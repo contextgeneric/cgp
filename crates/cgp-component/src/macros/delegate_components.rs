@@ -5,8 +5,9 @@ macro_rules! delegate_components {
         #[mark_delegate( $delegate_marker:ident )]
         $target:ident
             $( < $( $param:ident ),* $(,)? > )?
-            ;
-        $( $rest:tt )*
+        {
+            $( $rest:tt )*
+        }
     ) => {
         $crate::delegate_components!(
             @mark_component( $marker )
@@ -133,8 +134,9 @@ macro_rules! delegate_components {
         $crate::delegate_component!(
             $target
                 $( < $( $param ),* > )*
-                ;
-            $name : $forwarded
+            {
+                $name : $forwarded
+            }
         );
 
         $( impl<T> $marker < $name > for T {} )?

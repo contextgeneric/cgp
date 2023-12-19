@@ -3,8 +3,9 @@ macro_rules! delegate_component {
     (
         $target:ident
             $( < $( $param:ident ),* $(,)? > )?
-        ;
-        $name:ty : $forwarded:ty $(,)?
+        {
+            $name:ty : $forwarded:ty $(,)?
+        }
     ) => {
         impl< $( $( $param ),* )* >
             $crate::traits::delegate_component::DelegateComponent< $name >
