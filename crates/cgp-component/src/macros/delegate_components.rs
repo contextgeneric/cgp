@@ -20,7 +20,7 @@ macro_rules! delegate_components {
             @target( $target $( < $( $param ),* > )? )
             @body( $( $rest )* )
             @head_buf(
-                pub trait $delegate_marker: Sized
+                pub trait $delegate_marker $( < $( $param ),* > )? : Sized
             )
             @tail_buf(
                 {}
@@ -31,7 +31,7 @@ macro_rules! delegate_components {
             @target( $target $( < $( $param ),* > )? )
             @body( $( $rest )* )
             @head_buf(
-                impl<Components> $delegate_marker for Components
+                impl<Components, $( $( $param ),* )? > $delegate_marker $( < $( $param ),* > )? for Components
                 where
                     Components: Sized
             )
