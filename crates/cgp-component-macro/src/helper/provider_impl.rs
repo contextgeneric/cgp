@@ -1,7 +1,10 @@
 use proc_macro2::Span;
 use syn::punctuated::Punctuated;
 use syn::token::{Brace, Comma, For, Impl, Plus};
-use syn::{parse_quote, Ident, ImplItem, ItemImpl, ItemTrait, Path, TraitItem, TypeParamBound};
+use syn::{
+    parse_quote, GenericParam, Ident, ImplItem, ItemImpl, ItemTrait, Path, TraitItem,
+    TypeParamBound,
+};
 
 use crate::helper::delegate_fn::derive_delegated_fn_impl;
 use crate::helper::delegate_type::derive_delegate_type_impl;
@@ -74,6 +77,13 @@ pub fn derive_provider_impl(
                 let type_generics = {
                     let mut type_generics = trait_type.generics.clone();
                     type_generics.where_clause = None;
+
+                    for param in &mut type_generics.params {
+                        if let GenericParam::Type(type_param) = param {
+                            type_param.bounds.clear();
+                        }
+                    }
+
                     type_generics
                 };
 
