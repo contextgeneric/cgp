@@ -1,72 +1,102 @@
 #[macro_export]
 macro_rules! delegate_components {
-    (   $target:ident
+    (
+        $( @marker( $marker:ident ) )?
+        $target:ident
             $( < $( $param:ident ),* $(,)? > )?
-            $( @markers[ $( $marker:ident ),* $(,)? ] )?
             ;
+        $( $rest:tt )*
+    ) => {
+        $crate::delegate_components!(
+            $( @marker( $marker ) )?
+            @target( $target $( < $( $param ),* > )? )
+            @body( $( $rest )* )
+        );
+    };
+    (
+        $( @marker( $marker:ident ) )?
+        @target(
+            $target:ident
+            $( < $( $param:ident ),* $(,)? > )?
+        )
+        @body(  )
     ) => {
 
     };
-    (   $target:ident
+    (
+        $( @marker( $marker:ident ) )?
+        @target(
+            $target:ident
             $( < $( $param:ident ),* $(,)? > )?
-            $( @markers[ $( $marker:ident ),* $(,)? ] )?
-            ;
-        [ ] : $forwarded:ty
-        $( , $( $rest:tt )* )?
+        )
+        @body(
+            [ ] : $forwarded:ty
+            $( , $( $rest:tt )* )?
+        )
     ) => {
         $crate::delegate_components!(
-            $target
-                $( < $( $param ),* > )*
-                $( @markers[ $( $marker ),* ] )?
-                ;
-            $( $( $rest )*  )?
+            $( @marker( $marker ) )?
+            @target( $target $( < $( $param ),* > )? )
+            @body(
+                $( $( $rest )*  )?
+            )
         );
     };
-    (   $target:ident
+    (
+        $( @marker( $marker:ident ) )?
+        @target(
+            $target:ident
             $( < $( $param:ident ),* $(,)? > )?
-            $( @markers[ $( $marker:ident ),* $(,)? ] )?
-            ;
-        [ $name:ty $(, $($names:tt)* )?] : $forwarded:ty
-        $( , $( $rest:tt )* )?
+        )
+        @body(
+            [ $name:ty $(, $($names:tt)* )?] : $forwarded:ty
+            $( , $( $rest:tt )* )?
+        )
     ) => {
         $crate::delegate_component!(
             $target
                 $( < $( $param ),* > )*
-                $( @markers[ $( $marker ),* ] )?
                 ;
             $name : $forwarded
         );
 
+        $( impl<T> $marker < $name > for T {} )?
+
         $crate::delegate_components!(
-            $target
-                $( < $( $param ),* > )*
-                $( @markers[ $( $marker ),* ] )?
-                ;
-            [ $( $( $names )* )? ] : $forwarded
-            $( , $( $rest )*  )?
+            $( @marker( $marker ) )?
+            @target( $target $( < $( $param ),* > )? )
+            @body(
+                [ $( $( $names )* )? ] : $forwarded
+                $( , $( $rest )*  )?
+            )
         );
     };
-    (   $target:ident
+    (
+        $( @marker( $marker:ident ) )?
+        @target(
+            $target:ident
             $( < $( $param:ident ),* $(,)? > )?
-            $( @markers[ $( $marker:ident ),* $(,)? ] )?
-            ;
-        $name:ty : $forwarded:ty
-        $( , $( $rest:tt )* )?
+        )
+        @body(
+            $name:ty : $forwarded:ty
+            $( , $( $rest:tt )* )?
+        )
     ) => {
         $crate::delegate_component!(
             $target
                 $( < $( $param ),* > )*
-                $( @markers[ $( $marker ),* ] )?
                 ;
             $name : $forwarded
         );
 
+        $( impl<T> $marker < $name > for T {} )?
+
         $crate::delegate_components!(
-            $target
-                $( < $( $param ),* > )*
-                $( @markers[ $( $marker ),* ] )?
-                ;
-            $( $( $rest )*  )?
+            $( @marker( $marker ) )?
+            @target( $target $( < $( $param ),* > )? )
+            @body(
+                $( $( $rest )*  )?
+            )
         );
     };
 }

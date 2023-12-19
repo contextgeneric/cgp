@@ -3,7 +3,6 @@ macro_rules! delegate_component {
     (
         $target:ident
             $( < $( $param:ident ),* $(,)? > )?
-            $( @markers[ $( $marker:ident ),* $(,)? ] )?
         ;
         $name:ty : $forwarded:ty $(,)?
     ) => {
@@ -15,11 +14,5 @@ macro_rules! delegate_component {
         {
             type Delegate = $forwarded;
         }
-
-        $(
-            $crate::impl_component_marker!(
-                $name : [ $( $marker ),* ]
-            );
-        )?
     };
 }
