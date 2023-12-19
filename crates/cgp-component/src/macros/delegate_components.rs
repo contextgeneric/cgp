@@ -7,6 +7,10 @@ macro_rules! delegate_components {
             ;
         $( $rest:tt )*
     ) => {
+        $(
+            pub trait $marker < Component > {}
+        )?
+
         $crate::delegate_components!(
             $( @marker( $marker ) )?
             @target( $target $( < $( $param ),* > )? )
