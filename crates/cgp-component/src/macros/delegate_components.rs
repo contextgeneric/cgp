@@ -1,8 +1,8 @@
 #[macro_export]
 macro_rules! delegate_components {
     (
-        @mark_component( $marker:ident )
-        @mark_delegate( $delegate_marker:ident )
+        #[mark_component( $marker:ident )]
+        #[mark_delegate( $delegate_marker:ident )]
         $target:ident
             $( < $( $param:ident ),* $(,)? > )?
             ;
@@ -39,10 +39,9 @@ macro_rules! delegate_components {
                 {}
             )
         );
-
     };
     (
-        $( @mark_component( $marker:ident ) )?
+        $( #[mark_component( $marker:ident )] )?
         $target:ident
             $( < $( $param:ident ),* $(,)? > )?
             ;
@@ -52,6 +51,18 @@ macro_rules! delegate_components {
             pub trait $marker < Component > {}
         )?
 
+        $crate::delegate_components!(
+            $( @mark_component( $marker ) )?
+            @target( $target $( < $( $param ),* > )? )
+            @body( $( $rest )* )
+        );
+    };
+    (
+        $target:ident
+            $( < $( $param:ident ),* $(,)? > )?
+            ;
+        $( $rest:tt )*
+    ) => {
         $crate::delegate_components!(
             $( @mark_component( $marker ) )?
             @target( $target $( < $( $param ),* > )? )

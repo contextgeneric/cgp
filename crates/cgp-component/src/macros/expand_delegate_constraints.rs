@@ -43,7 +43,7 @@ macro_rules! expand_delegate_constraints {
                 [ $( $( $names )* )? ] : $forwarded,
                 $( $( $rest )*  )?
             )
-            @head_buf( $( $head:tt )* )
+            @head_buf( $( $head )* )
             @tail_buf( $( $tail )* )
         );
     };
