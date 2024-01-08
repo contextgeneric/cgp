@@ -1,4 +1,4 @@
-pub use async_trait::async_trait;
+pub use cgp_async_macro::native_async as async_trait;
 
 /**
    This is defined as a convenient constraint alias to

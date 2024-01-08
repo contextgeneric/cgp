@@ -13,4 +13,4 @@ description  = """
 """
 
 [dependencies]
-cgp-strip-async = { version = "0.1.0" }
+cgp-async-macro = { version = "0.1.0" }

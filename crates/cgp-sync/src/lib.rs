@@ -1,4 +1,4 @@
-pub use cgp_strip_async::strip_async as async_trait;
+pub use cgp_async_macro::strip_async as async_trait;
 
 pub trait Async: Sized + 'static {}
 

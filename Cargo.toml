@@ -4,22 +4,22 @@ resolver = "2"
 
 members = [
     "crates/cgp-async",
+    "crates/cgp-async-macro",
     "crates/cgp-sync",
     "crates/cgp-component",
     "crates/cgp-component-macro",
     "crates/cgp-error",
     "crates/cgp-error-eyre",
     "crates/cgp-error-std",
-    "crates/cgp-strip-async",
     "crates/cgp-core",
     "crates/cgp-run",
     "crates/cgp-inner",
 ]
 
 [patch.crates-io]
-cgp-strip-async     = { path = "./crates/cgp-strip-async" }
 cgp-core            = { path = "./crates/cgp-core" }
 cgp-async           = { path = "./crates/cgp-async" }
+cgp-async-macro     = { path = "./crates/cgp-async-macro" }
 cgp-sync            = { path = "./crates/cgp-sync" }
 cgp-component       = { path = "./crates/cgp-component" }
 cgp-component-macro = { path = "./crates/cgp-component-macro" }

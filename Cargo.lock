@@ -3,21 +3,19 @@
 version = 3
 
 [[package]]
-name = "async-trait"
-version = "0.1.73"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bc00ceb34980c03614e35a3a4e218276a0a824e911d07651cd0d858a51e8c0f0"
+name = "cgp-async"
+version = "0.1.0"
+dependencies = [
+ "cgp-async-macro",
+]
+
+[[package]]
+name = "cgp-async-macro"
+version = "0.1.0"
 dependencies = [
  "proc-macro2",
  "quote",
  "syn",
-]
-
-[[package]]
-name = "cgp-async"
-version = "0.1.0"
-dependencies = [
- "async-trait",
 ]
 
 [[package]]
@@ -90,19 +88,10 @@ dependencies = [
 ]
 
 [[package]]
-name = "cgp-strip-async"
-version = "0.1.0"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn",
-]
-
-[[package]]
 name = "cgp-sync"
 version = "0.1.0"
 dependencies = [
- "cgp-strip-async",
+ "cgp-async-macro",
 ]
 
 [[package]]
