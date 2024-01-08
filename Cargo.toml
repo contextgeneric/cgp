@@ -16,6 +16,13 @@ members = [
     "crates/cgp-inner",
 ]
 
+[workspace.package]
+rust-version    = "1.75"
+edition         = "2021"
+license         = "Apache-2.0"
+repository      = "https://github.com/informalsystems/cgp"
+authors         = ["Informal Systems <hello@informal.systems>", "Soares Chen <soares.chen@maybevoid.com>"]
+
 [patch.crates-io]
 cgp-core            = { path = "./crates/cgp-core" }
 cgp-async           = { path = "./crates/cgp-async" }
