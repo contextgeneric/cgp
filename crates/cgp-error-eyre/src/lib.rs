@@ -1,10 +1,9 @@
-use cgp_core::prelude::*;
-use cgp_core::ErrorRaiser;
-use cgp_core::ProvideErrorType;
-use core::fmt::Debug;
-use core::fmt::Display;
-use eyre::{eyre, Report};
+use core::fmt::{Debug, Display};
 use std::error::Error as StdError;
+
+use cgp_core::prelude::*;
+use cgp_core::{ErrorRaiser, ProvideErrorType};
+use eyre::{eyre, Report};
 
 pub struct ProvideEyreError;
 
