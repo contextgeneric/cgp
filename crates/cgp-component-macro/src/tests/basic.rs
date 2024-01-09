@@ -11,6 +11,6 @@ fn test_basic_derive_component() {
 
                 fn foo(&self) -> Self::Foo;
             }
-        }
+        },
     );
 }

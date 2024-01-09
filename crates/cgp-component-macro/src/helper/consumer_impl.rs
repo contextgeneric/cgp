@@ -1,5 +1,5 @@
 use syn::punctuated::Punctuated;
-use syn::token::{Brace, For, Impl, Plus, Comma};
+use syn::token::{Brace, Comma, For, Impl, Plus};
 use syn::{
     parse_quote, GenericParam, Ident, ImplItem, ItemImpl, ItemTrait, Path, TraitItem,
     TypeParamBound,

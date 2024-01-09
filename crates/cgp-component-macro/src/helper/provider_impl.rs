@@ -38,7 +38,6 @@ pub fn derive_provider_impl(
         generic_args
     };
 
-
     let impl_generics = {
         let mut impl_generics = provider_trait.generics.clone();
 

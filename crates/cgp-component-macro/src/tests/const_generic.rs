@@ -11,6 +11,6 @@ fn test_derive_component_with_const_generic() {
 
                 fn foo(&self) -> Self::Foo;
             }
-        }
+        },
     );
 }
