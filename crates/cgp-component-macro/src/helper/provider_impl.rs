@@ -103,7 +103,7 @@ pub fn derive_provider_impl(
                 };
 
                 let impl_type = derive_delegate_type_impl(
-                    &trait_type,
+                    trait_type,
                     parse_quote!(
                         < #component_type :: Delegate as #provider_name < #provider_generic_args > > :: #type_name #type_generics
                     ),
