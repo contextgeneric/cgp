@@ -18,11 +18,26 @@ pub fn derive_provider_impl(
 
     let component_type = Ident::new("Component", Span::call_site());
 
-    let provider_generics = {
-        let mut provider_generics = provider_trait.generics.clone();
-        provider_generics.where_clause = None;
-        provider_generics
+    let provider_generic_args = {
+        let mut generic_args: Punctuated<Ident, Comma> = Punctuated::new();
+
+        for param in provider_trait.generics.params.iter() {
+            match param {
+                GenericParam::Type(ty) => {
+                    generic_args.push(ty.ident.clone());
+                }
+                GenericParam::Const(arg) => {
+                    generic_args.push(arg.ident.clone());
+                }
+                GenericParam::Lifetime(_life) => {
+                    unimplemented!()
+                }
+            }
+        }
+
+        generic_args
     };
+
 
     let impl_generics = {
         let mut impl_generics = provider_trait.generics.clone();
@@ -37,7 +52,7 @@ pub fn derive_provider_impl(
             };
 
             let provider_constraint: Punctuated<TypeParamBound, Plus> = parse_quote! {
-                #provider_name #provider_generics
+                #provider_name < #provider_generic_args >
             };
 
             if let Some(where_clause) = &mut impl_generics.where_clause {
@@ -90,7 +105,7 @@ pub fn derive_provider_impl(
                 let impl_type = derive_delegate_type_impl(
                     &trait_type,
                     parse_quote!(
-                        < #component_type :: Delegate as #provider_name #provider_generics > :: #type_name #type_generics
+                        < #component_type :: Delegate as #provider_name < #provider_generic_args > > :: #type_name #type_generics
                     ),
                 );
 
@@ -100,12 +115,7 @@ pub fn derive_provider_impl(
         }
     }
 
-    let trait_path: Path = {
-        let mut trait_generics = provider_trait.generics.clone();
-        trait_generics.where_clause = None;
-
-        parse_quote!( #provider_name #trait_generics )
-    };
+    let trait_path: Path = parse_quote!( #provider_name < #provider_generic_args > );
 
     ItemImpl {
         attrs: provider_trait.attrs.clone(),

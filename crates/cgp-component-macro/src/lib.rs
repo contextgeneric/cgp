@@ -2,6 +2,9 @@ extern crate proc_macro;
 
 mod helper;
 
+#[cfg(test)]
+mod tests;
+
 use proc_macro::TokenStream;
 
 #[proc_macro_attribute]

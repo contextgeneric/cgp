@@ -1,5 +1,5 @@
 use syn::punctuated::Punctuated;
-use syn::token::{Brace, For, Impl, Plus};
+use syn::token::{Brace, For, Impl, Plus, Comma};
 use syn::{
     parse_quote, GenericParam, Ident, ImplItem, ItemImpl, ItemTrait, Path, TraitItem,
     TypeParamBound,
@@ -15,14 +15,32 @@ pub fn derive_consumer_impl(
 ) -> ItemImpl {
     let consumer_name = &consumer_trait.ident;
 
-    let provider_generics = {
-        let mut provider_generics = consumer_trait.generics.clone();
-        provider_generics
-            .params
-            .insert(0, parse_quote!(#context_type));
-        provider_generics.where_clause = None;
+    let consumer_generic_args = {
+        let mut generic_args: Punctuated<Ident, Comma> = Punctuated::new();
 
-        provider_generics
+        for param in consumer_trait.generics.params.iter() {
+            match param {
+                GenericParam::Type(ty) => {
+                    generic_args.push(ty.ident.clone());
+                }
+                GenericParam::Const(arg) => {
+                    generic_args.push(arg.ident.clone());
+                }
+                GenericParam::Lifetime(_life) => {
+                    unimplemented!()
+                }
+            }
+        }
+
+        generic_args
+    };
+
+    let provider_generic_args = {
+        let mut generic_args = consumer_generic_args.clone();
+
+        generic_args.insert(0, parse_quote!(#context_type));
+
+        generic_args
     };
 
     let impl_generics = {
@@ -52,7 +70,7 @@ pub fn derive_consumer_impl(
             };
 
             let provider_constraint: Punctuated<TypeParamBound, Plus> = parse_quote! {
-                #provider_name #provider_generics
+                #provider_name < #provider_generic_args >
             };
 
             if let Some(where_clause) = &mut impl_generics.where_clause {
@@ -105,7 +123,7 @@ pub fn derive_consumer_impl(
                 let impl_type = derive_delegate_type_impl(
                     &trait_type,
                     parse_quote!(
-                        < #context_type :: Components as #provider_name #provider_generics > :: #type_name #type_generics
+                        < #context_type :: Components as #provider_name < #provider_generic_args > > :: #type_name #type_generics
                     ),
                 );
 
@@ -115,12 +133,7 @@ pub fn derive_consumer_impl(
         }
     }
 
-    let trait_path: Path = {
-        let mut trait_generics = consumer_trait.generics.clone();
-        trait_generics.where_clause = None;
-
-        parse_quote!( #consumer_name #trait_generics )
-    };
+    let trait_path: Path = parse_quote!( #consumer_name < #consumer_generic_args > );
 
     ItemImpl {
         attrs: consumer_trait.attrs.clone(),
