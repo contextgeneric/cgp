@@ -1,0 +1,69 @@
+name: Rust Unit Tests
+on:
+  pull_request: {}
+  push:
+    branches: main
+
+env:
+  CARGO_INCREMENTAL: 0
+  CARGO_PROFILE_DEV_DEBUG: 1
+  CARGO_PROFILE_RELEASE_DEBUG: 1
+  RUST_BACKTRACE: short
+  CARGO_NET_RETRY: 10
+  RUSTUP_MAX_RETRIES: 10
+
+# Cancel previous runs of this workflow when a new commit is added to the PR, branch or tag
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  fmt:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+      - uses: actions-rs/cargo@v1
+        with:
+          command: fmt
+          args: --all -- --check
+
+  clippy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          components: clippy
+          override: true
+      - uses: Swatinem/rust-cache@v2
+      - uses: actions-rs/clippy-check@v1
+        with:
+          name: clippy-all-features
+          token: ${{ secrets.GITHUB_TOKEN }}
+          args: --all-features --all-targets -- -D warnings
+
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+      - uses: Swatinem/rust-cache@v2
+      - name: Install cargo-nextest
+        run: curl -LsSf https://get.nexte.st/latest/linux | tar zxf - -C ${CARGO_HOME:-~/.cargo}/bin
+      - uses: actions-rs/cargo@v1
+        with:
+          command: test
+          args: --all-features --no-fail-fast --no-run
+      - uses: actions-rs/cargo@v1
+        with:
+          command: nextest
+          args: run --all-features --no-fail-fast --workspace --no-capture
