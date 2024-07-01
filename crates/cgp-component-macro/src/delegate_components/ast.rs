@@ -2,8 +2,8 @@ use core::iter;
 
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
-use syn::token::{Brace, Colon, Comma};
-use syn::{braced, Generics, Ident, Token, Type};
+use syn::token::{Bracket, Colon, Comma};
+use syn::{braced, bracketed, Generics, Ident, Token, Type};
 
 pub struct DelegateComponentsAst {
     pub target_ident: Ident,
@@ -38,9 +38,9 @@ impl Parse for DelegateComponentsAst {
 
 impl Parse for DelegateEntryAst {
     fn parse(input: ParseStream) -> syn::Result<Self> {
-        let components: Punctuated<Type, Comma> = if input.peek(Brace) {
+        let components: Punctuated<Type, Comma> = if input.peek(Bracket) {
             let components_body;
-            braced!(components_body in input);
+            bracketed!(components_body in input);
             components_body.parse_terminated(Type::parse, Token![,])?
         } else {
             let component: Type = input.parse()?;

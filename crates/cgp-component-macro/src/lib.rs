@@ -2,7 +2,6 @@ extern crate proc_macro;
 
 mod delegate_components;
 mod derive_component;
-mod helper;
 
 #[cfg(test)]
 mod tests;

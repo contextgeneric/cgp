@@ -1,7 +1,7 @@
 use quote::quote;
 
 use crate::derive_component::derive::derive_component;
-use crate::helper::equal::equal_token_stream;
+use crate::tests::helper::equal::equal_token_stream;
 
 #[test]
 fn test_derive_component_with_const_generic() {
