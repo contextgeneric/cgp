@@ -11,6 +11,7 @@ pub fn generate_with_components_macro(
     components: &Punctuated<ComponentAst, Comma>,
 ) -> TokenStream {
     quote! {
+        #[macro_export]
         macro_rules! {
             #macro_name {
                 (

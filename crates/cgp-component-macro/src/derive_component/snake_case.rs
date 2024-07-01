@@ -1,10 +1,11 @@
 use proc_macro2::Span;
 use syn::Ident;
 
-pub fn to_snake_case(val: &Ident) -> Ident {
+pub fn to_snake_case_str(val: &str) -> String {
     let mut acc = String::new();
     let mut prev = '_';
-    for ch in val.to_string().chars() {
+
+    for ch in val.chars() {
         if ch.is_uppercase() && prev != '_' {
             acc.push('_');
         }
@@ -12,7 +13,9 @@ pub fn to_snake_case(val: &Ident) -> Ident {
         prev = ch;
     }
 
-    let raw_res = acc.to_lowercase();
+    acc.to_lowercase()
+}
 
-    Ident::new(&raw_res, Span::call_site())
+pub fn to_snake_case_ident(val: &Ident) -> Ident {
+    Ident::new(&to_snake_case_str(&val.to_string()), Span::call_site())
 }
