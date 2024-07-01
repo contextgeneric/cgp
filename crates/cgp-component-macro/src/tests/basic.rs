@@ -1,4 +1,4 @@
-use crate::helper::derive::derive_component;
+use crate::derive_component::derive::derive_component;
 use quote::quote;
 
 #[test]

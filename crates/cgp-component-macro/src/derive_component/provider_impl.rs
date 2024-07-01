@@ -6,8 +6,8 @@ use syn::{
     TypeParamBound,
 };
 
-use crate::helper::delegate_fn::derive_delegated_fn_impl;
-use crate::helper::delegate_type::derive_delegate_type_impl;
+use crate::derive_component::delegate_fn::derive_delegated_fn_impl;
+use crate::derive_component::delegate_type::derive_delegate_type_impl;
 
 pub fn derive_provider_impl(
     provider_trait: &ItemTrait,

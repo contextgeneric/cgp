@@ -2,11 +2,11 @@ use proc_macro2::TokenStream;
 use quote::ToTokens;
 use syn::ItemTrait;
 
-use crate::helper::component_name::derive_component_name_struct;
-use crate::helper::component_spec::ComponentSpec;
-use crate::helper::consumer_impl::derive_consumer_impl;
-use crate::helper::provider_impl::derive_provider_impl;
-use crate::helper::provider_trait::derive_provider_trait;
+use crate::derive_component::component_name::derive_component_name_struct;
+use crate::derive_component::component_spec::ComponentSpec;
+use crate::derive_component::consumer_impl::derive_consumer_impl;
+use crate::derive_component::provider_impl::derive_provider_impl;
+use crate::derive_component::provider_trait::derive_provider_trait;
 
 pub fn derive_component(attr: TokenStream, item: TokenStream) -> TokenStream {
     let spec: ComponentSpec = syn::parse2(attr).unwrap();

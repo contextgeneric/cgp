@@ -1,6 +1,6 @@
 use quote::quote;
 
-use crate::helper::derive::derive_component;
+use crate::derive_component::derive::derive_component;
 use crate::helper::equal::equal_token_stream;
 
 #[test]

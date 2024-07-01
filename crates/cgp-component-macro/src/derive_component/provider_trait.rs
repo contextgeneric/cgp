@@ -1,7 +1,7 @@
 use syn::{parse_quote, Ident, ItemTrait, TraitItem};
 
-use crate::helper::replace_self_receiver::replace_self_receiver;
-use crate::helper::replace_self_type::{
+use crate::derive_component::replace_self_receiver::replace_self_receiver;
+use crate::derive_component::replace_self_type::{
     iter_parse_and_replace_self_type, parse_and_replace_self_type,
 };
 

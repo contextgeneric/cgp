@@ -2,7 +2,7 @@ use proc_macro2::TokenStream;
 use quote::quote;
 use syn::{parse_quote, ImplItemFn, Signature, TypePath, Visibility};
 
-use crate::helper::signature_args::signature_to_args;
+use crate::derive_component::signature_args::signature_to_args;
 
 pub fn derive_delegated_fn_impl(sig: &Signature, delegator: &TypePath) -> ImplItemFn {
     let fn_name = &sig.ident;
