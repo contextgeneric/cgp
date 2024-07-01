@@ -7,7 +7,7 @@ use syn::{braced, bracketed, GenericParam, Generics, Ident, Token, Type};
 
 pub struct DelegateComponentsAst {
     pub target_type: Type,
-    pub target_generics: Punctuated<GenericParam, Comma>,
+    pub target_generics: Generics,
     pub delegate_entries: Punctuated<DelegateEntryAst, Comma>,
 }
 
@@ -19,14 +19,7 @@ pub struct DelegateEntryAst {
 impl Parse for DelegateComponentsAst {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let target_generics = if input.peek(Lt) {
-            let _: Lt = input.parse()?;
-
-            let target_generics: Punctuated<GenericParam, Comma> =
-                Punctuated::parse_separated_nonempty(input)?;
-
-            let _: Gt = input.parse()?;
-
-            target_generics
+            input.parse()?
         } else {
             Default::default()
         };
