@@ -2,12 +2,12 @@ use core::iter;
 
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
-use syn::token::{Bracket, Colon, Comma};
-use syn::{braced, bracketed, Generics, Ident, Token, Type};
+use syn::token::{Bracket, Colon, Comma, Gt, Lt};
+use syn::{braced, bracketed, GenericParam, Generics, Ident, Token, Type};
 
 pub struct DelegateComponentsAst {
-    pub target_ident: Ident,
-    pub target_generics: Generics,
+    pub target_type: Type,
+    pub target_generics: Punctuated<GenericParam, Comma>,
     pub delegate_entries: Punctuated<DelegateEntryAst, Comma>,
 }
 
@@ -18,9 +18,20 @@ pub struct DelegateEntryAst {
 
 impl Parse for DelegateComponentsAst {
     fn parse(input: ParseStream) -> syn::Result<Self> {
-        let target_ident: Ident = input.parse()?;
+        let target_generics = if input.peek(Lt) {
+            let _: Lt = input.parse()?;
 
-        let target_generics: Generics = input.parse()?;
+            let target_generics: Punctuated<GenericParam, Comma> =
+                Punctuated::parse_separated_nonempty(input)?;
+
+            let _: Gt = input.parse()?;
+
+            target_generics
+        } else {
+            Default::default()
+        };
+
+        let target_type: Type = input.parse()?;
 
         let delegate_entries = {
             let entries_body;
@@ -29,7 +40,7 @@ impl Parse for DelegateComponentsAst {
         };
 
         Ok(Self {
-            target_ident,
+            target_type,
             target_generics,
             delegate_entries,
         })
