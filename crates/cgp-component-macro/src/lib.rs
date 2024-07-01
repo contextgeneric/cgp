@@ -17,3 +17,8 @@ pub fn derive_component(attr: TokenStream, item: TokenStream) -> TokenStream {
 pub fn delegate_components(body: TokenStream) -> TokenStream {
     crate::delegate_components::delegate_components(body.into()).into()
 }
+
+#[proc_macro]
+pub fn define_components(body: TokenStream) -> TokenStream {
+    crate::delegate_components::define_components(body.into()).into()
+}

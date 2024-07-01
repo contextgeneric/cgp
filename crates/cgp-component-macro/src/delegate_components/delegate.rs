@@ -18,18 +18,5 @@ pub fn delegate_components(body: TokenStream) -> TokenStream {
         output.extend(impl_item.to_token_stream());
     }
 
-    if let Some(TokenTree::Ident(components_ident)) =
-        ast.target_type.to_token_stream().into_iter().next()
-    {
-        let components_name = format!("with_{}", to_snake_case_str(&components_ident.to_string()));
-
-        let with_components_macro = generate_with_components_macro(
-            &Ident::new(&to_snake_case_str(&components_name), Span::call_site()),
-            &ast.all_components(),
-        );
-
-        output.extend(with_components_macro);
-    }
-
     output
 }

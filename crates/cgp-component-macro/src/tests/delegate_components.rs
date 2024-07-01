@@ -1,11 +1,11 @@
 use quote::quote;
 
-use crate::delegate_components::delegate_components;
+use crate::delegate_components::{define_components, delegate_components};
 use crate::tests::helper::format::format_token_stream;
 
 #[test]
 fn test_basic_delegate_components() {
-    let derived = delegate_components(quote! {
+    let derived = define_components(quote! {
         FooComponents {
             [
                 BarAComponent,
@@ -20,9 +20,8 @@ fn test_basic_delegate_components() {
 
 #[test]
 fn test_delegate_components_containing_generics() {
-    let derived = delegate_components(quote! {
-        <'a, FooParamA, FooParamB: FooConstraint>
-        FooComponents<'a, FooParamA, FooParamB> {
+    let derived = define_components(quote! {
+        FooComponents<'a, FooParamA, FooParamB: FooConstraint> {
             BarComponentA: BazComponentsA<FooParamA>,
             [
                 BarComponentB<'a>,
