@@ -10,3 +10,5 @@ pub mod replace_self_receiver;
 pub mod replace_self_type;
 pub mod signature_args;
 pub mod snake_case;
+
+pub use derive::derive_component;
