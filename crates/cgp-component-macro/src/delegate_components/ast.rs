@@ -2,8 +2,8 @@ use core::iter;
 
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
-use syn::token::{Bracket, Colon, Comma, Gt, Lt};
-use syn::{braced, bracketed, GenericParam, Generics, Ident, Token, Type};
+use syn::token::{Bracket, Colon, Comma, Lt};
+use syn::{braced, bracketed, Generics, Token, Type};
 
 pub struct DelegateComponentsAst {
     pub target_type: Type,
