@@ -12,8 +12,13 @@ pub struct DelegateComponentsAst {
 }
 
 pub struct DelegateEntryAst {
-    pub components: Punctuated<Type, Comma>,
+    pub components: Punctuated<ComponentAst, Comma>,
     pub source: Type,
+}
+
+pub struct ComponentAst {
+    pub component_type: Type,
+    pub component_generics: Generics,
 }
 
 impl Parse for DelegateComponentsAst {
@@ -42,12 +47,12 @@ impl Parse for DelegateComponentsAst {
 
 impl Parse for DelegateEntryAst {
     fn parse(input: ParseStream) -> syn::Result<Self> {
-        let components: Punctuated<Type, Comma> = if input.peek(Bracket) {
+        let components = if input.peek(Bracket) {
             let components_body;
             bracketed!(components_body in input);
-            components_body.parse_terminated(Type::parse, Token![,])?
+            components_body.parse_terminated(ComponentAst::parse, Token![,])?
         } else {
-            let component: Type = input.parse()?;
+            let component: ComponentAst = input.parse()?;
             Punctuated::from_iter(iter::once(component))
         };
 
@@ -56,5 +61,22 @@ impl Parse for DelegateEntryAst {
         let source: Type = input.parse()?;
 
         Ok(Self { components, source })
+    }
+}
+
+impl Parse for ComponentAst {
+    fn parse(input: ParseStream) -> syn::Result<Self> {
+        let component_generics = if input.peek(Lt) {
+            input.parse()?
+        } else {
+            Default::default()
+        };
+
+        let component_type: Type = input.parse()?;
+
+        Ok(Self {
+            component_type,
+            component_generics,
+        })
     }
 }
