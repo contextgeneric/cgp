@@ -1,6 +1,6 @@
 use proc_macro2::{Span, TokenStream, TokenTree};
 use quote::ToTokens;
-use syn::{parse_quote, Ident};
+use syn::Ident;
 
 use crate::delegate_components::ast::DelegateComponentsAst;
 use crate::delegate_components::impl_delegate::impl_delegate_components;
