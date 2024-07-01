@@ -1,5 +1,7 @@
 use core::iter;
 
+use proc_macro2::TokenStream;
+use quote::ToTokens;
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::token::{Bracket, Colon, Comma, Lt};
@@ -16,9 +18,19 @@ pub struct DelegateEntryAst {
     pub source: Type,
 }
 
+#[derive(Clone)]
 pub struct ComponentAst {
     pub component_type: Type,
     pub component_generics: Generics,
+}
+
+impl DelegateComponentsAst {
+    pub fn all_components(&self) -> Punctuated<ComponentAst, Comma> {
+        self.delegate_entries
+            .iter()
+            .flat_map(|entry| entry.components.clone().into_iter())
+            .collect()
+    }
 }
 
 impl Parse for DelegateComponentsAst {
@@ -78,5 +90,12 @@ impl Parse for ComponentAst {
             component_type,
             component_generics,
         })
+    }
+}
+
+impl ToTokens for ComponentAst {
+    fn to_tokens(&self, tokens: &mut TokenStream) {
+        tokens.extend(self.component_generics.to_token_stream());
+        tokens.extend(self.component_type.to_token_stream());
     }
 }
