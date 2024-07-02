@@ -27,6 +27,7 @@ pub fn define_components(body: TokenStream) -> TokenStream {
 
     let with_components_macro = generate_with_components_macro(
         &Ident::new(&to_snake_case_str(&components_name), Span::call_site()),
+        &ast.target_ident,
         &ast.all_components(),
     );
 

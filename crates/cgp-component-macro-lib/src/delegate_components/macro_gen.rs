@@ -8,6 +8,7 @@ use crate::delegate_components::ast::ComponentAst;
 
 pub fn generate_with_components_macro(
     macro_name: &Ident,
+    components_ident: &Ident,
     components: &Punctuated<ComponentAst, Comma>,
 ) -> TokenStream {
     quote! {
@@ -66,7 +67,7 @@ pub fn generate_with_components_macro(
             };
 
             (
-                @remaining( @ components $( $remaining:tt )* )
+                @remaining( @ #components_ident $( $remaining:tt )* )
                 @out( $( $out:tt )* )
                 @stack( $( $stack:tt )* )
             ) => {

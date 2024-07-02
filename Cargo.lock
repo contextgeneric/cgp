@@ -30,6 +30,18 @@ dependencies = [
 name = "cgp-component-macro"
 version = "0.1.0"
 dependencies = [
+ "cgp-component-macro-lib",
+ "itertools",
+ "prettyplease",
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
+name = "cgp-component-macro-lib"
+version = "0.1.0"
+dependencies = [
  "itertools",
  "prettyplease",
  "proc-macro2",
