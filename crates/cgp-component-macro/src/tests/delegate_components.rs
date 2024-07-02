@@ -1,6 +1,6 @@
 use quote::quote;
 
-use crate::delegate_components::{define_components, delegate_components};
+use crate::delegate_components::define_components;
 use crate::tests::helper::format::format_token_stream;
 
 #[test]

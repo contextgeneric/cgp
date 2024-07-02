@@ -4,6 +4,20 @@ use crate::derive_component::derive::derive_component;
 use crate::tests::helper::equal::equal_token_stream;
 
 #[test]
+fn test_basic_derive_component() {
+    derive_component(
+        quote! { FooComponent, FooProvider<Context> },
+        quote! {
+            pub trait HasFoo<Bar> {
+                type Foo;
+
+                fn foo(&self) -> Self::Foo;
+            }
+        },
+    );
+}
+
+#[test]
 fn test_derive_component_with_const_generic() {
     let derived = derive_component(
         quote! { FooComponent, FooProvider<Context> },
