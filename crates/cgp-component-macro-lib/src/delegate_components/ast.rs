@@ -88,7 +88,7 @@ impl Parse for DelegateEntriesAst {
         let entries = {
             let entries_body;
             braced!(entries_body in input);
-            entries_body.parse_terminated(DelegateEntryAst::parse, Token![,])?
+            entries_body.parse_terminated(DelegateEntryAst::parse, Comma)?
         };
 
         Ok(Self { entries })
