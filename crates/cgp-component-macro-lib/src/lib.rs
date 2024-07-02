@@ -1,5 +1,5 @@
-mod delegate_components;
-mod derive_component;
+pub mod delegate_components;
+pub mod derive_component;
 
 #[cfg(test)]
 mod tests;

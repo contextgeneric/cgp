@@ -3,7 +3,6 @@ pub mod define;
 pub mod define_struct;
 pub mod delegate;
 pub mod delegates_to;
-pub mod generic_type_params;
 pub mod impl_delegate;
 pub mod macro_gen;
 pub mod merge_generics;
