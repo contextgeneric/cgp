@@ -26,9 +26,9 @@ pub fn merge_generics(generics_a: &Generics, generics_b: &Generics) -> Generics 
     };
 
     Generics {
-        lt_token: generics_a.lt_token.clone(),
+        lt_token: generics_a.lt_token,
         params,
-        gt_token: generics_a.gt_token.clone(),
+        gt_token: generics_a.gt_token,
         where_clause,
     }
 }

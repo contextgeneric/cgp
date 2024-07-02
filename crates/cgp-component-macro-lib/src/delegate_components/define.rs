@@ -35,7 +35,7 @@ pub fn define_components(body: TokenStream) -> TokenStream {
     }
 
     {
-        let delegates_to_trait_name = format!("DelegatesTo{}", ast.components_ident.to_string(),);
+        let delegates_to_trait_name = format!("DelegatesTo{}", ast.components_ident);
 
         let (delegates_to_trait, delegates_to_impl) = define_delegates_to_trait(
             &Ident::new(&delegates_to_trait_name, Span::call_site()),
