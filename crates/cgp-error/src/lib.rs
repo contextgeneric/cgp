@@ -25,6 +25,8 @@ pub trait HasErrorType: Async {
     type Error: Async + Debug;
 }
 
+pub type ErrorOf<Context> = <Context as HasErrorType>::Error;
+
 /**
    Used for injecting external error types into [`Self::Error`](HasErrorType::Error).
 
