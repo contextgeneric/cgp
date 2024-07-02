@@ -1,7 +1,7 @@
 use std::error::Error as StdError;
 
-use cgp_core::prelude::*;
 use cgp_core::error::{ErrorRaiser, ProvideErrorType};
+use cgp_core::prelude::*;
 
 pub type Error = Box<dyn StdError + Send + Sync + 'static>;
 
