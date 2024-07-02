@@ -2,5 +2,5 @@
 
 pub mod traits;
 
-pub use cgp_component_macro::{derive_component, delegate_components, define_components};
+pub use cgp_component_macro::{define_components, delegate_components, derive_component};
 pub use traits::{DelegateComponent, HasComponents};

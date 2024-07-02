@@ -134,5 +134,7 @@ pub fn define_substitution_macro(
                 }
             };
         }
+
+        pub use #macro_name;
     }
 }

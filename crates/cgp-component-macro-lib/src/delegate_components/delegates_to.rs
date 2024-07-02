@@ -29,15 +29,17 @@ pub fn define_delegates_to_trait(
 ) -> (ItemTrait, ItemImpl) {
     let trait_bounds = define_delegate_component_trait_bounds(target_type, delegate_entries);
 
-    let mut impl_generics = target_generics.clone();
-    impl_generics.params.push(parse_quote!(Components));
-
     let item_trait = parse_quote! {
         pub trait #trait_name #target_generics: #trait_bounds {}
     };
 
+    let mut impl_generics = target_generics.clone();
+    impl_generics.params.push(parse_quote!(Components));
+
+    let type_generics = target_generics.split_for_impl().1;
+
     let item_impl = parse_quote! {
-        impl #impl_generics #trait_name for Components
+        impl #impl_generics #trait_name #type_generics  for Components
         where
             Components: #trait_bounds
         {}

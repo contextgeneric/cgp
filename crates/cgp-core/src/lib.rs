@@ -4,8 +4,7 @@ pub mod prelude;
 
 pub use cgp_async::{async_trait, Async};
 pub use cgp_component::{
-    delegate_components, define_components, derive_component, DelegateComponent,
-    HasComponents,
+    define_components, delegate_components, derive_component, DelegateComponent, HasComponents,
 };
 pub use cgp_error::{
     CanRaiseError, ErrorRaiser, ErrorRaiserComponent, ErrorTypeComponent, HasErrorType,
