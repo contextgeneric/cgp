@@ -6,7 +6,7 @@ use crate::delegate_components::ast::DefineComponentsAst;
 use crate::delegate_components::define_struct::define_struct;
 use crate::delegate_components::delegates_to::define_delegates_to_trait;
 use crate::delegate_components::impl_delegate::impl_delegate_components;
-use crate::delegate_components::macro_gen::generate_with_components_macro;
+use crate::delegate_components::substitution_macro::define_substitution_macro;
 use crate::derive_component::snake_case::to_snake_case_str;
 
 pub fn define_components(body: TokenStream) -> TokenStream {
@@ -54,10 +54,10 @@ pub fn define_components(body: TokenStream) -> TokenStream {
             to_snake_case_str(&ast.components_ident.to_string())
         );
 
-        let with_components_macro = generate_with_components_macro(
+        let with_components_macro = define_substitution_macro(
             &Ident::new(&with_components_macro_name, Span::call_site()),
             &ast.components_ident,
-            &ast.delegate_entries.all_components(),
+            &ast.delegate_entries.all_components().to_token_stream(),
         );
 
         output.extend(with_components_macro);

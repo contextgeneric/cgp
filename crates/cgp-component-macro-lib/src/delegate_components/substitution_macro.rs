@@ -1,15 +1,11 @@
 use proc_macro2::TokenStream;
 use quote::quote;
-use syn::punctuated::Punctuated;
-use syn::token::Comma;
 use syn::Ident;
 
-use crate::delegate_components::ast::ComponentAst;
-
-pub fn generate_with_components_macro(
+pub fn define_substitution_macro(
     macro_name: &Ident,
-    components_ident: &Ident,
-    components: &Punctuated<ComponentAst, Comma>,
+    substitute_ident: &Ident,
+    substitution: &TokenStream,
 ) -> TokenStream {
     quote! {
         #[macro_export]
@@ -67,7 +63,7 @@ pub fn generate_with_components_macro(
             };
 
             (
-                @remaining( @ #components_ident $( $remaining:tt )* )
+                @remaining( @ #substitute_ident $( $remaining:tt )* )
                 @out( $( $out:tt )* )
                 @stack( $( $stack:tt )* )
             ) => {
@@ -75,7 +71,7 @@ pub fn generate_with_components_macro(
                     @remaining( $( $remaining )* )
                     @out(
                         $( $out )*
-                        [ #components ]
+                        [ #substitution ]
                     )
                     @stack( $( $stack )* )
                 }
