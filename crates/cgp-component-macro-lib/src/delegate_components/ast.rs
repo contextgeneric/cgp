@@ -8,9 +8,19 @@ use syn::token::{Bracket, Colon, Comma, Lt};
 use syn::{braced, bracketed, Generics, Ident, Token, Type};
 
 pub struct DelegateComponentsAst {
-    pub target_ident: Ident,
+    pub target_type: Type,
     pub target_generics: Generics,
-    pub delegate_entries: Punctuated<DelegateEntryAst, Comma>,
+    pub delegate_entries: DelegateEntriesAst,
+}
+
+pub struct DefineComponentsAst {
+    pub components_ident: Ident,
+    pub components_generics: Generics,
+    pub delegate_entries: DelegateEntriesAst,
+}
+
+pub struct DelegateEntriesAst {
+    pub entries: Punctuated<DelegateEntryAst, Comma>,
 }
 
 pub struct DelegateEntryAst {
@@ -24,9 +34,9 @@ pub struct ComponentAst {
     pub component_generics: Generics,
 }
 
-impl DelegateComponentsAst {
+impl DelegateEntriesAst {
     pub fn all_components(&self) -> Punctuated<ComponentAst, Comma> {
-        self.delegate_entries
+        self.entries
             .iter()
             .flat_map(|entry| entry.components.clone().into_iter())
             .collect()
@@ -35,25 +45,53 @@ impl DelegateComponentsAst {
 
 impl Parse for DelegateComponentsAst {
     fn parse(input: ParseStream) -> syn::Result<Self> {
-        let target_ident: Ident = input.parse()?;
-
         let target_generics = if input.peek(Lt) {
             input.parse()?
         } else {
             Default::default()
         };
 
-        let delegate_entries = {
+        let target_type: Type = input.parse()?;
+
+        let delegate_entries: DelegateEntriesAst = input.parse()?;
+
+        Ok(Self {
+            target_type,
+            target_generics,
+            delegate_entries,
+        })
+    }
+}
+
+impl Parse for DefineComponentsAst {
+    fn parse(input: ParseStream) -> syn::Result<Self> {
+        let components_ident: Ident = input.parse()?;
+
+        let components_generics = if input.peek(Lt) {
+            input.parse()?
+        } else {
+            Default::default()
+        };
+
+        let delegate_entries: DelegateEntriesAst = input.parse()?;
+
+        Ok(Self {
+            components_ident,
+            components_generics,
+            delegate_entries,
+        })
+    }
+}
+
+impl Parse for DelegateEntriesAst {
+    fn parse(input: ParseStream) -> syn::Result<Self> {
+        let entries = {
             let entries_body;
             braced!(entries_body in input);
             entries_body.parse_terminated(DelegateEntryAst::parse, Token![,])?
         };
 
-        Ok(Self {
-            target_ident,
-            target_generics,
-            delegate_entries,
-        })
+        Ok(Self { entries })
     }
 }
 

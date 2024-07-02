@@ -7,7 +7,11 @@ use crate::delegate_components::impl_delegate::impl_delegate_components;
 pub fn delegate_components(body: TokenStream) -> TokenStream {
     let ast: DelegateComponentsAst = syn::parse2(body).unwrap();
 
-    let impl_items = impl_delegate_components(&ast);
+    let impl_items = impl_delegate_components(
+        &ast.target_type,
+        &ast.target_generics,
+        &ast.delegate_entries,
+    );
 
     let mut output = TokenStream::new();
 

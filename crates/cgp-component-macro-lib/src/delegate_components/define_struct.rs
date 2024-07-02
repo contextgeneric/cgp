@@ -1,6 +1,6 @@
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
-use syn::{parse_quote, GenericParam, Generics, Ident, ItemStruct};
+use syn::{parse_quote, GenericParam, Generics, Ident, ItemStruct, Type};
 
 pub fn define_struct(ident: &Ident, generics: &Generics) -> ItemStruct {
     if generics.params.is_empty() {
@@ -9,14 +9,25 @@ pub fn define_struct(ident: &Ident, generics: &Generics) -> ItemStruct {
         }
     } else {
         let mut generic_params = generics.params.clone();
-        let mut phantom_params: Punctuated<Ident, Comma> = Default::default();
+        let mut phantom_params: Punctuated<Type, Comma> = Default::default();
 
         for param in generic_params.iter_mut() {
-            if let GenericParam::Type(type_param) = param {
-                type_param.colon_token = None;
-                type_param.bounds.clear();
+            match param {
+                GenericParam::Type(type_param) => {
+                    type_param.colon_token = None;
+                    type_param.bounds.clear();
 
-                phantom_params.push(type_param.ident.clone());
+                    let type_ident = &type_param.ident;
+                    phantom_params.push(parse_quote!( #type_ident ));
+                }
+                GenericParam::Lifetime(life_param) => {
+                    life_param.colon_token = None;
+                    life_param.bounds.clear();
+
+                    let lifetime = &life_param.lifetime;
+                    phantom_params.push(parse_quote!( & #lifetime () ));
+                }
+                _ => {}
             }
         }
 

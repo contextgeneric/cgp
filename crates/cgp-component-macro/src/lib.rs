@@ -1,11 +1,5 @@
 extern crate proc_macro;
 
-// mod delegate_components;
-// mod derive_component;
-
-// #[cfg(test)]
-// mod tests;
-
 use proc_macro::TokenStream;
 
 #[proc_macro_attribute]

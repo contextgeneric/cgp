@@ -1,35 +1,33 @@
-use syn::{parse_quote, Generics, Ident, ImplItem, ImplItemType, ItemImpl, Path, Type};
+use syn::{parse_quote, Generics, ImplItem, ImplItemType, ItemImpl, Path, Type};
 
-use crate::delegate_components::ast::{ComponentAst, DelegateComponentsAst};
+use crate::delegate_components::ast::{ComponentAst, DelegateEntriesAst};
 use crate::delegate_components::merge_generics::merge_generics;
 
-pub fn impl_delegate_components(ast: &DelegateComponentsAst) -> Vec<ItemImpl> {
-    let target_ident = &ast.target_ident;
-    let target_generics = &ast.target_generics;
-
-    ast.delegate_entries
+pub fn impl_delegate_components(
+    target_type: &Type,
+    target_generics: &Generics,
+    delegate_entries: &DelegateEntriesAst,
+) -> Vec<ItemImpl> {
+    delegate_entries
+        .entries
         .iter()
         .flat_map(|entry| {
             let source = &entry.source;
 
             entry.components.iter().map(|component| {
-                impl_delegate_component(target_ident, target_generics, component, source)
+                impl_delegate_component(target_type, target_generics, component, source)
             })
         })
         .collect()
 }
 
 pub fn impl_delegate_component(
-    target_ident: &Ident,
+    target_type: &Type,
     target_generics: &Generics,
     component: &ComponentAst,
     source: &Type,
 ) -> ItemImpl {
     let component_type = &component.component_type;
-
-    let (_, target_type_generics, _) = target_generics.split_for_impl();
-
-    let target_type: Type = parse_quote!(#target_ident #target_type_generics);
 
     let trait_path: Path = parse_quote!(DelegateComponent < #component_type >);
 
@@ -44,7 +42,7 @@ pub fn impl_delegate_component(
         impl_token: Default::default(),
         generics,
         trait_: Some((None, trait_path, Default::default())),
-        self_ty: Box::new(target_type),
+        self_ty: Box::new(target_type.clone()),
         brace_token: Default::default(),
         items: vec![ImplItem::Type(delegate_type)],
     }
