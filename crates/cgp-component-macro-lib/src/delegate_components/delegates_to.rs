@@ -1,6 +1,6 @@
 use syn::punctuated::Punctuated;
 use syn::token::Plus;
-use syn::{parse_quote, Ident, ItemImpl, ItemTrait, Type, TypeParamBound};
+use syn::{parse_quote, Generics, Ident, ItemImpl, ItemTrait, Type, TypeParamBound};
 
 use crate::delegate_components::ast::DelegateEntriesAst;
 
@@ -24,16 +24,20 @@ pub fn define_delegate_component_trait_bounds(
 pub fn define_delegates_to_trait(
     trait_name: &Ident,
     target_type: &Type,
+    target_generics: &Generics,
     delegate_entries: &DelegateEntriesAst,
 ) -> (ItemTrait, ItemImpl) {
     let trait_bounds = define_delegate_component_trait_bounds(target_type, delegate_entries);
 
+    let mut impl_generics = target_generics.clone();
+    impl_generics.params.push(parse_quote!(Components));
+
     let item_trait = parse_quote! {
-        pub trait #trait_name: #trait_bounds {}
+        pub trait #trait_name #target_generics: #trait_bounds {}
     };
 
     let item_impl = parse_quote! {
-        impl<Components> #trait_name for Components
+        impl #impl_generics #trait_name for Components
         where
             Components: #trait_bounds
         {}
