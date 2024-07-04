@@ -51,7 +51,7 @@ pub fn derive_fields(input: TokenStream) -> TokenStream {
 
     let item_impls = derive_has_field_impls(&item_struct);
 
-    let mut output = item_struct.to_token_stream();
+    let mut output = TokenStream::new();
 
     for item_impl in item_impls {
         output.extend(item_impl.to_token_stream());

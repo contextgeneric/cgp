@@ -2,8 +2,8 @@ extern crate proc_macro;
 
 use proc_macro::TokenStream;
 
-#[proc_macro_attribute]
-pub fn derive_fields(_attr: TokenStream, item: TokenStream) -> TokenStream {
+#[proc_macro_derive(HasField)]
+pub fn derive_fields(item: TokenStream) -> TokenStream {
     cgp_field_macro_lib::derive_fields(item.into()).into()
 }
 
