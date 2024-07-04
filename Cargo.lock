@@ -52,6 +52,7 @@ dependencies = [
  "cgp-async",
  "cgp-component",
  "cgp-error",
+ "cgp-field",
  "cgp-inner",
  "cgp-run",
 ]
@@ -82,6 +83,9 @@ dependencies = [
 [[package]]
 name = "cgp-field"
 version = "0.1.0"
+dependencies = [
+ "cgp-field-macro",
+]
 
 [[package]]
 name = "cgp-field-macro"

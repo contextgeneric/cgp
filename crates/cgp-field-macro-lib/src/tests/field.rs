@@ -2,7 +2,6 @@ use quote::quote;
 
 use crate::field::derive_fields;
 use crate::tests::helper::equal::equal_token_stream;
-use crate::tests::helper::format::format_token_stream;
 
 #[test]
 fn test_basic_derive_fields() {
@@ -41,6 +40,21 @@ fn test_basic_derive_fields() {
             }
         }
     };
+
+    assert!(equal_token_stream(&derived, &expected));
+}
+
+#[test]
+fn test_generic_derive_fields() {
+    let derived = derive_fields(quote! {
+        pub struct Foo<FooParamA, FooParamB: Clone>
+        where
+            FooParamA: Eq,
+        {
+            pub bar: Bar<FooParamA>,
+            pub baz: Baz<String>,
+        }
+    });
 
     let expected = quote! {
         pub struct Foo<FooParamA, FooParamB: Clone>
@@ -83,19 +97,4 @@ fn test_basic_derive_fields() {
     };
 
     assert!(equal_token_stream(&derived, &expected));
-}
-
-#[test]
-fn test_generic_derive_fields() {
-    let derived = derive_fields(quote! {
-        pub struct Foo<FooParamA, FooParamB: Clone>
-        where
-            FooParamA: Eq,
-        {
-            pub bar: Bar<FooParamA>,
-            pub baz: Baz<String>,
-        }
-    });
-
-    println!("derived:\n{}", format_token_stream(&derived));
 }
