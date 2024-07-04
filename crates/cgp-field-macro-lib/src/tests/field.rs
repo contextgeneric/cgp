@@ -13,11 +13,6 @@ fn test_basic_derive_fields() {
     });
 
     let expected = quote! {
-        pub struct Foo {
-            pub bar: Bar,
-            pub baz: Baz,
-        }
-
         impl HasField<(Char<'b'>, Char<'a'>, Char<'r'>)> for Foo {
             type Field = Bar;
 
@@ -57,14 +52,6 @@ fn test_generic_derive_fields() {
     });
 
     let expected = quote! {
-        pub struct Foo<FooParamA, FooParamB: Clone>
-        where
-            FooParamA: Eq,
-        {
-            pub bar: Bar<FooParamA>,
-            pub baz: Baz<String>,
-        }
-
         impl<FooParamA, FooParamB: Clone> HasField<(Char<'b'>, Char<'a'>, Char<'r'>)>
             for Foo<FooParamA, FooParamB>
         where
