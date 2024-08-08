@@ -1,4 +1,3 @@
-use cgp_async::Async;
 use cgp_component::{derive_component, DelegateComponent, HasComponents};
 
 use crate::has_error_type::HasErrorType;

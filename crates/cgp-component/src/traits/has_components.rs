@@ -1,5 +1,3 @@
-use cgp_async::Async;
-
-pub trait HasComponents: Async {
-    type Components: Async;
+pub trait HasComponents {
+    type Components;
 }

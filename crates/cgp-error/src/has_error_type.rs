@@ -15,7 +15,7 @@ use cgp_component::{derive_component, DelegateComponent, HasComponents};
    `Self::Error` type.
 */
 #[derive_component(ErrorTypeComponent, ProvideErrorType<Context>)]
-pub trait HasErrorType: Async {
+pub trait HasErrorType {
     /**
        The `Error` associated type is also required to implement [`Debug`].
 

@@ -1,3 +1,4 @@
+use syn::punctuated::Punctuated;
 use syn::{parse_quote, Ident, ItemTrait, TraitItem};
 
 use crate::derive_component::replace_self_receiver::replace_self_receiver;
@@ -42,7 +43,7 @@ pub fn derive_provider_trait(
             &local_assoc_types,
         )?;
 
-        provider_trait.supertraits = parse_quote!(Async);
+        provider_trait.supertraits = Punctuated::default();
 
         if !context_constraints.is_empty() {
             if let Some(where_clause) = &mut provider_trait.generics.where_clause {

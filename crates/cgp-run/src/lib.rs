@@ -11,6 +11,6 @@ use cgp_error::HasErrorType;
 
 #[derive_component(RunnerComponent, Runner<Context>)]
 #[async_trait]
-pub trait CanRun: HasErrorType {
+pub trait CanRun: Async + HasErrorType {
     async fn run(&self) -> Result<(), Self::Error>;
 }

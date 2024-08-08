@@ -1,5 +1,3 @@
-use cgp_async::Async;
-
-pub trait DelegateComponent<Name>: Async {
+pub trait DelegateComponent<Name> {
     type Delegate;
 }

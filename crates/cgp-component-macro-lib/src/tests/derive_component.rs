@@ -39,7 +39,7 @@ fn test_derive_component_with_const_generic() {
 
         pub struct FooComponent;
 
-        pub trait FooProvider<Context, const BAR: usize>: Async {
+        pub trait FooProvider<Context, const BAR: usize> {
             type Foo;
 
             fn foo(context: &Context) -> Self::Foo;
