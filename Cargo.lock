@@ -3,6 +3,14 @@
 version = 3
 
 [[package]]
+name = "cgp"
+version = "0.1.0"
+dependencies = [
+ "cgp-core",
+ "cgp-extra",
+]
+
+[[package]]
 name = "cgp-async"
 version = "0.1.0"
 dependencies = [
@@ -54,7 +62,6 @@ dependencies = [
  "cgp-error",
  "cgp-field",
  "cgp-inner",
- "cgp-run",
 ]
 
 [[package]]
@@ -78,6 +85,13 @@ name = "cgp-error-std"
 version = "0.1.0"
 dependencies = [
  "cgp-core",
+]
+
+[[package]]
+name = "cgp-extra"
+version = "0.1.0"
+dependencies = [
+ "cgp-run",
 ]
 
 [[package]]

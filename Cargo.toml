@@ -3,6 +3,9 @@
 resolver = "2"
 
 members = [
+    "crates/cgp",
+    "crates/cgp-core",
+    "crates/cgp-extra",
     "crates/cgp-async",
     "crates/cgp-async-macro",
     "crates/cgp-sync",
@@ -15,20 +18,21 @@ members = [
     "crates/cgp-error",
     "crates/cgp-error-eyre",
     "crates/cgp-error-std",
-    "crates/cgp-core",
     "crates/cgp-run",
     "crates/cgp-inner",
 ]
 
 [workspace.package]
-rust-version    = "1.75"
+rust-version    = "1.79"
 edition         = "2021"
 license         = "Apache-2.0"
-repository      = "https://github.com/informalsystems/cgp"
+repository      = "https://github.com/contextgeneric/cgp"
 authors         = ["Informal Systems <hello@informal.systems>", "Soares Chen <soares.chen@maybevoid.com>"]
 
 [patch.crates-io]
+cgp                         = { path = "./crates/cgp" }
 cgp-core                    = { path = "./crates/cgp-core" }
+cgp-extra                   = { path = "./crates/cgp-extra" }
 cgp-async                   = { path = "./crates/cgp-async" }
 cgp-async-macro             = { path = "./crates/cgp-async-macro" }
 cgp-sync                    = { path = "./crates/cgp-sync" }
