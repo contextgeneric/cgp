@@ -6,7 +6,7 @@ repository   = { workspace = true }
 authors      = { workspace = true }
 rust-version = { workspace = true }
 version      = "0.1.0"
-keywords     = ["context-generic programming"]
+keywords     = { workspace = true }
 description  = """
     Context-generic programming async macros
 """

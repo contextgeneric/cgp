@@ -6,9 +6,9 @@ license      = { workspace = true }
 repository   = { workspace = true }
 authors      = { workspace = true }
 rust-version = { workspace = true }
-keywords     = ["context-generic programming"]
+keywords     = { workspace = true }
 description  = """
-    Async-generic primitives to support both sync/async in Context-generic programming
+    Async-generic primitives to support both sync/async in context-generic programming
 """
 
 [dependencies]

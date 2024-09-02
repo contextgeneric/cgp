@@ -28,6 +28,7 @@ edition         = "2021"
 license         = "Apache-2.0"
 repository      = "https://github.com/contextgeneric/cgp"
 authors         = ["Informal Systems <hello@informal.systems>", "Soares Chen <soares.chen@maybevoid.com>"]
+keywords        = ["cgp"]
 
 [patch.crates-io]
 cgp                         = { path = "./crates/cgp" }
