@@ -6,19 +6,14 @@ license      = { workspace = true }
 repository   = { workspace = true }
 authors      = { workspace = true }
 rust-version = { workspace = true }
-readme       = "README.md"
 keywords     = ["context-generic programming"]
 description  = """
     Context-generic programming core traits
 """
-
-[package.metadata.docs.rs]
-all-features = true
 
 [dependencies]
 cgp-async       = { version = "0.1.0" }
 cgp-component   = { version = "0.1.0" }
 cgp-error       = { version = "0.1.0" }
 cgp-field       = { version = "0.1.0" }
-cgp-run         = { version = "0.1.0" }
 cgp-inner       = { version = "0.1.0" }

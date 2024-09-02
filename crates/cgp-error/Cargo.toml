@@ -6,10 +6,9 @@ license      = { workspace = true }
 repository   = { workspace = true }
 authors      = { workspace = true }
 rust-version = { workspace = true }
-readme       = "README.md"
 keywords     = ["context-generic programming"]
 description  = """
-    Context-generic programming core traits
+    Context-generic programming error components
 """
 
 [dependencies]

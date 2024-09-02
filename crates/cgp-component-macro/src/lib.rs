@@ -1,3 +1,7 @@
+/*!
+   This crate provides the proc macros used for defining CGP components.
+*/
+
 extern crate proc_macro;
 
 use proc_macro::TokenStream;

@@ -6,14 +6,10 @@ repository   = { workspace = true }
 authors      = { workspace = true }
 rust-version = { workspace = true }
 version      = "0.1.0"
-readme       = "README.md"
 keywords     = ["context-generic programming"]
 description  = """
-    Context-generic programming core macros
+    Context-generic programming async macros
 """
-
-[package.metadata.docs.rs]
-all-features = true
 
 [lib]
 proc-macro = true

@@ -1,1 +1,1 @@
-pub use cgp_core::*;
+pub use cgp_run as run;

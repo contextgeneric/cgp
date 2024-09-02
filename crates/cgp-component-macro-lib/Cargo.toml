@@ -6,14 +6,10 @@ license      = { workspace = true }
 repository   = { workspace = true }
 authors      = { workspace = true }
 rust-version = { workspace = true }
-readme       = "README.md"
 keywords     = ["context-generic programming"]
 description  = """
-    Context-generic programming core macros
+    Context-generic programming core component macros implemented as a library.
 """
-
-[package.metadata.docs.rs]
-all-features = true
 
 [dependencies]
 syn = { version = "2.0.37", features = [ "full" ] }

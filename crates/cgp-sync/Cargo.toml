@@ -6,7 +6,6 @@ license      = { workspace = true }
 repository   = { workspace = true }
 authors      = { workspace = true }
 rust-version = { workspace = true }
-readme       = "README.md"
 keywords     = ["context-generic programming"]
 description  = """
     Async-generic primitives to support both sync/async in Context-generic programming
