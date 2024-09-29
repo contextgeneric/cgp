@@ -17,24 +17,24 @@ where
     type Type = Field;
 }
 
-impl<Context, Tag, Field> FieldGetter<Context, Tag> for UseField<Tag>
+impl<Context, OutTag, Tag, Field> FieldGetter<Context, OutTag> for UseField<Tag>
 where
     Context: HasField<Tag, Field = Field>,
 {
     type Field = Field;
 
-    fn get_field(context: &Context, tag: PhantomData<Tag>) -> &Self::Field {
-        context.get_field(tag)
+    fn get_field(context: &Context, _tag: PhantomData<OutTag>) -> &Self::Field {
+        context.get_field(PhantomData)
     }
 }
 
-impl<Context, Tag, Field> MutFieldGetter<Context, Tag> for UseField<Tag>
+impl<Context, OutTag, Tag, Field> MutFieldGetter<Context, OutTag> for UseField<Tag>
 where
     Context: HasFieldMut<Tag, Field = Field>,
 {
     type Field = Field;
 
-    fn get_field_mut(context: &mut Context, tag: PhantomData<Tag>) -> &mut Self::Field {
-        context.get_field_mut(tag)
+    fn get_field_mut(context: &mut Context, _tag: PhantomData<OutTag>) -> &mut Self::Field {
+        context.get_field_mut(PhantomData)
     }
 }
