@@ -37,7 +37,7 @@ pub fn derive_has_field_impls(item_struct: &ItemStruct) -> Vec<ItemImpl> {
             };
 
             let has_field_mut_impl: ItemImpl = parse_quote! {
-                impl #impl_generics HasMutField< #field_symbol >
+                impl #impl_generics HasFieldMut< #field_symbol >
                     for #struct_ident #ty_generics
                 #where_clause
                 {
