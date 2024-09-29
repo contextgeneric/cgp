@@ -1,4 +1,9 @@
-use std::error::Error as StdError;
+#![no_std]
+
+extern crate alloc;
+
+use alloc::boxed::Box;
+use core::error::Error as StdError;
 
 use cgp_core::error::{ErrorRaiser, ProvideErrorType};
 use cgp_core::prelude::*;
