@@ -5,11 +5,11 @@ use cgp_type::types::with_type::WithTypeProvider;
 
 use crate::HasField;
 
-pub struct UseFieldType<Tag>(pub PhantomData<Tag>);
+pub struct UseField<Tag>(pub PhantomData<Tag>);
 
-pub type WithFieldType<Tag> = WithTypeProvider<UseFieldType<Tag>>;
+pub type WithFieldType<Tag> = WithTypeProvider<UseField<Tag>>;
 
-impl<Context, TypeTag, FieldTag, Field> ProvideType<Context, TypeTag> for UseFieldType<FieldTag>
+impl<Context, TypeTag, FieldTag, Field> ProvideType<Context, TypeTag> for UseField<FieldTag>
 where
     Context: HasField<FieldTag, Field = Field>,
 {
