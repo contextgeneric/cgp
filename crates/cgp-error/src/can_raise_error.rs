@@ -1,5 +1,4 @@
-use cgp_component::types::delegate::DelegateTo;
-use cgp_component::{derive_component, DelegateComponent, HasComponents};
+use cgp_component::{derive_component, DelegateComponent, DelegateTo, HasComponents};
 
 use crate::has_error_type::HasErrorType;
 

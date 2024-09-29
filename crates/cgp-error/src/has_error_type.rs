@@ -1,9 +1,8 @@
 use core::fmt::Debug;
 
 use cgp_async::Async;
-use cgp_component::{derive_component, DelegateComponent, HasComponents};
+use cgp_component::{derive_component, DelegateComponent, HasComponents, WithProvider};
 use cgp_type::traits::has_type::ProvideType;
-use cgp_type::types::with_type::WithTypeProvider;
 
 /**
    This is used for contexts to declare that they have a _unique_ `Self::Error` type.
@@ -29,7 +28,7 @@ pub trait HasErrorType {
 
 pub type ErrorOf<Context> = <Context as HasErrorType>::Error;
 
-impl<Context, Provider, Error> ProvideErrorType<Context> for WithTypeProvider<Provider>
+impl<Context, Provider, Error> ProvideErrorType<Context> for WithProvider<Provider>
 where
     Provider: ProvideType<Context, ErrorTypeComponent, Type = Error>,
     Error: Async + Debug,

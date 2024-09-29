@@ -13,4 +13,5 @@ description  = """
 
 [dependencies]
 cgp-field-macro = { version = "0.1.0" }
+cgp-component   = { version = "0.1.0" }
 cgp-type        = { version = "0.1.0" }

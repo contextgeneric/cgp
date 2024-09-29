@@ -1,3 +1,5 @@
-pub mod delegate;
+pub mod delegate_to;
+pub mod with_provider;
 
-pub use delegate::DelegateTo;
+pub use delegate_to::DelegateTo;
+pub use with_provider::WithProvider;
