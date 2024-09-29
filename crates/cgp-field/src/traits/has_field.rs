@@ -7,6 +7,12 @@ pub trait HasField<Tag> {
     fn get_field(&self, tag: PhantomData<Tag>) -> &Self::Field;
 }
 
+pub trait FieldGetter<Context, Tag> {
+    type Field;
+
+    fn get_field(context: &Context, tag: PhantomData<Tag>) -> &Self::Field;
+}
+
 impl<Context, Tag, Target, Field> HasField<Tag> for Context
 where
     Context: Deref<Target = Target>,

@@ -7,6 +7,12 @@ pub trait HasFieldMut<Tag>: HasField<Tag> {
     fn get_field_mut(&mut self, tag: PhantomData<Tag>) -> &mut Self::Field;
 }
 
+pub trait MutFieldGetter<Context, Tag> {
+    type Field;
+
+    fn get_field_mut(context: &mut Context, tag: PhantomData<Tag>) -> &mut Self::Field;
+}
+
 impl<Context, Tag, Target, Field> HasFieldMut<Tag> for Context
 where
     Context: DerefMut<Target = Target>,
