@@ -10,4 +10,4 @@ pub mod types;
 
 pub use cgp_component_macro::{define_components, delegate_components, derive_component};
 pub use traits::{DelegateComponent, HasComponents};
-pub use types::{DelegateTo, WithProvider};
+pub use types::{DelegateTo, UseContext, WithContext, WithProvider};
