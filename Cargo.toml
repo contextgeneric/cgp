@@ -12,6 +12,7 @@ members = [
     "crates/cgp-component",
     "crates/cgp-component-macro",
     "crates/cgp-component-macro-lib",
+    "crates/cgp-type",
     "crates/cgp-field",
     "crates/cgp-field-macro",
     "crates/cgp-field-macro-lib",
@@ -40,6 +41,7 @@ cgp-sync                    = { path = "./crates/cgp-sync" }
 cgp-component               = { path = "./crates/cgp-component" }
 cgp-component-macro         = { path = "./crates/cgp-component-macro" }
 cgp-component-macro-lib     = { path = "./crates/cgp-component-macro-lib" }
+cgp-type                    = { path = "./crates/cgp-type" }
 cgp-field                   = { path = "./crates/cgp-field" }
 cgp-field-macro             = { path = "./crates/cgp-field-macro" }
 cgp-field-macro-lib         = { path = "./crates/cgp-field-macro-lib" }
