@@ -19,7 +19,7 @@ pub fn derive_has_field_impls(item_struct: &ItemStruct) -> Vec<ItemImpl> {
 
             let field_type = &field.ty;
 
-            let item_impl: ItemImpl = parse_quote! {
+            let has_field_impl: ItemImpl = parse_quote! {
                 impl #impl_generics HasField< #field_symbol >
                     for #struct_ident #ty_generics
                 #where_clause
@@ -36,7 +36,23 @@ pub fn derive_has_field_impls(item_struct: &ItemStruct) -> Vec<ItemImpl> {
                 }
             };
 
-            item_impls.push(item_impl);
+            let has_field_mut_impl: ItemImpl = parse_quote! {
+                impl #impl_generics HasMutField< #field_symbol >
+                    for #struct_ident #ty_generics
+                #where_clause
+                {
+                    fn get_field_mut(
+                        &mut self,
+                        key: ::core::marker::PhantomData< #field_symbol >,
+                    ) -> &mut Self::Field
+                    {
+                        &mut self. #field_ident
+                    }
+                }
+            };
+
+            item_impls.push(has_field_impl);
+            item_impls.push(has_field_mut_impl);
         }
     }
 
