@@ -100,6 +100,7 @@ name = "cgp-field"
 version = "0.1.0"
 dependencies = [
  "cgp-field-macro",
+ "cgp-type",
 ]
 
 [[package]]
