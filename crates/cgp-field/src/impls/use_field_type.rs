@@ -1,6 +1,6 @@
 use core::marker::PhantomData;
 
-use cgp_type::traits::types::ProvideType;
+use cgp_type::traits::has_type::ProvideType;
 use cgp_type::types::with_type::WithTypeProvider;
 
 use crate::HasField;

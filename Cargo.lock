@@ -62,6 +62,7 @@ dependencies = [
  "cgp-error",
  "cgp-field",
  "cgp-inner",
+ "cgp-type",
 ]
 
 [[package]]

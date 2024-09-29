@@ -1,6 +1,6 @@
 use core::marker::PhantomData;
 
-use crate::traits::types::ProvideType;
+use crate::traits::has_type::ProvideType;
 use crate::types::with_type::WithTypeProvider;
 
 pub struct UseType<Type>(pub PhantomData<Type>);

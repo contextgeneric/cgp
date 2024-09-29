@@ -2,7 +2,7 @@ use core::fmt::Debug;
 
 use cgp_async::Async;
 use cgp_component::{derive_component, DelegateComponent, HasComponents};
-use cgp_type::traits::types::ProvideType;
+use cgp_type::traits::has_type::ProvideType;
 use cgp_type::types::with_type::WithTypeProvider;
 
 /**
