@@ -14,7 +14,8 @@ where
 
 impl<Context, Tag, Components, Type> ProvideType<Context, Tag> for DelegateTo<Components>
 where
-    Components: DelegateComponent<Tag, Delegate = Type>,
+    Components: DelegateComponent<Tag>,
+    Components::Delegate: ProvideType<Context, Tag, Type = Type>,
 {
     type Type = Type;
 }
