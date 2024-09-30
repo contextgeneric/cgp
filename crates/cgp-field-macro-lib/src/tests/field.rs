@@ -24,6 +24,15 @@ fn test_basic_derive_fields() {
             }
         }
 
+        impl HasFieldMut<(Char<'b'>, Char<'a'>, Char<'r'>)> for Foo {
+            fn get_field_mut(
+                &mut self,
+                key: ::core::marker::PhantomData<(Char<'b'>, Char<'a'>, Char<'r'>)>,
+            ) -> &mut Self::Field {
+                &mut self.bar
+            }
+        }
+
         impl HasField<(Char<'b'>, Char<'a'>, Char<'z'>)> for Foo {
             type Field = Baz;
 
@@ -32,6 +41,15 @@ fn test_basic_derive_fields() {
                 key: ::core::marker::PhantomData<(Char<'b'>, Char<'a'>, Char<'z'>)>,
             ) -> &Self::Field {
                 &self.baz
+            }
+        }
+
+        impl HasFieldMut<(Char<'b'>, Char<'a'>, Char<'z'>)> for Foo {
+            fn get_field_mut(
+                &mut self,
+                key: ::core::marker::PhantomData<(Char<'b'>, Char<'a'>, Char<'z'>)>,
+            ) -> &mut Self::Field {
+                &mut self.baz
             }
         }
     };
@@ -67,6 +85,19 @@ fn test_generic_derive_fields() {
             }
         }
 
+        impl<FooParamA, FooParamB: Clone> HasFieldMut<(Char<'b'>, Char<'a'>, Char<'r'>)>
+            for Foo<FooParamA, FooParamB>
+        where
+            FooParamA: Eq,
+        {
+            fn get_field_mut(
+                &mut self,
+                key: ::core::marker::PhantomData<(Char<'b'>, Char<'a'>, Char<'r'>)>,
+            ) -> &mut Self::Field {
+                &mut self.bar
+            }
+        }
+
         impl<FooParamA, FooParamB: Clone> HasField<(Char<'b'>, Char<'a'>, Char<'z'>)>
             for Foo<FooParamA, FooParamB>
         where
@@ -79,6 +110,19 @@ fn test_generic_derive_fields() {
                 key: ::core::marker::PhantomData<(Char<'b'>, Char<'a'>, Char<'z'>)>,
             ) -> &Self::Field {
                 &self.baz
+            }
+        }
+
+        impl<FooParamA, FooParamB: Clone> HasFieldMut<(Char<'b'>, Char<'a'>, Char<'z'>)>
+            for Foo<FooParamA, FooParamB>
+        where
+            FooParamA: Eq,
+        {
+            fn get_field_mut(
+                &mut self,
+                key: ::core::marker::PhantomData<(Char<'b'>, Char<'a'>, Char<'z'>)>,
+            ) -> &mut Self::Field {
+                &mut self.baz
             }
         }
     };
