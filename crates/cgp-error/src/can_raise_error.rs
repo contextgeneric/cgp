@@ -1,4 +1,4 @@
-use cgp_component::{derive_component, DelegateComponent, DelegateTo, HasComponents};
+use cgp_component::{derive_component, DelegateComponent, HasComponents, UseDelegate};
 
 use crate::has_error_type::HasErrorType;
 
@@ -15,7 +15,7 @@ pub trait CanRaiseError<E>: HasErrorType {
     fn raise_error(e: E) -> Self::Error;
 }
 
-impl<Context, Error, Components, Delegate> ErrorRaiser<Context, Error> for DelegateTo<Components>
+impl<Context, Error, Components, Delegate> ErrorRaiser<Context, Error> for UseDelegate<Components>
 where
     Context: HasErrorType,
     Components: DelegateComponent<Error, Delegate = Delegate>,
