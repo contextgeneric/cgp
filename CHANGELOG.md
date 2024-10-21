@@ -2,7 +2,12 @@
 
 ## Pre-Release
 
--  Introduce `cgp-type` crate with various refactoring [#23](https://github.com/contextgeneric/cgp/pull/23)
+- Component pattern improvements - [#24](https://github.com/contextgeneric/cgp/pull/24)
+    - Rename `DelegateTo` to `UseDelegate`.
+    - Implement `FieldGetter` for `UseContext`.
+    - Introduce `UseDelegatedType`.
+
+- Introduce `cgp-type` crate with various refactoring - [#23](https://github.com/contextgeneric/cgp/pull/23)
     - Introduce `cgp-type` crate, with the `HasType` component.
     - Introduce `FieldGetter` as a manual provider trait for `HasField`.
     - Introduce `HasFieldMut` trait to `cgp-field`, and auto derive it in `#[derive(HasField)]`.
