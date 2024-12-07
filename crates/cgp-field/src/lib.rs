@@ -4,6 +4,6 @@ pub mod impls;
 pub mod traits;
 pub mod types;
 
-pub use cgp_field_macro::{symbol, HasField};
+pub use cgp_field_macro::{product, symbol, HasField, Product};
 pub use traits::{FieldGetter, HasField, HasFieldMut, MutFieldGetter};
-pub use types::*;
+pub use types::{Char, Cons, Either, Field, Index, Nil, Void};

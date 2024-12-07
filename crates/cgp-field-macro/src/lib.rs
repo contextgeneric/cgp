@@ -11,3 +11,15 @@ pub fn derive_fields(item: TokenStream) -> TokenStream {
 pub fn symbol(body: TokenStream) -> TokenStream {
     cgp_field_macro_lib::make_symbol(body.into()).into()
 }
+
+#[proc_macro]
+#[allow(non_snake_case)]
+pub fn Product(body: TokenStream) -> TokenStream {
+    cgp_field_macro_lib::make_product_type(body.into()).into()
+}
+
+#[proc_macro]
+#[allow(non_snake_case)]
+pub fn product(body: TokenStream) -> TokenStream {
+    cgp_field_macro_lib::make_product_expr(body.into()).into()
+}
