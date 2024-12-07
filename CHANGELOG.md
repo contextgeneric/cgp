@@ -2,6 +2,8 @@
 
 ## Pre-Release
 
+- Remove `Sized` constraint from `Async` trait - [#34](https://github.com/contextgeneric/cgp/pull/34)
+
 - Component pattern improvements - [#24](https://github.com/contextgeneric/cgp/pull/24)
     - Rename `DelegateTo` to `UseDelegate`.
     - Implement `FieldGetter` for `UseContext`.
