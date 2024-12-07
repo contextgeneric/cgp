@@ -13,5 +13,5 @@ pub mod symbol;
 mod tests;
 
 pub use field::derive_fields;
-pub use product::{make_product_expr, make_product_type};
+pub use product::{make_product_expr, make_product_type, make_sum_type};
 pub use symbol::make_symbol;

@@ -1,6 +1,6 @@
 use quote::quote;
 
-use crate::product::{make_product_expr, make_product_type};
+use crate::product::{make_product_expr, make_product_type, make_sum_type};
 
 #[test]
 fn test_product_type() {
@@ -60,6 +60,27 @@ fn test_product_expr() {
                 Cons(
                     Baz::baz(),
                     Nil ) ) )
+    };
+
+    assert_eq!(derived.to_string(), expected.to_string());
+}
+
+#[test]
+fn test_sum_type() {
+    let derived = make_sum_type(quote! {
+        Foo,
+        Bar<T>,
+        Baz<T, U>,
+    });
+
+    let expected = quote! {
+        Either<
+            Foo,
+            Either<
+                Bar<T>,
+                Either<
+                    Baz<T, U>,
+                    Void> > >
     };
 
     assert_eq!(derived.to_string(), expected.to_string());

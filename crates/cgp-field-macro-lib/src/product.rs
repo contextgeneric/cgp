@@ -24,6 +24,16 @@ pub fn make_product_type(input: TokenStream) -> TokenStream {
     })
 }
 
+pub fn make_sum_type(input: TokenStream) -> TokenStream {
+    let types: ParsePunctuated<Type> = syn::parse2(input).unwrap();
+
+    types.0.iter().rfold(quote! { Void }, |res, item| {
+        quote! {
+            Either< #item , #res >
+        }
+    })
+}
+
 pub fn make_product_expr(input: TokenStream) -> TokenStream {
     let types: ParsePunctuated<Expr> = syn::parse2(input).unwrap();
 
