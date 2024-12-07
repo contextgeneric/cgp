@@ -12,7 +12,8 @@ description  = """
 """
 
 [features]
-default = [ "cgp-async/full" ]
+default = [ "full" ]
+full = [ "cgp-async/full" ]
 
 [dependencies]
 cgp-async      = { version = "0.1.0", default-features = false }
