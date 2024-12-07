@@ -1,7 +1,7 @@
 use core::fmt::Debug;
 
 use cgp_async::Async;
-use cgp_component::{derive_component, DelegateComponent, HasComponents, WithProvider};
+use cgp_component::{cgp_component, DelegateComponent, HasComponents, WithProvider};
 use cgp_type::traits::has_type::ProvideType;
 
 /**
@@ -15,7 +15,7 @@ use cgp_type::traits::has_type::ProvideType;
    parent traits, so that multiple traits can all refer to the same abstract
    `Self::Error` type.
 */
-#[derive_component(ErrorTypeComponent, ProvideErrorType<Context>)]
+#[cgp_component(ErrorTypeComponent, ProvideErrorType<Context>)]
 pub trait HasErrorType {
     /**
        The `Error` associated type is also required to implement [`Debug`].

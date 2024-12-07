@@ -1,4 +1,4 @@
-use cgp_component::{derive_component, DelegateComponent, HasComponents, UseDelegate};
+use cgp_component::{cgp_component, DelegateComponent, HasComponents, UseDelegate};
 
 use crate::has_error_type::HasErrorType;
 
@@ -10,7 +10,7 @@ use crate::has_error_type::HasErrorType;
    [`err: ParseIntError`](core::num::ParseIntError) and get back
    a [`Context::Error`](HasErrorType::Error) value.
 */
-#[derive_component(ErrorRaiserComponent, ErrorRaiser<Context>)]
+#[cgp_component(ErrorRaiserComponent, ErrorRaiser<Context>)]
 pub trait CanRaiseError<E>: HasErrorType {
     fn raise_error(e: E) -> Self::Error;
 }
