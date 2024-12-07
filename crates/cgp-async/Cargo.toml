@@ -11,5 +11,18 @@ description  = """
     Async-generic primitives to support both sync/async in context-generic programming
 """
 
+[features]
+default = [
+    "async",
+    "send",
+    "sync",
+    "static",
+]
+async = []
+send = [ "async" ]
+sync = [ "async" ]
+static = [ "async" ]
+
 [dependencies]
 cgp-async-macro = { version = "0.1.0" }
+cgp-sync = { version = "0.1.0" }

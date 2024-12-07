@@ -15,6 +15,7 @@ name = "cgp-async"
 version = "0.1.0"
 dependencies = [
  "cgp-async-macro",
+ "cgp-sync",
 ]
 
 [[package]]
