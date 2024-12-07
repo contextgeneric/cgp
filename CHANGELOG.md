@@ -2,6 +2,15 @@
 
 ## Pre-Release
 
+- Redesign `derive_component` to `cgp_component` with improved syntax - [#38](https://github.com/contextgeneric/cgp/pull/38)
+    - Rename the attribute `#[derive_component]` to `#[cgp_component]`
+    - The macro syntax has been changed as follows:
+    - Old: `#[derive_component(NameGetterComponent, NameGetter<MyContext>)]`
+    - New: `#[cgp_component { name: NameGetterComponent, context: MyContext, provider: NameGetter }]`
+    - For migration, the following regex can be used in a global search and replace:
+    - Search: `#\[derive_component\(([\w<>, ]+), (\w+)<(\w+)>\)\]`
+    - Replace: `#[cgp_component {\n  name: $1,\n  provider: $2,\n  context: $3,\n}]`
+
 - Support async-generic feature flags in cgp-async - [#37](https://github.com/contextgeneric/cgp/pull/37)
     - Introduce the following feature flags to `cgp-async`:
     - `async`
