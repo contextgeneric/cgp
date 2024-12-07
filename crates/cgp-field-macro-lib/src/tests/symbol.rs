@@ -5,26 +5,25 @@ use crate::tests::helper::equal::equal_token_stream;
 
 #[test]
 fn test_symbol_macro() {
-    let symbol = make_symbol(quote!("hello_world"));
+    let symbol = make_symbol(quote!("hello"));
 
     let derived = quote! {
         type Symbol = #symbol;
     };
 
     let expected = quote! {
-        type Symbol = (
+        type Symbol = Cons<
             Char<'h'>,
-            Char<'e'>,
-            Char<'l'>,
-            Char<'l'>,
-            Char<'o'>,
-            Char<'_'>,
-            Char<'w'>,
-            Char<'o'>,
-            Char<'r'>,
-            Char<'l'>,
-            Char<'d'>,
-        );
+            Cons<
+                Char<'e'>,
+                Cons<
+                    Char<'l'>,
+                    Cons<
+                        Char<'l'>,
+                        Cons<
+                            Char<'o'>,
+                            Nil
+                        >>>>>;
     };
 
     assert!(equal_token_stream(&derived, &expected));

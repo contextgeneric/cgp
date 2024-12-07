@@ -1,17 +1,13 @@
 use proc_macro2::TokenStream;
 use quote::ToTokens;
-use syn::punctuated::Punctuated;
-use syn::token::Comma;
 use syn::{parse_quote, LitStr, Type};
 
 pub fn symbol_from_string(value: &str) -> Type {
-    let char_types = <Punctuated<Type, Comma>>::from_iter(
-        value
-            .chars()
-            .map(|c: char| -> Type { parse_quote!( Char< #c > ) }),
-    );
-
-    parse_quote!( ( #char_types ) )
+    value
+        .chars()
+        .rfold(parse_quote! { Nil }, |tail, c: char| -> Type {
+            parse_quote!( Cons< Char< #c >, #tail > )
+        })
 }
 
 pub fn make_symbol(input: TokenStream) -> TokenStream {
