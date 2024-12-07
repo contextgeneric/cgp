@@ -1,6 +1,3 @@
-pub struct Cons<Head, Tail> {
-    pub head: Head,
-    pub tail: Tail,
-}
+pub struct Cons<Head, Tail>(pub Head, pub Tail);
 
 pub struct Nil;
