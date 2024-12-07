@@ -10,7 +10,9 @@ use crate::has_error_type::HasErrorType;
    [`err: ParseIntError`](core::num::ParseIntError) and get back
    a [`Context::Error`](HasErrorType::Error) value.
 */
-#[cgp_component(ErrorRaiserComponent, ErrorRaiser<Context>)]
+#[cgp_component {
+    provider: ErrorRaiser
+}]
 pub trait CanRaiseError<E>: HasErrorType {
     fn raise_error(e: E) -> Self::Error;
 }

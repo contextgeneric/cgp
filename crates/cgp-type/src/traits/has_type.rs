@@ -1,6 +1,9 @@
 use cgp_component::{cgp_component, DelegateComponent, HasComponents, UseContext, UseDelegate};
 
-#[cgp_component(TypeComponent, ProvideType<Context>)]
+#[cgp_component {
+    name: TypeComponent,
+    provider: ProvideType,
+}]
 pub trait HasType<Tag> {
     type Type;
 }

@@ -15,7 +15,10 @@ use cgp_type::traits::has_type::ProvideType;
    parent traits, so that multiple traits can all refer to the same abstract
    `Self::Error` type.
 */
-#[cgp_component(ErrorTypeComponent, ProvideErrorType<Context>)]
+#[cgp_component {
+    name: ErrorTypeComponent,
+    provider: ProvideErrorType,
+}]
 pub trait HasErrorType {
     /**
        The `Error` associated type is also required to implement [`Debug`].

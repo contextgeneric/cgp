@@ -4,6 +4,7 @@ pub mod consumer_impl;
 pub mod delegate_fn;
 pub mod delegate_type;
 pub mod derive;
+pub mod entry;
 pub mod provider_impl;
 pub mod provider_trait;
 pub mod replace_self_receiver;
