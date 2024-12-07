@@ -7,10 +7,7 @@ use eyre::{eyre, Report};
 
 pub struct ProvideEyreError;
 
-impl<Context> ProvideErrorType<Context> for ProvideEyreError
-where
-    Context: Async,
-{
+impl<Context> ProvideErrorType<Context> for ProvideEyreError {
     type Error = Report;
 }
 
@@ -19,7 +16,7 @@ pub struct RaiseStdError;
 impl<Context, E> ErrorRaiser<Context, E> for RaiseStdError
 where
     Context: HasErrorType<Error = Report>,
-    E: StdError + Async,
+    E: StdError + Send + Sync + 'static,
 {
     fn raise_error(e: E) -> Report {
         e.into()
