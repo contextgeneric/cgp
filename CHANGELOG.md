@@ -2,7 +2,26 @@
 
 ## Pre-Release
 
-- Introduce new cgp-field constructs [#36](https://github.com/contextgeneric/cgp/pull/36)
+- Support async-generic feature flags in cgp-async - [#37](https://github.com/contextgeneric/cgp/pull/37)
+    - Introduce the following feature flags to `cgp-async`:
+    - `async`
+    - `send`
+    - `sync`
+    - `static`
+    - `full` - default feature with all enabled
+    - Introduce the following traits in `cgp-async`:
+    - `MaybeSend` - alias to `Send` when the `send` feature is enabled, otherwise nothing.
+    - `MaybeSync` - alias to `Sync` when the `sync` feature is enabled, otherwise nothing.
+    - `MaybeStatic` - alias to `'static` when the `static` feature is enabled, otherwise nothing.
+    - Update the `Async` trait from `Sized + Send + Sync + 'static` to `MaybeSend + MaybeSync + MaybeStatic`.
+    - The `Sized` constraint is removed from `Async` to allow use inside `dyn` traits.
+    - Update the `#[async_trait]` macro to desugar async functions to return `impl Future<Output: MaybeSend>`.
+    - Use of `#[async_trait]` now requires import of `cgp::prelude::*` to allow `MaybeSend` to be auto imported.
+    - `cgp-async` now re-exports `cgp_sync::strip_async` if the `async` feature is not enabled.
+    - i.e. async functions are desugared into sync functions if the `async` feature is disabled.
+    - Crates such as `cgp` and `cgp-core` offers the `full` feature, which can be disabled to disable the indirect default features in `cgp-async`.
+
+- Introduce new cgp-field constructs - [#36](https://github.com/contextgeneric/cgp/pull/36)
     - Introduce the product type constructs `Cons` and `Nil`.
     - Introduce the sum type constructs `Either` and `Void`.
     - Introduce the `Field` type for tagged field value.
