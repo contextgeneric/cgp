@@ -6,6 +6,7 @@
 */
 
 pub mod field;
+pub mod product;
 pub mod symbol;
 
 #[cfg(test)]
