@@ -12,29 +12,27 @@ pub type WithField<Tag> = WithProvider<UseField<Tag>>;
 
 impl<Context, TypeTag, FieldTag, Field> ProvideType<Context, TypeTag> for UseField<FieldTag>
 where
-    Context: HasField<FieldTag, Field = Field>,
+    Context: HasField<FieldTag, Value = Field>,
 {
     type Type = Field;
 }
 
-impl<Context, OutTag, Tag, Field> FieldGetter<Context, OutTag> for UseField<Tag>
+impl<Context, OutTag, Tag, Value> FieldGetter<Context, OutTag> for UseField<Tag>
 where
-    Context: HasField<Tag, Field = Field>,
+    Context: HasField<Tag, Value = Value>,
 {
-    type Field = Field;
+    type Value = Value;
 
-    fn get_field(context: &Context, _tag: PhantomData<OutTag>) -> &Self::Field {
+    fn get_field(context: &Context, _tag: PhantomData<OutTag>) -> &Value {
         context.get_field(PhantomData)
     }
 }
 
-impl<Context, OutTag, Tag, Field> MutFieldGetter<Context, OutTag> for UseField<Tag>
+impl<Context, OutTag, Tag, Value> MutFieldGetter<Context, OutTag> for UseField<Tag>
 where
-    Context: HasFieldMut<Tag, Field = Field>,
+    Context: HasFieldMut<Tag, Value = Value>,
 {
-    type Field = Field;
-
-    fn get_field_mut(context: &mut Context, _tag: PhantomData<OutTag>) -> &mut Self::Field {
+    fn get_field_mut(context: &mut Context, _tag: PhantomData<OutTag>) -> &mut Value {
         context.get_field_mut(PhantomData)
     }
 }
