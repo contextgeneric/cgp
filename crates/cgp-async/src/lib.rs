@@ -24,6 +24,6 @@ pub use cgp_async_macro::native_async as async_trait;
    that the types implementing `Async` must not contain any lifetime
    parameter.
 */
-pub trait Async: Sized + Send + Sync + 'static {}
+pub trait Async: Send + Sync + 'static {}
 
-impl<A> Async for A where A: Sized + Send + Sync + 'static {}
+impl<A> Async for A where A: Send + Sync + 'static {}
