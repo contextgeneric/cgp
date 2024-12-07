@@ -2,6 +2,15 @@
 
 ## Pre-Release
 
+- Introduce new cgp-field constructs [#36](https://github.com/contextgeneric/cgp/pull/36)
+    - Introduce the product type constructs `Cons` and `Nil`.
+    - Introduce the sum type constructs `Either` and `Void`.
+    - Introduce the `Field` type for tagged field value.
+    - Introduce the `Product!` macro for building product types.
+    - Introduce the `product!` macro for building product expressions.
+    - Introduce the `Sum!` macro for building sum types.
+    - Change the `symbol!` macro to generate product type of `Char` using `Cons` and `Nil`.
+
 - Rename `HasField::Field` to `HasField::Value` - [#35](https://github.com/contextgeneric/cgp/pull/35)
 
 - Remove `Sized` constraint from `Async` trait - [#34](https://github.com/contextgeneric/cgp/pull/34)

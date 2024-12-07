@@ -9,7 +9,7 @@ pub struct ParsePunctuated<T>(pub Punctuated<T, Comma>);
 
 impl<T: Parse> Parse for ParsePunctuated<T> {
     fn parse(input: ParseStream) -> syn::Result<Self> {
-        let types = Punctuated::parse_terminated(&input)?;
+        let types = Punctuated::parse_terminated(input)?;
         Ok(ParsePunctuated(types))
     }
 }
