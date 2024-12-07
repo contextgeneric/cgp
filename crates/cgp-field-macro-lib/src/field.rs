@@ -24,12 +24,12 @@ pub fn derive_has_field_impls(item_struct: &ItemStruct) -> Vec<ItemImpl> {
                     for #struct_ident #ty_generics
                 #where_clause
                 {
-                    type Field = #field_type;
+                    type Value = #field_type;
 
                     fn get_field(
                         &self,
                         key: ::core::marker::PhantomData< #field_symbol >,
-                    ) -> &Self::Field
+                    ) -> &Self::Value
                     {
                         &self. #field_ident
                     }
@@ -44,7 +44,7 @@ pub fn derive_has_field_impls(item_struct: &ItemStruct) -> Vec<ItemImpl> {
                     fn get_field_mut(
                         &mut self,
                         key: ::core::marker::PhantomData< #field_symbol >,
-                    ) -> &mut Self::Field
+                    ) -> &mut Self::Value
                     {
                         &mut self. #field_ident
                     }

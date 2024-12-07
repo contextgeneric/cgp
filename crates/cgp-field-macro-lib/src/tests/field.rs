@@ -14,12 +14,12 @@ fn test_basic_derive_fields() {
 
     let expected = quote! {
         impl HasField<Cons<Char<'b'>, Cons<Char<'a'>, Cons<Char<'r'> , Nil>>>> for Foo {
-            type Field = Bar;
+            type Value = Bar;
 
             fn get_field(
                 &self,
                 key: ::core::marker::PhantomData<Cons<Char<'b'>, Cons<Char<'a'>, Cons<Char<'r'> , Nil>>>>,
-            ) -> &Self::Field {
+            ) -> &Self::Value {
                 &self.bar
             }
         }
@@ -28,18 +28,18 @@ fn test_basic_derive_fields() {
             fn get_field_mut(
                 &mut self,
                 key: ::core::marker::PhantomData<Cons<Char<'b'>, Cons<Char<'a'>, Cons<Char<'r'> , Nil>>>>,
-            ) -> &mut Self::Field {
+            ) -> &mut Self::Value {
                 &mut self.bar
             }
         }
 
         impl HasField<Cons<Char<'b'>, Cons<Char<'a'>, Cons<Char<'z'> , Nil>>>> for Foo {
-            type Field = Baz;
+            type Value = Baz;
 
             fn get_field(
                 &self,
                 key: ::core::marker::PhantomData<Cons<Char<'b'>, Cons<Char<'a'>, Cons<Char<'z'> , Nil>>>>,
-            ) -> &Self::Field {
+            ) -> &Self::Value {
                 &self.baz
             }
         }
@@ -48,7 +48,7 @@ fn test_basic_derive_fields() {
             fn get_field_mut(
                 &mut self,
                 key: ::core::marker::PhantomData<Cons<Char<'b'>, Cons<Char<'a'>, Cons<Char<'z'> , Nil>>>>,
-            ) -> &mut Self::Field {
+            ) -> &mut Self::Value {
                 &mut self.baz
             }
         }
@@ -75,12 +75,12 @@ fn test_generic_derive_fields() {
         where
             FooParamA: Eq,
         {
-            type Field = Bar<FooParamA>;
+            type Value = Bar<FooParamA>;
 
             fn get_field(
                 &self,
                 key: ::core::marker::PhantomData<Cons<Char<'b'>, Cons<Char<'a'>, Cons<Char<'r'> , Nil>>>>,
-            ) -> &Self::Field {
+            ) -> &Self::Value {
                 &self.bar
             }
         }
@@ -93,7 +93,7 @@ fn test_generic_derive_fields() {
             fn get_field_mut(
                 &mut self,
                 key: ::core::marker::PhantomData<Cons<Char<'b'>, Cons<Char<'a'>, Cons<Char<'r'> , Nil>>>>,
-            ) -> &mut Self::Field {
+            ) -> &mut Self::Value {
                 &mut self.bar
             }
         }
@@ -103,12 +103,12 @@ fn test_generic_derive_fields() {
         where
             FooParamA: Eq,
         {
-            type Field = Baz<String>;
+            type Value = Baz<String>;
 
             fn get_field(
                 &self,
                 key: ::core::marker::PhantomData<Cons<Char<'b'>, Cons<Char<'a'>, Cons<Char<'z'> , Nil>>>>,
-            ) -> &Self::Field {
+            ) -> &Self::Value {
                 &self.baz
             }
         }
@@ -121,7 +121,7 @@ fn test_generic_derive_fields() {
             fn get_field_mut(
                 &mut self,
                 key: ::core::marker::PhantomData<Cons<Char<'b'>, Cons<Char<'a'>, Cons<Char<'z'> , Nil>>>>,
-            ) -> &mut Self::Field {
+            ) -> &mut Self::Value {
                 &mut self.baz
             }
         }
