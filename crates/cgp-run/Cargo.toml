@@ -12,6 +12,6 @@ description  = """
 """
 
 [dependencies]
-cgp-async = { version = "0.1.0" }
+cgp-async = { version = "0.1.0", default-features = false }
 cgp-error = { version = "0.1.0" }
 cgp-component = { version = "0.1.0" }

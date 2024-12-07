@@ -6,6 +6,7 @@ version = 3
 name = "cgp"
 version = "0.1.0"
 dependencies = [
+ "cgp-async",
  "cgp-core",
  "cgp-extra",
 ]
@@ -31,7 +32,6 @@ dependencies = [
 name = "cgp-component"
 version = "0.1.0"
 dependencies = [
- "cgp-async",
  "cgp-component-macro",
 ]
 
@@ -129,7 +129,6 @@ dependencies = [
 name = "cgp-inner"
 version = "0.1.0"
 dependencies = [
- "cgp-async",
  "cgp-component",
 ]
 

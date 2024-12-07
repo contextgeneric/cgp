@@ -12,7 +12,8 @@ description  = """
 """
 
 [features]
-default = [
+default = [ "full" ]
+full = [
     "async",
     "send",
     "sync",

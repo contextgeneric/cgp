@@ -11,6 +11,10 @@ description  = """
     Context-generic programming meta crate
 """
 
+[features]
+default = [ "cgp-async/full" ]
+
 [dependencies]
-cgp-core       = { version = "0.1.0" }
+cgp-async      = { version = "0.1.0", default-features = false }
+cgp-core       = { version = "0.1.0", default-features = false }
 cgp-extra      = { version = "0.1.0" }

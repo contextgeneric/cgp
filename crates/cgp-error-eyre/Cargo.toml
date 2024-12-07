@@ -12,5 +12,5 @@ description  = """
 """
 
 [dependencies]
-cgp-core    = { version = "0.1.0" }
+cgp-core    = { version = "0.1.0", default-features = false }
 eyre        = { version = "0.6.11" }
