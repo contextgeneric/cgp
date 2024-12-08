@@ -1,6 +1,6 @@
 [package]
 name         = "cgp-component-macro"
-version      = "0.1.0"
+version      = "0.2.0"
 edition      = { workspace = true }
 license      = { workspace = true }
 repository   = { workspace = true }
@@ -15,5 +15,5 @@ description  = """
 proc-macro = true
 
 [dependencies]
-cgp-component-macro-lib = { version = "0.1.0" }
+cgp-component-macro-lib = { version = "0.2.0" }
 proc-macro2     = "1.0.67"
