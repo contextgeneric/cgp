@@ -50,7 +50,7 @@ fn test_basic_define_preset() {
             ($($body:tt)*) => {
                 for_each_replace! {
                     [ BarAComponent, BarBComponent, BarCComponent ],
-                    $body
+                    $( $body )*
                 }
             };
         }
@@ -177,7 +177,7 @@ fn test_define_preset_containing_generics() {
                         <BarParamA> BarComponentD<BarParamA, FooParamA>,
                         <'b, BarParamB: BarConstraint> BarComponentE<BarParamB, FooParamB>
                     ],
-                    $body
+                    $( $body )*
                 }
             };
         }

@@ -9,7 +9,7 @@ pub fn define_substitution_macro(macro_name: &Ident, substitution: &TokenStream)
             ( $( $body:tt )* ) => {
                 for_each_replace! {
                     [ #substitution ],
-                    $body
+                    $( $body )*
                 }
             };
         }
