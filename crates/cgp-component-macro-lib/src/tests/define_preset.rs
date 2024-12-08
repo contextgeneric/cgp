@@ -2,6 +2,7 @@ use quote::quote;
 
 use crate::define_preset;
 use crate::tests::helper::equal::equal_token_stream;
+use crate::tests::helper::format::format_token_stream;
 
 #[test]
 fn test_basic_define_preset() {
@@ -19,6 +20,8 @@ fn test_basic_define_preset() {
     let expected = quote! {
         pub struct FooPreset;
 
+        pub trait IsFooPreset {}
+
         impl DelegateComponent<BarAComponent> for FooPreset {
             type Delegate = BazAComponents;
         }
@@ -30,6 +33,10 @@ fn test_basic_define_preset() {
         impl DelegateComponent<BarCComponent> for FooPreset {
             type Delegate = BazBComponents;
         }
+
+        impl IsFooPreset for BarAComponent {}
+        impl IsFooPreset for BarBComponent {}
+        impl IsFooPreset for BarCComponent {}
 
         pub trait DelegatesToFooPreset: DelegateComponent<
                 BarAComponent,
@@ -77,10 +84,14 @@ fn test_define_preset_containing_generics() {
     })
     .unwrap();
 
+    println!("derived: {}", format_token_stream(&derived));
+
     let expected = quote! {
         pub struct FooPreset<'a, FooParamA, FooParamB>(
             pub ::core::marker::PhantomData<(&'a (), FooParamA, FooParamB)>,
         );
+
+        pub trait IsFooPreset {}
 
         impl<'a, FooParamA, FooParamB: FooConstraint> DelegateComponent<BarComponentA>
         for FooPreset<'a, FooParamA, FooParamB> {
@@ -117,6 +128,12 @@ fn test_define_preset_containing_generics() {
         for FooPreset<'a, FooParamA, FooParamB> {
             type Delegate = BazComponentsB;
         }
+
+        impl IsFooPreset for BarComponentA {}
+        impl<'a> IsFooPreset for BarComponentB<'a> {}
+        impl<FooParamB: FooConstraint> IsFooPreset for BarComponentC<FooParamB> {}
+        impl<FooParamA, BarParamA> IsFooPreset for BarComponentD<BarParamA, FooParamA> {}
+        impl<FooParamB: FooConstraint, BarParamB: BarConstraint> IsFooPreset for BarComponentE<BarParamB, FooParamB> {}
 
         pub trait DelegatesToFooPreset<
             'a,
