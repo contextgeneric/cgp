@@ -1,5 +1,5 @@
 use proc_macro2::{Group, TokenStream, TokenTree};
-use quote::ToTokens;
+use quote::{quote, ToTokens};
 use syn::__private::parse_brackets;
 use syn::parse::discouraged::Speculative;
 use syn::parse::{Parse, ParseStream};
@@ -78,6 +78,16 @@ pub fn handle_for_each_replace(tokens: TokenStream) -> syn::Result<TokenStream> 
         &specs.replacements,
         &specs.body,
     ))
+}
+
+pub fn handle_replace(tokens: TokenStream) -> syn::Result<TokenStream> {
+    let specs: ReplaceSpecs = syn::parse2(tokens)?;
+
+    let items: Punctuated<TokenStream, Comma> = specs.replacements.into_iter().collect();
+
+    let tokens = quote! { [ #items ] };
+
+    Ok(replace_stream(&specs.target_ident, &tokens, specs.body))
 }
 
 pub fn for_each_replace(
