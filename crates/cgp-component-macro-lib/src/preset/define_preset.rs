@@ -23,13 +23,20 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
     let preset_trait_name = Ident::new(&format!("Is{}", preset_ident), preset_ident.span());
 
     let preset_trait: ItemTrait = parse_quote! {
-        pub trait #preset_trait_name {}
+        pub trait #preset_trait_name {
+            type Phantom;
+        }
     };
 
     let impl_delegate_items =
         impl_delegate_components(&preset_type, &ast.preset_generics, &ast.delegate_entries);
 
-    let impl_is_reset_items = impl_components_is_preset(&preset_trait_name, &ast.delegate_entries);
+    let impl_is_reset_items = impl_components_is_preset(
+        &preset_trait_name,
+        &preset_type,
+        &ast.preset_generics,
+        &ast.delegate_entries,
+    );
 
     let item_struct = define_struct(&ast.preset_ident, &ast.preset_generics);
 

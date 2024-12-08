@@ -12,9 +12,9 @@ pub struct DefinePresetAst {
 
 impl Parse for DefinePresetAst {
     fn parse(input: ParseStream) -> syn::Result<Self> {
-        let components_ident: Ident = input.parse()?;
+        let preset_ident: Ident = input.parse()?;
 
-        let components_generics = if input.peek(Lt) {
+        let preset_generics = if input.peek(Lt) {
             input.parse()?
         } else {
             Default::default()
@@ -23,8 +23,8 @@ impl Parse for DefinePresetAst {
         let delegate_entries: DelegateEntriesAst = input.parse()?;
 
         Ok(Self {
-            preset_ident: components_ident,
-            preset_generics: components_generics,
+            preset_ident,
+            preset_generics,
             delegate_entries,
         })
     }

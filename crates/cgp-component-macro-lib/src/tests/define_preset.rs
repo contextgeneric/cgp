@@ -17,10 +17,14 @@ fn test_basic_define_preset() {
     })
     .unwrap();
 
+    println!("derived: {}", format_token_stream(&derived));
+
     let expected = quote! {
         pub struct FooPreset;
 
-        pub trait IsFooPreset {}
+        pub trait IsFooPreset {
+            type Phantom;
+        }
 
         impl DelegateComponent<BarAComponent> for FooPreset {
             type Delegate = BazAComponents;
@@ -34,9 +38,17 @@ fn test_basic_define_preset() {
             type Delegate = BazBComponents;
         }
 
-        impl IsFooPreset for BarAComponent {}
-        impl IsFooPreset for BarBComponent {}
-        impl IsFooPreset for BarCComponent {}
+        impl IsFooPreset for BarAComponent {
+            type Phantom = FooPreset;
+        }
+
+        impl IsFooPreset for BarBComponent {
+            type Phantom = FooPreset;
+        }
+
+        impl IsFooPreset for BarCComponent {
+            type Phantom = FooPreset;
+        }
 
         pub trait DelegatesToFooPreset: DelegateComponent<
                 BarAComponent,
@@ -91,7 +103,9 @@ fn test_define_preset_containing_generics() {
             pub ::core::marker::PhantomData<(&'a (), FooParamA, FooParamB)>,
         );
 
-        pub trait IsFooPreset {}
+        pub trait IsFooPreset {
+            type Phantom;
+        }
 
         impl<'a, FooParamA, FooParamB: FooConstraint> DelegateComponent<BarComponentA>
         for FooPreset<'a, FooParamA, FooParamB> {
@@ -129,11 +143,41 @@ fn test_define_preset_containing_generics() {
             type Delegate = BazComponentsB;
         }
 
-        impl IsFooPreset for BarComponentA {}
-        impl<'a> IsFooPreset for BarComponentB<'a> {}
-        impl<FooParamB: FooConstraint> IsFooPreset for BarComponentC<FooParamB> {}
-        impl<FooParamA, BarParamA> IsFooPreset for BarComponentD<BarParamA, FooParamA> {}
-        impl<FooParamB: FooConstraint, BarParamB: BarConstraint> IsFooPreset for BarComponentE<BarParamB, FooParamB> {}
+        impl<'a, FooParamA, FooParamB: FooConstraint> IsFooPreset for BarComponentA
+        {
+            type Phantom = FooPreset<'a, FooParamA, FooParamB>;
+        }
+
+        impl<'a, FooParamA, FooParamB: FooConstraint> IsFooPreset for BarComponentB<'a>
+        {
+            type Phantom = FooPreset<'a, FooParamA, FooParamB>;
+        }
+
+        impl<'a, FooParamA, FooParamB: FooConstraint> IsFooPreset for BarComponentC<FooParamB>
+        {
+            type Phantom = FooPreset<'a, FooParamA, FooParamB>;
+        }
+
+        impl<
+            'a,
+            FooParamA,
+            FooParamB: FooConstraint,
+            BarParamA,
+        > IsFooPreset for BarComponentD<BarParamA, FooParamA>
+        {
+            type Phantom = FooPreset<'a, FooParamA, FooParamB>;
+        }
+
+        impl<
+            'a,
+            'b,
+            FooParamA,
+            FooParamB: FooConstraint,
+            BarParamB: BarConstraint,
+        > IsFooPreset for BarComponentE<BarParamB, FooParamB>
+        {
+            type Phantom = FooPreset<'a, FooParamA, FooParamB>;
+        }
 
         pub trait DelegatesToFooPreset<
             'a,

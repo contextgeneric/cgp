@@ -37,7 +37,8 @@ fn test_basic_delegate_components() {
 #[test]
 fn test_delegate_components_containing_generics() {
     let derived = delegate_components(quote! {
-        FooComponents<'a, FooParamA, FooParamB: FooConstraint> {
+        <'a, FooParamA, FooParamB: FooConstraint>
+        FooComponents<'a, FooParamA, FooParamB> {
             BarComponentA: BazComponentsA<FooParamA>,
             [
                 BarComponentB<'a>,
