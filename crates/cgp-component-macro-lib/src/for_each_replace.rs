@@ -11,7 +11,7 @@ use crate::delegate_components::ast::ComponentAst;
 
 pub struct ReplaceSpecs {
     pub target_ident: Ident,
-    pub replacements: Vec<ComponentAst>,
+    pub replacements: Vec<TokenStream>,
     pub body: TokenStream,
 }
 
@@ -59,6 +59,7 @@ impl Parse for ReplaceSpecs {
                     .iter()
                     .any(|exclude| exclude == &replacement.component_type)
             })
+            .map(|ast| ast.to_token_stream())
             .collect();
 
         Ok(ReplaceSpecs {
@@ -81,7 +82,7 @@ pub fn handle_for_each_replace(tokens: TokenStream) -> syn::Result<TokenStream> 
 
 pub fn for_each_replace(
     target_ident: &Ident,
-    replacements: &[ComponentAst],
+    replacements: &[TokenStream],
     body: &TokenStream,
 ) -> TokenStream {
     replacements
@@ -92,7 +93,7 @@ pub fn for_each_replace(
 
 pub fn replace_stream(
     target_ident: &Ident,
-    replacement: &ComponentAst,
+    replacement: &TokenStream,
     body: TokenStream,
 ) -> TokenStream {
     body.into_iter()
@@ -102,7 +103,7 @@ pub fn replace_stream(
 
 pub fn replace_tree(
     target_ident: &Ident,
-    replacement: &ComponentAst,
+    replacement: &TokenStream,
     body: TokenTree,
 ) -> TokenStream {
     match body {
