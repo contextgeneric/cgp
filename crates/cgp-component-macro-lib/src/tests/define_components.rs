@@ -47,53 +47,11 @@ fn test_basic_define_components() {
 
         #[macro_export]
         macro_rules! with_foo_components {
-            (@ remaining() @ out($($out:tt)*) @ stack()) => {
-                $($out)*
-            };
-            (
-                @ remaining() @ out($($out:tt)*) @ stack(@ layer { @ front($($front:tt)*) @
-                remaining($($remaining:tt)*) } $($stack:tt)*)
-            ) => {
-                $crate ::with_foo_components! { @ remaining($($remaining)*) @ out($($front)* {
-                $($out)* }) @ stack($($stack)*) }
-            };
-            (
-                @ remaining() @ out($($out:tt)*) @ stack(@ layer[@ front($($front:tt)*) @
-                remaining($($remaining:tt)*)] $($stack:tt)*)
-            ) => {
-                $crate ::with_foo_components! { @ remaining($($remaining)*) @ out($($front)*
-                [$($out)*]) @ stack($($stack)*) }
-            };
-            (
-                @ remaining(@ FooComponents $($remaining:tt)*) @ out($($out:tt)*) @
-                stack($($stack:tt)*)
-            ) => {
-                $crate ::with_foo_components! { @ remaining($($remaining)*) @ out($($out)*
-                [BarAComponent, BarBComponent, BarCComponent]) @ stack($($stack)*) }
-            };
-            (
-                @ remaining({ $($inner:tt)* } $($outer:tt)*) @ out($($out:tt)*) @
-                stack($($stack:tt)*)
-            ) => {
-                $crate ::with_foo_components! { @ remaining($($inner)*) @ out() @ stack(@ layer {
-                @ front($($out)*) @ remaining($($outer)*) } $($stack)*) }
-            };
-            (
-                @ remaining([$($inner:tt)*] $($outer:tt)*) @ out($($out:tt)*) @
-                stack($($stack:tt)*)
-            ) => {
-                $crate ::with_foo_components! { @ remaining($($inner)*) @ out() @ stack(@ layer[@
-                front($($out)*) @ remaining($($outer)*)] $($stack)*) }
-            };
-            (
-                @ remaining($current:tt $($remaining:tt)*) @ out($($out:tt)*) @
-                stack($($stack:tt)*)
-            ) => {
-                $crate ::with_foo_components! { @ remaining($($remaining)*) @ out($($out)*
-                $current) @ stack($($stack)*) }
-            };
-            ($($remaining:tt)*) => {
-                $crate ::with_foo_components! { @ remaining($($remaining)*) @ out() @ stack() }
+            ($($body:tt)*) => {
+                for_each_replace! {
+                    [ BarAComponent, BarBComponent, BarCComponent ],
+                    $body
+                }
             };
         }
 
@@ -210,55 +168,17 @@ fn test_define_components_containing_generics() {
 
         #[macro_export]
         macro_rules! with_foo_components {
-            (@ remaining() @ out($($out:tt)*) @ stack()) => {
-                $($out)*
-            };
-            (
-                @ remaining() @ out($($out:tt)*) @ stack(@ layer { @ front($($front:tt)*) @
-                remaining($($remaining:tt)*) } $($stack:tt)*)
-            ) => {
-                $crate ::with_foo_components! { @ remaining($($remaining)*) @ out($($front)* {
-                $($out)* }) @ stack($($stack)*) }
-            };
-            (
-                @ remaining() @ out($($out:tt)*) @ stack(@ layer[@ front($($front:tt)*) @
-                remaining($($remaining:tt)*)] $($stack:tt)*)
-            ) => {
-                $crate ::with_foo_components! { @ remaining($($remaining)*) @ out($($front)*
-                [$($out)*]) @ stack($($stack)*) }
-            };
-            (
-                @ remaining(@ FooComponents $($remaining:tt)*) @ out($($out:tt)*) @
-                stack($($stack:tt)*)
-            ) => {
-                $crate ::with_foo_components! { @ remaining($($remaining)*) @ out($($out)*
-                [BarComponentA, BarComponentB < 'a >, BarComponentC < FooParamB >, < BarParamA >
-                BarComponentD < BarParamA, FooParamA >, < 'b, BarParamB : BarConstraint >
-                BarComponentE < BarParamB, FooParamB >]) @ stack($($stack)*) }
-            };
-            (
-                @ remaining({ $($inner:tt)* } $($outer:tt)*) @ out($($out:tt)*) @
-                stack($($stack:tt)*)
-            ) => {
-                $crate ::with_foo_components! { @ remaining($($inner)*) @ out() @ stack(@ layer {
-                @ front($($out)*) @ remaining($($outer)*) } $($stack)*) }
-            };
-            (
-                @ remaining([$($inner:tt)*] $($outer:tt)*) @ out($($out:tt)*) @
-                stack($($stack:tt)*)
-            ) => {
-                $crate ::with_foo_components! { @ remaining($($inner)*) @ out() @ stack(@ layer[@
-                front($($out)*) @ remaining($($outer)*)] $($stack)*) }
-            };
-            (
-                @ remaining($current:tt $($remaining:tt)*) @ out($($out:tt)*) @
-                stack($($stack:tt)*)
-            ) => {
-                $crate ::with_foo_components! { @ remaining($($remaining)*) @ out($($out)*
-                $current) @ stack($($stack)*) }
-            };
-            ($($remaining:tt)*) => {
-                $crate ::with_foo_components! { @ remaining($($remaining)*) @ out() @ stack() }
+            ($($body:tt)*) => {
+                for_each_replace! {
+                    [
+                        BarComponentA,
+                        BarComponentB<'a>,
+                        BarComponentC<FooParamB>,
+                        <BarParamA> BarComponentD<BarParamA, FooParamA>,
+                        <'b, BarParamB: BarConstraint> BarComponentE<BarParamB, FooParamB>
+                    ],
+                    $body
+                }
             };
         }
 

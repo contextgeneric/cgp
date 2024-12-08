@@ -56,7 +56,6 @@ pub fn define_components(body: TokenStream) -> TokenStream {
 
         let with_components_macro = define_substitution_macro(
             &Ident::new(&with_components_macro_name, Span::call_site()),
-            &ast.components_ident,
             &ast.delegate_entries.all_components().to_token_stream(),
         );
 
