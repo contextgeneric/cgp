@@ -35,3 +35,32 @@ fn test_for_each_replace() {
 
     assert!(equal_token_stream(&derived, &expected));
 }
+
+#[test]
+fn test_for_each_replace_without_exclude() {
+    let source = quote! {
+        [
+            FooComponent,
+            BarComponent,
+        ],
+        | Name | {
+            impl DelegateComponent<Name> for MyComponents {
+                type Delegate = ParentComponents;
+            }
+        }
+    };
+
+    let expected = quote! {
+        impl DelegateComponent<FooComponent> for MyComponents {
+            type Delegate = ParentComponents;
+        }
+
+        impl DelegateComponent<BarComponent> for MyComponents {
+            type Delegate = ParentComponents;
+        }
+    };
+
+    let derived = handle_for_each_replace(source).unwrap();
+
+    assert!(equal_token_stream(&derived, &expected));
+}

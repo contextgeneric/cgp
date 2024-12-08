@@ -1,9 +1,11 @@
 use proc_macro2::{Group, TokenStream, TokenTree};
 use quote::ToTokens;
+use syn::__private::parse_brackets;
+use syn::parse::discouraged::Speculative;
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::token::{Comma, Or};
-use syn::{braced, bracketed, Ident, Type};
+use syn::{braced, Ident, Type};
 
 pub struct ReplaceSpecs {
     pub target_ident: Ident,
@@ -14,9 +16,7 @@ pub struct ReplaceSpecs {
 impl Parse for ReplaceSpecs {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let raw_replacements: Vec<Type> = {
-            let content;
-            bracketed!(content in input);
-
+            let content = parse_brackets(input)?.content;
             let types = <Punctuated<Type, Comma>>::parse_terminated(&content)?;
             types.into_iter().collect()
         };
@@ -24,14 +24,19 @@ impl Parse for ReplaceSpecs {
         Comma::parse(input)?;
 
         let exclude: Vec<Type> = {
-            let content;
-            bracketed!(content in input);
+            let fork = input.fork();
 
-            let types = <Punctuated<Type, Comma>>::parse_terminated(&content)?;
-            types.into_iter().collect()
+            if let Ok(bracket) = parse_brackets(&fork) {
+                let types = <Punctuated<Type, Comma>>::parse_terminated(&bracket.content)?;
+
+                input.advance_to(&fork);
+                Comma::parse(input)?;
+
+                types.into_iter().collect()
+            } else {
+                Vec::new()
+            }
         };
-
-        Comma::parse(input)?;
 
         Or::parse(input)?;
 
