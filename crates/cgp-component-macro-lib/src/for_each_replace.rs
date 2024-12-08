@@ -7,17 +7,19 @@ use syn::punctuated::Punctuated;
 use syn::token::{Comma, Or};
 use syn::{braced, Ident, Type};
 
+use crate::delegate_components::ast::ComponentAst;
+
 pub struct ReplaceSpecs {
     pub target_ident: Ident,
-    pub replacements: Vec<Type>,
+    pub replacements: Vec<ComponentAst>,
     pub body: TokenStream,
 }
 
 impl Parse for ReplaceSpecs {
     fn parse(input: ParseStream) -> syn::Result<Self> {
-        let raw_replacements: Vec<Type> = {
+        let raw_replacements: Vec<ComponentAst> = {
             let content = parse_brackets(input)?.content;
-            let types = <Punctuated<Type, Comma>>::parse_terminated(&content)?;
+            let types = <Punctuated<ComponentAst, Comma>>::parse_terminated(&content)?;
             types.into_iter().collect()
         };
 
@@ -52,7 +54,11 @@ impl Parse for ReplaceSpecs {
 
         let replacements = raw_replacements
             .into_iter()
-            .filter(|replacement| !exclude.iter().any(|exclude| exclude == replacement))
+            .filter(|replacement| {
+                !exclude
+                    .iter()
+                    .any(|exclude| exclude == &replacement.component_type)
+            })
             .collect();
 
         Ok(ReplaceSpecs {
@@ -75,7 +81,7 @@ pub fn handle_for_each_replace(tokens: TokenStream) -> syn::Result<TokenStream> 
 
 pub fn for_each_replace(
     target_ident: &Ident,
-    replacements: &[Type],
+    replacements: &[ComponentAst],
     body: &TokenStream,
 ) -> TokenStream {
     replacements
@@ -84,13 +90,21 @@ pub fn for_each_replace(
         .collect()
 }
 
-pub fn replace_stream(target_ident: &Ident, replacement: &Type, body: TokenStream) -> TokenStream {
+pub fn replace_stream(
+    target_ident: &Ident,
+    replacement: &ComponentAst,
+    body: TokenStream,
+) -> TokenStream {
     body.into_iter()
         .map(|tree| replace_tree(target_ident, replacement, tree))
         .collect()
 }
 
-pub fn replace_tree(target_ident: &Ident, replacement: &Type, body: TokenTree) -> TokenStream {
+pub fn replace_tree(
+    target_ident: &Ident,
+    replacement: &ComponentAst,
+    body: TokenTree,
+) -> TokenStream {
     match body {
         TokenTree::Group(group) => TokenTree::Group(Group::new(
             group.delimiter(),

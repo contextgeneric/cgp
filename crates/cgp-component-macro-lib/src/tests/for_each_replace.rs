@@ -64,3 +64,42 @@ fn test_for_each_replace_without_exclude() {
 
     assert!(equal_token_stream(&derived, &expected));
 }
+
+#[test]
+fn test_for_each_replace_with_generics() {
+    let source = quote! {
+        [
+            FooComponent,
+            <A> BarComponent<A>,
+            <'b, B> BazComponent<'b, B>,
+        ],
+        [
+            BarComponent<A>,
+        ],
+        | Name | {
+            delegate_components! {
+                MyComponents {
+                    Name: ParentComponents,
+                }
+            }
+        }
+    };
+
+    let expected = quote! {
+        delegate_components! {
+            MyComponents {
+                FooComponent: ParentComponents,
+            }
+        }
+
+        delegate_components! {
+            MyComponents {
+                <'b, B> BazComponent<'b, B>: ParentComponents,
+            }
+        }
+    };
+
+    let derived = handle_for_each_replace(source).unwrap();
+
+    assert!(equal_token_stream(&derived, &expected));
+}

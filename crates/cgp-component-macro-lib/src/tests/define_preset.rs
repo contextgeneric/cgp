@@ -17,8 +17,6 @@ fn test_basic_define_preset() {
     })
     .unwrap();
 
-    println!("derived: {}", format_token_stream(&derived));
-
     let expected = quote! {
         pub struct FooPreset;
 
