@@ -23,9 +23,7 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
     let preset_trait_name = Ident::new(&format!("Is{}", preset_ident), preset_ident.span());
 
     let preset_trait: ItemTrait = parse_quote! {
-        pub trait #preset_trait_name {
-            type Phantom;
-        }
+        pub trait #preset_trait_name {}
     };
 
     let impl_delegate_items =

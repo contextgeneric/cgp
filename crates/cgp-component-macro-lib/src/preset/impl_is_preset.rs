@@ -1,4 +1,4 @@
-use syn::{parse_quote, Generics, Ident, ImplItem, ImplItemType, ItemImpl, Path, Type};
+use syn::{parse_quote, Generics, Ident, ItemImpl, Path, Type};
 
 use crate::delegate_components::ast::{ComponentAst, DelegateEntriesAst};
 use crate::delegate_components::merge_generics::merge_generics;
@@ -22,15 +22,13 @@ pub fn impl_components_is_preset(
 
 pub fn impl_component_is_preset(
     trait_name: &Ident,
-    preset_type: &Type,
+    _preset_type: &Type,
     preset_generics: &Generics,
     component: &ComponentAst,
 ) -> ItemImpl {
     let component_type = &component.component_type;
 
     let trait_path: Path = parse_quote!(#trait_name);
-
-    let phantom_type: ImplItemType = parse_quote!(type Phantom = #preset_type;);
 
     let generics = merge_generics(preset_generics, &component.component_generics);
 
@@ -43,6 +41,6 @@ pub fn impl_component_is_preset(
         trait_: Some((None, trait_path, Default::default())),
         self_ty: Box::new(component_type.clone()),
         brace_token: Default::default(),
-        items: vec![ImplItem::Type(phantom_type)],
+        items: vec![],
     }
 }
