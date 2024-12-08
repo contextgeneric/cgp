@@ -13,12 +13,6 @@ pub struct DelegateComponentsAst {
     pub delegate_entries: DelegateEntriesAst,
 }
 
-pub struct DefineComponentsAst {
-    pub components_ident: Ident,
-    pub components_generics: Generics,
-    pub delegate_entries: DelegateEntriesAst,
-}
-
 pub struct DelegateEntriesAst {
     pub entries: Punctuated<DelegateEntryAst, Comma>,
 }
@@ -58,26 +52,6 @@ impl Parse for DelegateComponentsAst {
         Ok(Self {
             target_type,
             target_generics,
-            delegate_entries,
-        })
-    }
-}
-
-impl Parse for DefineComponentsAst {
-    fn parse(input: ParseStream) -> syn::Result<Self> {
-        let components_ident: Ident = input.parse()?;
-
-        let components_generics = if input.peek(Lt) {
-            input.parse()?
-        } else {
-            Default::default()
-        };
-
-        let delegate_entries: DelegateEntriesAst = input.parse()?;
-
-        Ok(Self {
-            components_ident,
-            components_generics,
             delegate_entries,
         })
     }

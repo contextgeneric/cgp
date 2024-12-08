@@ -6,7 +6,7 @@ use crate::tests::helper::equal::equal_token_stream;
 #[test]
 fn test_basic_define_preset() {
     let derived = define_preset(quote! {
-        FooComponents {
+        FooPreset {
             [
                 BarAComponent,
                 BarBComponent,
@@ -17,37 +17,37 @@ fn test_basic_define_preset() {
     .unwrap();
 
     let expected = quote! {
-        pub struct FooComponents;
+        pub struct FooPreset;
 
-        impl DelegateComponent<BarAComponent> for FooComponents {
+        impl DelegateComponent<BarAComponent> for FooPreset {
             type Delegate = BazAComponents;
         }
 
-        impl DelegateComponent<BarBComponent> for FooComponents {
+        impl DelegateComponent<BarBComponent> for FooPreset {
             type Delegate = BazAComponents;
         }
 
-        impl DelegateComponent<BarCComponent> for FooComponents {
+        impl DelegateComponent<BarCComponent> for FooPreset {
             type Delegate = BazBComponents;
         }
 
-        pub trait DelegatesToFooComponents: DelegateComponent<
+        pub trait DelegatesToFooPreset: DelegateComponent<
                 BarAComponent,
-                Delegate = FooComponents,
+                Delegate = FooPreset,
             > + DelegateComponent<
                 BarBComponent,
-                Delegate = FooComponents,
-            > + DelegateComponent<BarCComponent, Delegate = FooComponents> {}
+                Delegate = FooPreset,
+            > + DelegateComponent<BarCComponent, Delegate = FooPreset> {}
 
-        impl<Components> DelegatesToFooComponents for Components
+        impl<Components> DelegatesToFooPreset for Components
         where
-            Components: DelegateComponent<BarAComponent, Delegate = FooComponents>
-                + DelegateComponent<BarBComponent, Delegate = FooComponents>
-                + DelegateComponent<BarCComponent, Delegate = FooComponents>,
+            Components: DelegateComponent<BarAComponent, Delegate = FooPreset>
+                + DelegateComponent<BarBComponent, Delegate = FooPreset>
+                + DelegateComponent<BarCComponent, Delegate = FooPreset>,
         {}
 
         #[macro_export]
-        macro_rules! with_foo_components {
+        macro_rules! with_foo_preset {
             ($($body:tt)*) => {
                 for_each_replace! {
                     [ BarAComponent, BarBComponent, BarCComponent ],
@@ -56,7 +56,7 @@ fn test_basic_define_preset() {
             };
         }
 
-        pub use with_foo_components;
+        pub use with_foo_preset;
     };
 
     assert!(equal_token_stream(&derived, &expected));
@@ -65,7 +65,7 @@ fn test_basic_define_preset() {
 #[test]
 fn test_define_preset_containing_generics() {
     let derived = define_preset(quote! {
-        FooComponents<'a, FooParamA, FooParamB: FooConstraint> {
+        FooPreset<'a, FooParamA, FooParamB: FooConstraint> {
             BarComponentA: BazComponentsA<FooParamA>,
             [
                 BarComponentB<'a>,
@@ -78,22 +78,22 @@ fn test_define_preset_containing_generics() {
     .unwrap();
 
     let expected = quote! {
-        pub struct FooComponents<'a, FooParamA, FooParamB>(
+        pub struct FooPreset<'a, FooParamA, FooParamB>(
             pub ::core::marker::PhantomData<(&'a (), FooParamA, FooParamB)>,
         );
 
         impl<'a, FooParamA, FooParamB: FooConstraint> DelegateComponent<BarComponentA>
-        for FooComponents<'a, FooParamA, FooParamB> {
+        for FooPreset<'a, FooParamA, FooParamB> {
             type Delegate = BazComponentsA<FooParamA>;
         }
 
         impl<'a, FooParamA, FooParamB: FooConstraint> DelegateComponent<BarComponentB<'a>>
-        for FooComponents<'a, FooParamA, FooParamB> {
+        for FooPreset<'a, FooParamA, FooParamB> {
             type Delegate = BazComponentsB;
         }
 
         impl<'a, FooParamA, FooParamB: FooConstraint> DelegateComponent<BarComponentC<FooParamB>>
-        for FooComponents<'a, FooParamA, FooParamB> {
+        for FooPreset<'a, FooParamA, FooParamB> {
             type Delegate = BazComponentsB;
         }
 
@@ -103,7 +103,7 @@ fn test_define_preset_containing_generics() {
             FooParamB: FooConstraint,
             BarParamA,
         > DelegateComponent<BarComponentD<BarParamA, FooParamA>>
-        for FooComponents<'a, FooParamA, FooParamB> {
+        for FooPreset<'a, FooParamA, FooParamB> {
             type Delegate = BazComponentsB;
         }
 
@@ -114,29 +114,29 @@ fn test_define_preset_containing_generics() {
             FooParamB: FooConstraint,
             BarParamB: BarConstraint,
         > DelegateComponent<BarComponentE<BarParamB, FooParamB>>
-        for FooComponents<'a, FooParamA, FooParamB> {
+        for FooPreset<'a, FooParamA, FooParamB> {
             type Delegate = BazComponentsB;
         }
 
-        pub trait DelegatesToFooComponents<
+        pub trait DelegatesToFooPreset<
             'a,
             FooParamA,
             FooParamB: FooConstraint,
         >: DelegateComponent<
                 BarComponentA,
-                Delegate = FooComponents<'a, FooParamA, FooParamB>,
+                Delegate = FooPreset<'a, FooParamA, FooParamB>,
             > + DelegateComponent<
                 BarComponentB<'a>,
-                Delegate = FooComponents<'a, FooParamA, FooParamB>,
+                Delegate = FooPreset<'a, FooParamA, FooParamB>,
             > + DelegateComponent<
                 BarComponentC<FooParamB>,
-                Delegate = FooComponents<'a, FooParamA, FooParamB>,
+                Delegate = FooPreset<'a, FooParamA, FooParamB>,
             > + DelegateComponent<
                 BarComponentD<BarParamA, FooParamA>,
-                Delegate = FooComponents<'a, FooParamA, FooParamB>,
+                Delegate = FooPreset<'a, FooParamA, FooParamB>,
             > + DelegateComponent<
                 BarComponentE<BarParamB, FooParamB>,
-                Delegate = FooComponents<'a, FooParamA, FooParamB>,
+                Delegate = FooPreset<'a, FooParamA, FooParamB>,
             > {}
 
         impl<
@@ -144,32 +144,32 @@ fn test_define_preset_containing_generics() {
             FooParamA,
             FooParamB: FooConstraint,
             Components,
-        > DelegatesToFooComponents<'a, FooParamA, FooParamB> for Components
+        > DelegatesToFooPreset<'a, FooParamA, FooParamB> for Components
         where
             Components: DelegateComponent<
                     BarComponentA,
-                    Delegate = FooComponents<'a, FooParamA, FooParamB>,
+                    Delegate = FooPreset<'a, FooParamA, FooParamB>,
                 >
                 + DelegateComponent<
                     BarComponentB<'a>,
-                    Delegate = FooComponents<'a, FooParamA, FooParamB>,
+                    Delegate = FooPreset<'a, FooParamA, FooParamB>,
                 >
                 + DelegateComponent<
                     BarComponentC<FooParamB>,
-                    Delegate = FooComponents<'a, FooParamA, FooParamB>,
+                    Delegate = FooPreset<'a, FooParamA, FooParamB>,
                 >
                 + DelegateComponent<
                     BarComponentD<BarParamA, FooParamA>,
-                    Delegate = FooComponents<'a, FooParamA, FooParamB>,
+                    Delegate = FooPreset<'a, FooParamA, FooParamB>,
                 >
                 + DelegateComponent<
                     BarComponentE<BarParamB, FooParamB>,
-                    Delegate = FooComponents<'a, FooParamA, FooParamB>,
+                    Delegate = FooPreset<'a, FooParamA, FooParamB>,
                 >,
         {}
 
         #[macro_export]
-        macro_rules! with_foo_components {
+        macro_rules! with_foo_preset {
             ($($body:tt)*) => {
                 for_each_replace! {
                     [
@@ -184,7 +184,7 @@ fn test_define_preset_containing_generics() {
             };
         }
 
-        pub use with_foo_components;
+        pub use with_foo_preset;
     };
 
     assert!(equal_token_stream(&derived, &expected));
