@@ -1,4 +1,4 @@
-use syn::{parse_quote, Generics, Ident, ItemImpl, Path, Type};
+use syn::{parse_quote, Generics, Ident, ItemImpl, Type};
 
 use crate::delegate_components::ast::{ComponentAst, DelegateEntriesAst};
 
@@ -27,22 +27,16 @@ pub fn impl_component_is_preset(
 ) -> ItemImpl {
     let component_type = &component.component_type;
 
-    let trait_path: Path = parse_quote!(#trait_name);
-
     // FIXME: The preset generic would be absent if the if it is used as part of the
     // component name's generic.
     // let generics = merge_generics(preset_generics, &component.component_generics);
-    let generics = component.component_generics.clone();
 
-    ItemImpl {
-        attrs: Vec::new(),
-        defaultness: None,
-        unsafety: None,
-        impl_token: Default::default(),
-        generics,
-        trait_: Some((None, trait_path, Default::default())),
-        self_ty: Box::new(component_type.clone()),
-        brace_token: Default::default(),
-        items: vec![],
+    let mut generics = component.component_generics.clone();
+    generics.params.push(parse_quote!(T));
+
+    let impl_generics = generics.split_for_impl().0;
+
+    parse_quote! {
+        impl #impl_generics #trait_name < #component_type > for T {}
     }
 }

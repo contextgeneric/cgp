@@ -19,7 +19,7 @@ fn test_basic_define_preset() {
     let expected = quote! {
         pub struct FooPreset;
 
-        pub trait IsFooPreset {}
+        pub trait IsFooPreset<Component> {}
 
         impl DelegateComponent<BarAComponent> for FooPreset {
             type Delegate = BazAComponents;
@@ -33,11 +33,11 @@ fn test_basic_define_preset() {
             type Delegate = BazBComponents;
         }
 
-        impl IsFooPreset for BarAComponent {}
+        impl<T> IsFooPreset<BarAComponent> for T {}
 
-        impl IsFooPreset for BarBComponent {}
+        impl<T> IsFooPreset<BarBComponent> for T {}
 
-        impl IsFooPreset for BarCComponent {}
+        impl<T> IsFooPreset<BarCComponent> for T {}
 
         pub trait DelegatesToFooPreset: DelegateComponent<
                 BarAComponent,
@@ -90,7 +90,7 @@ fn test_define_preset_containing_generics() {
             pub ::core::marker::PhantomData<(&'a (), FooParamA, FooParamB)>,
         );
 
-        pub trait IsFooPreset {}
+        pub trait IsFooPreset<Component> {}
 
         impl<'a, FooParamA, FooParamB: FooConstraint> DelegateComponent<BarComponentA>
             for FooPreset<'a, FooParamA, FooParamB>
@@ -133,15 +133,13 @@ fn test_define_preset_containing_generics() {
             type Delegate = BazComponentsB;
         }
 
-        impl IsFooPreset for BarComponentA {}
+        impl<T> IsFooPreset<BarComponentA> for T {}
+        impl<T> IsFooPreset<BarComponentB<'a>> for T {}
+        impl<T> IsFooPreset<BarComponentC<FooParamB>> for T {}
 
-        impl IsFooPreset for BarComponentB<'a> {}
+        impl<BarParamA, T> IsFooPreset<BarComponentD<BarParamA, FooParamA>> for T {}
 
-        impl IsFooPreset for BarComponentC<FooParamB> {}
-
-        impl<BarParamA> IsFooPreset for BarComponentD<BarParamA, FooParamA> {}
-
-        impl<'b, BarParamB: BarConstraint> IsFooPreset for BarComponentE<'b, BarParamB, FooParamB> {}
+        impl<'b, BarParamB: BarConstraint, T> IsFooPreset<BarComponentE<'b, BarParamB, FooParamB>> for T {}
 
         pub trait DelegatesToFooPreset<
             'a,
