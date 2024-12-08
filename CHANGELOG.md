@@ -2,6 +2,14 @@
 
 ## Pre-Release
 
+- Rename `define_components!` to `cgp_preset!` with slight improvement - [#41](https://github.com/contextgeneric/cgp/pull/41)
+    - Introduce `replace_with!` macro that allows replacement of an identifier with a list of component types in the body.
+    - Introduce `for_each_replace!` macro that allows repeated replacement of an identifier with each element of components in the list in the body.
+    - Rename `define_components!` to `cgp_preset!`.
+    - Use `replace_with!` inside the generated `with_preset!` macro.
+    - Re-introduce the `IsPreset` trait to allow bulk delegation of components.
+
+
 - Redesign `derive_component` to `cgp_component` with improved syntax - [#38](https://github.com/contextgeneric/cgp/pull/38)
     - Rename the attribute `#[derive_component]` to `#[cgp_component]`
     - The macro syntax has been changed as follows:
