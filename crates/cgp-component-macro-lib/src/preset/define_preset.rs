@@ -6,20 +6,21 @@ use crate::delegate_components::ast::DefineComponentsAst;
 use crate::delegate_components::define_struct::define_struct;
 use crate::delegate_components::delegates_to::define_delegates_to_trait;
 use crate::delegate_components::impl_delegate::impl_delegate_components;
-use crate::delegate_components::substitution_macro::define_substitution_macro;
 use crate::derive_component::snake_case::to_snake_case_str;
+use crate::preset::substitution_macro::define_substitution_macro;
 
-pub fn cgp_preset(body: TokenStream) -> TokenStream {
-    let ast: DefineComponentsAst = syn::parse2(body).unwrap();
+pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
+    let ast: DefineComponentsAst = syn::parse2(body)?;
 
-    let components_type = {
-        let components_ident = &ast.components_ident;
+    let preset_ident = &ast.components_ident;
+
+    let preset_type = {
         let type_generics = ast.components_generics.split_for_impl().1;
-        parse_quote!( #components_ident #type_generics )
+        parse_quote!( #preset_ident #type_generics )
     };
 
-    let impl_items = impl_delegate_components(
-        &components_type,
+    let impl_delegate_items = impl_delegate_components(
+        &preset_type,
         &ast.components_generics,
         &ast.delegate_entries,
     );
@@ -30,7 +31,7 @@ pub fn cgp_preset(body: TokenStream) -> TokenStream {
 
     output.extend(item_struct.to_token_stream());
 
-    for impl_item in impl_items {
+    for impl_item in impl_delegate_items {
         output.extend(impl_item.to_token_stream());
     }
 
@@ -39,7 +40,7 @@ pub fn cgp_preset(body: TokenStream) -> TokenStream {
 
         let (delegates_to_trait, delegates_to_impl) = define_delegates_to_trait(
             &Ident::new(&delegates_to_trait_name, Span::call_site()),
-            &components_type,
+            &preset_type,
             &ast.components_generics,
             &ast.delegate_entries,
         );
@@ -62,5 +63,5 @@ pub fn cgp_preset(body: TokenStream) -> TokenStream {
         output.extend(with_components_macro);
     }
 
-    output
+    Ok(output)
 }

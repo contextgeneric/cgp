@@ -18,7 +18,9 @@ pub fn delegate_components(body: TokenStream) -> TokenStream {
 
 #[proc_macro]
 pub fn cgp_preset(body: TokenStream) -> TokenStream {
-    cgp_component_macro_lib::cgp_preset(body.into()).into()
+    cgp_component_macro_lib::define_preset(body.into())
+        .unwrap()
+        .into()
 }
 
 #[proc_macro]
