@@ -2,7 +2,6 @@ use quote::quote;
 
 use crate::define_preset;
 use crate::tests::helper::equal::equal_token_stream;
-use crate::tests::helper::format::format_token_stream;
 
 #[test]
 fn test_basic_define_preset() {
@@ -58,7 +57,7 @@ fn test_basic_define_preset() {
         #[macro_export]
         macro_rules! with_foo_preset {
             ($($body:tt)*) => {
-                for_each_replace! {
+                replace_with! {
                     [ BarAComponent, BarBComponent, BarCComponent ],
                     $( $body )*
                 }
@@ -85,8 +84,6 @@ fn test_define_preset_containing_generics() {
         }
     })
     .unwrap();
-
-    println!("derived: {}", format_token_stream(&derived));
 
     let expected = quote! {
         pub struct FooPreset<'a, FooParamA, FooParamB>(
@@ -199,7 +196,7 @@ fn test_define_preset_containing_generics() {
         #[macro_export]
         macro_rules! with_foo_preset {
             ($($body:tt)*) => {
-                for_each_replace! {
+                replace_with! {
                     [
                         BarComponentA,
                         BarComponentB<'a>,

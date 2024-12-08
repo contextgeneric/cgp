@@ -7,7 +7,7 @@ pub fn define_substitution_macro(macro_name: &Ident, substitution: &TokenStream)
         #[macro_export]
         macro_rules! #macro_name {
             ( $( $body:tt )* ) => {
-                for_each_replace! {
+                replace_with! {
                     [ #substitution ],
                     $( $body )*
                 }

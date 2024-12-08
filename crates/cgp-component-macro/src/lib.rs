@@ -31,3 +31,10 @@ pub fn for_each_replace(body: TokenStream) -> TokenStream {
         .unwrap()
         .into()
 }
+
+#[proc_macro]
+pub fn replace_with(body: TokenStream) -> TokenStream {
+    cgp_component_macro_lib::handle_replace(body.into())
+        .unwrap()
+        .into()
+}

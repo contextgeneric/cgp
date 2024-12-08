@@ -15,5 +15,5 @@ mod tests;
 
 pub use crate::delegate_components::delegate_components;
 pub use crate::derive_component::derive_component;
-pub use crate::for_each_replace::handle_for_each_replace;
+pub use crate::for_each_replace::{handle_for_each_replace, handle_replace};
 pub use crate::preset::define_preset;
