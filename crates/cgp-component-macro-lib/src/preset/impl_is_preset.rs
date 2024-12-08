@@ -1,7 +1,6 @@
 use syn::{parse_quote, Generics, Ident, ItemImpl, Path, Type};
 
 use crate::delegate_components::ast::{ComponentAst, DelegateEntriesAst};
-use crate::delegate_components::merge_generics::merge_generics;
 
 pub fn impl_components_is_preset(
     trait_name: &Ident,
@@ -23,14 +22,17 @@ pub fn impl_components_is_preset(
 pub fn impl_component_is_preset(
     trait_name: &Ident,
     _preset_type: &Type,
-    preset_generics: &Generics,
+    _preset_generics: &Generics,
     component: &ComponentAst,
 ) -> ItemImpl {
     let component_type = &component.component_type;
 
     let trait_path: Path = parse_quote!(#trait_name);
 
-    let generics = merge_generics(preset_generics, &component.component_generics);
+    // FIXME: The preset generic would be absent if the if it is used as part of the
+    // component name's generic.
+    // let generics = merge_generics(preset_generics, &component.component_generics);
+    let generics = component.component_generics.clone();
 
     ItemImpl {
         attrs: Vec::new(),

@@ -82,7 +82,7 @@ fn test_define_preset_containing_generics() {
                 BarComponentB<'a>,
                 BarComponentC<FooParamB>,
                 <BarParamA> BarComponentD<BarParamA, FooParamA>,
-                <'b, BarParamB: BarConstraint> BarComponentE<BarParamB, FooParamB>,
+                <'b, BarParamB: BarConstraint> BarComponentE<'b, BarParamB, FooParamB>,
             ]: BazComponentsB,
         }
     })
@@ -98,17 +98,20 @@ fn test_define_preset_containing_generics() {
         pub trait IsFooPreset {}
 
         impl<'a, FooParamA, FooParamB: FooConstraint> DelegateComponent<BarComponentA>
-        for FooPreset<'a, FooParamA, FooParamB> {
+            for FooPreset<'a, FooParamA, FooParamB>
+        {
             type Delegate = BazComponentsA<FooParamA>;
         }
 
         impl<'a, FooParamA, FooParamB: FooConstraint> DelegateComponent<BarComponentB<'a>>
-        for FooPreset<'a, FooParamA, FooParamB> {
+            for FooPreset<'a, FooParamA, FooParamB>
+        {
             type Delegate = BazComponentsB;
         }
 
         impl<'a, FooParamA, FooParamB: FooConstraint> DelegateComponent<BarComponentC<FooParamB>>
-        for FooPreset<'a, FooParamA, FooParamB> {
+            for FooPreset<'a, FooParamA, FooParamB>
+        {
             type Delegate = BazComponentsB;
         }
 
@@ -118,7 +121,8 @@ fn test_define_preset_containing_generics() {
             FooParamB: FooConstraint,
             BarParamA,
         > DelegateComponent<BarComponentD<BarParamA, FooParamA>>
-        for FooPreset<'a, FooParamA, FooParamB> {
+            for FooPreset<'a, FooParamA, FooParamB>
+        {
             type Delegate = BazComponentsB;
         }
 
@@ -128,31 +132,21 @@ fn test_define_preset_containing_generics() {
             FooParamA,
             FooParamB: FooConstraint,
             BarParamB: BarConstraint,
-        > DelegateComponent<BarComponentE<BarParamB, FooParamB>>
-        for FooPreset<'a, FooParamA, FooParamB> {
+        > DelegateComponent<BarComponentE<'b, BarParamB, FooParamB>>
+            for FooPreset<'a, FooParamA, FooParamB>
+        {
             type Delegate = BazComponentsB;
         }
 
-        impl<'a, FooParamA, FooParamB: FooConstraint> IsFooPreset for BarComponentA {}
+        impl IsFooPreset for BarComponentA {}
 
-        impl<'a, FooParamA, FooParamB: FooConstraint> IsFooPreset for BarComponentB<'a> {}
+        impl IsFooPreset for BarComponentB<'a> {}
 
-        impl<'a, FooParamA, FooParamB: FooConstraint> IsFooPreset for BarComponentC<FooParamB> {}
+        impl IsFooPreset for BarComponentC<FooParamB> {}
 
-        impl<
-            'a,
-            FooParamA,
-            FooParamB: FooConstraint,
-            BarParamA,
-        > IsFooPreset for BarComponentD<BarParamA, FooParamA> {}
+        impl<BarParamA> IsFooPreset for BarComponentD<BarParamA, FooParamA> {}
 
-        impl<
-            'a,
-            'b,
-            FooParamA,
-            FooParamB: FooConstraint,
-            BarParamB: BarConstraint,
-        > IsFooPreset for BarComponentE<BarParamB, FooParamB> {}
+        impl<'b, BarParamB: BarConstraint> IsFooPreset for BarComponentE<'b, BarParamB, FooParamB> {}
 
         pub trait DelegatesToFooPreset<
             'a,
@@ -171,7 +165,7 @@ fn test_define_preset_containing_generics() {
                 BarComponentD<BarParamA, FooParamA>,
                 Delegate = FooPreset<'a, FooParamA, FooParamB>,
             > + DelegateComponent<
-                BarComponentE<BarParamB, FooParamB>,
+                BarComponentE<'b, BarParamB, FooParamB>,
                 Delegate = FooPreset<'a, FooParamA, FooParamB>,
             > {}
 
@@ -199,7 +193,7 @@ fn test_define_preset_containing_generics() {
                     Delegate = FooPreset<'a, FooParamA, FooParamB>,
                 >
                 + DelegateComponent<
-                    BarComponentE<BarParamB, FooParamB>,
+                    BarComponentE<'b, BarParamB, FooParamB>,
                     Delegate = FooPreset<'a, FooParamA, FooParamB>,
                 >,
         {}
@@ -213,7 +207,7 @@ fn test_define_preset_containing_generics() {
                         BarComponentB<'a>,
                         BarComponentC<FooParamB>,
                         <BarParamA> BarComponentD<BarParamA, FooParamA>,
-                        <'b, BarParamB: BarConstraint> BarComponentE<BarParamB, FooParamB>
+                        <'b, BarParamB: BarConstraint> BarComponentE<'b, BarParamB, FooParamB>
                     ],
                     $( $body )*
                 }
