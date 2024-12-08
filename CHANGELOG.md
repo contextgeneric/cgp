@@ -1,6 +1,6 @@
 # Changelog
 
-## Pre-Release
+## v0.2.0 (2025-12-08)
 
 - Rename `define_components!` to `cgp_preset!` with slight improvement - [#41](https://github.com/contextgeneric/cgp/pull/41)
     - Introduce `replace_with!` macro that allows replacement of an identifier with a list of component types in the body.

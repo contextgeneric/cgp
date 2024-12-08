@@ -1,26 +1,28 @@
 
 # `cgp` - Context-Generic Programming Libraries in Rust
 
-[![Apache 2.0 Licensed](https://img.shields.io/badge/license-Apache_2.0-blue.svg)](https://github.com/informalsystems/cgp/blob/master/LICENSE)
+[![Apache 2.0 Licensed](https://img.shields.io/badge/license-Apache_2.0-blue.svg)](https://github.com/contextgeneric/cgp/blob/master/LICENSE)
+[![Crates.io](https://img.shields.io/crates/v/cgp.svg)](https://crates.io/crates/cgp)
 ![Rust Stable](https://img.shields.io/badge/rustc-stable-blue.svg)
-![Rust 1.79+](https://img.shields.io/badge/rustc-1.79+-blue.svg)
+![Rust 1.81+](https://img.shields.io/badge/rustc-1.81+-blue.svg)
 
 ## Overview
 
-The `cgp` project contains a collection of micro Rust crates that empowers 
-_context-generic programming_ (CGP), a new programming paradigm in Rust.
-To learn more about context-generic programming, check out the book
-[Context-Generic Programming Patterns](https://patterns.contextgeneric.dev/).
+The `cgp` project contains a collection of micro Rust crates that empowers
+_context-generic programming_ (CGP), a new modular programming paradigm in Rust.
+To learn more about context-generic programming, check out the
+our website [contextgeneric.dev](https://contextgeneric.dev/), and
+our book [Context-Generic Programming Patterns](https://patterns.contextgeneric.dev/).
 
 ## Crates Organization
 
 The CGP core constructs are organized as many child crates that are intended
-to be minimal and stable. Having each construct defined in separate crate 
-helps us avoid introducing breaking changes in semantic  versioning, in case 
+to be minimal and stable. Having each construct defined in separate crate
+helps us avoid introducing breaking changes in semantic  versioning, in case
 an unrelated construct is updated.
 
 We also offers meta-crates that aggregate the dependencies from many CGP
-child crates into one place, so that users can use CGP by specifying only one 
+child crates into one place, so that users can use CGP by specifying only one
 dependency:
 
 - [`cgp`](./crates/cgp/) - The main crate that includes all child crates defined in this project.
