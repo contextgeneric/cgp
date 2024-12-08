@@ -7,10 +7,11 @@
 
 pub mod delegate_components;
 pub mod derive_component;
-pub mod for_each;
+pub mod for_each_replace;
 
 #[cfg(test)]
 mod tests;
 
 pub use crate::delegate_components::{define_components, delegate_components};
 pub use crate::derive_component::derive_component;
+pub use crate::for_each_replace::handle_for_each_replace;

@@ -20,3 +20,10 @@ pub fn delegate_components(body: TokenStream) -> TokenStream {
 pub fn define_components(body: TokenStream) -> TokenStream {
     cgp_component_macro_lib::define_components(body.into()).into()
 }
+
+#[proc_macro]
+pub fn for_each_replace(body: TokenStream) -> TokenStream {
+    cgp_component_macro_lib::handle_for_each_replace(body.into())
+        .unwrap()
+        .into()
+}
