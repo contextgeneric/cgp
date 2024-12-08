@@ -1,11 +1,11 @@
 use quote::quote;
 
-use crate::delegate_components::define_components;
+use crate::delegate_components::cgp_preset;
 use crate::tests::helper::equal::equal_token_stream;
 
 #[test]
-fn test_basic_define_components() {
-    let derived = define_components(quote! {
+fn test_basic_define_preset() {
+    let derived = cgp_preset(quote! {
         FooComponents {
             [
                 BarAComponent,
@@ -62,8 +62,8 @@ fn test_basic_define_components() {
 }
 
 #[test]
-fn test_define_components_containing_generics() {
-    let derived = define_components(quote! {
+fn test_define_preset_containing_generics() {
+    let derived = cgp_preset(quote! {
         FooComponents<'a, FooParamA, FooParamB: FooConstraint> {
             BarComponentA: BazComponentsA<FooParamA>,
             [

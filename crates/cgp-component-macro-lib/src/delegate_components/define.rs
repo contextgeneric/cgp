@@ -9,7 +9,7 @@ use crate::delegate_components::impl_delegate::impl_delegate_components;
 use crate::delegate_components::substitution_macro::define_substitution_macro;
 use crate::derive_component::snake_case::to_snake_case_str;
 
-pub fn define_components(body: TokenStream) -> TokenStream {
+pub fn cgp_preset(body: TokenStream) -> TokenStream {
     let ast: DefineComponentsAst = syn::parse2(body).unwrap();
 
     let components_type = {
