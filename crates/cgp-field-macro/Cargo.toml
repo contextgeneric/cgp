@@ -16,4 +16,4 @@ proc-macro = true
 
 [dependencies]
 cgp-field-macro-lib = { version = "0.2.0" }
-proc-macro2     = "1.0.67"
+proc-macro2     = "1.0.92"
