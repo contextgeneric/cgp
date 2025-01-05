@@ -1,50 +1,5 @@
 #![no_std]
 
-use core::error::Error as StdError;
-use core::fmt::{Debug, Display};
+pub mod impls;
 
-use cgp_core::error::{ErrorRaiser, ProvideErrorType};
-use cgp_core::prelude::*;
-use eyre::{eyre, Report};
-
-pub struct ProvideEyreError;
-
-impl<Context> ProvideErrorType<Context> for ProvideEyreError {
-    type Error = Report;
-}
-
-pub struct RaiseStdError;
-
-impl<Context, E> ErrorRaiser<Context, E> for RaiseStdError
-where
-    Context: HasErrorType<Error = Report>,
-    E: StdError + Send + Sync + 'static,
-{
-    fn raise_error(e: E) -> Report {
-        e.into()
-    }
-}
-
-pub struct RaiseDebugError;
-
-impl<Context, E> ErrorRaiser<Context, E> for RaiseDebugError
-where
-    Context: HasErrorType<Error = Report>,
-    E: Debug,
-{
-    fn raise_error(e: E) -> Report {
-        eyre!("{:?}", e)
-    }
-}
-
-pub struct RaiseDisplayError;
-
-impl<Context, E> ErrorRaiser<Context, E> for RaiseDisplayError
-where
-    Context: HasErrorType<Error = Report>,
-    E: Display,
-{
-    fn raise_error(e: E) -> Report {
-        eyre!("{e}")
-    }
-}
+pub use impls::*;
