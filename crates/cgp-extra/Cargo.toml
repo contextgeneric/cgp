@@ -12,4 +12,6 @@ description  = """
 """
 
 [dependencies]
-cgp-run = { version = "0.2.0" }
+cgp-run     = { version = "0.2.0" }
+cgp-inner   = { version = "0.2.0" }
+cgp-runtime = { version = "0.2.0" }

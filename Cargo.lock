@@ -66,7 +66,6 @@ dependencies = [
  "cgp-error",
  "cgp-field",
  "cgp-field-macro",
- "cgp-inner",
  "cgp-type",
 ]
 
@@ -107,7 +106,9 @@ dependencies = [
 name = "cgp-extra"
 version = "0.2.0"
 dependencies = [
+ "cgp-inner",
  "cgp-run",
+ "cgp-runtime",
 ]
 
 [[package]]

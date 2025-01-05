@@ -23,4 +23,3 @@ cgp-type            = { version = "0.2.0" }
 cgp-error           = { version = "0.2.0" }
 cgp-field           = { version = "0.2.0" }
 cgp-field-macro     = { version = "0.2.0" }
-cgp-inner           = { version = "0.2.0" }
