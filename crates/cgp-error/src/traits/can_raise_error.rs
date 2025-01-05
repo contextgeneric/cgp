@@ -1,7 +1,7 @@
 use cgp_component::{DelegateComponent, HasComponents, UseDelegate};
 use cgp_component_macro::cgp_component;
 
-use crate::has_error_type::HasErrorType;
+use crate::traits::has_error_type::HasErrorType;
 
 /**
    Used for injecting external error types into [`Self::Error`](HasErrorType::Error).

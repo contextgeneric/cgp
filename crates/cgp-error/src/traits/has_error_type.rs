@@ -27,7 +27,7 @@ pub trait HasErrorType {
        This is to allow `Self::Error` to be used in calls like `.unwrap()`,
        as well as for simpler error logging.
     */
-    type Error: Async + Debug;
+    type Error: Debug;
 }
 
 pub type ErrorOf<Context> = <Context as HasErrorType>::Error;
