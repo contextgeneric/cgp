@@ -26,4 +26,4 @@ static = [ "async" ]
 
 [dependencies]
 cgp-async-macro = { version = "0.2.0" }
-cgp-sync = { version = "0.2.0" }
+cgp-sync        = { version = "0.2.0" }

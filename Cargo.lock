@@ -37,7 +37,6 @@ name = "cgp-component-macro"
 version = "0.2.0"
 dependencies = [
  "cgp-component-macro-lib",
- "proc-macro2",
 ]
 
 [[package]]
@@ -224,9 +223,9 @@ dependencies = [
 
 [[package]]
 name = "syn"
-version = "2.0.90"
+version = "2.0.95"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "919d3b74a5dd0ccd15aeb8f93e7006bd9e14c295087c9896a110f490752bcf31"
+checksum = "46f71c0377baf4ef1cc3e3402ded576dccc315800fbc62dfc7fe04b009773b4a"
 dependencies = [
  "proc-macro2",
  "quote",
