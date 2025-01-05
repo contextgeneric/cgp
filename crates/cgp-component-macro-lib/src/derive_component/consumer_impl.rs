@@ -54,14 +54,17 @@ pub fn derive_consumer_impl(
             let supertrait_constraints = consumer_trait.supertraits.clone();
 
             if !supertrait_constraints.is_empty() {
-                if let Some(where_clause) = &mut impl_generics.where_clause {
-                    where_clause.predicates.push(parse_quote! {
-                        #context_type : #supertrait_constraints
-                    });
-                } else {
-                    impl_generics.where_clause = Some(parse_quote! {
-                        where #context_type : #supertrait_constraints
-                    });
+                match &mut impl_generics.where_clause {
+                    Some(where_clause) => {
+                        where_clause.predicates.push(parse_quote! {
+                            #context_type : #supertrait_constraints
+                        });
+                    }
+                    _ => {
+                        impl_generics.where_clause = Some(parse_quote! {
+                            where #context_type : #supertrait_constraints
+                        });
+                    }
                 }
             }
         }
@@ -75,20 +78,23 @@ pub fn derive_consumer_impl(
                 #provider_name < #provider_generic_args >
             };
 
-            if let Some(where_clause) = &mut impl_generics.where_clause {
-                where_clause.predicates.push(parse_quote! {
-                    #context_type : #has_component_constraint
-                });
+            match &mut impl_generics.where_clause {
+                Some(where_clause) => {
+                    where_clause.predicates.push(parse_quote! {
+                        #context_type : #has_component_constraint
+                    });
 
-                where_clause.predicates.push(parse_quote! {
-                    #context_type :: Components : #provider_constraint
-                });
-            } else {
-                impl_generics.where_clause = Some(parse_quote! {
-                    where
-                        #context_type : #has_component_constraint,
+                    where_clause.predicates.push(parse_quote! {
                         #context_type :: Components : #provider_constraint
-                });
+                    });
+                }
+                _ => {
+                    impl_generics.where_clause = Some(parse_quote! {
+                        where
+                            #context_type : #has_component_constraint,
+                            #context_type :: Components : #provider_constraint
+                    });
+                }
             }
         }
 

@@ -47,22 +47,25 @@ pub fn derive_provider_trait(
         provider_trait.supertraits = Punctuated::default();
 
         if !context_constraints.is_empty() {
-            if let Some(where_clause) = &mut provider_trait.generics.where_clause {
-                let mut predicates = iter_parse_and_replace_self_type(
-                    where_clause.predicates.clone(),
-                    context_type,
-                    &local_assoc_types,
-                )?;
+            match &mut provider_trait.generics.where_clause {
+                Some(where_clause) => {
+                    let mut predicates = iter_parse_and_replace_self_type(
+                        where_clause.predicates.clone(),
+                        context_type,
+                        &local_assoc_types,
+                    )?;
 
-                predicates.push(parse_quote! {
-                    #context_type : #context_constraints
-                });
+                    predicates.push(parse_quote! {
+                        #context_type : #context_constraints
+                    });
 
-                where_clause.predicates = predicates;
-            } else {
-                provider_trait.generics.where_clause = Some(parse_quote! {
-                    where #context_type : #context_constraints
-                });
+                    where_clause.predicates = predicates;
+                }
+                _ => {
+                    provider_trait.generics.where_clause = Some(parse_quote! {
+                        where #context_type : #context_constraints
+                    });
+                }
             }
         }
     }

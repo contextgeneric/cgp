@@ -56,20 +56,23 @@ pub fn derive_provider_impl(
                 #provider_name < #provider_generic_args >
             };
 
-            if let Some(where_clause) = &mut impl_generics.where_clause {
-                where_clause.predicates.push(parse_quote! {
-                    #component_type : #delegate_constraint
-                });
+            match &mut impl_generics.where_clause {
+                Some(where_clause) => {
+                    where_clause.predicates.push(parse_quote! {
+                        #component_type : #delegate_constraint
+                    });
 
-                where_clause.predicates.push(parse_quote! {
-                    #component_type :: Delegate : #provider_constraint
-                });
-            } else {
-                impl_generics.where_clause = Some(parse_quote! {
-                    where
-                        #component_type : #delegate_constraint,
+                    where_clause.predicates.push(parse_quote! {
                         #component_type :: Delegate : #provider_constraint
-                });
+                    });
+                }
+                _ => {
+                    impl_generics.where_clause = Some(parse_quote! {
+                        where
+                            #component_type : #delegate_constraint,
+                            #component_type :: Delegate : #provider_constraint
+                    });
+                }
             }
         }
 

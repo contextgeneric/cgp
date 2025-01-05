@@ -29,15 +29,16 @@ impl Parse for ReplaceSpecs {
         let exclude: Vec<Type> = {
             let fork = input.fork();
 
-            if let Ok(bracket) = parse_brackets(&fork) {
-                let types = <Punctuated<Type, Comma>>::parse_terminated(&bracket.content)?;
+            match parse_brackets(&fork) {
+                Ok(bracket) => {
+                    let types = <Punctuated<Type, Comma>>::parse_terminated(&bracket.content)?;
 
-                input.advance_to(&fork);
-                Comma::parse(input)?;
+                    input.advance_to(&fork);
+                    Comma::parse(input)?;
 
-                types.into_iter().collect()
-            } else {
-                Vec::new()
+                    types.into_iter().collect()
+                }
+                _ => Vec::new(),
             }
         };
 
