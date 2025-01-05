@@ -13,4 +13,4 @@ description  = """
 
 [dependencies]
 cgp-core    = { version = "0.2.0", default-features = false }
-anyhow      = { version = "1.0.95" }
+anyhow      = { version = "1.0.95", default-features = false }
