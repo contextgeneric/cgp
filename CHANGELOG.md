@@ -2,6 +2,14 @@
 
 ## v0.3.0 (pre-release)
 
+- Error crates refactoring - [#48](https://github.com/contextgeneric/cgp/pull/48)
+    - Remove `Async` trait bound from `HasErrorType::Error`.
+    - Introduce `HasAsyncErrorType` trait used for adding `Async` constraint to `HasErrorType::Error`.
+    - Introduce `CanWrapError` trait.
+    - Introduce generic `ErrorRaiser` providers in `cgp-error`.
+    - Rename and reoganize constructs in `cgp-error-eyre` and `cgp-error-std`.
+    - Introduce `cgp-error-anyhow` crate.
+
 - Decouple component and field macro crates from the library crates - [#47](https://github.com/contextgeneric/cgp/pull/47)
     - Remove `cgp-component-macro` crate from being a dependency of `cgp-component`.
     - Remove `cgp-field-macro` crate from being a dependency of `cgp-field`.
