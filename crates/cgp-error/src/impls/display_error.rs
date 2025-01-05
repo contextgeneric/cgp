@@ -1,3 +1,5 @@
+use alloc::format;
+use alloc::string::String;
 use core::fmt::Display;
 
 use crate::{CanRaiseError, ErrorRaiser};
