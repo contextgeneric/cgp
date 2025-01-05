@@ -156,6 +156,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "cgp-runtime"
+version = "0.2.0"
+dependencies = [
+ "cgp-core",
+]
+
+[[package]]
 name = "cgp-sync"
 version = "0.2.0"
 dependencies = [

@@ -21,6 +21,7 @@ members = [
     "crates/cgp-error-eyre",
     "crates/cgp-error-std",
     "crates/cgp-run",
+    "crates/cgp-runtime",
     "crates/cgp-inner",
 ]
 
