@@ -1,5 +1,5 @@
-use cgp_component_macro::cgp_component;
 use cgp_component::{DelegateComponent, HasComponents, UseDelegate};
+use cgp_component_macro::cgp_component;
 
 use crate::has_error_type::HasErrorType;
 

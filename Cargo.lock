@@ -60,6 +60,7 @@ dependencies = [
  "cgp-component-macro",
  "cgp-error",
  "cgp-field",
+ "cgp-field-macro",
  "cgp-inner",
  "cgp-type",
 ]
@@ -101,7 +102,6 @@ name = "cgp-field"
 version = "0.2.0"
 dependencies = [
  "cgp-component",
- "cgp-field-macro",
  "cgp-type",
 ]
 
