@@ -1,3 +1,5 @@
+use alloc::string::ToString;
+use alloc::vec::Vec;
 use proc_macro2::TokenStream;
 use quote::ToTokens;
 use syn::{parse_quote, Fields, ItemImpl, ItemStruct};

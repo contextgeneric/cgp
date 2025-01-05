@@ -1,3 +1,4 @@
+use alloc::string::ToString;
 use quote::quote;
 
 use crate::product::{make_product_expr, make_product_type, make_sum_type};

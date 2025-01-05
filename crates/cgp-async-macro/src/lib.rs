@@ -1,7 +1,10 @@
+#![no_std]
+
 /*!
    This library provides helper macros for using async functions in traits.
 */
 
+extern crate alloc;
 extern crate proc_macro;
 
 use proc_macro::TokenStream;

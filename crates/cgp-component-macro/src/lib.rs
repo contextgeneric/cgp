@@ -1,3 +1,5 @@
+#![no_std]
+
 /*!
    This crate provides the proc macros used for defining CGP components.
 */

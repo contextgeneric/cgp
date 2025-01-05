@@ -1,3 +1,4 @@
+use alloc::vec::Vec;
 use proc_macro2::{Group, TokenStream, TokenTree};
 use syn::parse::{Parse, ParseStream};
 use syn::token::{Async, Await, Dot, Fn};
