@@ -12,8 +12,8 @@ description  = """
 """
 
 [dependencies]
-syn             = { version = "2.0.90", features = [ "full", "extra-traits" ] }
-quote           = "1.0.33"
+syn             = { version = "2.0.95", features = [ "full", "extra-traits" ] }
+quote           = "1.0.38"
 proc-macro2     = "1.0.92"
-itertools       = "0.13.0"
-prettyplease    = "0.2.25"
+prettyplease    = "0.2.27"
+itertools       = "0.14.0"
