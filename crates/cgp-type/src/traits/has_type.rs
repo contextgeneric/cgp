@@ -1,4 +1,5 @@
-use cgp_component::{cgp_component, DelegateComponent, HasComponents, UseContext, UseDelegate};
+use cgp_component_macro::cgp_component;
+use cgp_component::{DelegateComponent, HasComponents, UseContext, UseDelegate};
 
 #[cgp_component {
     name: TypeComponent,

@@ -16,9 +16,10 @@ default = [ "full" ]
 full = [ "cgp-async/full" ]
 
 [dependencies]
-cgp-async       = { version = "0.2.0", default-features = false }
-cgp-component   = { version = "0.2.0" }
-cgp-type        = { version = "0.2.0" }
-cgp-error       = { version = "0.2.0" }
-cgp-field       = { version = "0.2.0" }
-cgp-inner       = { version = "0.2.0" }
+cgp-async           = { version = "0.2.0", default-features = false }
+cgp-component       = { version = "0.2.0" }
+cgp-component-macro = { version = "0.2.0" }
+cgp-type            = { version = "0.2.0" }
+cgp-error           = { version = "0.2.0" }
+cgp-field           = { version = "0.2.0" }
+cgp-inner           = { version = "0.2.0" }

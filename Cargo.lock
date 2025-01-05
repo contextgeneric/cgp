@@ -31,9 +31,6 @@ dependencies = [
 [[package]]
 name = "cgp-component"
 version = "0.2.0"
-dependencies = [
- "cgp-component-macro",
-]
 
 [[package]]
 name = "cgp-component-macro"
@@ -60,6 +57,7 @@ version = "0.2.0"
 dependencies = [
  "cgp-async",
  "cgp-component",
+ "cgp-component-macro",
  "cgp-error",
  "cgp-field",
  "cgp-inner",
@@ -72,6 +70,7 @@ version = "0.2.0"
 dependencies = [
  "cgp-async",
  "cgp-component",
+ "cgp-component-macro",
  "cgp-type",
 ]
 
@@ -130,6 +129,7 @@ name = "cgp-inner"
 version = "0.2.0"
 dependencies = [
  "cgp-component",
+ "cgp-component-macro",
 ]
 
 [[package]]
@@ -138,6 +138,7 @@ version = "0.2.0"
 dependencies = [
  "cgp-async",
  "cgp-component",
+ "cgp-component-macro",
  "cgp-error",
 ]
 
@@ -153,6 +154,7 @@ name = "cgp-type"
 version = "0.2.0"
 dependencies = [
  "cgp-component",
+ "cgp-component-macro",
 ]
 
 [[package]]

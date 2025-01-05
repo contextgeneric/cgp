@@ -7,6 +7,7 @@ use alloc::boxed::Box;
 
 use cgp_async::*;
 use cgp_component::*;
+use cgp_component_macro::*;
 use cgp_error::HasErrorType;
 
 #[cgp_component {

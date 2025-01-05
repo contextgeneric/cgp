@@ -1,6 +1,8 @@
 pub use cgp_async::{async_trait, Async, MaybeSend, MaybeStatic, MaybeSync};
-pub use cgp_component::{
+pub use cgp_component_macro::{
     cgp_component, cgp_preset, delegate_components, for_each_replace, replace_with,
+};
+pub use cgp_component::{
     DelegateComponent, HasComponents,
 };
 pub use cgp_error::{CanRaiseError, HasErrorType};

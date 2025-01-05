@@ -13,3 +13,4 @@ description  = """
 
 [dependencies]
 cgp-component = { version = "0.2.0" }
+cgp-component-macro = { version = "0.2.0" }
