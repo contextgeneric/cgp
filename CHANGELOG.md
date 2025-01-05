@@ -2,6 +2,14 @@
 
 ## v0.3.0 (pre-release)
 
+- Move `cgp-inner` to `cgp-extra` - [#51](https://github.com/contextgeneric/cgp/pull/51)
+    - Remove re-export of `cgp-inner` from `cgp-core`.
+    - Re-export `cgp-inner` and `cgp-runtime` from `cgp-extra`.
+
+- Introduce `cgp-runtime` crate - [#50](https://github.com/contextgeneric/cgp/pull/50)
+    - Introduce the `HasRuntimeType` and `HasRuntime` traits.
+    - Introduce `HasAsyncRuntimeType` trait used for adding `Async` constraint to `HasRuntimeType::Error`.
+
 - Error crates refactoring - [#48](https://github.com/contextgeneric/cgp/pull/48)
     - Remove `Async` trait bound from `HasErrorType::Error`.
     - Introduce `HasAsyncErrorType` trait used for adding `Async` constraint to `HasErrorType::Error`.
