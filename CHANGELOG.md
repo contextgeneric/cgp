@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.3.0 (pre-release)
+
+- Decouple component and field macro crates from the library crates - [#47](https://github.com/contextgeneric/cgp/pull/47)
+    - Remove `cgp-component-macro` crate from being a dependency of `cgp-component`.
+    - Remove `cgp-field-macro` crate from being a dependency of `cgp-field`.
+
 ## v0.2.0 (2025-12-08)
 
 - Rename `define_components!` to `cgp_preset!` with slight improvement - [#41](https://github.com/contextgeneric/cgp/pull/41)
