@@ -1,3 +1,4 @@
+use alloc::vec::Vec;
 use syn::punctuated::Punctuated;
 use syn::{parse_quote, Ident, ItemTrait, TraitItem};
 

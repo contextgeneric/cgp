@@ -1,3 +1,6 @@
+use alloc::boxed::Box;
+use alloc::vec;
+use alloc::vec::Vec;
 use syn::{parse_quote, Generics, ImplItem, ImplItemType, ItemImpl, Path, Type};
 
 use crate::delegate_components::ast::{ComponentAst, DelegateEntriesAst};

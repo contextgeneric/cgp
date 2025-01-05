@@ -1,3 +1,4 @@
+use alloc::string::{String, ToString};
 use prettyplease::unparse;
 use proc_macro2::TokenStream;
 use syn::parse_file;

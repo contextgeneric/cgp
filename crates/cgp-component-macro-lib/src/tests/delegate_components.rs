@@ -2,7 +2,6 @@ use quote::quote;
 
 use crate::delegate_components;
 use crate::tests::helper::equal::equal_token_stream;
-use crate::tests::helper::format::format_token_stream;
 
 #[test]
 fn test_basic_delegate_components() {
@@ -49,8 +48,6 @@ fn test_delegate_components_containing_generics() {
         }
     })
     .unwrap();
-
-    println!("derived: {}", format_token_stream(&derived));
 
     let expected = quote! {
         impl<'a, FooParamA, FooParamB: FooConstraint> DelegateComponent<BarComponentA>

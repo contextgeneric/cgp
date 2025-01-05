@@ -1,4 +1,4 @@
-use std::collections::BTreeMap;
+use alloc::collections::BTreeMap;
 
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;

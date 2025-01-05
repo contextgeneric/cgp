@@ -1,3 +1,5 @@
+use alloc::format;
+use alloc::string::ToString;
 use proc_macro2::{Span, TokenStream};
 use quote::ToTokens;
 use syn::{parse_quote, Ident, ItemTrait};
