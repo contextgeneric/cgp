@@ -1,7 +1,7 @@
 use cgp_component::{DelegateComponent, HasComponents, UseDelegate};
 use cgp_component_macro::cgp_component;
 
-use crate::HasErrorType;
+use crate::traits::HasErrorType;
 
 #[cgp_component {
     provider: ErrorWrapper,

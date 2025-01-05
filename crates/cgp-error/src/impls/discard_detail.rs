@@ -1,4 +1,4 @@
-use crate::{ErrorWrapper, HasErrorType};
+use crate::traits::{ErrorWrapper, HasErrorType};
 
 pub struct DiscardDetail;
 

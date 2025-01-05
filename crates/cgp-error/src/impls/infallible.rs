@@ -1,6 +1,6 @@
 use core::convert::Infallible;
 
-use crate::{ErrorRaiser, HasErrorType};
+use crate::traits::{ErrorRaiser, HasErrorType};
 
 pub struct RaiseInfallible;
 

@@ -1,6 +1,6 @@
 use core::fmt::Debug;
 
-use crate::{ErrorRaiser, HasErrorType};
+use crate::traits::{ErrorRaiser, HasErrorType};
 
 pub struct PanicOnError;
 

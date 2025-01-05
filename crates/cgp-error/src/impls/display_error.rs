@@ -2,7 +2,7 @@ use alloc::format;
 use alloc::string::String;
 use core::fmt::Display;
 
-use crate::{CanRaiseError, ErrorRaiser};
+use crate::traits::{CanRaiseError, ErrorRaiser};
 
 pub struct DisplayError;
 

@@ -1,4 +1,4 @@
-use crate::{ErrorRaiser, HasErrorType};
+use crate::traits::{ErrorRaiser, HasErrorType};
 
 pub struct ReturnError;
 

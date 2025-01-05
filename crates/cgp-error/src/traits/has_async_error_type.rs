@@ -1,6 +1,6 @@
 use cgp_async::Async;
 
-use crate::HasErrorType;
+use crate::traits::HasErrorType;
 
 pub trait HasAsyncErrorType: HasErrorType<Error: Async> {}
 
