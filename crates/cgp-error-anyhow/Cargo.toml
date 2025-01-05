@@ -1,0 +1,16 @@
+[package]
+name         = "cgp-error-anyhow"
+version      = "0.2.0"
+edition      = { workspace = true }
+license      = { workspace = true }
+repository   = { workspace = true }
+authors      = { workspace = true }
+rust-version = { workspace = true }
+keywords     = { workspace = true }
+description  = """
+    Context-generic programming error handlers implemented using eyre
+"""
+
+[dependencies]
+cgp-core    = { version = "0.2.0", default-features = false }
+anyhow      = { version = "1.0.95" }

@@ -17,6 +17,7 @@ members = [
     "crates/cgp-field-macro",
     "crates/cgp-field-macro-lib",
     "crates/cgp-error",
+    "crates/cgp-error-anyhow",
     "crates/cgp-error-eyre",
     "crates/cgp-error-std",
     "crates/cgp-run",

@@ -3,6 +3,12 @@
 version = 3
 
 [[package]]
+name = "anyhow"
+version = "1.0.95"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "34ac096ce696dc2fcabef30516bb13c0a68a11d30131d3df6f04711467681b04"
+
+[[package]]
 name = "cgp"
 version = "0.2.0"
 dependencies = [
@@ -72,6 +78,14 @@ dependencies = [
  "cgp-component",
  "cgp-component-macro",
  "cgp-type",
+]
+
+[[package]]
+name = "cgp-error-anyhow"
+version = "0.2.0"
+dependencies = [
+ "anyhow",
+ "cgp-core",
 ]
 
 [[package]]
