@@ -19,6 +19,9 @@ cgp_type! {
        The `Error` associated type is also required to implement [`Debug`].
        This is to allow `Self::Error` to be used in calls like `.unwrap()`,
        as well as for simpler error logging.
+
+       More details about how to use `HasErrorType` is available at
+       <https://patterns.contextgeneric.dev/error-handling.html>
     */
     Error: Debug
 }

@@ -2,6 +2,9 @@
 
 ## v0.3.0 (pre-release)
 
+- Introduce `cgp_type!` macro for defining simple abstract CGP types - [#55](https://github.com/contextgeneric/cgp/pull/55)
+    - Use `cgp_type!` to derive `HasErrorType` and `HasRuntimeType`.
+
 - Implement `ErrorWrapper` on generic `ErrorRaiser` providers - [#54](https://github.com/contextgeneric/cgp/pull/54)
     - Implement `ErrorWrapper` for the following providers: `DebugError`, `DisplayError`,
       `DebugAnyhowError`, `DisplayAnyhowError`, `RaiseAnyhowError`,
