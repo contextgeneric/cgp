@@ -6,7 +6,7 @@ use cgp_component::UseContext;
 pub trait HasField<Tag> {
     type Value;
 
-    fn get_field(&self, tag: PhantomData<Tag>) -> &Self::Value;
+    fn get_field(&self, _tag: PhantomData<Tag>) -> &Self::Value;
 }
 
 pub trait FieldGetter<Context, Tag> {
