@@ -1,7 +1,6 @@
+use alloc::string::String;
 use core::error::Error;
 use core::fmt::{Debug, Display};
-
-use alloc::string::String;
 
 pub struct StringError {
     pub message: String,

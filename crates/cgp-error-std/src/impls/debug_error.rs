@@ -1,7 +1,7 @@
-use core::fmt::Debug;
-
 use alloc::boxed::Box;
 use alloc::format;
+use core::fmt::Debug;
+
 use cgp_core::error::{ErrorRaiser, HasErrorType};
 
 use crate::types::{Error, StringError};

@@ -3,8 +3,7 @@ use core::marker::PhantomData;
 use cgp_component::WithProvider;
 use cgp_type::ProvideType;
 
-use crate::traits::{FieldGetter, HasField};
-use crate::traits::{HasFieldMut, MutFieldGetter};
+use crate::traits::{FieldGetter, HasField, HasFieldMut, MutFieldGetter};
 
 pub struct UseField<Tag>(pub PhantomData<Tag>);
 
