@@ -1,5 +1,5 @@
 #![no_std]
 
-pub mod traits;
+mod traits;
 
 pub use traits::*;

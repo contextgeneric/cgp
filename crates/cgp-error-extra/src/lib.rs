@@ -1,7 +1,8 @@
 #![no_std]
 
+#[cfg(feature = "alloc")]
 extern crate alloc;
 
-pub mod impls;
+mod impls;
 
 pub use impls::*;

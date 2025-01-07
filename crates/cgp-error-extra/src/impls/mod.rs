@@ -1,14 +1,16 @@
-pub mod debug_error;
-pub mod discard_detail;
-pub mod display_error;
-pub mod infallible;
-pub mod panic_error;
-pub mod raise_from;
-pub mod return_error;
+#[cfg(feature = "alloc")]
+mod alloc;
 
-pub use debug_error::*;
+mod discard_detail;
+mod infallible;
+mod panic_error;
+mod raise_from;
+mod return_error;
+
+#[cfg(feature = "alloc")]
+pub use alloc::*;
+
 pub use discard_detail::*;
-pub use display_error::*;
 pub use infallible::*;
 pub use panic_error::*;
 pub use raise_from::*;

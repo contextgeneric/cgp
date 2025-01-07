@@ -11,9 +11,9 @@ description  = """
     Context-generic programming error components
 """
 
+[features]
+default = [ "alloc" ]
+alloc = []
+
 [dependencies]
-cgp-async           = { version = "0.2.0", default-features = false }
-cgp-component       = { version = "0.2.0" }
-cgp-component-macro = { version = "0.2.0" }
-cgp-type            = { version = "0.2.0" }
 cgp-error           = { version = "0.2.0" }

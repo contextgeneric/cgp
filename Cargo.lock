@@ -91,11 +91,7 @@ dependencies = [
 name = "cgp-error-extra"
 version = "0.2.0"
 dependencies = [
- "cgp-async",
- "cgp-component",
- "cgp-component-macro",
  "cgp-error",
- "cgp-type",
 ]
 
 [[package]]
