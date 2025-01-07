@@ -1,4 +1,4 @@
-use crate::traits::{ErrorWrapper, HasErrorType};
+use cgp_error::{ErrorWrapper, HasErrorType};
 
 pub struct DiscardDetail;
 

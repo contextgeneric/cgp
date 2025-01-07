@@ -2,7 +2,7 @@ use alloc::format;
 use alloc::string::String;
 use core::fmt::Debug;
 
-use crate::traits::{CanRaiseError, ErrorRaiser};
+use cgp_error::{CanRaiseError, ErrorRaiser};
 
 pub struct DebugError;
 

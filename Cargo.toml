@@ -17,6 +17,7 @@ members = [
     "crates/cgp-field-macro",
     "crates/cgp-field-macro-lib",
     "crates/cgp-error",
+    "crates/cgp-error-extra",
     "crates/cgp-error-anyhow",
     "crates/cgp-error-eyre",
     "crates/cgp-error-std",
@@ -48,6 +49,7 @@ cgp-field                   = { path = "./crates/cgp-field" }
 cgp-field-macro             = { path = "./crates/cgp-field-macro" }
 cgp-field-macro-lib         = { path = "./crates/cgp-field-macro-lib" }
 cgp-error                   = { path = "./crates/cgp-error" }
+cgp-error-extra             = { path = "./crates/cgp-error-extra" }
 cgp-run                     = { path = "./crates/cgp-run" }
 cgp-runtime                 = { path = "./crates/cgp-runtime" }
 cgp-inner                   = { path = "./crates/cgp-inner" }

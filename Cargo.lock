@@ -88,6 +88,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "cgp-error-extra"
+version = "0.2.0"
+dependencies = [
+ "cgp-async",
+ "cgp-component",
+ "cgp-component-macro",
+ "cgp-error",
+ "cgp-type",
+]
+
+[[package]]
 name = "cgp-error-eyre"
 version = "0.2.0"
 dependencies = [
@@ -106,6 +117,7 @@ dependencies = [
 name = "cgp-extra"
 version = "0.2.0"
 dependencies = [
+ "cgp-error-extra",
  "cgp-inner",
  "cgp-run",
  "cgp-runtime",
