@@ -5,7 +5,7 @@ use quote::quote;
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::token::{Colon, Plus, Pound};
-use syn::{parse_quote, Attribute, Ident, ItemImpl, ItemTrait, TypeParamBound};
+use syn::{parse_quote, Attribute, Ident, ItemImpl, ItemTrait, ItemType, TypeParamBound};
 
 pub fn derive_type_component(stream: TokenStream) -> syn::Result<TokenStream> {
     let spec: TypeComponentSpecs = syn::parse2(stream)?;
@@ -65,7 +65,13 @@ pub fn do_derive_type_component(
 
     let provider_trait_name = Ident::new(&format!("Provide{ident}Type"), ident.span());
 
+    let alias_name = Ident::new(&format!("{ident}Of"), ident.span());
+
     let component_name = Ident::new(&format!("{ident}TypeComponent"), ident.span());
+
+    let alias_type: ItemType = parse_quote! {
+        type #alias_name <Context> = <Context as #consumer_trait_name>:: #ident;
+    };
 
     let mut consumer_trait: ItemTrait = parse_quote! {
         pub trait #consumer_trait_name {
@@ -129,6 +135,8 @@ pub fn do_derive_type_component(
         pub struct #component_name;
 
         #consumer_trait
+
+        #alias_type
 
         #provider_trait
 
