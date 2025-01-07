@@ -1,8 +1,7 @@
-use alloc::format;
-use alloc::string::String;
+use alloc::string::{String, ToString};
 use core::fmt::Display;
 
-use cgp_error::{CanRaiseError, ErrorRaiser};
+use cgp_error::{CanRaiseError, CanWrapError, ErrorRaiser, ErrorWrapper};
 
 pub struct DisplayError;
 
@@ -12,6 +11,16 @@ where
     E: Display,
 {
     fn raise_error(e: E) -> Context::Error {
-        Context::raise_error(format!("{e}"))
+        Context::raise_error(e.to_string())
+    }
+}
+
+impl<Context, Detail> ErrorWrapper<Context, Detail> for DisplayError
+where
+    Context: CanWrapError<String>,
+    Detail: Display,
+{
+    fn wrap_error(error: Context::Error, detail: Detail) -> Context::Error {
+        Context::wrap_error(error, detail.to_string())
     }
 }

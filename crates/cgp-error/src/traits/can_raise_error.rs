@@ -14,17 +14,18 @@ use crate::traits::has_error_type::HasErrorType;
 #[cgp_component {
     provider: ErrorRaiser
 }]
-pub trait CanRaiseError<E>: HasErrorType {
-    fn raise_error(e: E) -> Self::Error;
+pub trait CanRaiseError<SourceError>: HasErrorType {
+    fn raise_error(error: SourceError) -> Self::Error;
 }
 
-impl<Context, Error, Components, Delegate> ErrorRaiser<Context, Error> for UseDelegate<Components>
+impl<Context, SourceError, Components, Delegate> ErrorRaiser<Context, SourceError>
+    for UseDelegate<Components>
 where
     Context: HasErrorType,
-    Components: DelegateComponent<Error, Delegate = Delegate>,
-    Delegate: ErrorRaiser<Context, Error>,
+    Components: DelegateComponent<SourceError, Delegate = Delegate>,
+    Delegate: ErrorRaiser<Context, SourceError>,
 {
-    fn raise_error(e: Error) -> Context::Error {
+    fn raise_error(e: SourceError) -> Context::Error {
         Delegate::raise_error(e)
     }
 }

@@ -1,6 +1,7 @@
 use core::fmt::Debug;
 
-use cgp_core::error::ErrorRaiser;
+use alloc::format;
+use cgp_core::error::{ErrorRaiser, ErrorWrapper};
 use cgp_core::prelude::*;
 use eyre::{eyre, Error};
 
@@ -13,5 +14,15 @@ where
 {
     fn raise_error(e: E) -> Error {
         eyre!("{:?}", e)
+    }
+}
+
+impl<Context, Detail> ErrorWrapper<Context, Detail> for DebugEyreError
+where
+    Context: HasErrorType<Error = Error>,
+    Detail: Debug,
+{
+    fn wrap_error(error: Error, detail: Detail) -> Error {
+        error.wrap_err(format!("{detail:?}"))
     }
 }
