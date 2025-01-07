@@ -2,6 +2,12 @@
 
 ## v0.3.0 (pre-release)
 
+- Reorganize crate exports - [#53](https://github.com/contextgeneric/cgp/pull/53)
+    - Move generic error providers to the `cgp-error-extra` crate.
+    - Add an `alloc` feature to `cgp-error-extra` to enable use of `alloc` in providers.
+    - Make private the sub-modules inside CGP crates.
+    - Explicitly export module items instead of using `*`.
+
 - Move `cgp-inner` to `cgp-extra` - [#51](https://github.com/contextgeneric/cgp/pull/51)
     - Remove re-export of `cgp-inner` from `cgp-core`.
     - Re-export `cgp-inner` and `cgp-runtime` from `cgp-extra`.
