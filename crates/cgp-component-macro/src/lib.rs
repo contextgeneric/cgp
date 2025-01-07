@@ -28,6 +28,13 @@ pub fn cgp_preset(body: TokenStream) -> TokenStream {
 }
 
 #[proc_macro]
+pub fn cgp_type(body: TokenStream) -> TokenStream {
+    cgp_component_macro_lib::derive_type_component(body.into())
+        .unwrap()
+        .into()
+}
+
+#[proc_macro]
 pub fn for_each_replace(body: TokenStream) -> TokenStream {
     cgp_component_macro_lib::handle_for_each_replace(body.into())
         .unwrap()
