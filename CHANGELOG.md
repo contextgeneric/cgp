@@ -2,6 +2,12 @@
 
 ## v0.3.0 (pre-release)
 
+- Implement `ErrorWrapper` on generic `ErrorRaiser` providers - [#54](https://github.com/contextgeneric/cgp/pull/54)
+    - Implement `ErrorWrapper` for the following providers: `DebugError`, `DisplayError`,
+      `DebugAnyhowError`, `DisplayAnyhowError`, `RaiseAnyhowError`,
+      `DebugEyreError`, `DisplayEyreError`, `RaiseEyreError`,
+      `DebugBoxedStdError`, `DisplayBoxedStdError`.
+
 - Reorganize crate exports - [#53](https://github.com/contextgeneric/cgp/pull/53)
     - Move generic error providers to the `cgp-error-extra` crate.
     - Add an `alloc` feature to `cgp-error-extra` to enable use of `alloc` in providers.
