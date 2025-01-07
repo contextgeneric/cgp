@@ -1,10 +1,11 @@
 use alloc::boxed::Box;
-use alloc::format;
+use alloc::string::ToString;
 use core::fmt::Display;
 
-use cgp_core::error::{ErrorRaiser, HasErrorType};
+use cgp_core::error::{ErrorRaiser, ErrorWrapper, HasErrorType};
 
 use crate::types::{Error, StringError};
+use crate::WrapError;
 
 pub struct DisplayBoxedStdError;
 
@@ -14,6 +15,19 @@ where
     E: Display,
 {
     fn raise_error(e: E) -> Error {
-        Box::new(StringError::from(format!("{e}")))
+        Box::new(StringError::from(e.to_string()))
+    }
+}
+
+impl<Context, Detail> ErrorWrapper<Context, Detail> for DisplayBoxedStdError
+where
+    Context: HasErrorType<Error = Error>,
+    Detail: Display,
+{
+    fn wrap_error(error: Error, detail: Detail) -> Error {
+        Box::new(WrapError {
+            detail: detail.to_string(),
+            source: error,
+        })
     }
 }
