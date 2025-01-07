@@ -1,10 +1,5 @@
 #![no_std]
 
-extern crate alloc;
-
-#[allow(unused_imports)]
-use alloc::boxed::Box;
-
 use cgp_async::*;
 use cgp_component::*;
 use cgp_component_macro::*;

@@ -9,6 +9,8 @@ pub trait HasType<Tag> {
     type Type;
 }
 
+pub type TypeOf<Context, Tag> = <Context as HasType<Tag>>::Type;
+
 impl<Context, Tag> ProvideType<Context, Tag> for UseContext
 where
     Context: HasType<Tag>,

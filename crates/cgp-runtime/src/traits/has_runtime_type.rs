@@ -1,6 +1,6 @@
 use cgp_core::component::WithProvider;
 use cgp_core::prelude::*;
-use cgp_core::types::traits::ProvideType;
+use cgp_core::types::ProvideType;
 
 #[cgp_component {
     name: RuntimeTypeComponent,

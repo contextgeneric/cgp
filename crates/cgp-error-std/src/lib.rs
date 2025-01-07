@@ -2,8 +2,8 @@
 
 extern crate alloc;
 
-pub mod impls;
-pub mod types;
+mod impls;
+mod types;
 
-pub use impls::*;
-pub use types::*;
+pub use impls::{DebugBoxedStdError, DisplayBoxedStdError, RaiseBoxedStdError, UseBoxedStdError};
+pub use types::{Error, StringError};

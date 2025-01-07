@@ -1,3 +1,6 @@
-pub mod traits;
+mod traits;
 
-pub use traits::*;
+pub use traits::{
+    HasAsyncRuntimeType, HasRuntime, HasRuntimeType, ProvideRuntimeType, RuntimeGetter,
+    RuntimeGetterComponent, RuntimeOf, RuntimeTypeComponent,
+};

@@ -1,5 +1,5 @@
 #![no_std]
 
-pub mod impls;
+mod impls;
 
-pub use impls::*;
+pub use impls::{DebugEyreError, DisplayEyreError, RaiseEyreError, UseEyreError};

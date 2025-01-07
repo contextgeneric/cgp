@@ -3,7 +3,7 @@ use core::fmt::Debug;
 use cgp_async::Async;
 use cgp_component::{DelegateComponent, HasComponents, WithProvider};
 use cgp_component_macro::cgp_component;
-use cgp_type::traits::has_type::ProvideType;
+use cgp_type::ProvideType;
 
 /**
    This is used for contexts to declare that they have a _unique_ `Self::Error` type.

@@ -8,10 +8,10 @@ mod raise_from;
 mod return_error;
 
 #[cfg(feature = "alloc")]
-pub use alloc::*;
+pub use alloc::{DebugError, DisplayError};
 
-pub use discard_detail::*;
-pub use infallible::*;
-pub use panic_error::*;
-pub use raise_from::*;
-pub use return_error::*;
+pub use discard_detail::DiscardDetail;
+pub use infallible::RaiseInfallible;
+pub use panic_error::PanicOnError;
+pub use raise_from::RaiseFrom;
+pub use return_error::ReturnError;

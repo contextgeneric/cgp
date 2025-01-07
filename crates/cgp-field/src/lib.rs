@@ -1,9 +1,9 @@
 #![no_std]
 
-pub mod impls;
-pub mod traits;
-pub mod types;
+mod impls;
+mod traits;
+mod types;
 
-pub use impls::use_field;
+pub use impls::{UseField, WithField};
 pub use traits::{FieldGetter, HasField, HasFieldMut, MutFieldGetter};
 pub use types::{Char, Cons, Either, Field, Index, Nil, Void};

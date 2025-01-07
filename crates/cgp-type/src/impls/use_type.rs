@@ -2,7 +2,7 @@ use core::marker::PhantomData;
 
 use cgp_component::WithProvider;
 
-use crate::traits::has_type::ProvideType;
+use crate::traits::ProvideType;
 
 pub struct UseType<Type>(pub PhantomData<Type>);
 

@@ -1,6 +1,6 @@
-pub mod use_context;
-pub mod use_delegate;
-pub mod with_provider;
+mod use_context;
+mod use_delegate;
+mod with_provider;
 
 pub use use_context::{UseContext, WithContext};
 pub use use_delegate::UseDelegate;
