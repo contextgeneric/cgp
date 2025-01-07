@@ -70,7 +70,7 @@ pub fn do_derive_type_component(
     let component_name = Ident::new(&format!("{ident}TypeComponent"), ident.span());
 
     let alias_type: ItemType = parse_quote! {
-        type #alias_name <Context> = <Context as #consumer_trait_name>:: #ident;
+        pub type #alias_name <Context> = <Context as #consumer_trait_name>:: #ident;
     };
 
     let mut consumer_trait: ItemTrait = parse_quote! {
