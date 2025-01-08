@@ -1,0 +1,56 @@
+use alloc::string::ToString;
+use proc_macro2::TokenStream;
+use quote::quote;
+use syn::{parse_quote, Ident, ItemImpl, ItemTrait};
+
+use crate::getter_component::getter_field::GetterField;
+use crate::getter_component::symbol::symbol_from_string;
+
+pub fn derive_blanket_impl(
+    context_type: &Ident,
+    consumer_trait: &ItemTrait,
+    fields: &[GetterField],
+) -> ItemImpl {
+    let consumer_name = &consumer_trait.ident;
+
+    let mut constraints = consumer_trait.supertraits.clone();
+
+    let mut methods: TokenStream = TokenStream::new();
+
+    for field in fields {
+        let field_name = &field.field_name;
+        let provider_type = &field.provider_type;
+        let field_symbol = symbol_from_string(&field.field_name.to_string());
+
+        if field.field_mut.is_none() {
+            constraints.push(parse_quote! {
+                HasField< #field_symbol, Value = #provider_type >
+            });
+
+            methods.extend(quote! {
+                fn #field_name( context: & #context_type ) -> & #provider_type {
+                    context.get_field( ::core::marker::PhantomData::< #field_symbol > )
+                }
+            });
+        } else {
+            constraints.push(parse_quote! {
+                HasFieldMut< #field_symbol, Value = #provider_type >
+            });
+
+            methods.extend(quote! {
+                fn #field_name( context: &mut #context_type ) -> &mut #provider_type {
+                    context.get_field_mut( ::core::marker::PhantomData::< #field_symbol > )
+                }
+            });
+        }
+    }
+
+    parse_quote! {
+        impl< #context_type > #consumer_name for #context_type
+        where
+            #context_type: #constraints
+        {
+            #methods
+        }
+    }
+}

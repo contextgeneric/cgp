@@ -1,14 +1,13 @@
 use alloc::vec::Vec;
 use quote::ToTokens;
 use syn::spanned::Spanned;
-use syn::{parse_quote, Error, FnArg, ItemTrait, ReturnType, TraitItem, Type};
+use syn::{parse_quote, Error, FnArg, Ident, ItemTrait, ReturnType, TraitItem, Type};
 
-use crate::derive_component::component_spec::ComponentSpec;
 use crate::derive_component::replace_self_type::replace_self_type;
 use crate::getter_component::getter_field::GetterField;
 
 pub fn parse_getter_fields(
-    spec: &ComponentSpec,
+    context_type: &Ident,
     consumer_trait: &ItemTrait,
 ) -> syn::Result<Vec<GetterField>> {
     if !consumer_trait.generics.params.is_empty() {
@@ -120,7 +119,7 @@ pub fn parse_getter_fields(
 
                 let provider_type: Type = syn::parse2(replace_self_type(
                     field_type.to_token_stream(),
-                    &spec.context_type,
+                    context_type,
                     &Vec::new(),
                 ))?;
 

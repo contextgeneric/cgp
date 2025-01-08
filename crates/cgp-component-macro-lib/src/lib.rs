@@ -22,6 +22,6 @@ mod tests;
 pub use crate::delegate_components::delegate_components;
 pub use crate::derive_component::derive_component;
 pub use crate::for_each_replace::{handle_for_each_replace, handle_replace};
-pub use crate::getter_component::derive::derive_getter_component;
+pub use crate::getter_component::derive::{derive_auto_getter_component, derive_getter_component};
 pub use crate::preset::define_preset;
 pub use crate::type_component::derive::derive_type_component;
