@@ -10,7 +10,9 @@ use proc_macro::TokenStream;
 
 #[proc_macro_attribute]
 pub fn cgp_component(attr: TokenStream, item: TokenStream) -> TokenStream {
-    cgp_component_macro_lib::derive_component(attr.into(), item.into()).into()
+    cgp_component_macro_lib::derive_component(attr.into(), item.into())
+        .unwrap()
+        .into()
 }
 
 #[proc_macro]

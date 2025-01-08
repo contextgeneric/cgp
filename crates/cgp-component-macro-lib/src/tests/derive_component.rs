@@ -17,7 +17,8 @@ fn test_basic_derive_component() {
                 fn foo(&self) -> Self::Foo;
             }
         },
-    );
+    )
+    .unwrap();
 }
 
 #[test]
@@ -34,7 +35,8 @@ fn test_derive_component_with_const_generic() {
                 fn foo(&self) -> Self::Foo;
             }
         },
-    );
+    )
+    .unwrap();
 
     let expected = quote! {
         pub trait HasFoo<const BAR: usize> {
