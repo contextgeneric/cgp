@@ -14,16 +14,20 @@ pub fn derive_getter_component(attr: TokenStream, item: TokenStream) -> syn::Res
 
     let derived_component = derive_component_with_ast(&spec, &consumer_trait)?;
 
-    let fields = parse_getter_fields(&consumer_trait)?;
+    let _fields = parse_getter_fields(&consumer_trait)?;
 
     Ok(quote! {
         #derived_component
     })
 }
 
-pub fn parse_getter_fields(
-    consumer_trait: &ItemTrait,
-) -> syn::Result<Vec<(Ident, Type, Option<Mut>)>> {
+pub struct GetterField {
+    pub field_name: Ident,
+    pub field_type: Type,
+    pub field_mut: Option<Mut>,
+}
+
+pub fn parse_getter_fields(consumer_trait: &ItemTrait) -> syn::Result<Vec<GetterField>> {
     if !consumer_trait.generics.params.is_empty() {
         return Err(Error::new(
             consumer_trait.generics.params.span(),
@@ -73,9 +77,9 @@ pub fn parse_getter_fields(
                     ));
                 }
 
-                let method_name = signature.ident.clone();
+                let field_name = signature.ident.clone();
 
-                let return_type: Type = match &signature.output {
+                let field_type: Type = match &signature.output {
                     ReturnType::Default => parse_quote!(()),
                     ReturnType::Type(_, ty) => ty.as_ref().clone(),
                 };
@@ -92,7 +96,7 @@ pub fn parse_getter_fields(
                         )
                     })?;
 
-                let m_mut = match arg {
+                let field_mut = match arg {
                     FnArg::Receiver(receiver) => {
                         if receiver.reference.is_none() {
                             return Err(Error::new(
@@ -111,7 +115,11 @@ pub fn parse_getter_fields(
                     }
                 };
 
-                fields.push((method_name, return_type, m_mut))
+                fields.push(GetterField {
+                    field_name,
+                    field_type,
+                    field_mut,
+                })
             }
             _ => {
                 return Err(Error::new(
