@@ -20,11 +20,21 @@ pub fn derive_getter_component(attr: TokenStream, item: TokenStream) -> syn::Res
 
     let use_fields_impl = derive_use_fields_impl(&spec, &consumer_trait, &fields);
 
-    Ok(quote! {
+    let m_field: Option<[GetterField; 1]> = fields.try_into().ok();
+
+    let mut derived = quote! {
         #derived_component
 
         #use_fields_impl
-    })
+    };
+
+    if let Some([field]) = m_field {
+        let use_field_impl = derive_use_field_impl(&spec, &consumer_trait, &field);
+
+        derived.extend(use_field_impl.to_token_stream())
+    }
+
+    Ok(derived)
 }
 
 pub struct GetterField {
@@ -42,6 +52,7 @@ pub fn derive_use_fields_impl(
     let context_type = &spec.context_type;
     let provider_name = &spec.provider_name;
 
+    // FIXME: replace `Self` with `Context` inside super trait bound
     let mut constraints = consumer_trait.supertraits.clone();
 
     let mut methods: TokenStream = TokenStream::new();
@@ -84,6 +95,51 @@ pub fn derive_use_fields_impl(
     }
 }
 
+pub fn derive_use_field_impl(
+    spec: &ComponentSpec,
+    consumer_trait: &ItemTrait,
+    field: &GetterField,
+) -> ItemImpl {
+    let context_type = &spec.context_type;
+    let provider_name = &spec.provider_name;
+
+    // FIXME: replace `Self` with `Context` inside super trait bound
+    let mut constraints = consumer_trait.supertraits.clone();
+
+    let field_name = &field.field_name;
+    let provider_type = &field.provider_type;
+
+    let method = if field.field_mut.is_none() {
+        constraints.push(parse_quote! {
+            HasField< Tag, Value = #provider_type >
+        });
+
+        quote! {
+            fn #field_name( context: & #context_type ) -> & #provider_type {
+                context.get_field( ::core::marker::PhantomData )
+            }
+        }
+    } else {
+        constraints.push(parse_quote! {
+            HasFieldMut< Tag, Value = #provider_type >
+        });
+
+        quote! {
+            fn #field_name( context: &mut #context_type ) -> &mut #provider_type {
+                context.get_field_mut( ::core::marker::PhantomData )
+            }
+        }
+    };
+
+    parse_quote! {
+        impl< #context_type, Tag > #provider_name < #context_type > for UseField<Tag>
+        where
+            #context_type: #constraints
+        {
+            #method
+        }
+    }
+}
 pub fn parse_getter_fields(
     spec: &ComponentSpec,
     consumer_trait: &ItemTrait,
