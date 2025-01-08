@@ -1,6 +1,6 @@
 [package]
 name         = "cgp-error-extra"
-version      = "0.2.0"
+version      = "0.3.0"
 edition      = { workspace = true }
 license      = { workspace = true }
 repository   = { workspace = true }
@@ -16,4 +16,4 @@ default = [ "alloc" ]
 alloc = []
 
 [dependencies]
-cgp-error           = { version = "0.2.0" }
+cgp-error           = { version = "0.3.0" }
