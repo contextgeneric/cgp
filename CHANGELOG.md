@@ -1,6 +1,6 @@
 # Changelog
 
-## v0.3.0 (pre-release)
+## v0.3.0 (2025-01-08)
 
 - Introduce Accessor Component Macros - [#56](https://github.com/contextgeneric/cgp/pull/55)
     - Introduce `#[cgp_getter]` attribute macro that extends `#[cgp_component]` and implement
