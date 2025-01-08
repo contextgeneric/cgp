@@ -8,4 +8,4 @@ mod traits;
 mod types;
 
 pub use traits::{DelegateComponent, HasComponents};
-pub use types::{UseContext, UseDelegate, WithContext, WithProvider};
+pub use types::{UseContext, UseDelegate, UseFields, WithContext, WithProvider};

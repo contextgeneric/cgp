@@ -15,10 +15,14 @@ pub fn derive_getter_component(attr: TokenStream, item: TokenStream) -> syn::Res
 
     let derived_component = derive_component_with_ast(&spec, &consumer_trait)?;
 
-    let _fields = parse_getter_fields(&consumer_trait)?;
+    let fields = parse_getter_fields(&consumer_trait)?;
+
+    let use_fields_impl = derive_use_fields_impl(&consumer_trait, &spec.provider_name, &fields);
 
     Ok(quote! {
         #derived_component
+
+        #use_fields_impl
     })
 }
 
