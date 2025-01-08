@@ -1,9 +1,10 @@
+use alloc::string::ToString;
 use alloc::vec::Vec;
 use proc_macro2::TokenStream;
 use quote::quote;
 use syn::spanned::Spanned;
 use syn::token::Mut;
-use syn::{parse_quote, Error, FnArg, Ident, ItemTrait, ReturnType, TraitItem, Type};
+use syn::{parse_quote, Error, FnArg, Ident, ItemImpl, ItemTrait, ReturnType, TraitItem, Type};
 
 use crate::derive_component::component_spec::ComponentSpec;
 use crate::derive_component::derive::derive_component_with_ast;
@@ -25,6 +26,54 @@ pub struct GetterField {
     pub field_name: Ident,
     pub field_type: Type,
     pub field_mut: Option<Mut>,
+}
+
+pub fn derive_use_fields_impl(
+    consumer_trait: &ItemTrait,
+    provider_name: &Ident,
+    fields: &[GetterField],
+) -> ItemImpl {
+    let super_traits = &consumer_trait.supertraits;
+
+    let mut has_field_constraints: TokenStream = TokenStream::new();
+    let mut methods: TokenStream = TokenStream::new();
+
+    for field in fields {
+        let field_name = &field.field_name;
+        let field_type = &field.field_type;
+        let field_symbol = symbol_from_string(&field.field_name.to_string());
+
+        if field.field_mut.is_none() {
+            has_field_constraints.extend(quote! {
+                HasField< #field_symbol, Value = #field_type >
+            });
+
+            methods.extend(quote! {
+                fn #field_name( context: &Context ) -> & #field_type {
+                    context.get_field( ::core::marker::PhantomData::< #field_symbol > )
+                }
+            });
+        } else {
+            has_field_constraints.extend(quote! {
+                HasFieldMut< #field_symbol, Value = #field_type >
+            });
+
+            methods.extend(quote! {
+                fn #field_name( context: &mut Context ) -> &mut #field_type {
+                    context.get_field_mut( ::core::marker::PhantomData::< #field_symbol > )
+                }
+            });
+        }
+    }
+
+    parse_quote! {
+        impl<Context> #provider_name <Context> for UseFields
+        where
+            Context: #super_traits + #has_field_constraints
+        {
+            #methods
+        }
+    }
 }
 
 pub fn parse_getter_fields(consumer_trait: &ItemTrait) -> syn::Result<Vec<GetterField>> {
@@ -131,4 +180,12 @@ pub fn parse_getter_fields(consumer_trait: &ItemTrait) -> syn::Result<Vec<Getter
     }
 
     Ok(fields)
+}
+
+pub fn symbol_from_string(value: &str) -> Type {
+    value
+        .chars()
+        .rfold(parse_quote! { Nil }, |tail, c: char| -> Type {
+            parse_quote!( Cons< Char< #c >, #tail > )
+        })
 }
