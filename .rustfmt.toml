@@ -1,7 +1,4 @@
 max_width = 100
 reorder_imports = true
-
-# nightly only
-
-# group_imports = "StdExternalCrate"
-# imports_granularity = "Module"
+group_imports = "StdExternalCrate"
+imports_granularity = "Module"

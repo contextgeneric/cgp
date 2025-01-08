@@ -1,4 +1,5 @@
 use alloc::vec::Vec;
+
 use quote::ToTokens;
 use syn::spanned::Spanned;
 use syn::{parse_quote, Error, FnArg, Ident, ItemTrait, ReturnType, TraitItem, Type};

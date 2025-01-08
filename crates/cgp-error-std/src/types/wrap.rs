@@ -1,7 +1,6 @@
+use alloc::string::String;
 use core::error::Error as StdError;
 use core::fmt::{Debug, Display};
-
-use alloc::string::String;
 
 use crate::Error;
 

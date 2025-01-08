@@ -1,4 +1,5 @@
 use alloc::string::ToString;
+
 use proc_macro2::TokenStream;
 use quote::quote;
 use syn::{parse_quote, ItemImpl, ItemTrait};

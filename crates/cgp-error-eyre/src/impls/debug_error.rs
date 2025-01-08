@@ -1,6 +1,6 @@
+use alloc::format;
 use core::fmt::Debug;
 
-use alloc::format;
 use cgp_core::error::{ErrorRaiser, ErrorWrapper};
 use cgp_core::prelude::*;
 use eyre::{eyre, Error};
