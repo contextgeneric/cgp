@@ -11,6 +11,7 @@ use crate::HasRuntimeType;
 }]
 pub trait HasRuntime: HasRuntimeType {
     fn runtime(&self) -> &Self::Runtime;
+    // fn runtime_mut(&mut self) -> &mut Self::Runtime;
 }
 
 impl<Context, Provider, Runtime> RuntimeGetter<Context> for WithProvider<Provider>

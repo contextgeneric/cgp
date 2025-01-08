@@ -41,9 +41,9 @@ pub fn derive_use_fields_impl(
 ) -> ItemImpl {
     let context_type = &spec.context_type;
     let provider_name = &spec.provider_name;
-    let super_traits = &consumer_trait.supertraits;
 
-    let mut has_field_constraints: TokenStream = TokenStream::new();
+    let mut constraints = consumer_trait.supertraits.clone();
+
     let mut methods: TokenStream = TokenStream::new();
 
     for field in fields {
@@ -52,7 +52,7 @@ pub fn derive_use_fields_impl(
         let field_symbol = symbol_from_string(&field.field_name.to_string());
 
         if field.field_mut.is_none() {
-            has_field_constraints.extend(quote! {
+            constraints.push(parse_quote! {
                 HasField< #field_symbol, Value = #provider_type >
             });
 
@@ -62,7 +62,7 @@ pub fn derive_use_fields_impl(
                 }
             });
         } else {
-            has_field_constraints.extend(quote! {
+            constraints.push(parse_quote! {
                 HasFieldMut< #field_symbol, Value = #provider_type >
             });
 
@@ -77,7 +77,7 @@ pub fn derive_use_fields_impl(
     parse_quote! {
         impl< #context_type > #provider_name < #context_type > for UseFields
         where
-            #context_type: #super_traits + #has_field_constraints
+            #context_type: #constraints
         {
             #methods
         }
