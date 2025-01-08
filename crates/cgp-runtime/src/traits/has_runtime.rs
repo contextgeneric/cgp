@@ -6,7 +6,7 @@ use cgp_core::prelude::*;
 
 use crate::HasRuntimeType;
 
-#[cgp_component {
+#[cgp_getter {
     provider: RuntimeGetter,
 }]
 pub trait HasRuntime: HasRuntimeType {

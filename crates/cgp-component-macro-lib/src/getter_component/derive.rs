@@ -1,13 +1,14 @@
 use alloc::string::ToString;
 use alloc::vec::Vec;
 use proc_macro2::TokenStream;
-use quote::quote;
+use quote::{quote, ToTokens};
 use syn::spanned::Spanned;
 use syn::token::Mut;
 use syn::{parse_quote, Error, FnArg, Ident, ItemImpl, ItemTrait, ReturnType, TraitItem, Type};
 
 use crate::derive_component::component_spec::ComponentSpec;
 use crate::derive_component::derive::derive_component_with_ast;
+use crate::derive_component::replace_self_type::replace_self_type;
 
 pub fn derive_getter_component(attr: TokenStream, item: TokenStream) -> syn::Result<TokenStream> {
     let spec: ComponentSpec = syn::parse2(attr)?;
@@ -15,9 +16,9 @@ pub fn derive_getter_component(attr: TokenStream, item: TokenStream) -> syn::Res
 
     let derived_component = derive_component_with_ast(&spec, &consumer_trait)?;
 
-    let fields = parse_getter_fields(&consumer_trait)?;
+    let fields = parse_getter_fields(&spec, &consumer_trait)?;
 
-    let use_fields_impl = derive_use_fields_impl(&consumer_trait, &spec.provider_name, &fields);
+    let use_fields_impl = derive_use_fields_impl(&spec, &consumer_trait, &fields);
 
     Ok(quote! {
         #derived_component
@@ -29,14 +30,17 @@ pub fn derive_getter_component(attr: TokenStream, item: TokenStream) -> syn::Res
 pub struct GetterField {
     pub field_name: Ident,
     pub field_type: Type,
+    pub provider_type: Type,
     pub field_mut: Option<Mut>,
 }
 
 pub fn derive_use_fields_impl(
+    spec: &ComponentSpec,
     consumer_trait: &ItemTrait,
-    provider_name: &Ident,
     fields: &[GetterField],
 ) -> ItemImpl {
+    let context_type = &spec.context_type;
+    let provider_name = &spec.provider_name;
     let super_traits = &consumer_trait.supertraits;
 
     let mut has_field_constraints: TokenStream = TokenStream::new();
@@ -44,26 +48,26 @@ pub fn derive_use_fields_impl(
 
     for field in fields {
         let field_name = &field.field_name;
-        let field_type = &field.field_type;
+        let provider_type = &field.provider_type;
         let field_symbol = symbol_from_string(&field.field_name.to_string());
 
         if field.field_mut.is_none() {
             has_field_constraints.extend(quote! {
-                HasField< #field_symbol, Value = #field_type >
+                HasField< #field_symbol, Value = #provider_type >
             });
 
             methods.extend(quote! {
-                fn #field_name( context: &Context ) -> & #field_type {
+                fn #field_name( context: & #context_type ) -> & #provider_type {
                     context.get_field( ::core::marker::PhantomData::< #field_symbol > )
                 }
             });
         } else {
             has_field_constraints.extend(quote! {
-                HasFieldMut< #field_symbol, Value = #field_type >
+                HasFieldMut< #field_symbol, Value = #provider_type >
             });
 
             methods.extend(quote! {
-                fn #field_name( context: &mut Context ) -> &mut #field_type {
+                fn #field_name( context: &mut #context_type ) -> &mut #provider_type {
                     context.get_field_mut( ::core::marker::PhantomData::< #field_symbol > )
                 }
             });
@@ -71,16 +75,19 @@ pub fn derive_use_fields_impl(
     }
 
     parse_quote! {
-        impl<Context> #provider_name <Context> for UseFields
+        impl< #context_type > #provider_name < #context_type > for UseFields
         where
-            Context: #super_traits + #has_field_constraints
+            #context_type: #super_traits + #has_field_constraints
         {
             #methods
         }
     }
 }
 
-pub fn parse_getter_fields(consumer_trait: &ItemTrait) -> syn::Result<Vec<GetterField>> {
+pub fn parse_getter_fields(
+    spec: &ComponentSpec,
+    consumer_trait: &ItemTrait,
+) -> syn::Result<Vec<GetterField>> {
     if !consumer_trait.generics.params.is_empty() {
         return Err(Error::new(
             consumer_trait.generics.params.span(),
@@ -188,9 +195,16 @@ pub fn parse_getter_fields(consumer_trait: &ItemTrait) -> syn::Result<Vec<Getter
                     }
                 };
 
+                let provider_type: Type = syn::parse2(replace_self_type(
+                    field_type.to_token_stream(),
+                    &spec.context_type,
+                    &Vec::new(),
+                ))?;
+
                 fields.push(GetterField {
                     field_name,
                     field_type,
+                    provider_type,
                     field_mut,
                 })
             }
