@@ -128,11 +128,6 @@ pub fn parse_getter_fields(consumer_trait: &ItemTrait) -> syn::Result<Vec<Getter
 
                 let field_name = signature.ident.clone();
 
-                let field_type: Type = match &signature.output {
-                    ReturnType::Default => parse_quote!(()),
-                    ReturnType::Type(_, ty) => ty.as_ref().clone(),
-                };
-
                 let [arg]: [&FnArg; 1] = signature
                     .inputs
                     .iter()
@@ -161,6 +156,31 @@ pub fn parse_getter_fields(consumer_trait: &ItemTrait) -> syn::Result<Vec<Getter
                             arg.span(),
                             "first argument to getter method must be `&self`",
                         ))
+                    }
+                };
+
+                let field_type: Type = match &signature.output {
+                    ReturnType::Default => parse_quote!(()),
+                    ReturnType::Type(_, ty) => {
+                        let ty = ty.as_ref().clone();
+                        match &ty {
+                            Type::Reference(type_ref) => {
+                                if type_ref.mutability.is_some() != field_mut.is_some() {
+                                    return Err(Error::new(
+                                        type_ref.span(),
+                                        "return type have the same mutability as the self reference",
+                                    ));
+                                }
+
+                                type_ref.elem.as_ref().clone()
+                            }
+                            _ => {
+                                return Err(Error::new(
+                                    ty.span(),
+                                    "return type must be a reference",
+                                ))
+                            }
+                        }
                     }
                 };
 
