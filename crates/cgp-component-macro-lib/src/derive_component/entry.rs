@@ -1,5 +1,6 @@
 use alloc::collections::BTreeMap;
 
+use alloc::string::{String, ToString};
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::token::{Colon, Comma};
@@ -21,15 +22,18 @@ impl Parse for Entry {
 }
 
 pub struct Entries {
-    pub entries: BTreeMap<Ident, Type>,
+    pub entries: BTreeMap<String, Type>,
 }
 
 impl Parse for Entries {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let entry_list: Punctuated<Entry, Comma> = Punctuated::parse_terminated(input)?;
 
-        let entries =
-            BTreeMap::from_iter(entry_list.into_iter().map(|entry| (entry.key, entry.value)));
+        let entries = BTreeMap::from_iter(
+            entry_list
+                .into_iter()
+                .map(|entry| (entry.key.to_string(), entry.value)),
+        );
 
         Ok(Entries { entries })
     }

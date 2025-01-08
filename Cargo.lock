@@ -43,6 +43,7 @@ name = "cgp-component-macro"
 version = "0.2.0"
 dependencies = [
  "cgp-component-macro-lib",
+ "syn",
 ]
 
 [[package]]

@@ -21,12 +21,18 @@ pub struct ComponentNameSpec {
     pub component_params: Punctuated<Ident, Comma>,
 }
 
+static VALID_KEYS: [&'static str; 3] = ["context", "provider", "name"];
+
 impl Parse for ComponentSpec {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let Entries { entries } = input.parse()?;
 
+        for key in entries.keys() {
+            if !VALID_KEYS.iter().any(|valid| valid == key) {}
+        }
+
         let context_type: Ident = {
-            let raw_context_type = entries.get(&Ident::new("context", Span::call_site()));
+            let raw_context_type = entries.get("context");
 
             if let Some(context_type) = raw_context_type {
                 syn::parse2(context_type.to_token_stream())?
@@ -37,14 +43,14 @@ impl Parse for ComponentSpec {
 
         let provider_name: Ident = {
             let raw_provider_name = entries
-                .get(&Ident::new("provider", Span::call_site()))
+                .get("provider")
                 .ok_or_else(|| Error::new(input.span(), "expect provider name to be given"))?;
 
             syn::parse2(raw_provider_name.to_token_stream())?
         };
 
         let (component_name, component_params) = {
-            let raw_component_name = entries.get(&Ident::new("name", Span::call_site()));
+            let raw_component_name = entries.get("name");
 
             if let Some(raw_component_name) = raw_component_name {
                 let ComponentNameSpec {
