@@ -21,7 +21,7 @@ pub struct ComponentNameSpec {
     pub component_params: Punctuated<Ident, Comma>,
 }
 
-static VALID_KEYS: [&'static str; 3] = ["context", "provider", "name"];
+static VALID_KEYS: [&str; 3] = ["context", "provider", "name"];
 
 impl Parse for ComponentSpec {
     fn parse(input: ParseStream) -> syn::Result<Self> {
