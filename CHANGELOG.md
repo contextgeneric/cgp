@@ -2,6 +2,12 @@
 
 ## v0.3.0 (pre-release)
 
+- Introduce Accessor Component Macros - [#56](https://github.com/contextgeneric/cgp/pull/55)
+    - Introduce `#[cgp_getter]` attribute macro that extends `#[cgp_component]` and implement
+      `UseFields` and `UseField` for accessor traits.
+    - Introduce `#[cgp_auto_getter]` attribute macro for deriving accessor traits with
+      blanket implementations that use `HasField` directly.
+
 - Introduce `cgp_type!` macro for defining simple abstract CGP types - [#55](https://github.com/contextgeneric/cgp/pull/55)
     - Use `cgp_type!` to derive `HasErrorType` and `HasRuntimeType`.
 
