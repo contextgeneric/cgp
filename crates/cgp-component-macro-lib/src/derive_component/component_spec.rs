@@ -28,7 +28,14 @@ impl Parse for ComponentSpec {
         let Entries { entries } = input.parse()?;
 
         for key in entries.keys() {
-            if !VALID_KEYS.iter().any(|valid| valid == key) {}
+            if !VALID_KEYS.iter().any(|valid| valid == key) {
+                return Err(syn::Error::new(
+                    Span::call_site(),
+                    format!(
+                        r#"invalid key in component spec: {key}. the following keys are valid: "context", "provider", "name"."#
+                    ),
+                ));
+            }
         }
 
         let context_type: Ident = {
