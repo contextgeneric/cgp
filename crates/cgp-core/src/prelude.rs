@@ -5,6 +5,8 @@ pub use cgp_component_macro::{
     replace_with,
 };
 pub use cgp_error::{CanRaiseError, CanWrapError, HasErrorType};
-pub use cgp_field::{Char, Cons, Either, HasField, HasFieldMut, Nil, UseField, Void};
+pub use cgp_field::{
+    Char, Cons, Either, FieldGetter, HasField, HasFieldMut, MutFieldGetter, Nil, UseField, Void,
+};
 pub use cgp_field_macro::{product, symbol, HasField, Product, Sum};
 pub use cgp_type::{HasType, ProvideType, UseType};
