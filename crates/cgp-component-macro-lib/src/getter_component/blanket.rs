@@ -28,8 +28,8 @@ pub fn derive_blanket_impl(
             });
 
             methods.extend(quote! {
-                fn #field_name( context: & #context_type ) -> & #provider_type {
-                    context.get_field( ::core::marker::PhantomData::< #field_symbol > )
+                fn #field_name( &self ) -> & #provider_type {
+                    self.get_field( ::core::marker::PhantomData::< #field_symbol > )
                 }
             });
         } else {
@@ -38,8 +38,8 @@ pub fn derive_blanket_impl(
             });
 
             methods.extend(quote! {
-                fn #field_name( context: &mut #context_type ) -> &mut #provider_type {
-                    context.get_field_mut( ::core::marker::PhantomData::< #field_symbol > )
+                fn #field_name( &mut self ) -> &mut #provider_type {
+                    self.get_field_mut( ::core::marker::PhantomData::< #field_symbol > )
                 }
             });
         }
