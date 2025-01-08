@@ -12,12 +12,12 @@ pub fn derive_component(attr: TokenStream, item: TokenStream) -> syn::Result<Tok
     let spec: ComponentSpec = syn::parse2(attr)?;
     let consumer_trait: ItemTrait = syn::parse2(item)?;
 
-    derive_component_with_ast(spec, consumer_trait)
+    derive_component_with_ast(&spec, &consumer_trait)
 }
 
 pub fn derive_component_with_ast(
-    spec: ComponentSpec,
-    consumer_trait: ItemTrait,
+    spec: &ComponentSpec,
+    consumer_trait: &ItemTrait,
 ) -> syn::Result<TokenStream> {
     let provider_name = &spec.provider_name;
     let context_type = &spec.context_type;
