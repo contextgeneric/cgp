@@ -4,7 +4,7 @@ pub use cgp_component_macro::{
     cgp_auto_getter, cgp_component, cgp_getter, cgp_preset, cgp_type, delegate_components,
     for_each_replace, replace_with,
 };
-pub use cgp_error::{CanRaiseError, CanWrapError, HasErrorType};
+pub use cgp_error::{CanRaiseError, CanWrapError, HasAsyncErrorType, HasErrorType};
 pub use cgp_field::{
     Char, Cons, Either, FieldGetter, HasField, HasFieldMut, MutFieldGetter, Nil, UseField, Void,
 };
