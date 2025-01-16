@@ -1,6 +1,6 @@
 [workspace]
 
-resolver = "2"
+resolver = "3"
 
 members = [
     "crates/cgp",
@@ -27,7 +27,7 @@ members = [
 ]
 
 [workspace.package]
-rust-version    = "1.83"
+rust-version    = "1.84"
 edition         = "2021"
 license         = "Apache-2.0"
 repository      = "https://github.com/contextgeneric/cgp"
