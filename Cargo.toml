@@ -27,7 +27,7 @@ members = [
 ]
 
 [workspace.package]
-rust-version    = "1.84"
+rust-version    = "1.81"
 edition         = "2021"
 license         = "Apache-2.0"
 repository      = "https://github.com/contextgeneric/cgp"
