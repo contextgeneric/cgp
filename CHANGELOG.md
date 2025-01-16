@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.3.1 (2025-01-16)
+
+-  Add `HasAsyncErrorType` to prelude - [#59](https://github.com/contextgeneric/cgp/pull/59)
+
+- Add `CanRaiseAsyncError` and `CanWrapAsyncError` to `cgp-error` and prelude - [#60](https://github.com/contextgeneric/cgp/pull/60)
+
+
 ## v0.3.0 (2025-01-08)
 
 - Introduce Accessor Component Macros - [#56](https://github.com/contextgeneric/cgp/pull/55)
