@@ -1,8 +1,12 @@
 use proc_macro2::{Span, TokenStream};
 use quote::quote;
+use syn::punctuated::Punctuated;
 use syn::spanned::Spanned;
-use syn::token::For;
-use syn::{parse_quote, Error, GenericArgument, ItemImpl, Path, PathArguments, Type};
+use syn::token::{Comma, For};
+use syn::{
+    parse_quote, AngleBracketedGenericArguments, Error, GenericArgument, ItemImpl, Path,
+    PathArguments, Type,
+};
 
 pub fn derive_provider(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
     let component_name: Type = syn::parse2(attr)?;
@@ -42,15 +46,20 @@ pub fn derive_is_provider_for(
             )
         })?;
 
-    let is_provider_generics = match &provider_path.arguments {
+    let is_provider_generics: AngleBracketedGenericArguments = match &provider_path.arguments {
         PathArguments::AngleBracketed(generics) => {
-            let mut generics = generics.clone();
+            let mut generic_args = generics.clone().args.into_iter();
 
-            generics
-                .args
-                .insert(0, GenericArgument::Type(component_name.clone()));
+            let context_arg = generic_args.next().ok_or_else(|| {
+                Error::new(
+                    provider_impl.span(),
+                    "provider impl should contain trait path containing at least one generic parameter",
+                )
+            })?;
 
-            generics
+            let rest: Punctuated<GenericArgument, Comma> = generic_args.collect();
+
+            parse_quote!( < #component_name, #context_arg, ( #rest ) > )
         }
         _ => {
             return Err(Error::new(

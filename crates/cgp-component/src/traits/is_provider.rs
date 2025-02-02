@@ -1,1 +1,4 @@
-pub trait IsProviderFor<Component, Context, Params = ()> {}
+// #[diagnostic::on_unimplemented(
+//     message = "You need to add `#[cgp_provider({Component})]` on the impl block for CGP provider traits"
+// )]
+pub trait IsProviderFor<Component, Context, Params> {}

@@ -23,7 +23,7 @@ fn test_derive_is_provider_for() -> syn::Result<()> {
     .to_token_stream();
 
     let expected = quote! {
-        impl<Context: Async, Bar: Async> IsProviderFor<FooComponent, Context, Bar, Baz> for UseFoo
+        impl<Context: Async, Bar: Async> IsProviderFor<FooComponent, Context, (Bar, Baz)> for UseFoo
         where
                 Context: HasFooType,
                 Bar: HasBarType,
