@@ -9,15 +9,18 @@
 
 extern crate alloc;
 
-pub mod delegate_components;
-pub mod derive_component;
-pub mod for_each_replace;
-pub mod getter_component;
-pub mod preset;
-pub mod type_component;
+mod delegate_components;
+mod derive_component;
+mod derive_provider;
+mod for_each_replace;
+mod getter_component;
+mod preset;
+mod type_component;
 
 #[cfg(test)]
 mod tests;
+
+pub use derive_provider::derive_provider;
 
 pub use crate::delegate_components::delegate_components;
 pub use crate::derive_component::derive_component;

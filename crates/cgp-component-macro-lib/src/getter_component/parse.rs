@@ -126,7 +126,6 @@ pub fn parse_getter_fields(
 
                 fields.push(GetterField {
                     field_name,
-                    field_type,
                     provider_type,
                     field_mut,
                 })
