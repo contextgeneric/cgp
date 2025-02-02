@@ -1,7 +1,8 @@
 use core::marker::PhantomData;
 
-use cgp_component::WithProvider;
-use cgp_type::ProvideType;
+use cgp_component::{IsProviderFor, WithProvider};
+use cgp_component_macro::cgp_provider;
+use cgp_type::{ProvideType, TypeComponent};
 
 use crate::traits::{FieldGetter, HasField, HasFieldMut, MutFieldGetter};
 
@@ -9,6 +10,7 @@ pub struct UseField<Tag>(pub PhantomData<Tag>);
 
 pub type WithField<Tag> = WithProvider<UseField<Tag>>;
 
+#[cgp_provider(TypeComponent)]
 impl<Context, TypeTag, FieldTag, Field> ProvideType<Context, TypeTag> for UseField<FieldTag>
 where
     Context: HasField<FieldTag, Value = Field>,

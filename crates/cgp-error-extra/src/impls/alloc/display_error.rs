@@ -1,10 +1,15 @@
 use alloc::string::{String, ToString};
 use core::fmt::Display;
 
-use cgp_error::{CanRaiseError, CanWrapError, ErrorRaiser, ErrorWrapper};
+use cgp_core::error::{
+    CanRaiseError, CanWrapError, ErrorRaiser, ErrorRaiserComponent, ErrorWrapper,
+    ErrorWrapperComponent,
+};
+use cgp_core::prelude::*;
 
 pub struct DisplayError;
 
+#[cgp_provider(ErrorRaiserComponent)]
 impl<Context, E> ErrorRaiser<Context, E> for DisplayError
 where
     Context: CanRaiseError<String>,
@@ -15,6 +20,7 @@ where
     }
 }
 
+#[cgp_provider(ErrorWrapperComponent)]
 impl<Context, Detail> ErrorWrapper<Context, Detail> for DisplayError
 where
     Context: CanWrapError<String>,

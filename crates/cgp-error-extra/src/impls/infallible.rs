@@ -1,9 +1,11 @@
 use core::convert::Infallible;
 
-use cgp_error::{ErrorRaiser, HasErrorType};
+use cgp_core::error::{ErrorRaiser, ErrorRaiserComponent, HasErrorType};
+use cgp_core::prelude::*;
 
 pub struct RaiseInfallible;
 
+#[cgp_provider(ErrorRaiserComponent)]
 impl<Context> ErrorRaiser<Context, Infallible> for RaiseInfallible
 where
     Context: HasErrorType,

@@ -1,9 +1,10 @@
 use proc_macro2::{Span, TokenStream};
 use quote::quote;
-use syn::{Error, Ident, ItemTrait};
+use syn::{parse_quote, Error, Ident, ItemTrait};
 
 use crate::derive_component::component_spec::ComponentSpec;
 use crate::derive_component::derive::derive_component_with_ast;
+use crate::derive_provider::derive_is_provider_for;
 use crate::getter_component::blanket::derive_blanket_impl;
 use crate::getter_component::getter_field::GetterField;
 use crate::getter_component::parse::parse_getter_fields;
@@ -21,20 +22,37 @@ pub fn derive_getter_component(attr: TokenStream, body: TokenStream) -> syn::Res
 
     let use_fields_impl = derive_use_fields_impl(&spec, &consumer_trait, &fields);
 
+    let component_name = &spec.component_name;
+
+    let is_provider_use_fields_impl =
+        derive_is_provider_for(&parse_quote!(#component_name), &use_fields_impl)?;
+
     let m_field: Option<[GetterField; 1]> = fields.try_into().ok();
 
     let mut derived = quote! {
         #derived_component
 
         #use_fields_impl
+
+        #is_provider_use_fields_impl
     };
 
     if let Some([field]) = m_field {
         let use_field_impl = derive_use_field_impl(&spec, &consumer_trait, &field);
-        let use_provider_impl = derive_with_provider_impl(&spec, &consumer_trait, &field);
+        let is_provider_use_field_impl =
+            derive_is_provider_for(&parse_quote!(#component_name), &use_field_impl)?;
 
-        derived.extend(use_field_impl);
-        derived.extend(use_provider_impl);
+        let use_provider_impl = derive_with_provider_impl(&spec, &consumer_trait, &field);
+        let is_provider_use_provider_impl =
+            derive_is_provider_for(&parse_quote!(#component_name), &use_provider_impl)?;
+
+        derived.extend(quote! {
+            #use_field_impl
+            #is_provider_use_field_impl
+
+            #use_provider_impl
+            #is_provider_use_provider_impl
+        });
     }
 
     Ok(derived)

@@ -1,7 +1,9 @@
-use cgp_error::{ErrorRaiser, HasErrorType};
+use cgp_core::error::{ErrorRaiser, ErrorRaiserComponent, HasErrorType};
+use cgp_core::prelude::*;
 
 pub struct RaiseFrom;
 
+#[cgp_provider(ErrorRaiserComponent)]
 impl<Context, E> ErrorRaiser<Context, E> for RaiseFrom
 where
     Context: HasErrorType,

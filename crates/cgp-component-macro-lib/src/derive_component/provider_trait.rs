@@ -1,14 +1,18 @@
 use alloc::vec::Vec;
 
 use syn::punctuated::Punctuated;
+use syn::token::Comma;
 use syn::{parse_quote, Ident, ItemTrait, TraitItem};
 
+use crate::derive_component::generic_args::extract_generic_args;
 use crate::derive_component::replace_self_receiver::replace_self_receiver;
 use crate::derive_component::replace_self_type::{
     iter_parse_and_replace_self_type, parse_and_replace_self_type,
 };
 
 pub fn derive_provider_trait(
+    component_name: &Ident,
+    component_params: &Punctuated<Ident, Comma>,
     consumer_trait: &ItemTrait,
     provider_name: &Ident,
     context_type: &Ident,
@@ -45,7 +49,13 @@ pub fn derive_provider_trait(
             &local_assoc_types,
         )?;
 
-        provider_trait.supertraits = Punctuated::default();
+        {
+            let is_provider_params = extract_generic_args(&consumer_trait.generics.params);
+
+            provider_trait.supertraits = parse_quote!(
+                IsProviderFor< #component_name < #component_params >, #context_type, ( #is_provider_params ) >
+            );
+        }
 
         if !context_constraints.is_empty() {
             match &mut provider_trait.generics.where_clause {

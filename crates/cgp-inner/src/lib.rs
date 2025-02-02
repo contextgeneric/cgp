@@ -1,6 +1,6 @@
 #![no_std]
 
-use cgp_component::{DelegateComponent, HasComponents};
+use cgp_component::{DelegateComponent, HasComponents, IsProviderFor};
 use cgp_component_macro::cgp_component;
 
 #[cgp_component {

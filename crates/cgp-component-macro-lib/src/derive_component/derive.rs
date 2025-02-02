@@ -25,11 +25,19 @@ pub fn derive_component_with_ast(
     let component_struct =
         derive_component_name_struct(&spec.component_name, &spec.component_params);
 
-    let provider_trait = derive_provider_trait(consumer_trait, provider_name, context_type)?;
+    let provider_trait = derive_provider_trait(
+        &spec.component_name,
+        &spec.component_params,
+        consumer_trait,
+        provider_name,
+        context_type,
+    )?;
 
     let consumer_impl = derive_consumer_impl(consumer_trait, provider_name, context_type);
 
     let provider_impl = derive_provider_impl(
+        context_type,
+        consumer_trait,
         &provider_trait,
         &spec.component_name,
         &spec.component_params,

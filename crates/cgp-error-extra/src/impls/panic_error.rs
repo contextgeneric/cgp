@@ -1,9 +1,11 @@
 use core::fmt::Debug;
 
-use cgp_error::{ErrorRaiser, HasErrorType};
+use cgp_core::error::{ErrorRaiser, ErrorRaiserComponent, HasErrorType};
+use cgp_core::prelude::*;
 
 pub struct PanicOnError;
 
+#[cgp_provider(ErrorRaiserComponent)]
 impl<Context, E> ErrorRaiser<Context, E> for PanicOnError
 where
     Context: HasErrorType,

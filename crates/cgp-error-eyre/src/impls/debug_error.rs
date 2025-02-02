@@ -1,12 +1,13 @@
 use alloc::format;
 use core::fmt::Debug;
 
-use cgp_core::error::{ErrorRaiser, ErrorWrapper};
+use cgp_core::error::{ErrorRaiser, ErrorRaiserComponent, ErrorWrapper, ErrorWrapperComponent};
 use cgp_core::prelude::*;
 use eyre::{eyre, Error};
 
 pub struct DebugEyreError;
 
+#[cgp_provider(ErrorRaiserComponent)]
 impl<Context, E> ErrorRaiser<Context, E> for DebugEyreError
 where
     Context: HasErrorType<Error = Error>,
@@ -17,6 +18,7 @@ where
     }
 }
 
+#[cgp_provider(ErrorWrapperComponent)]
 impl<Context, Detail> ErrorWrapper<Context, Detail> for DebugEyreError
 where
     Context: HasErrorType<Error = Error>,

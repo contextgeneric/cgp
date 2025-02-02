@@ -5,6 +5,7 @@ pub mod delegate_fn;
 pub mod delegate_type;
 pub mod derive;
 pub mod entry;
+pub mod generic_args;
 pub mod provider_impl;
 pub mod provider_trait;
 pub mod replace_self_receiver;

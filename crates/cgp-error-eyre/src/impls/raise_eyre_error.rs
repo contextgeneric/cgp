@@ -1,12 +1,13 @@
 use core::error::Error as StdError;
 use core::fmt::Display;
 
-use cgp_core::error::{ErrorRaiser, ErrorWrapper};
+use cgp_core::error::{ErrorRaiser, ErrorRaiserComponent, ErrorWrapper, ErrorWrapperComponent};
 use cgp_core::prelude::*;
 use eyre::Error;
 
 pub struct RaiseEyreError;
 
+#[cgp_provider(ErrorRaiserComponent)]
 impl<Context, E> ErrorRaiser<Context, E> for RaiseEyreError
 where
     Context: HasErrorType<Error = Error>,
@@ -17,6 +18,7 @@ where
     }
 }
 
+#[cgp_provider(ErrorWrapperComponent)]
 impl<Context, Detail> ErrorWrapper<Context, Detail> for RaiseEyreError
 where
     Context: HasErrorType<Error = Error>,

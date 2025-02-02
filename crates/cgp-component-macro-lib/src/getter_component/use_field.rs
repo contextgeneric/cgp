@@ -1,4 +1,3 @@
-use proc_macro2::TokenStream;
 use quote::quote;
 use syn::{parse_quote, ItemImpl, ItemTrait};
 
@@ -9,7 +8,7 @@ pub fn derive_use_field_impl(
     spec: &ComponentSpec,
     consumer_trait: &ItemTrait,
     field: &GetterField,
-) -> TokenStream {
+) -> ItemImpl {
     let context_type = &spec.context_type;
     let provider_name = &spec.provider_name;
 
@@ -50,7 +49,5 @@ pub fn derive_use_field_impl(
         }
     };
 
-    quote! {
-        #use_field_impl
-    }
+    use_field_impl
 }

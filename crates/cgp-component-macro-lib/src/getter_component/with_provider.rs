@@ -1,6 +1,5 @@
-use proc_macro2::TokenStream;
 use quote::quote;
-use syn::ItemTrait;
+use syn::{parse_quote, ItemImpl, ItemTrait};
 
 use crate::derive_component::component_spec::ComponentSpec;
 use crate::getter_component::getter_field::GetterField;
@@ -9,7 +8,7 @@ pub fn derive_with_provider_impl(
     spec: &ComponentSpec,
     consumer_trait: &ItemTrait,
     field: &GetterField,
-) -> TokenStream {
+) -> ItemImpl {
     let component_name = &spec.component_name;
     let context_type = &spec.context_type;
     let provider_name = &spec.provider_name;
@@ -44,7 +43,7 @@ pub fn derive_with_provider_impl(
         }
     };
 
-    quote! {
+    parse_quote! {
         impl< #context_type, Provider > #provider_name < #context_type > for WithProvider<Provider>
         where
             #context_type: #context_constraints,

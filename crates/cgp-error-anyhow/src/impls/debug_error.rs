@@ -2,11 +2,12 @@ use alloc::format;
 use core::fmt::Debug;
 
 use anyhow::{anyhow, Error};
-use cgp_core::error::{ErrorRaiser, ErrorWrapper};
+use cgp_core::error::{ErrorRaiser, ErrorRaiserComponent, ErrorWrapper, ErrorWrapperComponent};
 use cgp_core::prelude::*;
 
 pub struct DebugAnyhowError;
 
+#[cgp_provider(ErrorRaiserComponent)]
 impl<Context, E> ErrorRaiser<Context, E> for DebugAnyhowError
 where
     Context: HasErrorType<Error = Error>,
@@ -17,6 +18,7 @@ where
     }
 }
 
+#[cgp_provider(ErrorWrapperComponent)]
 impl<Context, Detail> ErrorWrapper<Context, Detail> for DebugAnyhowError
 where
     Context: HasErrorType<Error = Error>,

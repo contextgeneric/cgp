@@ -16,4 +16,4 @@ default = [ "alloc" ]
 alloc = []
 
 [dependencies]
-cgp-error           = { version = "0.3.0" }
+cgp-core    = { version = "0.3.0", default-features = false }

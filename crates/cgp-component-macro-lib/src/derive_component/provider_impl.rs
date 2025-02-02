@@ -11,8 +11,11 @@ use syn::{
 
 use crate::derive_component::delegate_fn::derive_delegated_fn_impl;
 use crate::derive_component::delegate_type::derive_delegate_type_impl;
+use crate::derive_component::generic_args::extract_generic_args;
 
 pub fn derive_provider_impl(
+    context_type: &Ident,
+    consumer_trait: &ItemTrait,
     provider_trait: &ItemTrait,
     component_name: &Ident,
     component_params: &Punctuated<Ident, Comma>,
@@ -21,25 +24,7 @@ pub fn derive_provider_impl(
 
     let component_type = Ident::new("Component", Span::call_site());
 
-    let provider_generic_args = {
-        let mut generic_args: Punctuated<Ident, Comma> = Punctuated::new();
-
-        for param in provider_trait.generics.params.iter() {
-            match param {
-                GenericParam::Type(ty) => {
-                    generic_args.push(ty.ident.clone());
-                }
-                GenericParam::Const(arg) => {
-                    generic_args.push(arg.ident.clone());
-                }
-                GenericParam::Lifetime(_life) => {
-                    unimplemented!()
-                }
-            }
-        }
-
-        generic_args
-    };
+    let provider_generic_args = extract_generic_args(&provider_trait.generics.params);
 
     let impl_generics = {
         let mut impl_generics = provider_trait.generics.clone();
@@ -49,8 +34,11 @@ pub fn derive_provider_impl(
             .insert(0, parse_quote!(#component_type));
 
         {
+            let is_provider_params = extract_generic_args(&consumer_trait.generics.params);
+
             let delegate_constraint: Punctuated<TypeParamBound, Plus> = parse_quote! {
                 DelegateComponent< #component_name < #component_params > >
+                + IsProviderFor< #component_name < #component_params >, #context_type, ( #is_provider_params ) >
             };
 
             let provider_constraint: Punctuated<TypeParamBound, Plus> = parse_quote! {
@@ -83,7 +71,7 @@ pub fn derive_provider_impl(
     let mut impl_items: Vec<ImplItem> = Vec::new();
 
     for trait_item in provider_trait.items.iter() {
-        match trait_item {
+        match &trait_item {
             TraitItem::Fn(trait_fn) => {
                 let impl_fn = derive_delegated_fn_impl(
                     &trait_fn.sig,
