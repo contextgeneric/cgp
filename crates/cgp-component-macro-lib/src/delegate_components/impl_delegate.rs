@@ -46,9 +46,9 @@ pub fn impl_delegate_component(
         generics.params.push(parse_quote!(__Params__));
 
         let where_clause = generics.make_where_clause();
-        where_clause
-            .predicates
-            .push(parse_quote!( #source : IsProvider< #component_type, __Context__, __Params__ > ));
+        where_clause.predicates.push(
+            parse_quote!( #source : IsProviderFor< #component_type, __Context__, __Params__ > ),
+        );
 
         generics
     };
@@ -66,7 +66,7 @@ pub fn impl_delegate_component(
     };
 
     let is_provider_trait_path: Path =
-        parse_quote!( IsProvider< #component_type, __Context__, __Params__ > );
+        parse_quote!( IsProviderFor< #component_type, __Context__, __Params__ > );
 
     let is_provider_impl = ItemImpl {
         attrs: Vec::new(),

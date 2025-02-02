@@ -25,27 +25,27 @@ fn test_basic_define_preset() {
             type Delegate = BazAComponents;
         }
 
-        impl<__Context__, __Params__> IsProvider<BarAComponent, __Context__, __Params__> for FooPreset
+        impl<__Context__, __Params__> IsProviderFor<BarAComponent, __Context__, __Params__> for FooPreset
         where
-            BazAComponents: IsProvider<BarAComponent, __Context__, __Params__>,
+            BazAComponents: IsProviderFor<BarAComponent, __Context__, __Params__>,
         {}
 
         impl DelegateComponent<BarBComponent> for FooPreset {
             type Delegate = BazAComponents;
         }
 
-        impl<__Context__, __Params__> IsProvider<BarBComponent, __Context__, __Params__> for FooPreset
+        impl<__Context__, __Params__> IsProviderFor<BarBComponent, __Context__, __Params__> for FooPreset
         where
-            BazAComponents: IsProvider<BarBComponent, __Context__, __Params__>,
+            BazAComponents: IsProviderFor<BarBComponent, __Context__, __Params__>,
         {}
 
         impl DelegateComponent<BarCComponent> for FooPreset {
             type Delegate = BazBComponents;
         }
 
-        impl<__Context__, __Params__> IsProvider<BarCComponent, __Context__, __Params__> for FooPreset
+        impl<__Context__, __Params__> IsProviderFor<BarCComponent, __Context__, __Params__> for FooPreset
         where
-            BazBComponents: IsProvider<BarCComponent, __Context__, __Params__>,
+            BazBComponents: IsProviderFor<BarCComponent, __Context__, __Params__>,
         {}
 
         impl<T> IsFooPreset<BarAComponent> for T {}
@@ -114,10 +114,10 @@ fn test_define_preset_containing_generics() {
         }
 
         impl<'a, FooParamA, FooParamB: FooConstraint, __Context__, __Params__>
-            IsProvider<BarComponentA, __Context__, __Params__>
+            IsProviderFor<BarComponentA, __Context__, __Params__>
             for FooPreset<'a, FooParamA, FooParamB>
         where
-            BazComponentsA<FooParamA>: IsProvider<BarComponentA, __Context__, __Params__>,
+            BazComponentsA<FooParamA>: IsProviderFor<BarComponentA, __Context__, __Params__>,
         {}
 
         impl<'a, FooParamA, FooParamB: FooConstraint> DelegateComponent<BarComponentB<'a>>
@@ -127,10 +127,10 @@ fn test_define_preset_containing_generics() {
         }
 
         impl<'a, FooParamA, FooParamB: FooConstraint, __Context__, __Params__>
-            IsProvider<BarComponentB<'a>, __Context__, __Params__>
+            IsProviderFor<BarComponentB<'a>, __Context__, __Params__>
             for FooPreset<'a, FooParamA, FooParamB>
         where
-            BazComponentsB: IsProvider<BarComponentB<'a>, __Context__, __Params__>,
+            BazComponentsB: IsProviderFor<BarComponentB<'a>, __Context__, __Params__>,
         {}
 
         impl<'a, FooParamA, FooParamB: FooConstraint> DelegateComponent<BarComponentC<FooParamB>>
@@ -140,10 +140,10 @@ fn test_define_preset_containing_generics() {
         }
 
         impl<'a, FooParamA, FooParamB: FooConstraint, __Context__, __Params__>
-            IsProvider<BarComponentC<FooParamB>, __Context__, __Params__>
+            IsProviderFor<BarComponentC<FooParamB>, __Context__, __Params__>
             for FooPreset<'a, FooParamA, FooParamB>
         where
-            BazComponentsB: IsProvider<BarComponentC<FooParamB>, __Context__, __Params__>,
+            BazComponentsB: IsProviderFor<BarComponentC<FooParamB>, __Context__, __Params__>,
         {}
 
         impl<
@@ -165,10 +165,10 @@ fn test_define_preset_containing_generics() {
             __Context__,
             __Params__,
         >
-            IsProvider<BarComponentD<BarParamA, FooParamA>, __Context__, __Params__>
+            IsProviderFor<BarComponentD<BarParamA, FooParamA>, __Context__, __Params__>
             for FooPreset<'a, FooParamA, FooParamB>
         where
-            BazComponentsB: IsProvider<BarComponentD<BarParamA, FooParamA>, __Context__, __Params__>,
+            BazComponentsB: IsProviderFor<BarComponentD<BarParamA, FooParamA>, __Context__, __Params__>,
         {}
 
         impl<
@@ -192,10 +192,10 @@ fn test_define_preset_containing_generics() {
             __Context__,
             __Params__,
         >
-            IsProvider<BarComponentE<'b, BarParamB, FooParamB>, __Context__, __Params__>
+            IsProviderFor<BarComponentE<'b, BarParamB, FooParamB>, __Context__, __Params__>
             for FooPreset<'a, FooParamA, FooParamB>
         where
-            BazComponentsB: IsProvider<BarComponentE<'b, BarParamB, FooParamB>, __Context__, __Params__>,
+            BazComponentsB: IsProviderFor<BarComponentE<'b, BarParamB, FooParamB>, __Context__, __Params__>,
         {}
 
         impl<T> IsFooPreset<BarComponentA> for T {}

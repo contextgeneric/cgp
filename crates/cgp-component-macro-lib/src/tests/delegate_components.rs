@@ -21,27 +21,27 @@ fn test_basic_delegate_components() {
             type Delegate = BazAComponents;
         }
 
-        impl<__Context__, __Params__> IsProvider<BarAComponent, __Context__, __Params__> for FooComponents
+        impl<__Context__, __Params__> IsProviderFor<BarAComponent, __Context__, __Params__> for FooComponents
         where
-            BazAComponents: IsProvider<BarAComponent, __Context__, __Params__>,
+            BazAComponents: IsProviderFor<BarAComponent, __Context__, __Params__>,
         {}
 
         impl DelegateComponent<BarBComponent> for FooComponents {
             type Delegate = BazAComponents;
         }
 
-        impl<__Context__, __Params__> IsProvider<BarBComponent, __Context__, __Params__> for FooComponents
+        impl<__Context__, __Params__> IsProviderFor<BarBComponent, __Context__, __Params__> for FooComponents
         where
-            BazAComponents: IsProvider<BarBComponent, __Context__, __Params__>,
+            BazAComponents: IsProviderFor<BarBComponent, __Context__, __Params__>,
         {}
 
         impl DelegateComponent<BarCComponent> for FooComponents {
             type Delegate = BazBComponents;
         }
 
-        impl<__Context__, __Params__> IsProvider<BarCComponent, __Context__, __Params__> for FooComponents
+        impl<__Context__, __Params__> IsProviderFor<BarCComponent, __Context__, __Params__> for FooComponents
         where
-            BazBComponents: IsProvider<BarCComponent, __Context__, __Params__>,
+            BazBComponents: IsProviderFor<BarCComponent, __Context__, __Params__>,
         {}
     };
 
@@ -71,10 +71,10 @@ fn test_delegate_components_containing_generics() {
         }
 
         impl<'a, FooParamA, FooParamB: FooConstraint, __Context__, __Params__>
-            IsProvider<BarComponentA, __Context__, __Params__>
+            IsProviderFor<BarComponentA, __Context__, __Params__>
             for FooComponents<'a, FooParamA, FooParamB>
         where
-            BazComponentsA<FooParamA>: IsProvider<BarComponentA, __Context__, __Params__>,
+            BazComponentsA<FooParamA>: IsProviderFor<BarComponentA, __Context__, __Params__>,
         {}
 
         impl<'a, FooParamA, FooParamB: FooConstraint> DelegateComponent<BarComponentB<'a>>
@@ -83,10 +83,10 @@ fn test_delegate_components_containing_generics() {
         }
 
         impl<'a, FooParamA, FooParamB: FooConstraint, __Context__, __Params__>
-            IsProvider<BarComponentB<'a>, __Context__, __Params__>
+            IsProviderFor<BarComponentB<'a>, __Context__, __Params__>
             for FooComponents<'a, FooParamA, FooParamB>
         where
-            BazComponentsB: IsProvider<BarComponentB<'a>, __Context__, __Params__>,
+            BazComponentsB: IsProviderFor<BarComponentB<'a>, __Context__, __Params__>,
         {}
 
         impl<'a, FooParamA, FooParamB: FooConstraint> DelegateComponent<BarComponentC<FooParamB>>
@@ -95,10 +95,10 @@ fn test_delegate_components_containing_generics() {
         }
 
         impl<'a, FooParamA, FooParamB: FooConstraint, __Context__, __Params__>
-            IsProvider<BarComponentC<FooParamB>, __Context__, __Params__>
+            IsProviderFor<BarComponentC<FooParamB>, __Context__, __Params__>
             for FooComponents<'a, FooParamA, FooParamB>
         where
-            BazComponentsB: IsProvider<BarComponentC<FooParamB>, __Context__, __Params__>,
+            BazComponentsB: IsProviderFor<BarComponentC<FooParamB>, __Context__, __Params__>,
         {}
 
         impl<
@@ -119,10 +119,10 @@ fn test_delegate_components_containing_generics() {
             __Context__,
             __Params__,
         >
-            IsProvider<BarComponentD<BarParamA, FooParamA>, __Context__, __Params__>
+            IsProviderFor<BarComponentD<BarParamA, FooParamA>, __Context__, __Params__>
             for FooComponents<'a, FooParamA, FooParamB>
         where
-            BazComponentsB: IsProvider<BarComponentD<BarParamA, FooParamA>, __Context__, __Params__>,
+            BazComponentsB: IsProviderFor<BarComponentD<BarParamA, FooParamA>, __Context__, __Params__>,
         {}
 
         impl<
@@ -145,10 +145,10 @@ fn test_delegate_components_containing_generics() {
             __Context__,
             __Params__,
         >
-            IsProvider<BarComponentE<BarParamB, FooParamB>, __Context__, __Params__>
+            IsProviderFor<BarComponentE<BarParamB, FooParamB>, __Context__, __Params__>
             for FooComponents<'a, FooParamA, FooParamB>
         where
-            BazComponentsB: IsProvider<BarComponentE<BarParamB, FooParamB>, __Context__, __Params__>,
+            BazComponentsB: IsProviderFor<BarComponentE<BarParamB, FooParamB>, __Context__, __Params__>,
         {}
     };
 
