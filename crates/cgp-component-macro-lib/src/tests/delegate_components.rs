@@ -21,13 +21,28 @@ fn test_basic_delegate_components() {
             type Delegate = BazAComponents;
         }
 
+        impl<__Context__, __Params__> IsProvider<BarAComponent, __Context__, __Params__> for FooComponents
+        where
+            BazAComponents: IsProvider<BarAComponent, __Context__, __Params__>,
+        {}
+
         impl DelegateComponent<BarBComponent> for FooComponents {
             type Delegate = BazAComponents;
         }
 
+        impl<__Context__, __Params__> IsProvider<BarBComponent, __Context__, __Params__> for FooComponents
+        where
+            BazAComponents: IsProvider<BarBComponent, __Context__, __Params__>,
+        {}
+
         impl DelegateComponent<BarCComponent> for FooComponents {
             type Delegate = BazBComponents;
         }
+
+        impl<__Context__, __Params__> IsProvider<BarCComponent, __Context__, __Params__> for FooComponents
+        where
+            BazBComponents: IsProvider<BarCComponent, __Context__, __Params__>,
+        {}
     };
 
     assert!(equal_token_stream(&derived, &expected));
@@ -51,19 +66,40 @@ fn test_delegate_components_containing_generics() {
 
     let expected = quote! {
         impl<'a, FooParamA, FooParamB: FooConstraint> DelegateComponent<BarComponentA>
-        for FooComponents<'a, FooParamA, FooParamB> {
+            for FooComponents<'a, FooParamA, FooParamB> {
             type Delegate = BazComponentsA<FooParamA>;
         }
+
+        impl<'a, FooParamA, FooParamB: FooConstraint, __Context__, __Params__>
+            IsProvider<BarComponentA, __Context__, __Params__>
+            for FooComponents<'a, FooParamA, FooParamB>
+        where
+            BazComponentsA<FooParamA>: IsProvider<BarComponentA, __Context__, __Params__>,
+        {}
 
         impl<'a, FooParamA, FooParamB: FooConstraint> DelegateComponent<BarComponentB<'a>>
         for FooComponents<'a, FooParamA, FooParamB> {
             type Delegate = BazComponentsB;
         }
 
+        impl<'a, FooParamA, FooParamB: FooConstraint, __Context__, __Params__>
+            IsProvider<BarComponentB<'a>, __Context__, __Params__>
+            for FooComponents<'a, FooParamA, FooParamB>
+        where
+            BazComponentsB: IsProvider<BarComponentB<'a>, __Context__, __Params__>,
+        {}
+
         impl<'a, FooParamA, FooParamB: FooConstraint> DelegateComponent<BarComponentC<FooParamB>>
         for FooComponents<'a, FooParamA, FooParamB> {
             type Delegate = BazComponentsB;
         }
+
+        impl<'a, FooParamA, FooParamB: FooConstraint, __Context__, __Params__>
+            IsProvider<BarComponentC<FooParamB>, __Context__, __Params__>
+            for FooComponents<'a, FooParamA, FooParamB>
+        where
+            BazComponentsB: IsProvider<BarComponentC<FooParamB>, __Context__, __Params__>,
+        {}
 
         impl<
             'a,
@@ -77,6 +113,20 @@ fn test_delegate_components_containing_generics() {
 
         impl<
             'a,
+            FooParamA,
+            FooParamB: FooConstraint,
+            BarParamA,
+            __Context__,
+            __Params__,
+        >
+            IsProvider<BarComponentD<BarParamA, FooParamA>, __Context__, __Params__>
+            for FooComponents<'a, FooParamA, FooParamB>
+        where
+            BazComponentsB: IsProvider<BarComponentD<BarParamA, FooParamA>, __Context__, __Params__>,
+        {}
+
+        impl<
+            'a,
             'b,
             FooParamA,
             FooParamB: FooConstraint,
@@ -85,6 +135,21 @@ fn test_delegate_components_containing_generics() {
         for FooComponents<'a, FooParamA, FooParamB> {
             type Delegate = BazComponentsB;
         }
+
+        impl<
+            'a,
+            'b,
+            FooParamA,
+            FooParamB: FooConstraint,
+            BarParamB: BarConstraint,
+            __Context__,
+            __Params__,
+        >
+            IsProvider<BarComponentE<BarParamB, FooParamB>, __Context__, __Params__>
+            for FooComponents<'a, FooParamA, FooParamB>
+        where
+            BazComponentsB: IsProvider<BarComponentE<BarParamB, FooParamB>, __Context__, __Params__>,
+        {}
     };
 
     assert!(equal_token_stream(&derived, &expected));

@@ -1,4 +1,4 @@
-#![no_std]
+// #![no_std]
 
 /*!
    This is an internal crate used by the `cgp-component-macro` crate. We implement the
