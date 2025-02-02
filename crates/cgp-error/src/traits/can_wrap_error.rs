@@ -1,5 +1,5 @@
-use cgp_component::{DelegateComponent, HasComponents, UseDelegate};
-use cgp_component_macro::cgp_component;
+use cgp_component::{DelegateComponent, HasComponents, IsProviderFor, UseDelegate};
+use cgp_component_macro::{cgp_component, cgp_provider};
 
 use crate::traits::HasErrorType;
 
@@ -10,6 +10,7 @@ pub trait CanWrapError<Detail>: HasErrorType {
     fn wrap_error(error: Self::Error, detail: Detail) -> Self::Error;
 }
 
+#[cgp_provider(ErrorWrapperComponent)]
 impl<Context, Detail, Components> ErrorWrapper<Context, Detail> for UseDelegate<Components>
 where
     Context: HasErrorType,

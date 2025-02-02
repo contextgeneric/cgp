@@ -1,5 +1,5 @@
-use cgp_component::{DelegateComponent, HasComponents, UseDelegate};
-use cgp_component_macro::cgp_component;
+use cgp_component::{DelegateComponent, HasComponents, IsProviderFor, UseDelegate};
+use cgp_component_macro::{cgp_component, cgp_provider};
 
 use crate::traits::has_error_type::HasErrorType;
 
@@ -18,6 +18,7 @@ pub trait CanRaiseError<SourceError>: HasErrorType {
     fn raise_error(error: SourceError) -> Self::Error;
 }
 
+#[cgp_provider(ErrorRaiserComponent)]
 impl<Context, SourceError, Components, Delegate> ErrorRaiser<Context, SourceError>
     for UseDelegate<Components>
 where
