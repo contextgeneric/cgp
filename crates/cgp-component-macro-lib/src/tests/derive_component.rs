@@ -47,7 +47,7 @@ fn test_derive_component_with_const_generic() {
 
         pub struct FooComponent;
 
-        pub trait FooProvider<Context, const BAR: usize> {
+        pub trait FooProvider<Context, const BAR: usize>: IsProviderFor<FooComponent, Context, (BAR)> {
             type Foo;
 
             fn foo(context: &Context) -> Self::Foo;
@@ -67,7 +67,7 @@ fn test_derive_component_with_const_generic() {
 
         impl<Component, Context, const BAR: usize> FooProvider<Context, BAR> for Component
         where
-            Component: DelegateComponent<FooComponent>,
+            Component: DelegateComponent<FooComponent> + IsProviderFor<FooComponent, Context, (BAR)>,
             Component::Delegate: FooProvider<Context, BAR>,
         {
             type Foo = <Component::Delegate as FooProvider<Context, BAR>>::Foo;
