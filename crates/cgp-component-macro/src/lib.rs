@@ -16,6 +16,13 @@ pub fn cgp_component(attr: TokenStream, item: TokenStream) -> TokenStream {
 }
 
 #[proc_macro_attribute]
+pub fn cgp_provider(attr: TokenStream, item: TokenStream) -> TokenStream {
+    cgp_component_macro_lib::derive_provider(attr.into(), item.into())
+        .unwrap_or_else(syn::Error::into_compile_error)
+        .into()
+}
+
+#[proc_macro_attribute]
 pub fn cgp_getter(attr: TokenStream, item: TokenStream) -> TokenStream {
     cgp_component_macro_lib::derive_getter_component(attr.into(), item.into())
         .unwrap_or_else(syn::Error::into_compile_error)

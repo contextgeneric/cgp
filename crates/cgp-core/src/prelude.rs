@@ -1,8 +1,11 @@
 pub use cgp_async::{async_trait, Async, MaybeSend, MaybeStatic, MaybeSync};
-pub use cgp_component::{DelegateComponent, HasComponents, UseFields, WithContext, WithProvider};
+pub use cgp_component::{
+    CanUseComponent, DelegateComponent, HasComponents, IsProviderFor, UseFields, WithContext,
+    WithProvider,
+};
 pub use cgp_component_macro::{
-    cgp_auto_getter, cgp_component, cgp_getter, cgp_preset, cgp_type, delegate_components,
-    for_each_replace, replace_with,
+    cgp_auto_getter, cgp_component, cgp_getter, cgp_preset, cgp_provider, cgp_type,
+    delegate_components, for_each_replace, replace_with,
 };
 pub use cgp_error::{
     CanRaiseAsyncError, CanRaiseError, CanWrapAsyncError, CanWrapError, HasAsyncErrorType,
