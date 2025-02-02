@@ -8,14 +8,12 @@ use syn::punctuated::Punctuated;
 use syn::token::{Colon, Plus, Pound};
 use syn::{parse_quote, Attribute, Ident, ItemImpl, ItemTrait, ItemType, TypeParamBound};
 
+use crate::derive_provider::derive_is_provider_for;
+
 pub fn derive_type_component(stream: TokenStream) -> syn::Result<TokenStream> {
     let spec: TypeComponentSpecs = syn::parse2(stream)?;
 
-    Ok(do_derive_type_component(
-        spec.attributes,
-        spec.ident,
-        spec.bounds,
-    ))
+    do_derive_type_component(spec.attributes, spec.ident, spec.bounds)
 }
 
 pub struct TypeComponentSpecs {
@@ -61,7 +59,7 @@ pub fn do_derive_type_component(
     attributes: Vec<Attribute>,
     ident: Ident,
     bounds: Punctuated<TypeParamBound, Plus>,
-) -> TokenStream {
+) -> syn::Result<TokenStream> {
     let consumer_trait_name = Ident::new(&format!("Has{ident}Type"), ident.span());
 
     let provider_trait_name = Ident::new(&format!("Provide{ident}Type"), ident.span());
@@ -122,6 +120,9 @@ pub fn do_derive_type_component(
         }
     };
 
+    let is_provider_for_with_provider_impl =
+        derive_is_provider_for(&parse_quote!(#component_name), &with_provider_impl)?;
+
     let use_type_impl: ItemImpl = parse_quote! {
         impl<Context, #ident> #provider_trait_name <Context>
             for UseType<#ident>
@@ -132,7 +133,10 @@ pub fn do_derive_type_component(
         }
     };
 
-    quote! {
+    let is_provider_for_use_type_impl =
+        derive_is_provider_for(&parse_quote!(#component_name), &use_type_impl)?;
+
+    Ok(quote! {
         pub struct #component_name;
 
         #consumer_trait
@@ -147,6 +151,10 @@ pub fn do_derive_type_component(
 
         #with_provider_impl
 
+        #is_provider_for_with_provider_impl
+
         #use_type_impl
-    }
+
+        #is_provider_for_use_type_impl
+    })
 }
