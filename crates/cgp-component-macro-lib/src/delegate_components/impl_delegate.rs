@@ -6,7 +6,6 @@ use syn::{parse_quote, Generics, ImplItem, ImplItemType, ItemImpl, Path, Type};
 
 use crate::delegate_components::ast::{ComponentAst, DelegateEntriesAst};
 use crate::delegate_components::merge_generics::merge_generics;
-use crate::derive_provider::ENABLE_IS_PROVIDER_SUPERTRAIT;
 
 pub fn impl_delegate_components(
     target_type: &Type,
@@ -46,12 +45,10 @@ pub fn impl_delegate_component(
         generics.params.push(parse_quote!(__Context__));
         generics.params.push(parse_quote!(__Params__));
 
-        if ENABLE_IS_PROVIDER_SUPERTRAIT {
-            let where_clause = generics.make_where_clause();
-            where_clause.predicates.push(
-                parse_quote!( #source : IsProviderFor< #component_type, __Context__, __Params__ > ),
-            );
-        }
+        let where_clause = generics.make_where_clause();
+        where_clause.predicates.push(
+            parse_quote!( #source : IsProviderFor< #component_type, __Context__, __Params__ > ),
+        );
 
         generics
     };
