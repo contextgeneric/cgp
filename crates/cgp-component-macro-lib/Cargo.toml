@@ -11,6 +11,10 @@ description  = """
     Context-generic programming core component macros implemented as a library.
 """
 
+[features]
+default = []
+provider-supertrait = []
+
 [dependencies]
 syn             = { version = "2.0.95", features = [ "full", "extra-traits" ] }
 quote           = "1.0.38"
