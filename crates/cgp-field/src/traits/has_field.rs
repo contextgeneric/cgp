@@ -3,6 +3,10 @@ use core::ops::Deref;
 
 use cgp_component::UseContext;
 
+#[diagnostic::on_unimplemented(
+    message = "HasField is not implemented for {Self} with the field: {Tag}",
+    note = "You need to add #[derive(HasField)] to {Self} with the given field present in the struct"
+)]
 pub trait HasField<Tag> {
     type Value;
 
