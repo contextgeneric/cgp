@@ -20,10 +20,10 @@ where
 }
 
 #[cgp_provider(TypeComponent)]
-impl<Context, Tag, Components, Type> ProvideType<Context, Tag> for UseDelegate<Components>
+impl<Context, Tag, Components, Delegate> ProvideType<Context, Tag> for UseDelegate<Components>
 where
-    Components: DelegateComponent<Tag>,
-    Components::Delegate: ProvideType<Context, Tag, Type = Type>,
+    Components: DelegateComponent<Tag, Delegate = Delegate>,
+    Delegate: ProvideType<Context, Tag>,
 {
-    type Type = Type;
+    type Type = Delegate::Type;
 }

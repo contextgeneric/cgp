@@ -1,3 +1,5 @@
+use std::collections::BTreeMap;
+
 use proc_macro2::{Span, TokenStream};
 use quote::quote;
 use syn::punctuated::Punctuated;
@@ -7,6 +9,8 @@ use syn::{
     parse_quote, AngleBracketedGenericArguments, Error, GenericArgument, ItemImpl, Path,
     PathArguments, Type,
 };
+
+use crate::derive_provider::replace_provider_in_generics;
 
 pub fn derive_provider(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
     let component_name: Type = syn::parse2(attr)?;
@@ -46,6 +50,8 @@ pub fn derive_is_provider_for(
             )
         })?;
 
+    let provider_map = BTreeMap::from([(provider_path.ident.clone(), component_name.clone())]);
+
     let is_provider_generics: AngleBracketedGenericArguments = match &provider_path.arguments {
         PathArguments::AngleBracketed(generics) => {
             let mut generic_args = generics.clone().args.into_iter();
@@ -79,6 +85,8 @@ pub fn derive_is_provider_for(
     is_provider_impl.unsafety = None;
 
     is_provider_impl.trait_ = Some((None, is_provider_path, For(Span::call_site())));
+
+    replace_provider_in_generics(&provider_map, &mut is_provider_impl.generics);
 
     Ok(is_provider_impl)
 }
