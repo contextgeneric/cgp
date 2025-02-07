@@ -75,7 +75,7 @@ pub fn derive_auto_getter_component(
 
     let consumer_trait: ItemTrait = syn::parse2(body)?;
 
-    let context_type = Ident::new("Context", Span::call_site());
+    let context_type = Ident::new("__Context__", Span::call_site());
 
     let fields = parse_getter_fields(&context_type, &consumer_trait)?;
 

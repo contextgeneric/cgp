@@ -46,12 +46,27 @@ pub fn derive_blanket_impl(
         }
     }
 
-    parse_quote! {
+    let mut item_impl: ItemImpl = parse_quote! {
         impl< #context_type > #consumer_name for #context_type
         where
             #context_type: #constraints
         {
             #methods
         }
+    };
+
+    item_impl
+        .generics
+        .params
+        .extend(consumer_trait.generics.params.clone());
+
+    if let Some(consumer_where_clause) = &consumer_trait.generics.where_clause {
+        item_impl
+            .generics
+            .make_where_clause()
+            .predicates
+            .extend(consumer_where_clause.predicates.clone());
     }
+
+    item_impl
 }

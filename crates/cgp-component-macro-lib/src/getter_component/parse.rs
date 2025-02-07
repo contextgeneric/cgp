@@ -11,13 +11,6 @@ pub fn parse_getter_fields(
     context_type: &Ident,
     consumer_trait: &ItemTrait,
 ) -> syn::Result<Vec<GetterField>> {
-    if !consumer_trait.generics.params.is_empty() {
-        return Err(Error::new(
-            consumer_trait.generics.params.span(),
-            "getter trait cannot contain generic parameters",
-        ));
-    }
-
     let mut fields = Vec::new();
 
     for item in consumer_trait.items.iter() {
