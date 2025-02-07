@@ -82,7 +82,6 @@ fn test_derive_component_with_const_generic() {
     assert!(equal_token_stream(&derived, &expected));
 }
 
-
 #[cfg(not(feature = "provider-supertrait"))]
 #[test]
 fn test_derive_component_with_const_generic() {

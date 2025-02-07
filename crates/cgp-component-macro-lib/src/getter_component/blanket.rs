@@ -46,8 +46,10 @@ pub fn derive_blanket_impl(
         }
     }
 
+    let (_, type_generics, _) = consumer_trait.generics.split_for_impl();
+
     let mut item_impl: ItemImpl = parse_quote! {
-        impl< #context_type > #consumer_name for #context_type
+        impl< #context_type > #consumer_name #type_generics for #context_type
         where
             #context_type: #constraints
         {
