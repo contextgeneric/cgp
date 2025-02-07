@@ -14,6 +14,10 @@ description  = """
 [lib]
 proc-macro = true
 
+[features]
+default = []
+provider-supertrait = [ "cgp-component-macro-lib/provider-supertrait" ]
+
 [dependencies]
 syn                     = { version = "2.0.95", features = [ "full", "extra-traits" ] }
 cgp-component-macro-lib = { version = "0.3.0" }
