@@ -34,9 +34,11 @@ pub fn replace_provider_in_type_params(
     provider_map: &BTreeMap<Ident, Type>,
     type_params: &mut Punctuated<TypeParamBound, Plus>,
 ) {
-    for bound in type_params.iter_mut() {
+    let mut new_bounds: Vec<TypeParamBound> = Vec::new();
+
+    for bound in type_params.iter() {
         if let TypeParamBound::Trait(trait_bound) = bound {
-            if let Some(segment) = trait_bound.path.segments.last_mut() {
+            if let Some(segment) = trait_bound.path.segments.last() {
                 if let Some(component_type) = provider_map.get(&segment.ident).cloned() {
                     if let PathArguments::AngleBracketed(args) = &segment.arguments {
                         let mut generics = args.args.iter().map(Clone::clone);
@@ -44,11 +46,16 @@ pub fn replace_provider_in_type_params(
                             let rest_generics: Punctuated<GenericArgument, Comma> =
                                 generics.collect();
 
-                            trait_bound.path = parse_quote!( IsProviderFor< #component_type, #context_type, (#rest_generics) > );
+                            let mut new_bound = trait_bound.clone();
+                            new_bound.path = parse_quote!( IsProviderFor< #component_type, #context_type, (#rest_generics) > );
+
+                            new_bounds.push(TypeParamBound::Trait(new_bound));
                         }
                     }
                 }
             }
         }
     }
+
+    type_params.extend(new_bounds);
 }
