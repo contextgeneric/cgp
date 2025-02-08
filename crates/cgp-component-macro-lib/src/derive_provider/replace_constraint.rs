@@ -34,7 +34,7 @@ pub fn replace_provider_in_type_params(
     provider_map: &BTreeMap<Ident, Type>,
     type_params: &mut Punctuated<TypeParamBound, Plus>,
 ) {
-    let mut new_bounds: Vec<TypeParamBound> = Vec::new();
+    let mut new_bounds: Punctuated<TypeParamBound, Plus> = Punctuated::default();
 
     for bound in type_params.iter() {
         if let TypeParamBound::Trait(trait_bound) = bound {
@@ -57,5 +57,8 @@ pub fn replace_provider_in_type_params(
         }
     }
 
-    type_params.extend(new_bounds);
+    if !new_bounds.is_empty() {
+        new_bounds.extend(type_params.clone());
+        *type_params = new_bounds;
+    }
 }
