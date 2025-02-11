@@ -4,7 +4,7 @@ pub use cgp_component::{
     WithProvider,
 };
 pub use cgp_component_macro::{
-    cgp_auto_getter, cgp_component, cgp_getter, cgp_preset, cgp_provider, cgp_type,
+    cgp_auto_getter, cgp_component, cgp_context, cgp_getter, cgp_preset, cgp_provider, cgp_type,
     delegate_components, for_each_replace, replace_with,
 };
 pub use cgp_error::{
