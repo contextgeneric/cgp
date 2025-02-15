@@ -5,7 +5,7 @@ pub use cgp_component::{
 };
 pub use cgp_component_macro::{
     cgp_auto_getter, cgp_component, cgp_context, cgp_getter, cgp_preset, cgp_provider, cgp_type,
-    delegate_components, for_each_replace, replace_with,
+    delegate_components, for_each_replace, new_cgp_provider, replace_with,
 };
 pub use cgp_error::{
     CanRaiseAsyncError, CanRaiseError, CanWrapAsyncError, CanWrapError, HasAsyncErrorType,
