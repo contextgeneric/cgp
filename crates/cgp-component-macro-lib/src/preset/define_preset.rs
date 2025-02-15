@@ -5,6 +5,7 @@ use syn::{parse2, parse_quote, Generics, Ident, ItemTrait};
 use crate::delegate_components::define_struct::define_struct;
 use crate::delegate_components::delegates_to::define_delegates_to_trait;
 use crate::delegate_components::impl_delegate::impl_delegate_components;
+use crate::derive_component::snake_case::to_snake_case_str;
 use crate::preset::ast::DefinePresetAst;
 use crate::preset::impl_is_preset::impl_components_is_preset;
 use crate::preset::substitution_macro::define_substitution_macro;
@@ -80,7 +81,13 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
     }
 
     {
-        let with_components_macro_name = Ident::new("with_components", Span::call_site());
+        let with_components_macro_name = Ident::new(
+            &format!(
+                "with_{}",
+                to_snake_case_str(&preset_module_name.to_string())
+            ),
+            Span::call_site(),
+        );
 
         let with_components_macro = define_substitution_macro(
             &with_components_macro_name,
@@ -88,6 +95,9 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
         );
 
         mod_output.extend(with_components_macro);
+        mod_output.extend(quote! {
+            pub use #with_components_macro_name as with_components;
+        })
     }
 
     let output = quote! {

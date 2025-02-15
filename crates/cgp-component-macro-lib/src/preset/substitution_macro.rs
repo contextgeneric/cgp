@@ -13,7 +13,5 @@ pub fn define_substitution_macro(macro_name: &Ident, substitution: &TokenStream)
                 }
             };
         }
-
-        pub use #macro_name;
     }
 }
