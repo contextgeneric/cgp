@@ -81,6 +81,8 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
 
     let output = quote! {
         mod preset {
+            use super::*;
+
             #mod_output
         }
 
