@@ -91,13 +91,18 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
     }
 
     let output = quote! {
+        #impl_delegate_items
+
+        #[allow(non_snake_case)]
         pub mod #preset_module_name {
             use super::*;
 
+            mod re_exports {
+                pub use super::super::*;
+            }
+
             #mod_output
         }
-
-        #impl_delegate_items
     };
 
     Ok(output)
