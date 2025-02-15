@@ -2,7 +2,7 @@ use alloc::format;
 use alloc::string::ToString;
 
 use proc_macro2::{Span, TokenStream};
-use quote::{quote, ToTokens};
+use quote::{quote, ToTokens, TokenStreamExt};
 use syn::{parse_quote, Generics, Ident, ItemTrait};
 
 use crate::delegate_components::define_struct::define_struct;
@@ -35,7 +35,7 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
     let impl_delegate_items =
         impl_delegate_components(&preset_type, &preset_generics, &ast.delegate_entries);
 
-    let impl_is_reset_items = impl_components_is_preset(
+    let impl_is_preset_items = impl_components_is_preset(
         &preset_trait_name,
         &preset_type,
         &preset_generics,
@@ -44,19 +44,14 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
 
     let item_struct = define_struct(preset_ident, &preset_generics);
 
-    let mut output = TokenStream::new();
+    let mut mod_output = quote! {
+        #item_struct
 
-    output.extend(item_struct.to_token_stream());
+        #preset_trait
+    };
 
-    output.extend(preset_trait.to_token_stream());
-
-    for impl_item in impl_delegate_items {
-        output.extend(impl_item.to_token_stream());
-    }
-
-    for impl_item in impl_is_reset_items {
-        output.extend(impl_item.to_token_stream());
-    }
+    mod_output.append_all(impl_delegate_items);
+    mod_output.append_all(impl_is_preset_items);
 
     {
         let delegates_to_trait_name = format!("DelegatesTo{}", preset_ident);
@@ -68,8 +63,8 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
             &ast.delegate_entries,
         );
 
-        output.extend(delegates_to_trait.to_token_stream());
-        output.extend(delegates_to_impl.to_token_stream());
+        mod_output.extend(delegates_to_trait.to_token_stream());
+        mod_output.extend(delegates_to_impl.to_token_stream());
     }
 
     {
@@ -81,8 +76,16 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
             &ast.delegate_entries.all_components().to_token_stream(),
         );
 
-        output.extend(with_components_macro);
+        mod_output.extend(with_components_macro);
     }
+
+    let output = quote! {
+        mod preset {
+            #mod_output
+        }
+
+        pub use preset::*;
+    };
 
     Ok(output)
 }
