@@ -12,8 +12,9 @@ description  = """
 """
 
 [features]
-default = [ "full" ]
-full = [ "cgp-async/full" ]
+default             = [ "full" ]
+full                = [ "cgp-async/full" ]
+provider-supertrait = [ "cgp-component-macro/provider-supertrait" ]
 
 [dependencies]
 cgp-async           = { version = "0.3.0", default-features = false }
