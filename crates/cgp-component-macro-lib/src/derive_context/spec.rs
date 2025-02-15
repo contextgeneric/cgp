@@ -1,10 +1,12 @@
 use syn::parse::{Parse, ParseStream};
-use syn::token::{Colon, Lt};
-use syn::{AngleBracketedGenericArguments, Ident};
+use syn::token::Colon;
+use syn::Ident;
+
+use crate::parse::SimpleType;
 
 pub struct ContextSpec {
     pub provider_name: Ident,
-    pub preset: Option<(Ident, Option<AngleBracketedGenericArguments>)>,
+    pub preset: Option<SimpleType>,
 }
 
 impl Parse for ContextSpec {
@@ -14,16 +16,7 @@ impl Parse for ContextSpec {
         let colon: Option<Colon> = input.parse()?;
 
         let preset = match colon {
-            Some(_) => {
-                let preset_name: Ident = input.parse()?;
-                let preset_generics = if input.peek(Lt) {
-                    Some(input.parse()?)
-                } else {
-                    None
-                };
-
-                Some((preset_name, preset_generics))
-            }
+            Some(_) => Some(input.parse()?),
             None => None,
         };
 

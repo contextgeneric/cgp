@@ -6,11 +6,12 @@ use syn::punctuated::Punctuated;
 use syn::spanned::Spanned;
 use syn::token::{Comma, For};
 use syn::{
-    parse_quote, AngleBracketedGenericArguments, Error, GenericArgument, ItemImpl, Path,
-    PathArguments, Type,
+    parse_quote, AngleBracketedGenericArguments, Error, GenericArgument, ItemImpl, ItemStruct,
+    Path, PathArguments, Type,
 };
 
 use crate::derive_provider::replace_provider_in_generics;
+use crate::parse::SimpleType;
 
 pub fn derive_provider(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
     let component_name: Type = syn::parse2(attr)?;
@@ -25,6 +26,49 @@ pub fn derive_provider(attr: TokenStream, body: TokenStream) -> syn::Result<Toke
     };
 
     Ok(result)
+}
+
+pub fn derive_new_provider(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
+    let component_name: Type = syn::parse2(attr)?;
+
+    let provider_impl: ItemImpl = syn::parse2(body)?;
+
+    let provider_struct = derive_provider_struct(&provider_impl)?;
+
+    let is_provider_for_impl: ItemImpl = derive_is_provider_for(&component_name, &provider_impl)?;
+
+    let result = quote! {
+        #provider_struct
+        #provider_impl
+        #is_provider_for_impl
+    };
+
+    Ok(result)
+}
+
+pub fn derive_provider_struct(provider_impl: &ItemImpl) -> syn::Result<ItemStruct> {
+    let impl_self_type = &provider_impl.self_ty;
+
+    let provider_type: SimpleType = syn::parse2(quote!( #impl_self_type ))?;
+
+    let provider_name = &provider_type.name;
+
+    let provider_field = match &provider_type.generics {
+        Some(generics) => {
+            let args = &generics.args;
+            quote! {
+                #generics
+                ( pub ::core::marker::PhantomData<( #args )>  )
+            }
+        }
+        None => TokenStream::new(),
+    };
+
+    let provider_struct = syn::parse2(quote! {
+        pub struct #provider_name #provider_field;
+    })?;
+
+    Ok(provider_struct)
 }
 
 pub fn derive_is_provider_for(
