@@ -19,11 +19,11 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
 
     let preset_generics: Generics = syn::parse2(quote!( #preset_generic_args ))?;
 
-    let preset_struct_name = Ident::new("Preset", Span::call_site());
+    let provider_struct_name = Ident::new("Provider", Span::call_site());
 
-    let preset_type = {
+    let provider_type = {
         let type_generics = preset_generics.split_for_impl().1;
-        parse2(quote! { #preset_struct_name #type_generics })?
+        parse2(quote! { #provider_struct_name #type_generics })?
     };
 
     let preset_trait_name = Ident::new("IsPreset", Span::call_site());
@@ -34,7 +34,7 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
 
     let impl_delegate_items = {
         let namespaces_preset_type = parse2(quote! {
-            #preset_module_name :: #preset_type
+            #preset_module_name :: #provider_type
         })?;
 
         let items = impl_delegate_components(
@@ -51,15 +51,15 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
 
     let impl_is_preset_items = impl_components_is_preset(
         &preset_trait_name,
-        &preset_type,
+        &provider_type,
         &preset_generics,
         &ast.delegate_entries,
     );
 
-    let preset_struct = define_struct(&preset_struct_name, &preset_generics);
+    let provider_struct = define_struct(&provider_struct_name, &preset_generics);
 
     let mut mod_output = quote! {
-        #preset_struct
+        #provider_struct
 
         #preset_trait
     };
@@ -71,7 +71,7 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
 
         let (delegates_to_trait, delegates_to_impl) = define_delegates_to_trait(
             &delegates_to_trait_name,
-            &preset_type,
+            &provider_type,
             &preset_generics,
             &ast.delegate_entries,
         );
