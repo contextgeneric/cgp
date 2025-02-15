@@ -1,6 +1,6 @@
 use proc_macro2::TokenStream;
 use quote::quote;
-use syn::{parse_quote, AngleBracketedGenericArguments, Ident, ItemImpl, ItemStruct};
+use syn::{parse2, parse_quote, AngleBracketedGenericArguments, Ident, ItemImpl, ItemStruct, Path};
 
 use crate::derive_context::ContextSpec;
 
@@ -25,7 +25,7 @@ pub fn derive_context(attr: TokenStream, body: TokenStream) -> syn::Result<Token
 
     if let Some(preset) = &context_spec.preset {
         let (delegate_impl, is_provider_impl) =
-            derive_delegate_preset(provider_name, &preset.name, &preset.generics);
+            derive_delegate_preset(provider_name, &preset.name, &preset.generics)?;
 
         Ok(quote! {
             #base_derived
@@ -57,8 +57,14 @@ pub fn derive_delegate_preset(
     provider_name: &Ident,
     preset_name: &Ident,
     preset_generics: &Option<AngleBracketedGenericArguments>,
-) -> (ItemImpl, ItemImpl) {
-    let preset_trait_name = Ident::new(&format!("Is{preset_name}"), preset_name.span());
+) -> syn::Result<(ItemImpl, ItemImpl)> {
+    let preset_trait_name: Path = parse2(quote! {
+        #preset_name :: IsPreset
+    })?;
+
+    let preset_provider_name: Path = parse2(quote! {
+        #preset_name :: Provider
+    })?;
 
     let delegate_impl: ItemImpl = parse_quote! {
         impl<__Name__>
@@ -67,7 +73,7 @@ pub fn derive_delegate_preset(
         where
             Self: #preset_trait_name < __Name__ >,
         {
-            type Delegate = #preset_name #preset_generics ;
+            type Delegate = #preset_provider_name #preset_generics ;
         }
     };
 
@@ -77,10 +83,10 @@ pub fn derive_delegate_preset(
             for #provider_name
         where
             Self: #preset_trait_name < __Name__ >,
-            #preset_name #preset_generics: IsProviderFor<__Name__, __Context__, __Params__>,
+            #preset_provider_name #preset_generics: IsProviderFor<__Name__, __Context__, __Params__>,
         {
         }
     };
 
-    (delegate_impl, is_provider_impl)
+    Ok((delegate_impl, is_provider_impl))
 }
