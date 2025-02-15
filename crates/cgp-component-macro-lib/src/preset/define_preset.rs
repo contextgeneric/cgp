@@ -2,8 +2,8 @@ use alloc::format;
 use alloc::string::ToString;
 
 use proc_macro2::{Span, TokenStream};
-use quote::ToTokens;
-use syn::{parse_quote, Ident, ItemTrait};
+use quote::{quote, ToTokens};
+use syn::{parse_quote, Generics, Ident, ItemTrait, Type};
 
 use crate::delegate_components::define_struct::define_struct;
 use crate::delegate_components::delegates_to::define_delegates_to_trait;
@@ -16,12 +16,14 @@ use crate::preset::substitution_macro::define_substitution_macro;
 pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
     let ast: DefinePresetAst = syn::parse2(body)?;
 
-    let preset_ident = &ast.preset_ident;
+    let preset_ident = &ast.preset.name;
+    let preset_generic_args = &ast.preset.generics;
 
-    let preset_type = {
-        let type_generics = ast.preset_generics.split_for_impl().1;
-        parse_quote!( #preset_ident #type_generics )
-    };
+    let preset_type: Type = syn::parse2(quote! {
+        #preset_ident #preset_generic_args
+    })?;
+
+    let preset_generics: Generics = syn::parse2(quote!( #preset_generic_args ))?;
 
     let preset_trait_name = Ident::new(&format!("Is{}", preset_ident), preset_ident.span());
 
@@ -30,16 +32,16 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
     };
 
     let impl_delegate_items =
-        impl_delegate_components(&preset_type, &ast.preset_generics, &ast.delegate_entries);
+        impl_delegate_components(&preset_type, &preset_generics, &ast.delegate_entries);
 
     let impl_is_reset_items = impl_components_is_preset(
         &preset_trait_name,
         &preset_type,
-        &ast.preset_generics,
+        &preset_generics,
         &ast.delegate_entries,
     );
 
-    let item_struct = define_struct(&ast.preset_ident, &ast.preset_generics);
+    let item_struct = define_struct(preset_ident, &preset_generics);
 
     let mut output = TokenStream::new();
 
@@ -56,12 +58,12 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
     }
 
     {
-        let delegates_to_trait_name = format!("DelegatesTo{}", ast.preset_ident);
+        let delegates_to_trait_name = format!("DelegatesTo{}", preset_ident);
 
         let (delegates_to_trait, delegates_to_impl) = define_delegates_to_trait(
             &Ident::new(&delegates_to_trait_name, Span::call_site()),
             &preset_type,
-            &ast.preset_generics,
+            &preset_generics,
             &ast.delegate_entries,
         );
 
@@ -71,7 +73,7 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
 
     {
         let with_components_macro_name =
-            format!("with_{}", to_snake_case_str(&ast.preset_ident.to_string()));
+            format!("with_{}", to_snake_case_str(&preset_ident.to_string()));
 
         let with_components_macro = define_substitution_macro(
             &Ident::new(&with_components_macro_name, Span::call_site()),

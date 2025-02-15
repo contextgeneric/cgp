@@ -1,7 +1,7 @@
 use quote::quote;
 
 use crate::define_preset;
-use crate::tests::helper::equal::equal_token_stream;
+use crate::tests::helper::equal::assert_equal_token_stream;
 
 #[test]
 fn test_basic_define_preset() {
@@ -82,7 +82,7 @@ fn test_basic_define_preset() {
         pub use with_foo_preset;
     };
 
-    assert!(equal_token_stream(&derived, &expected));
+    assert_equal_token_stream(&derived, &expected);
 }
 
 #[test]
@@ -275,5 +275,5 @@ fn test_define_preset_containing_generics() {
         pub use with_foo_preset;
     };
 
-    assert!(equal_token_stream(&derived, &expected));
+    assert_equal_token_stream(&derived, &expected);
 }
