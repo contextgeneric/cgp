@@ -3,7 +3,7 @@ use alloc::string::ToString;
 
 use proc_macro2::{Span, TokenStream};
 use quote::{quote, ToTokens};
-use syn::{parse_quote, Generics, Ident, ItemTrait, Type};
+use syn::{parse_quote, Generics, Ident, ItemTrait};
 
 use crate::delegate_components::define_struct::define_struct;
 use crate::delegate_components::delegates_to::define_delegates_to_trait;
@@ -19,11 +19,12 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
     let preset_ident = &ast.preset.name;
     let preset_generic_args = &ast.preset.generics;
 
-    let preset_type: Type = syn::parse2(quote! {
-        #preset_ident #preset_generic_args
-    })?;
-
     let preset_generics: Generics = syn::parse2(quote!( #preset_generic_args ))?;
+
+    let preset_type = {
+        let type_generics = preset_generics.split_for_impl().1;
+        parse_quote!( #preset_ident #type_generics )
+    };
 
     let preset_trait_name = Ident::new(&format!("Is{}", preset_ident), preset_ident.span());
 
