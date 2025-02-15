@@ -107,10 +107,6 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
         pub mod #preset_module_name {
             use super::*;
 
-            pub mod re_exports {
-                pub use super::super::*;
-            }
-
             #mod_output
         }
     };
