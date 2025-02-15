@@ -32,8 +32,14 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
         pub trait #preset_trait_name <Component> {}
     };
 
-    let impl_delegate_items =
-        impl_delegate_components(&preset_type, &preset_generics, &ast.delegate_entries);
+    let impl_delegate_items = {
+        let items = impl_delegate_components(&preset_type, &preset_generics, &ast.delegate_entries);
+
+        let mut stream = TokenStream::new();
+        stream.append_all(items);
+
+        stream
+    };
 
     let impl_is_preset_items = impl_components_is_preset(
         &preset_trait_name,
@@ -45,12 +51,9 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
     let item_struct = define_struct(preset_ident, &preset_generics);
 
     let mut mod_output = quote! {
-        #item_struct
-
         #preset_trait
     };
 
-    mod_output.append_all(impl_delegate_items);
     mod_output.append_all(impl_is_preset_items);
 
     {
@@ -80,6 +83,10 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
     }
 
     let output = quote! {
+        #item_struct
+
+        #impl_delegate_items
+
         mod preset {
             use super::*;
 
