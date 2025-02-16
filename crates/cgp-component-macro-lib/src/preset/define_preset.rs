@@ -63,8 +63,8 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
 
     let all_components = ast.delegate_entries.all_components();
 
-    let impl_has_component_at =
-        derive_impl_has_component_at(&components_struct_name, &all_components)?;
+    let (impl_has_component_at, substitution) =
+        derive_impl_has_component_at(preset_module_name, &components_struct_name, &all_components)?;
 
     let provider_struct = define_struct(&provider_struct_name, &preset_generics);
 
@@ -103,10 +103,8 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
             Span::call_site(),
         );
 
-        let with_components_macro = define_substitution_macro(
-            &with_components_macro_name,
-            &all_components.to_token_stream(),
-        );
+        let with_components_macro =
+            define_substitution_macro(&with_components_macro_name, &substitution);
 
         mod_output.extend(with_components_macro);
         mod_output.extend(quote! {
