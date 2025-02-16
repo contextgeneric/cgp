@@ -13,10 +13,10 @@ pub(crate) mod delegate_components;
 pub(crate) mod derive_component;
 pub(crate) mod derive_context;
 pub(crate) mod derive_provider;
-pub(crate) mod for_each_replace;
 pub(crate) mod getter_component;
 pub(crate) mod parse;
 pub(crate) mod preset;
+pub(crate) mod replace;
 pub(crate) mod type_component;
 
 #[cfg(test)]
@@ -26,7 +26,7 @@ pub use crate::delegate_components::delegate_components;
 pub use crate::derive_component::derive_component;
 pub use crate::derive_context::derive_context;
 pub use crate::derive_provider::{derive_new_provider, derive_provider};
-pub use crate::for_each_replace::{handle_for_each_replace, handle_replace};
 pub use crate::getter_component::derive::{derive_auto_getter_component, derive_getter_component};
 pub use crate::preset::define_preset;
+pub use crate::replace::{handle_for_each_replace, handle_replace};
 pub use crate::type_component::derive::derive_type_component;

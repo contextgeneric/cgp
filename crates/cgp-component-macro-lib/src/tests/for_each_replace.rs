@@ -1,6 +1,6 @@
 use quote::quote;
 
-use crate::for_each_replace::{handle_for_each_replace, handle_replace};
+use crate::replace::{handle_for_each_replace, handle_replace};
 use crate::tests::helper::equal::equal_token_stream;
 
 #[test]

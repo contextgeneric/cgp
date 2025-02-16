@@ -50,6 +50,7 @@ pub fn derive_impl_has_component_at(
         };
 
         let substitution = quote! {
+            #component_type :
             #impl_generics
             #preset_module_name :: ComponentAt<
                 #local_self,
