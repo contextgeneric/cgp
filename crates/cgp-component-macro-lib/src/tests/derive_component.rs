@@ -1,7 +1,7 @@
 use quote::quote;
 
 use crate::derive_component::derive::derive_component;
-use crate::tests::helper::equal::equal_token_stream;
+use crate::tests::helper::equal::assert_equal_token_stream;
 
 #[test]
 fn test_basic_derive_component() {
@@ -40,13 +40,13 @@ fn test_derive_component_with_const_generic() {
     .unwrap();
 
     let expected = quote! {
+        pub struct FooComponent;
+
         pub trait HasFoo<const BAR: usize> {
             type Foo;
 
             fn foo(&self) -> Self::Foo;
         }
-
-        pub struct FooComponent;
 
         pub trait FooProvider<Context, const BAR: usize>: IsProviderFor<FooComponent, Context, (BAR)> {
             type Foo;
@@ -79,7 +79,7 @@ fn test_derive_component_with_const_generic() {
         }
     };
 
-    assert!(equal_token_stream(&derived, &expected));
+    assert_equal_token_stream(&derived, &expected);
 }
 
 #[cfg(not(feature = "provider-supertrait"))]
@@ -101,13 +101,13 @@ fn test_derive_component_with_const_generic() {
     .unwrap();
 
     let expected = quote! {
+        pub struct FooComponent;
+
         pub trait HasFoo<const BAR: usize> {
             type Foo;
 
             fn foo(&self) -> Self::Foo;
         }
-
-        pub struct FooComponent;
 
         pub trait FooProvider<Context, const BAR: usize> {
             type Foo;
@@ -140,5 +140,5 @@ fn test_derive_component_with_const_generic() {
         }
     };
 
-    assert!(equal_token_stream(&derived, &expected));
+    assert_equal_token_stream(&derived, &expected);
 }
