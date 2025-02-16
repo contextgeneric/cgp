@@ -59,8 +59,7 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
 
     let all_components = ast.delegate_entries.all_components();
 
-    let (alias_types, substitution) =
-        derive_component_aliases(preset_module_name, &all_components)?;
+    let (alias_types, substitution) = derive_component_aliases(&all_components)?;
 
     let provider_struct = define_struct(&provider_struct_name, &preset_generics);
 
@@ -72,8 +71,6 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
         #impl_is_preset_items
 
         pub mod components {
-            use super::*;
-
             #alias_types
         }
     };
@@ -101,8 +98,11 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
             Span::call_site(),
         );
 
-        let with_components_macro =
-            define_substitution_macro(&with_components_macro_name, &substitution);
+        let with_components_macro = define_substitution_macro(
+            preset_module_name,
+            &with_components_macro_name,
+            &substitution,
+        );
 
         mod_output.extend(with_components_macro);
         mod_output.extend(quote! {

@@ -6,7 +6,7 @@ use syn::__private::parse_brackets;
 use syn::parse::discouraged::Speculative;
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
-use syn::token::{Colon, Comma, Or};
+use syn::token::{Comma, Or};
 use syn::{braced, Ident, Type};
 
 use crate::delegate_components::ast::ComponentAst;
@@ -19,9 +19,9 @@ pub struct ReplaceSpecs {
 
 impl Parse for ReplaceSpecs {
     fn parse(input: ParseStream) -> syn::Result<Self> {
-        let raw_replacements: Vec<ReplaceComponent> = {
+        let raw_replacements: Vec<ComponentAst> = {
             let content = parse_brackets(input)?.content;
-            let types = <Punctuated<ReplaceComponent, Comma>>::parse_terminated(&content)?;
+            let types = <Punctuated<ComponentAst, Comma>>::parse_terminated(&content)?;
             types.into_iter().collect()
         };
 
@@ -60,33 +60,15 @@ impl Parse for ReplaceSpecs {
             .filter(|replacement| {
                 !exclude
                     .iter()
-                    .any(|exclude| exclude == &replacement.original)
+                    .any(|exclude| exclude == &replacement.component_type)
             })
-            .map(|ast| ast.replacement.to_token_stream())
+            .map(|ast| ast.to_token_stream())
             .collect();
 
         Ok(ReplaceSpecs {
             target_ident,
             replacements,
             body,
-        })
-    }
-}
-
-pub struct ReplaceComponent {
-    pub original: Type,
-    pub replacement: ComponentAst,
-}
-
-impl Parse for ReplaceComponent {
-    fn parse(input: ParseStream) -> syn::Result<Self> {
-        let original = input.parse()?;
-        let _: Colon = input.parse()?;
-        let replacement = input.parse()?;
-
-        Ok(Self {
-            original,
-            replacement,
         })
     }
 }
