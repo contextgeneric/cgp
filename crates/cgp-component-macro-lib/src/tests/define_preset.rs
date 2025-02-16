@@ -94,7 +94,7 @@ fn test_define_preset_containing_generics() {
                 BarComponentB<'a>,
                 BarComponentC<FooParamB>,
                 <BarParamA> BarComponentD<BarParamA, FooParamA>,
-                <'b, BarParamB: BarConstraint> BarComponentE<'b, BarParamB, FooParamB>,
+                <BarParamB: BarConstraint> BarComponentE<BarParamB, FooParamB>,
             ]: BazComponentsB,
         }
     })

@@ -1,24 +1,26 @@
-use alloc::vec::Vec;
-
+use proc_macro2::TokenStream;
+use quote::ToTokens;
 use syn::{parse_quote, Generics, Ident, ItemImpl, Type};
 
 use crate::delegate_components::ast::{ComponentAst, DelegateEntriesAst};
 
-pub fn impl_components_is_preset(
+pub fn derive_impl_components_is_preset(
     trait_name: &Ident,
     preset_type: &Type,
     preset_generics: &Generics,
     delegate_entries: &DelegateEntriesAst,
-) -> Vec<ItemImpl> {
-    delegate_entries
-        .entries
-        .iter()
-        .flat_map(|entry| {
-            entry.components.iter().map(|component| {
-                impl_component_is_preset(trait_name, preset_type, preset_generics, component)
-            })
-        })
-        .collect()
+) -> TokenStream {
+    let mut out = TokenStream::new();
+
+    for entry in delegate_entries.entries.iter() {
+        for component in entry.components.iter() {
+            let impl_is_preset =
+                impl_component_is_preset(trait_name, preset_type, preset_generics, component);
+            impl_is_preset.to_tokens(&mut out);
+        }
+    }
+
+    out
 }
 
 pub fn impl_component_is_preset(
