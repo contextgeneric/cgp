@@ -38,12 +38,16 @@ pub fn derive_type_component(attrs: TokenStream, body: TokenStream) -> syn::Resu
 
     let component = derive_component_with_ast(&spec, consumer_trait)?;
 
-    let alias_type = derive_type_alias(&component, &spec.context_type, &item_type)?;
+    let alias_type = derive_type_alias(&component.consumer_trait, &spec.context_type, &item_type)?;
+
+    let use_type_impl = derive_use_type_impl(&component.provider_trait, &item_type)?;
 
     Ok(quote! {
         #component
 
         #alias_type
+
+        #use_type_impl
     })
 }
 
@@ -74,19 +78,16 @@ pub fn extract_item_type(consumer_trait: &ItemTrait) -> syn::Result<&TraitItemTy
 }
 
 pub fn derive_type_alias(
-    component: &DerivedComponent,
+    consumer_trait: &ItemTrait,
     context_name: &Ident,
     item_type: &TraitItemType,
 ) -> syn::Result<ItemType> {
-    let consumer_trait_name = &component.consumer_trait.ident;
+    let consumer_trait_name = &consumer_trait.ident;
 
-    let (impl_generics, type_generics, where_clause) =
-        component.consumer_trait.generics.split_for_impl();
+    let (_, type_generics, _) = consumer_trait.generics.split_for_impl();
 
-    let impl_generics: Generics = parse2(impl_generics.to_token_stream())?;
     let type_generics: Generics = parse2(type_generics.to_token_stream())?;
 
-    let impl_generics_params = &impl_generics.params;
     let type_generics_params = &type_generics.params;
 
     let type_name = &item_type.ident;
@@ -98,6 +99,47 @@ pub fn derive_type_alias(
     })?;
 
     Ok(alias_type)
+}
+
+pub fn derive_use_type_impl(
+    provider_trait: &ItemTrait,
+    item_type: &TraitItemType,
+) -> syn::Result<ItemImpl> {
+    let provider_trait_name = &provider_trait.ident;
+
+    let (impl_generics, type_generics, where_clause) = provider_trait.generics.split_for_impl();
+
+    let impl_generics_params = parse2::<Generics>(impl_generics.to_token_stream())?.params;
+
+    let predicates = where_clause
+        .map(|c| c.predicates.clone())
+        .unwrap_or_default();
+
+    let type_name = &item_type.ident;
+
+    let type_bounds = if item_type.bounds.is_empty() {
+        TokenStream::new()
+    } else {
+        let bounds = &item_type.bounds;
+
+        quote! {
+            #type_name: #bounds,
+        }
+    };
+
+    let use_type_impl: ItemImpl = parse2(quote! {
+        impl< #type_name, #impl_generics_params >
+            #provider_trait_name #type_generics
+            for UseType< #type_name >
+        where
+            #type_bounds
+            #predicates
+        {
+            type #type_name = #type_name;
+        }
+    })?;
+
+    Ok(use_type_impl)
 }
 
 pub struct TypeComponentSpecs {
