@@ -8,7 +8,6 @@ use crate::delegate_components::ast::ComponentAst;
 
 pub fn derive_impl_has_component_at(
     preset_module_name: &Ident,
-    components_struct_name: &Ident,
     components: &Punctuated<ComponentAst, Comma>,
 ) -> syn::Result<(TokenStream, TokenStream)> {
     let mut i: usize = 0;
@@ -43,7 +42,12 @@ pub fn derive_impl_has_component_at(
         };
 
         let substitution = quote! {
-            #impl_generics ComponentAt< #preset_module_name :: #components_struct_name, #i, (#type_generics_param) >,
+            #impl_generics <
+                Self as
+                #preset_module_name :: HasComponentAt <
+                    #i, (#type_generics_param)
+                >::Component
+            >,
         };
 
         impl_body.extend(item_impl);

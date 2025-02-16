@@ -1,6 +1,6 @@
 use proc_macro2::{Span, TokenStream};
 use quote::{quote, ToTokens, TokenStreamExt};
-use syn::{parse2, parse_quote, Generics, Ident, ItemStruct, ItemTrait};
+use syn::{parse2, parse_quote, Generics, Ident, ItemTrait};
 
 use crate::delegate_components::define_struct::define_struct;
 use crate::delegate_components::delegates_to::define_delegates_to_trait;
@@ -26,10 +26,6 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
         let type_generics = preset_generics.split_for_impl().1;
         parse2(quote! { #provider_struct_name #type_generics })?
     };
-
-    let components_struct_name = Ident::new("Components", Span::call_site());
-
-    let components_struct: ItemStruct = parse_quote! { pub struct #components_struct_name; };
 
     let preset_trait_name = Ident::new("IsPreset", Span::call_site());
 
@@ -64,14 +60,12 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
     let all_components = ast.delegate_entries.all_components();
 
     let (impl_has_component_at, substitution) =
-        derive_impl_has_component_at(preset_module_name, &components_struct_name, &all_components)?;
+        derive_impl_has_component_at(preset_module_name, &all_components)?;
 
     let provider_struct = define_struct(&provider_struct_name, &preset_generics);
 
     let mut mod_output = quote! {
         #provider_struct
-
-        #components_struct
 
         #preset_trait
 
