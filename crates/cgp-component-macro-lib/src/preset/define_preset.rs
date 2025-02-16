@@ -7,7 +7,7 @@ use crate::delegate_components::delegates_to::define_delegates_to_trait;
 use crate::delegate_components::impl_delegate::impl_delegate_components;
 use crate::derive_component::snake_case::to_snake_case_str;
 use crate::preset::ast::DefinePresetAst;
-use crate::preset::impl_has_component_at::derive_impl_has_component_at;
+use crate::preset::component_alias::derive_component_aliases;
 use crate::preset::impl_is_preset::derive_impl_components_is_preset;
 use crate::preset::substitution_macro::define_substitution_macro;
 
@@ -59,8 +59,8 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
 
     let all_components = ast.delegate_entries.all_components();
 
-    let (impl_has_component_at, substitution) =
-        derive_impl_has_component_at(preset_module_name, &all_components)?;
+    let (alias_types, substitution) =
+        derive_component_aliases(preset_module_name, &all_components)?;
 
     let provider_struct = define_struct(&provider_struct_name, &preset_generics);
 
@@ -71,7 +71,11 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
 
         #impl_is_preset_items
 
-        #impl_has_component_at
+        pub mod components {
+            use super::*;
+
+            #alias_types
+        }
     };
 
     {
@@ -97,11 +101,8 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
             Span::call_site(),
         );
 
-        let with_components_macro = define_substitution_macro(
-            preset_module_name,
-            &with_components_macro_name,
-            &substitution,
-        );
+        let with_components_macro =
+            define_substitution_macro(&with_components_macro_name, &substitution);
 
         mod_output.extend(with_components_macro);
         mod_output.extend(quote! {
