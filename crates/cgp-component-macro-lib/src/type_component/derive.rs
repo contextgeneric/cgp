@@ -2,16 +2,17 @@ use alloc::format;
 use alloc::vec::Vec;
 
 use proc_macro2::TokenStream;
-use quote::{quote, ToTokens};
+use quote::{quote, ToTokens, TokenStreamExt};
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::spanned::Spanned;
 use syn::token::{Colon, Plus, Pound};
 use syn::{
     parse2, parse_quote, Attribute, Error, Generics, Ident, ItemImpl, ItemTrait, ItemType,
-    TraitItem, TraitItemType, TypeParamBound,
+    TraitItem, TraitItemType, Type, TypeParamBound,
 };
 
+use crate::delegate_components::ast::ComponentAst;
 use crate::derive_component::component_spec::{
     parse_component_from_entries, validate_component_entries, ComponentSpec,
 };
@@ -40,15 +41,17 @@ pub fn derive_type_component(attrs: TokenStream, body: TokenStream) -> syn::Resu
 
     let alias_type = derive_type_alias(&component.consumer_trait, &spec.context_type, &item_type)?;
 
-    let use_type_impl = derive_use_type_impl(&component.provider_trait, &item_type)?;
+    let type_provider_impls = derive_type_providers(&spec, &component.provider_trait, &item_type)?;
 
-    Ok(quote! {
+    let mut out = quote! {
         #component
 
         #alias_type
+    };
 
-        #use_type_impl
-    })
+    out.append_all(type_provider_impls);
+
+    Ok(out)
 }
 
 pub fn extract_item_type(consumer_trait: &ItemTrait) -> syn::Result<&TraitItemType> {
@@ -101,10 +104,19 @@ pub fn derive_type_alias(
     Ok(alias_type)
 }
 
-pub fn derive_use_type_impl(
+pub fn derive_type_providers(
+    spec: &ComponentSpec,
     provider_trait: &ItemTrait,
     item_type: &TraitItemType,
-) -> syn::Result<ItemImpl> {
+) -> syn::Result<Vec<ItemImpl>> {
+    let context_name = &spec.context_type;
+
+    let component_name = {
+        let name = &spec.component_name;
+        let params = &spec.component_params;
+        parse2::<Type>(quote! { #name < #params > })
+    }?;
+
     let provider_trait_name = &provider_trait.ident;
 
     let (impl_generics, type_generics, where_clause) = provider_trait.generics.split_for_impl();
@@ -117,29 +129,44 @@ pub fn derive_use_type_impl(
 
     let type_name = &item_type.ident;
 
-    let type_bounds = if item_type.bounds.is_empty() {
-        TokenStream::new()
-    } else {
-        let bounds = &item_type.bounds;
-
-        quote! {
-            #type_name: #bounds,
-        }
-    };
+    let type_bounds = &item_type.bounds;
 
     let use_type_impl: ItemImpl = parse2(quote! {
         impl< #type_name, #impl_generics_params >
             #provider_trait_name #type_generics
             for UseType< #type_name >
         where
-            #type_bounds
+            #type_name: #type_bounds,
             #predicates
         {
             type #type_name = #type_name;
         }
     })?;
 
-    Ok(use_type_impl)
+    let use_type_is_provider_impl = derive_is_provider_for(&component_name, &use_type_impl)?;
+
+    let with_provider_impl: ItemImpl = parse2(quote! {
+        impl< __Provider__, #impl_generics_params >
+            #provider_trait_name #type_generics
+            for WithProvider< __Provider__ >
+        where
+            __Provider__: ProvideType< #context_name, #component_name >,
+            __Provider__::Type: #type_bounds,
+            #predicates
+        {
+            type #type_name = __Provider__::Type;
+        }
+    })?;
+
+    let with_provider_is_provider_impl =
+        derive_is_provider_for(&component_name, &with_provider_impl)?;
+
+    Ok(vec![
+        use_type_impl,
+        use_type_is_provider_impl,
+        with_provider_impl,
+        with_provider_is_provider_impl,
+    ])
 }
 
 pub struct TypeComponentSpecs {
