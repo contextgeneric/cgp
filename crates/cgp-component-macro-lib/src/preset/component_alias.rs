@@ -2,10 +2,12 @@ use proc_macro2::TokenStream;
 use quote::quote;
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
+use syn::Ident;
 
 use crate::delegate_components::ast::ComponentAst;
 
 pub fn derive_component_aliases(
+    preset_module_name: &Ident,
     components: &Punctuated<ComponentAst, Comma>,
 ) -> syn::Result<(TokenStream, TokenStream)> {
     let mut impl_body = TokenStream::new();
@@ -22,7 +24,7 @@ pub fn derive_component_aliases(
         };
 
         let substitution = quote! {
-            #impl_generics #component_type,
+            #impl_generics #preset_module_name ::components:: #component_type,
         };
 
         impl_body.extend(item_impl);
