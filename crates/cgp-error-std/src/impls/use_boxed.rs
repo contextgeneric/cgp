@@ -1,9 +1,9 @@
-use cgp_core::error::ProvideErrorType;
+use cgp_core::error::ErrorTypeProvider;
 
 use crate::types::Error;
 
 pub struct UseBoxedStdError;
 
-impl<Context> ProvideErrorType<Context> for UseBoxedStdError {
+impl<Context> ErrorTypeProvider<Context> for UseBoxedStdError {
     type Error = Error;
 }

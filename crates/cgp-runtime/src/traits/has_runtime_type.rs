@@ -1,5 +1,6 @@
 use cgp_core::prelude::*;
 
-cgp_type! {
-    Runtime
+#[cgp_type]
+pub trait HasRuntimeType {
+    type Runtime;
 }

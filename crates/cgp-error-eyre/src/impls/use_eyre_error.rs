@@ -1,8 +1,8 @@
-use cgp_core::error::ProvideErrorType;
+use cgp_core::error::ErrorTypeProvider;
 use eyre::Error;
 
 pub struct UseEyreError;
 
-impl<Context> ProvideErrorType<Context> for UseEyreError {
+impl<Context> ErrorTypeProvider<Context> for UseEyreError {
     type Error = Error;
 }

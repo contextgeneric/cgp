@@ -1,5 +1,5 @@
 use proc_macro2::TokenStream;
-use quote::{quote, ToTokens};
+use quote::ToTokens;
 use syn::{ItemImpl, ItemStruct, ItemTrait};
 
 use crate::derive_component::component_name::derive_component_name_struct;
