@@ -16,7 +16,7 @@ pub fn derive_getter_component(attr: TokenStream, body: TokenStream) -> syn::Res
     let spec: ComponentSpec = syn::parse2(attr)?;
     let consumer_trait: ItemTrait = syn::parse2(body)?;
 
-    let derived_component = derive_component_with_ast(&spec, &consumer_trait)?;
+    let derived_component = derive_component_with_ast(&spec, consumer_trait.clone())?;
 
     let fields = parse_getter_fields(&spec.context_type, &consumer_trait)?;
 

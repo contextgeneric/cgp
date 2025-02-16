@@ -2,18 +2,102 @@ use alloc::format;
 use alloc::vec::Vec;
 
 use proc_macro2::TokenStream;
-use quote::quote;
+use quote::{quote, ToTokens};
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
+use syn::spanned::Spanned;
 use syn::token::{Colon, Plus, Pound};
-use syn::{parse_quote, Attribute, Ident, ItemImpl, ItemTrait, ItemType, TypeParamBound};
+use syn::{
+    parse2, parse_quote, Attribute, Error, Generics, Ident, ItemImpl, ItemTrait, ItemType,
+    TraitItem, TraitItemType, TypeParamBound,
+};
 
+use crate::derive_component::component_spec::{
+    parse_component_from_entries, validate_component_entries, ComponentSpec,
+};
+use crate::derive_component::derive::{derive_component_with_ast, DerivedComponent};
+use crate::derive_component::entry::Entries;
 use crate::derive_provider::derive_is_provider_for;
 
-pub fn derive_type_component(stream: TokenStream) -> syn::Result<TokenStream> {
-    let spec: TypeComponentSpecs = syn::parse2(stream)?;
+pub fn derive_type_component(attrs: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
+    let Entries { mut entries } = syn::parse2(attrs)?;
 
-    do_derive_type_component(spec.attributes, spec.ident, spec.bounds)
+    let consumer_trait: ItemTrait = syn::parse2(body)?;
+
+    let item_type = extract_item_type(&consumer_trait)?.clone();
+
+    entries.entry("provider".into()).or_insert_with(|| {
+        let provider_name = Ident::new(
+            &format!("{}TypeProvider", item_type.ident),
+            item_type.ident.span(),
+        );
+        parse_quote!( #provider_name )
+    });
+
+    let spec = parse_component_from_entries(&entries)?;
+
+    let component = derive_component_with_ast(&spec, consumer_trait)?;
+
+    let alias_type = derive_type_alias(&component, &spec.context_type, &item_type)?;
+
+    Ok(quote! {
+        #component
+
+        #alias_type
+    })
+}
+
+pub fn extract_item_type(consumer_trait: &ItemTrait) -> syn::Result<&TraitItemType> {
+    if consumer_trait.items.len() != 1 {
+        return Err(Error::new(
+            consumer_trait.span(),
+            "type trait should contain exactly one associated type item",
+        ));
+    }
+
+    match consumer_trait.items.get(0) {
+        Some(TraitItem::Type(item_type)) => {
+            if !item_type.generics.params.is_empty() || item_type.generics.where_clause.is_some() {
+                return Err(Error::new(
+                    consumer_trait.span(),
+                    "generic associated type and where clause are not supported",
+                ));
+            }
+
+            Ok(item_type)
+        }
+        _ => Err(Error::new(
+            consumer_trait.span(),
+            "type trait should contain exactly one associated type item",
+        )),
+    }
+}
+
+pub fn derive_type_alias(
+    component: &DerivedComponent,
+    context_name: &Ident,
+    item_type: &TraitItemType,
+) -> syn::Result<ItemType> {
+    let consumer_trait_name = &component.consumer_trait.ident;
+
+    let (impl_generics, type_generics, where_clause) =
+        component.consumer_trait.generics.split_for_impl();
+
+    let impl_generics: Generics = parse2(impl_generics.to_token_stream())?;
+    let type_generics: Generics = parse2(type_generics.to_token_stream())?;
+
+    let impl_generics_params = &impl_generics.params;
+    let type_generics_params = &type_generics.params;
+
+    let type_name = &item_type.ident;
+    let alias_name = Ident::new(&format!("{}Of", type_name), type_name.span());
+
+    let alias_type: ItemType = parse2(quote! {
+        pub type #alias_name < #context_name, #type_generics_params > =
+            < #context_name as #consumer_trait_name #type_generics > :: #type_name ;
+    })?;
+
+    Ok(alias_type)
 }
 
 pub struct TypeComponentSpecs {

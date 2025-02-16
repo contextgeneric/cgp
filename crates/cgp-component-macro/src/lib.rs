@@ -57,9 +57,9 @@ pub fn cgp_preset(body: TokenStream) -> TokenStream {
         .into()
 }
 
-#[proc_macro]
-pub fn cgp_type(body: TokenStream) -> TokenStream {
-    cgp_component_macro_lib::derive_type_component(body.into())
+#[proc_macro_attribute]
+pub fn cgp_type(attrs: TokenStream, body: TokenStream) -> TokenStream {
+    cgp_component_macro_lib::derive_type_component(attrs.into(), body.into())
         .unwrap_or_else(syn::Error::into_compile_error)
         .into()
 }
