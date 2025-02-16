@@ -49,7 +49,7 @@ impl Parse for ComponentSpec {
 pub fn parse_component_from_entries(
     entries: &BTreeMap<String, Type>,
 ) -> syn::Result<ComponentSpec> {
-    validate_component_entries(&entries)?;
+    validate_component_entries(entries)?;
 
     let context_type: Ident = {
         let raw_context_type = entries.get("context");

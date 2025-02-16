@@ -56,7 +56,7 @@ pub fn extract_item_type(consumer_trait: &ItemTrait) -> syn::Result<&TraitItemTy
         ));
     }
 
-    match consumer_trait.items.get(0) {
+    match consumer_trait.items.first() {
         Some(TraitItem::Type(item_type)) => {
             if !item_type.generics.params.is_empty() || item_type.generics.where_clause.is_some() {
                 return Err(Error::new(
