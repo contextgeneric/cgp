@@ -16,6 +16,9 @@ pub fn derive_impl_has_component_at(
         pub trait HasComponentAt<const I: usize, Params> {
             type Component;
         }
+
+        pub type ComponentAt<Context, const I: usize, Params> =
+            <Context as HasComponentAt<I, Params>>::Component;
     };
 
     let mut substitution_body = TokenStream::new();
@@ -43,12 +46,11 @@ pub fn derive_impl_has_component_at(
 
         let substitution = quote! {
             #impl_generics
-            <Self as
-                #preset_module_name :: HasComponentAt <
-                    #i, (#type_generics_param)
-                >
-            >::Component
-            ,
+            #preset_module_name :: ComponentAt<
+                Self,
+                #i,
+                (#type_generics_param),
+            >,
         };
 
         impl_body.extend(item_impl);
