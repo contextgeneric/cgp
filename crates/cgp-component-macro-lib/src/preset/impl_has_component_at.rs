@@ -22,10 +22,8 @@ pub fn derive_impl_has_component_at(
 
         let component_type = &component.component_type;
 
-        let i_type = i.to_string();
-
         let item_impl = quote! {
-            impl #impl_generics HasComponentAt< #i_type, (#impl_generics_params) >
+            impl #impl_generics HasComponentAt< #i, (#impl_generics_params) >
                 for #components_struct_name
             {
                 type Component = #component_type;
