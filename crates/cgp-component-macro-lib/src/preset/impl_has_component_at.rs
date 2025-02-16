@@ -42,12 +42,13 @@ pub fn derive_impl_has_component_at(
         };
 
         let substitution = quote! {
-            #impl_generics <
-                Self as
+            #impl_generics
+            <Self as
                 #preset_module_name :: HasComponentAt <
                     #i, (#type_generics_param)
-                >::Component
-            >,
+                >
+            >::Component
+            ,
         };
 
         impl_body.extend(item_impl);
