@@ -1,6 +1,6 @@
 pub use cgp_async::{async_trait, Async, MaybeSend, MaybeStatic, MaybeSync};
 pub use cgp_component::{
-    CanUseComponent, DelegateComponent, HasComponents, IsProviderFor, UseFields, WithContext,
+    CanUseComponent, DelegateComponent, HasProvider, IsProviderFor, UseFields, WithContext,
     WithProvider,
 };
 pub use cgp_component_macro::{

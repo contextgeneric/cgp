@@ -72,7 +72,7 @@ pub fn derive_consumer_impl(
 
         {
             let has_component_constraint: Punctuated<TypeParamBound, Plus> = parse_quote! {
-                HasComponents
+                HasProvider
             };
 
             let provider_constraint: Punctuated<TypeParamBound, Plus> = parse_quote! {
@@ -86,14 +86,14 @@ pub fn derive_consumer_impl(
                     });
 
                     where_clause.predicates.push(parse_quote! {
-                        #context_type :: Components : #provider_constraint
+                        #context_type :: Provider : #provider_constraint
                     });
                 }
                 _ => {
                     impl_generics.where_clause = Some(parse_quote! {
                         where
                             #context_type : #has_component_constraint,
-                            #context_type :: Components : #provider_constraint
+                            #context_type :: Provider : #provider_constraint
                     });
                 }
             }
@@ -109,7 +109,7 @@ pub fn derive_consumer_impl(
             TraitItem::Fn(trait_fn) => {
                 let impl_fn = derive_delegated_fn_impl(
                     &trait_fn.sig,
-                    &parse_quote!(#context_type :: Components),
+                    &parse_quote!(#context_type :: Provider),
                 );
 
                 impl_items.push(ImplItem::Fn(impl_fn));
@@ -132,7 +132,7 @@ pub fn derive_consumer_impl(
                 let impl_type = derive_delegate_type_impl(
                     trait_type,
                     parse_quote!(
-                        < #context_type :: Components as #provider_name < #provider_generic_args > > :: #type_name #type_generics
+                        < #context_type :: Provider as #provider_name < #provider_generic_args > > :: #type_name #type_generics
                     ),
                 );
 

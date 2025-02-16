@@ -45,10 +45,10 @@ pub fn derive_has_components(provider_name: &Ident, context_struct: &ItemStruct)
     let (impl_generics, ty_generics, where_clause) = context_struct.generics.split_for_impl();
 
     parse_quote! {
-        impl #impl_generics HasComponents for #context_name #ty_generics
+        impl #impl_generics HasProvider for #context_name #ty_generics
             #where_clause
         {
-            type Components = #provider_name;
+            type Provider = #provider_name;
         }
     }
 }

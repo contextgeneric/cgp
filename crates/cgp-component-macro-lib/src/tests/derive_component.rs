@@ -56,13 +56,13 @@ fn test_derive_component_with_const_generic() {
 
         impl<Context, const BAR: usize> HasFoo<BAR> for Context
         where
-            Context: HasComponents,
-            Context::Components: FooProvider<Context, BAR>,
+            Context: HasProvider,
+            Context::Provider: FooProvider<Context, BAR>,
         {
-            type Foo = <Context::Components as FooProvider<Context, BAR>>::Foo;
+            type Foo = <Context::Provider as FooProvider<Context, BAR>>::Foo;
 
             fn foo(&self) -> Self::Foo {
-                Context::Components::foo(self)
+                Context::Provider::foo(self)
             }
         }
 
@@ -117,13 +117,13 @@ fn test_derive_component_with_const_generic() {
 
         impl<Context, const BAR: usize> HasFoo<BAR> for Context
         where
-            Context: HasComponents,
-            Context::Components: FooProvider<Context, BAR>,
+            Context: HasProvider,
+            Context::Provider: FooProvider<Context, BAR>,
         {
-            type Foo = <Context::Components as FooProvider<Context, BAR>>::Foo;
+            type Foo = <Context::Provider as FooProvider<Context, BAR>>::Foo;
 
             fn foo(&self) -> Self::Foo {
-                Context::Components::foo(self)
+                Context::Provider::foo(self)
             }
         }
 
