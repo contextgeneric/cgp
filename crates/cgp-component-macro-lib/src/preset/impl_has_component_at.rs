@@ -10,6 +10,11 @@ pub fn derive_impl_has_component_at(
     preset_module_name: &Ident,
     components: &Punctuated<ComponentAst, Comma>,
 ) -> syn::Result<(TokenStream, TokenStream)> {
+    let local_self = Ident::new(
+        &format!("__{preset_module_name}__"),
+        preset_module_name.span(),
+    );
+
     let mut i: usize = 0;
 
     let mut impl_body = quote! {
@@ -47,7 +52,7 @@ pub fn derive_impl_has_component_at(
         let substitution = quote! {
             #impl_generics
             #preset_module_name :: ComponentAt<
-                Self,
+                #local_self,
                 #i,
                 (#type_generics_param),
             >,

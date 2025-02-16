@@ -97,8 +97,11 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
             Span::call_site(),
         );
 
-        let with_components_macro =
-            define_substitution_macro(&with_components_macro_name, &substitution);
+        let with_components_macro = define_substitution_macro(
+            preset_module_name,
+            &with_components_macro_name,
+            &substitution,
+        );
 
         mod_output.extend(with_components_macro);
         mod_output.extend(quote! {
