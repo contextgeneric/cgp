@@ -71,6 +71,13 @@ pub fn cgp_context(attr: TokenStream, item: TokenStream) -> TokenStream {
         .into()
 }
 
+#[proc_macro_attribute]
+pub fn re_export_imports(attrs: TokenStream, body: TokenStream) -> TokenStream {
+    cgp_component_macro_lib::derive_re_export_imports(attrs.into(), body.into())
+        .unwrap_or_else(syn::Error::into_compile_error)
+        .into()
+}
+
 #[proc_macro]
 pub fn for_each_replace(body: TokenStream) -> TokenStream {
     cgp_component_macro_lib::handle_for_each_replace(body.into())
