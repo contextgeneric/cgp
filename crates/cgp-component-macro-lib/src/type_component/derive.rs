@@ -2,14 +2,14 @@ use alloc::format;
 use alloc::vec::Vec;
 
 use proc_macro2::TokenStream;
-use quote::{quote, ToTokens, TokenStreamExt};
+use quote::{ToTokens, TokenStreamExt, quote};
 use syn::spanned::Spanned;
 use syn::{
-    parse2, parse_quote, Error, Generics, Ident, ItemImpl, ItemTrait, ItemType, TraitItem,
-    TraitItemType, Type,
+    Error, Generics, Ident, ItemImpl, ItemTrait, ItemType, TraitItem, TraitItemType, Type,
+    parse_quote, parse2,
 };
 
-use crate::derive_component::component_spec::{parse_component_from_entries, ComponentSpec};
+use crate::derive_component::component_spec::{ComponentSpec, parse_component_from_entries};
 use crate::derive_component::derive::derive_component_with_ast;
 use crate::derive_component::entry::Entries;
 use crate::derive_provider::derive_is_provider_for;

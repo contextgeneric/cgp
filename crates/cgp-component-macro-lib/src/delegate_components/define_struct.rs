@@ -1,6 +1,6 @@
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
-use syn::{parse_quote, GenericParam, Generics, Ident, ItemStruct, Type};
+use syn::{GenericParam, Generics, Ident, ItemStruct, Type, parse_quote};
 
 pub fn define_struct(ident: &Ident, generics: &Generics) -> ItemStruct {
     if generics.params.is_empty() {

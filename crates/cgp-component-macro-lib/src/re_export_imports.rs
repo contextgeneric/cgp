@@ -1,7 +1,7 @@
 use proc_macro2::{Span, TokenStream};
 use quote::quote;
 use syn::token::Pub;
-use syn::{parse2, parse_quote, Error, Item, ItemMod, Visibility};
+use syn::{Error, Item, ItemMod, Visibility, parse_quote, parse2};
 
 pub fn derive_re_export_imports(attrs: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
     if !attrs.is_empty() {

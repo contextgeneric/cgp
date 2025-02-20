@@ -1,6 +1,6 @@
 use proc_macro2::{Span, TokenStream};
 use quote::quote;
-use syn::{parse_quote, Error, Ident, ItemTrait, Type};
+use syn::{Error, Ident, ItemTrait, Type, parse_quote};
 
 use crate::derive_component::component_spec::ComponentSpec;
 use crate::derive_component::derive::derive_component_with_ast;

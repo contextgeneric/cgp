@@ -2,7 +2,7 @@ use alloc::vec::Vec;
 
 use proc_macro2::TokenStream;
 use quote::quote;
-use syn::{parse_quote, ImplItemFn, Signature, TypePath, Visibility};
+use syn::{ImplItemFn, Signature, TypePath, Visibility, parse_quote};
 
 use crate::derive_component::signature_args::signature_to_args;
 

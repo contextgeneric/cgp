@@ -2,7 +2,7 @@ use alloc::string::ToString;
 
 use proc_macro2::TokenStream;
 use quote::quote;
-use syn::{parse_quote, Ident, ItemImpl, ItemTrait};
+use syn::{Ident, ItemImpl, ItemTrait, parse_quote};
 
 use crate::getter_component::getter_field::GetterField;
 use crate::getter_component::symbol::symbol_from_string;

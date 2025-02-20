@@ -1,5 +1,5 @@
 use proc_macro2::Ident;
-use syn::{parse_quote, FnArg, TraitItemFn};
+use syn::{FnArg, TraitItemFn, parse_quote};
 
 use crate::derive_component::snake_case::to_snake_case_ident;
 

@@ -2,7 +2,7 @@ use alloc::string::ToString;
 
 use proc_macro2::TokenStream;
 use quote::quote;
-use syn::{parse_quote, ItemImpl, ItemTrait};
+use syn::{ItemImpl, ItemTrait, parse_quote};
 
 use crate::derive_component::component_spec::ComponentSpec;
 use crate::getter_component::getter_field::GetterField;

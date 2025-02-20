@@ -4,8 +4,8 @@ use alloc::vec::Vec;
 use syn::punctuated::Punctuated;
 use syn::token::{Brace, Comma, For, Impl, Plus};
 use syn::{
-    parse_quote, GenericParam, Ident, ImplItem, ItemImpl, ItemTrait, Path, TraitItem,
-    TypeParamBound,
+    GenericParam, Ident, ImplItem, ItemImpl, ItemTrait, Path, TraitItem, TypeParamBound,
+    parse_quote,
 };
 
 use crate::derive_component::delegate_fn::derive_delegated_fn_impl;

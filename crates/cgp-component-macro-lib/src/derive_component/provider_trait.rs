@@ -2,7 +2,7 @@ use alloc::vec::Vec;
 
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
-use syn::{parse_quote, Ident, ItemTrait, TraitItem};
+use syn::{Ident, ItemTrait, TraitItem, parse_quote};
 
 use crate::derive_component::generic_args::extract_generic_args;
 use crate::derive_component::replace_self_receiver::replace_self_receiver;

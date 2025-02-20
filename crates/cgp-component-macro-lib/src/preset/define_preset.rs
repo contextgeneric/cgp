@@ -3,7 +3,7 @@ use alloc::string::ToString;
 
 use proc_macro2::{Span, TokenStream};
 use quote::ToTokens;
-use syn::{parse_quote, Ident, ItemTrait};
+use syn::{Ident, ItemTrait, parse_quote};
 
 use crate::delegate_components::define_struct::define_struct;
 use crate::delegate_components::delegates_to::define_delegates_to_trait;

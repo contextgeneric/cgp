@@ -5,7 +5,7 @@ use quote::ToTokens;
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::token::{Bracket, Colon, Comma, Lt};
-use syn::{braced, bracketed, Generics, Token, Type};
+use syn::{Generics, Token, Type, braced, bracketed};
 
 pub struct DelegateComponentsAst {
     pub target_type: Type,

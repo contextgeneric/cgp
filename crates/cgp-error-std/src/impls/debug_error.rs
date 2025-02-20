@@ -5,8 +5,8 @@ use core::fmt::Debug;
 use cgp_core::error::{ErrorRaiser, ErrorRaiserComponent, ErrorWrapper, ErrorWrapperComponent};
 use cgp_core::prelude::*;
 
-use crate::types::{Error, StringError};
 use crate::WrapError;
+use crate::types::{Error, StringError};
 
 pub struct DebugBoxedStdError;
 

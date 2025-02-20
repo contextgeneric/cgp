@@ -1,6 +1,6 @@
 use alloc::vec::Vec;
 
-use syn::{parse_quote, Generics, Ident, ItemImpl, Type};
+use syn::{Generics, Ident, ItemImpl, Type, parse_quote};
 
 use crate::delegate_components::ast::{ComponentAst, DelegateEntriesAst};
 

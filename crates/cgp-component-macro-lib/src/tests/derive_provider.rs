@@ -1,4 +1,4 @@
-use quote::{quote, ToTokens};
+use quote::{ToTokens, quote};
 use syn::parse_quote;
 
 use crate::derive_provider::derive_is_provider_for;

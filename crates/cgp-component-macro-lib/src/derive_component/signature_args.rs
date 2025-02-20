@@ -1,7 +1,7 @@
 use proc_macro2::Span;
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
-use syn::{parse_quote, FnArg, Ident, Signature};
+use syn::{FnArg, Ident, Signature, parse_quote};
 
 pub fn signature_to_args(sig: &Signature) -> Punctuated<Ident, Comma> {
     let args = sig

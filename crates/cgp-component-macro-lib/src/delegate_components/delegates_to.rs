@@ -1,6 +1,6 @@
 use syn::punctuated::Punctuated;
 use syn::token::Plus;
-use syn::{parse_quote, Generics, Ident, ItemImpl, ItemTrait, Type, TypeParamBound};
+use syn::{Generics, Ident, ItemImpl, ItemTrait, Type, TypeParamBound, parse_quote};
 
 use crate::delegate_components::ast::DelegateEntriesAst;
 

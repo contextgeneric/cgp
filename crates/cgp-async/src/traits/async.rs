@@ -1,5 +1,5 @@
-use crate::traits::r#static::MaybeStatic;
 use crate::traits::send::MaybeSend;
+use crate::traits::r#static::MaybeStatic;
 use crate::traits::sync::MaybeSync;
 
 /**

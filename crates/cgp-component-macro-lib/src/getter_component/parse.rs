@@ -2,7 +2,7 @@ use alloc::vec::Vec;
 
 use quote::ToTokens;
 use syn::spanned::Spanned;
-use syn::{parse_quote, Error, FnArg, Ident, ItemTrait, ReturnType, TraitItem, Type};
+use syn::{Error, FnArg, Ident, ItemTrait, ReturnType, TraitItem, Type, parse_quote};
 
 use crate::derive_component::replace_self_type::replace_self_type;
 use crate::getter_component::getter_field::GetterField;
@@ -72,7 +72,7 @@ pub fn parse_getter_fields(
                         if receiver.reference.is_none() {
                             return Err(Error::new(
                                 receiver.span(),
-                                "first argument to getter method must be a reference to self, i.e. `&self`"
+                                "first argument to getter method must be a reference to self, i.e. `&self`",
                             ));
                         }
 
@@ -82,7 +82,7 @@ pub fn parse_getter_fields(
                         return Err(Error::new(
                             arg.span(),
                             "first argument to getter method must be `&self`",
-                        ))
+                        ));
                     }
                 };
 
@@ -105,7 +105,7 @@ pub fn parse_getter_fields(
                                 return Err(Error::new(
                                     ty.span(),
                                     "return type must be a reference",
-                                ))
+                                ));
                             }
                         }
                     }
@@ -127,7 +127,7 @@ pub fn parse_getter_fields(
                 return Err(Error::new(
                     item.span(),
                     "getter trait can only contain getter methods",
-                ))
+                ));
             }
         }
     }

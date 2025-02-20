@@ -1,6 +1,6 @@
 use proc_macro2::TokenStream;
 use quote::quote;
-use syn::{parse_quote, AngleBracketedGenericArguments, Ident, ItemImpl, ItemStruct};
+use syn::{AngleBracketedGenericArguments, Ident, ItemImpl, ItemStruct, parse_quote};
 
 use crate::derive_context::ContextSpec;
 

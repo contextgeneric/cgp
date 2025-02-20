@@ -1,6 +1,6 @@
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
-use syn::{parse_quote, Ident, ItemStruct};
+use syn::{Ident, ItemStruct, parse_quote};
 
 pub fn derive_component_name_struct(
     component_name: &Ident,

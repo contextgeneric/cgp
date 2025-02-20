@@ -1,4 +1,4 @@
-use syn::{parse_quote, Type};
+use syn::{Type, parse_quote};
 
 pub fn symbol_from_string(value: &str) -> Type {
     value

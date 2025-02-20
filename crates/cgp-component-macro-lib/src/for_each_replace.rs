@@ -1,13 +1,13 @@
 use alloc::vec::Vec;
 
 use proc_macro2::{Group, TokenStream, TokenTree};
-use quote::{quote, ToTokens};
+use quote::{ToTokens, quote};
 use syn::__private::parse_brackets;
 use syn::parse::discouraged::Speculative;
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::token::{Comma, Or};
-use syn::{braced, Ident, Type};
+use syn::{Ident, Type, braced};
 
 use crate::delegate_components::ast::ComponentAst;
 
