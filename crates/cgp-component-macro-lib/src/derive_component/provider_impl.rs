@@ -116,8 +116,8 @@ pub fn derive_provider_impl(
 
     let trait_path: Path = parse_quote!( #provider_name < #provider_generic_args > );
 
-    let mut attrs = provider_trait.attrs.clone();
-    attrs.push(parse_quote!( #[diagnostic::do_not_recommend] ));
+    let attrs = provider_trait.attrs.clone();
+    // attrs.push(parse_quote!( #[diagnostic::do_not_recommend] ));
 
     ItemImpl {
         attrs,
