@@ -19,6 +19,7 @@ pub trait FieldGetter<Context, Tag> {
     fn get_field(context: &Context, tag: PhantomData<Tag>) -> &Self::Value;
 }
 
+#[diagnostic::do_not_recommend]
 impl<Context, Tag, Target, Value> HasField<Tag> for Context
 where
     Context: Deref<Target = Target>,

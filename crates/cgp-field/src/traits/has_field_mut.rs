@@ -16,6 +16,7 @@ pub trait MutFieldGetter<Context, Tag>: FieldGetter<Context, Tag> {
     fn get_field_mut(context: &mut Context, tag: PhantomData<Tag>) -> &mut Self::Value;
 }
 
+#[diagnostic::do_not_recommend]
 impl<Context, Tag, Target, Value> HasFieldMut<Tag> for Context
 where
     Context: DerefMut<Target = Target>,

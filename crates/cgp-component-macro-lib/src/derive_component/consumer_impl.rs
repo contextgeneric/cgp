@@ -144,8 +144,11 @@ pub fn derive_consumer_impl(
 
     let trait_path: Path = parse_quote!( #consumer_name < #consumer_generic_args > );
 
+    let mut attrs = consumer_trait.attrs.clone();
+    attrs.push(parse_quote!( #[diagnostic::do_not_recommend] ));
+
     ItemImpl {
-        attrs: consumer_trait.attrs.clone(),
+        attrs,
         defaultness: None,
         unsafety: consumer_trait.unsafety,
         impl_token: Impl::default(),
