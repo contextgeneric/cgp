@@ -23,19 +23,20 @@ pub fn derive_context(attr: TokenStream, body: TokenStream) -> syn::Result<Token
         #has_components_impl
     };
 
-    if let Some(preset) = &context_spec.preset {
-        let (delegate_impl, is_provider_impl) =
-            derive_delegate_preset(provider_name, &preset.name, &preset.generics)?;
+    match &context_spec.preset {
+        Some(preset) => {
+            let (delegate_impl, is_provider_impl) =
+                derive_delegate_preset(provider_name, &preset.name, &preset.generics)?;
 
-        Ok(quote! {
-            #base_derived
+            Ok(quote! {
+                #base_derived
 
-            #delegate_impl
+                #delegate_impl
 
-            #is_provider_impl
-        })
-    } else {
-        Ok(base_derived)
+                #is_provider_impl
+            })
+        }
+        _ => Ok(base_derived),
     }
 }
 
