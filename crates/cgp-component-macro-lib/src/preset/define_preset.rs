@@ -29,6 +29,7 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
     let preset_trait_name = Ident::new("IsPreset", Span::call_site());
 
     let preset_trait: ItemTrait = parse_quote! {
+        #[doc(hidden)]
         pub trait #preset_trait_name <Component> {}
     };
 

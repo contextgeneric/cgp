@@ -30,6 +30,7 @@ pub fn define_delegates_to_trait(
     let trait_bounds = define_delegate_component_trait_bounds(target_type, delegate_entries);
 
     let item_trait = parse_quote! {
+        #[doc(hidden)]
         pub trait #trait_name #target_generics: #trait_bounds {}
     };
 
