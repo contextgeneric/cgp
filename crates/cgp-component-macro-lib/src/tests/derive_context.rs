@@ -76,16 +76,18 @@ fn test_derive_context_with_preset() {
 
         impl<__Name__> DelegateComponent<__Name__> for FooComponents
         where
-            Self: IsFooPreset<__Name__>,
+            Self: FooPreset::IsPreset<__Name__>,
         {
-            type Delegate = FooPreset<BaseComponents>;
+            type Delegate = FooPreset::Provider<BaseComponents>;
         }
 
         impl<__Name__, __Context__, __Params__> IsProviderFor<__Name__, __Context__, __Params__>
         for FooComponents
         where
-            Self: IsFooPreset<__Name__>,
-            FooPreset<BaseComponents>: IsProviderFor<__Name__, __Context__, __Params__>,
+            Self: FooPreset::IsPreset<__Name__>,
+            FooPreset::Provider<
+                BaseComponents,
+            >: IsProviderFor<__Name__, __Context__, __Params__>,
         {}
     };
 
