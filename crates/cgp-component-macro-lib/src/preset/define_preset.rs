@@ -107,6 +107,8 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
         pub mod #preset_module_name {
             use super::*;
 
+            #[doc(hidden)]
+            #[doc(no_inline)]
             pub use super::super::re_exports;
 
             #mod_output

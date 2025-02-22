@@ -17,13 +17,17 @@ pub fn derive_re_export_imports(attrs: TokenStream, body: TokenStream) -> syn::R
     let mod_name = &item_mod.ident;
 
     let doc_hidden: Attribute = parse_quote! { #[doc(hidden)] };
+    let doc_no_inline: Attribute = parse_quote! { #[doc(no_inline)] };
 
     if let Some(content) = &item_mod.content {
         for item in content.1.iter() {
             if let Item::Use(use_item) = item {
                 let mut re_export = use_item.clone();
+
                 re_export.vis = Visibility::Public(Pub(Span::call_site()));
                 re_export.attrs.push(doc_hidden.clone());
+                re_export.attrs.push(doc_no_inline.clone());
+
                 re_exports.push(re_export);
             }
         }
@@ -34,6 +38,7 @@ pub fn derive_re_export_imports(attrs: TokenStream, body: TokenStream) -> syn::R
 
     let export_mod: ItemMod = parse2(quote! {
         #[doc(hidden)]
+        #[doc(no_inline)]
         pub mod #export_mod_name {
             #mod_body
         }
