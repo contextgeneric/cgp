@@ -13,7 +13,6 @@ description  = """
 
 [features]
 default = []
-provider-supertrait = []
 
 [dependencies]
 syn             = { version = "2.0.95", features = [ "full", "extra-traits" ] }

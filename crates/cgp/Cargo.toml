@@ -14,7 +14,6 @@ description  = """
 [features]
 default             = [ "full" ]
 full                = [ "cgp-core/full", "cgp-extra/full" ]
-provider-supertrait = [ "cgp-core/provider-supertrait" ]
 
 [dependencies]
 cgp-async      = { version = "0.3.0", default-features = false }
