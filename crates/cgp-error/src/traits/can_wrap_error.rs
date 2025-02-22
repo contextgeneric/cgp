@@ -1,4 +1,4 @@
-use cgp_component::{DelegateComponent, HasComponents, IsProviderFor, UseDelegate};
+use cgp_component::{DelegateComponent, HasProvider, IsProviderFor, UseDelegate};
 use cgp_component_macro::{cgp_component, cgp_provider};
 
 use crate::traits::HasErrorType;

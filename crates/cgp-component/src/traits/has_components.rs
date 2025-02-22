@@ -1,3 +1,3 @@
-pub trait HasComponents {
-    type Components;
+pub trait HasProvider {
+    type Provider;
 }

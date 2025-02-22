@@ -4,6 +4,6 @@ mod traits;
 
 pub use traits::{
     CanRaiseAsyncError, CanRaiseError, CanWrapAsyncError, CanWrapError, ErrorOf, ErrorRaiser,
-    ErrorRaiserComponent, ErrorTypeComponent, ErrorWrapper, ErrorWrapperComponent,
-    HasAsyncErrorType, HasErrorType, ProvideErrorType,
+    ErrorRaiserComponent, ErrorTypeProvider, ErrorTypeProviderComponent, ErrorWrapper,
+    ErrorWrapperComponent, HasAsyncErrorType, HasErrorType,
 };

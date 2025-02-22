@@ -1,8 +1,10 @@
 use anyhow::Error;
-use cgp_core::error::ProvideErrorType;
+use cgp_core::error::{ErrorTypeProvider, ErrorTypeProviderComponent};
+use cgp_core::prelude::*;
 
 pub struct UseAnyhowError;
 
-impl<Context> ProvideErrorType<Context> for UseAnyhowError {
+#[cgp_provider(ErrorTypeProviderComponent)]
+impl<Context> ErrorTypeProvider<Context> for UseAnyhowError {
     type Error = Error;
 }

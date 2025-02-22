@@ -5,5 +5,5 @@ mod is_provider;
 
 pub use can_use_component::*;
 pub use delegate_component::DelegateComponent;
-pub use has_components::HasComponents;
+pub use has_components::HasProvider;
 pub use is_provider::*;

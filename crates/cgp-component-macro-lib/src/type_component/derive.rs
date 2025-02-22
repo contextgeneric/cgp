@@ -2,159 +2,163 @@ use alloc::format;
 use alloc::vec::Vec;
 
 use proc_macro2::TokenStream;
-use quote::quote;
-use syn::parse::{Parse, ParseStream};
-use syn::punctuated::Punctuated;
-use syn::token::{Colon, Plus, Pound};
-use syn::{parse_quote, Attribute, Ident, ItemImpl, ItemTrait, ItemType, TypeParamBound};
+use quote::{quote, ToTokens, TokenStreamExt};
+use syn::spanned::Spanned;
+use syn::{
+    parse2, parse_quote, Error, Generics, Ident, ItemImpl, ItemTrait, ItemType, TraitItem,
+    TraitItemType, Type,
+};
 
+use crate::derive_component::component_spec::{parse_component_from_entries, ComponentSpec};
+use crate::derive_component::derive::derive_component_with_ast;
+use crate::derive_component::entry::Entries;
 use crate::derive_provider::derive_is_provider_for;
 
-pub fn derive_type_component(stream: TokenStream) -> syn::Result<TokenStream> {
-    let spec: TypeComponentSpecs = syn::parse2(stream)?;
+pub fn derive_type_component(attrs: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
+    let Entries { mut entries } = syn::parse2(attrs)?;
 
-    do_derive_type_component(spec.attributes, spec.ident, spec.bounds)
+    let consumer_trait: ItemTrait = syn::parse2(body)?;
+
+    let item_type = extract_item_type(&consumer_trait)?.clone();
+
+    entries.entry("provider".into()).or_insert_with(|| {
+        let provider_name = Ident::new(
+            &format!("{}TypeProvider", item_type.ident),
+            item_type.ident.span(),
+        );
+        parse_quote!( #provider_name )
+    });
+
+    let spec = parse_component_from_entries(&entries)?;
+
+    let component = derive_component_with_ast(&spec, consumer_trait)?;
+
+    let alias_type = derive_type_alias(&component.consumer_trait, &spec.context_type, &item_type)?;
+
+    let type_provider_impls = derive_type_providers(&spec, &component.provider_trait, &item_type)?;
+
+    let mut out = quote! {
+        #component
+
+        #alias_type
+    };
+
+    out.append_all(type_provider_impls);
+
+    Ok(out)
 }
 
-pub struct TypeComponentSpecs {
-    pub attributes: Vec<Attribute>,
-    pub ident: Ident,
-    pub bounds: Punctuated<TypeParamBound, Plus>,
-}
+pub fn extract_item_type(consumer_trait: &ItemTrait) -> syn::Result<&TraitItemType> {
+    if consumer_trait.items.len() != 1 {
+        return Err(Error::new(
+            consumer_trait.span(),
+            "type trait should contain exactly one associated type item",
+        ));
+    }
 
-impl Parse for TypeComponentSpecs {
-    fn parse(input: ParseStream) -> syn::Result<Self> {
-        let attributes = {
-            let lookahead = input.lookahead1();
-            if lookahead.peek(Pound) {
-                input.call(Attribute::parse_outer)?
-            } else {
-                Vec::new()
+    match consumer_trait.items.first() {
+        Some(TraitItem::Type(item_type)) => {
+            if !item_type.generics.params.is_empty() || item_type.generics.where_clause.is_some() {
+                return Err(Error::new(
+                    consumer_trait.span(),
+                    "generic associated type and where clause are not supported",
+                ));
             }
-        };
 
-        let ident = input.parse()?;
-
-        if input.is_empty() {
-            return Ok(Self {
-                attributes,
-                ident,
-                bounds: Punctuated::new(),
-            });
+            Ok(item_type)
         }
-
-        let _: Colon = input.parse()?;
-
-        let bounds = input.parse_terminated(TypeParamBound::parse, Plus)?;
-
-        Ok(Self {
-            attributes,
-            ident,
-            bounds,
-        })
+        _ => Err(Error::new(
+            consumer_trait.span(),
+            "type trait should contain exactly one associated type item",
+        )),
     }
 }
 
-pub fn do_derive_type_component(
-    attributes: Vec<Attribute>,
-    ident: Ident,
-    bounds: Punctuated<TypeParamBound, Plus>,
-) -> syn::Result<TokenStream> {
-    let consumer_trait_name = Ident::new(&format!("Has{ident}Type"), ident.span());
+pub fn derive_type_alias(
+    consumer_trait: &ItemTrait,
+    context_name: &Ident,
+    item_type: &TraitItemType,
+) -> syn::Result<ItemType> {
+    let consumer_trait_name = &consumer_trait.ident;
 
-    let provider_trait_name = Ident::new(&format!("Provide{ident}Type"), ident.span());
+    let (_, type_generics, _) = consumer_trait.generics.split_for_impl();
 
-    let alias_name = Ident::new(&format!("{ident}Of"), ident.span());
+    let type_generics: Generics = parse2(type_generics.to_token_stream())?;
 
-    let component_name = Ident::new(&format!("{ident}TypeComponent"), ident.span());
+    let type_generics_params = &type_generics.params;
 
-    let alias_type: ItemType = parse_quote! {
-        pub type #alias_name <__Context__> = <__Context__ as #consumer_trait_name>:: #ident;
-    };
+    let type_name = &item_type.ident;
+    let alias_name = Ident::new(&format!("{}Of", type_name), type_name.span());
 
-    let mut consumer_trait: ItemTrait = parse_quote! {
-        pub trait #consumer_trait_name {
-            type #ident : #bounds ;
-        }
-    };
+    let alias_type: ItemType = parse2(quote! {
+        pub type #alias_name < #context_name, #type_generics_params > =
+            < #context_name as #consumer_trait_name #type_generics > :: #type_name ;
+    })?;
 
-    consumer_trait.attrs = attributes;
+    Ok(alias_type)
+}
 
-    let provider_trait: ItemTrait = parse_quote! {
-        pub trait #provider_trait_name <__Context__> {
-            type #ident : #bounds;
-        }
-    };
+pub fn derive_type_providers(
+    spec: &ComponentSpec,
+    provider_trait: &ItemTrait,
+    item_type: &TraitItemType,
+) -> syn::Result<Vec<ItemImpl>> {
+    let context_name = &spec.context_type;
 
-    let consumer_impl: ItemImpl = parse_quote! {
-        impl<__Context__, __Components__> #consumer_trait_name for __Context__
+    let component_name = {
+        let name = &spec.component_name;
+        let params = &spec.component_params;
+        parse2::<Type>(quote! { #name < #params > })
+    }?;
+
+    let provider_trait_name = &provider_trait.ident;
+
+    let (impl_generics, type_generics, where_clause) = provider_trait.generics.split_for_impl();
+
+    let impl_generics_params = parse2::<Generics>(impl_generics.to_token_stream())?.params;
+
+    let predicates = where_clause
+        .map(|c| c.predicates.clone())
+        .unwrap_or_default();
+
+    let type_name = &item_type.ident;
+
+    let type_bounds = &item_type.bounds;
+
+    let use_type_impl: ItemImpl = parse2(quote! {
+        impl< #type_name, #impl_generics_params >
+            #provider_trait_name #type_generics
+            for UseType< #type_name >
         where
-            __Context__: HasComponents< Components = __Components__ >,
-            __Components__: #provider_trait_name <__Context__>,
-            __Components__:: #ident : #bounds,
+            #type_name: #type_bounds,
+            #predicates
         {
-            type #ident = __Components__:: #ident;
+            type #type_name = #type_name;
         }
-    };
+    })?;
 
-    let provider_impl: ItemImpl = parse_quote! {
-        impl<__Context__, Component, Delegate>
-            #provider_trait_name <__Context__> for Component
+    let use_type_is_provider_impl = derive_is_provider_for(&component_name, &use_type_impl)?;
+
+    let with_provider_impl: ItemImpl = parse2(quote! {
+        impl< __Provider__, #impl_generics_params >
+            #provider_trait_name #type_generics
+            for WithProvider< __Provider__ >
         where
-            Component: DelegateComponent< #component_name, Delegate = Delegate >,
-            Delegate: #provider_trait_name <__Context__>,
-            Delegate:: #ident : #bounds,
+            __Provider__: ProvideType< #context_name, #component_name >,
+            __Provider__::Type: #type_bounds,
+            #predicates
         {
-            type #ident = Delegate:: #ident;
+            type #type_name = __Provider__::Type;
         }
-    };
+    })?;
 
-    let with_provider_impl: ItemImpl = parse_quote! {
-        impl<__Context__, Provider, #ident> #provider_trait_name <__Context__>
-            for WithProvider<Provider>
-        where
-            Provider: ProvideType<__Context__, #component_name, Type = #ident >,
-            #ident: #bounds,
-        {
-            type #ident = #ident;
-        }
-    };
+    let with_provider_is_provider_impl =
+        derive_is_provider_for(&component_name, &with_provider_impl)?;
 
-    let is_provider_for_with_provider_impl =
-        derive_is_provider_for(&parse_quote!(#component_name), &with_provider_impl)?;
-
-    let use_type_impl: ItemImpl = parse_quote! {
-        impl<__Context__, #ident> #provider_trait_name <__Context__>
-            for UseType<#ident>
-        where
-            #ident: #bounds,
-        {
-            type #ident = #ident;
-        }
-    };
-
-    let is_provider_for_use_type_impl =
-        derive_is_provider_for(&parse_quote!(#component_name), &use_type_impl)?;
-
-    Ok(quote! {
-        pub struct #component_name;
-
-        #consumer_trait
-
-        #alias_type
-
-        #provider_trait
-
-        #consumer_impl
-
-        #provider_impl
-
-        #with_provider_impl
-
-        #is_provider_for_with_provider_impl
-
-        #use_type_impl
-
-        #is_provider_for_use_type_impl
-    })
+    Ok(vec![
+        use_type_impl,
+        use_type_is_provider_impl,
+        with_provider_impl,
+        with_provider_is_provider_impl,
+    ])
 }

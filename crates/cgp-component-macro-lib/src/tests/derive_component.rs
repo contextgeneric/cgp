@@ -1,7 +1,7 @@
 use quote::quote;
 
 use crate::derive_component::derive::derive_component;
-use crate::tests::helper::equal::equal_token_stream;
+use crate::tests::helper::equal::assert_equal_token_stream;
 
 #[test]
 fn test_basic_derive_component() {
@@ -40,13 +40,13 @@ fn test_derive_component_with_const_generic() {
     .unwrap();
 
     let expected = quote! {
+        pub struct FooComponent;
+
         pub trait HasFoo<const BAR: usize> {
             type Foo;
 
             fn foo(&self) -> Self::Foo;
         }
-
-        pub struct FooComponent;
 
         pub trait FooProvider<Context, const BAR: usize>: IsProviderFor<FooComponent, Context, (BAR)> {
             type Foo;
@@ -56,13 +56,13 @@ fn test_derive_component_with_const_generic() {
 
         impl<Context, const BAR: usize> HasFoo<BAR> for Context
         where
-            Context: HasComponents,
-            Context::Components: FooProvider<Context, BAR>,
+            Context: HasProvider,
+            Context::Provider: FooProvider<Context, BAR>,
         {
-            type Foo = <Context::Components as FooProvider<Context, BAR>>::Foo;
+            type Foo = <Context::Provider as FooProvider<Context, BAR>>::Foo;
 
             fn foo(&self) -> Self::Foo {
-                Context::Components::foo(self)
+                Context::Provider::foo(self)
             }
         }
 
@@ -79,7 +79,7 @@ fn test_derive_component_with_const_generic() {
         }
     };
 
-    assert!(equal_token_stream(&derived, &expected));
+    assert_equal_token_stream(&derived, &expected);
 }
 
 #[cfg(not(feature = "provider-supertrait"))]
@@ -101,13 +101,13 @@ fn test_derive_component_with_const_generic() {
     .unwrap();
 
     let expected = quote! {
+        pub struct FooComponent;
+
         pub trait HasFoo<const BAR: usize> {
             type Foo;
 
             fn foo(&self) -> Self::Foo;
         }
-
-        pub struct FooComponent;
 
         pub trait FooProvider<Context, const BAR: usize> {
             type Foo;
@@ -117,13 +117,13 @@ fn test_derive_component_with_const_generic() {
 
         impl<Context, const BAR: usize> HasFoo<BAR> for Context
         where
-            Context: HasComponents,
-            Context::Components: FooProvider<Context, BAR>,
+            Context: HasProvider,
+            Context::Provider: FooProvider<Context, BAR>,
         {
-            type Foo = <Context::Components as FooProvider<Context, BAR>>::Foo;
+            type Foo = <Context::Provider as FooProvider<Context, BAR>>::Foo;
 
             fn foo(&self) -> Self::Foo {
-                Context::Components::foo(self)
+                Context::Provider::foo(self)
             }
         }
 
@@ -140,5 +140,5 @@ fn test_derive_component_with_const_generic() {
         }
     };
 
-    assert!(equal_token_stream(&derived, &expected));
+    assert_equal_token_stream(&derived, &expected);
 }
