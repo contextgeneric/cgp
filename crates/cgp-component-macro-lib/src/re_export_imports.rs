@@ -12,13 +12,13 @@ pub fn derive_re_export_imports(attrs: TokenStream, body: TokenStream) -> syn::R
 
     let mut re_exports: Vec<ItemUse> = Vec::new();
 
-    let mut item_mod: ItemMod = parse2(body)?;
+    let item_mod: ItemMod = parse2(body)?;
 
     let mod_name = &item_mod.ident;
 
     let doc_hidden: Attribute = parse_quote! { #[doc(hidden)] };
 
-    if let Some(content) = &mut item_mod.content {
+    if let Some(content) = &item_mod.content {
         for item in content.1.iter() {
             if let Item::Use(use_item) = item {
                 let mut re_export = use_item.clone();
@@ -27,11 +27,6 @@ pub fn derive_re_export_imports(attrs: TokenStream, body: TokenStream) -> syn::R
                 re_exports.push(re_export);
             }
         }
-
-        content.1.push(parse2(quote! {
-            #[doc(hidden)]
-            pub use super:: #export_mod_name ;
-        })?);
     }
 
     let mut mod_body = TokenStream::new();
