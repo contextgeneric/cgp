@@ -29,7 +29,8 @@ pub fn derive_re_export_imports(attrs: TokenStream, body: TokenStream) -> syn::R
         }
 
         content.1.push(parse2(quote! {
-            use super:: #export_mod_name ;
+            #[doc(hidden)]
+            pub use super:: #export_mod_name ;
         })?);
     }
 
