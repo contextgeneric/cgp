@@ -38,8 +38,7 @@ pub fn derive_re_export_imports(attrs: TokenStream, body: TokenStream) -> syn::R
 
     let export_mod: ItemMod = parse2(quote! {
         #[doc(hidden)]
-        #[doc(no_inline)]
-        pub mod #export_mod_name {
+        mod #export_mod_name {
             #mod_body
         }
     })?;
