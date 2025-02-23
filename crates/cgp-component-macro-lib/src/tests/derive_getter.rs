@@ -10,10 +10,8 @@ fn test_derive_getter_basic() {
             provider: PersonFieldsGetter,
         },
         quote! {
-            pub trait HasPersonFields: HasNameType + HasAgeType {
+            pub trait HasName: HasNameType {
                 fn name(&self) -> &Self::Name;
-
-                fn age(&self) -> &Self::Age;
             }
         },
     )
@@ -29,13 +27,11 @@ fn test_derive_getter_with_generics() {
             provider: PersonFieldsGetter,
         },
         quote! {
-            pub trait HasPersonFields<App>
+            pub trait HasName<App>
             where
-                App: HasNameType + HasAgeType,
+                App: HasNameType,
             {
                 fn name(&self) -> &App::Name;
-
-                fn age(&self) -> &App::Age;
             }
         },
     )

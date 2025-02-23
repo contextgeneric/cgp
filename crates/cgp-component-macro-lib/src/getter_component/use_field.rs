@@ -1,5 +1,7 @@
-use quote::quote;
-use syn::{parse_quote, ItemImpl, ItemTrait};
+use quote::{quote, ToTokens};
+use syn::punctuated::Punctuated;
+use syn::token::Plus;
+use syn::{parse2, parse_quote, Generics, ItemImpl, ItemTrait, TypeParamBound};
 
 use crate::derive_component::component_spec::ComponentSpec;
 use crate::getter_component::getter_field::GetterField;
@@ -7,20 +9,22 @@ use crate::getter_component::getter_field::GetterField;
 pub fn derive_use_field_impl(
     spec: &ComponentSpec,
     consumer_trait: &ItemTrait,
+    provider_trait: &ItemTrait,
     field: &GetterField,
-) -> ItemImpl {
+) -> syn::Result<ItemImpl> {
     let context_type = &spec.context_type;
-    let provider_name = &spec.provider_name;
+    let provider_name = &provider_trait.ident;
 
-    // FIXME: replace `Self` with `Context` inside super trait bound
-    let mut constraints = consumer_trait.supertraits.clone();
+    let mut field_constraints: Punctuated<TypeParamBound, Plus> = Punctuated::default();
 
     let field_name = &field.field_name;
     let provider_type = &field.provider_type;
 
+    let tag_type = quote! { __Tag__ };
+
     let method = if field.field_mut.is_none() {
-        constraints.push(parse_quote! {
-            HasField< Tag, Value = #provider_type >
+        field_constraints.push(parse_quote! {
+            HasField< #tag_type, Value = #provider_type >
         });
 
         quote! {
@@ -29,8 +33,8 @@ pub fn derive_use_field_impl(
             }
         }
     } else {
-        constraints.push(parse_quote! {
-            HasFieldMut< Tag, Value = #provider_type >
+        field_constraints.push(parse_quote! {
+            HasFieldMut< #tag_type, Value = #provider_type >
         });
 
         quote! {
@@ -40,14 +44,28 @@ pub fn derive_use_field_impl(
         }
     };
 
+    let mut provider_generics = provider_trait.generics.clone();
+
+    let mut where_clause = provider_generics.make_where_clause().clone();
+    where_clause
+        .predicates
+        .push(parse2(quote! { #context_type: #field_constraints })?);
+
+    let (impl_generics, type_generics, _) = provider_generics.split_for_impl();
+
+    let impl_generics = {
+        let mut generics: Generics = parse2(impl_generics.to_token_stream())?;
+        generics.params.push(parse2(tag_type.clone())?);
+        generics
+    };
+
     let use_field_impl: ItemImpl = parse_quote! {
-        impl< #context_type, Tag > #provider_name < #context_type > for UseField<Tag>
-        where
-            #context_type: #constraints
+        impl #impl_generics #provider_name #type_generics for UseField< #tag_type >
+        #where_clause
         {
             #method
         }
     };
 
-    use_field_impl
+    Ok(use_field_impl)
 }
