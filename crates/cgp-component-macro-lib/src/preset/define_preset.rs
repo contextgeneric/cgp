@@ -1,6 +1,6 @@
 use proc_macro2::{Span, TokenStream};
 use quote::{quote, ToTokens, TokenStreamExt};
-use syn::{parse2, parse_quote, Generics, Ident, ItemTrait};
+use syn::{parse2, parse_quote, Generics, Ident, Item, ItemTrait};
 
 use crate::delegate_components::define_struct::define_struct;
 use crate::delegate_components::delegates_to::define_delegates_to_trait;
@@ -59,13 +59,11 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
 
     let provider_struct = define_struct(&provider_struct_name, &preset_generics);
 
-    let mut mod_output = quote! {
-        #provider_struct
+    let mut output_items: Vec<Item> = Vec::new();
+    output_items.push(Item::Struct(provider_struct));
+    output_items.push(Item::Trait(preset_trait));
 
-        #preset_trait
-    };
-
-    mod_output.append_all(impl_is_preset_items);
+    output_items.extend(impl_is_preset_items.into_iter().map(Item::Impl));
 
     {
         let delegates_to_trait_name = Ident::new("DelegatesToPreset", Span::call_site());
@@ -77,8 +75,8 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
             &ast.delegate_entries,
         );
 
-        mod_output.extend(delegates_to_trait.to_token_stream());
-        mod_output.extend(delegates_to_impl.to_token_stream());
+        output_items.push(Item::Trait(delegates_to_trait));
+        output_items.push(Item::Impl(delegates_to_impl));
     }
 
     {
@@ -95,11 +93,14 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
             &ast.delegate_entries.all_components().to_token_stream(),
         );
 
-        mod_output.extend(with_components_macro);
-        mod_output.extend(quote! {
+        output_items.push(parse2(with_components_macro)?);
+        output_items.push(parse2(quote! {
             pub use #with_components_macro_name as with_components;
-        })
+        })?)
     }
+
+    let mut mod_output = TokenStream::new();
+    mod_output.append_all(output_items);
 
     let output = quote! {
         #impl_delegate_items
