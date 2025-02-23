@@ -27,3 +27,27 @@ fn test_basic_preset_module() {
 
     println!("derived: {}", format_token_stream(&derived));
 }
+
+#[test]
+fn test_preset_module_with_inheritance() {
+    let derived = derive_preset_module(
+        TokenStream::new(),
+        quote! {
+            mod preset {
+                use cgp::prelude::*;
+                use foo::{FooComponent, FooProvider};
+                use bar::{BarComponent, BarProvider};
+
+                cgp_preset! {
+                    MyPreset: PresetX + PresetY {
+                        FooComponent: FooProvider,
+                        BarComponent: BarProvider,
+                    }
+                }
+            }
+        },
+    )
+    .unwrap();
+
+    println!("derived: {}", format_token_stream(&derived));
+}
