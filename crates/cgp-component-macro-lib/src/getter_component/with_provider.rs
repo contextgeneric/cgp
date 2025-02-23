@@ -1,23 +1,22 @@
-use quote::quote;
-use syn::{parse_quote, ItemImpl, ItemTrait};
+use quote::{quote, ToTokens};
+use syn::{parse2, Generics, ItemImpl, ItemTrait};
 
 use crate::derive_component::component_spec::ComponentSpec;
 use crate::getter_component::getter_field::GetterField;
 
 pub fn derive_with_provider_impl(
     spec: &ComponentSpec,
-    consumer_trait: &ItemTrait,
+    provider_trait: &ItemTrait,
     field: &GetterField,
-) -> ItemImpl {
+) -> syn::Result<ItemImpl> {
     let component_name = &spec.component_name;
     let context_type = &spec.context_type;
     let provider_name = &spec.provider_name;
 
-    // FIXME: replace `Self` with `Context` inside super trait bound
-    let context_constraints = consumer_trait.supertraits.clone();
-
     let field_name = &field.field_name;
     let provider_type = &field.provider_type;
+
+    let provider_ident = quote! { __Provider__ };
 
     let provider_constraint = if field.field_mut.is_none() {
         quote! {
@@ -32,24 +31,39 @@ pub fn derive_with_provider_impl(
     let method = if field.field_mut.is_none() {
         quote! {
             fn #field_name( context: & #context_type ) -> & #provider_type {
-                Provider::get_field(context, ::core::marker::PhantomData )
+                #provider_ident ::get_field(context, ::core::marker::PhantomData )
             }
         }
     } else {
         quote! {
             fn #field_name( context: &mut #context_type ) -> &mut #provider_type {
-                Provider::get_field_mut(context, ::core::marker::PhantomData )
+                #provider_ident ::get_field_mut(context, ::core::marker::PhantomData )
             }
         }
     };
 
-    parse_quote! {
-        impl< #context_type, Provider > #provider_name < #context_type > for WithProvider<Provider>
-        where
-            #context_type: #context_constraints,
-            Provider: #provider_constraint,
+    let mut provider_generics = provider_trait.generics.clone();
+
+    let mut where_clause = provider_generics.make_where_clause().clone();
+    where_clause
+        .predicates
+        .push(parse2(quote! { #provider_ident : #provider_constraint })?);
+
+    let (impl_generics, type_generics, _) = provider_generics.split_for_impl();
+
+    let impl_generics = {
+        let mut generics: Generics = parse2(impl_generics.to_token_stream())?;
+        generics.params.push(parse2(provider_ident.clone())?);
+        generics
+    };
+
+    let out = parse2(quote! {
+        impl #impl_generics #provider_name #type_generics for WithProvider< #provider_ident >
+        #where_clause
         {
             #method
         }
-    }
+    })?;
+
+    Ok(out)
 }

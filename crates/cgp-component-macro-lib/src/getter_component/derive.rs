@@ -48,7 +48,8 @@ pub fn derive_getter_component(attr: TokenStream, body: TokenStream) -> syn::Res
         let is_provider_use_field_impl =
             derive_is_provider_for(&component_name_type, &use_field_impl)?;
 
-        let use_provider_impl = derive_with_provider_impl(&spec, &consumer_trait, &field);
+        let use_provider_impl =
+            derive_with_provider_impl(&spec, &derived_component.provider_trait, &field)?;
         let is_provider_use_provider_impl =
             derive_is_provider_for(&component_name_type, &use_provider_impl)?;
 
