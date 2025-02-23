@@ -29,7 +29,7 @@ pub fn derive_getter_component(attr: TokenStream, body: TokenStream) -> syn::Res
     };
 
     let is_provider_use_fields_impl =
-        derive_is_provider_for(&parse_quote!(#component_name_type), &use_fields_impl)?;
+        derive_is_provider_for(&component_name_type, &use_fields_impl)?;
 
     let m_field: Option<[GetterField; 1]> = fields.try_into().ok();
 
@@ -44,11 +44,11 @@ pub fn derive_getter_component(attr: TokenStream, body: TokenStream) -> syn::Res
     if let Some([field]) = m_field {
         let use_field_impl = derive_use_field_impl(&spec, &consumer_trait, &field);
         let is_provider_use_field_impl =
-            derive_is_provider_for(&parse_quote!(#component_name_type), &use_field_impl)?;
+            derive_is_provider_for(&component_name_type, &use_field_impl)?;
 
         let use_provider_impl = derive_with_provider_impl(&spec, &consumer_trait, &field);
         let is_provider_use_provider_impl =
-            derive_is_provider_for(&parse_quote!(#component_name_type), &use_provider_impl)?;
+            derive_is_provider_for(&component_name_type, &use_provider_impl)?;
 
         derived.extend(quote! {
             #use_field_impl
