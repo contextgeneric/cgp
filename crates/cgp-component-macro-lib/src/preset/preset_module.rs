@@ -3,14 +3,11 @@ use quote::{quote, TokenStreamExt};
 use syn::token::Pub;
 use syn::{parse2, parse_quote, Attribute, Ident, Item, ItemMod, ItemUse, Visibility};
 
-use crate::define_preset;
+use crate::preset::ast::DefinePresetAst;
+use crate::preset::define_preset::derive_preset;
 
-pub fn derive_preset_module(attrs: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
-    let export_mod_name: Ident = if !attrs.is_empty() {
-        parse2(attrs)?
-    } else {
-        Ident::new("re_exports", Span::call_site())
-    };
+pub fn derive_preset_module(_attrs: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
+    let export_mod_name: Ident = Ident::new("re_exports", Span::call_site());
 
     let mut re_exports: Vec<ItemUse> = Vec::new();
 
@@ -41,7 +38,10 @@ pub fn derive_preset_module(attrs: TokenStream, body: TokenStream) -> syn::Resul
                 Item::Macro(macro_item) => {
                     if macro_item.mac.path == parse_quote!(cgp_preset) {
                         let macro_body = macro_item.mac.tokens.clone();
-                        let new_body = define_preset(macro_body)?;
+                        let ast: DefinePresetAst = syn::parse2(macro_body)?;
+
+                        let items = derive_preset(ast)?;
+                        output_items.extend(items);
                     }
                 }
                 _ => output_items.push(item),
