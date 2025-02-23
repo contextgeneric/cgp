@@ -7,7 +7,7 @@ use crate::tests::helper::format::format_token_stream;
 fn test_derive_getter_basic() {
     let derived = derive_getter_component(
         quote! {
-            provider: PersonFieldsGetter,
+            provider: NameGetter,
         },
         quote! {
             pub trait HasName: HasNameType {
@@ -24,7 +24,7 @@ fn test_derive_getter_basic() {
 fn test_derive_getter_with_generics() {
     let derived = derive_getter_component(
         quote! {
-            provider: PersonFieldsGetter,
+            provider: NameGetter,
         },
         quote! {
             pub trait HasName<App>

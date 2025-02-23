@@ -20,7 +20,8 @@ pub fn derive_getter_component(attr: TokenStream, body: TokenStream) -> syn::Res
 
     let fields = parse_getter_fields(&spec.context_type, &consumer_trait)?;
 
-    let use_fields_impl = derive_use_fields_impl(&spec, &consumer_trait, &fields);
+    let use_fields_impl =
+        derive_use_fields_impl(&spec, &derived_component.provider_trait, &fields)?;
 
     let component_name_type: Type = {
         let component_name = &spec.component_name;
@@ -42,12 +43,8 @@ pub fn derive_getter_component(attr: TokenStream, body: TokenStream) -> syn::Res
     };
 
     if let Some([field]) = m_field {
-        let use_field_impl = derive_use_field_impl(
-            &spec,
-            &consumer_trait,
-            &derived_component.provider_trait,
-            &field,
-        )?;
+        let use_field_impl =
+            derive_use_field_impl(&spec, &derived_component.provider_trait, &field)?;
         let is_provider_use_field_impl =
             derive_is_provider_for(&component_name_type, &use_field_impl)?;
 

@@ -8,7 +8,6 @@ use crate::getter_component::getter_field::GetterField;
 
 pub fn derive_use_field_impl(
     spec: &ComponentSpec,
-    consumer_trait: &ItemTrait,
     provider_trait: &ItemTrait,
     field: &GetterField,
 ) -> syn::Result<ItemImpl> {
