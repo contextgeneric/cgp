@@ -1,6 +1,6 @@
 use proc_macro2::{Span, TokenStream};
 use quote::{quote, ToTokens, TokenStreamExt};
-use syn::{parse2, parse_quote, Generics, Ident, Item, ItemTrait};
+use syn::{parse2, parse_quote, Generics, Ident, Item, ItemMod, ItemTrait};
 
 use crate::delegate_components::define_struct::define_struct;
 use crate::delegate_components::delegates_to::define_delegates_to_trait;
@@ -13,6 +13,15 @@ use crate::preset::substitution_macro::define_substitution_macro;
 pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
     let ast: DefinePresetAst = syn::parse2(body)?;
 
+    let items = derive_preset(ast)?;
+
+    let mut out = TokenStream::new();
+    out.append_all(items);
+
+    Ok(out)
+}
+
+pub fn derive_preset(ast: DefinePresetAst) -> syn::Result<Vec<Item>> {
     let preset_module_name = &ast.preset.name;
 
     let preset_generic_args = &ast.preset.generics;
@@ -33,22 +42,12 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
         pub trait #preset_trait_name <Component> {}
     };
 
-    let impl_delegate_items = {
-        let namespaces_preset_type = parse2(quote! {
-            #preset_module_name :: #provider_type
-        })?;
+    let preset_type = parse2(quote! {
+        #preset_module_name :: #provider_type
+    })?;
 
-        let items = impl_delegate_components(
-            &namespaces_preset_type,
-            &preset_generics,
-            &ast.delegate_entries,
-        );
-
-        let mut stream = TokenStream::new();
-        stream.append_all(items);
-
-        stream
-    };
+    let impl_delegate_items =
+        impl_delegate_components(&preset_type, &preset_generics, &ast.delegate_entries);
 
     let impl_is_preset_items = impl_components_is_preset(
         &preset_trait_name,
@@ -102,9 +101,11 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
     let mut mod_output = TokenStream::new();
     mod_output.append_all(output_items);
 
-    let output = quote! {
-        #impl_delegate_items
+    let mut main_items: Vec<Item> = Vec::new();
 
+    main_items.extend(impl_delegate_items.into_iter().map(Item::Impl));
+
+    let inner_mod: ItemMod = parse2(quote! {
         #[allow(non_snake_case)]
         pub mod #preset_module_name {
             use super::*;
@@ -118,7 +119,9 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
 
             #mod_output
         }
-    };
+    })?;
 
-    Ok(output)
+    main_items.push(Item::Mod(inner_mod));
+
+    Ok(main_items)
 }

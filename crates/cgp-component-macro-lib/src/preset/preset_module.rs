@@ -1,5 +1,5 @@
 use proc_macro2::{Span, TokenStream};
-use quote::{quote, ToTokens, TokenStreamExt};
+use quote::{quote, TokenStreamExt};
 use syn::token::Pub;
 use syn::{parse2, parse_quote, Attribute, Ident, Item, ItemMod, ItemUse, Visibility};
 
@@ -22,7 +22,10 @@ pub fn derive_preset_module(attrs: TokenStream, body: TokenStream) -> syn::Resul
     let doc_no_inline: Attribute = parse_quote! { #[doc(no_inline)] };
 
     if let Some(content) = &mut item_mod.content {
-        for item in content.1.iter_mut() {
+        let items = core::mem::take(&mut content.1);
+        let mut output_items: Vec<Item> = Vec::new();
+
+        for item in items.into_iter() {
             match item {
                 Item::Use(use_item) => {
                     let mut re_export = use_item.clone();
@@ -32,6 +35,8 @@ pub fn derive_preset_module(attrs: TokenStream, body: TokenStream) -> syn::Resul
                     re_export.attrs.push(doc_no_inline.clone());
 
                     re_exports.push(re_export);
+
+                    output_items.push(Item::Use(use_item));
                 }
                 Item::Macro(macro_item) => {
                     if macro_item.mac.path == parse_quote!(cgp_preset) {
@@ -39,9 +44,11 @@ pub fn derive_preset_module(attrs: TokenStream, body: TokenStream) -> syn::Resul
                         let new_body = define_preset(macro_body)?;
                     }
                 }
-                _ => {}
+                _ => output_items.push(item),
             }
         }
+
+        content.1 = output_items;
     }
 
     let mut mod_body = TokenStream::new();
