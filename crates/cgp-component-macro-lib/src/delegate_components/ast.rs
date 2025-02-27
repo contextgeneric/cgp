@@ -7,6 +7,8 @@ use syn::punctuated::Punctuated;
 use syn::token::{Bracket, Colon, Comma, Lt};
 use syn::{braced, bracketed, Generics, Token, Type};
 
+use crate::parse::ImplGenerics;
+
 pub struct DelegateComponentsAst {
     pub target_type: Type,
     pub target_generics: Generics,
@@ -25,7 +27,7 @@ pub struct DelegateEntryAst {
 #[derive(Clone)]
 pub struct ComponentAst {
     pub component_type: Type,
-    pub component_generics: Generics,
+    pub component_generics: ImplGenerics,
 }
 
 impl DelegateEntriesAst {

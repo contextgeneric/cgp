@@ -3,6 +3,7 @@ use quote::ToTokens;
 use syn::parse::{Parse, ParseStream};
 use syn::{parse2, Error, Generics};
 
+#[derive(Clone, Default)]
 pub struct TypeGenerics {
     pub generics: Generics,
 }

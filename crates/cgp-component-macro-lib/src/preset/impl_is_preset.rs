@@ -33,7 +33,7 @@ pub fn impl_component_is_preset(
     // component name's generic.
     // let generics = merge_generics(preset_generics, &component.component_generics);
 
-    let mut generics = component.component_generics.clone();
+    let mut generics = component.component_generics.generics.clone();
     generics.params.push(parse_quote!(T));
 
     let impl_generics = generics.split_for_impl().0;

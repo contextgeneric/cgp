@@ -37,7 +37,7 @@ pub fn impl_delegate_component(
 
     let delegate_type: ImplItemType = parse_quote!(type Delegate = #source;);
 
-    let delegate_generics = merge_generics(target_generics, &component.component_generics);
+    let delegate_generics = merge_generics(target_generics, &component.component_generics.generics);
 
     let is_provider_generics = {
         let mut generics = delegate_generics.clone();
