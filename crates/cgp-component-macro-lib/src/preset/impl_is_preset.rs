@@ -2,14 +2,13 @@ use alloc::vec::Vec;
 
 use syn::{parse_quote, Ident, ItemImpl, Type};
 
-use crate::delegate_components::ast::{ComponentAst, DelegateEntriesAst};
-use crate::parse::ImplGenerics;
+use crate::parse::{DelegateComponentEntries, DelegateComponentName, ImplGenerics};
 
 pub fn impl_components_is_preset(
     trait_name: &Ident,
     preset_type: &Type,
     preset_generics: &ImplGenerics,
-    delegate_entries: &DelegateEntriesAst,
+    delegate_entries: &DelegateComponentEntries,
 ) -> Vec<ItemImpl> {
     delegate_entries
         .entries
@@ -26,7 +25,7 @@ pub fn impl_component_is_preset(
     trait_name: &Ident,
     _preset_type: &Type,
     _preset_generics: &ImplGenerics,
-    component: &ComponentAst,
+    component: &DelegateComponentName,
 ) -> ItemImpl {
     let component_type = &component.component_type;
 

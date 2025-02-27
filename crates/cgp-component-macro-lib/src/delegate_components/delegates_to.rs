@@ -2,12 +2,11 @@ use syn::punctuated::Punctuated;
 use syn::token::Plus;
 use syn::{parse_quote, Ident, ItemImpl, ItemTrait, Type, TypeParamBound};
 
-use crate::delegate_components::ast::DelegateEntriesAst;
-use crate::parse::ImplGenerics;
+use crate::parse::{DelegateComponentEntries, ImplGenerics};
 
 pub fn define_delegate_component_trait_bounds(
     target_type: &Type,
-    delegate_entries: &DelegateEntriesAst,
+    delegate_entries: &DelegateComponentEntries,
 ) -> Punctuated<TypeParamBound, Plus> {
     let mut trait_bounds: Punctuated<TypeParamBound, Plus> = Punctuated::new();
 
@@ -26,7 +25,7 @@ pub fn define_delegates_to_trait(
     trait_name: &Ident,
     target_type: &Type,
     target_generics: &ImplGenerics,
-    delegate_entries: &DelegateEntriesAst,
+    delegate_entries: &DelegateComponentEntries,
 ) -> (ItemTrait, ItemImpl) {
     let trait_bounds = define_delegate_component_trait_bounds(target_type, delegate_entries);
 

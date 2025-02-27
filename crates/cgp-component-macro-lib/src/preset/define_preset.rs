@@ -23,7 +23,7 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
     let provider_struct_name = Ident::new("Provider", Span::call_site());
 
     let provider_type = {
-        let type_generics = preset_generics.generics.split_for_impl().1;
+        let type_generics = preset_generics.as_type_generics();
         parse2(quote! { #provider_struct_name #type_generics })?
     };
 

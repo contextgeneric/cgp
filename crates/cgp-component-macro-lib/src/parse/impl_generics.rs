@@ -1,11 +1,18 @@
 use proc_macro2::TokenStream;
 use quote::ToTokens;
 use syn::parse::{Parse, ParseStream};
-use syn::{parse2, Error, Generics};
+use syn::{parse2, Error, Generics, TypeGenerics};
 
 #[derive(Clone, Default)]
 pub struct ImplGenerics {
     pub generics: Generics,
+}
+
+impl ImplGenerics {
+    pub fn as_type_generics(&self) -> TypeGenerics<'_> {
+        let (_, type_generics, _) = self.generics.split_for_impl();
+        type_generics
+    }
 }
 
 impl Parse for ImplGenerics {

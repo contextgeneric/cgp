@@ -9,7 +9,7 @@ use syn::punctuated::Punctuated;
 use syn::token::{Comma, Or};
 use syn::{braced, Ident, Type};
 
-use crate::delegate_components::ast::ComponentAst;
+use crate::parse::DelegateComponentName;
 
 pub struct ReplaceSpecs {
     pub target_ident: Ident,
@@ -19,9 +19,9 @@ pub struct ReplaceSpecs {
 
 impl Parse for ReplaceSpecs {
     fn parse(input: ParseStream) -> syn::Result<Self> {
-        let raw_replacements: Vec<ComponentAst> = {
+        let raw_replacements: Vec<DelegateComponentName> = {
             let content = parse_brackets(input)?.content;
-            let types = <Punctuated<ComponentAst, Comma>>::parse_terminated(&content)?;
+            let types = <Punctuated<DelegateComponentName, Comma>>::parse_terminated(&content)?;
             types.into_iter().collect()
         };
 

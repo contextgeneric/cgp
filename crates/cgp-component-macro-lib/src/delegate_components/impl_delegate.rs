@@ -4,14 +4,13 @@ use alloc::vec::Vec;
 
 use syn::{parse_quote, ImplItem, ImplItemType, ItemImpl, Path, Type};
 
-use crate::delegate_components::ast::{ComponentAst, DelegateEntriesAst};
 use crate::delegate_components::merge_generics::merge_generics;
-use crate::parse::ImplGenerics;
+use crate::parse::{DelegateComponentEntries, DelegateComponentName, ImplGenerics};
 
 pub fn impl_delegate_components(
     target_type: &Type,
     target_generics: &ImplGenerics,
-    delegate_entries: &DelegateEntriesAst,
+    delegate_entries: &DelegateComponentEntries,
 ) -> Vec<ItemImpl> {
     delegate_entries
         .entries
@@ -29,7 +28,7 @@ pub fn impl_delegate_components(
 pub fn impl_delegate_component(
     target_type: &Type,
     target_generics: &ImplGenerics,
-    component: &ComponentAst,
+    component: &DelegateComponentName,
     source: &Type,
 ) -> Vec<ItemImpl> {
     let component_type = &component.component_type;
