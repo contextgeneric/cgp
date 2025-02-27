@@ -1,5 +1,4 @@
 pub mod blanket;
-pub mod derive;
 pub mod getter_field;
 pub mod parse;
 pub mod symbol;

@@ -10,35 +10,35 @@ use proc_macro::TokenStream;
 
 #[proc_macro_attribute]
 pub fn cgp_component(attr: TokenStream, item: TokenStream) -> TokenStream {
-    cgp_component_macro_lib::derive_component(attr.into(), item.into())
+    cgp_component_macro_lib::cgp_component(attr.into(), item.into())
         .unwrap_or_else(syn::Error::into_compile_error)
         .into()
 }
 
 #[proc_macro_attribute]
 pub fn cgp_provider(attr: TokenStream, item: TokenStream) -> TokenStream {
-    cgp_component_macro_lib::derive_provider(attr.into(), item.into())
+    cgp_component_macro_lib::cgp_provider(attr.into(), item.into())
         .unwrap_or_else(syn::Error::into_compile_error)
         .into()
 }
 
 #[proc_macro_attribute]
 pub fn cgp_new_provider(attr: TokenStream, item: TokenStream) -> TokenStream {
-    cgp_component_macro_lib::derive_new_provider(attr.into(), item.into())
+    cgp_component_macro_lib::cgp_new_provider(attr.into(), item.into())
         .unwrap_or_else(syn::Error::into_compile_error)
         .into()
 }
 
 #[proc_macro_attribute]
 pub fn cgp_getter(attr: TokenStream, item: TokenStream) -> TokenStream {
-    cgp_component_macro_lib::derive_getter_component(attr.into(), item.into())
+    cgp_component_macro_lib::cgp_getter(attr.into(), item.into())
         .unwrap_or_else(syn::Error::into_compile_error)
         .into()
 }
 
 #[proc_macro_attribute]
 pub fn cgp_auto_getter(attr: TokenStream, item: TokenStream) -> TokenStream {
-    cgp_component_macro_lib::derive_auto_getter_component(attr.into(), item.into())
+    cgp_component_macro_lib::cgp_auto_getter(attr.into(), item.into())
         .unwrap_or_else(syn::Error::into_compile_error)
         .into()
 }
@@ -59,21 +59,21 @@ pub fn cgp_preset(body: TokenStream) -> TokenStream {
 
 #[proc_macro_attribute]
 pub fn cgp_type(attrs: TokenStream, body: TokenStream) -> TokenStream {
-    cgp_component_macro_lib::derive_type_component(attrs.into(), body.into())
+    cgp_component_macro_lib::cgp_type(attrs.into(), body.into())
         .unwrap_or_else(syn::Error::into_compile_error)
         .into()
 }
 
 #[proc_macro_attribute]
 pub fn cgp_context(attr: TokenStream, item: TokenStream) -> TokenStream {
-    cgp_component_macro_lib::derive_context(attr.into(), item.into())
+    cgp_component_macro_lib::cgp_context(attr.into(), item.into())
         .unwrap_or_else(syn::Error::into_compile_error)
         .into()
 }
 
 #[proc_macro_attribute]
 pub fn re_export_imports(attrs: TokenStream, body: TokenStream) -> TokenStream {
-    cgp_component_macro_lib::derive_re_export_imports(attrs.into(), body.into())
+    cgp_component_macro_lib::re_export_imports(attrs.into(), body.into())
         .unwrap_or_else(syn::Error::into_compile_error)
         .into()
 }
@@ -87,7 +87,7 @@ pub fn for_each_replace(body: TokenStream) -> TokenStream {
 
 #[proc_macro]
 pub fn replace_with(body: TokenStream) -> TokenStream {
-    cgp_component_macro_lib::handle_replace(body.into())
+    cgp_component_macro_lib::replace_with(body.into())
         .unwrap_or_else(syn::Error::into_compile_error)
         .into()
 }

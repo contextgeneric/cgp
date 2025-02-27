@@ -1,18 +1,17 @@
-use proc_macro2::{Span, TokenStream};
+use proc_macro2::TokenStream;
 use quote::quote;
-use syn::{parse_quote, Error, Ident, ItemTrait, Type};
+use syn::{parse_quote, ItemTrait, Type};
 
 use crate::derive_component::component_spec::ComponentSpec;
 use crate::derive_component::derive::derive_component_with_ast;
 use crate::derive_provider::derive_is_provider_for;
-use crate::getter_component::blanket::derive_blanket_impl;
 use crate::getter_component::getter_field::GetterField;
 use crate::getter_component::parse::parse_getter_fields;
 use crate::getter_component::use_field::derive_use_field_impl;
 use crate::getter_component::use_fields::derive_use_fields_impl;
 use crate::getter_component::with_provider::derive_with_provider_impl;
 
-pub fn derive_getter_component(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
+pub fn cgp_getter(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
     let spec: ComponentSpec = syn::parse2(attr)?;
     let consumer_trait: ItemTrait = syn::parse2(body)?;
 
@@ -63,29 +62,4 @@ pub fn derive_getter_component(attr: TokenStream, body: TokenStream) -> syn::Res
     }
 
     Ok(derived)
-}
-
-pub fn derive_auto_getter_component(
-    attr: TokenStream,
-    body: TokenStream,
-) -> syn::Result<TokenStream> {
-    if !attr.is_empty() {
-        return Err(Error::new(
-            Span::call_site(),
-            "#[derive_auto_getter] does not accept any attribute argument",
-        ));
-    }
-
-    let consumer_trait: ItemTrait = syn::parse2(body)?;
-
-    let context_type = Ident::new("__Context__", Span::call_site());
-
-    let fields = parse_getter_fields(&context_type, &consumer_trait)?;
-
-    let blanket_impl = derive_blanket_impl(&context_type, &consumer_trait, &fields);
-
-    Ok(quote! {
-        #consumer_trait
-        #blanket_impl
-    })
 }

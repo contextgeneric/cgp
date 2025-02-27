@@ -1,11 +1,11 @@
 use quote::quote;
 
-use crate::derive_getter_component;
+use crate::cgp_getter;
 use crate::tests::helper::equal::assert_equal_token_stream;
 
 #[test]
 fn test_derive_getter_basic() {
-    let derived = derive_getter_component(
+    let derived = cgp_getter(
         quote! {
             provider: NameGetter,
         },
@@ -122,7 +122,7 @@ fn test_derive_getter_basic() {
 
 #[test]
 fn test_derive_getter_with_generics() {
-    let derived = derive_getter_component(
+    let derived = cgp_getter(
         quote! {
             provider: NameGetter,
         },

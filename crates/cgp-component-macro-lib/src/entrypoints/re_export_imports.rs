@@ -3,7 +3,7 @@ use quote::{quote, TokenStreamExt};
 use syn::token::Pub;
 use syn::{parse2, parse_quote, Attribute, Ident, Item, ItemMod, ItemUse, Visibility};
 
-pub fn derive_re_export_imports(attrs: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
+pub fn re_export_imports(attrs: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
     let export_mod_name: Ident = if !attrs.is_empty() {
         parse2(attrs)?
     } else {

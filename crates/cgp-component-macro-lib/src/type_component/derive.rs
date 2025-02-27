@@ -1,52 +1,14 @@
 use alloc::format;
 use alloc::vec::Vec;
 
-use proc_macro2::TokenStream;
-use quote::{quote, ToTokens, TokenStreamExt};
+use quote::{quote, ToTokens};
 use syn::spanned::Spanned;
 use syn::{
-    parse2, parse_quote, Error, Generics, Ident, ItemImpl, ItemTrait, ItemType, TraitItem,
-    TraitItemType, Type,
+    parse2, Error, Generics, Ident, ItemImpl, ItemTrait, ItemType, TraitItem, TraitItemType, Type,
 };
 
-use crate::derive_component::component_spec::{parse_component_from_entries, ComponentSpec};
-use crate::derive_component::derive::derive_component_with_ast;
-use crate::derive_component::entry::Entries;
+use crate::derive_component::component_spec::ComponentSpec;
 use crate::derive_provider::derive_is_provider_for;
-
-pub fn derive_type_component(attrs: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
-    let Entries { mut entries } = syn::parse2(attrs)?;
-
-    let consumer_trait: ItemTrait = syn::parse2(body)?;
-
-    let item_type = extract_item_type(&consumer_trait)?.clone();
-
-    entries.entry("provider".into()).or_insert_with(|| {
-        let provider_name = Ident::new(
-            &format!("{}TypeProvider", item_type.ident),
-            item_type.ident.span(),
-        );
-        parse_quote!( #provider_name )
-    });
-
-    let spec = parse_component_from_entries(&entries)?;
-
-    let component = derive_component_with_ast(&spec, consumer_trait)?;
-
-    let alias_type = derive_type_alias(&component.consumer_trait, &spec.context_type, &item_type)?;
-
-    let type_provider_impls = derive_type_providers(&spec, &component.provider_trait, &item_type)?;
-
-    let mut out = quote! {
-        #component
-
-        #alias_type
-    };
-
-    out.append_all(type_provider_impls);
-
-    Ok(out)
-}
 
 pub fn extract_item_type(consumer_trait: &ItemTrait) -> syn::Result<&TraitItemType> {
     if consumer_trait.items.len() != 1 {

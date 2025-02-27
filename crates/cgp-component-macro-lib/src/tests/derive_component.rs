@@ -1,11 +1,11 @@
 use quote::quote;
 
-use crate::derive_component::derive::derive_component;
+use crate::cgp_component;
 use crate::tests::helper::equal::assert_equal_token_stream;
 
 #[test]
 fn test_basic_derive_component() {
-    derive_component(
+    cgp_component(
         quote! {
             name: FooComponent,
             provider: FooProvider,
@@ -23,7 +23,7 @@ fn test_basic_derive_component() {
 
 #[test]
 fn test_derive_component_with_const_generic() {
-    let derived = derive_component(
+    let derived = cgp_component(
         quote! {
             name: FooComponent,
             provider: FooProvider,

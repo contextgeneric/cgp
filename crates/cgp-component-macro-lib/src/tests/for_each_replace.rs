@@ -1,6 +1,7 @@
 use quote::quote;
 
-use crate::for_each_replace::{handle_for_each_replace, handle_replace};
+use crate::for_each_replace::handle_for_each_replace;
+use crate::replace_with;
 use crate::tests::helper::equal::equal_token_stream;
 
 #[test]
@@ -135,7 +136,7 @@ fn test_replace_tokens_with_generics() {
         }
     };
 
-    let derived = handle_replace(source).unwrap();
+    let derived = replace_with(source).unwrap();
 
     assert!(equal_token_stream(&derived, &expected));
 }

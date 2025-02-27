@@ -13,39 +13,6 @@ use syn::{
 use crate::derive_provider::replace_provider_in_generics;
 use crate::parse::SimpleType;
 
-pub fn derive_provider(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
-    let component_name: Type = syn::parse2(attr)?;
-
-    let provider_impl: ItemImpl = syn::parse2(body)?;
-
-    let is_provider_for_impl: ItemImpl = derive_is_provider_for(&component_name, &provider_impl)?;
-
-    let result = quote! {
-        #provider_impl
-        #is_provider_for_impl
-    };
-
-    Ok(result)
-}
-
-pub fn derive_new_provider(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
-    let component_name: Type = syn::parse2(attr)?;
-
-    let provider_impl: ItemImpl = syn::parse2(body)?;
-
-    let provider_struct = derive_provider_struct(&provider_impl)?;
-
-    let is_provider_for_impl: ItemImpl = derive_is_provider_for(&component_name, &provider_impl)?;
-
-    let result = quote! {
-        #provider_struct
-        #provider_impl
-        #is_provider_for_impl
-    };
-
-    Ok(result)
-}
-
 pub fn derive_provider_struct(provider_impl: &ItemImpl) -> syn::Result<ItemStruct> {
     let impl_self_type = &provider_impl.self_ty;
 

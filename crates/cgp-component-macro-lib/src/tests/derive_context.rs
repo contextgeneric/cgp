@@ -1,12 +1,12 @@
 use quote::quote;
 
-use crate::derive_context;
+use crate::cgp_context;
 use crate::tests::helper::equal::assert_equal_token_stream;
 use crate::tests::helper::format::format_token_stream;
 
 #[test]
 fn test_basic_derive_context() {
-    let derived = derive_context(
+    let derived = cgp_context(
         quote! { FooComponents },
         quote! {
             pub struct FooContext<Bar: BarConstraint>
@@ -44,7 +44,7 @@ fn test_basic_derive_context() {
 
 #[test]
 fn test_derive_context_with_preset() {
-    let derived = derive_context(
+    let derived = cgp_context(
         quote! { FooComponents: FooPreset<BaseComponents> },
         quote! {
             pub struct FooContext<Bar: BarConstraint>

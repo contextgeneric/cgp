@@ -8,15 +8,6 @@ use crate::derive_component::consumer_impl::derive_consumer_impl;
 use crate::derive_component::provider_impl::derive_provider_impl;
 use crate::derive_component::provider_trait::derive_provider_trait;
 
-pub fn derive_component(attr: TokenStream, item: TokenStream) -> syn::Result<TokenStream> {
-    let spec: ComponentSpec = syn::parse2(attr)?;
-    let consumer_trait: ItemTrait = syn::parse2(item)?;
-
-    let derived = derive_component_with_ast(&spec, consumer_trait)?;
-
-    Ok(derived.to_token_stream())
-}
-
 pub fn derive_component_with_ast(
     spec: &ComponentSpec,
     consumer_trait: ItemTrait,
