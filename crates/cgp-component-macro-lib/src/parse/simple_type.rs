@@ -4,6 +4,7 @@ use syn::Ident;
 
 use crate::parse::TypeGenerics;
 
+#[derive(Clone)]
 pub struct SimpleType {
     pub name: Ident,
     pub generics: Option<TypeGenerics>,

@@ -2,14 +2,15 @@ use alloc::boxed::Box;
 use alloc::vec;
 use alloc::vec::Vec;
 
-use syn::{parse_quote, Generics, ImplItem, ImplItemType, ItemImpl, Path, Type};
+use syn::{parse_quote, ImplItem, ImplItemType, ItemImpl, Path, Type};
 
 use crate::delegate_components::ast::{ComponentAst, DelegateEntriesAst};
 use crate::delegate_components::merge_generics::merge_generics;
+use crate::parse::ImplGenerics;
 
 pub fn impl_delegate_components(
     target_type: &Type,
-    target_generics: &Generics,
+    target_generics: &ImplGenerics,
     delegate_entries: &DelegateEntriesAst,
 ) -> Vec<ItemImpl> {
     delegate_entries
@@ -27,7 +28,7 @@ pub fn impl_delegate_components(
 
 pub fn impl_delegate_component(
     target_type: &Type,
-    target_generics: &Generics,
+    target_generics: &ImplGenerics,
     component: &ComponentAst,
     source: &Type,
 ) -> Vec<ItemImpl> {
@@ -37,7 +38,10 @@ pub fn impl_delegate_component(
 
     let delegate_type: ImplItemType = parse_quote!(type Delegate = #source;);
 
-    let delegate_generics = merge_generics(target_generics, &component.component_generics.generics);
+    let delegate_generics = merge_generics(
+        &target_generics.generics,
+        &component.component_generics.generics,
+    );
 
     let is_provider_generics = {
         let mut generics = delegate_generics.clone();

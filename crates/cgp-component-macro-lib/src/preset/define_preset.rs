@@ -1,11 +1,12 @@
 use proc_macro2::{Span, TokenStream};
 use quote::{quote, ToTokens, TokenStreamExt};
-use syn::{parse2, parse_quote, Generics, Ident, ItemTrait};
+use syn::{parse2, parse_quote, Ident, ItemTrait};
 
 use crate::delegate_components::define_struct::define_struct;
 use crate::delegate_components::delegates_to::define_delegates_to_trait;
 use crate::delegate_components::impl_delegate::impl_delegate_components;
 use crate::derive_component::snake_case::to_snake_case_str;
+use crate::parse::ImplGenerics;
 use crate::preset::ast::DefinePresetAst;
 use crate::preset::impl_is_preset::impl_components_is_preset;
 use crate::preset::substitution_macro::define_substitution_macro;
@@ -17,12 +18,12 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
 
     let preset_generic_args = &ast.preset.generics;
 
-    let preset_generics: Generics = syn::parse2(quote!( #preset_generic_args ))?;
+    let preset_generics: ImplGenerics = syn::parse2(quote!( #preset_generic_args ))?;
 
     let provider_struct_name = Ident::new("Provider", Span::call_site());
 
     let provider_type = {
-        let type_generics = preset_generics.split_for_impl().1;
+        let type_generics = preset_generics.generics.split_for_impl().1;
         parse2(quote! { #provider_struct_name #type_generics })?
     };
 
@@ -57,7 +58,7 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
         &ast.delegate_entries,
     );
 
-    let provider_struct = define_struct(&provider_struct_name, &preset_generics);
+    let provider_struct = define_struct(&provider_struct_name, &preset_generics.generics);
 
     let mut mod_output = quote! {
         #provider_struct

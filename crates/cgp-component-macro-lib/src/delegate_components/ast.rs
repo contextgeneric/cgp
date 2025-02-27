@@ -5,13 +5,13 @@ use quote::ToTokens;
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::token::{Bracket, Colon, Comma, Lt};
-use syn::{braced, bracketed, Generics, Token, Type};
+use syn::{braced, bracketed, Token, Type};
 
 use crate::parse::ImplGenerics;
 
 pub struct DelegateComponentsAst {
     pub target_type: Type,
-    pub target_generics: Generics,
+    pub target_generics: ImplGenerics,
     pub delegate_entries: DelegateEntriesAst,
 }
 
