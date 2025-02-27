@@ -2,12 +2,12 @@ use syn::parse::{Parse, ParseStream};
 
 use crate::parse::{DelegateComponentEntries, TypeSpec};
 
-pub struct DefinePresetAst {
+pub struct DefinePreset {
     pub preset: TypeSpec,
     pub delegate_entries: DelegateComponentEntries,
 }
 
-impl Parse for DefinePresetAst {
+impl Parse for DefinePreset {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let preset = input.parse()?;
 

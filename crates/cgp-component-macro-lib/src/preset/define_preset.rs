@@ -6,13 +6,12 @@ use crate::delegate_components::define_struct::define_struct;
 use crate::delegate_components::delegates_to::define_delegates_to_trait;
 use crate::delegate_components::impl_delegate::impl_delegate_components;
 use crate::derive_component::snake_case::to_snake_case_str;
-use crate::parse::ImplGenerics;
-use crate::preset::ast::DefinePresetAst;
+use crate::parse::{DefinePreset, ImplGenerics};
 use crate::preset::impl_is_preset::impl_components_is_preset;
 use crate::preset::substitution_macro::define_substitution_macro;
 
 pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
-    let ast: DefinePresetAst = syn::parse2(body)?;
+    let ast: DefinePreset = syn::parse2(body)?;
 
     let preset_module_name = &ast.preset.name;
 
