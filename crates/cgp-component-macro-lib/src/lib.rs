@@ -24,4 +24,3 @@ pub(crate) mod type_component;
 mod tests;
 
 pub use crate::entrypoints::*;
-pub use crate::for_each_replace::handle_for_each_replace;

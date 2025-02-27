@@ -1,7 +1,7 @@
 use alloc::vec::Vec;
 
 use proc_macro2::{Group, TokenStream, TokenTree};
-use quote::{quote, ToTokens};
+use quote::ToTokens;
 use syn::__private::parse_brackets;
 use syn::parse::discouraged::Speculative;
 use syn::parse::{Parse, ParseStream};
@@ -71,27 +71,6 @@ impl Parse for ReplaceSpecs {
             body,
         })
     }
-}
-
-pub fn handle_for_each_replace(tokens: TokenStream) -> syn::Result<TokenStream> {
-    let specs: ReplaceSpecs = syn::parse2(tokens)?;
-
-    Ok(for_each_replace(
-        &specs.target_ident,
-        &specs.replacements,
-        &specs.body,
-    ))
-}
-
-pub fn for_each_replace(
-    target_ident: &Ident,
-    replacements: &[TokenStream],
-    body: &TokenStream,
-) -> TokenStream {
-    replacements
-        .iter()
-        .map(|replacement| replace_stream(target_ident, replacement, body.clone()))
-        .collect()
 }
 
 pub fn replace_stream(
