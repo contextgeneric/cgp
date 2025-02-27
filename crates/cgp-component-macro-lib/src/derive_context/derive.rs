@@ -1,8 +1,9 @@
 use proc_macro2::TokenStream;
 use quote::quote;
-use syn::{parse2, parse_quote, AngleBracketedGenericArguments, Ident, ItemImpl, ItemStruct, Path};
+use syn::{parse2, parse_quote, Ident, ItemImpl, ItemStruct, Path};
 
 use crate::derive_context::ContextSpec;
+use crate::parse::TypeGenerics;
 
 pub fn derive_context(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
     let context_spec: ContextSpec = syn::parse2(attr)?;
@@ -57,7 +58,7 @@ pub fn derive_has_components(provider_name: &Ident, context_struct: &ItemStruct)
 pub fn derive_delegate_preset(
     provider_name: &Ident,
     preset_name: &Ident,
-    preset_generics: &Option<AngleBracketedGenericArguments>,
+    preset_generics: &Option<TypeGenerics>,
 ) -> syn::Result<(ItemImpl, ItemImpl)> {
     let preset_trait_name: Path = parse2(quote! {
         #preset_name :: IsPreset

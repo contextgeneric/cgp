@@ -1,10 +1,12 @@
 use syn::parse::{Parse, ParseStream};
 use syn::token::Lt;
-use syn::{AngleBracketedGenericArguments, Ident};
+use syn::Ident;
+
+use crate::parse::TypeGenerics;
 
 pub struct SimpleType {
     pub name: Ident,
-    pub generics: Option<AngleBracketedGenericArguments>,
+    pub generics: Option<TypeGenerics>,
 }
 
 impl Parse for SimpleType {
