@@ -4,7 +4,7 @@ use proc_macro2::TokenStream;
 use quote::quote;
 use syn::punctuated::Punctuated;
 use syn::token::Plus;
-use syn::{parse2, parse_quote, ItemImpl, ItemTrait, TypeParamBound};
+use syn::{parse2, ItemImpl, ItemTrait, TypeParamBound};
 
 use crate::getter_component::getter_field::GetterField;
 use crate::getter_component::symbol::symbol_from_string;
@@ -29,9 +29,9 @@ pub fn derive_use_fields_impl(
         let field_symbol = symbol_from_string(&field.field_name.to_string());
 
         if field.field_mut.is_none() {
-            field_constraints.push(parse_quote! {
+            field_constraints.push(parse2(quote! {
                 HasField< #field_symbol, Value = #provider_type >
-            });
+            })?);
 
             methods.extend(quote! {
                 fn #field_name( context: & #context_type ) -> & #provider_type {
@@ -39,9 +39,9 @@ pub fn derive_use_fields_impl(
                 }
             });
         } else {
-            field_constraints.push(parse_quote! {
+            field_constraints.push(parse2(quote! {
                 HasFieldMut< #field_symbol, Value = #provider_type >
-            });
+            })?);
 
             methods.extend(quote! {
                 fn #field_name( context: &mut #context_type ) -> &mut #provider_type {

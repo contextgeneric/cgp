@@ -1,7 +1,7 @@
 use quote::{quote, ToTokens};
 use syn::punctuated::Punctuated;
 use syn::token::Plus;
-use syn::{parse2, parse_quote, Generics, ItemImpl, ItemTrait, TypeParamBound};
+use syn::{parse2, Generics, ItemImpl, ItemTrait, TypeParamBound};
 
 use crate::getter_component::getter_field::GetterField;
 use crate::parse::ComponentSpec;
@@ -22,9 +22,9 @@ pub fn derive_use_field_impl(
     let tag_type = quote! { __Tag__ };
 
     let method = if field.field_mut.is_none() {
-        field_constraints.push(parse_quote! {
+        field_constraints.push(parse2(quote! {
             HasField< #tag_type, Value = #provider_type >
-        });
+        })?);
 
         quote! {
             fn #field_name( context: & #context_type ) -> & #provider_type {
@@ -32,9 +32,9 @@ pub fn derive_use_field_impl(
             }
         }
     } else {
-        field_constraints.push(parse_quote! {
+        field_constraints.push(parse2(quote! {
             HasFieldMut< #tag_type, Value = #provider_type >
-        });
+        })?);
 
         quote! {
             fn #field_name( context: &mut #context_type ) -> &mut #provider_type {
@@ -58,13 +58,13 @@ pub fn derive_use_field_impl(
         generics
     };
 
-    let use_field_impl: ItemImpl = parse_quote! {
+    let use_field_impl: ItemImpl = parse2(quote! {
         impl #impl_generics #provider_name #type_generics for UseField< #tag_type >
         #where_clause
         {
             #method
         }
-    };
+    })?;
 
     Ok(use_field_impl)
 }

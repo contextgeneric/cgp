@@ -1,8 +1,9 @@
 use alloc::vec::Vec;
 
+use quote::quote;
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
-use syn::{parse_quote, Ident, ItemTrait, TraitItem};
+use syn::{parse2, Ident, ItemTrait, TraitItem, TypeParamBound};
 
 use crate::derive_component::replace_self_receiver::replace_self_receiver;
 use crate::derive_component::replace_self_type::{
@@ -26,7 +27,7 @@ pub fn derive_provider_trait(
         provider_trait
             .generics
             .params
-            .insert(0, parse_quote!(#context_type));
+            .insert(0, parse2(quote!(#context_type))?);
     }
 
     let local_assoc_types: Vec<Ident> = provider_trait
@@ -53,9 +54,11 @@ pub fn derive_provider_trait(
             .generics
             .params;
 
-        provider_trait.supertraits = parse_quote!(
+        let provider_supertrait: TypeParamBound = parse2(quote!(
             IsProviderFor< #component_name < #component_params >, #context_type, ( #is_provider_params ) >
-        );
+        ))?;
+
+        provider_trait.supertraits = Punctuated::from_iter([provider_supertrait]);
 
         if !context_constraints.is_empty() {
             match &mut provider_trait.generics.where_clause {
@@ -66,16 +69,16 @@ pub fn derive_provider_trait(
                         &local_assoc_types,
                     )?;
 
-                    predicates.push(parse_quote! {
+                    predicates.push(parse2(quote! {
                         #context_type : #context_constraints
-                    });
+                    })?);
 
                     where_clause.predicates = predicates;
                 }
                 _ => {
-                    provider_trait.generics.where_clause = Some(parse_quote! {
+                    provider_trait.generics.where_clause = Some(parse2(quote! {
                         where #context_type : #context_constraints
-                    });
+                    })?);
                 }
             }
         }
