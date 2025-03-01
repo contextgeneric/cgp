@@ -2,7 +2,8 @@ use proc_macro2::TokenStream;
 use quote::quote;
 use syn::{parse_quote, ItemImpl, ItemStruct};
 
-use crate::derive_context::{derive_delegate_preset, derive_has_components, ContextSpec};
+use crate::derive_context::{derive_delegate_preset, derive_has_components};
+use crate::parse::ContextSpec;
 
 pub fn cgp_context(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
     let context_spec: ContextSpec = syn::parse2(attr)?;

@@ -1,4 +1,5 @@
 mod component_spec;
+mod context_spec;
 mod define_preset;
 mod delegate_components;
 mod entry;
@@ -8,6 +9,7 @@ mod type_generics;
 mod type_spec;
 
 pub use component_spec::*;
+pub use context_spec::*;
 pub use define_preset::*;
 pub use delegate_components::*;
 pub use entry::*;
