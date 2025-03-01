@@ -1,3 +1,4 @@
+mod check_entry;
 mod component_spec;
 mod context_spec;
 mod define_preset;
@@ -8,6 +9,7 @@ mod simple_type;
 mod type_generics;
 mod type_spec;
 
+pub use check_entry::*;
 pub use component_spec::*;
 pub use context_spec::*;
 pub use define_preset::*;
