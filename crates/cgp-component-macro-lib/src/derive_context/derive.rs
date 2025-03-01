@@ -3,18 +3,21 @@ use syn::{parse2, parse_quote, Ident, ItemImpl, ItemStruct, Path};
 
 use crate::parse::TypeGenerics;
 
-pub fn derive_has_components(provider_name: &Ident, context_struct: &ItemStruct) -> ItemImpl {
+pub fn derive_has_components(
+    provider_name: &Ident,
+    context_struct: &ItemStruct,
+) -> syn::Result<ItemImpl> {
     let context_name = &context_struct.ident;
 
     let (impl_generics, ty_generics, where_clause) = context_struct.generics.split_for_impl();
 
-    parse_quote! {
+    parse2(quote! {
         impl #impl_generics HasProvider for #context_name #ty_generics
             #where_clause
         {
             type Provider = #provider_name;
         }
-    }
+    })
 }
 
 pub fn derive_delegate_preset(

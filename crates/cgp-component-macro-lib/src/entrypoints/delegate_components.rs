@@ -11,7 +11,7 @@ pub fn delegate_components(body: TokenStream) -> syn::Result<TokenStream> {
         &ast.target_type,
         &ast.target_generics,
         &ast.delegate_entries,
-    );
+    )?;
 
     let mut output = TokenStream::new();
 

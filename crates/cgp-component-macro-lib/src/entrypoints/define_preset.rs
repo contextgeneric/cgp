@@ -41,7 +41,7 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
             &namespaces_preset_type,
             &preset_generics,
             &ast.delegate_entries,
-        );
+        )?;
 
         let mut stream = TokenStream::new();
         stream.append_all(items);
@@ -56,7 +56,7 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
         &ast.delegate_entries,
     );
 
-    let provider_struct = define_struct(&provider_struct_name, &preset_generics.generics);
+    let provider_struct = define_struct(&provider_struct_name, &preset_generics.generics)?;
 
     let mut mod_output = quote! {
         #provider_struct
@@ -74,7 +74,7 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
             &provider_type,
             &preset_generics,
             &ast.delegate_entries,
-        );
+        )?;
 
         mod_output.extend(delegates_to_trait.to_token_stream());
         mod_output.extend(delegates_to_impl.to_token_stream());

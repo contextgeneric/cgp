@@ -1,11 +1,11 @@
 use alloc::boxed::Box;
 use alloc::vec::Vec;
 
+use quote::quote;
 use syn::punctuated::Punctuated;
-use syn::token::{Brace, Comma, For, Impl, Plus};
+use syn::token::{Brace, Comma, For, Impl};
 use syn::{
-    parse_quote, GenericParam, Ident, ImplItem, ItemImpl, ItemTrait, Path, TraitItem,
-    TypeParamBound,
+    parse2, GenericParam, Ident, ImplItem, ItemImpl, ItemTrait, Path, TraitItem, TypeParamBound,
 };
 
 use crate::derive_component::delegate_fn::derive_delegated_fn_impl;
@@ -15,7 +15,7 @@ pub fn derive_consumer_impl(
     consumer_trait: &ItemTrait,
     provider_name: &Ident,
     context_type: &Ident,
-) -> ItemImpl {
+) -> syn::Result<ItemImpl> {
     let consumer_name = &consumer_trait.ident;
 
     let consumer_generic_args = {
@@ -41,7 +41,7 @@ pub fn derive_consumer_impl(
     let provider_generic_args = {
         let mut generic_args = consumer_generic_args.clone();
 
-        generic_args.insert(0, parse_quote!(#context_type));
+        generic_args.insert(0, parse2(quote!(#context_type))?);
 
         generic_args
     };
@@ -49,7 +49,9 @@ pub fn derive_consumer_impl(
     let impl_generics = {
         let mut impl_generics = consumer_trait.generics.clone();
 
-        impl_generics.params.insert(0, parse_quote!(#context_type));
+        impl_generics
+            .params
+            .insert(0, parse2(quote!(#context_type))?);
 
         {
             let supertrait_constraints = consumer_trait.supertraits.clone();
@@ -57,44 +59,44 @@ pub fn derive_consumer_impl(
             if !supertrait_constraints.is_empty() {
                 match &mut impl_generics.where_clause {
                     Some(where_clause) => {
-                        where_clause.predicates.push(parse_quote! {
+                        where_clause.predicates.push(parse2(quote! {
                             #context_type : #supertrait_constraints
-                        });
+                        })?);
                     }
                     _ => {
-                        impl_generics.where_clause = Some(parse_quote! {
+                        impl_generics.where_clause = Some(parse2(quote! {
                             where #context_type : #supertrait_constraints
-                        });
+                        })?);
                     }
                 }
             }
         }
 
         {
-            let has_component_constraint: Punctuated<TypeParamBound, Plus> = parse_quote! {
+            let has_component_constraint: TypeParamBound = parse2(quote! {
                 HasProvider
-            };
+            })?;
 
-            let provider_constraint: Punctuated<TypeParamBound, Plus> = parse_quote! {
+            let provider_constraint: TypeParamBound = parse2(quote! {
                 #provider_name < #provider_generic_args >
-            };
+            })?;
 
             match &mut impl_generics.where_clause {
                 Some(where_clause) => {
-                    where_clause.predicates.push(parse_quote! {
+                    where_clause.predicates.push(parse2(quote! {
                         #context_type : #has_component_constraint
-                    });
+                    })?);
 
-                    where_clause.predicates.push(parse_quote! {
+                    where_clause.predicates.push(parse2(quote! {
                         #context_type :: Provider : #provider_constraint
-                    });
+                    })?);
                 }
                 _ => {
-                    impl_generics.where_clause = Some(parse_quote! {
+                    impl_generics.where_clause = Some(parse2(quote! {
                         where
                             #context_type : #has_component_constraint,
                             #context_type :: Provider : #provider_constraint
-                    });
+                    })?);
                 }
             }
         }
@@ -109,7 +111,7 @@ pub fn derive_consumer_impl(
             TraitItem::Fn(trait_fn) => {
                 let impl_fn = derive_delegated_fn_impl(
                     &trait_fn.sig,
-                    &parse_quote!(#context_type :: Provider),
+                    &parse2(quote!(#context_type :: Provider))?,
                 );
 
                 impl_items.push(ImplItem::Fn(impl_fn));
@@ -131,9 +133,9 @@ pub fn derive_consumer_impl(
 
                 let impl_type = derive_delegate_type_impl(
                     trait_type,
-                    parse_quote!(
+                    parse2(quote!(
                         < #context_type :: Provider as #provider_name < #provider_generic_args > > :: #type_name #type_generics
-                    ),
+                    ))?,
                 );
 
                 impl_items.push(ImplItem::Type(impl_type));
@@ -142,17 +144,19 @@ pub fn derive_consumer_impl(
         }
     }
 
-    let trait_path: Path = parse_quote!( #consumer_name < #consumer_generic_args > );
+    let trait_path: Path = parse2(quote!( #consumer_name < #consumer_generic_args > ))?;
 
-    ItemImpl {
+    let item_impl = ItemImpl {
         attrs: consumer_trait.attrs.clone(),
         defaultness: None,
         unsafety: consumer_trait.unsafety,
         impl_token: Impl::default(),
         generics: impl_generics,
         trait_: Some((None, trait_path, For::default())),
-        self_ty: Box::new(parse_quote!(#context_type)),
+        self_ty: Box::new(parse2(quote!(#context_type))?),
         brace_token: Brace::default(),
         items: impl_items,
-    }
+    };
+
+    Ok(item_impl)
 }
