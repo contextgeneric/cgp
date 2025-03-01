@@ -1,4 +1,5 @@
-use quote::{quote, quote_spanned};
+use proc_macro2::TokenStream;
+use quote::{quote, quote_spanned, ToTokens};
 use syn::spanned::Spanned;
 use syn::{parse2, ItemImpl, Type};
 
@@ -21,6 +22,17 @@ pub fn derive_check_components(
         } else {
             component_span
         };
+
+        // Override the span of the context type so that any unsatisfied constraint
+        // error is highlighted on the component type instead
+        let context_type: TokenStream = context_type
+            .to_token_stream()
+            .into_iter()
+            .map(|mut tree| {
+                tree.set_span(span);
+                tree
+            })
+            .collect();
 
         let component_param = component_param.as_ref().unwrap_or(&unit);
 
