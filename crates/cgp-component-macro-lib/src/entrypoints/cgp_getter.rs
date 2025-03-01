@@ -2,7 +2,6 @@ use proc_macro2::TokenStream;
 use quote::quote;
 use syn::{parse_quote, ItemTrait, Type};
 
-use crate::derive_component::component_spec::ComponentSpec;
 use crate::derive_component::derive::derive_component_with_ast;
 use crate::derive_provider::derive_is_provider_for;
 use crate::getter_component::getter_field::GetterField;
@@ -10,6 +9,7 @@ use crate::getter_component::parse::parse_getter_fields;
 use crate::getter_component::use_field::derive_use_field_impl;
 use crate::getter_component::use_fields::derive_use_fields_impl;
 use crate::getter_component::with_provider::derive_with_provider_impl;
+use crate::parse::ComponentSpec;
 
 pub fn cgp_getter(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
     let spec: ComponentSpec = syn::parse2(attr)?;

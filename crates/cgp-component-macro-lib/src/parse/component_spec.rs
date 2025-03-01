@@ -8,7 +8,7 @@ use syn::punctuated::Punctuated;
 use syn::token::{Comma, Gt, Lt};
 use syn::{Error, Ident, Type};
 
-use crate::derive_component::entry::Entries;
+use crate::parse::Entries;
 
 pub struct ComponentSpec {
     pub provider_name: Ident,

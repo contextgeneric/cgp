@@ -1,12 +1,16 @@
+mod component_spec;
 mod define_preset;
 mod delegate_components;
+mod entry;
 mod impl_generics;
 mod simple_type;
 mod type_generics;
 mod type_spec;
 
+pub use component_spec::*;
 pub use define_preset::*;
 pub use delegate_components::*;
+pub use entry::*;
 pub use impl_generics::*;
 pub use simple_type::*;
 pub use type_generics::*;

@@ -7,8 +7,8 @@ use syn::{
     parse2, Error, Generics, Ident, ItemImpl, ItemTrait, ItemType, TraitItem, TraitItemType, Type,
 };
 
-use crate::derive_component::component_spec::ComponentSpec;
 use crate::derive_provider::derive_is_provider_for;
+use crate::parse::ComponentSpec;
 
 pub fn extract_item_type(consumer_trait: &ItemTrait) -> syn::Result<&TraitItemType> {
     if consumer_trait.items.len() != 1 {

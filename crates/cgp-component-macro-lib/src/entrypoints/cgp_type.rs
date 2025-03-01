@@ -4,9 +4,8 @@ use proc_macro2::TokenStream;
 use quote::{quote, TokenStreamExt};
 use syn::{parse_quote, Ident, ItemTrait};
 
-use crate::derive_component::component_spec::ComponentSpec;
 use crate::derive_component::derive::derive_component_with_ast;
-use crate::derive_component::entry::Entries;
+use crate::parse::{ComponentSpec, Entries};
 use crate::type_component::derive::{derive_type_alias, derive_type_providers, extract_item_type};
 
 pub fn cgp_type(attrs: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {

@@ -3,10 +3,10 @@ use quote::ToTokens;
 use syn::{ItemImpl, ItemStruct, ItemTrait};
 
 use crate::derive_component::component_name::derive_component_name_struct;
-use crate::derive_component::component_spec::ComponentSpec;
 use crate::derive_component::consumer_impl::derive_consumer_impl;
 use crate::derive_component::provider_impl::derive_provider_impl;
 use crate::derive_component::provider_trait::derive_provider_trait;
+use crate::parse::ComponentSpec;
 
 pub fn derive_component_with_ast(
     spec: &ComponentSpec,

@@ -3,8 +3,8 @@ use syn::punctuated::Punctuated;
 use syn::token::Plus;
 use syn::{parse2, parse_quote, Generics, ItemImpl, ItemTrait, TypeParamBound};
 
-use crate::derive_component::component_spec::ComponentSpec;
 use crate::getter_component::getter_field::GetterField;
+use crate::parse::ComponentSpec;
 
 pub fn derive_use_field_impl(
     spec: &ComponentSpec,

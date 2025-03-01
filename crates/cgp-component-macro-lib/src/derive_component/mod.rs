@@ -1,10 +1,8 @@
 pub mod component_name;
-pub mod component_spec;
 pub mod consumer_impl;
 pub mod delegate_fn;
 pub mod delegate_type;
 pub mod derive;
-pub mod entry;
 pub mod generic_args;
 pub mod provider_impl;
 pub mod provider_trait;

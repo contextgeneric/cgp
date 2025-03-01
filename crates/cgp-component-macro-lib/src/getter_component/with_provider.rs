@@ -1,8 +1,8 @@
 use quote::{quote, ToTokens};
 use syn::{parse2, Generics, ItemImpl, ItemTrait};
 
-use crate::derive_component::component_spec::ComponentSpec;
 use crate::getter_component::getter_field::GetterField;
+use crate::parse::ComponentSpec;
 
 pub fn derive_with_provider_impl(
     spec: &ComponentSpec,
