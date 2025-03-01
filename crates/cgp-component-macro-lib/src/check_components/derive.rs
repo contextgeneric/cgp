@@ -25,7 +25,7 @@ pub fn derive_check_components(
         let component_param = component_param.as_ref().unwrap_or(&unit);
 
         let item_impl: ItemImpl = parse2(quote_spanned! {
-            span =>
+            span=>
             impl CheckCanUseComponent< #component_type, #component_param >
                 for #context_type
             {}
