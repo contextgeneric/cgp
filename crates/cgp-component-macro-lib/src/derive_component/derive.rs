@@ -34,7 +34,7 @@ pub fn derive_component_with_ast(
         &provider_trait,
         &spec.component_name,
         &spec.component_params,
-    );
+    )?;
 
     let derived = DerivedComponent {
         component_struct,

@@ -18,15 +18,15 @@ pub fn derive_consumer_impl(
 ) -> syn::Result<ItemImpl> {
     let consumer_name = &consumer_trait.ident;
 
-    let consumer_generic_args = {
+    let consumer_type_generics = {
         let (_, type_generics, _) = consumer_trait.generics.split_for_impl();
         let generics: Generics = parse2(type_generics.to_token_stream())?;
 
         generics.params
     };
 
-    let provider_generic_args = {
-        let mut generic_args = consumer_generic_args.clone();
+    let provider_type_generics = {
+        let mut generic_args = consumer_type_generics.clone();
 
         generic_args.insert(0, parse2(quote!(#context_type))?);
 
@@ -63,7 +63,7 @@ pub fn derive_consumer_impl(
             })?;
 
             let provider_constraint: TypeParamBound = parse2(quote! {
-                #provider_name < #provider_generic_args >
+                #provider_name < #provider_type_generics >
             })?;
 
             match &mut generics.where_clause {
@@ -97,7 +97,7 @@ pub fn derive_consumer_impl(
                 let impl_fn = derive_delegated_fn_impl(
                     &trait_fn.sig,
                     &parse2(quote!(#context_type :: Provider))?,
-                );
+                )?;
 
                 impl_items.push(ImplItem::Fn(impl_fn));
             }
@@ -119,7 +119,7 @@ pub fn derive_consumer_impl(
                 let impl_type = derive_delegate_type_impl(
                     trait_type,
                     parse2(quote!(
-                        < #context_type :: Provider as #provider_name < #provider_generic_args > > :: #type_name #type_generics
+                        < #context_type :: Provider as #provider_name < #provider_type_generics > > :: #type_name #type_generics
                     ))?,
                 );
 
@@ -129,7 +129,7 @@ pub fn derive_consumer_impl(
         }
     }
 
-    let trait_path: Path = parse2(quote!( #consumer_name < #consumer_generic_args > ))?;
+    let trait_path: Path = parse2(quote!( #consumer_name < #consumer_type_generics > ))?;
 
     let item_impl = ItemImpl {
         attrs: consumer_trait.attrs.clone(),

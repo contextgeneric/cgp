@@ -2,11 +2,11 @@ use alloc::boxed::Box;
 use alloc::vec::Vec;
 
 use proc_macro2::Span;
+use quote::quote;
 use syn::punctuated::Punctuated;
 use syn::token::{Brace, Comma, For, Impl, Plus};
 use syn::{
-    parse_quote, GenericParam, Ident, ImplItem, ItemImpl, ItemTrait, Path, TraitItem,
-    TypeParamBound,
+    parse2, GenericParam, Ident, ImplItem, ItemImpl, ItemTrait, Path, TraitItem, TypeParamBound,
 };
 
 use crate::derive_component::delegate_fn::derive_delegated_fn_impl;
@@ -19,7 +19,7 @@ pub fn derive_provider_impl(
     provider_trait: &ItemTrait,
     component_name: &Ident,
     component_params: &Punctuated<Ident, Comma>,
-) -> ItemImpl {
+) -> syn::Result<ItemImpl> {
     let provider_name = &provider_trait.ident;
 
     let component_type = Ident::new("Component", Span::call_site());
@@ -31,39 +31,41 @@ pub fn derive_provider_impl(
 
         impl_generics
             .params
-            .insert(0, parse_quote!(#component_type));
+            .insert(0, parse2(quote!(#component_type))?);
 
         {
             let is_provider_params = extract_generic_args(&consumer_trait.generics.params);
 
-            let mut delegate_constraint: Punctuated<TypeParamBound, Plus> = parse_quote! {
+            let mut delegate_constraint: Punctuated<TypeParamBound, Plus> = Punctuated::default();
+
+            delegate_constraint.push(parse2(quote! {
                 DelegateComponent< #component_name < #component_params > >
-            };
+            })?);
 
-            delegate_constraint.push(parse_quote!(
+            delegate_constraint.push(parse2(quote!(
                 IsProviderFor< #component_name < #component_params >, #context_type, ( #is_provider_params ) >
-            ));
+            ))?);
 
-            let provider_constraint: Punctuated<TypeParamBound, Plus> = parse_quote! {
+            let provider_constraint: TypeParamBound = parse2(quote! {
                 #provider_name < #provider_generic_args >
-            };
+            })?;
 
             match &mut impl_generics.where_clause {
                 Some(where_clause) => {
-                    where_clause.predicates.push(parse_quote! {
+                    where_clause.predicates.push(parse2(quote! {
                         #component_type : #delegate_constraint
-                    });
+                    })?);
 
-                    where_clause.predicates.push(parse_quote! {
+                    where_clause.predicates.push(parse2(quote! {
                         #component_type :: Delegate : #provider_constraint
-                    });
+                    })?);
                 }
                 _ => {
-                    impl_generics.where_clause = Some(parse_quote! {
+                    impl_generics.where_clause = Some(parse2(quote! {
                         where
                             #component_type : #delegate_constraint,
                             #component_type :: Delegate : #provider_constraint
-                    });
+                    })?);
                 }
             }
         }
@@ -78,8 +80,8 @@ pub fn derive_provider_impl(
             TraitItem::Fn(trait_fn) => {
                 let impl_fn = derive_delegated_fn_impl(
                     &trait_fn.sig,
-                    &parse_quote!(#component_type :: Delegate),
-                );
+                    &parse2(quote!(#component_type :: Delegate))?,
+                )?;
 
                 impl_items.push(ImplItem::Fn(impl_fn))
             }
@@ -100,9 +102,9 @@ pub fn derive_provider_impl(
 
                 let impl_type = derive_delegate_type_impl(
                     trait_type,
-                    parse_quote!(
+                    parse2(quote!(
                         < #component_type :: Delegate as #provider_name < #provider_generic_args > > :: #type_name #type_generics
-                    ),
+                    ))?,
                 );
 
                 impl_items.push(ImplItem::Type(impl_type));
@@ -111,17 +113,19 @@ pub fn derive_provider_impl(
         }
     }
 
-    let trait_path: Path = parse_quote!( #provider_name < #provider_generic_args > );
+    let trait_path: Path = parse2(quote!( #provider_name < #provider_generic_args > ))?;
 
-    ItemImpl {
+    let item = ItemImpl {
         attrs: provider_trait.attrs.clone(),
         defaultness: None,
         unsafety: provider_trait.unsafety,
         impl_token: Impl::default(),
         generics: impl_generics,
         trait_: Some((None, trait_path, For::default())),
-        self_ty: Box::new(parse_quote!(#component_type)),
+        self_ty: Box::new(parse2(quote!(#component_type))?),
         brace_token: Brace::default(),
         items: impl_items,
-    }
+    };
+
+    Ok(item)
 }
