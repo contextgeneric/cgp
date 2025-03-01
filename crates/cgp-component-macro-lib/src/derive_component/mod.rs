@@ -1,12 +1,16 @@
-pub mod component_name;
-pub mod consumer_impl;
-pub mod delegate_fn;
-pub mod delegate_type;
-pub mod derive;
-pub mod generic_args;
-pub mod provider_impl;
-pub mod provider_trait;
-pub mod replace_self_receiver;
-pub mod replace_self_type;
-pub mod signature_args;
-pub mod snake_case;
+mod component_name;
+mod consumer_impl;
+mod delegate_fn;
+mod delegate_type;
+mod derive;
+mod generic_args;
+mod provider_impl;
+mod provider_trait;
+mod replace_self_receiver;
+mod replace_self_type;
+mod signature_args;
+mod snake_case;
+
+pub use derive::*;
+pub use replace_self_type::*;
+pub use snake_case::*;

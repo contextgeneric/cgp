@@ -2,8 +2,7 @@ use proc_macro2::{Span, TokenStream};
 use quote::quote;
 use syn::{Error, Ident, ItemTrait};
 
-use crate::getter_component::blanket::derive_blanket_impl;
-use crate::getter_component::parse::parse_getter_fields;
+use crate::getter_component::{derive_blanket_impl, parse_getter_fields};
 
 pub fn cgp_auto_getter(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
     if !attr.is_empty() {

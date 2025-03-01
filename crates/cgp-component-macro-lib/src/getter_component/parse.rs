@@ -4,7 +4,7 @@ use quote::ToTokens;
 use syn::spanned::Spanned;
 use syn::{parse_quote, Error, FnArg, Ident, ItemTrait, ReturnType, TraitItem, Type};
 
-use crate::derive_component::replace_self_type::replace_self_type;
+use crate::derive_component::replace_self_type;
 use crate::getter_component::getter_field::GetterField;
 
 pub fn parse_getter_fields(

@@ -1,4 +1,8 @@
-pub mod define_struct;
-pub mod delegates_to;
-pub mod impl_delegate;
-pub mod merge_generics;
+mod define_struct;
+mod delegates_to;
+mod impl_delegate;
+mod merge_generics;
+
+pub use define_struct::*;
+pub use delegates_to::*;
+pub use impl_delegate::*;

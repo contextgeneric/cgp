@@ -1,7 +1,7 @@
 use proc_macro2::TokenStream;
 use quote::ToTokens;
 
-use crate::delegate_components::impl_delegate::impl_delegate_components;
+use crate::delegate_components::impl_delegate_components;
 use crate::parse::DelegateComponents;
 
 pub fn delegate_components(body: TokenStream) -> syn::Result<TokenStream> {

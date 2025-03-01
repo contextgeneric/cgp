@@ -2,13 +2,12 @@ use proc_macro2::{Span, TokenStream};
 use quote::{quote, ToTokens, TokenStreamExt};
 use syn::{parse2, parse_quote, Ident, ItemTrait};
 
-use crate::delegate_components::define_struct::define_struct;
-use crate::delegate_components::delegates_to::define_delegates_to_trait;
-use crate::delegate_components::impl_delegate::impl_delegate_components;
-use crate::derive_component::snake_case::to_snake_case_str;
+use crate::delegate_components::{
+    define_delegates_to_trait, define_struct, impl_delegate_components,
+};
+use crate::derive_component::to_snake_case_str;
 use crate::parse::{DefinePreset, ImplGenerics};
-use crate::preset::impl_is_preset::impl_components_is_preset;
-use crate::preset::substitution_macro::define_substitution_macro;
+use crate::preset::{define_substitution_macro, impl_components_is_preset};
 
 pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
     let ast: DefinePreset = syn::parse2(body)?;

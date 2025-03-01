@@ -2,7 +2,7 @@ use proc_macro2::TokenStream;
 use quote::ToTokens;
 use syn::ItemTrait;
 
-use crate::derive_component::derive::derive_component_with_ast;
+use crate::derive_component::derive_component_with_ast;
 use crate::parse::ComponentSpec;
 
 pub fn cgp_component(attr: TokenStream, item: TokenStream) -> syn::Result<TokenStream> {
