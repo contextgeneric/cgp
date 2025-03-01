@@ -1,5 +1,4 @@
-use proc_macro2::TokenStream;
-use quote::{quote, ToTokens};
+use quote::{quote, quote_spanned};
 use syn::spanned::Spanned;
 use syn::{parse2, ItemImpl, Type};
 
@@ -13,26 +12,20 @@ pub fn derive_check_components(
     let unit: Type = parse2(quote!(()))?;
 
     for (component_type, component_param) in check_entries.entries.iter() {
-        let span = if component_param.is_some() {
-            component_param.span()
-        } else {
-            component_type.span()
-        };
+        let component_span = component_type.span();
 
-        // Override the span of the context type so that any unsatisfied constraint
-        // error is highlighted on the component type instead
-        let context_type: TokenStream = context_type
-            .to_token_stream()
-            .into_iter()
-            .map(|mut tree| {
-                tree.set_span(span);
-                tree
-            })
-            .collect();
+        let span = if component_param.is_some() {
+            component_span
+                .join(component_param.span())
+                .unwrap_or(component_span)
+        } else {
+            component_span
+        };
 
         let component_param = component_param.as_ref().unwrap_or(&unit);
 
-        let item_impl: ItemImpl = parse2(quote! {
+        let item_impl: ItemImpl = parse2(quote_spanned! {
+            span =>
             impl CheckCanUseComponent< #component_type, #component_param >
                 for #context_type
             {}
