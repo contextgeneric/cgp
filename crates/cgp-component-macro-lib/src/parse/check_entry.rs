@@ -2,7 +2,7 @@ use quote::quote;
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::token::{Bracket, Colon, Comma};
-use syn::{bracketed, parse2, Type};
+use syn::{braced, bracketed, parse2, Type};
 
 pub struct CheckComponents {
     pub context_type: Type,
@@ -22,7 +22,7 @@ impl Parse for CheckComponents {
         let context_type: Type = input.parse()?;
 
         let content;
-        bracketed!(content in input);
+        braced!(content in input);
 
         let entries: CheckEntries = content.parse()?;
 
