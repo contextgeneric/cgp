@@ -4,12 +4,33 @@ use syn::punctuated::Punctuated;
 use syn::token::{Bracket, Colon, Comma};
 use syn::{bracketed, parse2, Type};
 
+pub struct CheckComponents {
+    pub context_type: Type,
+    pub check_entries: CheckEntries,
+}
+
 pub struct CheckEntries {
     pub entries: Vec<(Type, Type)>,
 }
 
 struct CheckEntry {
     pub entries: Vec<(Type, Type)>,
+}
+
+impl Parse for CheckComponents {
+    fn parse(input: ParseStream) -> syn::Result<Self> {
+        let context_type: Type = input.parse()?;
+
+        let content;
+        bracketed!(content in input);
+
+        let entries: CheckEntries = content.parse()?;
+
+        Ok(Self {
+            context_type,
+            check_entries: entries,
+        })
+    }
 }
 
 impl Parse for CheckEntries {

@@ -9,6 +9,7 @@
 
 extern crate alloc;
 
+pub(crate) mod check_components;
 pub(crate) mod delegate_components;
 pub(crate) mod derive_component;
 pub(crate) mod derive_context;

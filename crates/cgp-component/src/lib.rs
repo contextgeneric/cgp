@@ -7,5 +7,7 @@
 mod traits;
 mod types;
 
-pub use traits::{CanUseComponent, DelegateComponent, HasProvider, IsProviderFor};
+pub use traits::{
+    CanUseComponent, CheckCanUseComponent, DelegateComponent, HasProvider, IsProviderFor,
+};
 pub use types::{UseContext, UseDelegate, UseFields, WithContext, WithProvider};
