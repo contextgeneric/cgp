@@ -1,4 +1,6 @@
-use quote::quote;
+use proc_macro2::TokenStream;
+use quote::{quote, ToTokens};
+use syn::spanned::Spanned;
 use syn::{parse2, ItemImpl, Type};
 
 use crate::parse::CheckEntries;
@@ -10,6 +12,19 @@ pub fn derive_check_components(
     let mut item_impls = Vec::new();
 
     for (component_type, component_param) in check_entries.entries.iter() {
+        let span = component_type.span();
+
+        // Override the span of the context type so that any unsatisfied constraint
+        // error is highlighted on the component type instead
+        let context_type: TokenStream = context_type
+            .to_token_stream()
+            .into_iter()
+            .map(|mut tree| {
+                tree.set_span(span);
+                tree
+            })
+            .collect();
+
         let item_impl: ItemImpl = parse2(quote! {
             impl CheckCanUseComponent< #component_type, #component_param >
                 for #context_type
