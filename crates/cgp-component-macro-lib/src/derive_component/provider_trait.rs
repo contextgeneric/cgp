@@ -4,11 +4,11 @@ use syn::punctuated::Punctuated;
 use syn::token::Comma;
 use syn::{parse_quote, Ident, ItemTrait, TraitItem};
 
-use crate::derive_component::generic_args::extract_generic_args;
 use crate::derive_component::replace_self_receiver::replace_self_receiver;
 use crate::derive_component::replace_self_type::{
     iter_parse_and_replace_self_type, parse_and_replace_self_type,
 };
+use crate::parse::TypeGenerics;
 
 pub fn derive_provider_trait(
     component_name: &Ident,
@@ -49,7 +49,9 @@ pub fn derive_provider_trait(
             &local_assoc_types,
         )?;
 
-        let is_provider_params = extract_generic_args(&consumer_trait.generics.params);
+        let is_provider_params = TypeGenerics::try_from(&consumer_trait.generics)?
+            .generics
+            .params;
 
         provider_trait.supertraits = parse_quote!(
             IsProviderFor< #component_name < #component_params >, #context_type, ( #is_provider_params ) >

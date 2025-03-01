@@ -24,6 +24,16 @@ impl Parse for TypeGenerics {
     }
 }
 
+impl<'a> TryFrom<&'a Generics> for TypeGenerics {
+    type Error = syn::Error;
+
+    fn try_from(generics: &'a Generics) -> syn::Result<Self> {
+        let (_, type_generics, _) = generics.split_for_impl();
+        let generics = parse2(type_generics.to_token_stream())?;
+        Ok(Self { generics })
+    }
+}
+
 impl ToTokens for TypeGenerics {
     fn to_tokens(&self, tokens: &mut TokenStream) {
         self.generics.to_tokens(tokens);

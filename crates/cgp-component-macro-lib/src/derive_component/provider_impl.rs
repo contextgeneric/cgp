@@ -11,7 +11,7 @@ use syn::{
 
 use crate::derive_component::delegate_fn::derive_delegated_fn_impl;
 use crate::derive_component::delegate_type::derive_delegate_type_impl;
-use crate::derive_component::generic_args::extract_generic_args;
+use crate::parse::TypeGenerics;
 
 pub fn derive_provider_impl(
     context_type: &Ident,
@@ -24,7 +24,9 @@ pub fn derive_provider_impl(
 
     let component_type = Ident::new("Component", Span::call_site());
 
-    let provider_generic_args = extract_generic_args(&provider_trait.generics.params);
+    let provider_generic_args = TypeGenerics::try_from(&provider_trait.generics)?
+        .generics
+        .params;
 
     let impl_generics = {
         let mut impl_generics = provider_trait.generics.clone();
@@ -34,7 +36,9 @@ pub fn derive_provider_impl(
             .insert(0, parse2(quote!(#component_type))?);
 
         {
-            let is_provider_params = extract_generic_args(&consumer_trait.generics.params);
+            let is_provider_params = TypeGenerics::try_from(&consumer_trait.generics)?
+                .generics
+                .params;
 
             let mut delegate_constraint: Punctuated<TypeParamBound, Plus> = Punctuated::default();
 

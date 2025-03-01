@@ -3,7 +3,6 @@ mod consumer_impl;
 mod delegate_fn;
 mod delegate_type;
 mod derive;
-mod generic_args;
 mod provider_impl;
 mod provider_trait;
 mod replace_self_receiver;
