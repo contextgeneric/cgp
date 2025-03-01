@@ -1,8 +1,7 @@
-use quote::quote;
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::token::{Bracket, Colon, Comma};
-use syn::{braced, bracketed, parse2, Type};
+use syn::{braced, bracketed, Type};
 
 pub struct CheckComponents {
     pub context_type: Type,
@@ -10,11 +9,11 @@ pub struct CheckComponents {
 }
 
 pub struct CheckEntries {
-    pub entries: Vec<(Type, Type)>,
+    pub entries: Vec<(Type, Option<Type>)>,
 }
 
 struct CheckEntry {
-    pub entries: Vec<(Type, Type)>,
+    pub entries: Vec<(Type, Option<Type>)>,
 }
 
 impl Parse for CheckComponents {
@@ -48,8 +47,6 @@ impl Parse for CheckEntries {
 
 impl Parse for CheckEntry {
     fn parse(input: ParseStream) -> syn::Result<Self> {
-        let unit: Type = parse2(quote!(()))?;
-
         let component_types: Vec<Type> = if input.peek(Bracket) {
             let content;
             bracketed!(content in input);
@@ -61,7 +58,7 @@ impl Parse for CheckEntry {
             vec![component_type]
         };
 
-        let component_params: Vec<Type> = if input.peek(Colon) {
+        let component_params: Vec<Option<Type>> = if input.peek(Colon) {
             let _: Colon = input.parse()?;
 
             if input.peek(Bracket) {
@@ -69,12 +66,12 @@ impl Parse for CheckEntry {
                 bracketed!(content in input);
 
                 let types: Punctuated<Type, Comma> = Punctuated::parse_terminated(&content)?;
-                Vec::from_iter(types)
+                types.into_iter().map(Some).collect()
             } else {
-                vec![input.parse()?]
+                vec![Some(input.parse()?)]
             }
         } else {
-            vec![unit.clone()]
+            vec![None]
         };
 
         let mut entries = Vec::new();
