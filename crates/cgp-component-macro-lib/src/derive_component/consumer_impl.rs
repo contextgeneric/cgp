@@ -1,11 +1,11 @@
 use alloc::boxed::Box;
 use alloc::vec::Vec;
 
-use quote::quote;
-use syn::punctuated::Punctuated;
-use syn::token::{Brace, Comma, For, Impl};
+use quote::{quote, ToTokens};
+use syn::token::{Brace, For, Impl};
 use syn::{
-    parse2, GenericParam, Ident, ImplItem, ItemImpl, ItemTrait, Path, TraitItem, TypeParamBound,
+    parse2, GenericParam, Generics, Ident, ImplItem, ItemImpl, ItemTrait, Path, TraitItem,
+    TypeParamBound,
 };
 
 use crate::derive_component::delegate_fn::derive_delegated_fn_impl;
@@ -19,23 +19,10 @@ pub fn derive_consumer_impl(
     let consumer_name = &consumer_trait.ident;
 
     let consumer_generic_args = {
-        let mut generic_args: Punctuated<Ident, Comma> = Punctuated::new();
+        let (_, type_generics, _) = consumer_trait.generics.split_for_impl();
+        let generics: Generics = parse2(type_generics.to_token_stream())?;
 
-        for param in consumer_trait.generics.params.iter() {
-            match param {
-                GenericParam::Type(ty) => {
-                    generic_args.push(ty.ident.clone());
-                }
-                GenericParam::Const(arg) => {
-                    generic_args.push(arg.ident.clone());
-                }
-                GenericParam::Lifetime(_life) => {
-                    unimplemented!()
-                }
-            }
-        }
-
-        generic_args
+        generics.params
     };
 
     let provider_generic_args = {
@@ -46,25 +33,23 @@ pub fn derive_consumer_impl(
         generic_args
     };
 
-    let impl_generics = {
-        let mut impl_generics = consumer_trait.generics.clone();
+    let generics_for_impl = {
+        let mut generics = consumer_trait.generics.clone();
 
-        impl_generics
-            .params
-            .insert(0, parse2(quote!(#context_type))?);
+        generics.params.insert(0, parse2(quote!(#context_type))?);
 
         {
             let supertrait_constraints = consumer_trait.supertraits.clone();
 
             if !supertrait_constraints.is_empty() {
-                match &mut impl_generics.where_clause {
+                match &mut generics.where_clause {
                     Some(where_clause) => {
                         where_clause.predicates.push(parse2(quote! {
                             #context_type : #supertrait_constraints
                         })?);
                     }
                     _ => {
-                        impl_generics.where_clause = Some(parse2(quote! {
+                        generics.where_clause = Some(parse2(quote! {
                             where #context_type : #supertrait_constraints
                         })?);
                     }
@@ -81,7 +66,7 @@ pub fn derive_consumer_impl(
                 #provider_name < #provider_generic_args >
             })?;
 
-            match &mut impl_generics.where_clause {
+            match &mut generics.where_clause {
                 Some(where_clause) => {
                     where_clause.predicates.push(parse2(quote! {
                         #context_type : #has_component_constraint
@@ -92,7 +77,7 @@ pub fn derive_consumer_impl(
                     })?);
                 }
                 _ => {
-                    impl_generics.where_clause = Some(parse2(quote! {
+                    generics.where_clause = Some(parse2(quote! {
                         where
                             #context_type : #has_component_constraint,
                             #context_type :: Provider : #provider_constraint
@@ -101,7 +86,7 @@ pub fn derive_consumer_impl(
             }
         }
 
-        impl_generics
+        generics
     };
 
     let mut impl_items: Vec<ImplItem> = Vec::new();
@@ -151,7 +136,7 @@ pub fn derive_consumer_impl(
         defaultness: None,
         unsafety: consumer_trait.unsafety,
         impl_token: Impl::default(),
-        generics: impl_generics,
+        generics: generics_for_impl,
         trait_: Some((None, trait_path, For::default())),
         self_ty: Box::new(parse2(quote!(#context_type))?),
         brace_token: Brace::default(),
