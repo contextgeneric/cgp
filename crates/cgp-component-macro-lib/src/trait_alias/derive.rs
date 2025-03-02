@@ -2,8 +2,8 @@ use proc_macro2::Span;
 use quote::{quote, ToTokens};
 use syn::token::{Eq, For, Impl, Semi};
 use syn::{
-    parse2, Error, ImplItem, ImplItemConst, ImplItemFn, ImplItemType, ItemImpl, ItemTrait, Path,
-    TraitItem, Type, Visibility,
+    parse2, Error, GenericArgument, Ident, ImplItem, ImplItemConst, ImplItemFn, ImplItemType,
+    ItemImpl, ItemTrait, Path, PathArguments, TraitItem, Type, TypeParamBound, Visibility,
 };
 
 pub fn derive_trait_alias(item_trait: &mut ItemTrait) -> syn::Result<ItemImpl> {
@@ -105,7 +105,48 @@ pub fn derive_trait_alias(item_trait: &mut ItemTrait) -> syn::Result<ItemImpl> {
         .params
         .push(parse2(context_type.to_token_stream())?);
 
-    let supertraits = &item_trait.supertraits;
+    let mut supertraits = item_trait.supertraits.clone();
+
+    for bound in supertraits.iter_mut() {
+        match bound {
+            TypeParamBound::Trait(trait_bound) => {
+                for path in trait_bound.path.segments.iter_mut() {
+                    match &mut path.arguments {
+                        PathArguments::AngleBracketed(generics) => {
+                            let new_generic_args = generics
+                                .args
+                                .clone()
+                                .into_iter()
+                                .filter(|arg| match arg {
+                                    GenericArgument::AssocType(assoc) => match &assoc.ty {
+                                        Type::Path(path) => {
+                                            if let Some(segment) = path.path.segments.first() {
+                                                if segment.ident
+                                                    == Ident::new("Self", Span::call_site())
+                                                {
+                                                    false
+                                                } else {
+                                                    true
+                                                }
+                                            } else {
+                                                true
+                                            }
+                                        }
+                                        _ => true,
+                                    },
+                                    _ => true,
+                                })
+                                .collect();
+
+                            generics.args = new_generic_args;
+                        }
+                        _ => {}
+                    }
+                }
+            }
+            _ => {}
+        }
+    }
 
     let where_clause = impl_generics.make_where_clause();
     where_clause.predicates.push(parse2(quote! {
