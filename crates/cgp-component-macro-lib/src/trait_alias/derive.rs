@@ -110,39 +110,7 @@ pub fn derive_trait_alias(item_trait: &mut ItemTrait) -> syn::Result<ItemImpl> {
     for bound in supertraits.iter_mut() {
         match bound {
             TypeParamBound::Trait(trait_bound) => {
-                for path in trait_bound.path.segments.iter_mut() {
-                    match &mut path.arguments {
-                        PathArguments::AngleBracketed(generics) => {
-                            let new_generic_args = generics
-                                .args
-                                .clone()
-                                .into_iter()
-                                .filter(|arg| match arg {
-                                    GenericArgument::AssocType(assoc) => match &assoc.ty {
-                                        Type::Path(path) => {
-                                            if let Some(segment) = path.path.segments.first() {
-                                                if segment.ident
-                                                    == Ident::new("Self", Span::call_site())
-                                                {
-                                                    false
-                                                } else {
-                                                    true
-                                                }
-                                            } else {
-                                                true
-                                            }
-                                        }
-                                        _ => true,
-                                    },
-                                    _ => true,
-                                })
-                                .collect();
-
-                            generics.args = new_generic_args;
-                        }
-                        _ => {}
-                    }
-                }
+                filter_assoc_self_constraint(&mut trait_bound.path);
             }
             _ => {}
         }
@@ -171,4 +139,38 @@ pub fn derive_trait_alias(item_trait: &mut ItemTrait) -> syn::Result<ItemImpl> {
     };
 
     Ok(item_impl)
+}
+
+pub fn filter_assoc_self_constraint(path: &mut Path) {
+    for path in path.segments.iter_mut() {
+        match &mut path.arguments {
+            PathArguments::AngleBracketed(generics) => {
+                let new_generic_args = generics
+                    .args
+                    .clone()
+                    .into_iter()
+                    .filter(|arg| match arg {
+                        GenericArgument::AssocType(assoc) => match &assoc.ty {
+                            Type::Path(path) => {
+                                if let Some(segment) = path.path.segments.first() {
+                                    if segment.ident == Ident::new("Self", Span::call_site()) {
+                                        false
+                                    } else {
+                                        true
+                                    }
+                                } else {
+                                    true
+                                }
+                            }
+                            _ => true,
+                        },
+                        _ => true,
+                    })
+                    .collect();
+
+                generics.args = new_generic_args;
+            }
+            _ => {}
+        }
+    }
 }
