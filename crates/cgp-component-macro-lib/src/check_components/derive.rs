@@ -1,13 +1,14 @@
-use proc_macro2::TokenStream;
-use quote::{quote, ToTokens};
+use quote::quote;
 use syn::{parse2, ItemImpl, ItemTrait, Type};
 
+use crate::check_components::override_span;
 use crate::parse::{CheckComponents, CheckEntry};
 
 pub fn derive_check_components(spec: &CheckComponents) -> syn::Result<(ItemTrait, Vec<ItemImpl>)> {
     let mut item_impls = Vec::new();
     let unit: Type = parse2(quote!(()))?;
 
+    let context_type = &spec.context_type;
     let trait_name = &spec.trait_name;
     let impl_generics = &spec.impl_generics;
     let where_clause = &spec.where_clause;
@@ -24,15 +25,7 @@ pub fn derive_check_components(spec: &CheckComponents) -> syn::Result<(ItemTrait
     {
         // Override the span of the context type so that any unsatisfied constraint
         // error is highlighted on the component type instead
-        let context_type: TokenStream = spec
-            .context_type
-            .to_token_stream()
-            .into_iter()
-            .map(|mut tree| {
-                tree.set_span(span.clone());
-                tree
-            })
-            .collect();
+        let context_type = override_span(span, context_type)?;
 
         let component_param = component_params.as_ref().unwrap_or(&unit);
 
