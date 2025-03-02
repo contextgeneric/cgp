@@ -149,22 +149,27 @@ pub fn filter_assoc_self_constraint(path: &mut Path) {
                     .args
                     .clone()
                     .into_iter()
-                    .filter(|arg| match arg {
-                        GenericArgument::AssocType(assoc) => match &assoc.ty {
-                            Type::Path(path) => {
-                                if let Some(segment) = path.path.segments.first() {
-                                    if segment.ident == Ident::new("Self", Span::call_site()) {
-                                        false
-                                    } else {
-                                        true
+                    .filter_map(|mut arg| {
+                        match &mut arg {
+                            GenericArgument::AssocType(assoc) => {
+                                if let Type::Path(path) = &assoc.ty {
+                                    if let Some(segment) = path.path.segments.first() {
+                                        if segment.ident == Ident::new("Self", Span::call_site()) {
+                                            return None;
+                                        }
                                     }
-                                } else {
-                                    true
                                 }
                             }
-                            _ => true,
-                        },
-                        _ => true,
+                            GenericArgument::Constraint(constraint) => {
+                                for bound in constraint.bounds.iter_mut() {
+                                    if let TypeParamBound::Trait(trait_bound) = bound {
+                                        filter_assoc_self_constraint(&mut trait_bound.path);
+                                    }
+                                }
+                            }
+                            _ => {}
+                        }
+                        Some(arg)
                     })
                     .collect();
 
