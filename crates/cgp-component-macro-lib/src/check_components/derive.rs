@@ -1,15 +1,20 @@
 use proc_macro2::TokenStream;
 use quote::{quote, ToTokens};
-use syn::{parse2, ItemImpl, Type};
+use syn::{parse2, ItemImpl, ItemTrait, Type};
 
 use crate::parse::{CheckComponents, CheckEntry};
 
-pub fn derive_check_components(spec: &CheckComponents) -> syn::Result<Vec<ItemImpl>> {
+pub fn derive_check_components(spec: &CheckComponents) -> syn::Result<(ItemTrait, Vec<ItemImpl>)> {
     let mut item_impls = Vec::new();
     let unit: Type = parse2(quote!(()))?;
 
+    let trait_name = &spec.trait_name;
     let impl_generics = &spec.impl_generics;
     let where_clause = &spec.where_clause;
+
+    let item_trait = parse2(quote! {
+        trait #trait_name <Component, Params>: CanUseComponent<Component, Params> {}
+    })?;
 
     for CheckEntry {
         component_type,
@@ -33,7 +38,7 @@ pub fn derive_check_components(spec: &CheckComponents) -> syn::Result<Vec<ItemIm
 
         let item_impl: ItemImpl = parse2(quote! {
             impl #impl_generics
-                CheckCanUseComponent< #component_type, #component_param >
+                #trait_name < #component_type, #component_param >
                 for #context_type
             #where_clause
             {}
@@ -42,5 +47,5 @@ pub fn derive_check_components(spec: &CheckComponents) -> syn::Result<Vec<ItemIm
         item_impls.push(item_impl);
     }
 
-    Ok(item_impls)
+    Ok((item_trait, item_impls))
 }
