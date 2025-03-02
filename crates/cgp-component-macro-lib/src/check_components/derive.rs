@@ -9,6 +9,7 @@ pub fn derive_check_components(spec: &CheckComponents) -> syn::Result<Vec<ItemIm
     let unit: Type = parse2(quote!(()))?;
 
     let impl_generics = &spec.impl_generics;
+    let where_clause = &spec.where_clause;
 
     for CheckEntry {
         component_type,
@@ -34,6 +35,7 @@ pub fn derive_check_components(spec: &CheckComponents) -> syn::Result<Vec<ItemIm
             impl #impl_generics
                 CheckCanUseComponent< #component_type, #component_param >
                 for #context_type
+            #where_clause
             {}
         })?;
 

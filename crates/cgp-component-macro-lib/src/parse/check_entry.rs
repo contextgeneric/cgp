@@ -2,14 +2,15 @@ use proc_macro2::Span;
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::spanned::Spanned;
-use syn::token::{Bracket, Colon, Comma, Lt};
-use syn::{braced, bracketed, Type};
+use syn::token::{Bracket, Colon, Comma, Lt, Where};
+use syn::{braced, bracketed, Type, WhereClause};
 
 use crate::parse::ImplGenerics;
 
 pub struct CheckComponents {
     pub impl_generics: ImplGenerics,
     pub context_type: Type,
+    pub where_clause: WhereClause,
     pub check_entries: CheckEntries,
 }
 
@@ -37,6 +38,15 @@ impl Parse for CheckComponents {
 
         let context_type: Type = input.parse()?;
 
+        let where_clause = if input.peek(Where) {
+            input.parse()?
+        } else {
+            WhereClause {
+                where_token: Where(Span::call_site()),
+                predicates: Punctuated::default(),
+            }
+        };
+
         let content;
         braced!(content in input);
 
@@ -45,6 +55,7 @@ impl Parse for CheckComponents {
         Ok(Self {
             impl_generics,
             context_type,
+            where_clause,
             check_entries: entries,
         })
     }
