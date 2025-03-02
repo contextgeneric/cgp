@@ -2,24 +2,24 @@ use proc_macro2::TokenStream;
 use quote::{quote, ToTokens};
 use syn::{parse2, ItemImpl, Type};
 
-use crate::parse::{CheckEntries, CheckEntry};
+use crate::parse::{CheckComponents, CheckEntry};
 
-pub fn derive_check_components(
-    context_type: &Type,
-    check_entries: &CheckEntries,
-) -> syn::Result<Vec<ItemImpl>> {
+pub fn derive_check_components(spec: &CheckComponents) -> syn::Result<Vec<ItemImpl>> {
     let mut item_impls = Vec::new();
     let unit: Type = parse2(quote!(()))?;
+
+    let impl_generics = &spec.impl_generics;
 
     for CheckEntry {
         component_type,
         component_params,
         span,
-    } in check_entries.entries.iter()
+    } in spec.check_entries.entries.iter()
     {
         // Override the span of the context type so that any unsatisfied constraint
         // error is highlighted on the component type instead
-        let context_type: TokenStream = context_type
+        let context_type: TokenStream = spec
+            .context_type
             .to_token_stream()
             .into_iter()
             .map(|mut tree| {
@@ -31,7 +31,8 @@ pub fn derive_check_components(
         let component_param = component_params.as_ref().unwrap_or(&unit);
 
         let item_impl: ItemImpl = parse2(quote! {
-            impl CheckCanUseComponent< #component_type, #component_param >
+            impl #impl_generics
+                CheckCanUseComponent< #component_type, #component_param >
                 for #context_type
             {}
         })?;

@@ -2,10 +2,13 @@ use proc_macro2::Span;
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::spanned::Spanned;
-use syn::token::{Bracket, Colon, Comma};
+use syn::token::{Bracket, Colon, Comma, Lt};
 use syn::{braced, bracketed, Type};
 
+use crate::parse::ImplGenerics;
+
 pub struct CheckComponents {
+    pub impl_generics: ImplGenerics,
     pub context_type: Type,
     pub check_entries: CheckEntries,
 }
@@ -26,6 +29,12 @@ struct ParseCheckEntries {
 
 impl Parse for CheckComponents {
     fn parse(input: ParseStream) -> syn::Result<Self> {
+        let impl_generics = if input.peek(Lt) {
+            input.parse()?
+        } else {
+            Default::default()
+        };
+
         let context_type: Type = input.parse()?;
 
         let content;
@@ -34,6 +43,7 @@ impl Parse for CheckComponents {
         let entries: CheckEntries = content.parse()?;
 
         Ok(Self {
+            impl_generics,
             context_type,
             check_entries: entries,
         })
