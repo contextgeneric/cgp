@@ -1,5 +1,7 @@
+use proc_macro2::Span;
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
+use syn::spanned::Spanned;
 use syn::token::{Bracket, Colon, Comma};
 use syn::{braced, bracketed, Type};
 
@@ -15,6 +17,7 @@ pub struct CheckEntries {
 pub struct CheckEntry {
     pub component_type: Type,
     pub component_params: Option<Type>,
+    pub span: Span,
 }
 
 struct ParseCheckEntries {
@@ -64,7 +67,7 @@ impl Parse for ParseCheckEntries {
             vec![component_type]
         };
 
-        let component_params: Vec<Option<Type>> = if input.peek(Colon) {
+        let component_params: Vec<Type> = if input.peek(Colon) {
             let _: Colon = input.parse()?;
 
             if input.peek(Bracket) {
@@ -72,22 +75,41 @@ impl Parse for ParseCheckEntries {
                 bracketed!(content in input);
 
                 let types: Punctuated<Type, Comma> = Punctuated::parse_terminated(&content)?;
-                types.into_iter().map(Some).collect()
+                types.into_iter().collect()
             } else {
-                vec![Some(input.parse()?)]
+                vec![input.parse()?]
             }
         } else {
-            vec![None]
+            vec![]
         };
 
         let mut entries = Vec::new();
 
+        let component_types_count = component_types.len();
+
         for component_type in component_types.iter() {
-            for component_param in component_params.iter() {
+            if component_params.is_empty() {
                 entries.push(CheckEntry {
                     component_type: component_type.clone(),
-                    component_params: component_param.clone(),
+                    component_params: None,
+                    span: component_type.span(),
                 })
+            } else {
+                let component_params_count = component_params.len();
+
+                for component_param in component_params.iter() {
+                    let span = if component_types_count >= component_params_count {
+                        component_type.span()
+                    } else {
+                        component_param.span()
+                    };
+
+                    entries.push(CheckEntry {
+                        component_type: component_type.clone(),
+                        component_params: Some(component_param.clone()),
+                        span,
+                    })
+                }
             }
         }
 
