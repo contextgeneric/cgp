@@ -3,7 +3,7 @@ use quote::{quote, quote_spanned, ToTokens};
 use syn::spanned::Spanned;
 use syn::{parse2, ItemImpl, Type};
 
-use crate::parse::CheckEntries;
+use crate::parse::{CheckEntries, CheckEntry};
 
 pub fn derive_check_components(
     context_type: &Type,
@@ -12,12 +12,16 @@ pub fn derive_check_components(
     let mut item_impls = Vec::new();
     let unit: Type = parse2(quote!(()))?;
 
-    for (component_type, component_param) in check_entries.entries.iter() {
+    for CheckEntry {
+        component_type,
+        component_params,
+    } in check_entries.entries.iter()
+    {
         let component_span = component_type.span();
 
-        let span = if component_param.is_some() {
+        let span = if component_params.is_some() {
             component_span
-                .join(component_param.span())
+                .join(component_params.span())
                 .unwrap_or(component_span)
         } else {
             component_span
@@ -34,7 +38,7 @@ pub fn derive_check_components(
             })
             .collect();
 
-        let component_param = component_param.as_ref().unwrap_or(&unit);
+        let component_param = component_params.as_ref().unwrap_or(&unit);
 
         let item_impl: ItemImpl = parse2(quote_spanned! {
             span=>

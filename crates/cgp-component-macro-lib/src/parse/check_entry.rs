@@ -9,11 +9,16 @@ pub struct CheckComponents {
 }
 
 pub struct CheckEntries {
-    pub entries: Vec<(Type, Option<Type>)>,
+    pub entries: Vec<CheckEntry>,
 }
 
-struct CheckEntry {
-    pub entries: Vec<(Type, Option<Type>)>,
+pub struct CheckEntry {
+    pub component_type: Type,
+    pub component_params: Option<Type>,
+}
+
+struct ParseCheckEntries {
+    pub entries: Vec<CheckEntry>,
 }
 
 impl Parse for CheckComponents {
@@ -34,7 +39,8 @@ impl Parse for CheckComponents {
 
 impl Parse for CheckEntries {
     fn parse(input: ParseStream) -> syn::Result<Self> {
-        let check_entries: Punctuated<CheckEntry, Comma> = Punctuated::parse_terminated(input)?;
+        let check_entries: Punctuated<ParseCheckEntries, Comma> =
+            Punctuated::parse_terminated(input)?;
 
         let entries = check_entries
             .into_iter()
@@ -45,7 +51,7 @@ impl Parse for CheckEntries {
     }
 }
 
-impl Parse for CheckEntry {
+impl Parse for ParseCheckEntries {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let component_types: Vec<Type> = if input.peek(Bracket) {
             let content;
@@ -78,7 +84,10 @@ impl Parse for CheckEntry {
 
         for component_type in component_types.iter() {
             for component_param in component_params.iter() {
-                entries.push((component_type.clone(), component_param.clone()))
+                entries.push(CheckEntry {
+                    component_type: component_type.clone(),
+                    component_params: component_param.clone(),
+                })
             }
         }
 
