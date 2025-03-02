@@ -1,3 +1,4 @@
+pub mod check_components;
 pub mod define_preset;
 pub mod delegate_components;
 pub mod derive_component;
