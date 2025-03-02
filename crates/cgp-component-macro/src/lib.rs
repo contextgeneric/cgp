@@ -79,6 +79,13 @@ pub fn cgp_context(attr: TokenStream, item: TokenStream) -> TokenStream {
 }
 
 #[proc_macro_attribute]
+pub fn trait_alias(attr: TokenStream, item: TokenStream) -> TokenStream {
+    cgp_component_macro_lib::trait_alias(attr.into(), item.into())
+        .unwrap_or_else(syn::Error::into_compile_error)
+        .into()
+}
+
+#[proc_macro_attribute]
 pub fn re_export_imports(attrs: TokenStream, body: TokenStream) -> TokenStream {
     cgp_component_macro_lib::re_export_imports(attrs.into(), body.into())
         .unwrap_or_else(syn::Error::into_compile_error)

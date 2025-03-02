@@ -10,6 +10,7 @@ mod define_preset;
 mod delegate_components;
 mod re_export_imports;
 mod replace_with;
+mod trait_alias;
 
 pub use cgp_auto_getter::*;
 pub use cgp_component::*;
@@ -23,3 +24,4 @@ pub use define_preset::*;
 pub use delegate_components::*;
 pub use re_export_imports::*;
 pub use replace_with::*;
+pub use trait_alias::*;
