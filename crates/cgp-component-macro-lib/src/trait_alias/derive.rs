@@ -6,7 +6,10 @@ use syn::{
     ItemImpl, ItemTrait, Path, PathArguments, TraitItem, Type, TypeParamBound, Visibility,
 };
 
-pub fn derive_trait_alias(item_trait: &mut ItemTrait) -> syn::Result<ItemImpl> {
+pub fn derive_trait_alias(
+    context_ident: &Ident,
+    item_trait: &mut ItemTrait,
+) -> syn::Result<ItemImpl> {
     let mut impl_items: Vec<ImplItem> = Vec::new();
 
     for trait_item in item_trait.items.iter_mut() {
@@ -98,7 +101,7 @@ pub fn derive_trait_alias(item_trait: &mut ItemTrait) -> syn::Result<ItemImpl> {
         }
     }
 
-    let context_type: Type = parse2(quote! { __Context__ })?;
+    let context_type: Type = parse2(quote! { #context_ident })?;
 
     let mut impl_generics = item_trait.generics.clone();
     impl_generics
