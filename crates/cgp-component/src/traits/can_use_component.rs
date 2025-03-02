@@ -8,5 +8,3 @@ where
     Context::Provider: IsProviderFor<Component, Context, Params>,
 {
 }
-
-pub trait CheckCanUseComponent<Component, Params = ()>: CanUseComponent<Component, Params> {}
