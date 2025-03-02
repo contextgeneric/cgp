@@ -33,7 +33,7 @@ pub fn derive_trait_alias(
                     attrs: trait_item_type.attrs.clone(),
                     vis: Visibility::Inherited,
                     defaultness: None,
-                    type_token: trait_item_type.type_token.clone(),
+                    type_token: trait_item_type.type_token,
                     ident: trait_item_type.ident.clone(),
                     generics: trait_item_type.generics.clone(),
                     eq_token: Eq(Span::call_site()),
@@ -85,14 +85,14 @@ pub fn derive_trait_alias(
                     attrs: trait_item_const.attrs.clone(),
                     vis: Visibility::Inherited,
                     defaultness: None,
-                    const_token: trait_item_const.const_token.clone(),
+                    const_token: trait_item_const.const_token,
                     ident: trait_item_const.ident.clone(),
                     generics: trait_item_const.generics.clone(),
-                    colon_token: trait_item_const.colon_token.clone(),
+                    colon_token: trait_item_const.colon_token,
                     ty: trait_item_const.ty.clone(),
                     eq_token,
                     expr: const_expr,
-                    semi_token: trait_item_const.semi_token.clone(),
+                    semi_token: trait_item_const.semi_token,
                 };
 
                 impl_items.push(ImplItem::Const(impl_item_const));
@@ -111,11 +111,8 @@ pub fn derive_trait_alias(
     let mut supertraits = item_trait.supertraits.clone();
 
     for bound in supertraits.iter_mut() {
-        match bound {
-            TypeParamBound::Trait(trait_bound) => {
-                filter_assoc_self_constraint(&mut trait_bound.path);
-            }
-            _ => {}
+        if let TypeParamBound::Trait(trait_bound) = bound {
+            filter_assoc_self_constraint(&mut trait_bound.path);
         }
     }
 
@@ -132,12 +129,12 @@ pub fn derive_trait_alias(
     let item_impl = ItemImpl {
         attrs: item_trait.attrs.clone(),
         defaultness: None,
-        unsafety: item_trait.unsafety.clone(),
+        unsafety: item_trait.unsafety,
         impl_token: Impl(Span::call_site()),
         generics: impl_generics,
         trait_: Some((None, trait_path, For(Span::call_site()))),
         self_ty: Box::new(context_type),
-        brace_token: item_trait.brace_token.clone(),
+        brace_token: item_trait.brace_token,
         items: impl_items,
     };
 
@@ -146,39 +143,36 @@ pub fn derive_trait_alias(
 
 pub fn filter_assoc_self_constraint(path: &mut Path) {
     for path in path.segments.iter_mut() {
-        match &mut path.arguments {
-            PathArguments::AngleBracketed(generics) => {
-                let new_generic_args = generics
-                    .args
-                    .clone()
-                    .into_iter()
-                    .filter_map(|mut arg| {
-                        match &mut arg {
-                            GenericArgument::AssocType(assoc) => {
-                                if let Type::Path(path) = &assoc.ty {
-                                    if let Some(segment) = path.path.segments.first() {
-                                        if segment.ident == Ident::new("Self", Span::call_site()) {
-                                            return None;
-                                        }
+        if let PathArguments::AngleBracketed(generics) = &mut path.arguments {
+            let new_generic_args = generics
+                .args
+                .clone()
+                .into_iter()
+                .filter_map(|mut arg| {
+                    match &mut arg {
+                        GenericArgument::AssocType(assoc) => {
+                            if let Type::Path(path) = &assoc.ty {
+                                if let Some(segment) = path.path.segments.first() {
+                                    if segment.ident == Ident::new("Self", Span::call_site()) {
+                                        return None;
                                     }
                                 }
                             }
-                            GenericArgument::Constraint(constraint) => {
-                                for bound in constraint.bounds.iter_mut() {
-                                    if let TypeParamBound::Trait(trait_bound) = bound {
-                                        filter_assoc_self_constraint(&mut trait_bound.path);
-                                    }
-                                }
-                            }
-                            _ => {}
                         }
-                        Some(arg)
-                    })
-                    .collect();
+                        GenericArgument::Constraint(constraint) => {
+                            for bound in constraint.bounds.iter_mut() {
+                                if let TypeParamBound::Trait(trait_bound) = bound {
+                                    filter_assoc_self_constraint(&mut trait_bound.path);
+                                }
+                            }
+                        }
+                        _ => {}
+                    }
+                    Some(arg)
+                })
+                .collect();
 
-                generics.args = new_generic_args;
-            }
-            _ => {}
+            generics.args = new_generic_args;
         }
     }
 }
