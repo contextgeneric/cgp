@@ -25,6 +25,40 @@ pub fn test_basic_trait_alias() {
     assert_equal_token_stream(&derived, &expected);
 }
 
+
+#[test]
+pub fn test_trait_alias_with_method() {
+    let derived = trait_alias(
+        quote!(),
+        quote! {
+            pub trait CanDoFooBar: CanDoFoo + CanDoBar {
+                fn foo_bar(&self) {
+                    self.foo().bar();
+                }
+            }
+        },
+    )
+    .unwrap();
+
+    let expected = quote! {
+        pub trait CanDoFooBar: CanDoFoo + CanDoBar {
+            fn foo_bar(&self);
+        }
+
+        impl<Context> CanDoFooBar for Context
+        where
+            Context: CanDoFoo + CanDoBar,
+        {
+            fn foo_bar(&self) {
+                self.foo().bar();
+            }
+        }
+    };
+
+    assert_equal_token_stream(&derived, &expected);
+}
+
+
 #[test]
 pub fn test_trait_alias_with_associated_type_without_constraints() {
     let derived = trait_alias(
