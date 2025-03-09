@@ -13,28 +13,36 @@ pub fn derive_trait_alias(
 ) -> syn::Result<ItemImpl> {
     let mut impl_items: Vec<ImplItem> = Vec::new();
 
+    let mut assoc_idents: Vec<Ident> = Vec::new();
     let mut assoc_bounds: Vec<WherePredicate> = Vec::new();
 
     for trait_item in item_trait.items.iter_mut() {
         match trait_item {
             TraitItem::Type(trait_item_type) => {
-                let type_impl = trait_item_type
-                    .default
-                    .as_ref()
-                    .ok_or_else(|| {
-                        Error::new_spanned(
-                            &trait_item_type,
-                            "type item require assignment to concrete type",
-                        )
-                    })?
-                    .1
-                    .clone();
+                // let type_impl = trait_item_type
+                //     .default
+                //     .as_ref()
+                //     .ok_or_else(|| {
+                //         Error::new_spanned(
+                //             &trait_item_type,
+                //             "type item require assignment to concrete type",
+                //         )
+                //     })?
+                //     .1
+                //     .clone();
 
                 trait_item_type.default.take();
 
+                let item_type_ident = &trait_item_type.ident;
+                assoc_idents.push(item_type_ident.clone());
+
+                let type_impl = parse2(quote! {
+                    #item_type_ident
+                })?;
+
                 for bound in trait_item_type.bounds.iter() {
                     assoc_bounds.push(parse2(quote! {
-                        #type_impl : #bound
+                        #item_type_ident : #bound
                     })?);
                 }
 
@@ -113,9 +121,16 @@ pub fn derive_trait_alias(
     let context_type: Type = parse2(quote! { #context_ident })?;
 
     let mut impl_generics = item_trait.generics.clone();
+
     impl_generics
         .params
         .push(parse2(context_type.to_token_stream())?);
+
+    for assoc_ident in assoc_idents {
+        impl_generics
+            .params
+            .push(parse2(assoc_ident.to_token_stream())?);
+    }
 
     let mut supertraits = item_trait.supertraits.clone();
 
@@ -155,35 +170,60 @@ pub fn derive_trait_alias(
 pub fn filter_assoc_self_constraint(path: &mut Path) {
     for path in path.segments.iter_mut() {
         if let PathArguments::AngleBracketed(generics) = &mut path.arguments {
-            let new_generic_args = generics
-                .args
-                .clone()
-                .into_iter()
-                .filter_map(|mut arg| {
-                    match &mut arg {
-                        GenericArgument::AssocType(assoc) => {
-                            if let Type::Path(path) = &assoc.ty {
-                                if let Some(segment) = path.path.segments.first() {
-                                    if segment.ident == Ident::new("Self", Span::call_site()) {
-                                        return None;
-                                    }
-                                }
-                            }
-                        }
-                        GenericArgument::Constraint(constraint) => {
-                            for bound in constraint.bounds.iter_mut() {
-                                if let TypeParamBound::Trait(trait_bound) = bound {
-                                    filter_assoc_self_constraint(&mut trait_bound.path);
-                                }
-                            }
-                        }
-                        _ => {}
-                    }
-                    Some(arg)
-                })
-                .collect();
+            for arg in generics.args.iter_mut() {
+                match arg {
+                    GenericArgument::AssocType(assoc) => {
+                        if let Type::Path(path) = &mut assoc.ty {
+                            if let Some(segment) = path.path.segments.first() {
+                                if segment.ident == Ident::new("Self", Span::call_site()) {
+                                    let mut new_segments = path.path.segments.clone().into_iter();
+                                    new_segments.next();
 
-            generics.args = new_generic_args;
+                                    path.path.segments = new_segments.collect();
+                                }
+                            }
+                        }
+                    }
+                    GenericArgument::Constraint(constraint) => {
+                        for bound in constraint.bounds.iter_mut() {
+                            if let TypeParamBound::Trait(trait_bound) = bound {
+                                filter_assoc_self_constraint(&mut trait_bound.path);
+                            }
+                        }
+                    }
+                    _ => {}
+                }
+            }
+
+            // let new_generic_args = generics
+            //     .args
+            //     .clone()
+            //     .into_iter()
+            //     .filter_map(|mut arg| {
+            //         match &mut arg {
+            //             GenericArgument::AssocType(assoc) => {
+            //                 if let Type::Path(path) = &assoc.ty {
+            //                     if let Some(segment) = path.path.segments.first() {
+            //                         if segment.ident == Ident::new("Self", Span::call_site()) {
+            //                             return None;
+            //                         }
+            //                     }
+            //                 }
+            //             }
+            //             GenericArgument::Constraint(constraint) => {
+            //                 for bound in constraint.bounds.iter_mut() {
+            //                     if let TypeParamBound::Trait(trait_bound) = bound {
+            //                         filter_assoc_self_constraint(&mut trait_bound.path);
+            //                     }
+            //                 }
+            //             }
+            //             _ => {}
+            //         }
+            //         Some(arg)
+            //     })
+            //     .collect();
+
+            // generics.args = new_generic_args;
         }
     }
 }

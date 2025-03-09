@@ -26,12 +26,12 @@ pub fn test_basic_trait_alias() {
 }
 
 #[test]
-pub fn test_trait_alias_with_associated_type() {
+pub fn test_trait_alias_with_associated_type_without_constraints() {
     let derived = trait_alias(
         quote!(),
         quote! {
             pub trait HasFooAtBar: HasFooAt<Bar, Foo = Self::FooBar> {
-                type FooBar = Self::Foo;
+                type FooBar;
             }
         },
     )
@@ -42,11 +42,11 @@ pub fn test_trait_alias_with_associated_type() {
             type FooBar;
         }
 
-        impl<Context> HasFooAtBar for Context
+        impl<Context, FooBar> HasFooAtBar for Context
         where
-            Context: HasFooAt<Bar>,
+            Context: HasFooAt<Bar, Foo = FooBar>,
         {
-            type FooBar = Self::Foo;
+            type FooBar = FooBar;
         }
     };
 
@@ -59,7 +59,7 @@ pub fn test_trait_alias_with_associated_type_and_constraints() {
         quote!(),
         quote! {
             pub trait HasFooAtBar: HasFooAt<Bar, Foo = Self::FooBar> {
-                type FooBar: Clone = Self::Foo;
+                type FooBar: Clone;
             }
         },
     )
@@ -70,12 +70,12 @@ pub fn test_trait_alias_with_associated_type_and_constraints() {
             type FooBar: Clone;
         }
 
-        impl<Context> HasFooAtBar for Context
+        impl<Context, FooBar> HasFooAtBar for Context
         where
-            Context: HasFooAt<Bar>,
-            Self::Foo: Clone,
+            Context: HasFooAt<Bar, Foo = FooBar>,
+            FooBar: Clone,
         {
-            type FooBar = Self::Foo;
+            type FooBar = FooBar;
         }
     };
 
