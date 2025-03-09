@@ -40,17 +40,19 @@ pub fn derive_trait_alias(
                     #item_type_ident
                 })?;
 
-                let mut current_assoc_bounds = trait_item_type.bounds.clone();
+                if !trait_item_type.bounds.is_empty() {
+                    let mut current_assoc_bounds = trait_item_type.bounds.clone();
 
-                for bound in current_assoc_bounds.iter_mut() {
-                    if let TypeParamBound::Trait(bound) = bound {
-                        filter_assoc_self_constraint(&mut bound.path);
+                    for bound in current_assoc_bounds.iter_mut() {
+                        if let TypeParamBound::Trait(bound) = bound {
+                            filter_assoc_self_constraint(&mut bound.path);
+                        }
                     }
-                }
 
-                assoc_bounds.push(parse2(quote! {
-                    #item_type_ident : #current_assoc_bounds
-                })?);
+                    assoc_bounds.push(parse2(quote! {
+                        #item_type_ident : #current_assoc_bounds
+                    })?);
+                }
 
                 let impl_item_type = ImplItemType {
                     attrs: trait_item_type.attrs.clone(),
