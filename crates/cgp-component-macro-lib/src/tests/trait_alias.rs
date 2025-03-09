@@ -52,3 +52,32 @@ pub fn test_trait_alias_with_associated_type() {
 
     assert_equal_token_stream(&derived, &expected);
 }
+
+#[test]
+pub fn test_trait_alias_with_associated_type_and_constraints() {
+    let derived = trait_alias(
+        quote!(),
+        quote! {
+            pub trait HasFooAtBar: HasFooAt<Bar, Foo = Self::FooBar> {
+                type FooBar: Clone = Self::Foo;
+            }
+        },
+    )
+    .unwrap();
+
+    let expected = quote! {
+        pub trait HasFooAtBar: HasFooAt<Bar, Foo = Self::FooBar> {
+            type FooBar: Clone;
+        }
+
+        impl<Context> HasFooAtBar for Context
+        where
+            Context: HasFooAt<Bar>,
+            Self::Foo: Clone,
+        {
+            type FooBar = Self::Foo;
+        }
+    };
+
+    assert_equal_token_stream(&derived, &expected);
+}

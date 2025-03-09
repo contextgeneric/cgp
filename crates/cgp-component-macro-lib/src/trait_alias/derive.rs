@@ -4,6 +4,7 @@ use syn::token::{Eq, For, Impl, Semi};
 use syn::{
     parse2, Error, GenericArgument, Ident, ImplItem, ImplItemConst, ImplItemFn, ImplItemType,
     ItemImpl, ItemTrait, Path, PathArguments, TraitItem, Type, TypeParamBound, Visibility,
+    WherePredicate,
 };
 
 pub fn derive_trait_alias(
@@ -11,6 +12,8 @@ pub fn derive_trait_alias(
     item_trait: &mut ItemTrait,
 ) -> syn::Result<ItemImpl> {
     let mut impl_items: Vec<ImplItem> = Vec::new();
+
+    let mut assoc_bounds: Vec<WherePredicate> = Vec::new();
 
     for trait_item in item_trait.items.iter_mut() {
         match trait_item {
@@ -28,6 +31,12 @@ pub fn derive_trait_alias(
                     .clone();
 
                 trait_item_type.default.take();
+
+                for bound in trait_item_type.bounds.iter() {
+                    assoc_bounds.push(parse2(quote! {
+                        #type_impl : #bound
+                    })?);
+                }
 
                 let impl_item_type = ImplItemType {
                     attrs: trait_item_type.attrs.clone(),
@@ -120,6 +129,8 @@ pub fn derive_trait_alias(
     where_clause.predicates.push(parse2(quote! {
         #context_type: #supertraits
     })?);
+
+    where_clause.predicates.extend(assoc_bounds);
 
     let trait_name = &item_trait.ident;
     let (_, type_generics, _) = item_trait.generics.split_for_impl();
