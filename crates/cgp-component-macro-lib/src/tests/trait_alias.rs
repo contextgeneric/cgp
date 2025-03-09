@@ -25,7 +25,6 @@ pub fn test_basic_trait_alias() {
     assert_equal_token_stream(&derived, &expected);
 }
 
-
 #[test]
 pub fn test_trait_alias_with_method() {
     let derived = trait_alias(
@@ -57,7 +56,6 @@ pub fn test_trait_alias_with_method() {
 
     assert_equal_token_stream(&derived, &expected);
 }
-
 
 #[test]
 pub fn test_trait_alias_with_associated_type_without_constraints() {
