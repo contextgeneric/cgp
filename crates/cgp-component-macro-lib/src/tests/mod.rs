@@ -7,3 +7,4 @@ pub mod derive_getter;
 pub mod derive_provider;
 pub mod for_each_replace;
 pub mod helper;
+pub mod trait_alias;
