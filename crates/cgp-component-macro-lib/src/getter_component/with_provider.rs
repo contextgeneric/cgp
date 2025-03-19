@@ -10,6 +10,8 @@ pub fn derive_with_provider_impl(
     field: &GetterField,
 ) -> syn::Result<ItemImpl> {
     let component_name = &spec.component_name;
+    let component_params = &spec.component_params;
+
     let context_type = &spec.context_type;
     let provider_name = &spec.provider_name;
 
@@ -20,11 +22,11 @@ pub fn derive_with_provider_impl(
 
     let provider_constraint = if field.field_mut.is_none() {
         quote! {
-            FieldGetter< #context_type, #component_name, Value = #provider_type >
+            FieldGetter< #context_type, #component_name < #component_params > , Value = #provider_type >
         }
     } else {
         quote! {
-            MutFieldGetter< #context_type, #component_name, Value = #provider_type >
+            MutFieldGetter< #context_type, #component_name < #component_params >, Value = #provider_type >
         }
     };
 
