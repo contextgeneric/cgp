@@ -242,3 +242,119 @@ fn test_derive_getter_with_generics() {
 
     assert_equal_token_stream(&derived, &expected);
 }
+
+#[test]
+fn test_derive_getter_with_component_generics() {
+    let derived = cgp_getter(
+        quote! {
+            name: NameGetterComponent<App>,
+            provider: NameGetter,
+        },
+        quote! {
+            pub trait HasName<App>
+            where
+                App: HasNameType,
+            {
+                fn name(&self) -> &App::Name;
+            }
+        },
+    )
+    .unwrap();
+
+    let expected = quote! {
+        pub struct NameGetterComponent<App>(pub core::marker::PhantomData<(App)>);
+        pub trait HasName<App>
+        where
+            App: HasNameType,
+        {
+            fn name(&self) -> &App::Name;
+        }
+        pub trait NameGetter<Context, App>:
+            IsProviderFor<NameGetterComponent<App>, Context, (App)>
+        where
+            App: HasNameType,
+        {
+            fn name(context: &Context) -> &App::Name;
+        }
+        impl<Context, App> HasName<App> for Context
+        where
+            App: HasNameType,
+            Context: HasProvider,
+            Context::Provider: NameGetter<Context, App>,
+        {
+            fn name(&self) -> &App::Name {
+                Context::Provider::name(self)
+            }
+        }
+        impl<Component, Context, App> NameGetter<Context, App> for Component
+        where
+            App: HasNameType,
+            Component: DelegateComponent<NameGetterComponent<App>>
+                + IsProviderFor<NameGetterComponent<App>, Context, (App)>,
+            Component::Delegate: NameGetter<Context, App>,
+        {
+            fn name(context: &Context) -> &App::Name {
+                Component::Delegate::name(context)
+            }
+        }
+        impl<Context, App> NameGetter<Context, App> for UseFields
+        where
+            App: HasNameType,
+            Context: HasField<
+                Cons<Char<'n'>, Cons<Char<'a'>, Cons<Char<'m'>, Cons<Char<'e'>, Nil>>>>,
+                Value = App::Name,
+            >,
+        {
+            fn name(context: &Context) -> &App::Name {
+                context.get_field(
+                    ::core::marker::PhantomData::<
+                        Cons<Char<'n'>, Cons<Char<'a'>, Cons<Char<'m'>, Cons<Char<'e'>, Nil>>>>,
+                    >,
+                )
+            }
+        }
+        impl<Context, App> IsProviderFor<NameGetterComponent<App>, Context, (App)> for UseFields
+        where
+            App: HasNameType,
+            Context: HasField<
+                Cons<Char<'n'>, Cons<Char<'a'>, Cons<Char<'m'>, Cons<Char<'e'>, Nil>>>>,
+                Value = App::Name,
+            >,
+        {
+        }
+        impl<Context, App, __Tag__> NameGetter<Context, App> for UseField<__Tag__>
+        where
+            App: HasNameType,
+            Context: HasField<__Tag__, Value = App::Name>,
+        {
+            fn name(context: &Context) -> &App::Name {
+                context.get_field(::core::marker::PhantomData)
+            }
+        }
+        impl<Context, App, __Tag__> IsProviderFor<NameGetterComponent<App>, Context, (App)>
+            for UseField<__Tag__>
+        where
+            App: HasNameType,
+            Context: HasField<__Tag__, Value = App::Name>,
+        {
+        }
+        impl<Context, App, __Provider__> NameGetter<Context, App> for WithProvider<__Provider__>
+        where
+            App: HasNameType,
+            __Provider__: FieldGetter<Context, NameGetterComponent<App>, Value = App::Name>,
+        {
+            fn name(context: &Context) -> &App::Name {
+                __Provider__::get_field(context, ::core::marker::PhantomData)
+            }
+        }
+        impl<Context, App, __Provider__> IsProviderFor<NameGetterComponent<App>, Context, (App)>
+            for WithProvider<__Provider__>
+        where
+            App: HasNameType,
+            __Provider__: FieldGetter<Context, NameGetterComponent<App>, Value = App::Name>,
+        {
+        }
+    };
+
+    assert_equal_token_stream(&derived, &expected);
+}
