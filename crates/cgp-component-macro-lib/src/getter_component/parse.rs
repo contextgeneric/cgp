@@ -2,10 +2,11 @@ use alloc::vec::Vec;
 
 use quote::ToTokens;
 use syn::spanned::Spanned;
-use syn::{parse_quote, Error, FnArg, Ident, ItemTrait, ReturnType, TraitItem, Type};
+use syn::{parse2, parse_quote, Error, FnArg, Ident, ItemTrait, ReturnType, TraitItem, Type};
 
 use crate::derive_component::replace_self_type;
 use crate::getter_component::getter_field::GetterField;
+use crate::parse::SimpleType;
 
 pub fn parse_getter_fields(
     context_type: &Ident,
@@ -55,17 +56,51 @@ pub fn parse_getter_fields(
 
                 let field_name = signature.ident.clone();
 
-                let [arg]: [&FnArg; 1] = signature
-                    .inputs
-                    .iter()
-                    .collect::<Vec<&FnArg>>()
-                    .try_into()
-                    .map_err(|_| {
-                        Error::new(
+                let args_count = signature.inputs.len();
+
+                let (arg, phantom) = if args_count == 1 {
+                    let [arg]: [&FnArg; 1] = signature
+                        .inputs
+                        .iter()
+                        .collect::<Vec<&FnArg>>()
+                        .try_into()
+                        .map_err(|_| {
+                            Error::new(
+                                signature.inputs.span(),
+                                "getter method must contain exactly one `&self` argument",
+                            )
+                        })?;
+
+                    (arg, None)
+                } else if args_count == 2 {
+                    let [arg, phantom]: [&FnArg; 2] = signature
+                        .inputs
+                        .iter()
+                        .collect::<Vec<&FnArg>>()
+                        .try_into()
+                        .map_err(|_| {
+                            Error::new(
+                                signature.inputs.span(),
+                                "getter method must contain exactly one `&self` argument",
+                            )
+                        })?;
+
+                    let phantom: SimpleType = parse2(phantom.to_token_stream())?;
+
+                    if phantom.name != "PhantomData" {
+                        return Err(Error::new(
                             signature.inputs.span(),
-                            "getter method must contain exactly one `&self` argument",
-                        )
-                    })?;
+                            "optional second argument in getter must be PhantomData",
+                        ));
+                    }
+
+                    (arg, Some(phantom))
+                } else {
+                    return Err(Error::new(
+                        signature.inputs.span(),
+                        "getter method must contain exactly one `&self` argument",
+                    ));
+                };
 
                 let field_mut = match arg {
                     FnArg::Receiver(receiver) => {
@@ -121,6 +156,7 @@ pub fn parse_getter_fields(
                     field_name,
                     provider_type,
                     field_mut,
+                    phantom,
                 })
             }
             _ => {
