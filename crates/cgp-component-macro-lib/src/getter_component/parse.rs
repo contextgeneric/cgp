@@ -96,7 +96,7 @@ pub fn parse_getter_fields(
                                 ));
                             }
 
-                            (arg, None)
+                            (arg, Some(phantom))
                         }
                         _ => {
                             return Err(Error::new(

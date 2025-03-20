@@ -1,3 +1,4 @@
+use proc_macro2::TokenStream;
 use quote::{quote, ToTokens};
 use syn::punctuated::Punctuated;
 use syn::token::Plus;
@@ -21,13 +22,22 @@ pub fn derive_use_field_impl(
 
     let tag_type = quote! { __Tag__ };
 
+    let phantom_arg = match &field.phantom {
+        Some(phantom) => {
+            quote! {
+                , _phantom: #phantom
+            }
+        }
+        None => TokenStream::new(),
+    };
+
     let method = if field.field_mut.is_none() {
         field_constraints.push(parse2(quote! {
             HasField< #tag_type, Value = #provider_type >
         })?);
 
         quote! {
-            fn #field_name( context: & #context_type ) -> & #provider_type {
+            fn #field_name( context: & #context_type #phantom_arg ) -> & #provider_type {
                 context.get_field( ::core::marker::PhantomData )
             }
         }
@@ -37,7 +47,7 @@ pub fn derive_use_field_impl(
         })?);
 
         quote! {
-            fn #field_name( context: &mut #context_type ) -> &mut #provider_type {
+            fn #field_name( context: &mut #context_type #phantom_arg ) -> &mut #provider_type {
                 context.get_field_mut( ::core::marker::PhantomData )
             }
         }
