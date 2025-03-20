@@ -73,7 +73,7 @@ pub fn parse_getter_fields(
 
                     (arg, None)
                 } else if args_count == 2 {
-                    let [arg, phantom]: [&FnArg; 2] = signature
+                    let [arg, phantom_arg]: [&FnArg; 2] = signature
                         .inputs
                         .iter()
                         .collect::<Vec<&FnArg>>()
@@ -85,16 +85,26 @@ pub fn parse_getter_fields(
                             )
                         })?;
 
-                    let phantom: SimpleType = parse2(phantom.to_token_stream())?;
+                    match phantom_arg {
+                        FnArg::Typed(phantom_type) => {
+                            let phantom: SimpleType = parse2(phantom_type.ty.to_token_stream())?;
 
-                    if phantom.name != "PhantomData" {
-                        return Err(Error::new(
-                            signature.inputs.span(),
-                            "optional second argument in getter must be PhantomData",
-                        ));
+                            if phantom.name != "PhantomData" {
+                                return Err(Error::new(
+                                    signature.inputs.span(),
+                                    "optional second argument in getter must be PhantomData",
+                                ));
+                            }
+
+                            (arg, None)
+                        }
+                        _ => {
+                            return Err(Error::new(
+                                signature.inputs.span(),
+                                "optional second argument in getter must be PhantomData",
+                            ));
+                        }
                     }
-
-                    (arg, Some(phantom))
                 } else {
                     return Err(Error::new(
                         signature.inputs.span(),

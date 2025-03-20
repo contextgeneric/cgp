@@ -358,3 +358,26 @@ fn test_derive_getter_with_component_generics() {
 
     assert_equal_token_stream(&derived, &expected);
 }
+
+#[test]
+fn test_derive_getter_with_phantom() {
+    let derived = cgp_getter(
+        quote! {
+            name: NameGetterComponent<App>,
+            provider: NameGetter,
+        },
+        quote! {
+            pub trait HasName<App>
+            where
+                App: HasNameType,
+            {
+                fn name(&self, _phantom: PhantomData<App>) -> &App::Name;
+            }
+        },
+    )
+    .unwrap();
+
+    let expected = quote! {};
+
+    assert_equal_token_stream(&derived, &expected);
+}
