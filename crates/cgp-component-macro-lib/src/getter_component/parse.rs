@@ -2,11 +2,10 @@ use alloc::vec::Vec;
 
 use quote::ToTokens;
 use syn::spanned::Spanned;
-use syn::{parse2, parse_quote, Error, FnArg, Ident, ItemTrait, ReturnType, TraitItem, Type};
+use syn::{parse_quote, Error, FnArg, Ident, ItemTrait, ReturnType, TraitItem, Type};
 
 use crate::derive_component::replace_self_type;
 use crate::getter_component::getter_field::GetterField;
-use crate::parse::SimpleType;
 
 pub fn parse_getter_fields(
     context_type: &Ident,
@@ -86,18 +85,7 @@ pub fn parse_getter_fields(
                         })?;
 
                     match phantom_arg {
-                        FnArg::Typed(phantom_type) => {
-                            let phantom: SimpleType = parse2(phantom_type.ty.to_token_stream())?;
-
-                            if phantom.name != "PhantomData" {
-                                return Err(Error::new(
-                                    signature.inputs.span(),
-                                    "optional second argument in getter must be PhantomData",
-                                ));
-                            }
-
-                            (arg, Some(phantom))
-                        }
+                        FnArg::Typed(phantom_type) => (arg, Some(phantom_type.ty.as_ref().clone())),
                         _ => {
                             return Err(Error::new(
                                 signature.inputs.span(),

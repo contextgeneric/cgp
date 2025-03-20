@@ -363,15 +363,15 @@ fn test_derive_getter_with_component_generics() {
 fn test_derive_getter_with_phantom() {
     let derived = cgp_getter(
         quote! {
-            name: NameGetterComponent<App>,
+            name: NameGetterComponent,
             provider: NameGetter,
         },
         quote! {
-            pub trait HasName<App>
+            pub trait HasName<App, B>
             where
                 App: HasNameType,
             {
-                fn name(&self, _phantom: PhantomData<App>) -> &App::Name;
+                fn name(&self, _phantom: PhantomData<(App, B)>) -> &App::Name;
             }
         },
     )
