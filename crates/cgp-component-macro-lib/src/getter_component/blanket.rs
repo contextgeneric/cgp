@@ -23,13 +23,22 @@ pub fn derive_blanket_impl(
         let provider_type = &field.provider_type;
         let field_symbol = symbol_from_string(&field.field_name.to_string());
 
+        let phantom_arg = match &field.phantom {
+            Some(phantom) => {
+                quote! {
+                    , _phantom: #phantom
+                }
+            }
+            None => TokenStream::new(),
+        };
+
         if field.field_mut.is_none() {
             constraints.push(parse2(quote! {
                 HasField< #field_symbol, Value = #provider_type >
             })?);
 
             methods.extend(quote! {
-                fn #field_name( &self ) -> & #provider_type {
+                fn #field_name( &self #phantom_arg ) -> & #provider_type {
                     self.get_field( ::core::marker::PhantomData::< #field_symbol > )
                 }
             });
@@ -39,7 +48,7 @@ pub fn derive_blanket_impl(
             })?);
 
             methods.extend(quote! {
-                fn #field_name( &mut self ) -> &mut #provider_type {
+                fn #field_name( &mut self #phantom_arg ) -> &mut #provider_type {
                     self.get_field_mut( ::core::marker::PhantomData::< #field_symbol > )
                 }
             });

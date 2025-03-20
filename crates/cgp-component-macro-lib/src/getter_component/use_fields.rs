@@ -28,13 +28,22 @@ pub fn derive_use_fields_impl(
         let provider_type = &field.provider_type;
         let field_symbol = symbol_from_string(&field.field_name.to_string());
 
+        let phantom_arg = match &field.phantom {
+            Some(phantom) => {
+                quote! {
+                    , _phantom: #phantom
+                }
+            }
+            None => TokenStream::new(),
+        };
+
         if field.field_mut.is_none() {
             field_constraints.push(parse2(quote! {
                 HasField< #field_symbol, Value = #provider_type >
             })?);
 
             methods.extend(quote! {
-                fn #field_name( context: & #context_type ) -> & #provider_type {
+                fn #field_name( context: & #context_type #phantom_arg ) -> & #provider_type {
                     context.get_field( ::core::marker::PhantomData::< #field_symbol > )
                 }
             });
@@ -44,7 +53,7 @@ pub fn derive_use_fields_impl(
             })?);
 
             methods.extend(quote! {
-                fn #field_name( context: &mut #context_type ) -> &mut #provider_type {
+                fn #field_name( context: &mut #context_type #phantom_arg ) -> &mut #provider_type {
                     context.get_field_mut( ::core::marker::PhantomData::< #field_symbol > )
                 }
             });

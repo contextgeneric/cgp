@@ -1,3 +1,4 @@
+use proc_macro2::TokenStream;
 use quote::{quote, ToTokens};
 use syn::{parse2, Generics, ItemImpl, ItemTrait};
 
@@ -20,6 +21,15 @@ pub fn derive_with_provider_impl(
 
     let provider_ident = quote! { __Provider__ };
 
+    let phantom_arg = match &field.phantom {
+        Some(phantom) => {
+            quote! {
+                , _phantom: #phantom
+            }
+        }
+        None => TokenStream::new(),
+    };
+
     let provider_constraint = if field.field_mut.is_none() {
         quote! {
             FieldGetter< #context_type, #component_name < #component_params > , Value = #provider_type >
@@ -32,13 +42,13 @@ pub fn derive_with_provider_impl(
 
     let method = if field.field_mut.is_none() {
         quote! {
-            fn #field_name( context: & #context_type ) -> & #provider_type {
+            fn #field_name( context: & #context_type #phantom_arg ) -> & #provider_type {
                 #provider_ident ::get_field(context, ::core::marker::PhantomData )
             }
         }
     } else {
         quote! {
-            fn #field_name( context: &mut #context_type ) -> &mut #provider_type {
+            fn #field_name( context: &mut #context_type #phantom_arg ) -> &mut #provider_type {
                 #provider_ident ::get_field_mut(context, ::core::marker::PhantomData )
             }
         }
