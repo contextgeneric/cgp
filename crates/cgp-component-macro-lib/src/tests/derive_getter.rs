@@ -377,7 +377,100 @@ fn test_derive_getter_with_phantom() {
     )
     .unwrap();
 
-    let expected = quote! {};
+    let expected = quote! {
+        pub struct NameGetterComponent;
+        pub trait HasName<App, B>
+        where
+            App: HasNameType,
+        {
+            fn name(&self, _phantom: PhantomData<(App, B)>) -> &App::Name;
+        }
+        pub trait NameGetter<Context, App, B>:
+            IsProviderFor<NameGetterComponent, Context, (App, B)>
+        where
+            App: HasNameType,
+        {
+            fn name(context: &Context, _phantom: PhantomData<(App, B)>) -> &App::Name;
+        }
+        impl<Context, App, B> HasName<App, B> for Context
+        where
+            App: HasNameType,
+            Context: HasProvider,
+            Context::Provider: NameGetter<Context, App, B>,
+        {
+            fn name(&self, _phantom: PhantomData<(App, B)>) -> &App::Name {
+                Context::Provider::name(self, _phantom)
+            }
+        }
+        impl<Component, Context, App, B> NameGetter<Context, App, B> for Component
+        where
+            App: HasNameType,
+            Component: DelegateComponent<NameGetterComponent>
+                + IsProviderFor<NameGetterComponent, Context, (App, B)>,
+            Component::Delegate: NameGetter<Context, App, B>,
+        {
+            fn name(context: &Context, _phantom: PhantomData<(App, B)>) -> &App::Name {
+                Component::Delegate::name(context, _phantom)
+            }
+        }
+        impl<Context, App, B> NameGetter<Context, App, B> for UseFields
+        where
+            App: HasNameType,
+            Context: HasField<
+                Cons<Char<'n'>, Cons<Char<'a'>, Cons<Char<'m'>, Cons<Char<'e'>, Nil>>>>,
+                Value = App::Name,
+            >,
+        {
+            fn name(context: &Context, _phantom: PhantomData<(App, B)>) -> &App::Name {
+                context.get_field(
+                    ::core::marker::PhantomData::<
+                        Cons<Char<'n'>, Cons<Char<'a'>, Cons<Char<'m'>, Cons<Char<'e'>, Nil>>>>,
+                    >,
+                )
+            }
+        }
+        impl<Context, App, B> IsProviderFor<NameGetterComponent, Context, (App, B)> for UseFields
+        where
+            App: HasNameType,
+            Context: HasField<
+                Cons<Char<'n'>, Cons<Char<'a'>, Cons<Char<'m'>, Cons<Char<'e'>, Nil>>>>,
+                Value = App::Name,
+            >,
+        {
+        }
+        impl<Context, App, B, __Tag__> NameGetter<Context, App, B> for UseField<__Tag__>
+        where
+            App: HasNameType,
+            Context: HasField<__Tag__, Value = App::Name>,
+        {
+            fn name(context: &Context, _phantom: PhantomData<(App, B)>) -> &App::Name {
+                context.get_field(::core::marker::PhantomData)
+            }
+        }
+        impl<Context, App, B, __Tag__> IsProviderFor<NameGetterComponent, Context, (App, B)>
+            for UseField<__Tag__>
+        where
+            App: HasNameType,
+            Context: HasField<__Tag__, Value = App::Name>,
+        {
+        }
+        impl<Context, App, B, __Provider__> NameGetter<Context, App, B> for WithProvider<__Provider__>
+        where
+            App: HasNameType,
+            __Provider__: FieldGetter<Context, NameGetterComponent, Value = App::Name>,
+        {
+            fn name(context: &Context, _phantom: PhantomData<(App, B)>) -> &App::Name {
+                __Provider__::get_field(context, ::core::marker::PhantomData)
+            }
+        }
+        impl<Context, App, B, __Provider__> IsProviderFor<NameGetterComponent, Context, (App, B)>
+            for WithProvider<__Provider__>
+        where
+            App: HasNameType,
+            __Provider__: FieldGetter<Context, NameGetterComponent, Value = App::Name>,
+        {
+        }
+    };
 
     assert_equal_token_stream(&derived, &expected);
 }
