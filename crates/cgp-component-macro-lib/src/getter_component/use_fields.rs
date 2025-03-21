@@ -8,7 +8,7 @@ use syn::{parse2, ItemImpl, ItemTrait, TypeParamBound};
 
 use crate::getter_component::getter_field::GetterField;
 use crate::getter_component::symbol::symbol_from_string;
-use crate::getter_component::{derive_getter_method, ContextArg};
+use crate::getter_component::{derive_getter_constraint, derive_getter_method, ContextArg};
 use crate::parse::ComponentSpec;
 
 pub fn derive_use_fields_impl(
@@ -25,7 +25,6 @@ pub fn derive_use_fields_impl(
     let mut methods: TokenStream = TokenStream::new();
 
     for field in fields {
-        let provider_type = &field.provider_type;
         let field_symbol = symbol_from_string(&field.field_name.to_string());
 
         let method = derive_getter_method(
@@ -34,17 +33,12 @@ pub fn derive_use_fields_impl(
             Some(quote! { ::< #field_symbol > }),
             None,
         );
+
         methods.extend(method);
 
-        if field.field_mut.is_none() {
-            field_constraints.push(parse2(quote! {
-                HasField< #field_symbol, Value = #provider_type >
-            })?);
-        } else {
-            field_constraints.push(parse2(quote! {
-                HasFieldMut< #field_symbol, Value = #provider_type >
-            })?);
-        }
+        let constraint = derive_getter_constraint(field, quote! { #field_symbol })?;
+
+        field_constraints.push(constraint);
     }
 
     let mut provider_generics = provider_trait.generics.clone();

@@ -21,13 +21,15 @@ pub fn derive_with_provider_impl(
 
     let provider_ident = Ident::new("__Provider__", Span::call_site());
 
+    let component_type = quote! { #component_name < #component_params > };
+
     let provider_constraint = if field.field_mut.is_none() {
         quote! {
-            FieldGetter< #context_type, #component_name < #component_params > , Value = #provider_type >
+            FieldGetter< #context_type, #component_type , Value = #provider_type >
         }
     } else {
         quote! {
-            MutFieldGetter< #context_type, #component_name < #component_params >, Value = #provider_type >
+            MutFieldGetter< #context_type, #component_type, Value = #provider_type >
         }
     };
 
