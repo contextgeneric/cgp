@@ -72,8 +72,14 @@ pub fn derive_getter_method(
         }
     };
 
+    let return_type = if spec.field_mut.is_none() {
+        quote! { & #provider_type }
+    } else {
+        quote! { & mut #provider_type }
+    };
+
     quote! {
-        fn #field_name( #context_fn_arg #phantom_arg ) -> & #provider_type {
+        fn #field_name( #context_fn_arg #phantom_arg ) -> #return_type {
             #call_expr
         }
     }
