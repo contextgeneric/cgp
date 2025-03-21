@@ -1,5 +1,6 @@
 mod blanket;
 mod getter_field;
+mod method;
 mod parse;
 mod symbol;
 mod use_field;
@@ -8,6 +9,7 @@ mod with_provider;
 
 pub use blanket::*;
 pub use getter_field::*;
+pub use method::*;
 pub use parse::*;
 pub use use_field::*;
 pub use use_fields::*;

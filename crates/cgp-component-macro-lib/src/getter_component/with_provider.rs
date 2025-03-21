@@ -1,8 +1,9 @@
-use proc_macro2::TokenStream;
+use proc_macro2::Span;
 use quote::{quote, ToTokens};
-use syn::{parse2, Generics, ItemImpl, ItemTrait};
+use syn::{parse2, Generics, Ident, ItemImpl, ItemTrait};
 
 use crate::getter_component::getter_field::GetterField;
+use crate::getter_component::{derive_getter_method, ContextArg};
 use crate::parse::ComponentSpec;
 
 pub fn derive_with_provider_impl(
@@ -16,19 +17,9 @@ pub fn derive_with_provider_impl(
     let context_type = &spec.context_type;
     let provider_name = &spec.provider_name;
 
-    let field_name = &field.field_name;
     let provider_type = &field.provider_type;
 
-    let provider_ident = quote! { __Provider__ };
-
-    let phantom_arg = match &field.phantom {
-        Some(phantom) => {
-            quote! {
-                , _phantom: #phantom
-            }
-        }
-        None => TokenStream::new(),
-    };
+    let provider_ident = Ident::new("__Provider__", Span::call_site());
 
     let provider_constraint = if field.field_mut.is_none() {
         quote! {
@@ -40,19 +31,12 @@ pub fn derive_with_provider_impl(
         }
     };
 
-    let method = if field.field_mut.is_none() {
-        quote! {
-            fn #field_name( context: & #context_type #phantom_arg ) -> & #provider_type {
-                #provider_ident ::get_field(context, ::core::marker::PhantomData )
-            }
-        }
-    } else {
-        quote! {
-            fn #field_name( context: &mut #context_type #phantom_arg ) -> &mut #provider_type {
-                #provider_ident ::get_field_mut(context, ::core::marker::PhantomData )
-            }
-        }
-    };
+    let method = derive_getter_method(
+        &ContextArg::Ident(context_type.clone()),
+        field,
+        None,
+        Some(provider_ident.clone()),
+    );
 
     let mut provider_generics = provider_trait.generics.clone();
 
@@ -65,7 +49,7 @@ pub fn derive_with_provider_impl(
 
     let impl_generics = {
         let mut generics: Generics = parse2(impl_generics.to_token_stream())?;
-        generics.params.push(parse2(provider_ident.clone())?);
+        generics.params.push(parse2(quote! { #provider_ident })?);
         generics
     };
 

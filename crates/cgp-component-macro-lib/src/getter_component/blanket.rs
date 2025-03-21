@@ -6,6 +6,7 @@ use syn::{parse2, Ident, ItemImpl, ItemTrait};
 
 use crate::getter_component::getter_field::GetterField;
 use crate::getter_component::symbol::symbol_from_string;
+use crate::getter_component::{derive_getter_method, ContextArg};
 
 pub fn derive_blanket_impl(
     context_type: &Ident,
@@ -19,39 +20,26 @@ pub fn derive_blanket_impl(
     let mut methods: TokenStream = TokenStream::new();
 
     for field in fields {
-        let field_name = &field.field_name;
         let provider_type = &field.provider_type;
         let field_symbol = symbol_from_string(&field.field_name.to_string());
 
-        let phantom_arg = match &field.phantom {
-            Some(phantom) => {
-                quote! {
-                    , _phantom: #phantom
-                }
-            }
-            None => TokenStream::new(),
-        };
+        let method = derive_getter_method(
+            &ContextArg::SelfArg,
+            field,
+            Some(quote! { ::< #field_symbol > }),
+            None,
+        );
+
+        methods.extend(method);
 
         if field.field_mut.is_none() {
             constraints.push(parse2(quote! {
                 HasField< #field_symbol, Value = #provider_type >
             })?);
-
-            methods.extend(quote! {
-                fn #field_name( &self #phantom_arg ) -> & #provider_type {
-                    self.get_field( ::core::marker::PhantomData::< #field_symbol > )
-                }
-            });
         } else {
             constraints.push(parse2(quote! {
                 HasFieldMut< #field_symbol, Value = #provider_type >
             })?);
-
-            methods.extend(quote! {
-                fn #field_name( &mut self #phantom_arg ) -> &mut #provider_type {
-                    self.get_field_mut( ::core::marker::PhantomData::< #field_symbol > )
-                }
-            });
         }
     }
 
