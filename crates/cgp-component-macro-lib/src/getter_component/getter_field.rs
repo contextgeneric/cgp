@@ -12,5 +12,6 @@ pub struct GetterField {
 pub enum FieldMode {
     Reference,
     AsRef,
+    Str,
     Clone,
 }

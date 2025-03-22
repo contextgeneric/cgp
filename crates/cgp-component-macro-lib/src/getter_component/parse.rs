@@ -1,8 +1,11 @@
 use alloc::vec::Vec;
 
-use quote::{quote, ToTokens};
+use quote::ToTokens;
 use syn::spanned::Spanned;
-use syn::{parse_quote, Error, FnArg, Ident, ItemTrait, ReturnType, TraitItem, Type};
+use syn::{
+    parse_quote, Error, FnArg, GenericArgument, Ident, ItemTrait, PathArguments, ReturnType,
+    TraitItem, Type, TypePath,
+};
 
 use crate::derive_component::replace_self_type;
 use crate::getter_component::getter_field::GetterField;
@@ -132,14 +135,24 @@ pub fn parse_getter_fields(
                                     ));
                                 }
 
-                                // if type_ref == &parse_quote! { &str } {
-                                // } else {
+                                if type_ref == &parse_quote! { &str } {
+                                    // Special case to handle &str as String field
 
-                                // }
+                                    let field_type: Type = parse_quote! { String };
 
-                                let field_type: Type = type_ref.elem.as_ref().clone();
+                                    (field_type, FieldMode::Str)
+                                } else {
+                                    let field_type: Type = type_ref.elem.as_ref().clone();
 
-                                (field_type, FieldMode::Reference)
+                                    (field_type, FieldMode::Reference)
+                                }
+                            }
+                            Type::Path(type_path) => {
+                                if try_parse_option_ref(type_path).is_some() {
+                                    (return_type, FieldMode::AsRef)
+                                } else {
+                                    (return_type, FieldMode::Clone)
+                                }
                             }
                             _ => {
                                 return Err(Error::new(
@@ -181,4 +194,20 @@ pub fn parse_getter_fields(
     }
 
     Ok(fields)
+}
+
+pub fn try_parse_option_ref(type_path: &TypePath) -> Option<&Type> {
+    let m_segment = type_path.path.segments.iter().next();
+
+    if let Some(segment) = m_segment {
+        if segment.ident == "Option" {
+            if let PathArguments::AngleBracketed(args) = &segment.arguments {
+                if let Some(GenericArgument::Type(Type::Reference(type_ref))) = args.args.first() {
+                    return Some(type_ref.elem.as_ref());
+                }
+            }
+        }
+    }
+
+    None
 }
