@@ -5,5 +5,12 @@ pub struct GetterField {
     pub field_name: Ident,
     pub provider_type: Type,
     pub field_mut: Option<Mut>,
-    pub phantom: Option<Type>,
+    pub phantom_arg_type: Option<Type>,
+    pub field_mode: FieldMode,
+}
+
+pub enum FieldMode {
+    Reference,
+    AsRef,
+    Clone,
 }

@@ -2,7 +2,7 @@ use proc_macro2::TokenStream;
 use quote::quote;
 use syn::Ident;
 
-use crate::getter_component::GetterField;
+use crate::getter_component::{FieldMode, GetterField};
 
 pub enum ContextArg {
     SelfArg,
@@ -18,7 +18,7 @@ pub fn derive_getter_method(
     let field_name = &spec.field_name;
     let provider_type = &spec.provider_type;
 
-    let phantom_arg = match &spec.phantom {
+    let phantom_arg = match &spec.phantom_arg_type {
         Some(phantom) => {
             quote! {
                 , _phantom: #phantom
@@ -70,6 +70,16 @@ pub fn derive_getter_method(
                 #context_var . #get_field_method ( ::core::marker::PhantomData #phantom_generics )
             }
         }
+    };
+
+    let call_expr = match spec.field_mode {
+        FieldMode::Reference => call_expr,
+        FieldMode::AsRef => quote! {
+            #call_expr .as_ref()
+        },
+        FieldMode::Clone => quote! {
+            #call_expr .clone()
+        },
     };
 
     let return_type = if spec.field_mut.is_none() {

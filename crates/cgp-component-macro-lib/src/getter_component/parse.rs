@@ -1,11 +1,12 @@
 use alloc::vec::Vec;
 
-use quote::ToTokens;
+use quote::{quote, ToTokens};
 use syn::spanned::Spanned;
 use syn::{parse_quote, Error, FnArg, Ident, ItemTrait, ReturnType, TraitItem, Type};
 
 use crate::derive_component::replace_self_type;
 use crate::getter_component::getter_field::GetterField;
+use crate::getter_component::FieldMode;
 
 pub fn parse_getter_fields(
     context_type: &Ident,
@@ -119,11 +120,10 @@ pub fn parse_getter_fields(
                     }
                 };
 
-                let field_type: Type = match &signature.output {
-                    ReturnType::Default => parse_quote!(()),
+                let (field_type, field_mode) = match &signature.output {
                     ReturnType::Type(_, ty) => {
-                        let ty = ty.as_ref().clone();
-                        match &ty {
+                        let return_type = ty.as_ref().clone();
+                        match &return_type {
                             Type::Reference(type_ref) => {
                                 if type_ref.mutability.is_some() != field_mut.is_some() {
                                     return Err(Error::new(
@@ -132,15 +132,28 @@ pub fn parse_getter_fields(
                                     ));
                                 }
 
-                                type_ref.elem.as_ref().clone()
+                                // if type_ref == &parse_quote! { &str } {
+                                // } else {
+
+                                // }
+
+                                let field_type: Type = type_ref.elem.as_ref().clone();
+
+                                (field_type, FieldMode::Reference)
                             }
                             _ => {
                                 return Err(Error::new(
-                                    ty.span(),
+                                    return_type.span(),
                                     "return type must be a reference",
                                 ))
                             }
                         }
+                    }
+                    _ => {
+                        return Err(Error::new(
+                            signature.span(),
+                            "return type must be specified",
+                        ))
                     }
                 };
 
@@ -154,7 +167,8 @@ pub fn parse_getter_fields(
                     field_name,
                     provider_type,
                     field_mut,
-                    phantom,
+                    phantom_arg_type: phantom,
+                    field_mode,
                 })
             }
             _ => {
