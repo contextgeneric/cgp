@@ -134,7 +134,84 @@ fn test_derive_getter_str() {
     )
     .unwrap();
 
-    let expected = quote! {};
+    let expected = quote! {
+        pub struct NameGetterComponent;
+        pub trait HasName {
+            fn name(&self) -> &str;
+        }
+        pub trait NameGetter<Context>: IsProviderFor<NameGetterComponent, Context, ()> {
+            fn name(context: &Context) -> &str;
+        }
+        impl<Context> HasName for Context
+        where
+            Context: HasProvider,
+            Context::Provider: NameGetter<Context>,
+        {
+            fn name(&self) -> &str {
+                Context::Provider::name(self)
+            }
+        }
+        impl<Component, Context> NameGetter<Context> for Component
+        where
+            Component: DelegateComponent<NameGetterComponent>
+                + IsProviderFor<NameGetterComponent, Context, ()>,
+            Component::Delegate: NameGetter<Context>,
+        {
+            fn name(context: &Context) -> &str {
+                Component::Delegate::name(context)
+            }
+        }
+        impl<Context> NameGetter<Context> for UseFields
+        where
+            Context: HasField<
+                Cons<Char<'n'>, Cons<Char<'a'>, Cons<Char<'m'>, Cons<Char<'e'>, Nil>>>>,
+                Value = String,
+            >,
+        {
+            fn name(context: &Context) -> &str {
+                context
+                    .get_field(
+                        ::core::marker::PhantomData::<
+                            Cons<Char<'n'>, Cons<Char<'a'>, Cons<Char<'m'>, Cons<Char<'e'>, Nil>>>>,
+                        >,
+                    )
+                    .as_str()
+            }
+        }
+        impl<Context> IsProviderFor<NameGetterComponent, Context, ()> for UseFields where
+            Context: HasField<
+                Cons<Char<'n'>, Cons<Char<'a'>, Cons<Char<'m'>, Cons<Char<'e'>, Nil>>>>,
+                Value = String,
+            >
+        {
+        }
+        impl<Context, __Tag__> NameGetter<Context> for UseField<__Tag__>
+        where
+            Context: HasField<__Tag__, Value = String>,
+        {
+            fn name(context: &Context) -> &str {
+                context.get_field(::core::marker::PhantomData).as_str()
+            }
+        }
+        impl<Context, __Tag__> IsProviderFor<NameGetterComponent, Context, ()> for UseField<__Tag__> where
+            Context: HasField<__Tag__, Value = String>
+        {
+        }
+        impl<Context, __Provider__> NameGetter<Context> for WithProvider<__Provider__>
+        where
+            __Provider__: FieldGetter<Context, NameGetterComponent, Value = String>,
+        {
+            fn name(context: &Context) -> &str {
+                __Provider__::get_field(context, ::core::marker::PhantomData).as_str()
+            }
+        }
+        impl<Context, __Provider__> IsProviderFor<NameGetterComponent, Context, ()>
+            for WithProvider<__Provider__>
+        where
+            __Provider__: FieldGetter<Context, NameGetterComponent, Value = String>,
+        {
+        }
+    };
 
     assert_equal_token_stream(&derived, &expected);
 }
@@ -153,7 +230,86 @@ fn test_derive_getter_mut_str() {
     )
     .unwrap();
 
-    let expected = quote! {};
+    let expected = quote! {
+        pub struct NameGetterComponent;
+        pub trait HasName {
+            fn name(&mut self) -> &mut str;
+        }
+        pub trait NameGetter<Context>: IsProviderFor<NameGetterComponent, Context, ()> {
+            fn name(context: &mut Context) -> &mut str;
+        }
+        impl<Context> HasName for Context
+        where
+            Context: HasProvider,
+            Context::Provider: NameGetter<Context>,
+        {
+            fn name(&mut self) -> &mut str {
+                Context::Provider::name(self)
+            }
+        }
+        impl<Component, Context> NameGetter<Context> for Component
+        where
+            Component: DelegateComponent<NameGetterComponent>
+                + IsProviderFor<NameGetterComponent, Context, ()>,
+            Component::Delegate: NameGetter<Context>,
+        {
+            fn name(context: &mut Context) -> &mut str {
+                Component::Delegate::name(context)
+            }
+        }
+        impl<Context> NameGetter<Context> for UseFields
+        where
+            Context: HasFieldMut<
+                Cons<Char<'n'>, Cons<Char<'a'>, Cons<Char<'m'>, Cons<Char<'e'>, Nil>>>>,
+                Value = String,
+            >,
+        {
+            fn name(context: &mut Context) -> &mut str {
+                context
+                    .get_field_mut(
+                        ::core::marker::PhantomData::<
+                            Cons<Char<'n'>, Cons<Char<'a'>, Cons<Char<'m'>, Cons<Char<'e'>, Nil>>>>,
+                        >,
+                    )
+                    .as_mut_str()
+            }
+        }
+        impl<Context> IsProviderFor<NameGetterComponent, Context, ()> for UseFields where
+            Context: HasFieldMut<
+                Cons<Char<'n'>, Cons<Char<'a'>, Cons<Char<'m'>, Cons<Char<'e'>, Nil>>>>,
+                Value = String,
+            >
+        {
+        }
+        impl<Context, __Tag__> NameGetter<Context> for UseField<__Tag__>
+        where
+            Context: HasFieldMut<__Tag__, Value = String>,
+        {
+            fn name(context: &mut Context) -> &mut str {
+                context
+                    .get_field_mut(::core::marker::PhantomData)
+                    .as_mut_str()
+            }
+        }
+        impl<Context, __Tag__> IsProviderFor<NameGetterComponent, Context, ()> for UseField<__Tag__> where
+            Context: HasFieldMut<__Tag__, Value = String>
+        {
+        }
+        impl<Context, __Provider__> NameGetter<Context> for WithProvider<__Provider__>
+        where
+            __Provider__: MutFieldGetter<Context, NameGetterComponent, Value = String>,
+        {
+            fn name(context: &mut Context) -> &mut str {
+                __Provider__::get_field_mut(context, ::core::marker::PhantomData).as_mut_str()
+            }
+        }
+        impl<Context, __Provider__> IsProviderFor<NameGetterComponent, Context, ()>
+            for WithProvider<__Provider__>
+        where
+            __Provider__: MutFieldGetter<Context, NameGetterComponent, Value = String>,
+        {
+        }
+    };
 
     assert_equal_token_stream(&derived, &expected);
 }
@@ -172,7 +328,97 @@ fn test_derive_getter_clone() {
     )
     .unwrap();
 
-    let expected = quote! {};
+    let expected = quote! {
+        pub struct NameGetterComponent;
+        pub trait HasName: HasNameType<Name: Clone> {
+            fn name(&self) -> Self::Name;
+        }
+        pub trait NameGetter<Context>: IsProviderFor<NameGetterComponent, Context, ()>
+        where
+            Context: HasNameType<Name: Clone>,
+        {
+            fn name(context: &Context) -> Context::Name;
+        }
+        impl<Context> HasName for Context
+        where
+            Context: HasNameType<Name: Clone>,
+            Context: HasProvider,
+            Context::Provider: NameGetter<Context>,
+        {
+            fn name(&self) -> Self::Name {
+                Context::Provider::name(self)
+            }
+        }
+        impl<Component, Context> NameGetter<Context> for Component
+        where
+            Context: HasNameType<Name: Clone>,
+            Component: DelegateComponent<NameGetterComponent>
+                + IsProviderFor<NameGetterComponent, Context, ()>,
+            Component::Delegate: NameGetter<Context>,
+        {
+            fn name(context: &Context) -> Context::Name {
+                Component::Delegate::name(context)
+            }
+        }
+        impl<Context> NameGetter<Context> for UseFields
+        where
+            Context: HasNameType<Name: Clone>,
+            Context: HasField<
+                Cons<Char<'n'>, Cons<Char<'a'>, Cons<Char<'m'>, Cons<Char<'e'>, Nil>>>>,
+                Value = Context::Name,
+            >,
+        {
+            fn name(context: &Context) -> Context::Name {
+                context
+                    .get_field(
+                        ::core::marker::PhantomData::<
+                            Cons<Char<'n'>, Cons<Char<'a'>, Cons<Char<'m'>, Cons<Char<'e'>, Nil>>>>,
+                        >,
+                    )
+                    .clone()
+            }
+        }
+        impl<Context> IsProviderFor<NameGetterComponent, Context, ()> for UseFields
+        where
+            Context: HasNameType<Name: Clone>,
+            Context: HasField<
+                Cons<Char<'n'>, Cons<Char<'a'>, Cons<Char<'m'>, Cons<Char<'e'>, Nil>>>>,
+                Value = Context::Name,
+            >,
+        {
+        }
+        impl<Context, __Tag__> NameGetter<Context> for UseField<__Tag__>
+        where
+            Context: HasNameType<Name: Clone>,
+            Context: HasField<__Tag__, Value = Context::Name>,
+        {
+            fn name(context: &Context) -> Context::Name {
+                context.get_field(::core::marker::PhantomData).clone()
+            }
+        }
+        impl<Context, __Tag__> IsProviderFor<NameGetterComponent, Context, ()> for UseField<__Tag__>
+        where
+            Context: HasNameType<Name: Clone>,
+            Context: HasField<__Tag__, Value = Context::Name>,
+        {
+        }
+        impl<Context, __Provider__> NameGetter<Context> for WithProvider<__Provider__>
+        where
+            Context: HasNameType<Name: Clone>,
+            __Provider__: FieldGetter<Context, NameGetterComponent, Value = Context::Name>,
+        {
+            fn name(context: &Context) -> Context::Name {
+                __Provider__::get_field(context, ::core::marker::PhantomData).clone()
+            }
+        }
+        impl<Context, __Provider__> IsProviderFor<NameGetterComponent, Context, ()>
+            for WithProvider<__Provider__>
+        where
+            Context: HasNameType<Name: Clone>,
+            __Provider__: FieldGetter<Context, NameGetterComponent, Value = Context::Name>,
+        {
+        }
+    };
 
     assert_equal_token_stream(&derived, &expected);
 }
@@ -191,7 +437,97 @@ fn test_derive_getter_option_ref() {
     )
     .unwrap();
 
-    let expected = quote! {};
+    let expected = quote! {
+        pub struct NameGetterComponent;
+        pub trait HasName: HasNameType {
+            fn name(&self) -> Option<&Self::Name>;
+        }
+        pub trait NameGetter<Context>: IsProviderFor<NameGetterComponent, Context, ()>
+        where
+            Context: HasNameType,
+        {
+            fn name(context: &Context) -> Option<&Context::Name>;
+        }
+        impl<Context> HasName for Context
+        where
+            Context: HasNameType,
+            Context: HasProvider,
+            Context::Provider: NameGetter<Context>,
+        {
+            fn name(&self) -> Option<&Self::Name> {
+                Context::Provider::name(self)
+            }
+        }
+        impl<Component, Context> NameGetter<Context> for Component
+        where
+            Context: HasNameType,
+            Component: DelegateComponent<NameGetterComponent>
+                + IsProviderFor<NameGetterComponent, Context, ()>,
+            Component::Delegate: NameGetter<Context>,
+        {
+            fn name(context: &Context) -> Option<&Context::Name> {
+                Component::Delegate::name(context)
+            }
+        }
+        impl<Context> NameGetter<Context> for UseFields
+        where
+            Context: HasNameType,
+            Context: HasField<
+                Cons<Char<'n'>, Cons<Char<'a'>, Cons<Char<'m'>, Cons<Char<'e'>, Nil>>>>,
+                Value = Option<Context::Name>,
+            >,
+        {
+            fn name(context: &Context) -> Option<&Context::Name> {
+                context
+                    .get_field(
+                        ::core::marker::PhantomData::<
+                            Cons<Char<'n'>, Cons<Char<'a'>, Cons<Char<'m'>, Cons<Char<'e'>, Nil>>>>,
+                        >,
+                    )
+                    .as_ref()
+            }
+        }
+        impl<Context> IsProviderFor<NameGetterComponent, Context, ()> for UseFields
+        where
+            Context: HasNameType,
+            Context: HasField<
+                Cons<Char<'n'>, Cons<Char<'a'>, Cons<Char<'m'>, Cons<Char<'e'>, Nil>>>>,
+                Value = Option<Context::Name>,
+            >,
+        {
+        }
+        impl<Context, __Tag__> NameGetter<Context> for UseField<__Tag__>
+        where
+            Context: HasNameType,
+            Context: HasField<__Tag__, Value = Option<Context::Name>>,
+        {
+            fn name(context: &Context) -> Option<&Context::Name> {
+                context.get_field(::core::marker::PhantomData).as_ref()
+            }
+        }
+        impl<Context, __Tag__> IsProviderFor<NameGetterComponent, Context, ()> for UseField<__Tag__>
+        where
+            Context: HasNameType,
+            Context: HasField<__Tag__, Value = Option<Context::Name>>,
+        {
+        }
+        impl<Context, __Provider__> NameGetter<Context> for WithProvider<__Provider__>
+        where
+            Context: HasNameType,
+            __Provider__: FieldGetter<Context, NameGetterComponent, Value = Option<Context::Name>>,
+        {
+            fn name(context: &Context) -> Option<&Context::Name> {
+                __Provider__::get_field(context, ::core::marker::PhantomData).as_ref()
+            }
+        }
+        impl<Context, __Provider__> IsProviderFor<NameGetterComponent, Context, ()>
+            for WithProvider<__Provider__>
+        where
+            Context: HasNameType,
+            __Provider__: FieldGetter<Context, NameGetterComponent, Value = Option<Context::Name>>,
+        {
+        }
+    };
 
     assert_equal_token_stream(&derived, &expected);
 }
@@ -210,7 +546,97 @@ fn test_derive_getter_option_mut() {
     )
     .unwrap();
 
-    let expected = quote! {};
+    let expected = quote! {
+        pub struct NameGetterComponent;
+        pub trait HasName: HasNameType {
+            fn name(&mut self) -> Option<&mut Self::Name>;
+        }
+        pub trait NameGetter<Context>: IsProviderFor<NameGetterComponent, Context, ()>
+        where
+            Context: HasNameType,
+        {
+            fn name(context: &mut Context) -> Option<&mut Context::Name>;
+        }
+        impl<Context> HasName for Context
+        where
+            Context: HasNameType,
+            Context: HasProvider,
+            Context::Provider: NameGetter<Context>,
+        {
+            fn name(&mut self) -> Option<&mut Self::Name> {
+                Context::Provider::name(self)
+            }
+        }
+        impl<Component, Context> NameGetter<Context> for Component
+        where
+            Context: HasNameType,
+            Component: DelegateComponent<NameGetterComponent>
+                + IsProviderFor<NameGetterComponent, Context, ()>,
+            Component::Delegate: NameGetter<Context>,
+        {
+            fn name(context: &mut Context) -> Option<&mut Context::Name> {
+                Component::Delegate::name(context)
+            }
+        }
+        impl<Context> NameGetter<Context> for UseFields
+        where
+            Context: HasNameType,
+            Context: HasFieldMut<
+                Cons<Char<'n'>, Cons<Char<'a'>, Cons<Char<'m'>, Cons<Char<'e'>, Nil>>>>,
+                Value = Option<Context::Name>,
+            >,
+        {
+            fn name(context: &mut Context) -> Option<&mut Context::Name> {
+                context
+                    .get_field_mut(
+                        ::core::marker::PhantomData::<
+                            Cons<Char<'n'>, Cons<Char<'a'>, Cons<Char<'m'>, Cons<Char<'e'>, Nil>>>>,
+                        >,
+                    )
+                    .as_mut()
+            }
+        }
+        impl<Context> IsProviderFor<NameGetterComponent, Context, ()> for UseFields
+        where
+            Context: HasNameType,
+            Context: HasFieldMut<
+                Cons<Char<'n'>, Cons<Char<'a'>, Cons<Char<'m'>, Cons<Char<'e'>, Nil>>>>,
+                Value = Option<Context::Name>,
+            >,
+        {
+        }
+        impl<Context, __Tag__> NameGetter<Context> for UseField<__Tag__>
+        where
+            Context: HasNameType,
+            Context: HasFieldMut<__Tag__, Value = Option<Context::Name>>,
+        {
+            fn name(context: &mut Context) -> Option<&mut Context::Name> {
+                context.get_field_mut(::core::marker::PhantomData).as_mut()
+            }
+        }
+        impl<Context, __Tag__> IsProviderFor<NameGetterComponent, Context, ()> for UseField<__Tag__>
+        where
+            Context: HasNameType,
+            Context: HasFieldMut<__Tag__, Value = Option<Context::Name>>,
+        {
+        }
+        impl<Context, __Provider__> NameGetter<Context> for WithProvider<__Provider__>
+        where
+            Context: HasNameType,
+            __Provider__: MutFieldGetter<Context, NameGetterComponent, Value = Option<Context::Name>>,
+        {
+            fn name(context: &mut Context) -> Option<&mut Context::Name> {
+                __Provider__::get_field_mut(context, ::core::marker::PhantomData).as_mut()
+            }
+        }
+        impl<Context, __Provider__> IsProviderFor<NameGetterComponent, Context, ()>
+            for WithProvider<__Provider__>
+        where
+            Context: HasNameType,
+            __Provider__: MutFieldGetter<Context, NameGetterComponent, Value = Option<Context::Name>>,
+        {
+        }
+    };
 
     assert_equal_token_stream(&derived, &expected);
 }
