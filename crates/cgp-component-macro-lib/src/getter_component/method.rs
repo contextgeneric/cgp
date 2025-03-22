@@ -73,9 +73,28 @@ pub fn derive_getter_method(
 
     let call_expr = match spec.field_mode {
         FieldMode::Reference => call_expr,
-        FieldMode::OptionRef | FieldMode::Str => quote! {
-            #call_expr .as_ref()
-        },
+        FieldMode::OptionRef => {
+            if spec.field_mut.is_none() {
+                quote! {
+                    #call_expr .as_ref()
+                }
+            } else {
+                quote! {
+                    #call_expr .as_mut()
+                }
+            }
+        }
+        FieldMode::Str => {
+            if spec.field_mut.is_none() {
+                quote! {
+                    #call_expr .as_str()
+                }
+            } else {
+                quote! {
+                    #call_expr .as_mut_str()
+                }
+            }
+        }
         FieldMode::Clone => quote! {
             #call_expr .clone()
         },

@@ -140,6 +140,25 @@ fn test_derive_getter_str() {
 }
 
 #[test]
+fn test_derive_getter_mut_str() {
+    let derived = cgp_getter(
+        quote! {
+            provider: NameGetter,
+        },
+        quote! {
+            pub trait HasName {
+                fn name(&mut self) -> &mut str;
+            }
+        },
+    )
+    .unwrap();
+
+    let expected = quote! {};
+
+    assert_equal_token_stream(&derived, &expected);
+}
+
+#[test]
 fn test_derive_getter_clone() {
     let derived = cgp_getter(
         quote! {
@@ -167,6 +186,25 @@ fn test_derive_getter_option_ref() {
         quote! {
             pub trait HasName: HasNameType {
                 fn name(&self) -> Option<&Self::Name>;
+            }
+        },
+    )
+    .unwrap();
+
+    let expected = quote! {};
+
+    assert_equal_token_stream(&derived, &expected);
+}
+
+#[test]
+fn test_derive_getter_option_mut() {
+    let derived = cgp_getter(
+        quote! {
+            provider: NameGetter,
+        },
+        quote! {
+            pub trait HasName: HasNameType {
+                fn name(&mut self) -> Option<&mut Self::Name>;
             }
         },
     )

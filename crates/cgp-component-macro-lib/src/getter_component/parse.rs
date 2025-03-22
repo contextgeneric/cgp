@@ -146,7 +146,7 @@ pub fn parse_getter_fields(
                             ));
                         }
 
-                        if type_ref == &parse_quote! { &str } {
+                        if type_ref.elem.as_ref() == &parse_quote! { str } {
                             // Special case to handle &str as String field
 
                             let field_type: Type = parse_quote! { String };
