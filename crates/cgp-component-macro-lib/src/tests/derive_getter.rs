@@ -121,6 +121,63 @@ fn test_derive_getter_basic() {
 }
 
 #[test]
+fn test_derive_getter_str() {
+    let derived = cgp_getter(
+        quote! {
+            provider: NameGetter,
+        },
+        quote! {
+            pub trait HasName {
+                fn name(&self) -> &str;
+            }
+        },
+    )
+    .unwrap();
+
+    let expected = quote! {};
+
+    assert_equal_token_stream(&derived, &expected);
+}
+
+#[test]
+fn test_derive_getter_clone() {
+    let derived = cgp_getter(
+        quote! {
+            provider: NameGetter,
+        },
+        quote! {
+            pub trait HasName: HasNameType<Name: Clone> {
+                fn name(&self) -> Self::Name;
+            }
+        },
+    )
+    .unwrap();
+
+    let expected = quote! {};
+
+    assert_equal_token_stream(&derived, &expected);
+}
+
+#[test]
+fn test_derive_getter_option_ref() {
+    let derived = cgp_getter(
+        quote! {
+            provider: NameGetter,
+        },
+        quote! {
+            pub trait HasName: HasNameType {
+                fn name(&self) -> Option<&Self::Name>;
+            }
+        },
+    )
+    .unwrap();
+
+    let expected = quote! {};
+
+    assert_equal_token_stream(&derived, &expected);
+}
+
+#[test]
 fn test_derive_getter_with_generics() {
     let derived = cgp_getter(
         quote! {

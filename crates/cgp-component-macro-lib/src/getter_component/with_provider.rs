@@ -17,7 +17,7 @@ pub fn derive_with_provider_impl(
     let context_type = &spec.context_type;
     let provider_name = &spec.provider_name;
 
-    let provider_type = &field.provider_type;
+    let provider_type = &field.field_type;
 
     let provider_ident = Ident::new("__Provider__", Span::call_site());
 

@@ -1,5 +1,5 @@
 use proc_macro2::TokenStream;
-use quote::{quote, ToTokens};
+use quote::quote;
 use syn::Ident;
 
 use crate::getter_component::{FieldMode, GetterField};
@@ -16,7 +16,6 @@ pub fn derive_getter_method(
     provider_ident: Option<Ident>,
 ) -> TokenStream {
     let field_name = &spec.field_name;
-    let provider_type = &spec.provider_type;
 
     let phantom_arg = match &spec.phantom_arg_type {
         Some(phantom) => {
@@ -74,7 +73,7 @@ pub fn derive_getter_method(
 
     let call_expr = match spec.field_mode {
         FieldMode::Reference => call_expr,
-        FieldMode::AsRef | FieldMode::Str => quote! {
+        FieldMode::OptionRef | FieldMode::Str => quote! {
             #call_expr .as_ref()
         },
         FieldMode::Clone => quote! {
@@ -82,16 +81,7 @@ pub fn derive_getter_method(
         },
     };
 
-    let return_type = match &spec.field_mode {
-        FieldMode::Reference | FieldMode::Str => {
-            if spec.field_mut.is_none() {
-                quote! { & #provider_type }
-            } else {
-                quote! { & mut #provider_type }
-            }
-        }
-        FieldMode::Clone | FieldMode::AsRef => provider_type.to_token_stream(),
-    };
+    let return_type = &spec.return_type;
 
     quote! {
         fn #field_name( #context_fn_arg #phantom_arg ) -> #return_type {

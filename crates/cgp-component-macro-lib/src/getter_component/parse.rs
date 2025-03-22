@@ -1,10 +1,10 @@
 use alloc::vec::Vec;
 
-use quote::ToTokens;
+use quote::{quote, ToTokens};
 use syn::spanned::Spanned;
 use syn::{
-    parse_quote, Error, FnArg, GenericArgument, Ident, ItemTrait, PathArguments, ReturnType,
-    TraitItem, Type, TypePath,
+    parse2, parse_quote, Error, FnArg, GenericArgument, Ident, ItemTrait, PathArguments,
+    ReturnType, TraitItem, Type, TypePath,
 };
 
 use crate::derive_component::replace_self_type;
@@ -123,45 +123,12 @@ pub fn parse_getter_fields(
                     }
                 };
 
-                let (field_type, field_mode) = match &signature.output {
-                    ReturnType::Type(_, ty) => {
-                        let return_type = ty.as_ref().clone();
-                        match &return_type {
-                            Type::Reference(type_ref) => {
-                                if type_ref.mutability.is_some() != field_mut.is_some() {
-                                    return Err(Error::new(
-                                        type_ref.span(),
-                                        "return type have the same mutability as the self reference",
-                                    ));
-                                }
-
-                                if type_ref == &parse_quote! { &str } {
-                                    // Special case to handle &str as String field
-
-                                    let field_type: Type = parse_quote! { String };
-
-                                    (field_type, FieldMode::Str)
-                                } else {
-                                    let field_type: Type = type_ref.elem.as_ref().clone();
-
-                                    (field_type, FieldMode::Reference)
-                                }
-                            }
-                            Type::Path(type_path) => {
-                                if try_parse_option_ref(type_path).is_some() {
-                                    (return_type, FieldMode::AsRef)
-                                } else {
-                                    (return_type, FieldMode::Clone)
-                                }
-                            }
-                            _ => {
-                                return Err(Error::new(
-                                    return_type.span(),
-                                    "return type must be a reference",
-                                ))
-                            }
-                        }
-                    }
+                let return_type = match &signature.output {
+                    ReturnType::Type(_, ty) => parse2(replace_self_type(
+                        ty.to_token_stream(),
+                        context_type,
+                        &Vec::new(),
+                    ))?,
                     _ => {
                         return Err(Error::new(
                             signature.span(),
@@ -170,15 +137,49 @@ pub fn parse_getter_fields(
                     }
                 };
 
-                let provider_type: Type = syn::parse2(replace_self_type(
-                    field_type.to_token_stream(),
-                    context_type,
-                    &Vec::new(),
-                ))?;
+                let (field_type, field_mode) = match &return_type {
+                    Type::Reference(type_ref) => {
+                        if type_ref.mutability.is_some() != field_mut.is_some() {
+                            return Err(Error::new(
+                                type_ref.span(),
+                                "return type have the same mutability as the self reference",
+                            ));
+                        }
+
+                        if type_ref == &parse_quote! { &str } {
+                            // Special case to handle &str as String field
+
+                            let field_type: Type = parse_quote! { String };
+
+                            (field_type, FieldMode::Str)
+                        } else {
+                            let field_type: Type = type_ref.elem.as_ref().clone();
+
+                            (field_type, FieldMode::Reference)
+                        }
+                    }
+                    Type::Path(type_path) => {
+                        if let Some(field_type) = try_parse_option_ref(type_path) {
+                            (
+                                parse2(quote! { Option< #field_type > })?,
+                                FieldMode::OptionRef,
+                            )
+                        } else {
+                            (return_type.clone(), FieldMode::Clone)
+                        }
+                    }
+                    _ => {
+                        return Err(Error::new(
+                            return_type.span(),
+                            "return type must be a reference",
+                        ))
+                    }
+                };
 
                 fields.push(GetterField {
                     field_name,
-                    provider_type,
+                    field_type,
+                    return_type,
                     field_mut,
                     phantom_arg_type: phantom,
                     field_mode,
