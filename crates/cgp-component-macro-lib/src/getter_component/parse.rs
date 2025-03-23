@@ -134,13 +134,24 @@ fn parse_fixed_size_args<const I: usize>(
 
 fn parse_phantom_arg_type(phantom_arg: &FnArg) -> syn::Result<Type> {
     match phantom_arg {
-        FnArg::Typed(phantom_type) => Ok(phantom_type.ty.as_ref().clone()),
-        _ => {
-            return Err(Error::new(
-                phantom_arg.span(),
-                "optional second argument in getter must be PhantomData",
-            ));
-        }
+        FnArg::Typed(phantom_type) => match phantom_type.ty.as_ref() {
+            Type::Path(type_path) => try_parse_phantom_arg_type_path(type_path).ok_or_else(|| {
+                Error::new(
+                    phantom_type.span(),
+                    "only PhantomData is allowed as second argument",
+                )
+            }),
+            _ => {
+                return Err(Error::new(
+                    phantom_type.span(),
+                    "only PhantomData is allowed as second argument",
+                ));
+            }
+        },
+        _ => Err(Error::new(
+            phantom_arg.span(),
+            "optional second argument in getter must be PhantomData",
+        )),
     }
 }
 
@@ -148,20 +159,18 @@ fn parse_field_mut(arg: &FnArg) -> syn::Result<Option<Mut>> {
     match arg {
         FnArg::Receiver(receiver) => {
             if receiver.reference.is_none() {
-                return Err(Error::new(
+                Err(Error::new(
                     receiver.span(),
                     "first argument to getter method must be a reference to self, i.e. `&self`",
-                ));
+                ))
+            } else {
+                Ok(receiver.mutability)
             }
-
-            Ok(receiver.mutability)
         }
-        _ => {
-            return Err(Error::new(
-                arg.span(),
-                "first argument to getter method must be `&self`",
-            ))
-        }
+        _ => Err(Error::new(
+            arg.span(),
+            "first argument to getter method must be `&self`",
+        )),
     }
 }
 
@@ -216,6 +225,20 @@ fn parse_field_type(return_type: &Type, field_mut: &Option<Mut>) -> syn::Result<
             "return type must be a reference",
         )),
     }
+}
+
+fn try_parse_phantom_arg_type_path(type_path: &TypePath) -> Option<Type> {
+    let segment = type_path.path.segments.iter().next()?;
+
+    if segment.ident == "PhantomData" {
+        if let PathArguments::AngleBracketed(args) = &segment.arguments {
+            if let Some(GenericArgument::Type(ty)) = args.args.first() {
+                return Some(ty.clone());
+            }
+        }
+    }
+
+    None
 }
 
 fn try_parse_option_ref(type_path: &TypePath) -> Option<&Type> {

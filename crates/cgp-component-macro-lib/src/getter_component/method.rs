@@ -20,7 +20,7 @@ pub fn derive_getter_method(
     let phantom_arg = match &spec.phantom_arg_type {
         Some(phantom) => {
             quote! {
-                , _phantom: #phantom
+                , _phantom: PhantomData< #phantom >
             }
         }
         None => TokenStream::new(),
