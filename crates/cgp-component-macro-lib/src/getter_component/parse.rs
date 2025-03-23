@@ -145,12 +145,10 @@ fn parse_phantom_arg_type(phantom_arg: &FnArg) -> syn::Result<Type> {
                     )
                 })
             }
-            _ => {
-                return Err(Error::new(
-                    phantom_type.span(),
-                    "only PhantomData is allowed as second argument",
-                ));
-            }
+            _ => Err(Error::new(
+                phantom_type.span(),
+                "only PhantomData is allowed as second argument",
+            )),
         },
         _ => Err(Error::new(
             phantom_arg.span(),
