@@ -6,7 +6,7 @@ use syn::spanned::Spanned;
 use syn::token::{Comma, Mut};
 use syn::{
     parse2, parse_quote, Error, FnArg, GenericArgument, Ident, ItemTrait, PathArguments,
-    ReturnType, Signature, TraitItem, TraitItemFn, Type, TypePath,
+    PathSegment, ReturnType, Signature, TraitItem, TraitItemFn, Type, TypePath,
 };
 
 use crate::derive_component::replace_self_type;
@@ -135,12 +135,16 @@ fn parse_fixed_size_args<const I: usize>(
 fn parse_phantom_arg_type(phantom_arg: &FnArg) -> syn::Result<Type> {
     match phantom_arg {
         FnArg::Typed(phantom_type) => match phantom_type.ty.as_ref() {
-            Type::Path(type_path) => try_parse_phantom_arg_type_path(type_path).ok_or_else(|| {
-                Error::new(
-                    phantom_type.span(),
-                    "only PhantomData is allowed as second argument",
-                )
-            }),
+            Type::Path(type_path) => {
+                let segment = parse_single_segment_type_path(type_path)?;
+
+                try_parse_phantom_arg_type_path(segment).ok_or_else(|| {
+                    Error::new(
+                        phantom_type.span(),
+                        "only PhantomData is allowed as second argument",
+                    )
+                })
+            }
             _ => {
                 return Err(Error::new(
                     phantom_type.span(),
@@ -227,9 +231,24 @@ fn parse_field_type(return_type: &Type, field_mut: &Option<Mut>) -> syn::Result<
     }
 }
 
-fn try_parse_phantom_arg_type_path(type_path: &TypePath) -> Option<Type> {
-    let segment = type_path.path.segments.iter().next()?;
+fn parse_single_segment_type_path(type_path: &TypePath) -> syn::Result<&PathSegment> {
+    let [segment]: [&PathSegment; 1] = type_path
+        .path
+        .segments
+        .iter()
+        .collect::<Vec<_>>()
+        .try_into()
+        .map_err(|_| {
+            Error::new(
+                type_path.span(),
+                "type path must contain exactly one path segment",
+            )
+        })?;
 
+    Ok(segment)
+}
+
+fn try_parse_phantom_arg_type_path(segment: &PathSegment) -> Option<Type> {
     if segment.ident == "PhantomData" {
         if let PathArguments::AngleBracketed(args) = &segment.arguments {
             if let Some(GenericArgument::Type(ty)) = args.args.first() {
@@ -242,14 +261,12 @@ fn try_parse_phantom_arg_type_path(type_path: &TypePath) -> Option<Type> {
 }
 
 fn try_parse_option_ref(type_path: &TypePath) -> Option<&Type> {
-    let m_segment = type_path.path.segments.iter().next();
+    let segment = parse_single_segment_type_path(type_path).ok()?;
 
-    if let Some(segment) = m_segment {
-        if segment.ident == "Option" {
-            if let PathArguments::AngleBracketed(args) = &segment.arguments {
-                if let Some(GenericArgument::Type(Type::Reference(type_ref))) = args.args.first() {
-                    return Some(type_ref.elem.as_ref());
-                }
+    if segment.ident == "Option" {
+        if let PathArguments::AngleBracketed(args) = &segment.arguments {
+            if let Some(GenericArgument::Type(Type::Reference(type_ref))) = args.args.first() {
+                return Some(type_ref.elem.as_ref());
             }
         }
     }
