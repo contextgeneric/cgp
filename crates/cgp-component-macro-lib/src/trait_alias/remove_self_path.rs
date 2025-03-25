@@ -16,7 +16,7 @@ pub fn remove_self_path(stream: TokenStream, assoc_idents: &Vec<Ident>) -> Token
                 if &ident == &self_type {
                     let m_colon_1 = token_iter.peek().cloned();
                     let m_colon_2 = token_iter.peek().cloned();
-                    let assoc_ident = token_iter.peek();
+                    let assoc_ident = token_iter.peek().cloned();
 
                     match (m_colon_1, m_colon_2, assoc_ident) {
                         (
@@ -25,10 +25,13 @@ pub fn remove_self_path(stream: TokenStream, assoc_idents: &Vec<Ident>) -> Token
                             Some(TokenTree::Ident(assoc_ident)),
                         ) if colon_1.as_char() == ':'
                             && colon_2.as_char() == ':'
-                            && assoc_idents.contains(assoc_ident) =>
+                            && assoc_idents.contains(&assoc_ident) =>
                         {
                             token_iter.next();
                             token_iter.next();
+                            token_iter.next();
+
+                            result_stream.push(TokenTree::Ident(assoc_ident));
                         }
                         _ => {
                             result_stream.push(TokenTree::Ident(ident));

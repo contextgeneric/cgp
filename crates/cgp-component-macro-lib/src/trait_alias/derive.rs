@@ -17,13 +17,22 @@ pub fn derive_trait_alias(
     let mut assoc_idents: Vec<Ident> = Vec::new();
     let mut assoc_bounds: Vec<WherePredicate> = Vec::new();
 
+    for trait_item in item_trait.items.iter() {
+        match trait_item {
+            TraitItem::Type(trait_item_type) => {
+                let item_type_ident = &trait_item_type.ident;
+                assoc_idents.push(item_type_ident.clone());
+            }
+            _ => {}
+        }
+    }
+
     for trait_item in item_trait.items.iter_mut() {
         match trait_item {
             TraitItem::Type(trait_item_type) => {
                 trait_item_type.default.take();
 
                 let item_type_ident = &trait_item_type.ident;
-                assoc_idents.push(item_type_ident.clone());
 
                 let type_impl = parse2(quote! {
                     #item_type_ident
