@@ -34,7 +34,10 @@ pub fn derive_trait_alias(
 
                     for bound in current_assoc_bounds.iter_mut() {
                         if let TypeParamBound::Trait(bound) = bound {
-                            bound.path = parse2(remove_self_path(bound.path.to_token_stream()))?;
+                            bound.path = parse2(remove_self_path(
+                                bound.path.to_token_stream(),
+                                &assoc_idents,
+                            ))?;
                         }
                     }
 
@@ -123,7 +126,7 @@ pub fn derive_trait_alias(
         .params
         .push(parse2(context_type.to_token_stream())?);
 
-    for assoc_ident in assoc_idents {
+    for assoc_ident in assoc_idents.iter() {
         impl_generics
             .params
             .push(parse2(assoc_ident.to_token_stream())?);
@@ -133,7 +136,10 @@ pub fn derive_trait_alias(
 
     for bound in supertraits.iter_mut() {
         if let TypeParamBound::Trait(trait_bound) = bound {
-            trait_bound.path = parse2(remove_self_path(trait_bound.path.to_token_stream()))?;
+            trait_bound.path = parse2(remove_self_path(
+                trait_bound.path.to_token_stream(),
+                &assoc_idents,
+            ))?;
         }
     }
 
