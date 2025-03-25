@@ -79,8 +79,8 @@ pub fn cgp_context(attr: TokenStream, item: TokenStream) -> TokenStream {
 }
 
 #[proc_macro_attribute]
-pub fn trait_alias(attr: TokenStream, item: TokenStream) -> TokenStream {
-    cgp_component_macro_lib::trait_alias(attr.into(), item.into())
+pub fn blanket_trait(attr: TokenStream, item: TokenStream) -> TokenStream {
+    cgp_component_macro_lib::blanket_trait(attr.into(), item.into())
         .unwrap_or_else(syn::Error::into_compile_error)
         .into()
 }

@@ -2,9 +2,9 @@ use proc_macro2::{Span, TokenStream};
 use quote::quote;
 use syn::{parse2, Ident, ItemTrait};
 
-use crate::trait_alias::derive_trait_alias;
+use crate::blanket_trait::derive_blanket_trait;
 
-pub fn trait_alias(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
+pub fn blanket_trait(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
     let context_ident: Ident = if attr.is_empty() {
         Ident::new("Context", Span::call_site())
     } else {
@@ -13,7 +13,7 @@ pub fn trait_alias(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStr
 
     let mut item_trait: ItemTrait = parse2(body)?;
 
-    let item_impl = derive_trait_alias(&context_ident, &mut item_trait)?;
+    let item_impl = derive_blanket_trait(&context_ident, &mut item_trait)?;
 
     let out = quote! {
         #item_trait

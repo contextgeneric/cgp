@@ -6,9 +6,9 @@ use syn::{
     Path, TraitItem, Type, TypeParamBound, Visibility, WherePredicate,
 };
 
-use crate::trait_alias::remove_self_path;
+use crate::blanket_trait::remove_self_path;
 
-pub fn derive_trait_alias(
+pub fn derive_blanket_trait(
     context_ident: &Ident,
     item_trait: &mut ItemTrait,
 ) -> syn::Result<ItemImpl> {

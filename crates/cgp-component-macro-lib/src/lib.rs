@@ -9,6 +9,7 @@
 
 extern crate alloc;
 
+pub(crate) mod blanket_trait;
 pub(crate) mod check_components;
 pub(crate) mod delegate_components;
 pub(crate) mod derive_component;
@@ -19,7 +20,6 @@ pub(crate) mod for_each_replace;
 pub(crate) mod getter_component;
 pub(crate) mod parse;
 pub(crate) mod preset;
-pub(crate) mod trait_alias;
 pub(crate) mod type_component;
 
 #[cfg(test)]

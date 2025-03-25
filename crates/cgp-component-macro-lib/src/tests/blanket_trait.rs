@@ -1,11 +1,11 @@
 use quote::quote;
 
+use crate::blanket_trait;
 use crate::tests::helper::equal::assert_equal_token_stream;
-use crate::trait_alias;
 
 #[test]
-pub fn test_basic_trait_alias() {
-    let derived = trait_alias(
+pub fn test_basic_blanket_trait() {
+    let derived = blanket_trait(
         quote!(),
         quote! {
             pub trait CanDoFooBar: CanDoFoo + CanDoBar {}
@@ -26,8 +26,8 @@ pub fn test_basic_trait_alias() {
 }
 
 #[test]
-pub fn test_trait_alias_with_method() {
-    let derived = trait_alias(
+pub fn test_blanket_trait_with_method() {
+    let derived = blanket_trait(
         quote!(),
         quote! {
             pub trait CanDoFooBar: CanDoFoo + CanDoBar {
@@ -58,8 +58,8 @@ pub fn test_trait_alias_with_method() {
 }
 
 #[test]
-pub fn test_trait_alias_with_associated_type_without_constraints() {
-    let derived = trait_alias(
+pub fn test_blanket_trait_with_associated_type_without_constraints() {
+    let derived = blanket_trait(
         quote!(),
         quote! {
             pub trait HasFooAtBar: HasFooAt<Bar, Foo = Self::FooBar> {
@@ -86,8 +86,8 @@ pub fn test_trait_alias_with_associated_type_without_constraints() {
 }
 
 #[test]
-pub fn test_trait_alias_with_associated_type_and_constraints() {
-    let derived = trait_alias(
+pub fn test_blanket_trait_with_associated_type_and_constraints() {
+    let derived = blanket_trait(
         quote!(),
         quote! {
             pub trait HasFooAtBar: HasFooAt<Bar, Foo = Self::FooBar> {
