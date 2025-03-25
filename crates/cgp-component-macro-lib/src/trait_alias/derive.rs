@@ -2,10 +2,11 @@ use proc_macro2::Span;
 use quote::{quote, ToTokens};
 use syn::token::{Eq, For, Impl, Semi};
 use syn::{
-    parse2, Error, GenericArgument, Ident, ImplItem, ImplItemConst, ImplItemFn, ImplItemType,
-    ItemImpl, ItemTrait, Path, PathArguments, TraitItem, Type, TypeParamBound, Visibility,
-    WherePredicate,
+    parse2, Error, Ident, ImplItem, ImplItemConst, ImplItemFn, ImplItemType, ItemImpl, ItemTrait,
+    Path, TraitItem, Type, TypeParamBound, Visibility, WherePredicate,
 };
+
+use crate::trait_alias::remove_self_path;
 
 pub fn derive_trait_alias(
     context_ident: &Ident,
@@ -33,7 +34,7 @@ pub fn derive_trait_alias(
 
                     for bound in current_assoc_bounds.iter_mut() {
                         if let TypeParamBound::Trait(bound) = bound {
-                            filter_assoc_self_constraint(&mut bound.path);
+                            bound.path = parse2(remove_self_path(bound.path.to_token_stream()))?;
                         }
                     }
 
@@ -132,7 +133,7 @@ pub fn derive_trait_alias(
 
     for bound in supertraits.iter_mut() {
         if let TypeParamBound::Trait(trait_bound) = bound {
-            filter_assoc_self_constraint(&mut trait_bound.path);
+            trait_bound.path = parse2(remove_self_path(trait_bound.path.to_token_stream()))?;
         }
     }
 
@@ -161,35 +162,4 @@ pub fn derive_trait_alias(
     };
 
     Ok(item_impl)
-}
-
-pub fn filter_assoc_self_constraint(path: &mut Path) {
-    for path in path.segments.iter_mut() {
-        if let PathArguments::AngleBracketed(generics) = &mut path.arguments {
-            for arg in generics.args.iter_mut() {
-                match arg {
-                    GenericArgument::AssocType(assoc) => {
-                        if let Type::Path(path) = &mut assoc.ty {
-                            if let Some(segment) = path.path.segments.first() {
-                                if segment.ident == Ident::new("Self", Span::call_site()) {
-                                    let mut new_segments = path.path.segments.clone().into_iter();
-                                    new_segments.next();
-
-                                    path.path.segments = new_segments.collect();
-                                }
-                            }
-                        }
-                    }
-                    GenericArgument::Constraint(constraint) => {
-                        for bound in constraint.bounds.iter_mut() {
-                            if let TypeParamBound::Trait(trait_bound) = bound {
-                                filter_assoc_self_constraint(&mut trait_bound.path);
-                            }
-                        }
-                    }
-                    _ => {}
-                }
-            }
-        }
-    }
 }
