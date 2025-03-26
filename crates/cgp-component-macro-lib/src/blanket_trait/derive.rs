@@ -18,12 +18,9 @@ pub fn derive_blanket_trait(
     let mut assoc_bounds: Vec<WherePredicate> = Vec::new();
 
     for trait_item in item_trait.items.iter() {
-        match trait_item {
-            TraitItem::Type(trait_item_type) => {
-                let item_type_ident = &trait_item_type.ident;
-                assoc_idents.push(item_type_ident.clone());
-            }
-            _ => {}
+        if let TraitItem::Type(trait_item_type) = trait_item {
+            let item_type_ident = &trait_item_type.ident;
+            assoc_idents.push(item_type_ident.clone());
         }
     }
 

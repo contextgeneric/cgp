@@ -13,7 +13,7 @@ pub fn remove_self_path(stream: TokenStream, assoc_idents: &Vec<Ident>) -> Token
     while let Some(tree) = token_iter.next() {
         match tree {
             TokenTree::Ident(ident) => {
-                if &ident == &self_type {
+                if ident == self_type {
                     let m_colon_1 = token_iter.peek().cloned();
                     let m_colon_2 = token_iter.peek().cloned();
                     let assoc_ident = token_iter.peek().cloned();
