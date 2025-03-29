@@ -2,7 +2,7 @@ use proc_macro2::TokenStream;
 use quote::quote;
 use syn::Ident;
 
-use crate::getter_component::{FieldMode, GetterField};
+use crate::derive_getter::{FieldMode, GetterField};
 
 pub enum ContextArg {
     SelfArg,

@@ -10,8 +10,8 @@ use syn::{
 };
 
 use crate::derive_component::replace_self_type;
-use crate::getter_component::getter_field::GetterField;
-use crate::getter_component::FieldMode;
+use crate::derive_getter::getter_field::GetterField;
+use crate::derive_getter::FieldMode;
 
 pub fn parse_getter_fields(
     context_type: &Ident,

@@ -3,11 +3,11 @@ use quote::quote;
 use syn::{parse_quote, ItemTrait, Type};
 
 use crate::derive_component::derive_component_with_ast;
-use crate::derive_provider::derive_is_provider_for;
-use crate::getter_component::{
+use crate::derive_getter::{
     derive_use_field_impl, derive_use_fields_impl, derive_with_provider_impl, parse_getter_fields,
     GetterField,
 };
+use crate::derive_provider::derive_is_provider_for;
 use crate::parse::ComponentSpec;
 
 pub fn cgp_getter(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {

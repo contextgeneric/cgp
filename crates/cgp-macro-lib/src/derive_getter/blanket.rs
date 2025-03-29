@@ -4,9 +4,9 @@ use proc_macro2::TokenStream;
 use quote::quote;
 use syn::{parse2, Ident, ItemImpl, ItemTrait};
 
-use crate::getter_component::getter_field::GetterField;
-use crate::getter_component::symbol::symbol_from_string;
-use crate::getter_component::{derive_getter_constraint, derive_getter_method, ContextArg};
+use crate::derive_getter::getter_field::GetterField;
+use crate::derive_getter::symbol::symbol_from_string;
+use crate::derive_getter::{derive_getter_constraint, derive_getter_method, ContextArg};
 
 pub fn derive_blanket_impl(
     context_type: &Ident,

@@ -2,7 +2,7 @@ use proc_macro2::TokenStream;
 use quote::quote;
 use syn::{parse2, TypeParamBound};
 
-use crate::getter_component::GetterField;
+use crate::derive_getter::GetterField;
 
 pub fn derive_getter_constraint(
     spec: &GetterField,
