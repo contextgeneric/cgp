@@ -7,9 +7,9 @@ use syn::token::Plus;
 use syn::{parse2, ItemImpl, ItemTrait, TypeParamBound};
 
 use crate::derive_getter::getter_field::GetterField;
-use crate::derive_getter::symbol::symbol_from_string;
 use crate::derive_getter::{derive_getter_constraint, derive_getter_method, ContextArg};
 use crate::parse::ComponentSpec;
+use crate::symbol::symbol_from_string;
 
 pub fn derive_use_fields_impl(
     spec: &ComponentSpec,

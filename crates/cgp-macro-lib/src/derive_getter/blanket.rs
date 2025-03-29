@@ -5,8 +5,8 @@ use quote::quote;
 use syn::{parse2, Ident, ItemImpl, ItemTrait};
 
 use crate::derive_getter::getter_field::GetterField;
-use crate::derive_getter::symbol::symbol_from_string;
 use crate::derive_getter::{derive_getter_constraint, derive_getter_method, ContextArg};
+use crate::symbol::symbol_from_string;
 
 pub fn derive_blanket_impl(
     context_type: &Ident,

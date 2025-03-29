@@ -3,7 +3,6 @@ mod constraint;
 mod getter_field;
 mod method;
 mod parse;
-mod symbol;
 mod use_field;
 mod use_fields;
 mod with_provider;
