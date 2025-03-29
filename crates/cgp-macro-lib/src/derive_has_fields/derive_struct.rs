@@ -20,7 +20,7 @@ pub fn derive_has_fields_impls_from_struct(item_struct: &ItemStruct) -> syn::Res
         })?;
 
         fields_ref_type = parse2(quote! {
-            Cons< Field< #field_tag, & #life #field_type >, #fields_type >
+            Cons< Field< #field_tag, & #life #field_type >, #fields_ref_type >
         })?;
     }
 
