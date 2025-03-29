@@ -1,3 +1,4 @@
+use quote::ToTokens;
 use syn::{parse_quote, Type};
 
 use crate::symbol::symbol_from_string;
@@ -15,5 +16,11 @@ impl FieldTag {
                 parse_quote! { Index< #i > }
             }
         }
+    }
+}
+
+impl ToTokens for FieldTag {
+    fn to_tokens(&self, tokens: &mut proc_macro2::TokenStream) {
+        self.to_type().to_tokens(tokens);
     }
 }
