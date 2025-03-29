@@ -46,7 +46,6 @@ dependencies = [
  "cgp-component",
  "cgp-error",
  "cgp-field",
- "cgp-field-macro",
  "cgp-macro",
  "cgp-type",
 ]
@@ -108,14 +107,6 @@ dependencies = [
  "cgp-component",
  "cgp-macro",
  "cgp-type",
-]
-
-[[package]]
-name = "cgp-field-macro"
-version = "0.4.0"
-dependencies = [
- "cgp-macro-lib",
- "proc-macro2",
 ]
 
 [[package]]
