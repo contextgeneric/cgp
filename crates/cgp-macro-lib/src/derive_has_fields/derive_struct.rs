@@ -4,6 +4,7 @@ use syn::{parse2, parse_quote, ItemImpl, ItemStruct, Lifetime, Type};
 use crate::derive_has_fields::from_struct_fields::derive_from_fields_for_struct;
 use crate::derive_has_fields::struct_fields::extract_struct_fields;
 use crate::derive_has_fields::to_struct_fields::derive_to_fields_for_struct;
+use crate::derive_has_fields::to_struct_fields_ref::derive_to_fields_ref_for_struct;
 
 pub fn derive_has_fields_impls_from_struct(item_struct: &ItemStruct) -> syn::Result<Vec<ItemImpl>> {
     let struct_name = &item_struct.ident;
@@ -51,10 +52,13 @@ pub fn derive_has_fields_impls_from_struct(item_struct: &ItemStruct) -> syn::Res
 
     let to_fields_impl = derive_to_fields_for_struct(item_struct)?;
 
+    let to_fields_ref_impl = derive_to_fields_ref_for_struct(item_struct)?;
+
     Ok(vec![
         has_fields_impl,
         has_fields_ref_impl,
         from_fields_impl,
         to_fields_impl,
+        to_fields_ref_impl,
     ])
 }
