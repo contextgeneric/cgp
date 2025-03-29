@@ -1,6 +1,6 @@
 use quote::quote;
 use syn::spanned::Spanned;
-use syn::{parse2, Error, Fields, Ident, ItemImpl, ItemStruct};
+use syn::{parse2, parse_quote, Error, Fields, Ident, ItemImpl, ItemStruct, Lifetime};
 
 pub fn derive_to_fields_ref_for_struct(item_struct: &ItemStruct) -> syn::Result<ItemImpl> {
     let struct_name = &item_struct.ident;
@@ -40,16 +40,18 @@ pub fn derive_to_fields_ref_for_struct(item_struct: &ItemStruct) -> syn::Result<
         Fields::Unit => {}
     };
 
+    let life: Lifetime = parse_quote! { '__a };
+
     let item_impl = parse2(quote! {
         impl #impl_generics
             ToFieldsRef for #struct_name #type_generics
         #where_clause
         {
-            fn to_fields_ref<'a>(
-                &'a self,
-            ) -> Self::FieldsRef<'a>
+            fn to_fields_ref< #life >(
+                & #life self,
+            ) -> Self::FieldsRef< #life >
             where
-                Self: 'a,
+                Self: #life,
             {
                 #constructor
             }
