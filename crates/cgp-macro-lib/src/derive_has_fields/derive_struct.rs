@@ -38,7 +38,7 @@ pub fn derive_has_fields_impls_from_struct(item_struct: &ItemStruct) -> syn::Res
             HasFieldsRef for #struct_name #type_generics
         #where_clause
         {
-            type FieldsRef< #life > = #fields_type
+            type FieldsRef< #life > = #fields_ref_type
             where
                 Self: #life
             ;

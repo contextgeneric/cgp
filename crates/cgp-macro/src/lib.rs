@@ -99,11 +99,6 @@ pub fn replace_with(body: TokenStream) -> TokenStream {
         .into()
 }
 
-#[proc_macro_derive(HasField)]
-pub fn derive_fields(item: TokenStream) -> TokenStream {
-    cgp_macro_lib::derive_fields(item.into()).into()
-}
-
 #[proc_macro]
 pub fn symbol(body: TokenStream) -> TokenStream {
     cgp_macro_lib::make_symbol(body.into()).into()
@@ -124,4 +119,16 @@ pub fn Sum(body: TokenStream) -> TokenStream {
 #[proc_macro]
 pub fn product(body: TokenStream) -> TokenStream {
     cgp_macro_lib::make_product_expr(body.into()).into()
+}
+
+#[proc_macro_derive(HasField)]
+pub fn derive_fields(item: TokenStream) -> TokenStream {
+    cgp_macro_lib::derive_fields(item.into()).into()
+}
+
+#[proc_macro_derive(HasFields)]
+pub fn derive_has_fields(item: TokenStream) -> TokenStream {
+    cgp_macro_lib::derive_has_fields(item.into())
+        .unwrap_or_else(syn::Error::into_compile_error)
+        .into()
 }

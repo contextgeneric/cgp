@@ -9,6 +9,7 @@ mod cgp_type;
 mod check_components;
 mod define_preset;
 mod delegate_components;
+mod derive_has_fields;
 mod re_export_imports;
 mod replace_with;
 
@@ -23,5 +24,6 @@ pub use cgp_type::*;
 pub use check_components::*;
 pub use define_preset::*;
 pub use delegate_components::*;
+pub use derive_has_fields::*;
 pub use re_export_imports::*;
 pub use replace_with::*;
