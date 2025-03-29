@@ -15,6 +15,7 @@ pub(crate) mod delegate_components;
 pub(crate) mod derive_component;
 pub(crate) mod derive_context;
 pub(crate) mod derive_getter;
+pub(crate) mod derive_has_fields;
 pub(crate) mod derive_provider;
 mod entrypoints;
 pub(crate) mod field;
