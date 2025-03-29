@@ -1,6 +1,7 @@
 use quote::quote;
 use syn::{parse2, parse_quote, ItemImpl, ItemStruct, Lifetime, Type};
 
+use crate::derive_has_fields::from_struct_fields::derive_from_fields_for_struct;
 use crate::derive_has_fields::struct_fields::extract_struct_fields;
 
 pub fn derive_has_fields_impls_from_struct(item_struct: &ItemStruct) -> syn::Result<Vec<ItemImpl>> {
@@ -14,7 +15,7 @@ pub fn derive_has_fields_impls_from_struct(item_struct: &ItemStruct) -> syn::Res
 
     let life: Lifetime = parse_quote! { '__a };
 
-    for (field_tag, field_type) in fields {
+    for (field_tag, field_type) in fields.iter().rev() {
         fields_type = parse2(quote! {
             Cons< Field< #field_tag, #field_type >, #fields_type >
         })?;
@@ -45,5 +46,7 @@ pub fn derive_has_fields_impls_from_struct(item_struct: &ItemStruct) -> syn::Res
         }
     })?;
 
-    Ok(vec![has_fields_impl, has_fields_ref_impl])
+    let from_fields_impl = derive_from_fields_for_struct(item_struct)?;
+
+    Ok(vec![has_fields_impl, has_fields_ref_impl, from_fields_impl])
 }
