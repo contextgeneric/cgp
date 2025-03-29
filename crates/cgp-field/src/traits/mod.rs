@@ -1,5 +1,7 @@
 mod has_field;
 mod has_field_mut;
+mod has_fields;
 
-pub use has_field::{FieldGetter, HasField};
-pub use has_field_mut::{HasFieldMut, MutFieldGetter};
+pub use has_field::*;
+pub use has_field_mut::*;
+pub use has_fields::*;
