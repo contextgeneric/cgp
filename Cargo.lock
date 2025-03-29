@@ -39,34 +39,15 @@ name = "cgp-component"
 version = "0.4.0"
 
 [[package]]
-name = "cgp-component-macro"
-version = "0.4.0"
-dependencies = [
- "cgp-component-macro-lib",
- "syn",
-]
-
-[[package]]
-name = "cgp-component-macro-lib"
-version = "0.4.0"
-dependencies = [
- "itertools",
- "prettyplease",
- "proc-macro2",
- "quote",
- "syn",
-]
-
-[[package]]
 name = "cgp-core"
 version = "0.4.0"
 dependencies = [
  "cgp-async",
  "cgp-component",
- "cgp-component-macro",
  "cgp-error",
  "cgp-field",
  "cgp-field-macro",
+ "cgp-macro",
  "cgp-type",
 ]
 
@@ -76,7 +57,7 @@ version = "0.4.0"
 dependencies = [
  "cgp-async",
  "cgp-component",
- "cgp-component-macro",
+ "cgp-macro",
  "cgp-type",
 ]
 
@@ -125,7 +106,7 @@ name = "cgp-field"
 version = "0.4.0"
 dependencies = [
  "cgp-component",
- "cgp-component-macro",
+ "cgp-macro",
  "cgp-type",
 ]
 
@@ -152,7 +133,26 @@ name = "cgp-inner"
 version = "0.4.0"
 dependencies = [
  "cgp-component",
- "cgp-component-macro",
+ "cgp-macro",
+]
+
+[[package]]
+name = "cgp-macro"
+version = "0.4.0"
+dependencies = [
+ "cgp-macro-lib",
+ "syn",
+]
+
+[[package]]
+name = "cgp-macro-lib"
+version = "0.4.0"
+dependencies = [
+ "itertools",
+ "prettyplease",
+ "proc-macro2",
+ "quote",
+ "syn",
 ]
 
 [[package]]
@@ -161,8 +161,8 @@ version = "0.4.0"
 dependencies = [
  "cgp-async",
  "cgp-component",
- "cgp-component-macro",
  "cgp-error",
+ "cgp-macro",
 ]
 
 [[package]]
@@ -184,7 +184,7 @@ name = "cgp-type"
 version = "0.4.0"
 dependencies = [
  "cgp-component",
- "cgp-component-macro",
+ "cgp-macro",
 ]
 
 [[package]]

@@ -1,7 +1,7 @@
 #![no_std]
 
 use cgp_component::*;
-use cgp_component_macro::cgp_component;
+use cgp_macro::cgp_component;
 
 #[cgp_component {
     name: InnerComponent,

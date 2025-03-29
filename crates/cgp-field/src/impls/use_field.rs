@@ -1,7 +1,7 @@
 use core::marker::PhantomData;
 
 use cgp_component::{IsProviderFor, WithProvider};
-use cgp_component_macro::cgp_provider;
+use cgp_macro::cgp_provider;
 use cgp_type::{ProvideType, TypeComponent};
 
 use crate::traits::{FieldGetter, HasField, HasFieldMut, MutFieldGetter};

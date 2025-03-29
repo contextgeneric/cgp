@@ -1,5 +1,5 @@
 use cgp_async::Async;
-use cgp_component_macro::blanket_trait;
+use cgp_macro::blanket_trait;
 
 use crate::traits::HasErrorType;
 use crate::{CanRaiseError, CanWrapError};

@@ -1,7 +1,7 @@
 use core::fmt::Debug;
 
 use cgp_component::{DelegateComponent, HasProvider, IsProviderFor, WithProvider};
-use cgp_component_macro::cgp_type;
+use cgp_macro::cgp_type;
 use cgp_type::{ProvideType, UseType};
 
 /**

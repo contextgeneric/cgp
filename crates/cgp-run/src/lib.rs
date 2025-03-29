@@ -2,8 +2,8 @@
 
 use cgp_async::*;
 use cgp_component::*;
-use cgp_component_macro::*;
 use cgp_error::HasErrorType;
+use cgp_macro::*;
 
 #[cgp_component {
     provider: Runner,

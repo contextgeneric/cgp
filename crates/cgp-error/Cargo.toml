@@ -14,5 +14,5 @@ description  = """
 [dependencies]
 cgp-async           = { version = "0.4.0", default-features = false }
 cgp-component       = { version = "0.4.0" }
-cgp-component-macro = { version = "0.4.0" }
+cgp-macro = { version = "0.4.0" }
 cgp-type            = { version = "0.4.0" }
