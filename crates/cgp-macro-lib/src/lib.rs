@@ -17,10 +17,17 @@ pub(crate) mod derive_context;
 pub(crate) mod derive_getter;
 pub(crate) mod derive_provider;
 mod entrypoints;
+pub(crate) mod field;
 pub(crate) mod for_each_replace;
 pub(crate) mod parse;
 pub(crate) mod preset;
+pub(crate) mod product;
+pub(crate) mod symbol;
 pub(crate) mod type_component;
+
+pub use field::derive_fields;
+pub use product::{make_product_expr, make_product_type, make_sum_type};
+pub use symbol::make_symbol;
 
 #[cfg(test)]
 mod tests;

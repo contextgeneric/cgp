@@ -15,7 +15,6 @@ members = [
     "crates/cgp-type",
     "crates/cgp-field",
     "crates/cgp-field-macro",
-    "crates/cgp-field-macro-lib",
     "crates/cgp-error",
     "crates/cgp-error-extra",
     "crates/cgp-error-anyhow",
@@ -47,7 +46,6 @@ cgp-macro-lib               = { path = "./crates/cgp-macro-lib" }
 cgp-type                    = { path = "./crates/cgp-type" }
 cgp-field                   = { path = "./crates/cgp-field" }
 cgp-field-macro             = { path = "./crates/cgp-field-macro" }
-cgp-field-macro-lib         = { path = "./crates/cgp-field-macro-lib" }
 cgp-error                   = { path = "./crates/cgp-error" }
 cgp-error-extra             = { path = "./crates/cgp-error-extra" }
 cgp-run                     = { path = "./crates/cgp-run" }
