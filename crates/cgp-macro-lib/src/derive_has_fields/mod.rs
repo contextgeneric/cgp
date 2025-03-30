@@ -6,4 +6,5 @@ mod sum;
 mod to_struct_fields;
 mod to_struct_fields_ref;
 
+pub use derive_enum::*;
 pub use derive_struct::*;

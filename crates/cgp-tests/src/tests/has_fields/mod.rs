@@ -1,1 +1,2 @@
-pub mod struct_fields;
+mod enum_fields;
+mod struct_fields;
