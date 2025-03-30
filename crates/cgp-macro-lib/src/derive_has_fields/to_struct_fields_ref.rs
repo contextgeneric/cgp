@@ -1,42 +1,17 @@
 use quote::quote;
-use syn::spanned::Spanned;
-use syn::{parse2, parse_quote, Error, Fields, ItemImpl, ItemStruct, Lifetime, LitInt};
+use syn::{parse2, parse_quote, ItemImpl, ItemStruct, Lifetime};
+
+use crate::derive_has_fields::to_fields_struct::derive_to_fields_constructor;
 
 pub fn derive_to_fields_ref_for_struct(item_struct: &ItemStruct) -> syn::Result<ItemImpl> {
     let struct_name = &item_struct.ident;
     let (impl_generics, type_generics, where_clause) = item_struct.generics.split_for_impl();
 
-    let mut constructor = quote! { Nil };
-
-    match &item_struct.fields {
-        Fields::Named(fields) => {
-            for field in fields.named.iter().rev() {
-                let field_name = field.ident.as_ref().ok_or_else(|| {
-                    Error::new_spanned(field, "expect struct field to contain name identifier")
-                })?;
-
-                constructor = quote! {
-                    Cons(
-                        (&self . #field_name) .into(),
-                        #constructor
-                    )
-                };
-            }
+    let constructor = derive_to_fields_constructor(&item_struct.fields, |field_name| {
+        quote! {
+            ( &self . #field_name ) .into()
         }
-        Fields::Unnamed(fields) => {
-            for (i, field) in fields.unnamed.iter().enumerate().rev() {
-                let field_name = LitInt::new(&format!("{i}"), field.span());
-
-                constructor = quote! {
-                    Cons(
-                        (&self . #field_name) .into(),
-                        #constructor
-                    )
-                };
-            }
-        }
-        Fields::Unit => {}
-    };
+    })?;
 
     let life: Lifetime = parse_quote! { '__a };
 
