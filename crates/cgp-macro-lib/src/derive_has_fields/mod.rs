@@ -1,5 +1,6 @@
 mod derive_enum;
 mod derive_struct;
+mod from_fields_enum;
 mod from_struct_fields;
 mod product;
 mod sum;

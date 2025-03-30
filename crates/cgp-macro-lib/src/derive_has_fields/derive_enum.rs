@@ -2,6 +2,7 @@ use proc_macro2::TokenStream;
 use quote::quote;
 use syn::{parse2, ItemEnum, ItemImpl};
 
+use crate::derive_has_fields::from_fields_enum::derive_from_fields_for_enum;
 use crate::derive_has_fields::sum::variants_to_sum_type;
 
 pub fn derive_has_fields_impls_from_enum(item_enum: &ItemEnum) -> syn::Result<Vec<ItemImpl>> {
@@ -34,5 +35,7 @@ pub fn derive_has_fields_impls_from_enum(item_enum: &ItemEnum) -> syn::Result<Ve
         }
     })?;
 
-    Ok(vec![has_fields_impl, has_fields_ref_impl])
+    let from_fields_impl = derive_from_fields_for_enum(item_enum)?;
+
+    Ok(vec![has_fields_impl, has_fields_ref_impl, from_fields_impl])
 }
