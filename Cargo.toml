@@ -22,6 +22,7 @@ members = [
     "crates/cgp-run",
     "crates/cgp-runtime",
     "crates/cgp-inner",
+    "crates/cgp-tests",
 ]
 
 [workspace.package]

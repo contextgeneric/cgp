@@ -161,6 +161,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "cgp-tests"
+version = "0.4.0"
+dependencies = [
+ "cgp",
+]
+
+[[package]]
 name = "cgp-type"
 version = "0.4.0"
 dependencies = [
