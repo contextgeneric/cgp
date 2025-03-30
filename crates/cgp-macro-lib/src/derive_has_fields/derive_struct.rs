@@ -4,8 +4,8 @@ use syn::{parse2, ItemImpl, ItemStruct};
 
 use crate::derive_has_fields::from_fields_struct::derive_from_fields_for_struct;
 use crate::derive_has_fields::product::item_fields_to_product_type;
+use crate::derive_has_fields::to_fields_ref_struct::derive_to_fields_ref_for_struct;
 use crate::derive_has_fields::to_fields_struct::derive_to_fields_for_struct;
-use crate::derive_has_fields::to_struct_fields_ref::derive_to_fields_ref_for_struct;
 
 pub fn derive_has_fields_impls_from_struct(item_struct: &ItemStruct) -> syn::Result<Vec<ItemImpl>> {
     let struct_name = &item_struct.ident;

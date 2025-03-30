@@ -21,7 +21,7 @@ pub fn variants_to_sum_type(
 
         out = quote! {
             Either<
-                Field< #variant_symbol, #reference #variant_fields >,
+                Field< #variant_symbol, #variant_fields >,
                 #out,
             >
         };

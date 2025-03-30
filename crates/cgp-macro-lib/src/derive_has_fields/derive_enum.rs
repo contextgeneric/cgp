@@ -5,6 +5,7 @@ use syn::{parse2, ItemEnum, ItemImpl};
 use crate::derive_has_fields::from_fields_enum::derive_from_fields_for_enum;
 use crate::derive_has_fields::sum::variants_to_sum_type;
 use crate::derive_has_fields::to_fields_enum::derive_to_fields_for_enum;
+use crate::derive_has_fields::to_fields_ref_enum::derive_to_fields_ref_for_enum;
 
 pub fn derive_has_fields_impls_from_enum(item_enum: &ItemEnum) -> syn::Result<Vec<ItemImpl>> {
     let struct_name = &item_enum.ident;
@@ -40,10 +41,13 @@ pub fn derive_has_fields_impls_from_enum(item_enum: &ItemEnum) -> syn::Result<Ve
 
     let to_fields_impl = derive_to_fields_for_enum(item_enum)?;
 
+    let to_fields_ref_impl = derive_to_fields_ref_for_enum(item_enum)?;
+
     Ok(vec![
         has_fields_impl,
         has_fields_ref_impl,
         from_fields_impl,
         to_fields_impl,
+        to_fields_ref_impl,
     ])
 }
