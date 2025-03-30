@@ -1,19 +1,44 @@
 use proc_macro2::TokenStream;
 use quote::quote;
+use syn::punctuated::Punctuated;
 use syn::spanned::Spanned;
-use syn::{parse2, Error, Fields, Ident, ItemEnum, ItemImpl};
+use syn::token::Comma;
+use syn::{parse2, Error, Fields, Ident, ItemEnum, ItemImpl, Variant};
 
 use crate::derive_has_fields::to_fields_struct::{derive_to_fields_constructor, FieldLabel};
 
 pub fn derive_to_fields_for_enum(item_enum: &ItemEnum) -> syn::Result<ItemImpl> {
-    let struct_name = &item_enum.ident;
+    let enum_name = &item_enum.ident;
     let (impl_generics, type_generics, where_clause) = item_enum.generics.split_for_impl();
 
+    let match_arms = derive_to_fields_match_arms(&item_enum.variants)?;
+
+    let item_impl = quote! {
+        impl #impl_generics
+            ToFields for #enum_name #type_generics
+        #where_clause
+        {
+            fn to_fields(
+                self,
+            ) -> Self::Fields {
+                match self {
+                    #match_arms
+                }
+            }
+        }
+    };
+
+    parse2(item_impl)
+}
+
+pub fn derive_to_fields_match_arms(
+    variants: &Punctuated<Variant, Comma>,
+) -> syn::Result<TokenStream> {
     let mut match_arms = quote! {};
     let mut inject_prefix: Box<dyn Fn(TokenStream) -> TokenStream> =
         Box::new(|inner: TokenStream| quote! { #inner });
 
-    for variant in item_enum.variants.iter() {
+    for variant in variants.iter() {
         let variant_ident = &variant.ident;
 
         let constructor = derive_to_fields_constructor(&variant.fields, |label| match label {
@@ -51,22 +76,7 @@ pub fn derive_to_fields_for_enum(item_enum: &ItemEnum) -> syn::Result<ItemImpl> 
         };
     }
 
-    let item_impl = quote! {
-        impl #impl_generics
-            ToFields for #struct_name #type_generics
-        #where_clause
-        {
-            fn to_fields(
-                self,
-            ) -> Self::Fields {
-                match self {
-                    #match_arms
-                }
-            }
-        }
-    };
-
-    parse2(item_impl)
+    Ok(match_arms)
 }
 
 pub fn extract_variant_args(fields: &Fields) -> syn::Result<TokenStream> {
