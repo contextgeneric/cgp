@@ -79,15 +79,42 @@ fn test_generic_struct() {
     assert_eq!(person1, person2);
 }
 
-// #[test]
-// fn test_single_unnamed_field() {
-//     #[derive(HasFields)]
-//     pub struct Person(String);
+#[test]
+fn test_single_unnamed_field() {
+    #[derive(Clone, Debug, Eq, PartialEq, HasFields)]
+    pub struct Person(String);
 
-//     let name = "Alice".to_owned();
+    let name = "Alice".to_owned();
 
-//     let person = Person { 0: name.clone() };
+    let person1 = Person(name.clone());
 
-//     let product = person.to_fields();
-//     assert_eq!(product, Cons(name.clone().into(), Nil));
-// }
+    let product = person1.clone().to_fields();
+    assert_eq!(product, Cons(name.clone().into(), Nil));
+
+    let product_ref = person1.to_fields_ref();
+    assert_eq!(product_ref, Cons((&name).into(), Nil));
+
+    let person2 = Person::from_fields(product);
+
+    assert_eq!(person1, person2);
+}
+
+#[test]
+fn test_single_unnamed_multi_field() {
+    #[derive(Clone, Debug, Eq, PartialEq, HasFields)]
+    pub struct Person(String, u8);
+
+    let name = "Alice".to_owned();
+
+    let person1 = Person(name.clone(), 32);
+
+    let product = person1.clone().to_fields();
+    assert_eq!(product, Cons(name.clone().into(), Cons(32.into(), Nil)));
+
+    let product_ref = person1.to_fields_ref();
+    assert_eq!(product_ref, Cons((&name).into(), Cons((&32).into(), Nil)));
+
+    let person2 = Person::from_fields(product);
+
+    assert_eq!(person1, person2);
+}

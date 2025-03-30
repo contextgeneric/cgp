@@ -1,6 +1,6 @@
 use quote::quote;
 use syn::spanned::Spanned;
-use syn::{parse2, Error, Fields, Ident, ItemImpl, ItemStruct};
+use syn::{parse2, Error, Fields, ItemImpl, ItemStruct, LitInt};
 
 pub fn derive_to_fields_for_struct(item_struct: &ItemStruct) -> syn::Result<ItemImpl> {
     let struct_name = &item_struct.ident;
@@ -24,10 +24,8 @@ pub fn derive_to_fields_for_struct(item_struct: &ItemStruct) -> syn::Result<Item
             }
         }
         Fields::Unnamed(fields) => {
-            let mut constructor = quote! { Nil };
-
             for (i, field) in fields.unnamed.iter().enumerate().rev() {
-                let field_name: Ident = Ident::new(&format!("{i}"), field.span());
+                let field_name = LitInt::new(&format!("{i}"), field.span());
 
                 constructor = quote! {
                     Cons(

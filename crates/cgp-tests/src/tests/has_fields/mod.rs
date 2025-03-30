@@ -1,1 +1,1 @@
-pub mod named_struct;
+pub mod struct_fields;
