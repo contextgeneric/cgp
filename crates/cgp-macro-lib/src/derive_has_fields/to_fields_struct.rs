@@ -1,5 +1,5 @@
 use proc_macro2::TokenStream;
-use quote::quote;
+use quote::{quote, ToTokens};
 use syn::spanned::Spanned;
 use syn::{parse2, Error, Fields, ItemImpl, ItemStruct, LitInt};
 
@@ -7,7 +7,11 @@ pub fn derive_to_fields_for_struct(item_struct: &ItemStruct) -> syn::Result<Item
     let struct_name = &item_struct.ident;
     let (impl_generics, type_generics, where_clause) = item_struct.generics.split_for_impl();
 
-    let constructor = derive_to_fields_constructor(&item_struct.fields, &quote! { self })?;
+    let constructor = derive_to_fields_constructor(&item_struct.fields, |field_name| {
+        quote! {
+            self . #field_name .into()
+        }
+    })?;
 
     let item_impl = parse2(quote! {
         impl #impl_generics
@@ -27,9 +31,9 @@ pub fn derive_to_fields_for_struct(item_struct: &ItemStruct) -> syn::Result<Item
 
 pub fn derive_to_fields_constructor(
     fields: &Fields,
-    context_var: &TokenStream,
+    construct_field: impl Fn(TokenStream) -> TokenStream,
 ) -> syn::Result<TokenStream> {
-    let mut constructor = quote! { Nil };
+    let mut constructors = quote! { Nil };
 
     match &fields {
         Fields::Named(fields) => {
@@ -38,10 +42,12 @@ pub fn derive_to_fields_constructor(
                     Error::new_spanned(field, "expect struct field to contain name identifier")
                 })?;
 
-                constructor = quote! {
+                let constructor = construct_field(field_name.to_token_stream());
+
+                constructors = quote! {
                     Cons(
-                        #context_var . #field_name .into(),
-                        #constructor
+                        #constructor,
+                        #constructors
                     )
                 };
             }
@@ -50,10 +56,12 @@ pub fn derive_to_fields_constructor(
             for (i, field) in fields.unnamed.iter().enumerate().rev() {
                 let field_name = LitInt::new(&format!("{i}"), field.span());
 
-                constructor = quote! {
+                let constructor = construct_field(field_name.to_token_stream());
+
+                constructors = quote! {
                     Cons(
-                        #context_var . #field_name .into(),
-                        #constructor
+                        #constructor,
+                        #constructors
                     )
                 };
             }
@@ -61,5 +69,5 @@ pub fn derive_to_fields_constructor(
         Fields::Unit => {}
     };
 
-    Ok(constructor)
+    Ok(constructors)
 }
