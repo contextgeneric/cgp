@@ -26,7 +26,7 @@ pub fn derive_to_fields_for_struct(item_struct: &ItemStruct) -> syn::Result<Item
         Fields::Unnamed(fields) => {
             let mut constructor = quote! { Nil };
 
-            for (i, field) in fields.unnamed.iter().enumerate() {
+            for (i, field) in fields.unnamed.iter().enumerate().rev() {
                 let field_name: Ident = Ident::new(&format!("{i}"), field.span());
 
                 constructor = quote! {
