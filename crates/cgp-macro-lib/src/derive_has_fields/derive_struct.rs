@@ -11,11 +11,11 @@ pub fn derive_has_fields_impls_from_struct(item_struct: &ItemStruct) -> syn::Res
     let struct_name = &item_struct.ident;
     let (impl_generics, type_generics, where_clause) = item_struct.generics.split_for_impl();
 
-    let life = quote! { & '__a };
+    let life = quote! { '__a };
 
     let fields_type = item_fields_to_product_type(&item_struct.fields, &TokenStream::new())?;
 
-    let fields_ref_type = item_fields_to_product_type(&item_struct.fields, &life)?;
+    let fields_ref_type = item_fields_to_product_type(&item_struct.fields, &quote! { & #life })?;
 
     let has_fields_impl: ItemImpl = parse2(quote! {
         impl #impl_generics
