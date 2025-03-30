@@ -1,7 +1,7 @@
 use quote::quote;
 use syn::{parse2, ItemEnum, ItemImpl};
 
-use crate::derive_has_fields::from_struct_fields::derive_from_field_params;
+use crate::derive_has_fields::from_fields_struct::derive_from_field_params;
 
 pub fn derive_from_fields_for_enum(item_enum: &ItemEnum) -> syn::Result<ItemImpl> {
     let enum_name = &item_enum.ident;

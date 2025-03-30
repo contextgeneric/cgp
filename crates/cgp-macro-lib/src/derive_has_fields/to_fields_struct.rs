@@ -1,3 +1,4 @@
+use proc_macro2::TokenStream;
 use quote::quote;
 use syn::spanned::Spanned;
 use syn::{parse2, Error, Fields, ItemImpl, ItemStruct, LitInt};
@@ -6,37 +7,7 @@ pub fn derive_to_fields_for_struct(item_struct: &ItemStruct) -> syn::Result<Item
     let struct_name = &item_struct.ident;
     let (impl_generics, type_generics, where_clause) = item_struct.generics.split_for_impl();
 
-    let mut constructor = quote! { Nil };
-
-    match &item_struct.fields {
-        Fields::Named(fields) => {
-            for field in fields.named.iter().rev() {
-                let field_name = field.ident.as_ref().ok_or_else(|| {
-                    Error::new_spanned(field, "expect struct field to contain name identifier")
-                })?;
-
-                constructor = quote! {
-                    Cons(
-                        self . #field_name .into(),
-                        #constructor
-                    )
-                };
-            }
-        }
-        Fields::Unnamed(fields) => {
-            for (i, field) in fields.unnamed.iter().enumerate().rev() {
-                let field_name = LitInt::new(&format!("{i}"), field.span());
-
-                constructor = quote! {
-                    Cons(
-                        self . #field_name .into(),
-                        #constructor
-                    )
-                };
-            }
-        }
-        Fields::Unit => {}
-    };
+    let constructor = derive_to_fields_constructor(&item_struct.fields, &quote! { self })?;
 
     let item_impl = parse2(quote! {
         impl #impl_generics
@@ -52,4 +23,43 @@ pub fn derive_to_fields_for_struct(item_struct: &ItemStruct) -> syn::Result<Item
     })?;
 
     Ok(item_impl)
+}
+
+pub fn derive_to_fields_constructor(
+    fields: &Fields,
+    context_var: &TokenStream,
+) -> syn::Result<TokenStream> {
+    let mut constructor = quote! { Nil };
+
+    match &fields {
+        Fields::Named(fields) => {
+            for field in fields.named.iter().rev() {
+                let field_name = field.ident.as_ref().ok_or_else(|| {
+                    Error::new_spanned(field, "expect struct field to contain name identifier")
+                })?;
+
+                constructor = quote! {
+                    Cons(
+                        #context_var . #field_name .into(),
+                        #constructor
+                    )
+                };
+            }
+        }
+        Fields::Unnamed(fields) => {
+            for (i, field) in fields.unnamed.iter().enumerate().rev() {
+                let field_name = LitInt::new(&format!("{i}"), field.span());
+
+                constructor = quote! {
+                    Cons(
+                        #context_var . #field_name .into(),
+                        #constructor
+                    )
+                };
+            }
+        }
+        Fields::Unit => {}
+    };
+
+    Ok(constructor)
 }

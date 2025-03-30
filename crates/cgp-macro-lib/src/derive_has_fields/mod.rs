@@ -1,10 +1,10 @@
 mod derive_enum;
 mod derive_struct;
 mod from_fields_enum;
-mod from_struct_fields;
+mod from_fields_struct;
 mod product;
 mod sum;
-mod to_struct_fields;
+mod to_fields_struct;
 mod to_struct_fields_ref;
 
 pub use derive_enum::*;
