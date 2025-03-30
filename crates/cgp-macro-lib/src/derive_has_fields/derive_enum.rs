@@ -10,6 +10,9 @@ pub fn derive_has_fields_impls_from_enum(item_enum: &ItemEnum) -> syn::Result<Ve
 
     let sum_type = variants_to_sum_type(&item_enum.variants, &TokenStream::new())?;
 
+    let life = quote! { '__a };
+    let sum_type_ref = variants_to_sum_type(&item_enum.variants, &quote! { & #life })?;
+
     let has_fields_impl: ItemImpl = parse2(quote! {
         impl #impl_generics
             HasFields for #struct_name #type_generics
@@ -19,5 +22,17 @@ pub fn derive_has_fields_impls_from_enum(item_enum: &ItemEnum) -> syn::Result<Ve
         }
     })?;
 
-    Ok(vec![has_fields_impl])
+    let has_fields_ref_impl: ItemImpl = parse2(quote! {
+        impl #impl_generics
+            HasFieldsRef for #struct_name #type_generics
+        #where_clause
+        {
+            type FieldsRef< #life > = #sum_type_ref
+            where
+                Self: #life
+            ;
+        }
+    })?;
+
+    Ok(vec![has_fields_impl, has_fields_ref_impl])
 }
