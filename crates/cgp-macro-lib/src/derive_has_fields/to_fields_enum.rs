@@ -3,6 +3,8 @@ use quote::quote;
 use syn::spanned::Spanned;
 use syn::{parse2, Error, Fields, Ident, ItemEnum, ItemImpl};
 
+use crate::derive_has_fields::to_fields_struct::{derive_to_fields_constructor, FieldLabel};
+
 pub fn derive_to_fields_for_enum(item_enum: &ItemEnum) -> syn::Result<ItemImpl> {
     let struct_name = &item_enum.ident;
     let (impl_generics, type_generics, where_clause) = item_enum.generics.split_for_impl();
@@ -13,7 +15,21 @@ pub fn derive_to_fields_for_enum(item_enum: &ItemEnum) -> syn::Result<ItemImpl> 
 
     for variant in item_enum.variants.iter() {
         let variant_ident = &variant.ident;
-        let (variant_args, constructor) = extract_variant_args(&variant.fields)?;
+
+        let constructor = derive_to_fields_constructor(&variant.fields, |label| match label {
+            FieldLabel::Named(label) => quote! {
+                #label .into()
+            },
+            FieldLabel::Unnamed(label) => {
+                let field_name = Ident::new(&format!("field_{label}"), label.span());
+
+                quote! {
+                    #field_name .into()
+                }
+            }
+        })?;
+
+        let variant_args = extract_variant_args(&variant.fields)?;
 
         let inject_variant = inject_prefix(quote! {
             Either::Left( #constructor .into() )
@@ -53,11 +69,10 @@ pub fn derive_to_fields_for_enum(item_enum: &ItemEnum) -> syn::Result<ItemImpl> 
     parse2(item_impl)
 }
 
-pub fn extract_variant_args(fields: &Fields) -> syn::Result<(TokenStream, TokenStream)> {
+pub fn extract_variant_args(fields: &Fields) -> syn::Result<TokenStream> {
     match fields {
         Fields::Named(fields) => {
             let mut args = TokenStream::new();
-            let mut constructor = quote! { Nil };
 
             for field in fields.named.iter().rev() {
                 let field_name = field.ident.as_ref().ok_or_else(|| {
@@ -65,10 +80,9 @@ pub fn extract_variant_args(fields: &Fields) -> syn::Result<(TokenStream, TokenS
                 })?;
 
                 args = quote! { #field_name , #args };
-                constructor = quote! { Cons( #field_name .into(), #constructor ) }
             }
 
-            Ok((quote! { { #args } }, constructor))
+            Ok(quote! { { #args } })
         }
         Fields::Unnamed(fields) => {
             let mut args = TokenStream::new();
@@ -81,8 +95,8 @@ pub fn extract_variant_args(fields: &Fields) -> syn::Result<(TokenStream, TokenS
                 constructor = quote! { Cons( #field_name .into(), #constructor ) }
             }
 
-            Ok((quote! { ( #args ) }, constructor))
+            Ok(quote! { ( #args ) })
         }
-        Fields::Unit => Ok((TokenStream::new(), quote! { Nil })),
+        Fields::Unit => Ok(TokenStream::new()),
     }
 }

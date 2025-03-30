@@ -1,7 +1,7 @@
 use proc_macro2::TokenStream;
 use quote::{quote, ToTokens};
 use syn::spanned::Spanned;
-use syn::{parse2, Error, Fields, ItemImpl, ItemStruct, LitInt};
+use syn::{parse2, Error, Fields, Ident, ItemImpl, ItemStruct, LitInt};
 
 pub fn derive_to_fields_for_struct(item_struct: &ItemStruct) -> syn::Result<ItemImpl> {
     let struct_name = &item_struct.ident;
@@ -29,20 +29,34 @@ pub fn derive_to_fields_for_struct(item_struct: &ItemStruct) -> syn::Result<Item
     Ok(item_impl)
 }
 
+pub enum FieldLabel {
+    Named(Ident),
+    Unnamed(LitInt),
+}
+
+impl ToTokens for FieldLabel {
+    fn to_tokens(&self, tokens: &mut TokenStream) {
+        match self {
+            Self::Named(label) => label.to_tokens(tokens),
+            Self::Unnamed(label) => label.to_tokens(tokens),
+        }
+    }
+}
+
 pub fn derive_to_fields_constructor(
     fields: &Fields,
-    construct_field: impl Fn(TokenStream) -> TokenStream,
+    construct_field: impl Fn(FieldLabel) -> TokenStream,
 ) -> syn::Result<TokenStream> {
     let mut constructors = quote! { Nil };
 
     match &fields {
         Fields::Named(fields) => {
             for field in fields.named.iter().rev() {
-                let field_name = field.ident.as_ref().ok_or_else(|| {
+                let field_name = field.ident.as_ref().cloned().ok_or_else(|| {
                     Error::new_spanned(field, "expect struct field to contain name identifier")
                 })?;
 
-                let constructor = construct_field(field_name.to_token_stream());
+                let constructor = construct_field(FieldLabel::Named(field_name));
 
                 constructors = quote! {
                     Cons(
@@ -56,7 +70,7 @@ pub fn derive_to_fields_constructor(
             for (i, field) in fields.unnamed.iter().enumerate().rev() {
                 let field_name = LitInt::new(&format!("{i}"), field.span());
 
-                let constructor = construct_field(field_name.to_token_stream());
+                let constructor = construct_field(FieldLabel::Unnamed(field_name));
 
                 constructors = quote! {
                     Cons(
