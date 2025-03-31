@@ -1,10 +1,13 @@
 use core::fmt::Debug;
 use core::marker::PhantomData;
 
-pub struct Field<Tag, Value> {
+#[allow(non_camel_case_types)]
+pub struct ω<Tag, Value> {
     pub value: Value,
     pub phantom: PhantomData<Tag>,
 }
+
+pub type Field<Tag, Value> = ω<Tag, Value>;
 
 impl<Tag, Value> From<Value> for Field<Tag, Value> {
     fn from(value: Value) -> Self {

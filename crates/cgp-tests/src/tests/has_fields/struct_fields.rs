@@ -101,7 +101,10 @@ fn test_generic_lifetime_struct() {
     assert_eq!(product, cons((&name).into(), cons((&32).into(), nil())));
 
     let product_ref = person1.to_fields_ref();
-    assert_eq!(product_ref, cons((&&name).into(), cons((&&32).into(), nil())));
+    assert_eq!(
+        product_ref,
+        cons((&&name).into(), cons((&&32).into(), nil()))
+    );
 
     let person2 = Person::from_fields(product);
 
