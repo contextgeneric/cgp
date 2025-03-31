@@ -6,6 +6,6 @@ mod sum;
 
 pub use char::*;
 pub use field::*;
-pub use index::Index;
+pub use index::*;
 pub use product::*;
-pub use sum::{Either, Void};
+pub use sum::*;

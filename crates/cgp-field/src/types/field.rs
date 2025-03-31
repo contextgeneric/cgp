@@ -1,7 +1,6 @@
 use core::fmt::Debug;
 use core::marker::PhantomData;
 
-#[allow(non_camel_case_types)]
 pub struct ω<Tag, Value> {
     pub value: Value,
     pub phantom: PhantomData<Tag>,

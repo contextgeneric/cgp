@@ -1,8 +1,12 @@
 #[derive(Eq, PartialEq, Debug, Clone)]
-pub enum Either<Head, Tail> {
+pub enum σ<Head, Tail> {
     Left(Head),
     Right(Tail),
 }
 
 #[derive(Eq, PartialEq, Debug, Clone)]
-pub enum Void {}
+pub enum θ {}
+
+pub type Either<Head, Tail> = σ<Head, Tail>;
+
+pub type Void = θ;
