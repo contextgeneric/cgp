@@ -1,3 +1,4 @@
+#![allow(confusable_idents)]
 #![allow(mixed_script_confusables)]
 
 /*!
