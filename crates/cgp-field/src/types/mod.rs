@@ -7,5 +7,5 @@ mod sum;
 pub use char::Char;
 pub use field::Field;
 pub use index::Index;
-pub use product::{Cons, Nil};
+pub use product::*;
 pub use sum::{Either, Void};

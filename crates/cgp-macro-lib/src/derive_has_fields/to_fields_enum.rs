@@ -96,13 +96,13 @@ pub fn extract_variant_args(fields: &Fields) -> syn::Result<TokenStream> {
         }
         Fields::Unnamed(fields) => {
             let mut args = TokenStream::new();
-            let mut constructor = quote! { Nil };
+            let mut constructor = quote! { ε };
 
             for (i, field) in fields.unnamed.iter().enumerate().rev() {
                 let field_name = Ident::new(&format!("field_{i}"), field.span());
 
                 args = quote! { #field_name , #args };
-                constructor = quote! { Cons( #field_name .into(), #constructor ) }
+                constructor = quote! { π( #field_name .into(), #constructor ) }
             }
 
             Ok(quote! { ( #args ) })

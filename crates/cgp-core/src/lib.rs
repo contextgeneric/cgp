@@ -1,4 +1,5 @@
 #![no_std]
+#![allow(mixed_script_confusables)]
 
 pub mod prelude;
 
