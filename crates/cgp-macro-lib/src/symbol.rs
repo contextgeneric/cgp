@@ -6,7 +6,7 @@ pub fn symbol_from_string(value: &str) -> Type {
     value
         .chars()
         .rfold(parse_quote! { Nil }, |tail, c: char| -> Type {
-            parse_quote!( ι< #c, #tail > )
+            parse_quote!( Char< #c, #tail > )
         })
 }
 

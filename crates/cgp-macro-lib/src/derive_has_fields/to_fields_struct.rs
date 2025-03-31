@@ -47,7 +47,7 @@ pub fn derive_to_fields_constructor(
     fields: &Fields,
     construct_field: impl Fn(FieldLabel) -> TokenStream,
 ) -> syn::Result<TokenStream> {
-    let mut constructors = quote! { ε };
+    let mut constructors = quote! { Nil };
 
     match &fields {
         Fields::Named(fields) => {
@@ -59,7 +59,7 @@ pub fn derive_to_fields_constructor(
                 let constructor = construct_field(FieldLabel::Named(field_name));
 
                 constructors = quote! {
-                    π(
+                    Cons(
                         #constructor,
                         #constructors
                     )
@@ -73,7 +73,7 @@ pub fn derive_to_fields_constructor(
                 let constructor = construct_field(FieldLabel::Unnamed(field_name));
 
                 constructors = quote! {
-                    π(
+                    Cons(
                         #constructor,
                         #constructors
                     )

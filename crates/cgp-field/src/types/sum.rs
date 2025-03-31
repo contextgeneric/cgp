@@ -7,6 +7,4 @@ pub enum σ<Head, Tail> {
 #[derive(Eq, PartialEq, Debug, Clone)]
 pub enum θ {}
 
-pub type Either<Head, Tail> = σ<Head, Tail>;
-
-pub type Void = θ;
+pub use {θ as Void, σ as Either};

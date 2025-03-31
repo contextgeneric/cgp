@@ -14,10 +14,10 @@ fn test_single_named_field() {
     let person1 = Person { name: name.clone() };
 
     let product = person1.clone().to_fields();
-    assert_eq!(product, cons(name.clone().into(), nil()));
+    assert_eq!(product, Cons(name.clone().into(), Nil));
 
     let product_ref = person1.to_fields_ref();
-    assert_eq!(product_ref, cons((&name).into(), nil()));
+    assert_eq!(product_ref, Cons((&name).into(), Nil));
 
     let person2 = Person::from_fields(product);
 
@@ -40,10 +40,10 @@ fn test_two_named_field() {
     };
 
     let product = person1.clone().to_fields();
-    assert_eq!(product, cons(name.clone().into(), cons(32.into(), nil())));
+    assert_eq!(product, Cons(name.clone().into(), Cons(32.into(), Nil)));
 
     let product_ref = person1.to_fields_ref();
-    assert_eq!(product_ref, cons((&name).into(), cons((&32).into(), nil())));
+    assert_eq!(product_ref, Cons((&name).into(), Cons((&32).into(), Nil)));
 
     let person2 = Person::from_fields(product);
 
@@ -69,10 +69,10 @@ fn test_generic_struct() {
     };
 
     let product = person1.clone().to_fields();
-    assert_eq!(product, cons(name.clone().into(), cons(32.into(), nil())));
+    assert_eq!(product, Cons(name.clone().into(), Cons(32.into(), Nil)));
 
     let product_ref = person1.to_fields_ref();
-    assert_eq!(product_ref, cons((&name).into(), cons((&32).into(), nil())));
+    assert_eq!(product_ref, Cons((&name).into(), Cons((&32).into(), Nil)));
 
     let person2 = Person::from_fields(product);
 
@@ -98,13 +98,10 @@ fn test_generic_lifetime_struct() {
     };
 
     let product = person1.clone().to_fields();
-    assert_eq!(product, cons((&name).into(), cons((&32).into(), nil())));
+    assert_eq!(product, Cons((&name).into(), Cons((&32).into(), Nil)));
 
     let product_ref = person1.to_fields_ref();
-    assert_eq!(
-        product_ref,
-        cons((&&name).into(), cons((&&32).into(), nil()))
-    );
+    assert_eq!(product_ref, Cons((&&name).into(), Cons((&&32).into(), Nil)));
 
     let person2 = Person::from_fields(product);
 
@@ -121,10 +118,10 @@ fn test_single_unnamed_field() {
     let person1 = Person(name.clone());
 
     let product = person1.clone().to_fields();
-    assert_eq!(product, cons(name.clone().into(), nil()));
+    assert_eq!(product, Cons(name.clone().into(), Nil));
 
     let product_ref = person1.to_fields_ref();
-    assert_eq!(product_ref, cons((&name).into(), nil()));
+    assert_eq!(product_ref, Cons((&name).into(), Nil));
 
     let person2 = Person::from_fields(product);
 
@@ -141,10 +138,10 @@ fn test_single_unnamed_multi_field() {
     let person1 = Person(name.clone(), 32);
 
     let product = person1.clone().to_fields();
-    assert_eq!(product, cons(name.clone().into(), cons(32.into(), nil())));
+    assert_eq!(product, Cons(name.clone().into(), Cons(32.into(), Nil)));
 
     let product_ref = person1.to_fields_ref();
-    assert_eq!(product_ref, cons((&name).into(), cons((&32).into(), nil())));
+    assert_eq!(product_ref, Cons((&name).into(), Cons((&32).into(), Nil)));
 
     let person2 = Person::from_fields(product);
 

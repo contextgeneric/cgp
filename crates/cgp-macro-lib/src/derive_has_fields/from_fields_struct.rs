@@ -28,7 +28,7 @@ pub fn derive_from_fields_for_struct(item_struct: &ItemStruct) -> syn::Result<It
 pub fn derive_from_field_params(fields: &Fields) -> syn::Result<(TokenStream, TokenStream)> {
     match fields {
         Fields::Named(fields) => {
-            let mut fields_arg = quote! { ε };
+            let mut fields_arg = quote! { Nil };
             let mut constructor_args = quote! {};
 
             for field in fields.named.iter().rev() {
@@ -37,7 +37,7 @@ pub fn derive_from_field_params(fields: &Fields) -> syn::Result<(TokenStream, To
                 })?;
 
                 fields_arg = quote! {
-                    π( #field_name, #fields_arg )
+                    Cons( #field_name, #fields_arg )
                 };
 
                 constructor_args = quote! {
@@ -54,14 +54,14 @@ pub fn derive_from_field_params(fields: &Fields) -> syn::Result<(TokenStream, To
             ))
         }
         Fields::Unnamed(fields) => {
-            let mut fields_arg = quote! { ε };
+            let mut fields_arg = quote! { Nil };
             let mut constructor_args = quote! {};
 
             for (i, field) in fields.unnamed.iter().enumerate() {
                 let field_name: Ident = Ident::new(&format!("field_{i}"), field.span());
 
                 fields_arg = quote! {
-                    π( #field_name, #fields_arg )
+                    Cons( #field_name, #fields_arg )
                 };
 
                 constructor_args = quote! {
@@ -77,6 +77,6 @@ pub fn derive_from_field_params(fields: &Fields) -> syn::Result<(TokenStream, To
                 },
             ))
         }
-        Fields::Unit => Ok((quote! { ε }, TokenStream::new())),
+        Fields::Unit => Ok((quote! { Nil }, TokenStream::new())),
     }
 }

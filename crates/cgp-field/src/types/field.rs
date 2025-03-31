@@ -6,7 +6,7 @@ pub struct ω<Tag, Value> {
     pub phantom: PhantomData<Tag>,
 }
 
-pub type Field<Tag, Value> = ω<Tag, Value>;
+pub use ω as Field;
 
 impl<Tag, Value> From<Value> for Field<Tag, Value> {
     fn from(value: Value) -> Self {
