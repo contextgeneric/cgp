@@ -8,7 +8,7 @@ pub use cgp_error::{
     HasErrorType,
 };
 pub use cgp_field::{
-    cons, nil, ε, ι, π, ω, Char, Cons, Either, Field, FieldGetter, FromFields, HasField,
+    cons, nil, δ, ε, θ, ι, π, σ, ω, Char, Cons, Either, Field, FieldGetter, FromFields, HasField,
     HasFieldMut, HasFields, HasFieldsRef, Index, MutFieldGetter, Nil, ToFields, ToFieldsRef,
     UseField, Void,
 };
