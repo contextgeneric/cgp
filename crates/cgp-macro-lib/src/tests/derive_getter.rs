@@ -58,14 +58,14 @@ fn test_derive_getter_basic() {
         where
             Context: HasNameType,
             Context: HasField<
-                Cons<Char<'n'>, Cons<Char<'a'>, Cons<Char<'m'>, Cons<Char<'e'>, Nil>>>>,
+                Char<'n', Char<'a', Char<'m', Char<'e', Nil>>>>,
                 Value = Context::Name,
             >,
         {
             fn name(context: &Context) -> &Context::Name {
                 context.get_field(
                     ::core::marker::PhantomData::<
-                        Cons<Char<'n'>, Cons<Char<'a'>, Cons<Char<'m'>, Cons<Char<'e'>, Nil>>>>,
+                        Char<'n', Char<'a', Char<'m', Char<'e', Nil>>>>,
                     >,
                 )
             }
@@ -75,7 +75,7 @@ fn test_derive_getter_basic() {
         where
             Context: HasNameType,
             Context: HasField<
-                Cons<Char<'n'>, Cons<Char<'a'>, Cons<Char<'m'>, Cons<Char<'e'>, Nil>>>>,
+                Char<'n', Char<'a', Char<'m', Char<'e', Nil>>>>,
                 Value = Context::Name,
             >,
         {
@@ -164,7 +164,7 @@ fn test_derive_getter_str() {
         impl<Context> NameGetter<Context> for UseFields
         where
             Context: HasField<
-                Cons<Char<'n'>, Cons<Char<'a'>, Cons<Char<'m'>, Cons<Char<'e'>, Nil>>>>,
+                Char<'n', Char<'a', Char<'m', Char<'e', Nil>>>>,
                 Value = String,
             >,
         {
@@ -172,7 +172,7 @@ fn test_derive_getter_str() {
                 context
                     .get_field(
                         ::core::marker::PhantomData::<
-                            Cons<Char<'n'>, Cons<Char<'a'>, Cons<Char<'m'>, Cons<Char<'e'>, Nil>>>>,
+                            Char<'n', Char<'a', Char<'m', Char<'e', Nil>>>>,
                         >,
                     )
                     .as_str()
@@ -180,7 +180,7 @@ fn test_derive_getter_str() {
         }
         impl<Context> IsProviderFor<NameGetterComponent, Context, ()> for UseFields where
             Context: HasField<
-                Cons<Char<'n'>, Cons<Char<'a'>, Cons<Char<'m'>, Cons<Char<'e'>, Nil>>>>,
+                Char<'n', Char<'a', Char<'m', Char<'e', Nil>>>>,
                 Value = String,
             >
         {
@@ -260,7 +260,7 @@ fn test_derive_getter_mut_str() {
         impl<Context> NameGetter<Context> for UseFields
         where
             Context: HasFieldMut<
-                Cons<Char<'n'>, Cons<Char<'a'>, Cons<Char<'m'>, Cons<Char<'e'>, Nil>>>>,
+                Char<'n', Char<'a', Char<'m', Char<'e', Nil>>>>,
                 Value = String,
             >,
         {
@@ -268,7 +268,7 @@ fn test_derive_getter_mut_str() {
                 context
                     .get_field_mut(
                         ::core::marker::PhantomData::<
-                            Cons<Char<'n'>, Cons<Char<'a'>, Cons<Char<'m'>, Cons<Char<'e'>, Nil>>>>,
+                            Char<'n', Char<'a', Char<'m', Char<'e', Nil>>>>,
                         >,
                     )
                     .as_mut_str()
@@ -276,7 +276,7 @@ fn test_derive_getter_mut_str() {
         }
         impl<Context> IsProviderFor<NameGetterComponent, Context, ()> for UseFields where
             Context: HasFieldMut<
-                Cons<Char<'n'>, Cons<Char<'a'>, Cons<Char<'m'>, Cons<Char<'e'>, Nil>>>>,
+                Char<'n', Char<'a', Char<'m', Char<'e', Nil>>>>,
                 Value = String,
             >
         {
@@ -364,7 +364,7 @@ fn test_derive_getter_clone() {
         where
             Context: HasNameType<Name: Clone>,
             Context: HasField<
-                Cons<Char<'n'>, Cons<Char<'a'>, Cons<Char<'m'>, Cons<Char<'e'>, Nil>>>>,
+                Char<'n', Char<'a', Char<'m', Char<'e', Nil>>>>,
                 Value = Context::Name,
             >,
         {
@@ -372,7 +372,7 @@ fn test_derive_getter_clone() {
                 context
                     .get_field(
                         ::core::marker::PhantomData::<
-                            Cons<Char<'n'>, Cons<Char<'a'>, Cons<Char<'m'>, Cons<Char<'e'>, Nil>>>>,
+                            Char<'n', Char<'a', Char<'m', Char<'e', Nil>>>>,
                         >,
                     )
                     .clone()
@@ -382,7 +382,7 @@ fn test_derive_getter_clone() {
         where
             Context: HasNameType<Name: Clone>,
             Context: HasField<
-                Cons<Char<'n'>, Cons<Char<'a'>, Cons<Char<'m'>, Cons<Char<'e'>, Nil>>>>,
+                Char<'n', Char<'a', Char<'m', Char<'e', Nil>>>>,
                 Value = Context::Name,
             >,
         {
@@ -473,7 +473,7 @@ fn test_derive_getter_option_ref() {
         where
             Context: HasNameType,
             Context: HasField<
-                Cons<Char<'n'>, Cons<Char<'a'>, Cons<Char<'m'>, Cons<Char<'e'>, Nil>>>>,
+                Char<'n', Char<'a', Char<'m', Char<'e', Nil>>>>,
                 Value = Option<Context::Name>,
             >,
         {
@@ -481,7 +481,7 @@ fn test_derive_getter_option_ref() {
                 context
                     .get_field(
                         ::core::marker::PhantomData::<
-                            Cons<Char<'n'>, Cons<Char<'a'>, Cons<Char<'m'>, Cons<Char<'e'>, Nil>>>>,
+                            Char<'n', Char<'a', Char<'m', Char<'e', Nil>>>>,
                         >,
                     )
                     .as_ref()
@@ -491,7 +491,7 @@ fn test_derive_getter_option_ref() {
         where
             Context: HasNameType,
             Context: HasField<
-                Cons<Char<'n'>, Cons<Char<'a'>, Cons<Char<'m'>, Cons<Char<'e'>, Nil>>>>,
+                Char<'n', Char<'a', Char<'m', Char<'e', Nil>>>>,
                 Value = Option<Context::Name>,
             >,
         {
@@ -582,7 +582,7 @@ fn test_derive_getter_option_mut() {
         where
             Context: HasNameType,
             Context: HasFieldMut<
-                Cons<Char<'n'>, Cons<Char<'a'>, Cons<Char<'m'>, Cons<Char<'e'>, Nil>>>>,
+                Char<'n', Char<'a', Char<'m', Char<'e', Nil>>>>,
                 Value = Option<Context::Name>,
             >,
         {
@@ -590,7 +590,7 @@ fn test_derive_getter_option_mut() {
                 context
                     .get_field_mut(
                         ::core::marker::PhantomData::<
-                            Cons<Char<'n'>, Cons<Char<'a'>, Cons<Char<'m'>, Cons<Char<'e'>, Nil>>>>,
+                            Char<'n', Char<'a', Char<'m', Char<'e', Nil>>>>,
                         >,
                     )
                     .as_mut()
@@ -600,7 +600,7 @@ fn test_derive_getter_option_mut() {
         where
             Context: HasNameType,
             Context: HasFieldMut<
-                Cons<Char<'n'>, Cons<Char<'a'>, Cons<Char<'m'>, Cons<Char<'e'>, Nil>>>>,
+                Char<'n', Char<'a', Char<'m', Char<'e', Nil>>>>,
                 Value = Option<Context::Name>,
             >,
         {
@@ -702,14 +702,14 @@ fn test_derive_getter_with_generics() {
         where
             App: HasNameType,
             Context: HasField<
-                Cons<Char<'n'>, Cons<Char<'a'>, Cons<Char<'m'>, Cons<Char<'e'>, Nil>>>>,
+                Char<'n', Char<'a', Char<'m', Char<'e', Nil>>>>,
                 Value = App::Name,
             >,
         {
             fn name(context: &Context) -> &App::Name {
                 context.get_field(
                     ::core::marker::PhantomData::<
-                        Cons<Char<'n'>, Cons<Char<'a'>, Cons<Char<'m'>, Cons<Char<'e'>, Nil>>>>,
+                        Char<'n', Char<'a', Char<'m', Char<'e', Nil>>>>,
                     >,
                 )
             }
@@ -719,7 +719,7 @@ fn test_derive_getter_with_generics() {
         where
             App: HasNameType,
             Context: HasField<
-                Cons<Char<'n'>, Cons<Char<'a'>, Cons<Char<'m'>, Cons<Char<'e'>, Nil>>>>,
+                Char<'n', Char<'a', Char<'m', Char<'e', Nil>>>>,
                 Value = App::Name,
             >,
         {
@@ -822,14 +822,14 @@ fn test_derive_getter_with_component_generics() {
         where
             App: HasNameType,
             Context: HasField<
-                Cons<Char<'n'>, Cons<Char<'a'>, Cons<Char<'m'>, Cons<Char<'e'>, Nil>>>>,
+                Char<'n', Char<'a', Char<'m', Char<'e', Nil>>>>,
                 Value = App::Name,
             >,
         {
             fn name(context: &Context) -> &App::Name {
                 context.get_field(
                     ::core::marker::PhantomData::<
-                        Cons<Char<'n'>, Cons<Char<'a'>, Cons<Char<'m'>, Cons<Char<'e'>, Nil>>>>,
+                        Char<'n', Char<'a', Char<'m', Char<'e', Nil>>>>,
                     >,
                 )
             }
@@ -838,7 +838,7 @@ fn test_derive_getter_with_component_generics() {
         where
             App: HasNameType,
             Context: HasField<
-                Cons<Char<'n'>, Cons<Char<'a'>, Cons<Char<'m'>, Cons<Char<'e'>, Nil>>>>,
+                Char<'n', Char<'a', Char<'m', Char<'e', Nil>>>>,
                 Value = App::Name,
             >,
         {
@@ -938,14 +938,14 @@ fn test_derive_getter_with_phantom() {
         where
             App: HasNameType,
             Context: HasField<
-                Cons<Char<'n'>, Cons<Char<'a'>, Cons<Char<'m'>, Cons<Char<'e'>, Nil>>>>,
+                Char<'n', Char<'a', Char<'m', Char<'e', Nil>>>>,
                 Value = App::Name,
             >,
         {
             fn name(context: &Context, _phantom: PhantomData<(App, B)>) -> &App::Name {
                 context.get_field(
                     ::core::marker::PhantomData::<
-                        Cons<Char<'n'>, Cons<Char<'a'>, Cons<Char<'m'>, Cons<Char<'e'>, Nil>>>>,
+                        Char<'n', Char<'a', Char<'m', Char<'e', Nil>>>>,
                     >,
                 )
             }
@@ -954,7 +954,7 @@ fn test_derive_getter_with_phantom() {
         where
             App: HasNameType,
             Context: HasField<
-                Cons<Char<'n'>, Cons<Char<'a'>, Cons<Char<'m'>, Cons<Char<'e'>, Nil>>>>,
+                Char<'n', Char<'a', Char<'m', Char<'e', Nil>>>>,
                 Value = App::Name,
             >,
         {

@@ -13,41 +13,41 @@ fn test_basic_derive_fields() {
     });
 
     let expected = quote! {
-        impl HasField<Cons<Char<'b'>, Cons<Char<'a'>, Cons<Char<'r'> , Nil>>>> for Foo {
+        impl HasField<Char<'b', Char<'a', Char<'r', Nil>>>> for Foo {
             type Value = Bar;
 
             fn get_field(
                 &self,
-                key: ::core::marker::PhantomData<Cons<Char<'b'>, Cons<Char<'a'>, Cons<Char<'r'> , Nil>>>>,
+                key: ::core::marker::PhantomData<Char<'b', Char<'a', Char<'r', Nil>>>>,
             ) -> &Self::Value {
                 &self.bar
             }
         }
 
-        impl HasFieldMut<Cons<Char<'b'>, Cons<Char<'a'>, Cons<Char<'r'> , Nil>>>> for Foo {
+        impl HasFieldMut<Char<'b', Char<'a', Char<'r', Nil>>>> for Foo {
             fn get_field_mut(
                 &mut self,
-                key: ::core::marker::PhantomData<Cons<Char<'b'>, Cons<Char<'a'>, Cons<Char<'r'> , Nil>>>>,
+                key: ::core::marker::PhantomData<Char<'b', Char<'a', Char<'r', Nil>>>>,
             ) -> &mut Self::Value {
                 &mut self.bar
             }
         }
 
-        impl HasField<Cons<Char<'b'>, Cons<Char<'a'>, Cons<Char<'z'> , Nil>>>> for Foo {
+        impl HasField<Char<'b', Char<'a', Char<'z', Nil>>>> for Foo {
             type Value = Baz;
 
             fn get_field(
                 &self,
-                key: ::core::marker::PhantomData<Cons<Char<'b'>, Cons<Char<'a'>, Cons<Char<'z'> , Nil>>>>,
+                key: ::core::marker::PhantomData<Char<'b', Char<'a', Char<'z', Nil>>>>,
             ) -> &Self::Value {
                 &self.baz
             }
         }
 
-        impl HasFieldMut<Cons<Char<'b'>, Cons<Char<'a'>, Cons<Char<'z'> , Nil>>>> for Foo {
+        impl HasFieldMut<Char<'b', Char<'a', Char<'z', Nil>>>> for Foo {
             fn get_field_mut(
                 &mut self,
-                key: ::core::marker::PhantomData<Cons<Char<'b'>, Cons<Char<'a'>, Cons<Char<'z'> , Nil>>>>,
+                key: ::core::marker::PhantomData<Char<'b', Char<'a', Char<'z', Nil>>>>,
             ) -> &mut Self::Value {
                 &mut self.baz
             }
@@ -70,7 +70,7 @@ fn test_generic_derive_fields() {
     });
 
     let expected = quote! {
-        impl<FooParamA, FooParamB: Clone> HasField<Cons<Char<'b'>, Cons<Char<'a'>, Cons<Char<'r'> , Nil>>>>
+        impl<FooParamA, FooParamB: Clone> HasField<Char<'b', Char<'a', Char<'r', Nil>>>>
             for Foo<FooParamA, FooParamB>
         where
             FooParamA: Eq,
@@ -79,26 +79,26 @@ fn test_generic_derive_fields() {
 
             fn get_field(
                 &self,
-                key: ::core::marker::PhantomData<Cons<Char<'b'>, Cons<Char<'a'>, Cons<Char<'r'> , Nil>>>>,
+                key: ::core::marker::PhantomData<Char<'b', Char<'a', Char<'r', Nil>>>>,
             ) -> &Self::Value {
                 &self.bar
             }
         }
 
-        impl<FooParamA, FooParamB: Clone> HasFieldMut<Cons<Char<'b'>, Cons<Char<'a'>, Cons<Char<'r'> , Nil>>>>
+        impl<FooParamA, FooParamB: Clone> HasFieldMut<Char<'b', Char<'a', Char<'r', Nil>>>>
             for Foo<FooParamA, FooParamB>
         where
             FooParamA: Eq,
         {
             fn get_field_mut(
                 &mut self,
-                key: ::core::marker::PhantomData<Cons<Char<'b'>, Cons<Char<'a'>, Cons<Char<'r'> , Nil>>>>,
+                key: ::core::marker::PhantomData<Char<'b', Char<'a', Char<'r', Nil>>>>,
             ) -> &mut Self::Value {
                 &mut self.bar
             }
         }
 
-        impl<FooParamA, FooParamB: Clone> HasField<Cons<Char<'b'>, Cons<Char<'a'>, Cons<Char<'z'> , Nil>>>>
+        impl<FooParamA, FooParamB: Clone> HasField<Char<'b', Char<'a', Char<'z', Nil>>>>
             for Foo<FooParamA, FooParamB>
         where
             FooParamA: Eq,
@@ -107,20 +107,20 @@ fn test_generic_derive_fields() {
 
             fn get_field(
                 &self,
-                key: ::core::marker::PhantomData<Cons<Char<'b'>, Cons<Char<'a'>, Cons<Char<'z'> , Nil>>>>,
+                key: ::core::marker::PhantomData<Char<'b', Char<'a', Char<'z', Nil>>>>,
             ) -> &Self::Value {
                 &self.baz
             }
         }
 
-        impl<FooParamA, FooParamB: Clone> HasFieldMut<Cons<Char<'b'>, Cons<Char<'a'>, Cons<Char<'z'> , Nil>>>>
+        impl<FooParamA, FooParamB: Clone> HasFieldMut<Char<'b', Char<'a', Char<'z', Nil>>>>
             for Foo<FooParamA, FooParamB>
         where
             FooParamA: Eq,
         {
             fn get_field_mut(
                 &mut self,
-                key: ::core::marker::PhantomData<Cons<Char<'b'>, Cons<Char<'a'>, Cons<Char<'z'> , Nil>>>>,
+                key: ::core::marker::PhantomData<Char<'b', Char<'a', Char<'z', Nil>>>>,
             ) -> &mut Self::Value {
                 &mut self.baz
             }

@@ -12,18 +12,7 @@ fn test_symbol_macro() {
     };
 
     let expected = quote! {
-        type Symbol = Cons<
-            Char<'h'>,
-            Cons<
-                Char<'e'>,
-                Cons<
-                    Char<'l'>,
-                    Cons<
-                        Char<'l'>,
-                        Cons<
-                            Char<'o'>,
-                            Nil
-                        >>>>>;
+        type Symbol = Char<'h', Char<'e', Char<'l', Char<'l', Char<'o', Nil>>>>>;
     };
 
     assert!(equal_token_stream(&derived, &expected));
