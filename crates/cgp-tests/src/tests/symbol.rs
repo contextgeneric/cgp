@@ -8,6 +8,6 @@ pub fn test_symbol_display() {
 
 #[test]
 pub fn test_index_display() {
-    let val = <Index<123>>::default();
+    let val: Index<123> = Default::default();
     assert_eq!(val.to_string(), "123");
 }
