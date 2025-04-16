@@ -218,6 +218,8 @@ fn parse_field_type(return_type: &Type, field_mut: &Option<Mut>) -> syn::Result<
                     parse2(quote! { Option< #field_type > })?,
                     FieldMode::OptionRef,
                 ))
+            } else if let (Some(field_type), None) = (try_parse_mref(type_path), field_mut) {
+                Ok((field_type.clone(), FieldMode::MRef))
             } else {
                 Ok((return_type.clone(), FieldMode::Clone))
             }
@@ -263,8 +265,27 @@ fn try_parse_option_ref(type_path: &TypePath) -> Option<&Type> {
 
     if segment.ident == "Option" {
         if let PathArguments::AngleBracketed(args) = &segment.arguments {
-            if let Some(GenericArgument::Type(Type::Reference(type_ref))) = args.args.first() {
+            let [arg] = Vec::from_iter(args.args.iter()).try_into().ok()?;
+
+            if let GenericArgument::Type(Type::Reference(type_ref)) = arg {
                 return Some(type_ref.elem.as_ref());
+            }
+        }
+    }
+
+    None
+}
+
+fn try_parse_mref(type_path: &TypePath) -> Option<&Type> {
+    let segment = parse_single_segment_type_path(type_path).ok()?;
+
+    if segment.ident == "MRef" {
+        if let PathArguments::AngleBracketed(args) = &segment.arguments {
+            let [arg1, arg2] = Vec::from_iter(args.args.iter()).try_into().ok()?;
+
+            match (arg1, arg2) {
+                (GenericArgument::Lifetime(_), GenericArgument::Type(ty)) => return Some(ty),
+                _ => {}
             }
         }
     }

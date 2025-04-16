@@ -13,6 +13,7 @@ pub struct GetterField {
 pub enum FieldMode {
     Reference,
     OptionRef,
+    MRef,
     Str,
     Clone,
 }

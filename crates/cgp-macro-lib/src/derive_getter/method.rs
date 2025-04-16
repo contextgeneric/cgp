@@ -84,6 +84,11 @@ pub fn derive_getter_method(
                 }
             }
         }
+        FieldMode::MRef => {
+            quote! {
+                MRef::Ref( #call_expr )
+            }
+        }
         FieldMode::Str => {
             if spec.field_mut.is_none() {
                 quote! {
