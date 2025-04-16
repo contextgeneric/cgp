@@ -9,7 +9,7 @@ pub use cgp_error::{
 };
 pub use cgp_field::{
     Char, Cons, Either, Field, FieldGetter, FromFields, HasField, HasFieldMut, HasFields,
-    HasFieldsRef, Index, MutFieldGetter, Nil, ToFields, ToFieldsRef, UseField, Void,
+    HasFieldsRef, Index, MRef, MutFieldGetter, Nil, ToFields, ToFieldsRef, UseField, Void,
 };
 pub use cgp_macro::{
     cgp_auto_getter, cgp_component, cgp_context, cgp_getter, cgp_new_provider, cgp_preset,
