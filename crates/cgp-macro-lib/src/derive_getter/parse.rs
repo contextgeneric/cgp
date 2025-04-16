@@ -287,10 +287,7 @@ fn try_parse_mref(type_path: &TypePath) -> Option<&Type> {
         if let PathArguments::AngleBracketed(args) = &segment.arguments {
             let [arg1, arg2] = Vec::from_iter(args.args.iter()).try_into().ok()?;
 
-            match (arg1, arg2) {
-                (GenericArgument::Lifetime(_), GenericArgument::Type(ty)) => return Some(ty),
-                _ => {}
-            }
+            if let (GenericArgument::Lifetime(_), GenericArgument::Type(ty)) = (arg1, arg2) { return Some(ty) }
         }
     }
 

@@ -5,7 +5,7 @@ pub enum MRef<'a, T> {
     Owned(T),
 }
 
-impl<'a, T> Deref for MRef<'a, T> {
+impl<T> Deref for MRef<'_, T> {
     type Target = T;
 
     fn deref(&self) -> &T {
@@ -16,13 +16,13 @@ impl<'a, T> Deref for MRef<'a, T> {
     }
 }
 
-impl<'a, T> AsRef<T> for MRef<'a, T> {
+impl<T> AsRef<T> for MRef<'_, T> {
     fn as_ref(&self) -> &T {
         self.deref()
     }
 }
 
-impl<'a, T> From<T> for MRef<'a, T> {
+impl<T> From<T> for MRef<'_, T> {
     fn from(value: T) -> Self {
         Self::Owned(value)
     }
@@ -34,7 +34,7 @@ impl<'a, T> From<&'a T> for MRef<'a, T> {
     }
 }
 
-impl<'a, T> MRef<'a, T>
+impl<T> MRef<'_, T>
 where
     T: Clone,
 {
