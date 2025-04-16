@@ -100,9 +100,16 @@ pub fn derive_getter_method(
                 }
             }
         }
-        FieldMode::Clone => quote! {
-            #call_expr .clone()
-        },
+        FieldMode::Clone => {
+            quote! {
+                #call_expr .clone()
+            }
+        }
+        FieldMode::Slice => {
+            quote! {
+                #call_expr .as_ref()
+            }
+        }
     };
 
     let return_type = &spec.return_type;

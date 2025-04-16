@@ -16,4 +16,5 @@ pub enum FieldMode {
     MRef,
     Str,
     Clone,
+    Slice,
 }

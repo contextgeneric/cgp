@@ -2,7 +2,7 @@ use proc_macro2::TokenStream;
 use quote::quote;
 use syn::{parse2, TypeParamBound};
 
-use crate::derive_getter::GetterField;
+use crate::derive_getter::{FieldMode, GetterField};
 
 pub fn derive_getter_constraint(
     spec: &GetterField,
@@ -11,8 +11,14 @@ pub fn derive_getter_constraint(
     let provider_type = &spec.field_type;
 
     let constraint = if spec.field_mut.is_none() {
-        quote! {
-            HasField< #field_symbol, Value = #provider_type >
+        if let FieldMode::Slice = spec.field_mode {
+            quote! {
+                HasField< #field_symbol, Value: AsRef< [ #provider_type ] >
+            }
+        } else {
+            quote! {
+                HasField< #field_symbol, Value = #provider_type >
+            }
         }
     } else {
         quote! {
