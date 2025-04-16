@@ -3,7 +3,7 @@ use quote::{quote, ToTokens};
 use syn::{parse2, Generics, Ident, ItemImpl, ItemTrait};
 
 use crate::derive_getter::getter_field::GetterField;
-use crate::derive_getter::{derive_getter_method, ContextArg};
+use crate::derive_getter::{derive_getter_method, ContextArg, FieldMode};
 use crate::parse::ComponentSpec;
 
 pub fn derive_with_provider_impl(
@@ -24,8 +24,14 @@ pub fn derive_with_provider_impl(
     let component_type = quote! { #component_name < #component_params > };
 
     let provider_constraint = if field.field_mut.is_none() {
-        quote! {
-            FieldGetter< #context_type, #component_type , Value = #provider_type >
+        if let FieldMode::Slice = field.field_mode {
+            quote! {
+                FieldGetter< #context_type, #component_type, Value: AsRef< [ #provider_type ] > + 'static >
+            }
+        } else {
+            quote! {
+                FieldGetter< #context_type, #component_type , Value = #provider_type >
+            }
         }
     } else {
         quote! {

@@ -207,11 +207,11 @@ fn parse_field_type(return_type: &Type, field_mut: &Option<Mut>) -> syn::Result<
 
                 Ok((field_type, FieldMode::Str))
             } else if let (Type::Slice(slice), None) = (type_ref.elem.as_ref(), field_mut) {
-                let field_type: Type = slice.elem.as_ref().clone();
+                let field_type = slice.elem.as_ref().clone();
 
                 Ok((field_type, FieldMode::Slice))
             } else {
-                let field_type: Type = type_ref.elem.as_ref().clone();
+                let field_type = type_ref.elem.as_ref().clone();
 
                 Ok((field_type, FieldMode::Reference))
             }

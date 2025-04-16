@@ -13,7 +13,7 @@ pub fn derive_getter_constraint(
     let constraint = if spec.field_mut.is_none() {
         if let FieldMode::Slice = spec.field_mode {
             quote! {
-                HasField< #field_symbol, Value: AsRef< [ #provider_type ] >
+                HasField< #field_symbol, Value: AsRef< [ #provider_type ] > + 'static >
             }
         } else {
             quote! {
