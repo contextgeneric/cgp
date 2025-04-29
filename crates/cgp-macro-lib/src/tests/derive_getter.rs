@@ -54,6 +54,21 @@ fn test_derive_getter_basic() {
             }
         }
 
+        impl<Context> NameGetter<Context> for UseContext
+        where
+            Context: HasNameType,
+            Context: HasName,
+        {
+            fn name(context: &Context) -> &Context::Name {
+                Context::name(context)
+            }
+        }
+        impl<Context> IsProviderFor<NameGetterComponent, Context, ()> for UseContext
+        where
+            Context: HasNameType,
+            Context: HasName,
+        {}
+
         impl<Context> NameGetter<Context> for UseFields
         where
             Context: HasNameType,
@@ -161,6 +176,18 @@ fn test_derive_getter_str() {
                 Component::Delegate::name(context)
             }
         }
+        impl<Context> NameGetter<Context> for UseContext
+        where
+            Context: HasName,
+        {
+            fn name(context: &Context) -> &str {
+                Context::name(context)
+            }
+        }
+        impl<Context> IsProviderFor<NameGetterComponent, Context, ()> for UseContext
+        where
+            Context: HasName,
+        {}
         impl<Context> NameGetter<Context> for UseFields
         where
             Context: HasField<
@@ -257,6 +284,18 @@ fn test_derive_getter_mut_str() {
                 Component::Delegate::name(context)
             }
         }
+        impl<Context> NameGetter<Context> for UseContext
+        where
+            Context: HasName,
+        {
+            fn name(context: &mut Context) -> &mut str {
+                Context::name(context)
+            }
+        }
+        impl<Context> IsProviderFor<NameGetterComponent, Context, ()> for UseContext
+        where
+            Context: HasName,
+        {}
         impl<Context> NameGetter<Context> for UseFields
         where
             Context: HasFieldMut<
@@ -360,6 +399,20 @@ fn test_derive_getter_clone() {
                 Component::Delegate::name(context)
             }
         }
+        impl<Context> NameGetter<Context> for UseContext
+        where
+            Context: HasNameType<Name: Clone>,
+            Context: HasName,
+        {
+            fn name(context: &Context) -> Context::Name {
+                Context::name(context)
+            }
+        }
+        impl<Context> IsProviderFor<NameGetterComponent, Context, ()> for UseContext
+        where
+            Context: HasNameType<Name: Clone>,
+            Context: HasName,
+        {}
         impl<Context> NameGetter<Context> for UseFields
         where
             Context: HasNameType<Name: Clone>,
@@ -469,6 +522,20 @@ fn test_derive_getter_option_ref() {
                 Component::Delegate::name(context)
             }
         }
+        impl<Context> NameGetter<Context> for UseContext
+        where
+            Context: HasNameType,
+            Context: HasName,
+        {
+            fn name(context: &Context) -> Option<&Context::Name> {
+                Context::name(context)
+            }
+        }
+        impl<Context> IsProviderFor<NameGetterComponent, Context, ()> for UseContext
+        where
+            Context: HasNameType,
+            Context: HasName,
+        {}
         impl<Context> NameGetter<Context> for UseFields
         where
             Context: HasNameType,
@@ -578,6 +645,20 @@ fn test_derive_getter_option_mut() {
                 Component::Delegate::name(context)
             }
         }
+        impl<Context> NameGetter<Context> for UseContext
+        where
+            Context: HasNameType,
+            Context: HasName,
+        {
+            fn name(context: &mut Context) -> Option<&mut Context::Name> {
+                Context::name(context)
+            }
+        }
+        impl<Context> IsProviderFor<NameGetterComponent, Context, ()> for UseContext
+        where
+            Context: HasNameType,
+            Context: HasName,
+        {}
         impl<Context> NameGetter<Context> for UseFields
         where
             Context: HasNameType,
@@ -697,7 +778,20 @@ fn test_derive_getter_with_generics() {
                 Component::Delegate::name(context)
             }
         }
-
+        impl<Context, App> NameGetter<Context, App> for UseContext
+        where
+            App: HasNameType,
+            Context: HasName<App>,
+        {
+            fn name(context: &Context) -> &App::Name {
+                Context::name(context)
+            }
+        }
+        impl<Context, App> IsProviderFor<NameGetterComponent, Context, (App)> for UseContext
+        where
+            App: HasNameType,
+            Context: HasName<App>,
+        {}
         impl<Context, App> NameGetter<Context, App> for UseFields
         where
             App: HasNameType,
@@ -818,6 +912,20 @@ fn test_derive_getter_with_component_generics() {
                 Component::Delegate::name(context)
             }
         }
+        impl<Context, App> NameGetter<Context, App> for UseContext
+        where
+            App: HasNameType,
+            Context: HasName<App>,
+        {
+            fn name(context: &Context) -> &App::Name {
+                Context::name(context)
+            }
+        }
+        impl<Context, App> IsProviderFor<NameGetterComponent<App>, Context, (App)> for UseContext
+        where
+            App: HasNameType,
+            Context: HasName<App>,
+        {}
         impl<Context, App> NameGetter<Context, App> for UseFields
         where
             App: HasNameType,
@@ -934,6 +1042,21 @@ fn test_derive_getter_with_phantom() {
                 Component::Delegate::name(context, _phantom)
             }
         }
+        impl<Context, App, B> NameGetter<Context, App, B> for UseContext
+        where
+            App: HasNameType,
+            Context: HasName<App, B>,
+        {
+            fn name(context: &Context, _phantom: PhantomData<(App, B)>) -> &App::Name {
+                Context::name(context, _phantom)
+            }
+        }
+        impl<Context, App, B> IsProviderFor<NameGetterComponent, Context, (App, B)>
+        for UseContext
+        where
+            App: HasNameType,
+            Context: HasName<App, B>,
+        {}
         impl<Context, App, B> NameGetter<Context, App, B> for UseFields
         where
             App: HasNameType,

@@ -76,6 +76,21 @@ fn test_derive_component_with_const_generic() {
                 Component::Delegate::foo(context)
             }
         }
+
+        impl<Context, const BAR: usize> FooProvider<Context, BAR> for UseContext
+        where
+            Context: HasFoo<BAR>,
+        {
+            type Foo = Context::Foo;
+            fn foo(context: &Context) -> Self::Foo {
+                Context::foo(context)
+            }
+        }
+        impl<Context, const BAR: usize> IsProviderFor<FooComponent, Context, (BAR)>
+        for UseContext
+        where
+            Context: HasFoo<BAR>,
+        {}
     };
 
     assert_equal_token_stream(&derived, &expected);
