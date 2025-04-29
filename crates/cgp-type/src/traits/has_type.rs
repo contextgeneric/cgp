@@ -12,14 +12,6 @@ pub trait HasType<Tag> {
 pub type TypeOf<Context, Tag> = <Context as HasType<Tag>>::Type;
 
 #[cgp_provider(TypeComponent)]
-impl<Context, Tag> ProvideType<Context, Tag> for UseContext
-where
-    Context: HasType<Tag>,
-{
-    type Type = Context::Type;
-}
-
-#[cgp_provider(TypeComponent)]
 impl<Context, Tag, Components, Delegate> ProvideType<Context, Tag> for UseDelegate<Components>
 where
     Components: DelegateComponent<Tag, Delegate = Delegate>,

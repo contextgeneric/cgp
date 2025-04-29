@@ -2,14 +2,19 @@ use alloc::vec::Vec;
 
 use proc_macro2::TokenStream;
 use quote::quote;
-use syn::{parse2, ImplItemFn, Signature, TypePath, Visibility};
+use syn::punctuated::Punctuated;
+use syn::token::Comma;
+use syn::{parse2, ImplItemFn, Signature, Visibility};
 
 use crate::derive_component::signature_args::signature_to_args;
 
-pub fn derive_delegated_fn_impl(sig: &Signature, delegator: &TypePath) -> syn::Result<ImplItemFn> {
+pub fn derive_delegated_fn_impl(
+    sig: &Signature,
+    delegator: &TokenStream,
+) -> syn::Result<ImplItemFn> {
     let fn_name = &sig.ident;
 
-    let args = signature_to_args(sig);
+    let args: Punctuated<_, Comma> = signature_to_args(sig).collect();
 
     let await_expr: TokenStream = if sig.asyncness.is_some() {
         quote!( .await )

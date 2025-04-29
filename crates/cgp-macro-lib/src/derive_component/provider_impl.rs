@@ -4,9 +4,11 @@ use alloc::vec::Vec;
 use proc_macro2::Span;
 use quote::quote;
 use syn::punctuated::Punctuated;
+use syn::spanned::Spanned;
 use syn::token::{Brace, Comma, For, Impl, Plus};
 use syn::{
-    parse2, GenericParam, Ident, ImplItem, ItemImpl, ItemTrait, Path, TraitItem, TypeParamBound,
+    parse2, Error, GenericParam, Ident, ImplItem, ItemImpl, ItemTrait, Path, TraitItem,
+    TypeParamBound,
 };
 
 use crate::derive_component::delegate_fn::derive_delegated_fn_impl;
@@ -54,24 +56,15 @@ pub fn derive_provider_impl(
                 #provider_name < #provider_generic_args >
             })?;
 
-            match &mut impl_generics.where_clause {
-                Some(where_clause) => {
-                    where_clause.predicates.push(parse2(quote! {
-                        #component_type : #delegate_constraint
-                    })?);
+            let where_clause = impl_generics.make_where_clause();
 
-                    where_clause.predicates.push(parse2(quote! {
-                        #component_type :: Delegate : #provider_constraint
-                    })?);
-                }
-                _ => {
-                    impl_generics.where_clause = Some(parse2(quote! {
-                        where
-                            #component_type : #delegate_constraint,
-                            #component_type :: Delegate : #provider_constraint
-                    })?);
-                }
-            }
+            where_clause.predicates.push(parse2(quote! {
+                #component_type : #delegate_constraint
+            })?);
+
+            where_clause.predicates.push(parse2(quote! {
+                #component_type :: Delegate : #provider_constraint
+            })?);
         }
 
         impl_generics
@@ -82,15 +75,14 @@ pub fn derive_provider_impl(
     for trait_item in provider_trait.items.iter() {
         match &trait_item {
             TraitItem::Fn(trait_fn) => {
-                let impl_fn = derive_delegated_fn_impl(
-                    &trait_fn.sig,
-                    &parse2(quote!(#component_type :: Delegate))?,
-                )?;
+                let impl_fn =
+                    derive_delegated_fn_impl(&trait_fn.sig, &quote!(#component_type :: Delegate))?;
 
                 impl_items.push(ImplItem::Fn(impl_fn))
             }
             TraitItem::Type(trait_type) => {
                 let type_name = &trait_type.ident;
+
                 let type_generics = {
                     let mut type_generics = trait_type.generics.clone();
                     type_generics.where_clause = None;
@@ -113,7 +105,12 @@ pub fn derive_provider_impl(
 
                 impl_items.push(ImplItem::Type(impl_type));
             }
-            _ => {}
+            _ => {
+                return Err(Error::new(
+                    trait_item.span(),
+                    format!("unsupported trait item: {trait_item:?}"),
+                ))
+            }
         }
     }
 
