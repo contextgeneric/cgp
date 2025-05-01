@@ -1,7 +1,7 @@
 use quote::quote;
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
-use syn::{parse2, Ident, ItemStruct};
+use syn::{Ident, ItemStruct, parse2};
 
 pub fn derive_component_name_struct(
     component_name: &Ident,

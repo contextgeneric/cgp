@@ -1,6 +1,6 @@
 use proc_macro2::TokenStream;
 use quote::quote;
-use syn::{parse2, TypeParamBound};
+use syn::{TypeParamBound, parse2};
 
 use crate::derive_getter::{FieldMode, GetterField};
 

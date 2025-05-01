@@ -2,10 +2,10 @@ use alloc::string::ToString;
 
 use proc_macro2::TokenStream;
 use quote::quote;
-use syn::{parse2, Ident, ItemImpl, ItemTrait};
+use syn::{Ident, ItemImpl, ItemTrait, parse2};
 
 use crate::derive_getter::getter_field::GetterField;
-use crate::derive_getter::{derive_getter_constraint, derive_getter_method, ContextArg};
+use crate::derive_getter::{ContextArg, derive_getter_constraint, derive_getter_method};
 use crate::symbol::symbol_from_string;
 
 pub fn derive_blanket_impl(

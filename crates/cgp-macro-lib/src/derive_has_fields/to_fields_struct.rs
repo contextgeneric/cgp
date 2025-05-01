@@ -1,7 +1,7 @@
 use proc_macro2::TokenStream;
-use quote::{quote, ToTokens};
+use quote::{ToTokens, quote};
 use syn::spanned::Spanned;
-use syn::{parse2, Error, Fields, Ident, ItemImpl, ItemStruct, LitInt};
+use syn::{Error, Fields, Ident, ItemImpl, ItemStruct, LitInt, parse2};
 
 pub fn derive_to_fields_for_struct(item_struct: &ItemStruct) -> syn::Result<ItemImpl> {
     let struct_name = &item_struct.ident;

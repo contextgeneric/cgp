@@ -1,7 +1,7 @@
 use quote::quote;
 use syn::punctuated::Punctuated;
 use syn::token::Plus;
-use syn::{parse2, Ident, ItemImpl, ItemTrait, Type, TypeParamBound};
+use syn::{Ident, ItemImpl, ItemTrait, Type, TypeParamBound, parse2};
 
 use crate::parse::{DelegateComponentEntries, ImplGenerics};
 

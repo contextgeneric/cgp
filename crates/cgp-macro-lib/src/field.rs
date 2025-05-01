@@ -3,7 +3,7 @@ use alloc::vec::Vec;
 
 use proc_macro2::TokenStream;
 use quote::ToTokens;
-use syn::{parse_quote, Fields, ItemImpl, ItemStruct};
+use syn::{Fields, ItemImpl, ItemStruct, parse_quote};
 
 use crate::symbol::symbol_from_string;
 

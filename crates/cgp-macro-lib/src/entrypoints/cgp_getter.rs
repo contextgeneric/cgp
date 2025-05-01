@@ -1,11 +1,11 @@
 use proc_macro2::TokenStream;
 use quote::quote;
-use syn::{parse_quote, ItemTrait, Type};
+use syn::{ItemTrait, Type, parse_quote};
 
 use crate::derive_component::derive_component_with_ast;
 use crate::derive_getter::{
-    derive_use_field_impl, derive_use_fields_impl, derive_with_provider_impl, parse_getter_fields,
-    GetterField,
+    GetterField, derive_use_field_impl, derive_use_fields_impl, derive_with_provider_impl,
+    parse_getter_fields,
 };
 use crate::derive_provider::derive_is_provider_for;
 use crate::parse::ComponentSpec;

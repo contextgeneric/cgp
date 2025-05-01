@@ -3,8 +3,8 @@ use core::marker::PhantomData;
 use cgp_component::{DelegateComponent, IsProviderFor, WithProvider};
 use cgp_macro::cgp_provider;
 
-use crate::traits::ProvideType;
 use crate::TypeComponent;
+use crate::traits::ProvideType;
 
 pub struct UseDelegatedType<Components>(pub PhantomData<Components>);
 

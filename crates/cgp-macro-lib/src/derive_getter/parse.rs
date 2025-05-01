@@ -1,17 +1,17 @@
 use alloc::vec::Vec;
 
-use quote::{quote, ToTokens};
+use quote::{ToTokens, quote};
 use syn::punctuated::Punctuated;
 use syn::spanned::Spanned;
 use syn::token::{Comma, Mut};
 use syn::{
-    parse2, parse_quote, Error, FnArg, GenericArgument, Ident, ItemTrait, PathArguments,
-    PathSegment, ReturnType, Signature, TraitItem, TraitItemFn, Type, TypePath,
+    Error, FnArg, GenericArgument, Ident, ItemTrait, PathArguments, PathSegment, ReturnType,
+    Signature, TraitItem, TraitItemFn, Type, TypePath, parse_quote, parse2,
 };
 
 use crate::derive_component::replace_self_type;
-use crate::derive_getter::getter_field::GetterField;
 use crate::derive_getter::FieldMode;
+use crate::derive_getter::getter_field::GetterField;
 
 pub fn parse_getter_fields(
     context_type: &Ident,
@@ -30,7 +30,7 @@ pub fn parse_getter_fields(
                 return Err(Error::new(
                     item.span(),
                     "getter trait can only contain getter methods",
-                ))
+                ));
             }
         }
     }

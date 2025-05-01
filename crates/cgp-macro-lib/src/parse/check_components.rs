@@ -3,7 +3,7 @@ use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::spanned::Spanned;
 use syn::token::{Bracket, Colon, Comma, For, Lt, Where};
-use syn::{braced, bracketed, Ident, Type, WhereClause};
+use syn::{Ident, Type, WhereClause, braced, bracketed};
 
 use crate::parse::ImplGenerics;
 

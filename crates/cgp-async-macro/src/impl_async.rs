@@ -1,6 +1,6 @@
 use proc_macro2::TokenStream;
 use quote::ToTokens;
-use syn::{parse_quote, ItemTrait, ReturnType, TraitItem, Type};
+use syn::{ItemTrait, ReturnType, TraitItem, Type, parse_quote};
 
 pub fn impl_async(item: TokenStream) -> TokenStream {
     match syn::parse2::<ItemTrait>(item.clone()) {
@@ -16,7 +16,7 @@ pub fn impl_async(item: TokenStream) -> TokenStream {
                         };
 
                         let impl_return: ReturnType = parse_quote! {
-                            -> impl ::core::future::Future<Output = #return_type> + MaybeSend
+                            -> impl ::core::future::Future<Output = #return_type> + MaybeSend + '_
                         };
 
                         trait_fn.sig.output = impl_return;

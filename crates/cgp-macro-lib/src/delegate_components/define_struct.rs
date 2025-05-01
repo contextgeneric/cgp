@@ -1,7 +1,7 @@
 use quote::quote;
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
-use syn::{parse2, GenericParam, Generics, Ident, ItemStruct, Type};
+use syn::{GenericParam, Generics, Ident, ItemStruct, Type, parse2};
 
 pub fn define_struct(ident: &Ident, generics: &Generics) -> syn::Result<ItemStruct> {
     if generics.params.is_empty() {

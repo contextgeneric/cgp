@@ -1,6 +1,6 @@
 use proc_macro2::{Span, TokenStream};
 use quote::quote;
-use syn::{parse2, Ident, ItemTrait};
+use syn::{Ident, ItemTrait, parse2};
 
 use crate::blanket_trait::derive_blanket_trait;
 

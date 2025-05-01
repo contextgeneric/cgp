@@ -1,9 +1,9 @@
 use proc_macro2::Span;
-use quote::{quote, ToTokens};
+use quote::{ToTokens, quote};
 use syn::token::{Eq, For, Impl, Semi};
 use syn::{
-    parse2, Error, Ident, ImplItem, ImplItemConst, ImplItemFn, ImplItemType, ItemImpl, ItemTrait,
-    Path, TraitItem, Type, TypeParamBound, Visibility, WherePredicate,
+    Error, Ident, ImplItem, ImplItemConst, ImplItemFn, ImplItemType, ItemImpl, ItemTrait, Path,
+    TraitItem, Type, TypeParamBound, Visibility, WherePredicate, parse2,
 };
 
 use crate::blanket_trait::remove_self_path;

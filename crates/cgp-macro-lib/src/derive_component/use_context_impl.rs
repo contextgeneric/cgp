@@ -1,7 +1,7 @@
 use quote::quote;
 use syn::spanned::Spanned;
 use syn::token::{Brace, For, Impl};
-use syn::{parse2, Error, GenericParam, Ident, ImplItem, ItemImpl, ItemTrait, Path, TraitItem};
+use syn::{Error, GenericParam, Ident, ImplItem, ItemImpl, ItemTrait, Path, TraitItem, parse2};
 
 use crate::derive_component::delegate_fn::derive_delegated_fn_impl;
 use crate::derive_component::delegate_type::derive_delegate_type_impl;
@@ -65,7 +65,7 @@ pub fn derive_use_context_impl(
                 return Err(Error::new(
                     trait_item.span(),
                     format!("unsupported trait item: {trait_item:?}"),
-                ))
+                ));
             }
         }
     }

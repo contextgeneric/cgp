@@ -7,8 +7,8 @@ use syn::punctuated::Punctuated;
 use syn::spanned::Spanned;
 use syn::token::{Brace, Comma, For, Impl, Plus};
 use syn::{
-    parse2, Error, GenericParam, Ident, ImplItem, ItemImpl, ItemTrait, Path, TraitItem,
-    TypeParamBound,
+    Error, GenericParam, Ident, ImplItem, ItemImpl, ItemTrait, Path, TraitItem, TypeParamBound,
+    parse2,
 };
 
 use crate::derive_component::delegate_fn::derive_delegated_fn_impl;
@@ -51,6 +51,10 @@ pub fn derive_provider_impl(
             delegate_constraint.push(parse2(quote!(
                 IsProviderFor< #component_name < #component_params >, #context_type, ( #is_provider_params ) >
             ))?);
+
+            delegate_constraint.push(parse2(quote! {
+                'static
+            })?);
 
             let provider_constraint: TypeParamBound = parse2(quote! {
                 #provider_name < #provider_generic_args >
@@ -109,7 +113,7 @@ pub fn derive_provider_impl(
                 return Err(Error::new(
                     trait_item.span(),
                     format!("unsupported trait item: {trait_item:?}"),
-                ))
+                ));
             }
         }
     }

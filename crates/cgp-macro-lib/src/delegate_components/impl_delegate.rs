@@ -3,7 +3,7 @@ use alloc::vec;
 use alloc::vec::Vec;
 
 use quote::quote;
-use syn::{parse2, ImplItem, ImplItemType, ItemImpl, Path, Type};
+use syn::{ImplItem, ImplItemType, ItemImpl, Path, Type, parse2};
 
 use crate::delegate_components::merge_generics::merge_generics;
 use crate::parse::{DelegateComponentEntries, DelegateComponentName, ImplGenerics};

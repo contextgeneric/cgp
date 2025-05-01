@@ -3,7 +3,7 @@ use core::fmt::Display;
 
 use cgp_core::error::{ErrorRaiser, ErrorRaiserComponent, ErrorWrapper, ErrorWrapperComponent};
 use cgp_core::prelude::*;
-use eyre::{eyre, Error};
+use eyre::{Error, eyre};
 
 pub struct DisplayEyreError;
 

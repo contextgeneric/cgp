@@ -2,7 +2,7 @@ use alloc::vec::Vec;
 
 use itertools::Itertools;
 use proc_macro2::{Group, Ident, TokenStream, TokenTree};
-use quote::{format_ident, ToTokens};
+use quote::{ToTokens, format_ident};
 use syn::parse::Parse;
 
 pub fn iter_parse_and_replace_self_type<I, T>(

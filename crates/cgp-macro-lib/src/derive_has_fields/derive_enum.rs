@@ -1,6 +1,6 @@
 use proc_macro2::TokenStream;
 use quote::quote;
-use syn::{parse2, ItemEnum, ItemImpl};
+use syn::{ItemEnum, ItemImpl, parse2};
 
 use crate::derive_has_fields::from_fields_enum::derive_from_fields_for_enum;
 use crate::derive_has_fields::sum::variants_to_sum_type;

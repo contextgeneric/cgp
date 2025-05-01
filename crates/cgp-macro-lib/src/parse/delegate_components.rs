@@ -5,7 +5,7 @@ use quote::ToTokens;
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::token::{Bracket, Colon, Comma, Lt};
-use syn::{braced, bracketed, Token, Type};
+use syn::{Token, Type, braced, bracketed};
 
 use crate::parse::ImplGenerics;
 

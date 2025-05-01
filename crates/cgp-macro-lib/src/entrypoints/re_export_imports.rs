@@ -1,7 +1,7 @@
 use proc_macro2::{Span, TokenStream};
-use quote::{quote, TokenStreamExt};
+use quote::{TokenStreamExt, quote};
 use syn::token::Pub;
-use syn::{parse2, parse_quote, Attribute, Ident, Item, ItemMod, ItemUse, Visibility};
+use syn::{Attribute, Ident, Item, ItemMod, ItemUse, Visibility, parse_quote, parse2};
 
 pub fn re_export_imports(attrs: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
     let export_mod_name: Ident = if !attrs.is_empty() {

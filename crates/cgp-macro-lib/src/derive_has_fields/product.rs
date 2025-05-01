@@ -1,7 +1,7 @@
 use proc_macro2::TokenStream;
 use quote::quote;
 use syn::spanned::Spanned;
-use syn::{parse2, Error, Fields, LitInt, Type};
+use syn::{Error, Fields, LitInt, Type, parse2};
 
 use crate::symbol::symbol_from_string;
 

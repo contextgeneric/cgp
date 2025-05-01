@@ -3,8 +3,8 @@ use std::collections::BTreeMap;
 use syn::punctuated::Punctuated;
 use syn::token::{Comma, Plus};
 use syn::{
-    parse_quote, GenericArgument, GenericParam, Generics, Ident, PathArguments, Type,
-    TypeParamBound, WherePredicate,
+    GenericArgument, GenericParam, Generics, Ident, PathArguments, Type, TypeParamBound,
+    WherePredicate, parse_quote,
 };
 
 pub fn replace_provider_in_generics(provider_map: &BTreeMap<Ident, Type>, generics: &mut Generics) {

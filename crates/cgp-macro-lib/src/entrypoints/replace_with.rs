@@ -3,7 +3,7 @@ use quote::quote;
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
 
-use crate::for_each_replace::{replace_stream, ReplaceSpecs};
+use crate::for_each_replace::{ReplaceSpecs, replace_stream};
 
 pub fn replace_with(tokens: TokenStream) -> syn::Result<TokenStream> {
     let specs: ReplaceSpecs = syn::parse2(tokens)?;

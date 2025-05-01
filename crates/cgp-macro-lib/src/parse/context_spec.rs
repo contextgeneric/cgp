@@ -1,6 +1,6 @@
+use syn::Ident;
 use syn::parse::{Parse, ParseStream};
 use syn::token::Colon;
-use syn::Ident;
 
 use crate::parse::SimpleType;
 

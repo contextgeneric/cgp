@@ -1,6 +1,6 @@
 use proc_macro2::{Span, TokenStream};
-use quote::{quote, ToTokens, TokenStreamExt};
-use syn::{parse2, parse_quote, Ident, ItemTrait};
+use quote::{ToTokens, TokenStreamExt, quote};
+use syn::{Ident, ItemTrait, parse_quote, parse2};
 
 use crate::delegate_components::{
     define_delegates_to_trait, define_struct, impl_delegate_components,

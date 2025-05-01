@@ -1,6 +1,6 @@
+use syn::Ident;
 use syn::parse::{Parse, ParseStream};
 use syn::token::Lt;
-use syn::Ident;
 
 use crate::parse::ImplGenerics;
 

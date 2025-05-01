@@ -1,11 +1,11 @@
 use alloc::boxed::Box;
 use alloc::vec::Vec;
 
-use quote::{quote, ToTokens};
+use quote::{ToTokens, quote};
 use syn::token::{Brace, For, Impl};
 use syn::{
-    parse2, GenericParam, Generics, Ident, ImplItem, ItemImpl, ItemTrait, Path, TraitItem,
-    TypeParamBound,
+    GenericParam, Generics, Ident, ImplItem, ItemImpl, ItemTrait, Path, TraitItem, TypeParamBound,
+    parse2,
 };
 
 use crate::derive_component::delegate_fn::derive_delegated_fn_impl;

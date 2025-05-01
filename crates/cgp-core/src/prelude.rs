@@ -1,4 +1,4 @@
-pub use cgp_async::{async_trait, Async, MaybeSend, MaybeStatic, MaybeSync};
+pub use cgp_async::{Async, MaybeSend, MaybeStatic, MaybeSync, async_trait};
 pub use cgp_component::{
     CanUseComponent, DelegateComponent, HasProvider, IsProviderFor, UseContext, UseFields,
     WithContext, WithProvider,
@@ -12,8 +12,8 @@ pub use cgp_field::{
     HasFieldsRef, Index, MRef, MutFieldGetter, Nil, ToFields, ToFieldsRef, UseField, Void,
 };
 pub use cgp_macro::{
-    cgp_auto_getter, cgp_component, cgp_context, cgp_getter, cgp_new_provider, cgp_preset,
-    cgp_provider, cgp_type, check_components, delegate_components, product, re_export_imports,
-    replace_with, symbol, HasField, HasFields, Product, Sum,
+    HasField, HasFields, Product, Sum, cgp_auto_getter, cgp_component, cgp_context, cgp_getter,
+    cgp_new_provider, cgp_preset, cgp_provider, cgp_type, check_components, delegate_components,
+    product, re_export_imports, replace_with, symbol,
 };
 pub use cgp_type::{HasType, ProvideType, UseType};
