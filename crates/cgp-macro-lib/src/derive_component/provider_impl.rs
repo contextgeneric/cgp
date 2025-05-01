@@ -109,7 +109,7 @@ pub fn derive_provider_impl(
                 return Err(Error::new(
                     trait_item.span(),
                     format!("unsupported trait item: {trait_item:?}"),
-                ))
+                ));
             }
         }
     }

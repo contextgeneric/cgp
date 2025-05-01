@@ -16,7 +16,7 @@ pub fn derive_has_fields(body: TokenStream) -> syn::Result<TokenStream> {
             return Err(Error::new_spanned(
                 item,
                 "expect body to be either a struct or enum",
-            ))
+            ));
         }
     };
 

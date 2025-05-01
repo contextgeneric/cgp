@@ -30,7 +30,7 @@ pub fn parse_getter_fields(
                 return Err(Error::new(
                     item.span(),
                     "getter trait can only contain getter methods",
-                ))
+                ));
             }
         }
     }

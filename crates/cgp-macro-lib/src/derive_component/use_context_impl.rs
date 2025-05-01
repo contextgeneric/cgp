@@ -65,7 +65,7 @@ pub fn derive_use_context_impl(
                 return Err(Error::new(
                     trait_item.span(),
                     format!("unsupported trait item: {trait_item:?}"),
-                ))
+                ));
             }
         }
     }
