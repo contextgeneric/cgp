@@ -1,0 +1,22 @@
+use cgp::prelude::*;
+
+use crate::tests::preset::basic::components::{
+    BarGetterComponent, BarTypeProviderComponent, FooGetterComponent, FooTypeProviderComponent,
+};
+use crate::tests::preset::nested_inheritance::preset_d::NestedPresetD;
+
+#[cgp_context(MyContextComponents: NestedPresetD)]
+#[derive(HasField)]
+pub struct MyContext {
+    pub foo: (),
+    pub bar: (),
+}
+
+check_components! {
+    CanUseMyContext for MyContext {
+        FooTypeProviderComponent,
+        BarTypeProviderComponent,
+        FooGetterComponent,
+        BarGetterComponent,
+    }
+}
