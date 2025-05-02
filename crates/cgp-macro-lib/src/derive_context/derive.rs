@@ -1,7 +1,5 @@
 use quote::quote;
-use syn::{parse2, parse_quote, Ident, ItemImpl, ItemStruct, Path};
-
-use crate::parse::TypeGenerics;
+use syn::{parse2, parse_quote, AngleBracketedGenericArguments, Ident, ItemImpl, ItemStruct};
 
 pub fn derive_has_components(
     provider_name: &Ident,
@@ -23,15 +21,15 @@ pub fn derive_has_components(
 pub fn derive_delegate_preset(
     provider_name: &Ident,
     preset_name: &Ident,
-    preset_generics: &Option<TypeGenerics>,
+    preset_generics: &Option<AngleBracketedGenericArguments>,
 ) -> syn::Result<(ItemImpl, ItemImpl)> {
-    let preset_trait_name: Path = parse2(quote! {
+    let preset_trait_name = quote! {
         #preset_name :: IsPreset
-    })?;
+    };
 
-    let preset_provider_name: Path = parse2(quote! {
-        #preset_name :: Provider
-    })?;
+    let preset_provider_name = quote! {
+        #preset_name :: Provider #preset_generics
+    };
 
     let delegate_impl: ItemImpl = parse_quote! {
         impl<__Name__>
@@ -40,7 +38,7 @@ pub fn derive_delegate_preset(
         where
             Self: #preset_trait_name < __Name__ >,
         {
-            type Delegate = #preset_provider_name #preset_generics ;
+            type Delegate = #preset_provider_name;
         }
     };
 
@@ -50,7 +48,7 @@ pub fn derive_delegate_preset(
             for #provider_name
         where
             Self: #preset_trait_name < __Name__ >,
-            #preset_provider_name #preset_generics: IsProviderFor<__Name__, __Context__, __Params__>,
+            #preset_provider_name: IsProviderFor<__Name__, __Context__, __Params__>,
         {
         }
     };
