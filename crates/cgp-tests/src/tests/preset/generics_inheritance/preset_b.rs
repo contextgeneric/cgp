@@ -7,7 +7,7 @@ mod preset {
 
     MyGenericPresetA::with_components! {
         [
-            FooGetterComponent<Index<I>>,
+            FooGetterComponent,
         ],
         | Components | {
             cgp_preset! {

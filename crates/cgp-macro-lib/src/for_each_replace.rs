@@ -7,7 +7,7 @@ use syn::parse::discouraged::Speculative;
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::token::{Comma, Or};
-use syn::{braced, Ident, Type};
+use syn::{braced, Ident};
 
 use crate::parse::DelegateComponentName;
 
@@ -27,12 +27,12 @@ impl Parse for ReplaceSpecs {
 
         Comma::parse(input)?;
 
-        let exclude: Vec<Type> = {
+        let exclude: Vec<Ident> = {
             let fork = input.fork();
 
             match parse_brackets(&fork) {
                 Ok(bracket) => {
-                    let types = <Punctuated<Type, Comma>>::parse_terminated(&bracket.content)?;
+                    let types = <Punctuated<Ident, Comma>>::parse_terminated(&bracket.content)?;
 
                     input.advance_to(&fork);
                     Comma::parse(input)?;
@@ -58,9 +58,17 @@ impl Parse for ReplaceSpecs {
         let replacements = raw_replacements
             .into_iter()
             .filter(|replacement| {
-                !exclude
-                    .iter()
-                    .any(|exclude| exclude == &replacement.component_type)
+                let target_ident = replacement
+                    .component_type
+                    .to_token_stream()
+                    .into_iter()
+                    .next();
+                match target_ident {
+                    Some(TokenTree::Ident(target_ident)) => {
+                        !exclude.iter().any(|exclude| exclude == &target_ident)
+                    }
+                    _ => true,
+                }
             })
             .map(|ast| ast.to_token_stream())
             .collect();
