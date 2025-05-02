@@ -22,7 +22,7 @@ pub fn derive_provider_struct(provider_impl: &ItemImpl) -> syn::Result<ItemStruc
 
     let provider_field = match &provider_type.generics {
         Some(generics) => {
-            let args = &generics.generics.params;
+            let args = &generics.args;
             quote! {
                 #generics
                 ( pub ::core::marker::PhantomData<( #args )>  )
