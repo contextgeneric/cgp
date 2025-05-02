@@ -2,9 +2,7 @@ use proc_macro2::{Span, TokenStream};
 use quote::{quote, ToTokens, TokenStreamExt};
 use syn::{parse2, parse_quote, Ident, ItemTrait};
 
-use crate::delegate_components::{
-    define_delegates_to_trait, define_struct, impl_delegate_components,
-};
+use crate::delegate_components::{define_struct, impl_delegate_components};
 use crate::derive_component::to_snake_case_str;
 use crate::parse::{DefinePreset, ImplGenerics};
 use crate::preset::{define_substitution_macro, impl_components_is_preset};
@@ -65,20 +63,6 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
     };
 
     mod_output.append_all(impl_is_preset_items);
-
-    {
-        let delegates_to_trait_name = Ident::new("DelegatesToPreset", Span::call_site());
-
-        let (delegates_to_trait, delegates_to_impl) = define_delegates_to_trait(
-            &delegates_to_trait_name,
-            &provider_type,
-            &preset_generics,
-            &ast.delegate_entries,
-        )?;
-
-        mod_output.extend(delegates_to_trait.to_token_stream());
-        mod_output.extend(delegates_to_impl.to_token_stream());
-    }
 
     {
         let with_components_macro_name = Ident::new(
