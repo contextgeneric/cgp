@@ -118,11 +118,14 @@ impl ToTokens for DelegateComponentEntry {
         let components = &self.components;
         let source = &self.source;
 
-        if components.len() == 1 {
+        let count = components.len();
+
+        #[allow(clippy::comparison_chain)]
+        if count == 1 {
             tokens.append_all(quote! {
                 #components : #source
             });
-        } else if components.len() > 1 {
+        } else if count > 1 {
             tokens.append_all(quote! {
                 [
                     #components

@@ -1,3 +1,5 @@
+#![allow(clippy::module_inception)]
+
 pub mod basic;
 pub mod generics;
 pub mod generics_inheritance;
