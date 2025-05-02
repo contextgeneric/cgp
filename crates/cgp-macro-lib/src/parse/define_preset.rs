@@ -15,13 +15,16 @@ impl Parse for DefinePreset {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let preset = input.parse()?;
 
-        let delegate_entries: DelegateComponentEntries = input.parse()?;
-
         let parent_presets = if input.peek(Colon) {
+            let _: Colon = input.parse()?;
+            // let parent: Ident = input.parse()?;
+            // Punctuated::from_iter([parent])
             <Punctuated<Ident, Plus>>::parse_separated_nonempty(input)?
         } else {
             Default::default()
         };
+
+        let delegate_entries: DelegateComponentEntries = input.parse()?;
 
         Ok(Self {
             preset,

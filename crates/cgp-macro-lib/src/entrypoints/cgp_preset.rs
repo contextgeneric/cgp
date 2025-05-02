@@ -22,16 +22,22 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
 
         let rest_parent_presets: Punctuated<&Ident, Plus> = parent_presets.collect();
 
+        let super_presets = if rest_parent_presets.is_empty() {
+            quote! {}
+        } else {
+            quote! { : #rest_parent_presets }
+        };
+
         let preset_type_spec = &ast.preset;
         let delegate_entries = &ast.delegate_entries;
 
         let output = quote! {
             use #parent_preset ::re_exports::*;
 
-            #parent_preset :: with_components {
+            #parent_preset :: with_components! {
                 | #parent_components_ident | {
                     cgp_preset! {
-                        #preset_type_spec : #rest_parent_presets {
+                        #preset_type_spec #super_presets {
                             #parent_components_ident: #parent_preset :: Provider,
                             #delegate_entries
                         }
