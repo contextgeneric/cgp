@@ -12,7 +12,7 @@ fn test_replace_tokens_with_generics() {
             <'b, B> BazComponent<'b, B>,
         ],
         [
-            BarComponent<A>,
+            BarComponent,
         ],
         | Name | {
             delegate_components! {
