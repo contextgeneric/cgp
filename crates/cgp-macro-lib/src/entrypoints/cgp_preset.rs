@@ -1,5 +1,7 @@
 use proc_macro2::{Span, TokenStream};
 use quote::{quote, ToTokens, TokenStreamExt};
+use syn::punctuated::Punctuated;
+use syn::token::Plus;
 use syn::{parse2, parse_quote, Ident, ItemTrait};
 
 use crate::delegate_components::{define_struct, impl_delegate_components};
@@ -9,6 +11,37 @@ use crate::preset::{define_substitution_macro, impl_components_is_preset};
 
 pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
     let ast: DefinePreset = syn::parse2(body)?;
+
+    let mut parent_presets = ast.parent_presets.iter();
+
+    if let Some(parent_preset) = parent_presets.next() {
+        let parent_components_ident = Ident::new(
+            &format!("__{parent_preset}Components__"),
+            parent_preset.span(),
+        );
+
+        let rest_parent_presets: Punctuated<&Ident, Plus> = parent_presets.collect();
+
+        let preset_type_spec = &ast.preset;
+        let delegate_entries = &ast.delegate_entries;
+
+        let output = quote! {
+            use #parent_preset ::re_exports::*;
+
+            #parent_preset :: with_components {
+                | #parent_components_ident | {
+                    cgp_preset! {
+                        #preset_type_spec : #rest_parent_presets {
+                            #parent_components_ident: #parent_preset :: Provider,
+                            #delegate_entries
+                        }
+                    }
+                }
+            }
+        };
+
+        return Ok(output);
+    }
 
     let preset_module_name = &ast.preset.name;
 

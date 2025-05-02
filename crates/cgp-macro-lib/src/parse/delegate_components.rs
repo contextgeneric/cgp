@@ -1,7 +1,7 @@
 use core::iter;
 
 use proc_macro2::TokenStream;
-use quote::ToTokens;
+use quote::{quote, ToTokens, TokenStreamExt};
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::token::{Bracket, Colon, Comma, Lt};
@@ -104,6 +104,31 @@ impl Parse for DelegateComponentName {
             component_type,
             component_generics,
         })
+    }
+}
+
+impl ToTokens for DelegateComponentEntries {
+    fn to_tokens(&self, tokens: &mut TokenStream) {
+        self.entries.to_tokens(tokens);
+    }
+}
+
+impl ToTokens for DelegateComponentEntry {
+    fn to_tokens(&self, tokens: &mut TokenStream) {
+        let components = &self.components;
+        let source = &self.source;
+
+        if components.len() == 1 {
+            tokens.append_all(quote! {
+                #components : #source
+            });
+        } else if components.len() > 1 {
+            tokens.append_all(quote! {
+                [
+                    #components
+                ] : #source
+            });
+        }
     }
 }
 

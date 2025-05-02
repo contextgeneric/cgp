@@ -1,3 +1,4 @@
+use quote::ToTokens;
 use syn::parse::{Parse, ParseStream};
 use syn::token::Lt;
 use syn::Ident;
@@ -19,5 +20,12 @@ impl Parse for TypeSpec {
         };
 
         Ok(Self { name, generics })
+    }
+}
+
+impl ToTokens for TypeSpec {
+    fn to_tokens(&self, tokens: &mut proc_macro2::TokenStream) {
+        self.name.to_tokens(tokens);
+        self.generics.to_tokens(tokens);
     }
 }
