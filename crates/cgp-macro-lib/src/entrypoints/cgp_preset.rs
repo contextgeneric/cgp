@@ -128,6 +128,17 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
         })
     }
 
+    let mut parent_exports = TokenStream::new();
+
+    for parent in parent_presets.iter() {
+        let parent_ident = &parent.parent_type.name;
+        parent_exports.append_all(quote! {
+            #[doc(hidden)]
+            #[doc(no_inline)]
+            pub use super:: #parent_ident ::re_exports::*;
+        });
+    }
+
     let output = quote! {
         #impl_delegate_items
 
@@ -140,6 +151,8 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
                 #[doc(hidden)]
                 #[doc(no_inline)]
                 pub use super::super::super::re_exports::*;
+
+                #parent_exports
             }
 
             #mod_output
