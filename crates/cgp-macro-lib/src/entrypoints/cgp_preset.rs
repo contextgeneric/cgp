@@ -1,7 +1,6 @@
 use proc_macro2::{Span, TokenStream};
 use quote::{quote, ToTokens, TokenStreamExt};
-use syn::punctuated::Punctuated;
-use syn::token::Plus;
+use syn::token::At;
 use syn::{parse2, parse_quote, Ident, ItemTrait};
 
 use crate::delegate_components::{define_struct, impl_delegate_components};
@@ -12,24 +11,27 @@ use crate::preset::{define_substitution_macro, impl_components_is_preset};
 pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
     let ast: DefinePreset = syn::parse2(body)?;
 
-    let mut parent_presets_iter = ast.parent_presets.iter();
+    let mut parent_presets = ast.parent_presets.clone();
 
-    if let Some(parent_preset) = parent_presets_iter.next() {
-        let parent_ident = &parent_preset.name;
-        let parent_generics = &parent_preset.generics;
+    let mut remaining_parents = parent_presets
+        .iter_mut()
+        .filter(|parent| parent.has_expanded.is_none());
+
+    let m_parent = if let Some(parent_preset) = remaining_parents.next() {
+        parent_preset.has_expanded = Some(At(Span::call_site()));
+        Some(parent_preset.parent_type.clone())
+    } else {
+        None
+    };
+
+    if let Some(parent) = m_parent {
+        let parent_ident = &parent.name;
+        let parent_generics = &parent.generics;
 
         let parent_components_ident = Ident::new(
             &format!("__{parent_ident}Components__"),
             parent_ident.span(),
         );
-
-        let rest_parent_presets: Punctuated<_, Plus> = parent_presets_iter.collect();
-
-        let super_presets = if rest_parent_presets.is_empty() {
-            quote! {}
-        } else {
-            quote! { : #rest_parent_presets }
-        };
 
         let preset_type_spec = &ast.preset;
         let delegate_entries = &ast.delegate_entries;
@@ -40,7 +42,7 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
             #parent_ident :: with_components! {
                 | #parent_components_ident | {
                     cgp_preset! {
-                        #preset_type_spec #super_presets {
+                        #preset_type_spec: #parent_presets {
                             #parent_components_ident: #parent_ident :: Provider #parent_generics,
                             #delegate_entries
                         }
