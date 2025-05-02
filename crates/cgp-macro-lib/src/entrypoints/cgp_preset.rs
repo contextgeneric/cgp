@@ -12,15 +12,18 @@ use crate::preset::{define_substitution_macro, impl_components_is_preset};
 pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
     let ast: DefinePreset = syn::parse2(body)?;
 
-    let mut parent_presets = ast.parent_presets.iter();
+    let mut parent_presets_iter = ast.parent_presets.iter();
 
-    if let Some(parent_preset) = parent_presets.next() {
+    if let Some(parent_preset) = parent_presets_iter.next() {
+        let parent_ident = &parent_preset.name;
+        let parent_generics = &parent_preset.generics;
+
         let parent_components_ident = Ident::new(
-            &format!("__{parent_preset}Components__"),
-            parent_preset.span(),
+            &format!("__{parent_ident}Components__"),
+            parent_ident.span(),
         );
 
-        let rest_parent_presets: Punctuated<&Ident, Plus> = parent_presets.collect();
+        let rest_parent_presets: Punctuated<_, Plus> = parent_presets_iter.collect();
 
         let super_presets = if rest_parent_presets.is_empty() {
             quote! {}
@@ -32,13 +35,13 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
         let delegate_entries = &ast.delegate_entries;
 
         let output = quote! {
-            use #parent_preset ::re_exports::*;
+            pub use #parent_ident ::re_exports::*;
 
-            #parent_preset :: with_components! {
+            #parent_ident :: with_components! {
                 | #parent_components_ident | {
                     cgp_preset! {
                         #preset_type_spec #super_presets {
-                            #parent_components_ident: #parent_preset :: Provider,
+                            #parent_components_ident: #parent_ident :: Provider #parent_generics,
                             #delegate_entries
                         }
                     }
