@@ -12,11 +12,7 @@ use crate::parse::ImplGenerics;
 pub struct DelegateComponents {
     pub target_type: Type,
     pub target_generics: ImplGenerics,
-    pub delegate_entries: DelegateComponentEntries<Type>,
-}
-
-pub struct DelegateComponentEntries<T> {
-    pub entries: Punctuated<DelegateComponentEntry<T>, Comma>,
+    pub delegate_entries: Punctuated<DelegateComponentEntry<Type>, Comma>,
 }
 
 pub struct DelegateComponentEntry<T> {
@@ -40,28 +36,17 @@ impl Parse for DelegateComponents {
 
         let target_type: Type = input.parse()?;
 
-        let delegate_entries: DelegateComponentEntries<Type> = input.parse()?;
+        let delegate_entries = {
+            let content;
+            braced!(content in input);
+            Punctuated::parse_terminated(&content)?
+        };
 
         Ok(Self {
             target_type,
             target_generics,
             delegate_entries,
         })
-    }
-}
-
-impl<Type> Parse for DelegateComponentEntries<Type>
-where
-    Type: Parse,
-{
-    fn parse(input: ParseStream) -> syn::Result<Self> {
-        let entries = {
-            let entries_body;
-            braced!(entries_body in input);
-            entries_body.parse_terminated(DelegateComponentEntry::parse, Comma)?
-        };
-
-        Ok(Self { entries })
     }
 }
 
@@ -104,15 +89,6 @@ where
             component_type,
             component_generics,
         })
-    }
-}
-
-impl<Type> ToTokens for DelegateComponentEntries<Type>
-where
-    Type: ToTokens,
-{
-    fn to_tokens(&self, tokens: &mut TokenStream) {
-        self.entries.to_tokens(tokens);
     }
 }
 
