@@ -1,7 +1,9 @@
 #[cgp::re_export_imports]
 mod preset {
+    #![allow(unused_imports)]
+
     use cgp::prelude::*;
-    use MyGenericPresetA::re_exports::*;
+    use MyGenericPresetA::components::*;
 
     use crate::tests::preset::generics_inheritance::preset_a::MyGenericPresetA;
 

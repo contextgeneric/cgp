@@ -38,6 +38,7 @@ pub fn re_export_imports(attrs: TokenStream, body: TokenStream) -> syn::Result<T
 
     let export_mod: ItemMod = parse2(quote! {
         #[doc(hidden)]
+        #[allow(unused_imports)]
         mod #export_mod_name {
             #mod_body
         }

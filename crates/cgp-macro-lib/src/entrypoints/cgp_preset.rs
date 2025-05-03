@@ -40,7 +40,7 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
         let delegate_entries = &ast.delegate_entries;
 
         let output = quote! {
-            pub use #parent_ident ::re_exports::*;
+            use #parent_ident ::components::*;
 
             #parent_ident :: with_components! {
                 | #parent_components_ident | {
@@ -139,15 +139,17 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
             parent_exports.append_all(quote! {
                 #[doc(hidden)]
                 #[doc(no_inline)]
-                pub use super:: #parent_ident ::re_exports::*;
+                pub use super:: #parent_ident ::components::*;
             });
         }
 
         quote! {
             #[doc(hidden)]
-            pub mod re_exports {
+            #[allow(unused_imports)]
+            mod re_exports {
                 #[doc(hidden)]
                 #[doc(no_inline)]
+                #[allow(unused_imports)]
                 pub use super::super::super::re_exports::*;
 
                 #parent_exports
