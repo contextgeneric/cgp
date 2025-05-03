@@ -8,7 +8,7 @@ use crate::tests::preset::nested_inheritance::preset_d::NestedPresetD;
 #[cgp_context(MyContextComponents: NestedPresetD)]
 #[derive(HasField)]
 pub struct MyContext {
-    pub foo: (),
+    pub fool: (),
     pub bar: (),
 }
 

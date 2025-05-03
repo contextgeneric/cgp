@@ -8,7 +8,7 @@ use crate::tests::preset::generics_inheritance::preset_b::MyGenericPresetB;
 #[cgp_context(MyContextComponents: MyGenericPresetB<()>)]
 #[derive(HasField)]
 pub struct MyContext {
-    pub foo: (),
+    pub food: (),
     pub bar: (),
 }
 

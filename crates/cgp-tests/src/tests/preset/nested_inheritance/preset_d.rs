@@ -7,6 +7,8 @@ mod preset {
 
     cgp_preset! {
         NestedPresetD: NestedPresetB + NestedPresetC {
+            override FooGetterComponent:
+                UseField<symbol!("fool")>,
         }
     }
 }
