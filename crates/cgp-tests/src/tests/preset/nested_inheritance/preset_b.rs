@@ -11,4 +11,12 @@ mod preset {
                 UseField<symbol!("food")>,
         }
     }
+
+    pub trait CheckDelegatesForNestedPresetB:
+        DelegateComponent<FooTypeProviderComponent, Delegate = NestedPresetA::Provider>
+        + DelegateComponent<FooGetterComponent, Delegate = UseField<symbol!("food")>>
+    {
+    }
+
+    impl CheckDelegatesForNestedPresetB for NestedPresetB::Provider {}
 }

@@ -26,3 +26,12 @@ check_components! {
         BarGetterComponent,
     }
 }
+
+pub trait CheckDelegatesForMyContextComponents:
+    DelegateComponent<FooTypeProviderComponent, Delegate = MyPreset::Provider>
+    + DelegateComponent<BarTypeProviderComponent, Delegate = MyPreset::Provider>
+    + DelegateComponent<FooGetterComponent, Delegate = MyPreset::Provider>
+{
+}
+
+impl CheckDelegatesForMyContextComponents for MyContextComponents {}

@@ -15,4 +15,12 @@ mod preset {
                 UseType<()>,
         }
     }
+
+    pub trait CheckDelegatesForMyPresetA:
+        DelegateComponent<FooTypeProviderComponent, Delegate = UseType<()>>
+        + DelegateComponent<BarTypeProviderComponent, Delegate = UseType<()>>
+    {
+    }
+
+    impl CheckDelegatesForMyPresetA for MyPresetA::Provider {}
 }

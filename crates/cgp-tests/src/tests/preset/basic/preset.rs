@@ -17,4 +17,13 @@ mod preset {
                 UseField<symbol!("foo")>,
         }
     }
+
+    pub trait CheckDelegatesForMyPreset:
+        DelegateComponent<FooTypeProviderComponent, Delegate = UseType<()>>
+        + DelegateComponent<BarTypeProviderComponent, Delegate = UseType<()>>
+        + DelegateComponent<FooGetterComponent, Delegate = UseField<symbol!("foo")>>
+    {
+    }
+
+    impl CheckDelegatesForMyPreset for MyPreset::Provider {}
 }
