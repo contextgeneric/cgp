@@ -8,13 +8,17 @@ use syn::{parse2, parse_quote, Ident, ItemTrait};
 
 use crate::delegate_components::{define_struct, impl_delegate_components};
 use crate::derive_component::to_snake_case_str;
-use crate::parse::{DefinePreset, ImplGenerics};
+use crate::parse::{DefinePreset, DelegateComponentEntry, ImplGenerics, SimpleType};
 use crate::preset::{define_substitution_macro, impl_components_is_preset};
 
 pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
     let ast: DefinePreset = syn::parse2(body)?;
 
-    let delegate_entries = &ast.delegate_entries;
+    let delegate_entries: Punctuated<DelegateComponentEntry<SimpleType>, Comma> = ast
+        .delegate_entries
+        .iter()
+        .map(|entry| entry.entry.clone())
+        .collect();
 
     let mut parent_presets = ast.parent_presets.clone();
 
@@ -40,10 +44,29 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
 
         let preset_type_spec = &ast.preset;
 
+        let mut overrides: Punctuated<&Ident, Comma> = Punctuated::default();
+
+        for entry in ast.delegate_entries.iter() {
+            if entry.is_override {
+                for component in entry.entry.components.iter() {
+                    overrides.push(&component.component_type.name);
+                }
+            }
+        }
+
+        let filter = if !overrides.is_empty() {
+            quote! {
+                [ #overrides ],
+            }
+        } else {
+            TokenStream::new()
+        };
+
         let output = quote! {
             use #parent_ident ::components::*;
 
             #parent_ident :: with_components! {
+                #filter
                 | #parent_components_ident | {
                     cgp_preset! {
                         #preset_type_spec: #parent_presets {
@@ -84,7 +107,7 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
         })?;
 
         let items =
-            impl_delegate_components(&namespaces_preset_type, &preset_generics, delegate_entries)?;
+            impl_delegate_components(&namespaces_preset_type, &preset_generics, &delegate_entries)?;
 
         let mut stream = TokenStream::new();
         stream.append_all(items);
@@ -96,7 +119,7 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
         &preset_trait_name,
         &provider_type,
         &preset_generics,
-        delegate_entries,
+        &delegate_entries,
     );
 
     let provider_struct = define_struct(&provider_struct_name, &preset_generics.generics)?;

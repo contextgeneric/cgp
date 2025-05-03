@@ -15,6 +15,7 @@ pub struct DelegateComponents {
     pub delegate_entries: Punctuated<DelegateComponentEntry<Type>, Comma>,
 }
 
+#[derive(Clone)]
 pub struct DelegateComponentEntry<T> {
     pub components: Punctuated<DelegateComponentName<T>, Comma>,
     pub source: Type,

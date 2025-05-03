@@ -3,14 +3,19 @@ use quote::ToTokens;
 use syn::braced;
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
-use syn::token::{At, Colon, Comma, Plus};
+use syn::token::{At, Colon, Comma, Override, Plus};
 
 use crate::parse::{DelegateComponentEntry, SimpleType, TypeSpec};
 
 pub struct DefinePreset {
     pub preset: TypeSpec,
     pub parent_presets: Punctuated<PresetParent, Plus>,
-    pub delegate_entries: Punctuated<DelegateComponentEntry<SimpleType>, Comma>,
+    pub delegate_entries: Punctuated<DelegatePresetEntry, Comma>,
+}
+
+pub struct DelegatePresetEntry {
+    pub is_override: bool,
+    pub entry: DelegateComponentEntry<SimpleType>,
 }
 
 impl Parse for DefinePreset {
@@ -31,6 +36,21 @@ impl Parse for DefinePreset {
             parent_presets,
             delegate_entries,
         })
+    }
+}
+
+impl Parse for DelegatePresetEntry {
+    fn parse(input: ParseStream) -> syn::Result<Self> {
+        let is_override = if input.peek(Override) {
+            let _: Override = input.parse()?;
+            true
+        } else {
+            false
+        };
+
+        let entry = input.parse()?;
+
+        Ok(Self { is_override, entry })
     }
 }
 

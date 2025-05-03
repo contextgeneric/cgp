@@ -15,7 +15,7 @@ mod preset {
             cgp_preset! {
                 MyGenericPresetB<T> {
                     Components: MyGenericPresetA::Provider<T>,
-                    <I> FooGetterComponent<I>:
+                    override <I> FooGetterComponent<I>:
                         UseField<symbol!("foo")>,
                 }
             }
