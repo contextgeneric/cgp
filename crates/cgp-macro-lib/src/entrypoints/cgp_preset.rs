@@ -47,7 +47,7 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
         let mut overrides: Punctuated<&Ident, Comma> = Punctuated::default();
 
         for entry in ast.delegate_entries.iter() {
-            if entry.is_override {
+            if entry.is_override.is_some() {
                 for component in entry.entry.components.iter() {
                     overrides.push(&component.component_type.name);
                 }
@@ -62,6 +62,8 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
             TokenStream::new()
         };
 
+        let preset_entries = &ast.delegate_entries;
+
         let output = quote! {
             use #parent_ident ::components::*;
 
@@ -71,7 +73,7 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
                     cgp_preset! {
                         #preset_type_spec: #parent_presets {
                             #parent_components_ident: #parent_ident :: Provider #parent_generics,
-                            #delegate_entries
+                            #preset_entries
                         }
                     }
                 }

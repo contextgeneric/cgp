@@ -14,7 +14,7 @@ pub struct DefinePreset {
 }
 
 pub struct DelegatePresetEntry {
-    pub is_override: bool,
+    pub is_override: Option<Override>,
     pub entry: DelegateComponentEntry<SimpleType>,
 }
 
@@ -42,10 +42,10 @@ impl Parse for DefinePreset {
 impl Parse for DelegatePresetEntry {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let is_override = if input.peek(Override) {
-            let _: Override = input.parse()?;
-            true
+            let is_override = input.parse()?;
+            Some(is_override)
         } else {
-            false
+            None
         };
 
         let entry = input.parse()?;
@@ -69,6 +69,13 @@ impl Parse for PresetParent {
             has_expanded,
             parent_type,
         })
+    }
+}
+
+impl ToTokens for DelegatePresetEntry {
+    fn to_tokens(&self, tokens: &mut TokenStream) {
+        self.is_override.to_tokens(tokens);
+        self.entry.to_tokens(tokens);
     }
 }
 
