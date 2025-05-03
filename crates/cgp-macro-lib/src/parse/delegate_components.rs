@@ -15,8 +15,8 @@ pub struct DelegateComponents {
     pub delegate_entries: DelegateComponentEntries<Type>,
 }
 
-pub struct DelegateComponentEntries<Type> {
-    pub entries: Punctuated<DelegateComponentEntry<Type>, Comma>,
+pub struct DelegateComponentEntries<T> {
+    pub entries: Punctuated<DelegateComponentEntry<T>, Comma>,
 }
 
 pub struct DelegateComponentEntry<T> {
@@ -25,8 +25,8 @@ pub struct DelegateComponentEntry<T> {
 }
 
 #[derive(Clone)]
-pub struct DelegateComponentName<Type> {
-    pub component_type: Type,
+pub struct DelegateComponentName<T> {
+    pub component_type: T,
     pub component_generics: ImplGenerics,
 }
 

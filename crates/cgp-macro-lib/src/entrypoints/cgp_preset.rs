@@ -1,6 +1,9 @@
+use std::collections::HashSet;
+
 use proc_macro2::{Span, TokenStream};
 use quote::{quote, ToTokens, TokenStreamExt};
-use syn::token::At;
+use syn::punctuated::Punctuated;
+use syn::token::{At, Comma};
 use syn::{parse2, parse_quote, Ident, ItemTrait};
 
 use crate::delegate_components::{define_struct, impl_delegate_components};
@@ -128,24 +131,19 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
         })
     }
 
-    let mut parent_exports = TokenStream::new();
+    let re_exports_mod = {
+        let mut parent_exports = TokenStream::new();
 
-    for parent in parent_presets.iter() {
-        let parent_ident = &parent.parent_type.name;
-        parent_exports.append_all(quote! {
-            #[doc(hidden)]
-            #[doc(no_inline)]
-            pub use super:: #parent_ident ::re_exports::*;
-        });
-    }
+        for parent in parent_presets.iter() {
+            let parent_ident = &parent.parent_type.name;
+            parent_exports.append_all(quote! {
+                #[doc(hidden)]
+                #[doc(no_inline)]
+                pub use super:: #parent_ident ::re_exports::*;
+            });
+        }
 
-    let output = quote! {
-        #impl_delegate_items
-
-        #[allow(non_snake_case)]
-        pub mod #preset_module_name {
-            use super::*;
-
+        quote! {
             #[doc(hidden)]
             pub mod re_exports {
                 #[doc(hidden)]
@@ -154,6 +152,41 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
 
                 #parent_exports
             }
+        }
+    };
+
+    let components_mod = {
+        let mut components: HashSet<Ident> = HashSet::default();
+
+        for entry in ast.delegate_entries.entries.iter() {
+            for component in entry.components.iter() {
+                let component_name = &component.component_type.name;
+                components.insert(component_name.clone());
+            }
+        }
+
+        let components_list: Punctuated<Ident, Comma> =
+            Punctuated::from_iter(components.into_iter());
+
+        quote! {
+            #[doc(hidden)]
+            pub mod components {
+                #[doc(hidden)]
+                #[doc(no_inline)]
+                pub use super::re_exports::{ #components_list };
+            }
+        }
+    };
+
+    mod_output.append_all(re_exports_mod);
+    mod_output.append_all(components_mod);
+
+    let output = quote! {
+        #impl_delegate_items
+
+        #[allow(non_snake_case)]
+        pub mod #preset_module_name {
+            use super::*;
 
             #mod_output
         }
