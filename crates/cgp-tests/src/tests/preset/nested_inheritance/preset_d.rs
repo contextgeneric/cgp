@@ -9,6 +9,8 @@ mod preset {
         NestedPresetD: NestedPresetB + NestedPresetC {
             override FooGetterComponent:
                 UseField<symbol!("fool")>,
+            override BarTypeProviderComponent:
+                NestedPresetC::Provider,
         }
     }
 
