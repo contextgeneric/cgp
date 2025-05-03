@@ -193,8 +193,7 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
             }
         }
 
-        let components_list: Punctuated<Ident, Comma> =
-            Punctuated::from_iter(components.into_iter());
+        let components_list: Punctuated<Ident, Comma> = Punctuated::from_iter(components);
 
         quote! {
             #[doc(hidden)]
