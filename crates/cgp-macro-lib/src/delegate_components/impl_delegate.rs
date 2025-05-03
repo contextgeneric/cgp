@@ -34,7 +34,7 @@ pub fn impl_delegate_component<T>(
     target_type: &Type,
     target_generics: &ImplGenerics,
     component: &DelegateComponentName<T>,
-    source: &T,
+    source: &Type,
 ) -> syn::Result<Vec<ItemImpl>>
 where
     T: ToTokens,

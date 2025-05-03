@@ -7,9 +7,9 @@ use syn::parse::discouraged::Speculative;
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::token::{Comma, Or};
-use syn::{braced, Ident, Type};
+use syn::{braced, Ident};
 
-use crate::parse::DelegateComponentName;
+use crate::parse::{DelegateComponentName, SimpleType};
 
 pub struct ReplaceSpecs {
     pub target_ident: Ident,
@@ -19,10 +19,10 @@ pub struct ReplaceSpecs {
 
 impl Parse for ReplaceSpecs {
     fn parse(input: ParseStream) -> syn::Result<Self> {
-        let raw_replacements: Vec<DelegateComponentName<Type>> = {
+        let raw_replacements: Vec<DelegateComponentName<SimpleType>> = {
             let content = parse_brackets(input)?.content;
             let types =
-                <Punctuated<DelegateComponentName<Type>, Comma>>::parse_terminated(&content)?;
+                <Punctuated<DelegateComponentName<SimpleType>, Comma>>::parse_terminated(&content)?;
             types.into_iter().collect()
         };
 
@@ -59,17 +59,9 @@ impl Parse for ReplaceSpecs {
         let replacements = raw_replacements
             .into_iter()
             .filter(|replacement| {
-                let target_ident = replacement
-                    .component_type
-                    .to_token_stream()
-                    .into_iter()
-                    .next();
-                match target_ident {
-                    Some(TokenTree::Ident(target_ident)) => {
-                        !exclude.iter().any(|exclude| exclude == &target_ident)
-                    }
-                    _ => true,
-                }
+                let target_ident = &replacement.component_type.name;
+
+                exclude.iter().all(|exclude| exclude != target_ident)
             })
             .map(|ast| ast.to_token_stream())
             .collect();

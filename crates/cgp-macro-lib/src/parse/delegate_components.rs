@@ -19,8 +19,8 @@ pub struct DelegateComponentEntries<Type> {
     pub entries: Punctuated<DelegateComponentEntry<Type>, Comma>,
 }
 
-pub struct DelegateComponentEntry<Type> {
-    pub components: Punctuated<DelegateComponentName<Type>, Comma>,
+pub struct DelegateComponentEntry<T> {
+    pub components: Punctuated<DelegateComponentName<T>, Comma>,
     pub source: Type,
 }
 
@@ -93,7 +93,7 @@ where
 
         let _: Colon = input.parse()?;
 
-        let source: Type = input.parse()?;
+        let source = input.parse()?;
 
         Ok(Self { components, source })
     }

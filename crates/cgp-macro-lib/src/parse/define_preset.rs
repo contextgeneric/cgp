@@ -3,14 +3,13 @@ use quote::ToTokens;
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::token::{At, Colon, Plus};
-use syn::Type;
 
 use crate::parse::{DelegateComponentEntries, SimpleType, TypeSpec};
 
 pub struct DefinePreset {
     pub preset: TypeSpec,
     pub parent_presets: Punctuated<PresetParent, Plus>,
-    pub delegate_entries: DelegateComponentEntries<Type>,
+    pub delegate_entries: DelegateComponentEntries<SimpleType>,
 }
 
 impl Parse for DefinePreset {
@@ -20,7 +19,7 @@ impl Parse for DefinePreset {
             parent_presets,
         } = input.parse()?;
 
-        let delegate_entries: DelegateComponentEntries<Type> = input.parse()?;
+        let delegate_entries = input.parse()?;
 
         Ok(Self {
             preset,
