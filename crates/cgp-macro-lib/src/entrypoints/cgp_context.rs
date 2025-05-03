@@ -22,7 +22,7 @@ pub fn cgp_context(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStr
     };
 
     let provider_struct: ItemStruct =
-        parse2(quote!( pub struct #provider_name #provider_phantom; ))?;
+        parse2(quote!( pub struct #provider_name #provider_generics #provider_phantom; ))?;
 
     let has_components_impl: ItemImpl =
         derive_has_components(provider_name, provider_generics, &context_struct)?;
