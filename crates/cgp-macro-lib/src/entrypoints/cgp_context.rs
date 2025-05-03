@@ -11,10 +11,21 @@ pub fn cgp_context(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStr
     let context_struct: ItemStruct = syn::parse2(body)?;
 
     let provider_name = &context_spec.provider_name;
+    let provider_generics = &context_spec.provider_generics;
 
-    let provider_struct: ItemStruct = parse2(quote!( pub struct #provider_name; ))?;
+    let provider_phantom = match provider_generics {
+        Some(generics) => {
+            let params = &generics.generics.params;
+            quote! { ( ::core::marker::PhantomData<( #params )> ) }
+        }
+        None => quote! {},
+    };
 
-    let has_components_impl: ItemImpl = derive_has_components(provider_name, &context_struct)?;
+    let provider_struct: ItemStruct =
+        parse2(quote!( pub struct #provider_name #provider_phantom; ))?;
+
+    let has_components_impl: ItemImpl =
+        derive_has_components(provider_name, provider_generics, &context_struct)?;
 
     let base_derived = quote! {
         #context_struct
@@ -26,8 +37,12 @@ pub fn cgp_context(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStr
 
     match &context_spec.preset {
         Some((preset_path, preset_generics)) => {
-            let (delegate_impl, is_provider_impl) =
-                derive_delegate_preset(provider_name, preset_path, preset_generics)?;
+            let (delegate_impl, is_provider_impl) = derive_delegate_preset(
+                provider_name,
+                provider_generics,
+                preset_path,
+                preset_generics,
+            )?;
 
             Ok(quote! {
                 #base_derived
