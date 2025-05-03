@@ -2,17 +2,20 @@ use alloc::boxed::Box;
 use alloc::vec;
 use alloc::vec::Vec;
 
-use quote::quote;
+use quote::{quote, ToTokens};
 use syn::{parse2, ImplItem, ImplItemType, ItemImpl, Path, Type};
 
 use crate::delegate_components::merge_generics::merge_generics;
 use crate::parse::{DelegateComponentEntries, DelegateComponentName, ImplGenerics};
 
-pub fn impl_delegate_components(
+pub fn impl_delegate_components<T>(
     target_type: &Type,
     target_generics: &ImplGenerics,
-    delegate_entries: &DelegateComponentEntries,
-) -> syn::Result<Vec<ItemImpl>> {
+    delegate_entries: &DelegateComponentEntries<T>,
+) -> syn::Result<Vec<ItemImpl>>
+where
+    T: ToTokens,
+{
     let mut components = Vec::new();
 
     for entry in delegate_entries.entries.iter() {
@@ -27,12 +30,15 @@ pub fn impl_delegate_components(
     Ok(components)
 }
 
-pub fn impl_delegate_component(
+pub fn impl_delegate_component<T>(
     target_type: &Type,
     target_generics: &ImplGenerics,
-    component: &DelegateComponentName,
-    source: &Type,
-) -> syn::Result<Vec<ItemImpl>> {
+    component: &DelegateComponentName<T>,
+    source: &T,
+) -> syn::Result<Vec<ItemImpl>>
+where
+    T: ToTokens,
+{
     let component_type = &component.component_type;
 
     let delegate_trait_path: Path = parse2(quote!(DelegateComponent < #component_type >))?;

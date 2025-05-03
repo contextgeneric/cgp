@@ -12,26 +12,29 @@ use crate::parse::ImplGenerics;
 pub struct DelegateComponents {
     pub target_type: Type,
     pub target_generics: ImplGenerics,
-    pub delegate_entries: DelegateComponentEntries,
+    pub delegate_entries: DelegateComponentEntries<Type>,
 }
 
-pub struct DelegateComponentEntries {
-    pub entries: Punctuated<DelegateComponentEntry, Comma>,
+pub struct DelegateComponentEntries<Type> {
+    pub entries: Punctuated<DelegateComponentEntry<Type>, Comma>,
 }
 
-pub struct DelegateComponentEntry {
-    pub components: Punctuated<DelegateComponentName, Comma>,
+pub struct DelegateComponentEntry<Type> {
+    pub components: Punctuated<DelegateComponentName<Type>, Comma>,
     pub source: Type,
 }
 
 #[derive(Clone)]
-pub struct DelegateComponentName {
+pub struct DelegateComponentName<Type> {
     pub component_type: Type,
     pub component_generics: ImplGenerics,
 }
 
-impl DelegateComponentEntries {
-    pub fn all_components(&self) -> Punctuated<DelegateComponentName, Comma> {
+impl<Type> DelegateComponentEntries<Type>
+where
+    Type: Clone,
+{
+    pub fn all_components(&self) -> Punctuated<DelegateComponentName<Type>, Comma> {
         self.entries
             .iter()
             .flat_map(|entry| entry.components.clone().into_iter())
@@ -49,7 +52,7 @@ impl Parse for DelegateComponents {
 
         let target_type: Type = input.parse()?;
 
-        let delegate_entries: DelegateComponentEntries = input.parse()?;
+        let delegate_entries: DelegateComponentEntries<Type> = input.parse()?;
 
         Ok(Self {
             target_type,
@@ -59,7 +62,10 @@ impl Parse for DelegateComponents {
     }
 }
 
-impl Parse for DelegateComponentEntries {
+impl<Type> Parse for DelegateComponentEntries<Type>
+where
+    Type: Parse,
+{
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let entries = {
             let entries_body;
@@ -71,14 +77,17 @@ impl Parse for DelegateComponentEntries {
     }
 }
 
-impl Parse for DelegateComponentEntry {
+impl<Type> Parse for DelegateComponentEntry<Type>
+where
+    Type: Parse,
+{
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let components = if input.peek(Bracket) {
             let components_body;
             bracketed!(components_body in input);
             components_body.parse_terminated(DelegateComponentName::parse, Token![,])?
         } else {
-            let component: DelegateComponentName = input.parse()?;
+            let component: DelegateComponentName<Type> = input.parse()?;
             Punctuated::from_iter(iter::once(component))
         };
 
@@ -90,7 +99,10 @@ impl Parse for DelegateComponentEntry {
     }
 }
 
-impl Parse for DelegateComponentName {
+impl<Type> Parse for DelegateComponentName<Type>
+where
+    Type: Parse,
+{
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let component_generics = if input.peek(Lt) {
             input.parse()?
@@ -107,13 +119,19 @@ impl Parse for DelegateComponentName {
     }
 }
 
-impl ToTokens for DelegateComponentEntries {
+impl<Type> ToTokens for DelegateComponentEntries<Type>
+where
+    Type: ToTokens,
+{
     fn to_tokens(&self, tokens: &mut TokenStream) {
         self.entries.to_tokens(tokens);
     }
 }
 
-impl ToTokens for DelegateComponentEntry {
+impl<Type> ToTokens for DelegateComponentEntry<Type>
+where
+    Type: ToTokens,
+{
     fn to_tokens(&self, tokens: &mut TokenStream) {
         let components = &self.components;
         let source = &self.source;
@@ -135,7 +153,10 @@ impl ToTokens for DelegateComponentEntry {
     }
 }
 
-impl ToTokens for DelegateComponentName {
+impl<Type> ToTokens for DelegateComponentName<Type>
+where
+    Type: ToTokens,
+{
     fn to_tokens(&self, tokens: &mut TokenStream) {
         tokens.extend(self.component_generics.to_token_stream());
         tokens.extend(self.component_type.to_token_stream());

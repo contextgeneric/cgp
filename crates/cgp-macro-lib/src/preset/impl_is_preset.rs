@@ -8,7 +8,7 @@ pub fn impl_components_is_preset(
     trait_name: &Ident,
     preset_type: &Type,
     preset_generics: &ImplGenerics,
-    delegate_entries: &DelegateComponentEntries,
+    delegate_entries: &DelegateComponentEntries<Type>,
 ) -> Vec<ItemImpl> {
     delegate_entries
         .entries
@@ -25,7 +25,7 @@ pub fn impl_component_is_preset(
     trait_name: &Ident,
     _preset_type: &Type,
     _preset_generics: &ImplGenerics,
-    component: &DelegateComponentName,
+    component: &DelegateComponentName<Type>,
 ) -> ItemImpl {
     let component_type = &component.component_type;
 
