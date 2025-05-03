@@ -1,17 +1,18 @@
 use alloc::vec::Vec;
 
+use syn::punctuated::Punctuated;
+use syn::token::Comma;
 use syn::{parse_quote, Ident, ItemImpl, Type};
 
-use crate::parse::{DelegateComponentEntries, DelegateComponentName, ImplGenerics, SimpleType};
+use crate::parse::{DelegateComponentEntry, DelegateComponentName, ImplGenerics, SimpleType};
 
 pub fn impl_components_is_preset(
     trait_name: &Ident,
     preset_type: &Type,
     preset_generics: &ImplGenerics,
-    delegate_entries: &DelegateComponentEntries<SimpleType>,
+    delegate_entries: &Punctuated<DelegateComponentEntry<SimpleType>, Comma>,
 ) -> Vec<ItemImpl> {
     delegate_entries
-        .entries
         .iter()
         .flat_map(|entry| {
             entry.components.iter().map(|component| {

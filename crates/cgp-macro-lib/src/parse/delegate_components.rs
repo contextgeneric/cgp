@@ -30,18 +30,6 @@ pub struct DelegateComponentName<T> {
     pub component_generics: ImplGenerics,
 }
 
-impl<Type> DelegateComponentEntries<Type>
-where
-    Type: Clone,
-{
-    pub fn all_components(&self) -> Punctuated<DelegateComponentName<Type>, Comma> {
-        self.entries
-            .iter()
-            .flat_map(|entry| entry.components.clone().into_iter())
-            .collect()
-    }
-}
-
 impl Parse for DelegateComponents {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let target_generics = if input.peek(Lt) {

@@ -1,15 +1,16 @@
 use proc_macro2::TokenStream;
 use quote::ToTokens;
+use syn::braced;
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
-use syn::token::{At, Colon, Plus};
+use syn::token::{At, Colon, Comma, Plus};
 
-use crate::parse::{DelegateComponentEntries, SimpleType, TypeSpec};
+use crate::parse::{DelegateComponentEntry, SimpleType, TypeSpec};
 
 pub struct DefinePreset {
     pub preset: TypeSpec,
     pub parent_presets: Punctuated<PresetParent, Plus>,
-    pub delegate_entries: DelegateComponentEntries<SimpleType>,
+    pub delegate_entries: Punctuated<DelegateComponentEntry<SimpleType>, Comma>,
 }
 
 impl Parse for DefinePreset {
@@ -19,7 +20,11 @@ impl Parse for DefinePreset {
             parent_presets,
         } = input.parse()?;
 
-        let delegate_entries = input.parse()?;
+        let delegate_entries = {
+            let inner;
+            braced!(inner in input);
+            Punctuated::parse_terminated(&inner)?
+        };
 
         Ok(Self {
             preset,

@@ -14,6 +14,8 @@ use crate::preset::{define_substitution_macro, impl_components_is_preset};
 pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
     let ast: DefinePreset = syn::parse2(body)?;
 
+    let delegate_entries = &ast.delegate_entries;
+
     let mut parent_presets = ast.parent_presets.clone();
 
     let mut remaining_parents = parent_presets
@@ -37,7 +39,6 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
         );
 
         let preset_type_spec = &ast.preset;
-        let delegate_entries = &ast.delegate_entries;
 
         let output = quote! {
             use #parent_ident ::components::*;
@@ -82,11 +83,8 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
             #preset_module_name :: #provider_type
         })?;
 
-        let items = impl_delegate_components(
-            &namespaces_preset_type,
-            &preset_generics,
-            &ast.delegate_entries,
-        )?;
+        let items =
+            impl_delegate_components(&namespaces_preset_type, &preset_generics, delegate_entries)?;
 
         let mut stream = TokenStream::new();
         stream.append_all(items);
@@ -98,7 +96,7 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
         &preset_trait_name,
         &provider_type,
         &preset_generics,
-        &ast.delegate_entries,
+        delegate_entries,
     );
 
     let provider_struct = define_struct(&provider_struct_name, &preset_generics.generics)?;
@@ -120,9 +118,14 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
             Span::call_site(),
         );
 
+        let all_components: Punctuated<_, Comma> = delegate_entries
+            .iter()
+            .flat_map(|entry| entry.components.clone().into_iter())
+            .collect();
+
         let with_components_macro = define_substitution_macro(
             &with_components_macro_name,
-            &ast.delegate_entries.all_components().to_token_stream(),
+            &all_components.to_token_stream(),
         );
 
         mod_output.extend(with_components_macro);
@@ -160,7 +163,7 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
     let components_mod = {
         let mut components: HashSet<Ident> = HashSet::default();
 
-        for entry in ast.delegate_entries.entries.iter() {
+        for entry in delegate_entries.iter() {
             for component in entry.components.iter() {
                 let component_name = &component.component_type.name;
                 components.insert(component_name.clone());
