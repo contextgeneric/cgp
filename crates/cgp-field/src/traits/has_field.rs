@@ -16,7 +16,7 @@ pub trait HasField<Tag> {
 pub trait MapField<Tag>: HasField<Tag> {
     fn map_field<T>(
         &self,
-        tag: PhantomData<Tag>,
+        _tag: PhantomData<Tag>,
         mapper: impl for<'a> FnOnce(&'a Self::Value) -> &'a T,
     ) -> &T;
 }
@@ -24,13 +24,13 @@ pub trait MapField<Tag>: HasField<Tag> {
 pub trait FieldGetter<Context, Tag> {
     type Value;
 
-    fn get_field(context: &Context, tag: PhantomData<Tag>) -> &Self::Value;
+    fn get_field(context: &Context, _tag: PhantomData<Tag>) -> &Self::Value;
 }
 
 pub trait FieldMapper<Context, Tag>: FieldGetter<Context, Tag> {
     fn map_field<T>(
         context: &Context,
-        tag: PhantomData<Tag>,
+        _tag: PhantomData<Tag>,
         mapper: impl for<'a> FnOnce(&'a Self::Value) -> &'a T,
     ) -> &T;
 }

@@ -46,7 +46,7 @@ pub fn derive_has_field_impls(item_struct: &ItemStruct) -> Vec<ItemImpl> {
                 {
                     fn map_field<__Mapped__>(&self,
                         tag: ::core::marker::PhantomData< #field_symbol >,
-                        mapper: impl for<'a> FnOnce(&'a Self::Value) -> &'a __Mapped__,
+                        mapper: impl for<'__mapped__> FnOnce(&'__mapped__ Self::Value) -> &'__mapped__ __Mapped__,
                     ) -> &__Mapped__
                     {
                         mapper( &self. #field_ident )
