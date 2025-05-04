@@ -5,7 +5,7 @@ use quote::{quote, ToTokens, TokenStreamExt};
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::token::{Bracket, Colon, Comma, Lt, Struct};
-use syn::{braced, bracketed, Token, Type};
+use syn::{braced, bracketed, Generics, Ident, Token, Type};
 
 use crate::parse::ImplGenerics;
 
@@ -26,6 +26,13 @@ pub struct DelegateEntry<T> {
 pub struct DelegateKey<T> {
     pub ty: T,
     pub generics: ImplGenerics,
+}
+
+pub struct DelegateNewValue {
+    pub wrapper_ident: Ident,
+    pub struct_ident: Ident,
+    pub struct_generics: Generics,
+    pub entries: Punctuated<DelegateEntry<Type>, Comma>,
 }
 
 impl Parse for DelegateComponents {
@@ -104,6 +111,34 @@ where
     }
 }
 
+impl Parse for DelegateNewValue {
+    fn parse(input: ParseStream) -> syn::Result<Self> {
+        let wrapper_ident = input.parse()?;
+
+        let _: Lt = input.parse()?;
+
+        let _: Struct = input.parse()?;
+
+        let struct_ident = input.parse()?;
+
+        let struct_generics = input.parse()?;
+
+        let entries = {
+            let content;
+            braced!(content in input);
+
+            Punctuated::parse_terminated(&content)?
+        };
+
+        Ok(Self {
+            wrapper_ident,
+            struct_ident,
+            struct_generics,
+            entries,
+        })
+    }
+}
+
 impl<Type> ToTokens for DelegateEntry<Type>
 where
     Type: ToTokens,
@@ -136,5 +171,24 @@ where
     fn to_tokens(&self, tokens: &mut TokenStream) {
         tokens.extend(self.generics.to_token_stream());
         tokens.extend(self.ty.to_token_stream());
+    }
+}
+
+impl ToTokens for DelegateNewValue {
+    fn to_tokens(&self, tokens: &mut TokenStream) {
+        let Self {
+            wrapper_ident,
+            struct_ident,
+            struct_generics,
+            entries,
+        } = self;
+
+        tokens.extend(quote! {
+            #wrapper_ident <
+                struct #struct_ident #struct_generics {
+                    #entries
+                }
+            >
+        });
     }
 }
