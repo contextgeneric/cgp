@@ -25,7 +25,7 @@ where
     for entry in delegate_entries.iter() {
         let source = &entry.value;
         for component in entry.keys.iter() {
-            let impls = impl_delegate_component(target_type, target_generics, component, &source)?;
+            let impls = impl_delegate_component(target_type, target_generics, component, source)?;
 
             out.extend(impls);
         }
@@ -102,7 +102,7 @@ where
     if let DelegateValue::New(value) = value {
         let struct_ident = &value.struct_ident;
 
-        let item_struct = define_struct(&struct_ident, &value.struct_generics)?;
+        let item_struct = define_struct(struct_ident, &value.struct_generics)?;
 
         let (impl_generics, type_generics, _) = value.struct_generics.split_for_impl();
 
