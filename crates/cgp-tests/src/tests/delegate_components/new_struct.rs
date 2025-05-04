@@ -54,13 +54,14 @@ pub fn test_delegate_components_with_new_value() {
     struct FooKey;
     struct FooValue;
     struct BarKey;
-    struct BarValue;
+    struct BazKey;
+    struct BazValue;
 
     delegate_components! {
         struct MyComponents {
             FooKey: FooValue,
             BarKey: UseDelegate<struct BarValue {
-
+                BazKey: BazValue,
             }>,
         }
     }
@@ -72,4 +73,8 @@ pub fn test_delegate_components_with_new_value() {
     }
 
     impl CheckDelegates for MyComponents {}
+
+    trait CheckInnerDelegates: DelegateComponent<BazKey, Delegate = BazValue> {}
+
+    impl CheckInnerDelegates for BarValue {}
 }
