@@ -5,13 +5,13 @@ use quote::{quote, ToTokens, TokenStreamExt};
 use syn::parse::discouraged::Speculative;
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
-use syn::token::{Bracket, Colon, Comma, Gt, Lt, Struct};
-use syn::{braced, bracketed, parse_quote, Generics, Ident, Token, Type};
+use syn::token::{Bracket, Colon, Comma, Gt, Lt};
+use syn::{braced, bracketed, parse_quote, Error, Generics, Ident, Token, Type};
 
 use crate::parse::ImplGenerics;
 
 pub struct DelegateComponents {
-    pub new_struct: Option<Struct>,
+    pub new_struct: bool,
     pub target_type: Type,
     pub target_generics: ImplGenerics,
     pub entries: Punctuated<DelegateEntry<Type>, Comma>,
@@ -65,10 +65,16 @@ impl Parse for DelegateComponents {
             Default::default()
         };
 
-        let new_struct = if input.peek(Struct) {
-            Some(input.parse()?)
-        } else {
-            None
+        let new_struct = {
+            let fork = input.fork();
+            let new_ident: Option<Ident> = fork.parse().ok();
+            match new_ident {
+                Some(new_ident) if new_ident == "new" => {
+                    input.advance_to(&fork);
+                    true
+                }
+                _ => false,
+            }
         };
 
         let target_type: Type = input.parse()?;
@@ -153,7 +159,11 @@ impl Parse for DelegateNewValue {
 
         let _: Lt = input.parse()?;
 
-        let _: Struct = input.parse()?;
+        let new_ident: Ident = input.parse()?;
+
+        if new_ident != "new" {
+            return Err(Error::new(new_ident.span(), "expect `new` keyword"));
+        }
 
         let struct_ident = input.parse()?;
 
@@ -232,7 +242,7 @@ impl ToTokens for DelegateNewValue {
 
         tokens.extend(quote! {
             #wrapper_ident <
-                struct #struct_ident #struct_generics {
+                new #struct_ident #struct_generics {
                     #entries
                 }
             >

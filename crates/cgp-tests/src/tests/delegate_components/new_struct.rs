@@ -12,7 +12,7 @@ pub fn test_delegate_components_with_new_struct() {
     struct BarValue;
 
     delegate_components! {
-        struct MyComponents {
+        new MyComponents {
             FooKey: FooValue,
             BarKey: BarValue,
         }
@@ -35,7 +35,7 @@ pub fn test_delegate_components_with_new_generic_struct() {
 
     delegate_components! {
         <T>
-        struct MyComponents<T> {
+        new MyComponents<T> {
             FooKey<T>: FooValue,
             BarKey: BarValue<T>,
         }
@@ -58,9 +58,9 @@ pub fn test_delegate_components_with_new_value() {
     struct BazValue;
 
     delegate_components! {
-        struct MyComponents {
+        new MyComponents {
             FooKey: FooValue,
-            BarKey: UseDelegate<struct BarValue {
+            BarKey: UseDelegate<new BarValue {
                 BazKey: BazValue,
             }>,
         }

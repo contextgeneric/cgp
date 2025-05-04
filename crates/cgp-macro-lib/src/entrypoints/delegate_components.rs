@@ -8,7 +8,7 @@ use crate::parse::{DelegateComponents, SimpleType};
 pub fn delegate_components(body: TokenStream) -> syn::Result<TokenStream> {
     let spec: DelegateComponents = parse2(body)?;
 
-    let component_struct = if spec.new_struct.is_some() {
+    let component_struct = if spec.new_struct {
         let target_type: SimpleType<Generics> = parse2(spec.target_type.to_token_stream())?;
         let component_struct =
             define_struct(&target_type.name, &target_type.generics.unwrap_or_default())?;
