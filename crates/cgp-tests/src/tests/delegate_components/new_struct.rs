@@ -2,6 +2,7 @@
 
 use core::marker::PhantomData;
 
+use cgp::core::component::UseDelegate;
 use cgp::prelude::*;
 
 pub fn test_delegate_components_with_new_struct() {
@@ -47,4 +48,28 @@ pub fn test_delegate_components_with_new_generic_struct() {
     }
 
     impl<T> CheckDelegates<T> for MyComponents<T> {}
+}
+
+pub fn test_delegate_components_with_new_value() {
+    struct FooKey;
+    struct FooValue;
+    struct BarKey;
+    struct BarValue;
+
+    delegate_components! {
+        struct MyComponents {
+            FooKey: FooValue,
+            BarKey: UseDelegate<struct BarValue {
+
+            }>,
+        }
+    }
+
+    trait CheckDelegates:
+        DelegateComponent<FooKey, Delegate = FooValue>
+        + DelegateComponent<BarKey, Delegate = UseDelegate<BarValue>>
+    {
+    }
+
+    impl CheckDelegates for MyComponents {}
 }

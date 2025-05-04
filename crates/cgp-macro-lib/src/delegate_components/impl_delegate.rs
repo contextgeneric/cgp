@@ -23,8 +23,13 @@ where
     for entry in delegate_entries.iter() {
         let source = &entry.value;
         for component in entry.keys.iter() {
-            let mut impls =
-                impl_delegate_component(target_type, target_generics, component, source)?;
+            let mut impls = impl_delegate_component(
+                target_type,
+                target_generics,
+                component,
+                &source.as_type(),
+            )?;
+
             components.append(&mut impls);
         }
     }

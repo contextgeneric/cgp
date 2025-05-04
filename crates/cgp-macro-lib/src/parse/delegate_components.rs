@@ -5,7 +5,7 @@ use quote::{quote, ToTokens, TokenStreamExt};
 use syn::parse::discouraged::Speculative;
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
-use syn::token::{Bracket, Colon, Comma, Lt, Struct};
+use syn::token::{Bracket, Colon, Comma, Gt, Lt, Struct};
 use syn::{braced, bracketed, parse_quote, Generics, Ident, Token, Type};
 
 use crate::parse::ImplGenerics;
@@ -20,7 +20,7 @@ pub struct DelegateComponents {
 #[derive(Clone)]
 pub struct DelegateEntry<T> {
     pub keys: Punctuated<DelegateKey<T>, Comma>,
-    pub value: Type,
+    pub value: DelegateValue,
 }
 
 #[derive(Clone)]
@@ -29,6 +29,7 @@ pub struct DelegateKey<T> {
     pub generics: ImplGenerics,
 }
 
+#[derive(Clone)]
 pub enum DelegateValue {
     Type(Type),
     New(DelegateNewValue),
@@ -47,9 +48,10 @@ impl DelegateValue {
         match self {
             Self::Type(ty) => ty.clone(),
             Self::New(value) => {
+                let wrapper_ident = &value.wrapper_ident;
                 let struct_ident = &value.struct_ident;
                 let (_, struct_generics, _) = value.struct_generics.split_for_impl();
-                parse_quote!( #struct_ident #struct_generics )
+                parse_quote!( #wrapper_ident < #struct_ident #struct_generics > )
             }
         }
     }
@@ -163,6 +165,8 @@ impl Parse for DelegateNewValue {
 
             Punctuated::parse_terminated(&content)?
         };
+
+        let _: Gt = input.parse()?;
 
         Ok(Self {
             wrapper_ident,
