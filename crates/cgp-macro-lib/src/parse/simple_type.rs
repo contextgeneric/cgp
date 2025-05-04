@@ -4,12 +4,15 @@ use syn::token::Lt;
 use syn::{AngleBracketedGenericArguments, Ident};
 
 #[derive(Clone)]
-pub struct SimpleType {
+pub struct SimpleType<Generics = AngleBracketedGenericArguments> {
     pub name: Ident,
-    pub generics: Option<AngleBracketedGenericArguments>,
+    pub generics: Option<Generics>,
 }
 
-impl Parse for SimpleType {
+impl<Generics> Parse for SimpleType<Generics>
+where
+    Generics: Parse,
+{
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let name: Ident = input.parse()?;
         let generics = if input.peek(Lt) {

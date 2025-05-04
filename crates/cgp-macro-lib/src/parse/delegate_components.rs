@@ -4,12 +4,13 @@ use proc_macro2::TokenStream;
 use quote::{quote, ToTokens, TokenStreamExt};
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
-use syn::token::{Bracket, Colon, Comma, Lt};
+use syn::token::{Bracket, Colon, Comma, Lt, Struct};
 use syn::{braced, bracketed, Token, Type};
 
 use crate::parse::ImplGenerics;
 
 pub struct DelegateComponents {
+    pub new_struct: Option<Struct>,
     pub target_type: Type,
     pub target_generics: ImplGenerics,
     pub entries: Punctuated<DelegateEntry<Type>, Comma>,
@@ -35,6 +36,12 @@ impl Parse for DelegateComponents {
             Default::default()
         };
 
+        let new_struct = if input.peek(Struct) {
+            Some(input.parse()?)
+        } else {
+            None
+        };
+
         let target_type: Type = input.parse()?;
 
         let delegate_entries = {
@@ -44,6 +51,7 @@ impl Parse for DelegateComponents {
         };
 
         Ok(Self {
+            new_struct,
             target_type,
             target_generics,
             entries: delegate_entries,

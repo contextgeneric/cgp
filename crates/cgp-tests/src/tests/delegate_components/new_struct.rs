@@ -1,0 +1,50 @@
+#![allow(unused)]
+
+use core::marker::PhantomData;
+
+use cgp::prelude::*;
+
+pub fn test_delegate_components_with_new_struct() {
+    struct FooKey;
+    struct FooValue;
+    struct BarKey;
+    struct BarValue;
+
+    delegate_components! {
+        struct MyComponents {
+            FooKey: FooValue,
+            BarKey: BarValue,
+        }
+    }
+
+    trait CheckDelegates:
+        DelegateComponent<FooKey, Delegate = FooValue>
+        + DelegateComponent<BarKey, Delegate = BarValue>
+    {
+    }
+
+    impl CheckDelegates for MyComponents {}
+}
+
+pub fn test_delegate_components_with_new_generic_struct() {
+    struct FooKey<T>(PhantomData<T>);
+    struct FooValue;
+    struct BarKey;
+    struct BarValue<T>(PhantomData<T>);
+
+    delegate_components! {
+        <T>
+        struct MyComponents<T> {
+            FooKey<T>: FooValue,
+            BarKey: BarValue<T>,
+        }
+    }
+
+    trait CheckDelegates<T>:
+        DelegateComponent<FooKey<T>, Delegate = FooValue>
+        + DelegateComponent<BarKey, Delegate = BarValue<T>>
+    {
+    }
+
+    impl<T> CheckDelegates<T> for MyComponents<T> {}
+}
