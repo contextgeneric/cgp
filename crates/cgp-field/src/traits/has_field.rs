@@ -48,6 +48,21 @@ where
     }
 }
 
+#[diagnostic::do_not_recommend]
+impl<Context, Tag, Target, Value> MapField<Tag> for Context
+where
+    Context: Deref<Target = Target>,
+    Target: MapField<Tag, Value = Value> + 'static,
+{
+    fn map_field<T>(
+        &self,
+        tag: PhantomData<Tag>,
+        mapper: impl for<'a> FnOnce(&'a Self::Value) -> &'a T,
+    ) -> &T {
+        self.deref().map_field(tag, mapper)
+    }
+}
+
 impl<Context, Tag, Field> FieldGetter<Context, Tag> for UseContext
 where
     Context: HasField<Tag, Value = Field>,
