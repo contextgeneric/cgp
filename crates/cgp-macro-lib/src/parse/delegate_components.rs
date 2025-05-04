@@ -12,19 +12,19 @@ use crate::parse::ImplGenerics;
 pub struct DelegateComponents {
     pub target_type: Type,
     pub target_generics: ImplGenerics,
-    pub delegate_entries: Punctuated<DelegateComponentEntry<Type>, Comma>,
+    pub entries: Punctuated<DelegateEntry<Type>, Comma>,
 }
 
 #[derive(Clone)]
-pub struct DelegateComponentEntry<T> {
-    pub components: Punctuated<DelegateComponentName<T>, Comma>,
-    pub source: Type,
+pub struct DelegateEntry<T> {
+    pub keys: Punctuated<DelegateKey<T>, Comma>,
+    pub value: Type,
 }
 
 #[derive(Clone)]
-pub struct DelegateComponentName<T> {
-    pub component_type: T,
-    pub component_generics: ImplGenerics,
+pub struct DelegateKey<T> {
+    pub ty: T,
+    pub generics: ImplGenerics,
 }
 
 impl Parse for DelegateComponents {
@@ -46,12 +46,12 @@ impl Parse for DelegateComponents {
         Ok(Self {
             target_type,
             target_generics,
-            delegate_entries,
+            entries: delegate_entries,
         })
     }
 }
 
-impl<Type> Parse for DelegateComponentEntry<Type>
+impl<Type> Parse for DelegateEntry<Type>
 where
     Type: Parse,
 {
@@ -59,9 +59,9 @@ where
         let components = if input.peek(Bracket) {
             let components_body;
             bracketed!(components_body in input);
-            components_body.parse_terminated(DelegateComponentName::parse, Token![,])?
+            components_body.parse_terminated(DelegateKey::parse, Token![,])?
         } else {
-            let component: DelegateComponentName<Type> = input.parse()?;
+            let component: DelegateKey<Type> = input.parse()?;
             Punctuated::from_iter(iter::once(component))
         };
 
@@ -69,11 +69,14 @@ where
 
         let source = input.parse()?;
 
-        Ok(Self { components, source })
+        Ok(Self {
+            keys: components,
+            value: source,
+        })
     }
 }
 
-impl<Type> Parse for DelegateComponentName<Type>
+impl<Type> Parse for DelegateKey<Type>
 where
     Type: Parse,
 {
@@ -87,19 +90,19 @@ where
         let component_type: Type = input.parse()?;
 
         Ok(Self {
-            component_type,
-            component_generics,
+            ty: component_type,
+            generics: component_generics,
         })
     }
 }
 
-impl<Type> ToTokens for DelegateComponentEntry<Type>
+impl<Type> ToTokens for DelegateEntry<Type>
 where
     Type: ToTokens,
 {
     fn to_tokens(&self, tokens: &mut TokenStream) {
-        let components = &self.components;
-        let source = &self.source;
+        let components = &self.keys;
+        let source = &self.value;
 
         let count = components.len();
 
@@ -118,12 +121,12 @@ where
     }
 }
 
-impl<Type> ToTokens for DelegateComponentName<Type>
+impl<Type> ToTokens for DelegateKey<Type>
 where
     Type: ToTokens,
 {
     fn to_tokens(&self, tokens: &mut TokenStream) {
-        tokens.extend(self.component_generics.to_token_stream());
-        tokens.extend(self.component_type.to_token_stream());
+        tokens.extend(self.generics.to_token_stream());
+        tokens.extend(self.ty.to_token_stream());
     }
 }

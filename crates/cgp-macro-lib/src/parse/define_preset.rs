@@ -5,7 +5,7 @@ use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::token::{At, Colon, Comma, Override, Plus};
 
-use crate::parse::{DelegateComponentEntry, SimpleType, TypeSpec};
+use crate::parse::{DelegateEntry, SimpleType, TypeSpec};
 
 pub struct DefinePreset {
     pub preset: TypeSpec,
@@ -15,7 +15,7 @@ pub struct DefinePreset {
 
 pub struct DelegatePresetEntry {
     pub is_override: Option<Override>,
-    pub entry: DelegateComponentEntry<SimpleType>,
+    pub entry: DelegateEntry<SimpleType>,
 }
 
 impl Parse for DefinePreset {

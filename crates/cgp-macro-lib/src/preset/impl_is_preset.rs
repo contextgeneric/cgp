@@ -4,18 +4,18 @@ use syn::punctuated::Punctuated;
 use syn::token::Comma;
 use syn::{parse_quote, Ident, ItemImpl, Type};
 
-use crate::parse::{DelegateComponentEntry, DelegateComponentName, ImplGenerics, SimpleType};
+use crate::parse::{DelegateEntry, DelegateKey, ImplGenerics, SimpleType};
 
 pub fn impl_components_is_preset(
     trait_name: &Ident,
     preset_type: &Type,
     preset_generics: &ImplGenerics,
-    delegate_entries: &Punctuated<DelegateComponentEntry<SimpleType>, Comma>,
+    delegate_entries: &Punctuated<DelegateEntry<SimpleType>, Comma>,
 ) -> Vec<ItemImpl> {
     delegate_entries
         .iter()
         .flat_map(|entry| {
-            entry.components.iter().map(|component| {
+            entry.keys.iter().map(|component| {
                 impl_component_is_preset(trait_name, preset_type, preset_generics, component)
             })
         })
@@ -26,11 +26,11 @@ pub fn impl_component_is_preset(
     trait_name: &Ident,
     _preset_type: &Type,
     _preset_generics: &ImplGenerics,
-    component: &DelegateComponentName<SimpleType>,
+    component: &DelegateKey<SimpleType>,
 ) -> ItemImpl {
-    let component_type = &component.component_type;
+    let component_type = &component.ty;
 
-    let mut generics = component.component_generics.generics.clone();
+    let mut generics = component.generics.generics.clone();
     generics.params.push(parse_quote!(T));
 
     let impl_generics = generics.split_for_impl().0;

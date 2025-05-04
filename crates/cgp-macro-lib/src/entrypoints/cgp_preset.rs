@@ -8,13 +8,13 @@ use syn::{parse2, parse_quote, Ident, ItemTrait};
 
 use crate::delegate_components::{define_struct, impl_delegate_components};
 use crate::derive_component::to_snake_case_str;
-use crate::parse::{DefinePreset, DelegateComponentEntry, ImplGenerics, SimpleType};
+use crate::parse::{DefinePreset, DelegateEntry, ImplGenerics, SimpleType};
 use crate::preset::{define_substitution_macro, impl_components_is_preset};
 
 pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
     let ast: DefinePreset = syn::parse2(body)?;
 
-    let delegate_entries: Punctuated<DelegateComponentEntry<SimpleType>, Comma> = ast
+    let delegate_entries: Punctuated<DelegateEntry<SimpleType>, Comma> = ast
         .delegate_entries
         .iter()
         .map(|entry| entry.entry.clone())
@@ -48,8 +48,8 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
 
         for entry in ast.delegate_entries.iter() {
             if entry.is_override.is_some() {
-                for component in entry.entry.components.iter() {
-                    overrides.push(&component.component_type.name);
+                for component in entry.entry.keys.iter() {
+                    overrides.push(&component.ty.name);
                 }
             }
         }
@@ -145,7 +145,7 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
 
         let all_components: Punctuated<_, Comma> = delegate_entries
             .iter()
-            .flat_map(|entry| entry.components.clone().into_iter())
+            .flat_map(|entry| entry.keys.clone().into_iter())
             .collect();
 
         let with_components_macro = define_substitution_macro(
@@ -189,8 +189,8 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
         let mut components: HashSet<Ident> = HashSet::default();
 
         for entry in delegate_entries.iter() {
-            for component in entry.components.iter() {
-                let component_name = &component.component_type.name;
+            for component in entry.keys.iter() {
+                let component_name = &component.ty.name;
                 components.insert(component_name.clone());
             }
         }

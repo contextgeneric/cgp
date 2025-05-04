@@ -8,12 +8,12 @@ use syn::token::Comma;
 use syn::{parse2, ImplItem, ImplItemType, ItemImpl, Path, Type};
 
 use crate::delegate_components::merge_generics::merge_generics;
-use crate::parse::{DelegateComponentEntry, DelegateComponentName, ImplGenerics};
+use crate::parse::{DelegateEntry, DelegateKey, ImplGenerics};
 
 pub fn impl_delegate_components<T>(
     target_type: &Type,
     target_generics: &ImplGenerics,
-    delegate_entries: &Punctuated<DelegateComponentEntry<T>, Comma>,
+    delegate_entries: &Punctuated<DelegateEntry<T>, Comma>,
 ) -> syn::Result<Vec<ItemImpl>>
 where
     T: ToTokens,
@@ -21,8 +21,8 @@ where
     let mut components = Vec::new();
 
     for entry in delegate_entries.iter() {
-        let source = &entry.source;
-        for component in entry.components.iter() {
+        let source = &entry.value;
+        for component in entry.keys.iter() {
             let mut impls =
                 impl_delegate_component(target_type, target_generics, component, source)?;
             components.append(&mut impls);
@@ -35,22 +35,19 @@ where
 pub fn impl_delegate_component<T>(
     target_type: &Type,
     target_generics: &ImplGenerics,
-    component: &DelegateComponentName<T>,
+    component: &DelegateKey<T>,
     source: &Type,
 ) -> syn::Result<Vec<ItemImpl>>
 where
     T: ToTokens,
 {
-    let component_type = &component.component_type;
+    let component_type = &component.ty;
 
     let delegate_trait_path: Path = parse2(quote!(DelegateComponent < #component_type >))?;
 
     let delegate_type: ImplItemType = parse2(quote!(type Delegate = #source;))?;
 
-    let delegate_generics = merge_generics(
-        &target_generics.generics,
-        &component.component_generics.generics,
-    );
+    let delegate_generics = merge_generics(&target_generics.generics, &component.generics.generics);
 
     let is_provider_generics = {
         let mut generics = delegate_generics.clone();
