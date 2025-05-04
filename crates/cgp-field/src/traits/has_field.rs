@@ -13,10 +13,26 @@ pub trait HasField<Tag> {
     fn get_field(&self, _tag: PhantomData<Tag>) -> &Self::Value;
 }
 
+pub trait MapField<Tag>: HasField<Tag> {
+    fn map_field<T>(
+        &self,
+        tag: PhantomData<Tag>,
+        mapper: impl for<'a> FnOnce(&'a Self::Value) -> &'a T,
+    ) -> &T;
+}
+
 pub trait FieldGetter<Context, Tag> {
     type Value;
 
     fn get_field(context: &Context, tag: PhantomData<Tag>) -> &Self::Value;
+}
+
+pub trait FieldMapper<Context, Tag>: FieldGetter<Context, Tag> {
+    fn map_field<T>(
+        context: &Context,
+        tag: PhantomData<Tag>,
+        mapper: impl for<'a> FnOnce(&'a Self::Value) -> &'a T,
+    ) -> &T;
 }
 
 #[diagnostic::do_not_recommend]
@@ -40,5 +56,18 @@ where
 
     fn get_field(context: &Context, _tag: PhantomData<Tag>) -> &Self::Value {
         context.get_field(PhantomData)
+    }
+}
+
+impl<Context, Tag, Field> FieldMapper<Context, Tag> for UseContext
+where
+    Context: MapField<Tag, Value = Field>,
+{
+    fn map_field<T>(
+        context: &Context,
+        tag: PhantomData<Tag>,
+        mapper: impl for<'a> FnOnce(&'a Self::Value) -> &'a T,
+    ) -> &T {
+        context.map_field(tag, mapper)
     }
 }
