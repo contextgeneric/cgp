@@ -177,8 +177,11 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
             mod re_exports {
                 #[doc(hidden)]
                 #[doc(no_inline)]
-                #[allow(unused_imports)]
                 pub use super::super::super::re_exports::*;
+
+                #[doc(hidden)]
+                #[doc(no_inline)]
+                pub use super::super::*;
 
                 #parent_exports
             }
