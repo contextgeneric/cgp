@@ -2,6 +2,7 @@ use alloc::boxed::Box;
 use alloc::vec;
 use alloc::vec::Vec;
 
+use proc_macro2::TokenStream;
 use quote::{quote, ToTokens};
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
@@ -14,27 +15,27 @@ pub fn impl_delegate_components<T>(
     target_type: &Type,
     target_generics: &ImplGenerics,
     delegate_entries: &Punctuated<DelegateEntry<T>, Comma>,
-) -> syn::Result<Vec<ItemImpl>>
+) -> syn::Result<TokenStream>
 where
     T: ToTokens,
 {
-    let mut components = Vec::new();
+    let mut out = TokenStream::new();
 
     for entry in delegate_entries.iter() {
         let source = &entry.value;
         for component in entry.keys.iter() {
-            let mut impls = impl_delegate_component(
+            let impls = impl_delegate_component(
                 target_type,
                 target_generics,
                 component,
                 &source.as_type(),
             )?;
 
-            components.append(&mut impls);
+            out.extend(impls);
         }
     }
 
-    Ok(components)
+    Ok(out)
 }
 
 pub fn impl_delegate_component<T>(
@@ -42,7 +43,7 @@ pub fn impl_delegate_component<T>(
     target_generics: &ImplGenerics,
     component: &DelegateKey<T>,
     source: &Type,
-) -> syn::Result<Vec<ItemImpl>>
+) -> syn::Result<TokenStream>
 where
     T: ToTokens,
 {
@@ -95,5 +96,8 @@ where
         items: Default::default(),
     };
 
-    Ok(vec![delegate_impl, is_provider_impl])
+    Ok(quote! {
+        #delegate_impl
+        #is_provider_impl
+    })
 }
