@@ -8,7 +8,7 @@ use syn::punctuated::Punctuated;
 use syn::token::{Bracket, Colon, Comma, Gt, Lt};
 use syn::{braced, bracketed, parse_quote, Error, Generics, Ident, Token, Type};
 
-use crate::parse::ImplGenerics;
+use crate::parse::{ImplGenerics, TypeGenerics};
 
 pub struct DelegateComponents {
     pub new_struct: bool,
@@ -167,7 +167,7 @@ impl Parse for DelegateNewValue {
 
         let struct_ident = input.parse()?;
 
-        let struct_generics = input.parse()?;
+        let struct_generics: TypeGenerics = input.parse()?;
 
         let entries = {
             let content;
@@ -181,7 +181,7 @@ impl Parse for DelegateNewValue {
         Ok(Self {
             wrapper_ident,
             struct_ident,
-            struct_generics,
+            struct_generics: struct_generics.generics,
             entries,
         })
     }

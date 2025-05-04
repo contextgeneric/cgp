@@ -1,18 +1,18 @@
 use proc_macro2::TokenStream;
 use quote::{quote, ToTokens};
-use syn::{parse2, Generics};
+use syn::parse2;
 
 use crate::delegate_components::{define_struct, impl_delegate_components};
-use crate::parse::{DelegateComponents, SimpleType};
+use crate::parse::{DelegateComponents, SimpleType, TypeGenerics};
 
 pub fn delegate_components(body: TokenStream) -> syn::Result<TokenStream> {
     let spec: DelegateComponents = parse2(body)?;
     let mut target_generics = spec.target_generics;
 
     let component_struct = if spec.new_struct {
-        let target_type: SimpleType<Generics> = parse2(spec.target_type.to_token_stream())?;
+        let target_type: SimpleType<TypeGenerics> = parse2(spec.target_type.to_token_stream())?;
 
-        let type_generics = target_type.generics.unwrap_or_default();
+        let type_generics = target_type.generics.unwrap_or_default().generics;
 
         let component_struct = define_struct(&target_type.name, &type_generics)?;
 
