@@ -2,10 +2,11 @@ use core::iter;
 
 use proc_macro2::TokenStream;
 use quote::{quote, ToTokens, TokenStreamExt};
+use syn::parse::discouraged::Speculative;
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::token::{Bracket, Colon, Comma, Lt, Struct};
-use syn::{braced, bracketed, Generics, Ident, Token, Type};
+use syn::{braced, bracketed, parse_quote, Generics, Ident, Token, Type};
 
 use crate::parse::ImplGenerics;
 
@@ -28,11 +29,30 @@ pub struct DelegateKey<T> {
     pub generics: ImplGenerics,
 }
 
+pub enum DelegateValue {
+    Type(Type),
+    New(DelegateNewValue),
+}
+
+#[derive(Clone)]
 pub struct DelegateNewValue {
     pub wrapper_ident: Ident,
     pub struct_ident: Ident,
     pub struct_generics: Generics,
     pub entries: Punctuated<DelegateEntry<Type>, Comma>,
+}
+
+impl DelegateValue {
+    pub fn as_type(&self) -> Type {
+        match self {
+            Self::Type(ty) => ty.clone(),
+            Self::New(value) => {
+                let struct_ident = &value.struct_ident;
+                let (_, struct_generics, _) = value.struct_generics.split_for_impl();
+                parse_quote!( #struct_ident #struct_generics )
+            }
+        }
+    }
 }
 
 impl Parse for DelegateComponents {
@@ -111,6 +131,20 @@ where
     }
 }
 
+impl Parse for DelegateValue {
+    fn parse(input: ParseStream) -> syn::Result<Self> {
+        let fork = input.fork();
+
+        match fork.parse::<DelegateNewValue>() {
+            Ok(value) => {
+                input.advance_to(&fork);
+                Ok(Self::New(value))
+            }
+            _ => Ok(Self::Type(input.parse()?)),
+        }
+    }
+}
+
 impl Parse for DelegateNewValue {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let wrapper_ident = input.parse()?;
@@ -171,6 +205,15 @@ where
     fn to_tokens(&self, tokens: &mut TokenStream) {
         tokens.extend(self.generics.to_token_stream());
         tokens.extend(self.ty.to_token_stream());
+    }
+}
+
+impl ToTokens for DelegateValue {
+    fn to_tokens(&self, tokens: &mut TokenStream) {
+        match self {
+            Self::Type(value) => value.to_tokens(tokens),
+            Self::New(value) => value.to_tokens(tokens),
+        }
     }
 }
 
