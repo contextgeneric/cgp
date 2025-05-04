@@ -34,7 +34,6 @@ pub fn test_delegate_components_with_new_generic_struct() {
     struct BarValue<T>(PhantomData<T>);
 
     delegate_components! {
-        <T>
         new MyComponents<T> {
             FooKey<T>: FooValue,
             BarKey: BarValue<T>,
@@ -77,4 +76,33 @@ pub fn test_delegate_components_with_new_value() {
     trait CheckInnerDelegates: DelegateComponent<BazKey, Delegate = BazValue> {}
 
     impl CheckInnerDelegates for BarValue {}
+}
+
+pub fn test_delegate_components_with_generic_new_value() {
+    struct FooKey;
+    struct FooValue;
+    struct BarKey<T>(pub PhantomData<T>);
+    struct BazKey;
+    struct BazValue<T>(pub PhantomData<T>);
+
+    delegate_components! {
+        new MyComponents {
+            FooKey: FooValue,
+            <T> BarKey<T>: UseDelegate<new BarValue<T> {
+                BazKey: BazValue<T>,
+            }>,
+        }
+    }
+
+    trait CheckDelegates<T>:
+        DelegateComponent<FooKey, Delegate = FooValue>
+        + DelegateComponent<BarKey<T>, Delegate = UseDelegate<BarValue<T>>>
+    {
+    }
+
+    impl<T> CheckDelegates<T> for MyComponents {}
+
+    trait CheckInnerDelegates<T>: DelegateComponent<BazKey, Delegate = BazValue<T>> {}
+
+    impl<T> CheckInnerDelegates<T> for BarValue<T> {}
 }

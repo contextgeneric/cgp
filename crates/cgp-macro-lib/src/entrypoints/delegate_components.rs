@@ -7,18 +7,23 @@ use crate::parse::{DelegateComponents, SimpleType};
 
 pub fn delegate_components(body: TokenStream) -> syn::Result<TokenStream> {
     let spec: DelegateComponents = parse2(body)?;
+    let mut target_generics = spec.target_generics;
 
     let component_struct = if spec.new_struct {
         let target_type: SimpleType<Generics> = parse2(spec.target_type.to_token_stream())?;
-        let component_struct =
-            define_struct(&target_type.name, &target_type.generics.unwrap_or_default())?;
+
+        let type_generics = target_type.generics.unwrap_or_default();
+
+        let component_struct = define_struct(&target_type.name, &type_generics)?;
+
+        target_generics.generics.params.extend(type_generics.params);
+
         Some(component_struct)
     } else {
         None
     };
 
-    let impl_items =
-        impl_delegate_components(&spec.target_type, &spec.target_generics, &spec.entries)?;
+    let impl_items = impl_delegate_components(&spec.target_type, &target_generics, &spec.entries)?;
 
     let mut output = quote! {
         #component_struct
