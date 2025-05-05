@@ -1,5 +1,6 @@
 pub mod r#async;
 pub mod blanket_trait;
+pub mod cgp_component;
 pub mod check_components;
 pub mod delegate_components;
 pub mod getter;

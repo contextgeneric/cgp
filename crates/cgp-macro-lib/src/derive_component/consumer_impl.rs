@@ -1,11 +1,13 @@
 use alloc::boxed::Box;
 use alloc::vec::Vec;
 
+use proc_macro2::Span;
 use quote::{quote, ToTokens};
-use syn::token::{Brace, For, Impl};
+use syn::spanned::Spanned;
+use syn::token::{Brace, Eq, For, Impl};
 use syn::{
-    parse2, GenericParam, Generics, Ident, ImplItem, ItemImpl, ItemTrait, Path, TraitItem,
-    TypeParamBound,
+    parse2, Error, GenericParam, Generics, Ident, ImplItem, ImplItemConst, ItemImpl, ItemTrait,
+    Path, TraitItem, TypeParamBound, Visibility,
 };
 
 use crate::derive_component::delegate_fn::derive_delegated_fn_impl;
@@ -125,7 +127,36 @@ pub fn derive_consumer_impl(
 
                 impl_items.push(ImplItem::Type(impl_type));
             }
-            _ => {}
+            TraitItem::Const(trait_item_const) => {
+                let const_ident = &trait_item_const.ident;
+                let (_, type_generics, _) = trait_item_const.generics.split_for_impl();
+
+                let impl_expr = parse2(quote! {
+                    < #context_type :: Provider as #provider_name < #provider_type_generics > > :: #const_ident #type_generics
+                })?;
+
+                let impl_item_const = ImplItemConst {
+                    attrs: trait_item_const.attrs.clone(),
+                    vis: Visibility::Inherited,
+                    defaultness: None,
+                    const_token: trait_item_const.const_token.clone(),
+                    ident: trait_item_const.ident.clone(),
+                    generics: trait_item_const.generics.clone(),
+                    colon_token: trait_item_const.colon_token.clone(),
+                    ty: trait_item_const.ty.clone(),
+                    eq_token: Eq(Span::call_site()),
+                    expr: impl_expr,
+                    semi_token: trait_item_const.semi_token.clone(),
+                };
+
+                impl_items.push(ImplItem::Const(impl_item_const));
+            }
+            _ => {
+                return Err(Error::new(
+                    trait_item.span(),
+                    format!("unsupported trait item: {trait_item:?}"),
+                ));
+            }
         }
     }
 
