@@ -21,11 +21,9 @@ fn test_chained_getter() {
         },
     };
 
-    let name: &String =
-        <ChainGetters<UseField<symbol!("inner")>, UseField<symbol!("name")>>>::get_field(
-            &context,
-            PhantomData::<()>,
-        );
+    let name: &String = <ChainGetters<
+        Product![UseField<symbol!("inner")>, UseField<symbol!("name")>],
+    >>::get_field(&context, PhantomData::<()>);
     assert_eq!(name, "test");
 }
 
@@ -47,11 +45,9 @@ fn test_chained_getter_with_outer_life() {
         },
     };
 
-    let name: &String =
-        <ChainGetters<UseField<symbol!("inner")>, UseField<symbol!("name")>>>::get_field(
-            &context,
-            PhantomData::<()>,
-        );
+    let name: &String = <ChainGetters<
+        Product![UseField<symbol!("inner")>, UseField<symbol!("name")>],
+    >>::get_field(&context, PhantomData::<()>);
     assert_eq!(name, "test");
 }
 
@@ -73,10 +69,8 @@ fn test_chained_getter_with_inner_life() {
         },
     };
 
-    let name: &String =
-        <ChainGetters<UseField<symbol!("inner")>, UseField<symbol!("name")>>>::get_field(
-            &context,
-            PhantomData::<()>,
-        );
+    let name: &String = <ChainGetters<
+        Product![UseField<symbol!("inner")>, UseField<symbol!("name")>],
+    >>::get_field(&context, PhantomData::<()>);
     assert_eq!(name, "test");
 }

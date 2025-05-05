@@ -1,19 +1,28 @@
 use core::marker::PhantomData;
 
-use crate::{FieldGetter, FieldMapper};
+use crate::{Cons, FieldGetter, FieldMapper, Nil};
 
-pub struct ChainGetters<GetterA, GetterB>(pub PhantomData<(GetterA, GetterB)>);
+pub struct ChainGetters<Getters>(pub PhantomData<Getters>);
 
-impl<Context, Tag, GetterA, GetterB, ValueA, ValueB> FieldGetter<Context, Tag>
-    for ChainGetters<GetterA, GetterB>
+impl<Context, Tag, Getter, RestGetters, ValueA, ValueB> FieldGetter<Context, Tag>
+    for ChainGetters<Cons<Getter, RestGetters>>
 where
-    GetterA: FieldMapper<Context, Tag, Value = ValueA>,
-    GetterB: FieldGetter<ValueA, Tag, Value = ValueB>,
+    Getter: FieldMapper<Context, Tag, Value = ValueA>,
+    ChainGetters<RestGetters>: FieldGetter<ValueA, Tag, Value = ValueB>,
 {
     type Value = ValueB;
 
     fn get_field(context: &Context, tag: PhantomData<Tag>) -> &ValueB {
-        // GetterB::get_field(GetterA::get_field(context, tag), tag)
-        GetterA::map_field(context, tag, |value| GetterB::get_field(value, tag))
+        Getter::map_field(context, tag, |value| {
+            <ChainGetters<RestGetters>>::get_field(value, tag)
+        })
+    }
+}
+
+impl<Context, Tag> FieldGetter<Context, Tag> for ChainGetters<Nil> {
+    type Value = Context;
+
+    fn get_field(context: &Context, _tag: PhantomData<Tag>) -> &Context {
+        context
     }
 }
