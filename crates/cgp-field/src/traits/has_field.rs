@@ -21,6 +21,20 @@ pub trait MapField<Tag>: HasField<Tag> {
     ) -> &T;
 }
 
+impl<Context, Tag> MapField<Tag> for Context
+where
+    Context: HasField<Tag>,
+    Tag: 'static,
+{
+    fn map_field<T>(
+        &self,
+        tag: PhantomData<Tag>,
+        mapper: impl for<'a> FnOnce(&'a Self::Value) -> &'a T,
+    ) -> &T {
+        mapper(self.get_field(tag))
+    }
+}
+
 pub trait FieldGetter<Context, Tag> {
     type Value;
 
@@ -48,22 +62,6 @@ where
     }
 }
 
-#[diagnostic::do_not_recommend]
-impl<Context, Tag, Target> MapField<Tag> for Context
-where
-    Context: DerefMap<Target = Target>,
-    Target: MapField<Tag>,
-    Tag: 'static,
-{
-    fn map_field<T>(
-        &self,
-        tag: PhantomData<Tag>,
-        mapper: impl for<'a> FnOnce(&'a Self::Value) -> &'a T,
-    ) -> &T {
-        self.map_deref(|inner| mapper(inner.get_field(tag)))
-    }
-}
-
 impl<Context, Tag, Field> FieldGetter<Context, Tag> for UseContext
 where
     Context: HasField<Tag, Value = Field>,
@@ -88,7 +86,7 @@ where
     }
 }
 
-pub trait DerefMap: Deref {
+trait DerefMap: Deref {
     fn map_deref<T>(&self, mapper: impl for<'a> FnOnce(&'a Self::Target) -> &'a T) -> &T;
 }
 

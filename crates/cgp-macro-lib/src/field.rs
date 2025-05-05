@@ -39,21 +39,6 @@ pub fn derive_has_field_impls(item_struct: &ItemStruct) -> Vec<ItemImpl> {
                 }
             };
 
-            let can_map_field_impl: ItemImpl = parse_quote! {
-                impl #impl_generics MapField< #field_symbol >
-                    for #struct_ident #ty_generics
-                #where_clause
-                {
-                    fn map_field<__Mapped__>(&self,
-                        tag: ::core::marker::PhantomData< #field_symbol >,
-                        mapper: impl for<'__mapped__> FnOnce(&'__mapped__ Self::Value) -> &'__mapped__ __Mapped__,
-                    ) -> &__Mapped__
-                    {
-                        mapper( &self. #field_ident )
-                    }
-                }
-            };
-
             let has_field_mut_impl: ItemImpl = parse_quote! {
                 impl #impl_generics HasFieldMut< #field_symbol >
                     for #struct_ident #ty_generics
@@ -71,7 +56,6 @@ pub fn derive_has_field_impls(item_struct: &ItemStruct) -> Vec<ItemImpl> {
 
             item_impls.push(has_field_impl);
             item_impls.push(has_field_mut_impl);
-            item_impls.push(can_map_field_impl);
         }
     }
 
