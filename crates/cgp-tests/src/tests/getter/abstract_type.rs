@@ -7,9 +7,7 @@ pub fn test_abstract_type_getter() {
         type Name;
     }
 
-    #[cgp_getter {
-        provider: NameGetter,
-    }]
+    #[cgp_getter]
     pub trait HasName: HasNameType {
         fn name(&self) -> &Self::Name;
     }

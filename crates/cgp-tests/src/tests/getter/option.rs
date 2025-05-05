@@ -2,9 +2,7 @@ use cgp::prelude::*;
 
 #[test]
 pub fn test_option_getter() {
-    #[cgp_getter {
-        provider: FooGetter,
-    }]
+    #[cgp_getter]
     pub trait HasFoo {
         fn foo(&self) -> Option<&String>;
     }

@@ -1,10 +1,9 @@
+use cgp::core::field::MRef;
 use cgp::prelude::*;
 
 #[test]
 pub fn test_mref_getter() {
-    #[cgp_getter {
-        provider: FooGetter,
-    }]
+    #[cgp_getter]
     pub trait HasFoo {
         fn foo(&self) -> MRef<'_, String>;
     }

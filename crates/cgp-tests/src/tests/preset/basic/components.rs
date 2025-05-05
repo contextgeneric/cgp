@@ -10,16 +10,12 @@ pub trait HasBarType {
     type Bar;
 }
 
-#[cgp_getter {
-    provider: FooGetter,
-}]
+#[cgp_getter]
 pub trait HasFoo: HasFooType {
     fn foo(&self) -> &Self::Foo;
 }
 
-#[cgp_getter {
-    provider: BarGetter,
-}]
+#[cgp_getter]
 pub trait HasBar: HasBarType {
     fn bar(&self) -> &Self::Bar;
 }

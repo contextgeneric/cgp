@@ -7,9 +7,7 @@ pub fn test_clone_getter() {
         type Name;
     }
 
-    #[cgp_getter {
-        provider: NameGetter,
-    }]
+    #[cgp_getter]
     pub trait HasName: HasNameType<Name: Clone> {
         fn name(&self) -> Self::Name;
     }
