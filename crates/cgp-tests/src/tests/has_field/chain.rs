@@ -41,19 +41,18 @@ fn test_chained_getter_with_outer_life() {
         pub name: String,
     }
 
-    let inner = Inner {
-        name: "test".to_owned(),
+    let context = Outer {
+        inner: &Inner {
+            name: "test".to_owned(),
+        },
     };
 
-    let context = Outer { inner: &inner };
-
-    // let name: &String =
-    //     <ChainGetters<UseField<symbol!("inner")>, UseField<symbol!("name")>>>::get_field(
-    //         &context,
-    //         PhantomData::<()>,
-    //     );
-
-    // assert_eq!(name, "test");
+    let name: &String =
+        <ChainGetters<UseField<symbol!("inner")>, UseField<symbol!("name")>>>::get_field(
+            &context,
+            PhantomData::<()>,
+        );
+    assert_eq!(name, "test");
 }
 
 #[test]
@@ -68,17 +67,16 @@ fn test_chained_getter_with_inner_life() {
         pub name: &'a String,
     }
 
-    let name = "test".to_owned();
-
     let context = Outer {
-        inner: Inner { name: &name },
+        inner: Inner {
+            name: &"test".to_owned(),
+        },
     };
 
-    // let name: &String =
-    //     <ChainGetters<UseField<symbol!("inner")>, UseField<symbol!("name")>>>::get_field(
-    //         &context,
-    //         PhantomData::<()>,
-    //     );
-
-    // assert_eq!(name, "test");
+    let name: &String =
+        <ChainGetters<UseField<symbol!("inner")>, UseField<symbol!("name")>>>::get_field(
+            &context,
+            PhantomData::<()>,
+        );
+    assert_eq!(name, "test");
 }
