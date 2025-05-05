@@ -9,7 +9,6 @@ impl<Context, Tag, GetterA, GetterB, ValueA, ValueB> FieldGetter<Context, Tag>
 where
     GetterA: FieldMapper<Context, Tag, Value = ValueA>,
     GetterB: FieldGetter<ValueA, Tag, Value = ValueB>,
-    Tag: 'static,
 {
     type Value = ValueB;
 

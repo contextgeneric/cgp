@@ -49,6 +49,20 @@ pub trait FieldMapper<Context, Tag>: FieldGetter<Context, Tag> {
     ) -> &T;
 }
 
+impl<Getter, Context, Tag> FieldMapper<Context, Tag> for Getter
+where
+    Getter: FieldGetter<Context, Tag> + 'static,
+    Tag: 'static,
+{
+    fn map_field<T>(
+        context: &Context,
+        tag: PhantomData<Tag>,
+        mapper: impl for<'a> FnOnce(&'a Self::Value) -> &'a T,
+    ) -> &T {
+        mapper(Getter::get_field(context, tag))
+    }
+}
+
 #[diagnostic::do_not_recommend]
 impl<Context, Tag, Target, Value> HasField<Tag> for Context
 where
@@ -70,19 +84,6 @@ where
 
     fn get_field(context: &Context, _tag: PhantomData<Tag>) -> &Self::Value {
         context.get_field(PhantomData)
-    }
-}
-
-impl<Context, Tag, Field> FieldMapper<Context, Tag> for UseContext
-where
-    Context: MapField<Tag, Value = Field>,
-{
-    fn map_field<T>(
-        context: &Context,
-        tag: PhantomData<Tag>,
-        mapper: impl for<'a> FnOnce(&'a Self::Value) -> &'a T,
-    ) -> &T {
-        context.map_field(tag, mapper)
     }
 }
 

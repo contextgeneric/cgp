@@ -5,7 +5,6 @@ use cgp_macro::cgp_provider;
 use cgp_type::{ProvideType, TypeComponent};
 
 use crate::traits::{FieldGetter, HasField, HasFieldMut, MutFieldGetter};
-use crate::{FieldMapper, MapField};
 
 pub struct UseField<Tag>(pub PhantomData<Tag>);
 
@@ -36,18 +35,5 @@ where
 {
     fn get_field_mut(context: &mut Context, _tag: PhantomData<OutTag>) -> &mut Value {
         context.get_field_mut(PhantomData)
-    }
-}
-
-impl<Context, OutTag, Tag, Value> FieldMapper<Context, OutTag> for UseField<Tag>
-where
-    Context: MapField<Tag, Value = Value>,
-{
-    fn map_field<T>(
-        context: &Context,
-        _tag: PhantomData<OutTag>,
-        mapper: impl for<'a> FnOnce(&'a Self::Value) -> &'a T,
-    ) -> &T {
-        context.map_field(PhantomData, mapper)
     }
 }
