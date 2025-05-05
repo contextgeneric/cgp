@@ -38,28 +38,29 @@ pub trait FieldMapper<Context, Tag>: FieldGetter<Context, Tag> {
 #[diagnostic::do_not_recommend]
 impl<Context, Tag, Target, Value> HasField<Tag> for Context
 where
-    Context: Deref<Target = Target>,
-    Target: HasField<Tag, Value = Value> + 'static,
+    Context: DerefMap<Target = Target>,
+    Target: HasField<Tag, Value = Value>,
 {
     type Value = Value;
 
     fn get_field(&self, tag: PhantomData<Tag>) -> &Self::Value {
-        self.deref().get_field(tag)
+        self.map_deref(|context| context.get_field(tag))
     }
 }
 
 #[diagnostic::do_not_recommend]
-impl<Context, Tag, Target, Value> MapField<Tag> for Context
+impl<Context, Tag, Target> MapField<Tag> for Context
 where
-    Context: Deref<Target = Target>,
-    Target: MapField<Tag, Value = Value> + 'static,
+    Context: DerefMap<Target = Target>,
+    Target: MapField<Tag>,
+    Tag: 'static,
 {
     fn map_field<T>(
         &self,
         tag: PhantomData<Tag>,
         mapper: impl for<'a> FnOnce(&'a Self::Value) -> &'a T,
     ) -> &T {
-        self.deref().map_field(tag, mapper)
+        self.map_deref(|inner| mapper(inner.get_field(tag)))
     }
 }
 
@@ -84,5 +85,18 @@ where
         mapper: impl for<'a> FnOnce(&'a Self::Value) -> &'a T,
     ) -> &T {
         context.map_field(tag, mapper)
+    }
+}
+
+pub trait DerefMap: Deref {
+    fn map_deref<T>(&self, mapper: impl for<'a> FnOnce(&'a Self::Target) -> &'a T) -> &T;
+}
+
+impl<Context> DerefMap for Context
+where
+    Context: Deref,
+{
+    fn map_deref<T>(&self, mapper: impl for<'a> FnOnce(&'a Self::Target) -> &'a T) -> &T {
+        mapper(self.deref())
     }
 }
