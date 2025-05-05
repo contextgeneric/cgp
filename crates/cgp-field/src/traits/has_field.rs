@@ -13,54 +13,10 @@ pub trait HasField<Tag> {
     fn get_field(&self, _tag: PhantomData<Tag>) -> &Self::Value;
 }
 
-pub trait MapField<Tag>: HasField<Tag> {
-    fn map_field<T>(
-        &self,
-        _tag: PhantomData<Tag>,
-        mapper: impl for<'a> FnOnce(&'a Self::Value) -> &'a T,
-    ) -> &T;
-}
-
-impl<Context, Tag> MapField<Tag> for Context
-where
-    Context: HasField<Tag>,
-    Tag: 'static,
-{
-    fn map_field<T>(
-        &self,
-        tag: PhantomData<Tag>,
-        mapper: impl for<'a> FnOnce(&'a Self::Value) -> &'a T,
-    ) -> &T {
-        mapper(self.get_field(tag))
-    }
-}
-
 pub trait FieldGetter<Context, Tag> {
     type Value;
 
     fn get_field(context: &Context, _tag: PhantomData<Tag>) -> &Self::Value;
-}
-
-pub trait FieldMapper<Context, Tag>: FieldGetter<Context, Tag> {
-    fn map_field<T>(
-        context: &Context,
-        _tag: PhantomData<Tag>,
-        mapper: impl for<'a> FnOnce(&'a Self::Value) -> &'a T,
-    ) -> &T;
-}
-
-impl<Getter, Context, Tag> FieldMapper<Context, Tag> for Getter
-where
-    Getter: FieldGetter<Context, Tag> + 'static,
-    Tag: 'static,
-{
-    fn map_field<T>(
-        context: &Context,
-        tag: PhantomData<Tag>,
-        mapper: impl for<'a> FnOnce(&'a Self::Value) -> &'a T,
-    ) -> &T {
-        mapper(Getter::get_field(context, tag))
-    }
 }
 
 #[diagnostic::do_not_recommend]
@@ -87,6 +43,11 @@ where
     }
 }
 
+/**
+   A helper trait to help organize the lifetime inference in Rust.
+   Without this, `Self::Target` would need to be `'static`, as Rust couldn't
+   infer the correct lifetime when calling `context.deref().get_field()`.
+*/
 trait DerefMap: Deref {
     fn map_deref<T>(&self, mapper: impl for<'a> FnOnce(&'a Self::Target) -> &'a T) -> &T;
 }
