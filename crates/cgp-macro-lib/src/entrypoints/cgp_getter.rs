@@ -21,8 +21,7 @@ pub fn cgp_getter(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStre
 
     if let Entry::Vacant(entry) = provider_entry {
         let consumer_name = consumer_trait.ident.to_string();
-        if consumer_name.starts_with("Has") {
-            let field_name = &consumer_name[3..];
+        if let Some(field_name) = consumer_name.strip_prefix("Has") {
             if !field_name.is_empty() {
                 let provider_name =
                     Ident::new(&format!("{field_name}Getter"), consumer_trait.ident.span());
