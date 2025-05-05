@@ -64,5 +64,5 @@ fn test_generic_delegate_components() {
     {
     }
 
-    impl<'a, T1, T2> CheckDelegates<'a, T1, T2> for Components where T1: Clone {}
+    impl<T1, T2> CheckDelegates<'_, T1, T2> for Components where T1: Clone {}
 }

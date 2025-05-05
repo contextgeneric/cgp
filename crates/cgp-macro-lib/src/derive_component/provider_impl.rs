@@ -117,14 +117,14 @@ pub fn derive_provider_impl(
                     attrs: trait_item_const.attrs.clone(),
                     vis: Visibility::Inherited,
                     defaultness: None,
-                    const_token: trait_item_const.const_token.clone(),
+                    const_token: trait_item_const.const_token,
                     ident: trait_item_const.ident.clone(),
                     generics: trait_item_const.generics.clone(),
-                    colon_token: trait_item_const.colon_token.clone(),
+                    colon_token: trait_item_const.colon_token,
                     ty: trait_item_const.ty.clone(),
                     eq_token: Eq(Span::call_site()),
                     expr: impl_expr,
-                    semi_token: trait_item_const.semi_token.clone(),
+                    semi_token: trait_item_const.semi_token,
                 };
 
                 impl_items.push(ImplItem::Const(impl_item_const));
