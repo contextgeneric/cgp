@@ -104,9 +104,7 @@ fn test_deeply_nested_getter() {
         pub a: A,
     }
 
-    #[cgp_getter {
-        provider: NameGetter,
-    }]
+    #[cgp_getter]
     pub trait HasName {
         fn name(&self) -> &str;
     }

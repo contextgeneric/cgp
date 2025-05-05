@@ -1,6 +1,8 @@
+use std::collections::btree_map::Entry;
+
 use proc_macro2::TokenStream;
-use quote::quote;
-use syn::{parse_quote, ItemTrait, Type};
+use quote::{quote, ToTokens};
+use syn::{parse2, parse_quote, Ident, ItemTrait, Type};
 
 use crate::derive_component::derive_component_with_ast;
 use crate::derive_getter::{
@@ -8,11 +10,28 @@ use crate::derive_getter::{
     GetterField,
 };
 use crate::derive_provider::derive_is_provider_for;
-use crate::parse::ComponentSpec;
+use crate::parse::{ComponentSpec, Entries};
 
 pub fn cgp_getter(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
-    let spec: ComponentSpec = syn::parse2(attr)?;
+    let Entries { mut entries } = parse2(attr)?;
+
     let consumer_trait: ItemTrait = syn::parse2(body)?;
+
+    let provider_entry = entries.entry("provider".to_owned());
+
+    if let Entry::Vacant(entry) = provider_entry {
+        let consumer_name = consumer_trait.ident.to_string();
+        if consumer_name.starts_with("Has") {
+            let field_name = &consumer_name[3..];
+            if !field_name.is_empty() {
+                let provider_name =
+                    Ident::new(&format!("{field_name}Getter"), consumer_trait.ident.span());
+                entry.insert(parse2(provider_name.to_token_stream())?);
+            }
+        }
+    }
+
+    let spec = ComponentSpec::from_entries(&entries)?;
 
     let derived_component = derive_component_with_ast(&spec, consumer_trait.clone())?;
 
