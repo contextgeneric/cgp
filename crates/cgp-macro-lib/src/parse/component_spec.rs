@@ -3,7 +3,7 @@ use std::collections::BTreeMap;
 
 use proc_macro2::Span;
 use quote::ToTokens;
-use syn::parse::{Parse, ParseStream};
+use syn::parse::{End, Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::token::{Comma, Gt, Lt};
 use syn::{Error, Ident, Type};
@@ -26,8 +26,23 @@ static VALID_KEYS: [&str; 3] = ["context", "provider", "name"];
 
 impl Parse for ComponentSpec {
     fn parse(input: ParseStream) -> syn::Result<Self> {
-        let Entries { entries } = input.parse()?;
-        Self::from_entries(&entries)
+        if input.peek2(End) {
+            let provider_name: Ident = input.parse()?;
+            let context_type = Ident::new("Context", Span::call_site());
+            let component_name =
+                Ident::new(&format!("{provider_name}Component"), provider_name.span());
+            let component_params = Punctuated::default();
+
+            Ok(Self {
+                provider_name,
+                context_type,
+                component_name,
+                component_params,
+            })
+        } else {
+            let Entries { entries } = input.parse()?;
+            Self::from_entries(&entries)
+        }
     }
 }
 
