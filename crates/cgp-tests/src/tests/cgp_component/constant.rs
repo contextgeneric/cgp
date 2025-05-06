@@ -10,7 +10,7 @@ pub fn test_component_with_const() {
 
     pub struct UseConstant<const CONSTANT: u64>;
 
-    #[cgp_provider(ConstantGetterComponent)]
+    #[cgp_provider]
     impl<Context, const CONSTANT: u64> ConstantGetter<Context> for UseConstant<CONSTANT> {
         const CONSTANT: u64 = CONSTANT;
     }
@@ -48,7 +48,7 @@ pub fn test_component_with_generic_const() {
 
     pub struct UseConstant<const CONSTANT: u64>;
 
-    #[cgp_provider(ConstantGetterComponent)]
+    #[cgp_provider]
     impl<Context, const CONSTANT: u64> ConstantGetter<Context> for UseConstant<CONSTANT>
     where
         Context: HasUnitType<Unit = u64>,
