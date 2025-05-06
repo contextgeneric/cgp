@@ -1,9 +1,7 @@
 use cgp::prelude::*;
 
 pub fn test_component_with_const() {
-    #[cgp_component {
-        provider: ConstantGetter
-    }]
+    #[cgp_component(ConstantGetter)]
     pub trait HasConstant {
         const CONSTANT: u64;
     }
@@ -39,9 +37,7 @@ pub fn test_component_with_generic_const() {
         type Unit;
     }
 
-    #[cgp_component {
-        provider: ConstantGetter
-    }]
+    #[cgp_component(ConstantGetter)]
     pub trait HasConstant: HasUnitType {
         const CONSTANT: Self::Unit;
     }

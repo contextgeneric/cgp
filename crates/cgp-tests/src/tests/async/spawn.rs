@@ -22,25 +22,19 @@ pub fn test_async_spawn() {
         type Bar: Async;
     }
 
-    #[cgp_component {
-        provider: FooFetcher,
-    }]
+    #[cgp_component(FooFetcher)]
     #[async_trait]
     pub trait CanFetchFoo: Async + HasFooType + HasAsyncErrorType {
         async fn fetch_foo(&self) -> Result<Self::Foo, Self::Error>;
     }
 
-    #[cgp_component {
-        provider: BarFetcher,
-    }]
+    #[cgp_component(BarFetcher)]
     #[async_trait]
     pub trait CanFetchBar: Async + HasBarType + HasAsyncErrorType {
         async fn fetch_bar(&self) -> Result<Self::Bar, Self::Error>;
     }
 
-    #[cgp_component {
-        provider: FooBarRunner,
-    }]
+    #[cgp_component(FooBarRunner)]
     #[async_trait]
     pub trait CanRunFooBar: Async + HasFooType + HasBarType + HasAsyncErrorType {
         async fn run_foo_bar(&self, foo: &Self::Foo, bar: &Self::Bar) -> Result<(), Self::Error>;
