@@ -1,14 +1,27 @@
 use proc_macro2::TokenStream;
 use quote::quote;
-use syn::{parse2, ItemImpl, ItemStruct};
+use syn::{parse2, Ident, ItemImpl, ItemStruct};
 
 use crate::derive_context::{derive_delegate_preset, derive_has_components};
 use crate::parse::ContextSpec;
 
 pub fn cgp_context(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
-    let context_spec: ContextSpec = syn::parse2(attr)?;
-
     let context_struct: ItemStruct = syn::parse2(body)?;
+
+    let context_spec: ContextSpec = if !attr.is_empty() {
+        syn::parse2(attr)?
+    } else {
+        let provider_name = Ident::new(
+            &format!("{}Components", context_struct.ident),
+            context_struct.ident.span(),
+        );
+
+        ContextSpec {
+            provider_name,
+            provider_generics: None,
+            preset: None,
+        }
+    };
 
     let provider_name = &context_spec.provider_name;
     let provider_generics = &context_spec.provider_generics;
