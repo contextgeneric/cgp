@@ -98,7 +98,7 @@ fn test_deeply_nested_getter() {
         pub name: String,
     }
 
-    #[cgp_context(MyContextComponents)]
+    #[cgp_context]
     #[derive(HasField)]
     pub struct MyContext {
         pub a: A,

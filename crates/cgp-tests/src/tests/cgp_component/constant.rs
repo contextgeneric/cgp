@@ -15,7 +15,7 @@ pub fn test_component_with_const() {
         const CONSTANT: u64 = CONSTANT;
     }
 
-    #[cgp_context(MyContextComponents)]
+    #[cgp_context]
     pub struct MyContext;
 
     delegate_components! {
@@ -56,7 +56,7 @@ pub fn test_component_with_generic_const() {
         const CONSTANT: u64 = CONSTANT;
     }
 
-    #[cgp_context(MyContextComponents)]
+    #[cgp_context]
     pub struct MyContext;
 
     delegate_components! {

@@ -7,7 +7,7 @@ pub fn test_slice_getter() {
         fn foo(&self) -> &[u8];
     }
 
-    #[cgp_context(AppComponents)]
+    #[cgp_context]
     #[derive(HasField)]
     pub struct App {
         pub bar: Vec<u8>,

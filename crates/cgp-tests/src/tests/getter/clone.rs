@@ -12,7 +12,7 @@ pub fn test_clone_getter() {
         fn name(&self) -> Self::Name;
     }
 
-    #[cgp_context(AppComponents)]
+    #[cgp_context]
     #[derive(HasField)]
     pub struct App {
         pub name: String,
@@ -44,7 +44,7 @@ pub fn test_clone_auto_getter() {
         fn name(&self) -> Self::Name;
     }
 
-    #[cgp_context(AppComponents)]
+    #[cgp_context]
     #[derive(HasField)]
     pub struct App {
         pub name: String,

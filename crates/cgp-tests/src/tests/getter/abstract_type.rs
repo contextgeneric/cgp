@@ -12,7 +12,7 @@ pub fn test_abstract_type_getter() {
         fn name(&self) -> &Self::Name;
     }
 
-    #[cgp_context(AppComponents)]
+    #[cgp_context]
     #[derive(HasField)]
     pub struct App {
         pub name: String,
@@ -44,7 +44,7 @@ pub fn test_abstract_type_auto_getter() {
         fn name(&self) -> &Self::Name;
     }
 
-    #[cgp_context(AppComponents)]
+    #[cgp_context]
     #[derive(HasField)]
     pub struct App {
         pub name: String,

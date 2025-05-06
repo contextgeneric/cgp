@@ -8,7 +8,7 @@ pub fn test_mref_getter() {
         fn foo(&self) -> MRef<'_, String>;
     }
 
-    #[cgp_context(AppComponents)]
+    #[cgp_context]
     #[derive(HasField)]
     pub struct App {
         pub bar: String,
