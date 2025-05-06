@@ -1,13 +1,17 @@
 use proc_macro2::TokenStream;
 use quote::quote;
-use syn::{ItemImpl, Type};
+use syn::{parse2, ItemImpl, Type};
 
-use crate::derive_provider::derive_is_provider_for;
+use crate::derive_provider::{derive_component_name_from_provider_impl, derive_is_provider_for};
 
 pub fn cgp_provider(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
-    let component_name: Type = syn::parse2(attr)?;
+    let provider_impl: ItemImpl = parse2(body)?;
 
-    let provider_impl: ItemImpl = syn::parse2(body)?;
+    let component_name: Type = if !attr.is_empty() {
+        syn::parse2(attr)?
+    } else {
+        derive_component_name_from_provider_impl(&provider_impl)?
+    };
 
     let is_provider_for_impl: ItemImpl = derive_is_provider_for(&component_name, &provider_impl)?;
 
