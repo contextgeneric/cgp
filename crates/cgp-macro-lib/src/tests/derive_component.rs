@@ -55,7 +55,7 @@ fn test_derive_component_with_const_generic() {
 
         impl<Context, const BAR: usize> HasFoo<BAR> for Context
         where
-            Context: HasProvider,
+            Context: HasCgpProvider,
             Context::Provider: FooProvider<Context, BAR>,
         {
             type Foo = <Context::Provider as FooProvider<Context, BAR>>::Foo;

@@ -1,10 +1,10 @@
-use crate::{HasProvider, IsProviderFor};
+use crate::{HasCgpProvider, IsProviderFor};
 
 pub trait CanUseComponent<Component, Params = ()> {}
 
 impl<Context, Component, Params> CanUseComponent<Component, Params> for Context
 where
-    Context: HasProvider,
-    Context::Provider: IsProviderFor<Component, Context, Params>,
+    Context: HasCgpProvider,
+    Context::CgpProvider: IsProviderFor<Component, Context, Params>,
 {
 }

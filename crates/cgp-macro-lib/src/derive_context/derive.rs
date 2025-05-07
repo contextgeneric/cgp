@@ -13,10 +13,10 @@ pub fn derive_has_components(
     let (impl_generics, ty_generics, where_clause) = context_struct.generics.split_for_impl();
 
     parse2(quote! {
-        impl #impl_generics HasProvider for #context_name #ty_generics
+        impl #impl_generics HasCgpProvider for #context_name #ty_generics
             #where_clause
         {
-            type Provider = #provider_name #provider_generics;
+            type CgpProvider = #provider_name #provider_generics;
         }
     })
 }

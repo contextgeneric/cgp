@@ -34,7 +34,7 @@ fn test_derive_getter_basic() {
         impl<Context> HasName for Context
         where
             Context: HasNameType,
-            Context: HasProvider,
+            Context: HasCgpProvider,
             Context::Provider: NameGetter<Context>,
         {
             fn name(&self) -> &Self::Name {
@@ -159,7 +159,7 @@ fn test_derive_getter_str() {
         }
         impl<Context> HasName for Context
         where
-            Context: HasProvider,
+            Context: HasCgpProvider,
             Context::Provider: NameGetter<Context>,
         {
             fn name(&self) -> &str {
@@ -267,7 +267,7 @@ fn test_derive_getter_mut_str() {
         }
         impl<Context> HasName for Context
         where
-            Context: HasProvider,
+            Context: HasCgpProvider,
             Context::Provider: NameGetter<Context>,
         {
             fn name(&mut self) -> &mut str {
@@ -381,7 +381,7 @@ fn test_derive_getter_clone() {
         impl<Context> HasName for Context
         where
             Context: HasNameType<Name: Clone>,
-            Context: HasProvider,
+            Context: HasCgpProvider,
             Context::Provider: NameGetter<Context>,
         {
             fn name(&self) -> Self::Name {
@@ -504,7 +504,7 @@ fn test_derive_getter_option_ref() {
         impl<Context> HasName for Context
         where
             Context: HasNameType,
-            Context: HasProvider,
+            Context: HasCgpProvider,
             Context::Provider: NameGetter<Context>,
         {
             fn name(&self) -> Option<&Self::Name> {
@@ -627,7 +627,7 @@ fn test_derive_getter_option_mut() {
         impl<Context> HasName for Context
         where
             Context: HasNameType,
-            Context: HasProvider,
+            Context: HasCgpProvider,
             Context::Provider: NameGetter<Context>,
         {
             fn name(&mut self) -> Option<&mut Self::Name> {
@@ -759,7 +759,7 @@ fn test_derive_getter_with_generics() {
         impl<Context, App> HasName<App> for Context
         where
             App: HasNameType,
-            Context: HasProvider,
+            Context: HasCgpProvider,
             Context::Provider: NameGetter<Context, App>,
         {
             fn name(&self) -> &App::Name {
@@ -894,7 +894,7 @@ fn test_derive_getter_with_component_generics() {
         impl<Context, App> HasName<App> for Context
         where
             App: HasNameType,
-            Context: HasProvider,
+            Context: HasCgpProvider,
             Context::Provider: NameGetter<Context, App>,
         {
             fn name(&self) -> &App::Name {
@@ -1024,7 +1024,7 @@ fn test_derive_getter_with_phantom() {
         impl<Context, App, B> HasName<App, B> for Context
         where
             App: HasNameType,
-            Context: HasProvider,
+            Context: HasCgpProvider,
             Context::Provider: NameGetter<Context, App, B>,
         {
             fn name(&self, _phantom: PhantomData<(App, B)>) -> &App::Name {

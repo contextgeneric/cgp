@@ -1,3 +1,3 @@
-pub trait HasProvider {
-    type Provider;
+pub trait HasCgpProvider {
+    type CgpProvider;
 }

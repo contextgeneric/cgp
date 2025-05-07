@@ -61,7 +61,7 @@ pub fn derive_consumer_impl(
 
         {
             let has_component_constraint: TypeParamBound = parse2(quote! {
-                HasProvider
+                HasCgpProvider
             })?;
 
             let provider_constraint: TypeParamBound = parse2(quote! {
@@ -75,14 +75,14 @@ pub fn derive_consumer_impl(
                     })?);
 
                     where_clause.predicates.push(parse2(quote! {
-                        #context_type :: Provider : #provider_constraint
+                        #context_type :: CgpProvider : #provider_constraint
                     })?);
                 }
                 _ => {
                     generics.where_clause = Some(parse2(quote! {
                         where
                             #context_type : #has_component_constraint,
-                            #context_type :: Provider : #provider_constraint
+                            #context_type :: CgpProvider : #provider_constraint
                     })?);
                 }
             }
@@ -98,7 +98,7 @@ pub fn derive_consumer_impl(
             TraitItem::Fn(trait_fn) => {
                 let impl_fn = derive_delegated_fn_impl(
                     &trait_fn.sig,
-                    &parse2(quote!(#context_type :: Provider))?,
+                    &parse2(quote!(#context_type :: CgpProvider))?,
                 )?;
 
                 impl_items.push(ImplItem::Fn(impl_fn));
@@ -121,7 +121,7 @@ pub fn derive_consumer_impl(
                 let impl_type = derive_delegate_type_impl(
                     trait_type,
                     parse2(quote!(
-                        < #context_type :: Provider as #provider_name < #provider_type_generics > > :: #type_name #type_generics
+                        < #context_type :: CgpProvider as #provider_name < #provider_type_generics > > :: #type_name #type_generics
                     ))?,
                 );
 
@@ -132,7 +132,7 @@ pub fn derive_consumer_impl(
                 let (_, type_generics, _) = trait_item_const.generics.split_for_impl();
 
                 let impl_expr = parse2(quote! {
-                    < #context_type :: Provider as #provider_name < #provider_type_generics > > :: #const_ident #type_generics
+                    < #context_type :: CgpProvider as #provider_name < #provider_type_generics > > :: #const_ident #type_generics
                 })?;
 
                 let impl_item_const = ImplItemConst {

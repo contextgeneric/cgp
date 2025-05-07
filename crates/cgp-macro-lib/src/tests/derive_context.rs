@@ -29,7 +29,7 @@ fn test_basic_derive_context() {
 
         pub struct FooComponents;
 
-        impl<Bar: BarConstraint> HasProvider for FooContext<Bar>
+        impl<Bar: BarConstraint> HasCgpProvider for FooContext<Bar>
         where
             Bar: BazConstraint,
         {
@@ -67,7 +67,7 @@ fn test_derive_context_with_preset() {
 
         pub struct FooComponents;
 
-        impl<Bar: BarConstraint> HasProvider for FooContext<Bar>
+        impl<Bar: BarConstraint> HasCgpProvider for FooContext<Bar>
         where
             Bar: BazConstraint,
         {
