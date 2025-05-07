@@ -33,7 +33,7 @@ fn test_basic_derive_context() {
         where
             Bar: BazConstraint,
         {
-            type Provider = FooComponents;
+            type CgpProvider = FooComponents;
         }
     };
 
@@ -71,7 +71,7 @@ fn test_derive_context_with_preset() {
         where
             Bar: BazConstraint,
         {
-            type Provider = FooComponents;
+            type CgpProvider = FooComponents;
         }
 
         impl<__Name__> DelegateComponent<__Name__> for FooComponents

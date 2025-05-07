@@ -35,10 +35,10 @@ fn test_derive_getter_basic() {
         where
             Context: HasNameType,
             Context: HasCgpProvider,
-            Context::Provider: NameGetter<Context>,
+            Context::CgpProvider: NameGetter<Context>,
         {
             fn name(&self) -> &Self::Name {
-                Context::Provider::name(self)
+                Context::CgpProvider::name(self)
             }
         }
 
@@ -160,10 +160,10 @@ fn test_derive_getter_str() {
         impl<Context> HasName for Context
         where
             Context: HasCgpProvider,
-            Context::Provider: NameGetter<Context>,
+            Context::CgpProvider: NameGetter<Context>,
         {
             fn name(&self) -> &str {
-                Context::Provider::name(self)
+                Context::CgpProvider::name(self)
             }
         }
         impl<Component, Context> NameGetter<Context> for Component
@@ -268,10 +268,10 @@ fn test_derive_getter_mut_str() {
         impl<Context> HasName for Context
         where
             Context: HasCgpProvider,
-            Context::Provider: NameGetter<Context>,
+            Context::CgpProvider: NameGetter<Context>,
         {
             fn name(&mut self) -> &mut str {
-                Context::Provider::name(self)
+                Context::CgpProvider::name(self)
             }
         }
         impl<Component, Context> NameGetter<Context> for Component
@@ -382,10 +382,10 @@ fn test_derive_getter_clone() {
         where
             Context: HasNameType<Name: Clone>,
             Context: HasCgpProvider,
-            Context::Provider: NameGetter<Context>,
+            Context::CgpProvider: NameGetter<Context>,
         {
             fn name(&self) -> Self::Name {
-                Context::Provider::name(self)
+                Context::CgpProvider::name(self)
             }
         }
         impl<Component, Context> NameGetter<Context> for Component
@@ -505,10 +505,10 @@ fn test_derive_getter_option_ref() {
         where
             Context: HasNameType,
             Context: HasCgpProvider,
-            Context::Provider: NameGetter<Context>,
+            Context::CgpProvider: NameGetter<Context>,
         {
             fn name(&self) -> Option<&Self::Name> {
-                Context::Provider::name(self)
+                Context::CgpProvider::name(self)
             }
         }
         impl<Component, Context> NameGetter<Context> for Component
@@ -628,10 +628,10 @@ fn test_derive_getter_option_mut() {
         where
             Context: HasNameType,
             Context: HasCgpProvider,
-            Context::Provider: NameGetter<Context>,
+            Context::CgpProvider: NameGetter<Context>,
         {
             fn name(&mut self) -> Option<&mut Self::Name> {
-                Context::Provider::name(self)
+                Context::CgpProvider::name(self)
             }
         }
         impl<Component, Context> NameGetter<Context> for Component
@@ -760,10 +760,10 @@ fn test_derive_getter_with_generics() {
         where
             App: HasNameType,
             Context: HasCgpProvider,
-            Context::Provider: NameGetter<Context, App>,
+            Context::CgpProvider: NameGetter<Context, App>,
         {
             fn name(&self) -> &App::Name {
-                Context::Provider::name(self)
+                Context::CgpProvider::name(self)
             }
         }
 
@@ -895,10 +895,10 @@ fn test_derive_getter_with_component_generics() {
         where
             App: HasNameType,
             Context: HasCgpProvider,
-            Context::Provider: NameGetter<Context, App>,
+            Context::CgpProvider: NameGetter<Context, App>,
         {
             fn name(&self) -> &App::Name {
-                Context::Provider::name(self)
+                Context::CgpProvider::name(self)
             }
         }
         impl<Component, Context, App> NameGetter<Context, App> for Component
@@ -1025,10 +1025,10 @@ fn test_derive_getter_with_phantom() {
         where
             App: HasNameType,
             Context: HasCgpProvider,
-            Context::Provider: NameGetter<Context, App, B>,
+            Context::CgpProvider: NameGetter<Context, App, B>,
         {
             fn name(&self, _phantom: PhantomData<(App, B)>) -> &App::Name {
-                Context::Provider::name(self, _phantom)
+                Context::CgpProvider::name(self, _phantom)
             }
         }
         impl<Component, Context, App, B> NameGetter<Context, App, B> for Component
