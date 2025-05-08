@@ -58,6 +58,13 @@ pub fn check_components(body: TokenStream) -> TokenStream {
 }
 
 #[proc_macro]
+pub fn delegate_and_check_components(body: TokenStream) -> TokenStream {
+    cgp_macro_lib::delegate_and_check_components(body.into())
+        .unwrap_or_else(syn::Error::into_compile_error)
+        .into()
+}
+
+#[proc_macro]
 pub fn cgp_preset(body: TokenStream) -> TokenStream {
     cgp_macro_lib::define_preset(body.into())
         .unwrap_or_else(syn::Error::into_compile_error)
