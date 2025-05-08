@@ -16,15 +16,10 @@ pub fn test_component_with_const() {
     #[cgp_context]
     pub struct MyContext;
 
-    delegate_components! {
+    delegate_and_check_components! {
+        CanUseMyContext for MyContext;
         MyContextComponents {
             ConstantGetterComponent: UseConstant<42>,
-        }
-    }
-
-    check_components! {
-        CanUseMyContext for MyContext {
-            ConstantGetterComponent,
         }
     }
 

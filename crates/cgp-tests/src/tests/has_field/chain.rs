@@ -109,7 +109,8 @@ fn test_deeply_nested_getter() {
         fn name(&self) -> &str;
     }
 
-    delegate_components! {
+    delegate_and_check_components! {
+        CanUseMyContext for MyContext;
         MyContextComponents {
             NameGetterComponent: WithProvider<
                 ChainGetters<Product![
@@ -119,12 +120,6 @@ fn test_deeply_nested_getter() {
                     UseField<symbol!("d")>,
                     UseField<symbol!("name")>
                 ]>>
-        }
-    }
-
-    check_components! {
-        CanUseMyContext for MyContext {
-            NameGetterComponent,
         }
     }
 

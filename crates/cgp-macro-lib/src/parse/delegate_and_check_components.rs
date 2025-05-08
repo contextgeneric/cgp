@@ -12,7 +12,7 @@ pub struct DelegateAndCheckSpec {
     pub trait_name: Ident,
     pub context_type: Type,
     pub provider_type: Type,
-    pub entries: Punctuated<DelegateAndCheckEntry, Type>,
+    pub entries: Punctuated<DelegateAndCheckEntry, Comma>,
 }
 
 #[derive(Clone)]
@@ -39,7 +39,7 @@ impl Parse for DelegateAndCheckSpec {
 
         let provider_type = input.parse()?;
 
-        let delegate_entries = {
+        let entries = {
             let body;
             braced!(body in input);
             Punctuated::parse_terminated(&body)?
@@ -50,7 +50,7 @@ impl Parse for DelegateAndCheckSpec {
             trait_name,
             context_type,
             provider_type,
-            entries: delegate_entries,
+            entries,
         })
     }
 }
