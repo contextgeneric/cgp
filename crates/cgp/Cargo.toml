@@ -7,8 +7,9 @@ repository   = { workspace = true }
 authors      = { workspace = true }
 rust-version = { workspace = true }
 keywords     = { workspace = true }
+readme       = "../../README.md"
 description  = """
-    Context-generic programming meta crate
+    Main crate for using context-generic programming
 """
 
 [features]

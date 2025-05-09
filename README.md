@@ -1,5 +1,5 @@
 
-# `cgp` - Context-Generic Programming Libraries in Rust
+# `cgp` - Context-Generic Programming in Rust
 
 [![Apache 2.0 Licensed](https://img.shields.io/badge/license-Apache_2.0-blue.svg)](https://github.com/contextgeneric/cgp/blob/master/LICENSE)
 [![Crates.io](https://img.shields.io/crates/v/cgp.svg)](https://crates.io/crates/cgp)
@@ -8,32 +8,12 @@
 
 ## Overview
 
-The `cgp` project contains a collection of micro Rust crates that empowers
-_context-generic programming_ (CGP), a new modular programming paradigm in Rust.
-To learn more about context-generic programming, check out the
-our website [contextgeneric.dev](https://contextgeneric.dev/), and
-our book [Context-Generic Programming Patterns](https://patterns.contextgeneric.dev/).
+The `cgp` project contains a collection of micro Rust crates that empowers _context-generic programming_ (CGP), a new modular programming paradigm in Rust.
 
-## Crates Organization
+To learn more about context-generic programming, check out the our website [contextgeneric.dev](https://contextgeneric.dev/), and our book [Context-Generic Programming Patterns](https://patterns.contextgeneric.dev/).
 
-The CGP core constructs are organized as many child crates that are intended
-to be minimal and stable. Having each construct defined in separate crate
-helps us avoid introducing breaking changes in semantic  versioning, in case
-an unrelated construct is updated.
+<div class="warning">
 
-We also offers meta-crates that aggregate the dependencies from many CGP
-child crates into one place, so that users can use CGP by specifying only one
-dependency:
+At the moment, the `cgp` crate its constructs are mostly undocumented within Rustdoc. The best way to understand CGP is to read the book [Context-Generic Programming Patterns](https://patterns.contextgeneric.dev/).
 
-- [`cgp`](./crates/cgp/) - The main crate that includes all child crates defined in this project.
-- [`cgp-core`](./crates/cgp-core) - Meta crate that includes core CGP crates that
-- [`cgp-extra`](./crates/cgp-extra) - Meta crate that includes additional CGP crates that may be non-essential or unstable.
-
-The following library crates are provided:
-
-- [`cgp-component`](./crates/cgp-component) - Defines the core CGP component traits and macros.
-- [`cgp-async`](./crates/cgp-async/) - Defines the `Async` trait as an alias for async-safe types.
-- [`cgp-error`](./crates/cgp-error/) - Defines the `HasErrorType` component and error handling constructs.
-- [`cgp-field`](./crates/cgp-field/) - Defines the `HasField` trait to enable the use of data-generic programming with CGP.
-- [`cgp-inner`](./crates/cgp-inner/) - Defines the `HasInner` component which enables composition-based implementation in CGP.
-- [`cgp-run`](./crates/cgp-run) - Defines the `CanRun` component for implementing async runners.
+</div>

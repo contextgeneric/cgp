@@ -30,7 +30,7 @@ rust-version    = "1.81"
 edition         = "2021"
 license         = "Apache-2.0"
 repository      = "https://github.com/contextgeneric/cgp"
-authors         = ["Informal Systems <hello@informal.systems>", "Soares Chen <soares.chen@maybevoid.com>"]
+authors         = ["Soares Chen <soares.chen@maybevoid.com>", "Informal Systems <hello@informal.systems>"]
 keywords        = ["cgp"]
 
 [patch.crates-io]
