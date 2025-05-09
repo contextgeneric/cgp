@@ -1,10 +1,60 @@
 # Changelog
 
+## v0.4.0 (2025-05-09)
+
+- Debugging Improvements
+    - Implement `delegate_and_check_components!` - [#98](https://github.com/contextgeneric/cgp/pull/98)
+    - Implement `check_components!` macro to check if a context implements a component - [#78](https://github.com/contextgeneric/cgp/pull/78)
+    - Permanently enable provider supertrait - [#73](https://github.com/contextgeneric/cgp/pull/73)
+    - Introduce `#[new_cgp_provider]` to also generate provider struct definition - [#67](https://github.com/contextgeneric/cgp/pull/67)
+    - Preserve original provider bounds inside `#[cgp_provider]` - [#65](https://github.com/contextgeneric/cgp/pull/65)
+    - Introduce `IsProviderFor` trait to help improve compile errors - [#63](https://github.com/contextgeneric/cgp/pull/63)
+
+- CGP Presets Implementation
+    - Fix nested inheritance and multi inheritance for presets - [#92](https://github.com/contextgeneric/cgp/pull/92)
+    - Preset Macro Improvements - [#91](https://github.com/contextgeneric/cgp/pull/91)
+    - Expand `cgp_preset!` into a preset module - [#72](https://github.com/contextgeneric/cgp/pull/72)
+    - Re-export imports inside a `re_export` submodule - [#71](https://github.com/contextgeneric/cgp/pull/71)
+    - Introduce `#[cgp::re_export_imports]` macro - [#70](https://github.com/contextgeneric/cgp/pull/70)
+
+- CGP Getter Improvements
+    - CGP Getter Improvements - [#94](https://github.com/contextgeneric/cgp/pull/94)
+    - Getter Macro Improvements - [#87](https://github.com/contextgeneric/cgp/pull/87)
+    - Refactoring and Improvements on `#[cgp_getter]` - [#81](https://github.com/contextgeneric/cgp/pull/81)
+    - Fix component generics inside derivation of `WithProvider` for `#[cgp_getter]` - [#80](https://github.com/contextgeneric/cgp/pull/80)
+    - Fix `#[cgp_getter]` macro when the getter trait contains generic parameters - [#76](https://github.com/contextgeneric/cgp/pull/76)
+    - Allow generic arguments inside `#[cgp_auto_getter]` traits - [#64](https://github.com/contextgeneric/cgp/pull/64)
+
+- Macro Improvements
+    - Simplify attribute arguments for `#[cgp_component]`, `#[cgp_provider]` and `#[cgp_context]` - [#96](https://github.com/contextgeneric/cgp/pull/96)
+    - Allow definition of new structs inside `delegate_components!` - [#93](https://github.com/contextgeneric/cgp/pull/93)
+    - Migrate macro tests to `cgp-tests` crate, part 1 - [#90](https://github.com/contextgeneric/cgp/pull/90)
+    - Automatically derive `UseContext` implementation inside `#[cgp_component]` - [#88](https://github.com/contextgeneric/cgp/pull/88)
+    - Macro Crates Reorganization - [#83](https://github.com/contextgeneric/cgp/pull/83)
+    - Refactoring and rename `#[trait_alias]` to `#[blanket_trait]` - [#82](https://github.com/contextgeneric/cgp/pull/82)
+    - Introduce `#[trait_alias]` macro to simplify definition of alias traits - [#79](https://github.com/contextgeneric/cgp/pull/79)
+    - CGP Macro Refactoring - [#77](https://github.com/contextgeneric/cgp/pull/77)
+    - Rename `#[new_cgp_provider]` to `#[cgp_new_provider]` - [#75](https://github.com/contextgeneric/cgp/pull/74)
+    - Introduce `#[cgp_context]` attribute macro for CGP contexts - [#66](https://github.com/contextgeneric/cgp/pull/66)
+
+- Component System Improvements
+    - Rename `HasProvider` trait to `HasCgpProvider` - [#97](https://github.com/contextgeneric/cgp/pull/97)
+    - Add support for `const` item in component traits - [#95](https://github.com/contextgeneric/cgp/pull/95)
+    - Remove `'static` bound from `Async` trait alias - [#89](https://github.com/contextgeneric/cgp/pull/89)
+    - Rename `HasComponents` trait to `HasProvider` - [#69](https://github.com/contextgeneric/cgp/pull/69)
+    - Redesign `cgp_type` to work as attribute macro - [#68](https://github.com/contextgeneric/cgp/pull/68)
+
+- CGP Field Improvements
+    - Add `Display` instance for symbol types - [#86](https://github.com/contextgeneric/cgp/pull/85)
+    - Use Unicode Greek alphabets for visual representation of CGP field types - [#85](https://github.com/contextgeneric/cgp/pull/85)
+    - Implement traits and derive macros for `HasFields`, `FromFields`, and `ToFields` - [#84](https://github.com/contextgeneric/cgp/pull/84)
+    - Add `#[diagnostic::do_not_recommend]` to blanket impl of `HasField` - [#74](https://github.com/contextgeneric/cgp/pull/74)
+
 ## v0.3.1 (2025-01-16)
 
 - Update Rust MSRV to v1.84 - [#58](https://github.com/contextgeneric/cgp/pull/58)
 
--  Add `HasAsyncErrorType` to prelude - [#59](https://github.com/contextgeneric/cgp/pull/59)
+- Add `HasAsyncErrorType` to prelude - [#59](https://github.com/contextgeneric/cgp/pull/59)
 
 - Add `CanRaiseAsyncError` and `CanWrapAsyncError` to `cgp-error` and prelude - [#60](https://github.com/contextgeneric/cgp/pull/60)
 
