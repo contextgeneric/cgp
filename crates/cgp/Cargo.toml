@@ -7,7 +7,7 @@ repository   = { workspace = true }
 authors      = { workspace = true }
 rust-version = { workspace = true }
 keywords     = { workspace = true }
-readme       = "../../README.md"
+readme       = "./README.md"
 description  = """
     Main crate for using context-generic programming
 """
