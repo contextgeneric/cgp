@@ -1,5 +1,4 @@
 #![no_std]
-
 #![doc = include_str!("../../../README.md")]
 
 pub use cgp_core::{prelude, re_export_imports};
