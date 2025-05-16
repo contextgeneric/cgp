@@ -95,6 +95,7 @@ name = "cgp-extra"
 version = "0.4.0"
 dependencies = [
  "cgp-error-extra",
+ "cgp-handler",
  "cgp-inner",
  "cgp-run",
  "cgp-runtime",
@@ -107,6 +108,13 @@ dependencies = [
  "cgp-component",
  "cgp-macro",
  "cgp-type",
+]
+
+[[package]]
+name = "cgp-handler"
+version = "0.4.0"
+dependencies = [
+ "cgp-core",
 ]
 
 [[package]]

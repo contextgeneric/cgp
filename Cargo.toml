@@ -19,6 +19,7 @@ members = [
     "crates/cgp-error-anyhow",
     "crates/cgp-error-eyre",
     "crates/cgp-error-std",
+    "crates/cgp-handler",
     "crates/cgp-run",
     "crates/cgp-runtime",
     "crates/cgp-inner",
@@ -47,6 +48,7 @@ cgp-type                    = { path = "./crates/cgp-type" }
 cgp-field                   = { path = "./crates/cgp-field" }
 cgp-error                   = { path = "./crates/cgp-error" }
 cgp-error-extra             = { path = "./crates/cgp-error-extra" }
+cgp-handler                 = { path = "./crates/cgp-handler" }
 cgp-run                     = { path = "./crates/cgp-run" }
 cgp-runtime                 = { path = "./crates/cgp-runtime" }
 cgp-inner                   = { path = "./crates/cgp-inner" }

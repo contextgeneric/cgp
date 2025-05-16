@@ -19,3 +19,4 @@ cgp-error-extra = { version = "0.4.0", default-features = false }
 cgp-inner       = { version = "0.4.0" }
 cgp-run         = { version = "0.4.0" }
 cgp-runtime     = { version = "0.4.0" }
+cgp-handler     = { version = "0.4.0" }
