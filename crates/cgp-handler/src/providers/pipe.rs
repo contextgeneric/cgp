@@ -4,15 +4,15 @@ use cgp_core::prelude::*;
 
 use crate::components::*;
 
-pub struct Pipe<Handlers>(pub PhantomData<Handlers>);
+pub struct Pipe<Providers>(pub PhantomData<Providers>);
 
 #[cgp_provider]
-impl<Context, Tag, Input, Output, CurrentHandler, RestHandlers> Handler<Context, Tag, Input>
-    for Pipe<Cons<CurrentHandler, RestHandlers>>
+impl<Context, Tag, Input, Output, CurrentProvider, RestProviders> Handler<Context, Tag, Input>
+    for Pipe<Cons<CurrentProvider, RestProviders>>
 where
     Context: HasAsyncErrorType,
-    CurrentHandler: Handler<Context, Tag, Input>,
-    Pipe<RestHandlers>: Handler<Context, Tag, CurrentHandler::Output, Output = Output>,
+    CurrentProvider: Handler<Context, Tag, Input>,
+    Pipe<RestProviders>: Handler<Context, Tag, CurrentProvider::Output, Output = Output>,
     Tag: Send,
     Input: Send,
     Output: Send,
@@ -23,9 +23,9 @@ where
         context: &Context,
         tag: PhantomData<Tag>,
         input: Input,
-    ) -> Result<Self::Output, Context::Error> {
-        let intermediate = CurrentHandler::handle(context, tag, input).await?;
-        <Pipe<RestHandlers>>::handle(context, tag, intermediate.into()).await
+    ) -> Result<Output, Context::Error> {
+        let intermediate = CurrentProvider::handle(context, tag, input).await?;
+        <Pipe<RestProviders>>::handle(context, tag, intermediate.into()).await
     }
 }
 
@@ -44,5 +44,30 @@ where
         input: Input,
     ) -> Result<Input, Context::Error> {
         Ok(input)
+    }
+}
+
+#[cgp_provider]
+impl<Context, Tag, Input, Output, CurrentProvider, RestProviders> Computer<Context, Tag, Input>
+    for Pipe<Cons<CurrentProvider, RestProviders>>
+where
+    Context: HasAsyncErrorType,
+    CurrentProvider: Computer<Context, Tag, Input>,
+    Pipe<RestProviders>: Computer<Context, Tag, CurrentProvider::Output, Output = Output>,
+{
+    type Output = Output;
+
+    fn compute(context: &Context, tag: PhantomData<Tag>, input: Input) -> Output {
+        let intermediate = CurrentProvider::compute(context, tag, input);
+        <Pipe<RestProviders>>::compute(context, tag, intermediate.into())
+    }
+}
+
+#[cgp_provider]
+impl<Context, Tag, Input> Computer<Context, Tag, Input> for Pipe<Nil> {
+    type Output = Input;
+
+    fn compute(_context: &Context, _tag: PhantomData<Tag>, input: Input) -> Input {
+        input
     }
 }
