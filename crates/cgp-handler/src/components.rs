@@ -5,34 +5,32 @@ use cgp_core::prelude::*;
 
 #[cgp_component(Handler)]
 #[async_trait]
-pub trait CanHandle<Tag: Send>: HasAsyncErrorType {
-    type Input: Send;
-
+pub trait CanHandle<Tag: Send, Input: Send>: HasAsyncErrorType {
     type Output: Send;
 
     async fn handle(
         &self,
         _tag: PhantomData<Tag>,
-        input: Self::Input,
+        input: Input,
     ) -> Result<Self::Output, Self::Error>;
 }
 
 #[cgp_provider]
-impl<Context, Tag, Components, Delegate> Handler<Context, Tag> for UseDelegate<Components>
+impl<Context, Tag, Input, Components, Delegate> Handler<Context, Tag, Input>
+    for UseDelegate<Components>
 where
     Context: HasAsyncErrorType,
     Components: DelegateComponent<Tag, Delegate = Delegate>,
-    Delegate: Handler<Context, Tag>,
+    Delegate: Handler<Context, Tag, Input>,
     Tag: Send,
+    Input: Send,
 {
-    type Input = Delegate::Input;
-
     type Output = Delegate::Output;
 
     async fn handle(
         context: &Context,
         tag: PhantomData<Tag>,
-        input: Self::Input,
+        input: Input,
     ) -> Result<Self::Output, Context::Error> {
         Delegate::handle(context, tag, input).await
     }
