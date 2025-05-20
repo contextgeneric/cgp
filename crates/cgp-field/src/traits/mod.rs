@@ -1,3 +1,4 @@
+mod format;
 mod from_fields;
 mod has_field;
 mod has_field_mut;
@@ -5,6 +6,7 @@ mod has_fields;
 mod map_field;
 mod to_fields;
 
+pub use format::*;
 pub use from_fields::*;
 pub use has_field::*;
 pub use has_field_mut::*;
