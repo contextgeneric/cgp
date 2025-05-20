@@ -28,6 +28,7 @@ where
         <PipeHandlers<RestHandlers>>::handle(context, tag, intermediate.into()).await
     }
 }
+
 #[cgp_provider]
 impl<Context, Tag, Input> Handler<Context, Tag, Input> for PipeHandlers<Nil>
 where
