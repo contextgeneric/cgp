@@ -28,3 +28,20 @@ where
         <PipeHandlers<RestHandlers>>::handle(context, tag, intermediate.into()).await
     }
 }
+#[cgp_provider]
+impl<Context, Tag, Input> Handler<Context, Tag, Input> for PipeHandlers<Nil>
+where
+    Context: HasAsyncErrorType,
+    Tag: Send,
+    Input: Send,
+{
+    type Output = Input;
+
+    async fn handle(
+        _context: &Context,
+        _tag: PhantomData<Tag>,
+        input: Input,
+    ) -> Result<Input, Context::Error> {
+        Ok(input)
+    }
+}
