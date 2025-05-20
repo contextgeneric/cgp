@@ -43,8 +43,14 @@ pub fn replace_provider_in_type_params(
                     if let PathArguments::AngleBracketed(args) = &segment.arguments {
                         let mut generics = args.args.iter().map(Clone::clone);
                         if let Some(GenericArgument::Type(context_type)) = generics.next() {
-                            let rest_generics: Punctuated<GenericArgument, Comma> =
-                                generics.collect();
+                            let rest_generics: Punctuated<GenericArgument, Comma> = generics
+                                .filter(|arg| match arg {
+                                    GenericArgument::Lifetime(_)
+                                    | GenericArgument::Type(_)
+                                    | GenericArgument::Const(_) => true,
+                                    _ => false,
+                                })
+                                .collect();
 
                             let mut new_bound = trait_bound.clone();
                             new_bound.path = parse_quote!( IsProviderFor< #component_type, #context_type, (#rest_generics) > );
