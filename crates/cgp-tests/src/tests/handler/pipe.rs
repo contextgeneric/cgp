@@ -2,7 +2,7 @@ use core::convert::Infallible;
 use core::marker::PhantomData;
 
 use cgp::core::error::ErrorTypeProviderComponent;
-use cgp::extra::handler::{CanHandle, Handler, HandlerComponent, PipeHandlers};
+use cgp::extra::handler::{CanHandle, Handler, HandlerComponent, Pipe};
 use cgp::prelude::*;
 use futures::executor::block_on;
 
@@ -54,7 +54,7 @@ pub fn test_pipe_handlers() {
         MyContextComponents {
             ErrorTypeProviderComponent: UseType<Infallible>,
             HandlerComponent:
-                PipeHandlers<
+                Pipe<
                     Product! [
                         Multiply<symbol!("foo")>,
                         Add<symbol!("bar")>,
