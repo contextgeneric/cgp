@@ -51,7 +51,6 @@ where
 impl<Context, Tag, Input, Output, CurrentProvider, RestProviders> Computer<Context, Tag, Input>
     for Pipe<Cons<CurrentProvider, RestProviders>>
 where
-    Context: HasAsyncErrorType,
     CurrentProvider: Computer<Context, Tag, Input>,
     Pipe<RestProviders>: Computer<Context, Tag, CurrentProvider::Output, Output = Output>,
 {
