@@ -3,7 +3,8 @@ use core::marker::PhantomData;
 
 use cgp::core::error::ErrorTypeProviderComponent;
 use cgp::extra::handler::{
-    CanCompute, CanHandle, Computer, ComputerComponent, Handler, HandlerComponent, Pipe, Promote,
+    CanCompute, CanHandle, Computer, ComputerComponent, Handler, HandlerComponent, PipeHandlers,
+    Promote,
 };
 use cgp::prelude::*;
 use futures::executor::block_on;
@@ -45,7 +46,7 @@ pub fn test_pipe_computers() {
     delegate_components! {
         MyContextComponents {
             ComputerComponent:
-                Pipe<
+                PipeHandlers<
                     Product! [
                         Multiply<symbol!("foo")>,
                         Add<symbol!("bar")>,
@@ -116,7 +117,7 @@ pub fn test_pipe_handlers() {
         MyContextComponents {
             ErrorTypeProviderComponent: UseType<Infallible>,
             HandlerComponent:
-                Pipe<
+                PipeHandlers<
                     Product! [
                         Multiply<symbol!("foo")>,
                         Promote<Add<symbol!("bar")>>,
