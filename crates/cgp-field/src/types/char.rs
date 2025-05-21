@@ -1,7 +1,8 @@
 use core::fmt::Display;
+use core::marker::PhantomData;
 
 #[derive(Eq, PartialEq, Clone, Copy, Default)]
-pub struct ι<const CHAR: char, Tail>(pub Tail);
+pub struct ι<const CHAR: char, Tail>(pub PhantomData<Tail>);
 
 pub use ι as Char;
 
