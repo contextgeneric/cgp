@@ -33,8 +33,6 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
         None
     };
 
-    let provider_struct_name = Ident::new("BaseProvider", Span::call_site());
-
     if let Some(parent) = m_parent {
         let parent_ident = &parent.name;
         let parent_generics = &parent.generics;
@@ -74,7 +72,7 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
                 | #parent_components_ident | {
                     cgp_preset! {
                         #preset_type_spec: #parent_presets {
-                            #parent_components_ident: #parent_ident :: #provider_struct_name #parent_generics,
+                            #parent_components_ident: #parent_ident :: Provider #parent_generics,
                             #preset_entries
                         }
                     }
@@ -84,6 +82,8 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
 
         return Ok(output);
     }
+
+    let provider_struct_name = Ident::new("BaseProvider", Span::call_site());
 
     let preset_module_name = &ast.preset.name;
 
