@@ -42,6 +42,13 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
             parent_ident.span(),
         );
 
+        let wrapper_attribute = match ast.provider_wrapper {
+            Some(wrapper) => quote! {
+                #[wrap_provider( #wrapper )]
+            },
+            None => TokenStream::new(),
+        };
+
         let preset_type_spec = &ast.preset;
 
         let mut overrides: Punctuated<&Ident, Comma> = Punctuated::default();
@@ -71,6 +78,7 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
                 #filter
                 | #parent_components_ident | {
                     cgp_preset! {
+                        #wrapper_attribute
                         #preset_type_spec: #parent_presets {
                             #parent_components_ident: #parent_ident :: Provider #parent_generics,
                             #preset_entries
