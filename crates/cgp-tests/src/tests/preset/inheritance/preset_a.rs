@@ -7,6 +7,7 @@ mod preset {
     };
 
     cgp_preset! {
+        #[wrap_provider(UseDelegate)]
         MyPresetA {
             [
                 FooTypeProviderComponent,

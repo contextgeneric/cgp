@@ -1,13 +1,14 @@
 use proc_macro2::TokenStream;
 use quote::ToTokens;
-use syn::braced;
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
-use syn::token::{At, Colon, Comma, Override, Plus};
+use syn::token::{At, Colon, Comma, Override, Plus, Pound};
+use syn::{braced, bracketed, parenthesized, Error, Ident};
 
 use crate::parse::{DelegateEntry, SimpleType, TypeSpec};
 
 pub struct DefinePreset {
+    pub provider_wrapper: Option<Ident>,
     pub preset: TypeSpec,
     pub parent_presets: Punctuated<PresetParent, Plus>,
     pub delegate_entries: Punctuated<DelegatePresetEntry, Comma>,
@@ -20,6 +21,28 @@ pub struct DelegatePresetEntry {
 
 impl Parse for DefinePreset {
     fn parse(input: ParseStream) -> syn::Result<Self> {
+        let provider_wrapper: Option<Ident> = if input.peek(Pound) {
+            let _: Pound = input.parse()?;
+
+            let body;
+            bracketed!(body in input);
+
+            let meta: Ident = body.parse()?;
+            if meta != "wrap_provider" {
+                return Err(Error::new(
+                    meta.span(),
+                    &format!("unsupported attribute: {meta}"),
+                ));
+            }
+
+            let body2;
+            parenthesized!(body2 in body);
+
+            Some(body2.parse()?)
+        } else {
+            None
+        };
+
         let PresetHead {
             preset,
             parent_presets,
@@ -32,6 +55,7 @@ impl Parse for DefinePreset {
         };
 
         Ok(Self {
+            provider_wrapper,
             preset,
             parent_presets,
             delegate_entries,
