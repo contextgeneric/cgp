@@ -1,5 +1,6 @@
 #[cgp::re_export_imports]
 mod preset {
+    use cgp::core::component::UseDelegate;
     use cgp::prelude::*;
 
     use crate::tests::preset::basic::components::{
@@ -7,7 +8,8 @@ mod preset {
     };
 
     cgp_preset! {
-        MyPresetA {
+        #[wrap_provider(UseDelegate)]
+        WrappedPreset {
             [
                 FooTypeProviderComponent,
                 BarTypeProviderComponent,
@@ -22,5 +24,5 @@ mod preset {
     {
     }
 
-    impl CheckDelegatesForMyPresetA for MyPresetA::Provider {}
+    impl CheckDelegatesForMyPresetA for WrappedPreset::BaseProvider {}
 }
