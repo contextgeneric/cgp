@@ -33,6 +33,8 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
         None
     };
 
+    let provider_struct_name = Ident::new("BaseProvider", Span::call_site());
+
     if let Some(parent) = m_parent {
         let parent_ident = &parent.name;
         let parent_generics = &parent.generics;
@@ -72,7 +74,7 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
                 | #parent_components_ident | {
                     cgp_preset! {
                         #preset_type_spec: #parent_presets {
-                            #parent_components_ident: #parent_ident :: Provider #parent_generics,
+                            #parent_components_ident: #parent_ident :: #provider_struct_name #parent_generics,
                             #preset_entries
                         }
                     }
@@ -88,8 +90,6 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
     let preset_generic_args = &ast.preset.generics;
 
     let preset_generics: ImplGenerics = syn::parse2(quote!( #preset_generic_args ))?;
-
-    let provider_struct_name = Ident::new("Provider", Span::call_site());
 
     let provider_type = {
         let type_generics = preset_generics.as_type_generics();
@@ -126,8 +126,25 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
 
     let provider_struct = define_struct(&provider_struct_name, &preset_generics.generics)?;
 
+    let export_provider = match ast.provider_wrapper {
+        Some(wrapper) => {
+            let (impl_generics, type_generics, _) = preset_generics.generics.split_for_impl();
+
+            quote! {
+                pub type Provider #impl_generics = #wrapper < #provider_struct_name #type_generics >;
+            }
+        }
+        None => {
+            quote! {
+                pub use #provider_struct_name as Provider;
+            }
+        }
+    };
+
     let mut mod_output = quote! {
         #provider_struct
+
+        #export_provider
 
         #preset_trait
     };
