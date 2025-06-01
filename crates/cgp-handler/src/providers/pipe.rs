@@ -25,7 +25,7 @@ where
         input: Input,
     ) -> Result<Output, Context::Error> {
         let intermediate = CurrentProvider::handle(context, tag, input).await?;
-        <PipeHandlers<RestProviders>>::handle(context, tag, intermediate.into()).await
+        <PipeHandlers<RestProviders>>::handle(context, tag, intermediate).await
     }
 }
 
@@ -58,7 +58,7 @@ where
 
     fn compute(context: &Context, tag: PhantomData<Tag>, input: Input) -> Output {
         let intermediate = CurrentProvider::compute(context, tag, input);
-        <PipeHandlers<RestProviders>>::compute(context, tag, intermediate.into())
+        <PipeHandlers<RestProviders>>::compute(context, tag, intermediate)
     }
 }
 

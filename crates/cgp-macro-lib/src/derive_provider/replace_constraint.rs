@@ -44,11 +44,13 @@ pub fn replace_provider_in_type_params(
                         let mut generics = args.args.iter().map(Clone::clone);
                         if let Some(GenericArgument::Type(context_type)) = generics.next() {
                             let rest_generics: Punctuated<GenericArgument, Comma> = generics
-                                .filter(|arg| match arg {
-                                    GenericArgument::Lifetime(_)
-                                    | GenericArgument::Type(_)
-                                    | GenericArgument::Const(_) => true,
-                                    _ => false,
+                                .filter(|arg| {
+                                    matches!(
+                                        arg,
+                                        GenericArgument::Lifetime(_)
+                                            | GenericArgument::Type(_)
+                                            | GenericArgument::Const(_)
+                                    )
                                 })
                                 .collect();
 
