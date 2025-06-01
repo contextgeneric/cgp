@@ -91,7 +91,7 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
         return Ok(output);
     }
 
-    let provider_struct_name = Ident::new("BaseProvider", Span::call_site());
+    let provider_struct_name = Ident::new("Components", Span::call_site());
 
     let preset_module_name = &ast.preset.name;
 
