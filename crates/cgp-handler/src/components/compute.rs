@@ -4,22 +4,22 @@ use cgp_core::component::UseDelegate;
 use cgp_core::prelude::*;
 
 #[cgp_component(Computer)]
-pub trait CanCompute<Tag, Input> {
+pub trait CanCompute<Code, Input> {
     type Output;
 
-    fn compute(&self, _tag: PhantomData<Tag>, input: Input) -> Self::Output;
+    fn compute(&self, _tag: PhantomData<Code>, input: Input) -> Self::Output;
 }
 
 #[cgp_provider]
-impl<Context, Tag, Input, Components, Delegate> Computer<Context, Tag, Input>
+impl<Context, Code, Input, Components, Delegate> Computer<Context, Code, Input>
     for UseDelegate<Components>
 where
-    Components: DelegateComponent<Tag, Delegate = Delegate>,
-    Delegate: Computer<Context, Tag, Input>,
+    Components: DelegateComponent<Code, Delegate = Delegate>,
+    Delegate: Computer<Context, Code, Input>,
 {
     type Output = Delegate::Output;
 
-    fn compute(context: &Context, tag: PhantomData<Tag>, input: Input) -> Self::Output {
+    fn compute(context: &Context, tag: PhantomData<Code>, input: Input) -> Self::Output {
         Delegate::compute(context, tag, input)
     }
 }

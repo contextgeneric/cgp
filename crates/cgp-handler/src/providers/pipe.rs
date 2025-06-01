@@ -7,13 +7,13 @@ use crate::components::*;
 pub struct PipeHandlers<Providers>(pub PhantomData<Providers>);
 
 #[cgp_provider]
-impl<Context, Tag, Input, Output, CurrentProvider, RestProviders> Handler<Context, Tag, Input>
+impl<Context, Code, Input, Output, CurrentProvider, RestProviders> Handler<Context, Code, Input>
     for PipeHandlers<Cons<CurrentProvider, RestProviders>>
 where
     Context: HasAsyncErrorType,
-    CurrentProvider: Handler<Context, Tag, Input>,
-    PipeHandlers<RestProviders>: Handler<Context, Tag, CurrentProvider::Output, Output = Output>,
-    Tag: Send,
+    CurrentProvider: Handler<Context, Code, Input>,
+    PipeHandlers<RestProviders>: Handler<Context, Code, CurrentProvider::Output, Output = Output>,
+    Code: Send,
     Input: Send,
     Output: Send,
 {
@@ -21,7 +21,7 @@ where
 
     async fn handle(
         context: &Context,
-        tag: PhantomData<Tag>,
+        tag: PhantomData<Code>,
         input: Input,
     ) -> Result<Output, Context::Error> {
         let intermediate = CurrentProvider::handle(context, tag, input).await?;

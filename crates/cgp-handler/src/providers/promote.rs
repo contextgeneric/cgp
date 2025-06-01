@@ -5,11 +5,11 @@ use cgp_core::prelude::*;
 use crate::{Computer, Handler, HandlerComponent};
 
 #[cgp_new_provider]
-impl<Context, Tag, Input, Output, Provider> Handler<Context, Tag, Input> for Promote<Provider>
+impl<Context, Code, Input, Output, Provider> Handler<Context, Code, Input> for Promote<Provider>
 where
     Context: HasAsyncErrorType,
-    Provider: Computer<Context, Tag, Input, Output = Output>,
-    Tag: Send,
+    Provider: Computer<Context, Code, Input, Output = Output>,
+    Code: Send,
     Input: Send,
     Output: Send,
 {
@@ -17,7 +17,7 @@ where
 
     async fn handle(
         context: &Context,
-        tag: PhantomData<Tag>,
+        tag: PhantomData<Code>,
         input: Input,
     ) -> Result<Output, Context::Error> {
         Ok(Provider::compute(context, tag, input))
