@@ -1,8 +1,7 @@
-mod handler;
-pub use handler::*;
-
 mod compute;
-pub use compute::*;
-
+mod handler;
 mod produce;
+
+pub use compute::*;
+pub use handler::*;
 pub use produce::*;
