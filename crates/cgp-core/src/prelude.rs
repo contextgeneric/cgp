@@ -1,7 +1,7 @@
 pub use cgp_async::{async_trait, Async, MaybeSend, MaybeSync};
 pub use cgp_component::{
-    CanUseComponent, DelegateComponent, HasCgpProvider, IsProviderFor, UseContext, UseFields,
-    WithContext, WithProvider,
+    CanUseComponent, DelegateComponent, HasCgpProvider, IsProviderFor, UseContext, UseDelegate,
+    UseFields, WithContext, WithProvider,
 };
 pub use cgp_error::{
     CanRaiseAsyncError, CanRaiseError, CanWrapAsyncError, CanWrapError, HasAsyncErrorType,

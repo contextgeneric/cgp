@@ -31,7 +31,7 @@ impl Parse for DefinePreset {
             if meta != "wrap_provider" {
                 return Err(Error::new(
                     meta.span(),
-                    &format!("unsupported attribute: {meta}"),
+                    format!("unsupported attribute: {meta}"),
                 ));
             }
 
