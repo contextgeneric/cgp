@@ -5,7 +5,7 @@ use cgp_core::prelude::*;
 
 #[cgp_component {
     provider: Handler,
-    use_delegate: Code,
+    derive_delegate: UseDelegate<Code>,
 }]
 #[async_trait]
 pub trait CanHandle<Code: Send, Input: Send>: HasAsyncErrorType {

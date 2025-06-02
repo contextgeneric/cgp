@@ -4,7 +4,7 @@ use cgp::prelude::*;
 
 #[cgp_type {
     provider: FooTypeAt,
-    use_delegate: I,
+    derive_delegate: UseDelegate<I>,
 }]
 pub trait HasFooTypeAt<I> {
     type Foo;
@@ -12,7 +12,7 @@ pub trait HasFooTypeAt<I> {
 
 #[cgp_getter {
     provider: FooGetterAt,
-    use_delegate: I,
+    derive_delegate: UseDelegate<I>,
 }]
 pub trait HasFooAt<I> {
     fn foo(&self, _tag: PhantomData<I>) -> &str;

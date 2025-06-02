@@ -5,7 +5,7 @@ use cgp_core::prelude::*;
 
 #[cgp_component {
     provider: Computer,
-    use_delegate: Code,
+    derive_delegate: UseDelegate<Code>,
 }]
 pub trait CanCompute<Code, Input> {
     type Output;

@@ -13,7 +13,7 @@ use crate::traits::has_error_type::HasErrorType;
 */
 #[cgp_component {
     provider: ErrorRaiser,
-    use_delegate: SourceError,
+    derive_delegate: UseDelegate<SourceError>,
 }]
 pub trait CanRaiseError<SourceError>: HasErrorType {
     fn raise_error(error: SourceError) -> Self::Error;

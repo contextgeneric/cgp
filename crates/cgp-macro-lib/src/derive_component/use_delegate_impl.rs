@@ -1,23 +1,26 @@
 use proc_macro2::Span;
 use quote::quote;
-use syn::punctuated::Punctuated;
 use syn::spanned::Spanned;
-use syn::token::{Brace, Comma, Eq, For, Impl};
+use syn::token::{Brace, Eq, For, Impl};
 use syn::{
     parse2, Error, Ident, ImplItem, ImplItemConst, ItemImpl, ItemTrait, Path, TraitItem, Visibility,
 };
 
 use crate::derive_component::delegate_fn::derive_delegated_fn_impl;
 use crate::derive_component::delegate_type::derive_delegate_type_impl;
+use crate::parse::UseDelegateSpec;
 
 pub fn derive_use_delegate_impl(
     provider_trait: &ItemTrait,
-    use_delegate_params: &Punctuated<Ident, Comma>,
+    spec: &UseDelegateSpec,
 ) -> syn::Result<ItemImpl> {
     let provider_trait_ident = &provider_trait.ident;
 
     let components_ident = Ident::new("__Components__", Span::call_site());
     let delegate_ident = Ident::new("__Delegate__", Span::call_site());
+
+    let wrapper_ident = &spec.wrapper;
+    let use_delegate_params = &spec.params;
 
     let generics = {
         let mut generics = provider_trait.generics.clone();
@@ -103,7 +106,7 @@ pub fn derive_use_delegate_impl(
         }
     }
 
-    let provider_type = parse2(quote!(UseDelegate< #components_ident >))?;
+    let provider_type = parse2(quote!(#wrapper_ident < #components_ident >))?;
 
     let item = ItemImpl {
         attrs: provider_trait.attrs.clone(),

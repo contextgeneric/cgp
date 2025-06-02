@@ -5,7 +5,7 @@ use cgp_core::prelude::*;
 
 #[cgp_component {
     provider: Producer,
-    use_delegate: Code,
+    derive_delegate: UseDelegate<Code>,
 }]
 pub trait CanProduce<Code> {
     type Output;

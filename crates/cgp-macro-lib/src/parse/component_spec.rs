@@ -15,7 +15,7 @@ pub struct ComponentSpec {
     pub context_type: Ident,
     pub component_name: Ident,
     pub component_params: Punctuated<Ident, Comma>,
-    pub use_delegate_params: Punctuated<Ident, Comma>,
+    pub use_delegate_spec: Vec<UseDelegateSpec>,
 }
 
 pub struct ComponentNameSpec {
@@ -23,7 +23,7 @@ pub struct ComponentNameSpec {
     pub component_params: Punctuated<Ident, Comma>,
 }
 
-static VALID_KEYS: [&str; 4] = ["context", "provider", "name", "use_delegate"];
+static VALID_KEYS: [&str; 4] = ["context", "provider", "name", "derive_delegate"];
 
 impl Parse for ComponentSpec {
     fn parse(input: ParseStream) -> syn::Result<Self> {
@@ -36,14 +36,13 @@ impl Parse for ComponentSpec {
                 Ident::new(&format!("{provider_name}Component"), provider_name.span());
 
             let component_params = Punctuated::new();
-            let use_delegate_params = Punctuated::new();
 
             Ok(Self {
                 provider_name,
                 context_type,
                 component_name,
                 component_params,
-                use_delegate_params,
+                use_delegate_spec: Vec::new(),
             })
         } else {
             let Entries { entries } = input.parse()?;
@@ -106,12 +105,12 @@ impl ComponentSpec {
             }
         };
 
-        let use_delegate_params = match entries.get("use_delegate") {
+        let use_delegate_spec = match entries.get("derive_delegate") {
             Some(entry) => {
-                let UseDelegateSpec { idents } = parse2(entry.to_token_stream())?;
-                idents
+                let spec = parse2(entry.to_token_stream())?;
+                vec![spec]
             }
-            None => Punctuated::new(),
+            None => Vec::new(),
         };
 
         Ok(ComponentSpec {
@@ -119,7 +118,7 @@ impl ComponentSpec {
             provider_name,
             context_type,
             component_params,
-            use_delegate_params,
+            use_delegate_spec,
         })
     }
 }
@@ -149,12 +148,17 @@ impl Parse for ComponentNameSpec {
 }
 
 pub struct UseDelegateSpec {
-    pub idents: Punctuated<Ident, Comma>,
+    pub wrapper: Ident,
+    pub params: Punctuated<Ident, Comma>,
 }
 
 impl Parse for UseDelegateSpec {
     fn parse(input: ParseStream) -> syn::Result<Self> {
-        if input.peek(Paren) {
+        let wrapper: Ident = input.parse()?;
+
+        let _: Lt = input.parse()?;
+
+        let idents = if input.peek(Paren) {
             let body;
             parenthesized!(body in input);
             let idents = Punctuated::parse_terminated(&body)?;
@@ -165,12 +169,16 @@ impl Parse for UseDelegateSpec {
                 ));
             }
 
-            Ok(Self { idents })
+            idents
         } else {
             let ident: Ident = input.parse()?;
-            Ok(Self {
-                idents: Punctuated::from_iter([ident]),
-            })
-        }
+            Punctuated::from_iter([ident])
+        };
+
+        let _: Gt = input.parse()?;
+        Ok(Self {
+            wrapper,
+            params: idents,
+        })
     }
 }

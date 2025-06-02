@@ -57,20 +57,20 @@ pub fn derive_component_with_ast(
         use_context_is_provider_impl,
     ];
 
-    if !spec.use_delegate_params.is_empty() {
-        // panic!("test");
-        let use_delegate_impl =
-            derive_use_delegate_impl(&provider_trait, &spec.use_delegate_params)?;
+    if !spec.use_delegate_spec.is_empty() {
+        for spec in spec.use_delegate_spec.iter() {
+            let use_delegate_impl = derive_use_delegate_impl(&provider_trait, spec)?;
 
-        let use_delegate_is_provider_impl = derive_is_provider_for(
-            &parse2(quote! {
-                #component_name < #component_params >
-            })?,
-            &use_delegate_impl,
-        )?;
+            let use_delegate_is_provider_impl = derive_is_provider_for(
+                &parse2(quote! {
+                    #component_name < #component_params >
+                })?,
+                &use_delegate_impl,
+            )?;
 
-        item_impls.push(use_delegate_impl);
-        item_impls.push(use_delegate_is_provider_impl);
+            item_impls.push(use_delegate_impl);
+            item_impls.push(use_delegate_is_provider_impl);
+        }
     }
 
     let derived = DerivedComponent {
