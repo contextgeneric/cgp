@@ -13,7 +13,7 @@ use crate::derive_component::delegate_type::derive_delegate_type_impl;
 
 pub fn derive_use_delegate_impl(
     provider_trait: &ItemTrait,
-    use_delegate_params: Punctuated<Ident, Comma>,
+    use_delegate_params: &Punctuated<Ident, Comma>,
 ) -> syn::Result<ItemImpl> {
     let provider_trait_ident = &provider_trait.ident;
 
