@@ -8,11 +8,11 @@ use syn::{
 
 use crate::derive_component::delegate_fn::derive_delegated_fn_impl;
 use crate::derive_component::delegate_type::derive_delegate_type_impl;
-use crate::parse::UseDelegateSpec;
+use crate::parse::DeriveDelegateSpec;
 
-pub fn derive_use_delegate_impl(
+pub fn derive_delegate_impl(
     provider_trait: &ItemTrait,
-    spec: &UseDelegateSpec,
+    spec: &DeriveDelegateSpec,
 ) -> syn::Result<ItemImpl> {
     let provider_trait_ident = &provider_trait.ident;
 

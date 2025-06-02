@@ -15,7 +15,7 @@ pub struct ComponentSpec {
     pub context_type: Ident,
     pub component_name: Ident,
     pub component_params: Punctuated<Ident, Comma>,
-    pub use_delegate_spec: Vec<UseDelegateSpec>,
+    pub use_delegate_spec: Vec<DeriveDelegateSpec>,
 }
 
 pub struct ComponentNameSpec {
@@ -107,7 +107,7 @@ impl ComponentSpec {
 
         let use_delegate_spec = match entries.get("derive_delegate") {
             Some(entry) => {
-                let UseDelegateSpecs { specs } = parse2(entry.to_token_stream())?;
+                let DeriveDelegateSpecs { specs } = parse2(entry.to_token_stream())?;
                 specs
             }
             None => Vec::new(),
@@ -147,12 +147,12 @@ impl Parse for ComponentNameSpec {
     }
 }
 
-pub struct UseDelegateSpec {
+pub struct DeriveDelegateSpec {
     pub wrapper: Ident,
     pub params: Punctuated<Ident, Comma>,
 }
 
-impl Parse for UseDelegateSpec {
+impl Parse for DeriveDelegateSpec {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let wrapper: Ident = input.parse()?;
 
@@ -183,17 +183,17 @@ impl Parse for UseDelegateSpec {
     }
 }
 
-pub struct UseDelegateSpecs {
-    pub specs: Vec<UseDelegateSpec>,
+pub struct DeriveDelegateSpecs {
+    pub specs: Vec<DeriveDelegateSpec>,
 }
 
-impl Parse for UseDelegateSpecs {
+impl Parse for DeriveDelegateSpecs {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         if input.peek(Bracket) {
             let body;
             bracketed!(body in input);
 
-            let specs = <Punctuated<UseDelegateSpec, Comma>>::parse_terminated(&body)?;
+            let specs = <Punctuated<DeriveDelegateSpec, Comma>>::parse_terminated(&body)?;
             Ok(Self {
                 specs: Vec::from_iter(specs),
             })

@@ -7,7 +7,7 @@ use crate::derive_component::consumer_impl::derive_consumer_impl;
 use crate::derive_component::provider_impl::derive_provider_impl;
 use crate::derive_component::provider_trait::derive_provider_trait;
 use crate::derive_component::use_context_impl::derive_use_context_impl;
-use crate::derive_component::use_delegate_impl::derive_use_delegate_impl;
+use crate::derive_component::use_delegate_impl::derive_delegate_impl;
 use crate::derive_provider::derive_is_provider_for;
 use crate::parse::ComponentSpec;
 
@@ -59,7 +59,7 @@ pub fn derive_component_with_ast(
 
     if !spec.use_delegate_spec.is_empty() {
         for spec in spec.use_delegate_spec.iter() {
-            let use_delegate_impl = derive_use_delegate_impl(&provider_trait, spec)?;
+            let use_delegate_impl = derive_delegate_impl(&provider_trait, spec)?;
 
             let use_delegate_is_provider_impl = derive_is_provider_for(
                 &parse2(quote! {
