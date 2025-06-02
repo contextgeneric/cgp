@@ -15,6 +15,7 @@ pub struct ComponentSpec {
     pub context_type: Ident,
     pub component_name: Ident,
     pub component_params: Punctuated<Ident, Comma>,
+    pub use_delegate_params: Vec<Ident>,
 }
 
 pub struct ComponentNameSpec {
@@ -22,22 +23,28 @@ pub struct ComponentNameSpec {
     pub component_params: Punctuated<Ident, Comma>,
 }
 
-static VALID_KEYS: [&str; 3] = ["context", "provider", "name"];
+static VALID_KEYS: [&str; 4] = ["context", "provider", "name", "use_delegate"];
 
 impl Parse for ComponentSpec {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         if input.peek2(End) {
             let provider_name: Ident = input.parse()?;
+
             let context_type = Ident::new("Context", Span::call_site());
+
             let component_name =
                 Ident::new(&format!("{provider_name}Component"), provider_name.span());
+
             let component_params = Punctuated::default();
+
+            let use_delegate_params = Vec::new();
 
             Ok(Self {
                 provider_name,
                 context_type,
                 component_name,
                 component_params,
+                use_delegate_params,
             })
         } else {
             let Entries { entries } = input.parse()?;
@@ -100,11 +107,17 @@ impl ComponentSpec {
             }
         };
 
+        let use_delegate_params = match entries.get("derive") {
+            Some(entry) => Vec::new(),
+            None => Vec::new(),
+        };
+
         Ok(ComponentSpec {
             component_name,
             provider_name,
             context_type,
             component_params,
+            use_delegate_params,
         })
     }
 }
