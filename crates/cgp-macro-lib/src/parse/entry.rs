@@ -2,7 +2,7 @@ use alloc::collections::BTreeMap;
 use alloc::string::{String, ToString};
 
 use proc_macro2::TokenStream;
-use quote::ToTokens;
+use quote::{quote, ToTokens};
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::token::{Bracket, Colon, Comma};
@@ -20,7 +20,8 @@ impl Parse for Entry {
         let value = if input.peek(Bracket) {
             let body;
             bracketed!(body in input);
-            body.parse()?
+            let inner: TokenStream = body.parse()?;
+            quote! { [ #inner ] }
         } else {
             input.parse::<Type>()?.to_token_stream()
         };
