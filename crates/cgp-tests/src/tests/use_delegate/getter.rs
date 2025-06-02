@@ -4,7 +4,7 @@ use cgp::prelude::*;
 
 #[cgp_type {
     provider: FooTypeAt,
-    derive_delegate: UseDelegate<I>,
+    derive_delegate: [UseDelegate<I>],
 }]
 pub trait HasFooTypeAt<I> {
     type Foo;

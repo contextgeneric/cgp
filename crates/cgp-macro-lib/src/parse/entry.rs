@@ -5,8 +5,8 @@ use proc_macro2::TokenStream;
 use quote::ToTokens;
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
-use syn::token::{Colon, Comma};
-use syn::{Ident, Type};
+use syn::token::{Bracket, Colon, Comma};
+use syn::{bracketed, Ident, Type};
 
 pub struct Entry {
     pub key: Ident,
@@ -17,12 +17,15 @@ impl Parse for Entry {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let key = input.parse()?;
         let _colon: Colon = input.parse()?;
-        let value: Type = input.parse()?;
+        let value = if input.peek(Bracket) {
+            let body;
+            bracketed!(body in input);
+            body.parse()?
+        } else {
+            input.parse::<Type>()?.to_token_stream()
+        };
 
-        Ok(Entry {
-            key,
-            value: value.to_token_stream(),
-        })
+        Ok(Entry { key, value })
     }
 }
 
