@@ -5,7 +5,10 @@ use cgp_core::prelude::*;
 
 #[cgp_component {
     provider: Handler,
-    derive_delegate: UseDelegate<Code>,
+    derive_delegate: [
+        UseDelegate<Code>,
+        UseInputDelegate<Input>,
+    ],
 }]
 #[async_trait]
 pub trait CanHandle<Code: Send, Input: Send>: HasAsyncErrorType {
@@ -17,3 +20,5 @@ pub trait CanHandle<Code: Send, Input: Send>: HasAsyncErrorType {
         input: Input,
     ) -> Result<Self::Output, Self::Error>;
 }
+
+pub struct UseInputDelegate<Components>(pub PhantomData<Components>);
