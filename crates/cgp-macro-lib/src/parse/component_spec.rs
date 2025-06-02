@@ -1,12 +1,11 @@
 use alloc::format;
 use std::collections::BTreeMap;
 
-use proc_macro2::Span;
-use quote::ToTokens;
+use proc_macro2::{Span, TokenStream};
 use syn::parse::{End, Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::token::{Bracket, Comma, Gt, Lt, Paren};
-use syn::{bracketed, parenthesized, parse2, Error, Ident, Type};
+use syn::{bracketed, parenthesized, parse2, Error, Ident};
 
 use crate::parse::Entries;
 
@@ -52,7 +51,7 @@ impl Parse for ComponentSpec {
 }
 
 impl ComponentSpec {
-    pub fn validate_entries(entries: &BTreeMap<String, Type>) -> syn::Result<()> {
+    pub fn validate_entries(entries: &BTreeMap<String, TokenStream>) -> syn::Result<()> {
         for key in entries.keys() {
             if !VALID_KEYS.iter().any(|valid| valid == key) {
                 return Err(syn::Error::new(
@@ -67,14 +66,14 @@ impl ComponentSpec {
         Ok(())
     }
 
-    pub fn from_entries(entries: &BTreeMap<String, Type>) -> syn::Result<Self> {
+    pub fn from_entries(entries: &BTreeMap<String, TokenStream>) -> syn::Result<Self> {
         Self::validate_entries(entries)?;
 
         let context_type: Ident = {
             let raw_context_type = entries.get("context");
 
             if let Some(context_type) = raw_context_type {
-                syn::parse2(context_type.to_token_stream())?
+                syn::parse2(context_type.clone())?
             } else {
                 Ident::new("Context", Span::call_site())
             }
@@ -85,7 +84,7 @@ impl ComponentSpec {
                 .get("provider")
                 .ok_or_else(|| Error::new(Span::call_site(), "expect provider name to be given"))?;
 
-            syn::parse2(raw_provider_name.to_token_stream())?
+            syn::parse2(raw_provider_name.clone())?
         };
 
         let (component_name, component_params) = {
@@ -95,7 +94,7 @@ impl ComponentSpec {
                 let ComponentNameSpec {
                     component_name,
                     component_params,
-                } = syn::parse2(raw_component_name.to_token_stream())?;
+                } = syn::parse2(raw_component_name.clone())?;
                 (component_name, component_params)
             } else {
                 (
@@ -107,7 +106,7 @@ impl ComponentSpec {
 
         let use_delegate_spec = match entries.get("derive_delegate") {
             Some(entry) => {
-                let DeriveDelegateSpecs { specs } = parse2(entry.to_token_stream())?;
+                let DeriveDelegateSpecs { specs } = parse2(entry.clone())?;
                 specs
             }
             None => Vec::new(),

@@ -1,6 +1,8 @@
 use alloc::collections::BTreeMap;
 use alloc::string::{String, ToString};
 
+use proc_macro2::TokenStream;
+use quote::ToTokens;
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::token::{Colon, Comma};
@@ -8,21 +10,24 @@ use syn::{Ident, Type};
 
 pub struct Entry {
     pub key: Ident,
-    pub value: Type,
+    pub value: TokenStream,
 }
 
 impl Parse for Entry {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let key = input.parse()?;
         let _colon: Colon = input.parse()?;
-        let value = input.parse()?;
+        let value: Type = input.parse()?;
 
-        Ok(Entry { key, value })
+        Ok(Entry {
+            key,
+            value: value.to_token_stream(),
+        })
     }
 }
 
 pub struct Entries {
-    pub entries: BTreeMap<String, Type>,
+    pub entries: BTreeMap<String, TokenStream>,
 }
 
 impl Parse for Entries {
