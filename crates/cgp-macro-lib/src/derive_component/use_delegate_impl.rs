@@ -1,42 +1,60 @@
 use proc_macro2::Span;
 use quote::quote;
+use syn::punctuated::Punctuated;
 use syn::spanned::Spanned;
-use syn::token::{Brace, Eq, For, Impl};
+use syn::token::{Brace, Comma, Eq, For, Impl};
 use syn::{
-    parse2, Error, GenericParam, Ident, ImplItem, ImplItemConst, ItemImpl, ItemTrait, Path,
+    parse2, parse_quote, Error, Ident, ImplItem, ImplItemConst, ItemImpl, ItemTrait, Path,
     TraitItem, Visibility,
 };
 
 use crate::derive_component::delegate_fn::derive_delegated_fn_impl;
 use crate::derive_component::delegate_type::derive_delegate_type_impl;
-use crate::parse::TypeGenerics;
 
-pub fn derive_use_context_impl(
-    context_type: &Ident,
-    consumer_trait: &ItemTrait,
+pub fn derive_use_delegate_impl(
     provider_trait: &ItemTrait,
+    use_delegate_params: Punctuated<Ident, Comma>,
 ) -> syn::Result<ItemImpl> {
-    let consumer_trait_ident = &consumer_trait.ident;
     let provider_trait_ident = &provider_trait.ident;
 
-    let provider_generics = TypeGenerics::try_from(&provider_trait.generics)?.generics;
+    let components_ident = Ident::new("__Components__", Span::call_site());
+    let delegate_ident = Ident::new("__Delegate__", Span::call_site());
 
-    let consumer_generics = TypeGenerics::try_from(&consumer_trait.generics)?.generics;
+    let generics = {
+        let mut generics = provider_trait.generics.clone();
 
-    let mut impl_generics = provider_trait.generics.clone();
+        generics.params.push(parse_quote!( #components_ident ));
+        generics.params.push(parse_quote!( #delegate_ident ));
 
-    let where_clause = impl_generics.make_where_clause();
+        let where_clause = generics.make_where_clause();
 
-    where_clause.predicates.push(parse2(quote! {
-        #context_type : #consumer_trait_ident #consumer_generics
-    })?);
+        where_clause.predicates.push(parse2(quote! {
+            __Components__: DelegateComponent<
+                ( #use_delegate_params ),
+                Delegate = #delegate_ident,
+            >,
+        })?);
+
+        let type_generics = provider_trait.generics.split_for_impl().1;
+
+        where_clause.predicates.push(parse2(quote! {
+            #delegate_ident : #provider_trait_ident #type_generics
+            >,
+        })?);
+
+        generics
+    };
+
+    let (_, type_generics, _) = generics.split_for_impl();
+
+    let trait_path: Path = parse2(quote!( #provider_trait_ident #type_generics ))?;
 
     let mut impl_items: Vec<ImplItem> = Vec::new();
 
     for trait_item in provider_trait.items.iter() {
         match trait_item {
             TraitItem::Fn(trait_fn) => {
-                let impl_fn = derive_delegated_fn_impl(&trait_fn.sig, &quote!( #context_type ))?;
+                let impl_fn = derive_delegated_fn_impl(&trait_fn.sig, &quote!( #delegate_ident ))?;
 
                 impl_items.push(ImplItem::Fn(impl_fn))
             }
@@ -48,7 +66,7 @@ pub fn derive_use_context_impl(
                 let impl_type = derive_delegate_type_impl(
                     trait_type,
                     parse2(quote!(
-                        #context_type :: #type_name #type_generics
+                        #delegate_ident :: #type_name #type_generics
                     ))?,
                 );
 
@@ -59,7 +77,7 @@ pub fn derive_use_context_impl(
                 let (_, type_generics, _) = trait_item_const.generics.split_for_impl();
 
                 let impl_expr = parse2(quote! {
-                    #context_type :: #const_ident #type_generics
+                    #delegate_ident :: #const_ident #type_generics
                 })?;
 
                 let impl_item_const = ImplItemConst {
@@ -87,16 +105,16 @@ pub fn derive_use_context_impl(
         }
     }
 
-    let trait_path: Path = parse2(quote!( #provider_trait_ident #provider_generics ))?;
+    let provider_type = parse2(quote!(UseDelegate<( #use_delegate_params )>))?;
 
     let item = ItemImpl {
         attrs: provider_trait.attrs.clone(),
         defaultness: None,
         unsafety: provider_trait.unsafety,
         impl_token: Impl::default(),
-        generics: impl_generics,
+        generics,
         trait_: Some((None, trait_path, For::default())),
-        self_ty: Box::new(parse2(quote!(UseContext))?),
+        self_ty: Box::new(provider_type),
         brace_token: Brace::default(),
         items: impl_items,
     };

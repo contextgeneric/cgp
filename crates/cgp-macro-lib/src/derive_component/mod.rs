@@ -10,6 +10,7 @@ mod replace_self_type;
 mod signature_args;
 mod snake_case;
 mod use_context_impl;
+mod use_delegate_impl;
 
 pub use derive::*;
 pub use replace_self_type::*;
