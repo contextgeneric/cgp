@@ -5,8 +5,8 @@ use proc_macro2::Span;
 use quote::ToTokens;
 use syn::parse::{End, Parse, ParseStream};
 use syn::punctuated::Punctuated;
-use syn::token::{Comma, Gt, Lt};
-use syn::{Error, Ident, Type};
+use syn::token::{Comma, Gt, Lt, Paren};
+use syn::{parenthesized, parse2, Error, Ident, Type};
 
 use crate::parse::Entries;
 
@@ -15,7 +15,7 @@ pub struct ComponentSpec {
     pub context_type: Ident,
     pub component_name: Ident,
     pub component_params: Punctuated<Ident, Comma>,
-    pub use_delegate_params: Vec<Ident>,
+    pub use_delegate_params: Punctuated<Ident, Comma>,
 }
 
 pub struct ComponentNameSpec {
@@ -35,9 +35,8 @@ impl Parse for ComponentSpec {
             let component_name =
                 Ident::new(&format!("{provider_name}Component"), provider_name.span());
 
-            let component_params = Punctuated::default();
-
-            let use_delegate_params = Vec::new();
+            let component_params = Punctuated::new();
+            let use_delegate_params = Punctuated::new();
 
             Ok(Self {
                 provider_name,
@@ -108,8 +107,11 @@ impl ComponentSpec {
         };
 
         let use_delegate_params = match entries.get("derive") {
-            Some(entry) => Vec::new(),
-            None => Vec::new(),
+            Some(entry) => {
+                let UseDelegateSpec { idents } = parse2(entry.to_token_stream())?;
+                idents
+            }
+            None => Punctuated::new(),
         };
 
         Ok(ComponentSpec {
@@ -143,5 +145,32 @@ impl Parse for ComponentNameSpec {
             component_name,
             component_params,
         })
+    }
+}
+
+pub struct UseDelegateSpec {
+    pub idents: Punctuated<Ident, Comma>,
+}
+
+impl Parse for UseDelegateSpec {
+    fn parse(input: ParseStream) -> syn::Result<Self> {
+        if input.peek(Paren) {
+            let body;
+            parenthesized!(body in input);
+            let idents = Punctuated::parse_terminated(&body)?;
+            if idents.is_empty() {
+                return Err(Error::new(
+                    body.span(),
+                    "expect non-empty tuple list of identifiers in use_delegate_spec",
+                ));
+            }
+
+            Ok(Self { idents })
+        } else {
+            let ident: Ident = input.parse()?;
+            Ok(Self {
+                idents: Punctuated::from_iter([ident]),
+            })
+        }
     }
 }
