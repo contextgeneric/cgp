@@ -58,6 +58,7 @@ pub fn derive_component_with_ast(
     ];
 
     if !spec.use_delegate_params.is_empty() {
+        // panic!("test");
         let use_delegate_impl =
             derive_use_delegate_impl(&provider_trait, &spec.use_delegate_params)?;
 

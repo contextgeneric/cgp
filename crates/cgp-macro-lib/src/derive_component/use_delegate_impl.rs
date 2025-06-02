@@ -4,8 +4,7 @@ use syn::punctuated::Punctuated;
 use syn::spanned::Spanned;
 use syn::token::{Brace, Comma, Eq, For, Impl};
 use syn::{
-    parse2, parse_quote, Error, Ident, ImplItem, ImplItemConst, ItemImpl, ItemTrait, Path,
-    TraitItem, Visibility,
+    parse2, Error, Ident, ImplItem, ImplItemConst, ItemImpl, ItemTrait, Path, TraitItem, Visibility,
 };
 
 use crate::derive_component::delegate_fn::derive_delegated_fn_impl;
@@ -23,29 +22,28 @@ pub fn derive_use_delegate_impl(
     let generics = {
         let mut generics = provider_trait.generics.clone();
 
-        generics.params.push(parse_quote!( #components_ident ));
-        generics.params.push(parse_quote!( #delegate_ident ));
+        generics.params.push(parse2(quote!( #components_ident ))?);
+        generics.params.push(parse2(quote!( #delegate_ident ))?);
 
         let where_clause = generics.make_where_clause();
 
         where_clause.predicates.push(parse2(quote! {
-            __Components__: DelegateComponent<
+            #components_ident: DelegateComponent<
                 ( #use_delegate_params ),
                 Delegate = #delegate_ident,
-            >,
+            >
         })?);
 
         let type_generics = provider_trait.generics.split_for_impl().1;
 
         where_clause.predicates.push(parse2(quote! {
             #delegate_ident : #provider_trait_ident #type_generics
-            >,
         })?);
 
         generics
     };
 
-    let (_, type_generics, _) = generics.split_for_impl();
+    let (_, type_generics, _) = provider_trait.generics.split_for_impl();
 
     let trait_path: Path = parse2(quote!( #provider_trait_ident #type_generics ))?;
 
@@ -105,7 +103,7 @@ pub fn derive_use_delegate_impl(
         }
     }
 
-    let provider_type = parse2(quote!(UseDelegate<( #use_delegate_params )>))?;
+    let provider_type = parse2(quote!(UseDelegate< #components_ident >))?;
 
     let item = ItemImpl {
         attrs: provider_trait.attrs.clone(),

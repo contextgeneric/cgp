@@ -106,7 +106,7 @@ impl ComponentSpec {
             }
         };
 
-        let use_delegate_params = match entries.get("derive") {
+        let use_delegate_params = match entries.get("use_delegate") {
             Some(entry) => {
                 let UseDelegateSpec { idents } = parse2(entry.to_token_stream())?;
                 idents
