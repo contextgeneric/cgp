@@ -5,8 +5,8 @@ use proc_macro2::Span;
 use quote::ToTokens;
 use syn::parse::{End, Parse, ParseStream};
 use syn::punctuated::Punctuated;
-use syn::token::{Comma, Gt, Lt, Paren};
-use syn::{parenthesized, parse2, Error, Ident, Type};
+use syn::token::{Bracket, Comma, Gt, Lt, Paren};
+use syn::{bracketed, parenthesized, parse2, Error, Ident, Type};
 
 use crate::parse::Entries;
 
@@ -107,8 +107,8 @@ impl ComponentSpec {
 
         let use_delegate_spec = match entries.get("derive_delegate") {
             Some(entry) => {
-                let spec = parse2(entry.to_token_stream())?;
-                vec![spec]
+                let UseDelegateSpecs { specs } = parse2(entry.to_token_stream())?;
+                specs
             }
             None => Vec::new(),
         };
@@ -180,5 +180,26 @@ impl Parse for UseDelegateSpec {
             wrapper,
             params: idents,
         })
+    }
+}
+
+pub struct UseDelegateSpecs {
+    pub specs: Vec<UseDelegateSpec>,
+}
+
+impl Parse for UseDelegateSpecs {
+    fn parse(input: ParseStream) -> syn::Result<Self> {
+        if input.peek(Bracket) {
+            let body;
+            bracketed!(body in input);
+
+            let specs = <Punctuated<UseDelegateSpec, Comma>>::parse_terminated(&body)?;
+            Ok(Self {
+                specs: Vec::from_iter(specs),
+            })
+        } else {
+            let spec = input.parse()?;
+            Ok(Self { specs: vec![spec] })
+        }
     }
 }
