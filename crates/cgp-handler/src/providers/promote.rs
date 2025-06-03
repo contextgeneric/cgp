@@ -23,3 +23,23 @@ where
         Ok(Provider::compute(context, tag, input))
     }
 }
+
+#[cgp_new_provider]
+impl<Context, Code, Input, Output, Provider> Handler<Context, Code, Input> for TryPromote<Provider>
+where
+    Context: HasAsyncErrorType,
+    Provider: Computer<Context, Code, Input, Output = Result<Output, Context::Error>>,
+    Code: Send,
+    Input: Send,
+    Output: Send,
+{
+    type Output = Output;
+
+    async fn handle(
+        context: &Context,
+        tag: PhantomData<Code>,
+        input: Input,
+    ) -> Result<Output, Context::Error> {
+        Provider::compute(context, tag, input)
+    }
+}
