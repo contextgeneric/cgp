@@ -31,11 +31,11 @@ pub fn impl_component_is_preset(
     let component_type = &component.ty;
 
     let mut generics = component.generics.generics.clone();
-    generics.params.push(parse_quote!(T));
+    generics.params.push(parse_quote!(__Self__));
 
     let impl_generics = generics.split_for_impl().0;
 
     parse_quote! {
-        impl #impl_generics #trait_name < #component_type > for T {}
+        impl #impl_generics #trait_name < #component_type > for __Self__ {}
     }
 }
