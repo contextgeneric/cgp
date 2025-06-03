@@ -4,7 +4,7 @@ use proc_macro2::{Span, TokenStream};
 use quote::{quote, ToTokens, TokenStreamExt};
 use syn::punctuated::Punctuated;
 use syn::token::{At, Comma};
-use syn::{parse2, parse_quote, Ident, ItemTrait};
+use syn::{parse2, parse_quote, GenericParam, Ident, ItemTrait, TypeParamBound};
 
 use crate::delegate_components::{define_struct, impl_delegate_components};
 use crate::derive_component::to_snake_case_str;
@@ -220,6 +220,18 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
             for component in entry.keys.iter() {
                 let component_name = &component.ty.name;
                 components.insert(component_name.clone());
+
+                for param in component.generics.generics.params.iter() {
+                    if let GenericParam::Type(param) = param {
+                        for bound in param.bounds.iter() {
+                            if let TypeParamBound::Trait(bound) = bound {
+                                if let Some(segment) = bound.path.segments.first() {
+                                    components.insert(segment.ident.clone());
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
 
