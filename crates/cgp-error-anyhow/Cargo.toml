@@ -1,6 +1,6 @@
 [package]
 name         = "cgp-error-anyhow"
-version      = "0.4.0"
+version      = "0.4.1-alpha"
 edition      = { workspace = true }
 license      = { workspace = true }
 repository   = { workspace = true }
@@ -12,5 +12,5 @@ description  = """
 """
 
 [dependencies]
-cgp-core    = { version = "0.4.0", default-features = false }
+cgp-core    = { version = "0.4.1-alpha", default-features = false }
 anyhow      = { version = "1.0.95", default-features = false }
