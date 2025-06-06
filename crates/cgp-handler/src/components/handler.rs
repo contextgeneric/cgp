@@ -6,8 +6,7 @@ use cgp_core::prelude::*;
 #[cgp_component {
     provider: Handler,
     derive_delegate: [
-        UseDelegate<Code>,
-        UseInputDelegate<Input>,
+        UseDelegate<(Code, Input)>,
     ],
 }]
 #[async_trait]
