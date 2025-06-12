@@ -143,6 +143,41 @@ pub fn cgp_provider(attr: TokenStream, item: TokenStream) -> TokenStream {
         .into()
 }
 
+/**
+    The `#[cgp_new_provider]` macro is an extension to [`#[cgp_provider]`](macro@cgp_provider)
+    that in addition to the derivation of `IsProviderFor`, also generates a new provider
+    struct based on the `Self` type.
+
+    This macro is a convenient shorthand for users to skip the manual definition of
+    the provider struct. It is commonly used when user only wants to implement one
+    provider trait for each provider struct.
+
+    When the user wants to implement multiple provider traits for the same provider struct,
+    the user should still explicitly define the provider struct, and use `#[cgp_provider]`
+    instead.
+
+    ## Example
+
+    Given the following provider trait implementation:
+
+    ```rust,ignore
+    #[cgp_provider]
+    impl<Context> Greeter<Context> for GreetName
+    where
+        Context: HasName,
+    {
+        fn greet(context: &Context) {
+            println!("Hello, {}!", context.name());
+        }
+    }
+    ```
+
+    The provider struct `GreetName` is also generated as follows:
+
+    ```rust
+    struct GreetName;
+    ```
+*/
 #[proc_macro_attribute]
 pub fn cgp_new_provider(attr: TokenStream, item: TokenStream) -> TokenStream {
     cgp_macro_lib::cgp_new_provider(attr.into(), item.into())
@@ -150,6 +185,67 @@ pub fn cgp_new_provider(attr: TokenStream, item: TokenStream) -> TokenStream {
         .into()
 }
 
+/**
+    `#[cgp_getter]` is an extension to [`#[cgp_component]`](macro@cgp_component) that
+    derives additional getter constructs.
+
+    This macro can only be used on traits that contains only getter-like methods.
+
+    The macro accepts the same arguments as `#[cgp_component]`, and generates the same
+    CGP component constructs. Additionally, it also generates implementation for the
+    following getter providers:
+
+    - `UseField<Tag>` - implements the provider trait using `HasField<Tag>`.
+    - `UseFields` - implements the provider trait using `HasField`, with the tag
+      being the same name as the getter methods.
+    - `WithProvider<Provider>` - implements the provider trait if the given
+      `Provider` implements `FieldGetter<ComponentName>`.
+
+    ## Example
+
+    Given the following getter component definition:
+
+    ```rust,ignore
+    #[cgp_component(NameGetter)]
+    pub trait HasName {
+        fn name(&self) -> &str;
+    }
+    ```
+
+    The following getter providers are generated:
+
+    ```rust,ignore
+    #[cgp_provider]
+    impl<Context, Tag> NameGetter<Context> for UseField<Tag>
+    where
+        Context: HasField<Tag, Value = String>,
+    {
+        fn get(context: &Context) -> &str {
+            context.get_field(PhantomData).as_str()
+        }
+    }
+
+    #[cgp_provider]
+    impl<Context> NameGetter<Context> for UseFields
+    where
+        Context: HasField<symbol!("name"), Value = String>,
+    {
+        fn get(context: &Context) -> &str {
+            context.get_field(PhantomData).as_str()
+        }
+    }
+
+    #[cgp_provider]
+    impl<Context, Provider> NameGetter<Context> for WithProvider<Provider>
+    where
+        Provider: FieldGetter<Context, NameGetterComponent, Value = String>,
+    {
+        fn get(context: &Context) -> &str {
+            Provider::get_field(context, PhantomData).as_str()
+        }
+    }
+    ```
+*/
 #[proc_macro_attribute]
 pub fn cgp_getter(attr: TokenStream, item: TokenStream) -> TokenStream {
     cgp_macro_lib::cgp_getter(attr.into(), item.into())
@@ -157,6 +253,57 @@ pub fn cgp_getter(attr: TokenStream, item: TokenStream) -> TokenStream {
         .into()
 }
 
+/**
+    `#[cgp_auto_getter]` is used on a regular getter Rust trait without turnning it
+    into a CGP component. Instead, a blanket implementation is derived directly on
+    that trait.
+
+    This macro can only be used on traits that contains only getter-like methods.
+
+    This macro is a simplified version of [`#[cgp_getter]`](macro@cgp_getter) that does
+    not require explicit implementation or wiring. Instead, the trait would have a blanket
+    implementation that is implemented only if the context implements `HasField` with the
+    field having the exact same name as the getter methods.
+
+    This macro serves as a convenient alternative, so that whenever there is a need to
+    use the `HasField` trait directly, one can instead define a getter trait that is
+    applied with `#[cgp_auto_getter]`.
+
+    This can significantly improve developer experience, as the `HasField` trait can be
+    confusing to new users, who may not be familiar with how the field tag being used
+    as a type-level string instead of regular values.
+
+    ## Example
+
+    Given the following getter trait definition:
+
+    ```rust,ignore
+    #[cgp_auto_getter]
+    pub trait HasName {
+        fn name(&self) -> &str;
+    }
+    ```
+
+    The trait will always be implemented for any struct that derives `HasField` with
+    a `name` field of type `String`, without requiring further wiring. For example:
+
+    ```rust,ignore
+    #[derive(HasField)]
+    struct Person {
+        name: String,
+    }
+    ```
+
+    or:
+
+    ```rust,ignore
+    #[derive(HasField)]
+    struct Person {
+        name: String,
+        age: u8,
+    }
+    ```
+*/
 #[proc_macro_attribute]
 pub fn cgp_auto_getter(attr: TokenStream, item: TokenStream) -> TokenStream {
     cgp_macro_lib::cgp_auto_getter(attr.into(), item.into())
@@ -192,6 +339,72 @@ pub fn cgp_preset(body: TokenStream) -> TokenStream {
         .into()
 }
 
+/**
+    `#[cgp_type]` is an extension to [`#[cgp_component]`](macro@cgp_component) that
+    derives additional constructs for abstract type components.
+
+    This macro can only be used on an abstract type trait that contains a single
+    associated type as its item, and nothing else.
+
+    The macro can be used with no attribute argument, in which case the provider
+    type would be named in the format `{associated_type_name}TypeProvider`.
+
+    In addition to the component constructs generated by `#[cgp_component]`, the macro
+    also generates a provider for `UseType<Type>`, that implements the provider trait
+    using `Type`.
+
+    The macro also generates a type alias for accessing the associated type, with the
+    type alias named in the format `{associated_type_name}Of`.
+
+    For advanced use cases, the macro also generates an implementation of
+    `WithProvider<Provider>`, which implements the provider trait if the given
+    `Provider` implements  `TypeProvider<Context, ComponentName>`.
+
+    ## Example
+
+    Given the following abstract type trait definition:
+
+    ```rust,ignore
+    #[cgp_type]
+    pub trait HasNameType {
+        type Name: Display;
+    }
+    ```
+
+    would be equivalent to the following fully explicit definition:
+
+    ```rust,ignore
+    #[cgp_type {
+        name: NameTypeProviderComponent,
+        provider: NameTypeProvider,
+        context: Context,
+    }]
+    pub trait HasNameType {
+        type Name: Display;
+    }
+    ```
+
+    Which would generate the following constructs:
+
+    ```rust,ignore
+    impl<Context, Type> NameTypeProvider<Context> for UseType<Type>
+    where
+        Type: Display,
+    {
+        type Name = Type;
+    }
+
+    type NameOf<Context> = <Context as HasNameType>::Name;
+
+    impl<Context, Provider> HasNameType<Context> for WithProvider<Provider>
+    where
+        Provider: TypeProvider<Context, NameTypeProviderComponent>,
+        Provider::Type: Display,
+    {
+        type Name = Provider::Type;
+    }
+    ```
+*/
 #[proc_macro_attribute]
 pub fn cgp_type(attrs: TokenStream, body: TokenStream) -> TokenStream {
     cgp_macro_lib::cgp_type(attrs.into(), body.into())
@@ -199,6 +412,76 @@ pub fn cgp_type(attrs: TokenStream, body: TokenStream) -> TokenStream {
         .into()
 }
 
+/**
+    The `#[cgp_context]` macro is used when defining a CGP context.
+
+    The macro can be used with a struct definition. An optional identifier can be
+    provided to be used as the name of the provider for the context. If not provided,
+    the context provider would be named in the format `{struct_name}Components`.
+
+    The macro generates a struct definition for the context provider, and implements
+    `HasCgpProvider` for the context struct to point to the context provider.
+
+    ## Example
+
+    Given the following context definition:
+
+    ```rust,ignore
+    #[cgp_context]
+    pub struct MyApp {
+        name: String,
+    }
+    ```
+
+    would be equivalent to the following fully explicit definition:
+
+    ```rust,ignore
+    #[cgp_context(MyAppComponents)]
+    pub struct MyApp {
+        name: String,
+    }
+    ```
+
+    which would generate the following constructs:
+
+    ```rust,ignore
+    struct MyAppComponents;
+
+    impl HasCgpProvider for MyApp {
+        type CgpProvider = MyAppComponents;
+    }
+    ```
+
+    ## Preset Inheritance
+
+    The macro also allows the context provider to inherit its component mappings
+    from a specified preset. The preset can be specified following a `:`, after
+    the context provider name is specified.
+
+    The context provider would implement `DelegateComponent` for all keys in the
+    preset, with the `Delegate` target pointing to `Preset::Provider`. This is
+    done through the `IsPreset` trait generated from the [`cgp_preset!`] macro.
+
+    For example, given the following definition:
+
+    ```rust,ignore
+    #[cgp_context(MyAppComponents: MyPreset)]
+    pub struct MyApp {
+        name: String,
+    }
+    ```
+
+    The following blanket implementation would be generated:
+
+    ```rust,ignore
+    impl<Name> DelegateComponent<Name> for MyAppComponents
+    where
+        Self: MyPreset::IsPreset<Name>,
+    {
+        type Delegate = MyPreset::Provider;
+    }
+    ```
+*/
 #[proc_macro_attribute]
 pub fn cgp_context(attr: TokenStream, item: TokenStream) -> TokenStream {
     cgp_macro_lib::cgp_context(attr.into(), item.into())
