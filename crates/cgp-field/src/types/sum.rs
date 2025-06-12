@@ -1,4 +1,4 @@
-/** 
+/**
     The `Either` type, a.k.a. `σ`, is used to represent an _anonymous sum type_.
 
     Similar to [`Cons`](crate::types::Cons), `Either` is used to form a sum type
@@ -15,7 +15,7 @@
     types and turns them into a chain of `Either` types.
 
     ## Example
-    
+
     Given the following sum type definition:
 
     ```rust,ignore
@@ -28,7 +28,7 @@
     type MyUnion = Either<u32, Either<String, Either<bool, Void>>>;
     ```
 
-    which would be shown with the shortened representation as:  
+    which would be shown with the shortened representation as:
 
     ```rust,ignore
     type MyUnion = σ<u32, σ<String, σ<bool, θ>>>;
@@ -40,16 +40,16 @@ pub enum σ<Head, Tail> {
     Right(Tail),
 }
 
-/** 
+/**
     The `Void` type, a.k.a. `θ`, is used to represent the end of an _anonymous sum type_,
     or an _empty_ sum type.
 
     `Void` is commonly used as the `Tail` of a [`Either`] type, to terminate the list.
     When used on its own, it represents an empty sum type, which can _never be constructed_.
 
-    `Void` is functionally the same as the 
+    `Void` is functionally the same as the
     [_never_ type](https://doc.rust-lang.org/std/primitive.never.html), `!`,
-    or otherwise 
+    or otherwise
     [`Infallible`](https://doc.rust-lang.org/std/convert/enum.Infallible.html).
     However, we define a separate `Void` type, to make it more clear that it is
     specifically used for terminating a sum type.

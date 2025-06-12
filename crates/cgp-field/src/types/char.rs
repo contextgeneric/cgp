@@ -16,7 +16,7 @@ use core::marker::PhantomData;
     Similar to `Cons`, `Char` is also shown as `ι` to further improve its
     readability.
 
-    We represent type-level strings as list of `Char`s, because it is currently 
+    We represent type-level strings as list of `Char`s, because it is currently
     not possible to use types like `String` or `&str` as const-generic parameters.
     On the other hand, a single `char` can be used as a const-generic parameter,
     and so we can workaround the limitation by combining a type-level list of

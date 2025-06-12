@@ -1,7 +1,7 @@
 use core::fmt::{Debug, Display};
 
-/** 
-    The `Index` type, a.k.a. `δ`, is used to represent a `usize` value at 
+/**
+    The `Index` type, a.k.a. `δ`, is used to represent a `usize` value at
     the _type level_.
 
     `Index` is simply defined to be parameterized by a _const-generic_ value
@@ -19,7 +19,7 @@ use core::fmt::{Debug, Display};
     pub struct MyContext(pub u32);
     ```
 
-    The following `HasField` implementation would be generated, with use of 
+    The following `HasField` implementation would be generated, with use of
     `Index<0>` as the field tag:
 
     ```rust,ignore
