@@ -8,7 +8,7 @@ authors      = { workspace = true }
 rust-version = { workspace = true }
 keywords     = { workspace = true }
 description  = """
-    Context-generic programming core component traits
+    Core CGP traits and types used for implementing the CGP component system
 """
 
 [dependencies]
