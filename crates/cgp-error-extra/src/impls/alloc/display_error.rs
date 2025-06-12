@@ -9,7 +9,7 @@ use cgp_core::prelude::*;
 
 pub struct DisplayError;
 
-#[cgp_provider(ErrorRaiserComponent)]
+#[cgp_provider]
 impl<Context, E> ErrorRaiser<Context, E> for DisplayError
 where
     Context: CanRaiseError<String>,
@@ -20,7 +20,7 @@ where
     }
 }
 
-#[cgp_provider(ErrorWrapperComponent)]
+#[cgp_provider]
 impl<Context, Detail> ErrorWrapper<Context, Detail> for DisplayError
 where
     Context: CanWrapError<String>,

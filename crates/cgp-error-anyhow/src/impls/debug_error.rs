@@ -7,7 +7,7 @@ use cgp_core::prelude::*;
 
 pub struct DebugAnyhowError;
 
-#[cgp_provider(ErrorRaiserComponent)]
+#[cgp_provider]
 impl<Context, E> ErrorRaiser<Context, E> for DebugAnyhowError
 where
     Context: HasErrorType<Error = Error>,
@@ -18,7 +18,7 @@ where
     }
 }
 
-#[cgp_provider(ErrorWrapperComponent)]
+#[cgp_provider]
 impl<Context, Detail> ErrorWrapper<Context, Detail> for DebugAnyhowError
 where
     Context: HasErrorType<Error = Error>,

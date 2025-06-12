@@ -7,7 +7,7 @@ use cgp_core::prelude::*;
 
 pub struct DebugError;
 
-#[cgp_provider(ErrorRaiserComponent)]
+#[cgp_provider]
 impl<Context, E> ErrorRaiser<Context, E> for DebugError
 where
     Context: CanRaiseError<String>,
@@ -18,7 +18,7 @@ where
     }
 }
 
-#[cgp_provider(ErrorWrapperComponent)]
+#[cgp_provider]
 impl<Context, Detail> ErrorWrapper<Context, Detail> for DebugError
 where
     Context: CanWrapError<String>,

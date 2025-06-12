@@ -7,7 +7,7 @@ use eyre::Error;
 
 pub struct RaiseEyreError;
 
-#[cgp_provider(ErrorRaiserComponent)]
+#[cgp_provider]
 impl<Context, E> ErrorRaiser<Context, E> for RaiseEyreError
 where
     Context: HasErrorType<Error = Error>,
@@ -18,7 +18,7 @@ where
     }
 }
 
-#[cgp_provider(ErrorWrapperComponent)]
+#[cgp_provider]
 impl<Context, Detail> ErrorWrapper<Context, Detail> for RaiseEyreError
 where
     Context: HasErrorType<Error = Error>,
