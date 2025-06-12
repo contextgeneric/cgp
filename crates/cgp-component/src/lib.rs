@@ -1,7 +1,8 @@
 #![no_std]
 
 /*!
-   This crate defines the core CGP traits, [`DelegateComponent`] and [`HasCgpProvider`].
+   This crate defines the core CGP types and traits used to enable the core
+   CGP component implementation.
 */
 
 mod traits;

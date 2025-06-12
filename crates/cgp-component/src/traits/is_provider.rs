@@ -1,113 +1,122 @@
 /**
-    The `IsProviderFor` trait is used to propagate the constraints required to
-    implement the provider trait that corresponds to the `Component` type.
+   The `IsProviderFor` trait is used to propagate the constraints required to
+   implement the provider trait that corresponds to the `Component` type.
 
-    ## `IsProviderFor` as a constraint carrier
+   ## Parameters
 
-    The trait definition for `IsProviderFor` has an empty body that can be trivially
-    implemented. However, when used with `#[cgp_provider]` or `#[cgp_new_provider]`,
-    on a provider trait implementation, it would be implemented by the `Provider` type
-    with the same set of constraints as the provider trait implementation.
+   The `IsProviderFor` trait parameters are used as follows:
 
-    The `IsProviderFor` trait is included as a supertrait of all CGP provider traits 
-    generated from `#[cgp_component]`. This means that when there is any unsatisfied
-    constraint in the provider trait implementation, it would also result in the
-    same error shown in the `IsProviderFor` implementation.
+   - `Component`: The component name type that corresponds to the provider trait.
+   - `Context`: The `Context` type used in the provider trait.
+   - `Params`: Any additional generic parameters in the provider trait, with
+     multiple generic parameters grouped inside a tuple.
 
-    ## Why is this trait necessary?
+   ## `IsProviderFor` as a constraint carrier
 
-    The trait is necessary to force the Rust compiler to show any relevant error message
-    when there are unsatisfied constraints in the provider trait implementation. By default,
-    Rust would hide the error messages from the provider trait implementation, because there
-    is also an alternative candidate implementation available, which is the blanket 
-    implementation of the provider trait.
+   The trait definition for `IsProviderFor` has an empty body that can be trivially
+   implemented. However, when used with `#[cgp_provider]` or `#[cgp_new_provider]`,
+   on a provider trait implementation, it would be implemented by the `Provider` type
+   with the same set of constraints as the provider trait implementation.
 
-    On the other hand, the `IsProviderFor` trait is explicitly propagated inside 
-    `delegate_components!`, together with `DelegateComponent`. Because of this different
-    implementation path, we are able to "unhide" the error messages that were hidden away
-    by Rust.
+   The `IsProviderFor` trait is included as a supertrait of all CGP provider traits
+   generated from `#[cgp_component]`. This means that when there is any unsatisfied
+   constraint in the provider trait implementation, it would also result in the
+   same error shown in the `IsProviderFor` implementation.
 
-    ## Example Definition
+   ## Why is this trait necessary?
 
-    Given a CGP trait definition such as:
+   The trait is necessary to force the Rust compiler to show any relevant error message
+   when there are unsatisfied constraints in the provider trait implementation. By default,
+   Rust would hide the error messages from the provider trait implementation, because there
+   is also an alternative candidate implementation available, which is the blanket
+   implementation of the provider trait.
 
-    ```rust,ignore
-    #[cgp_component(FooGetterAt)]
-    pub trait CanGetFooAt<I, J> {
-        fn foo_at(&self, _phantom: PhantomData<(I, J)>) -> u64;
-    }
-    ```
-    
-    The following provider trait would be generated with the `IsProviderFor` supertrait:
+   On the other hand, the `IsProviderFor` trait is explicitly propagated inside
+   `delegate_components!`, together with `DelegateComponent`. Because of this different
+   implementation path, we are able to "unhide" the error messages that were hidden away
+   by Rust.
 
-    ```rust,ignore
-    pub trait FooGetterAt<Context, I, J>: 
-        IsProviderFor<FooGetterAtComponent, Context, (I, J)> 
-    {
-        fn foo_at(context: &Context, _phantom: PhantomData<(I, J)>) -> u64;
-    }
-    ```
+   ## Example Definition
 
-    ## Example Implementation
+   Given a CGP trait definition such as:
 
-    Given a provider trait implementation such as:
+   ```rust,ignore
+   #[cgp_component(FooGetterAt)]
+   pub trait CanGetFooAt<I, J> {
+       fn foo_at(&self, _phantom: PhantomData<(I, J)>) -> u64;
+   }
+   ```
 
-    ```rust,ignore
-    #[cgp_provider(FooGetterAt)]
-    impl<I, J> FooGetterAt<Context, I, J> for GetFooValue 
-    where
-        Context: HasField<symbol!("foo"), Value = u64>,
-    {
-        fn foo_at(context: &Context, _phantom: PhantomData<(I, J)>) -> u64 {
-            context.get_field(PhantomData)
-        }
-    }
-    ```
+   The following provider trait would be generated with the `IsProviderFor` supertrait:
 
-    The following implementation for `IsProviderFor` would be generated:
+   ```rust,ignore
+   pub trait FooGetterAt<Context, I, J>:
+       IsProviderFor<FooGetterAtComponent, Context, (I, J)>
+   {
+       fn foo_at(context: &Context, _phantom: PhantomData<(I, J)>) -> u64;
+   }
+   ```
 
-    ```rust,ignore
-    impl<Context, I, J> 
-        IsProviderFor<FooGetterAtComponent, Context, (I, J)> 
-        for GetFooValue
-    where
-        Context: HasField<symbol!("foo"), Value = u64>,
-    {
-    }
-    ```
+   ## Example Implementation
 
-    ## Example Delegation
+   Given a provider trait implementation such as:
 
-    Given a component delegation such as:
+   ```rust,ignore
+   #[cgp_provider(FooGetterAt)]
+   impl<I, J> FooGetterAt<Context, I, J> for GetFooValue
+   where
+       Context: HasField<symbol!("foo"), Value = u64>,
+   {
+       fn foo_at(context: &Context, _phantom: PhantomData<(I, J)>) -> u64 {
+           context.get_field(PhantomData)
+       }
+   }
+   ```
 
-    ```rust,ignore
-    delegate_component! {
-        MyAppComponents {
-            FooGetterAtComponent: GetFooValue,
-        }
-    }
-    ```
+   The following implementation for `IsProviderFor` would be generated:
 
-    The following `IsProviderFor` implementation would be generated:
+   ```rust,ignore
+   impl<Context, I, J>
+       IsProviderFor<FooGetterAtComponent, Context, (I, J)>
+       for GetFooValue
+   where
+       Context: HasField<symbol!("foo"), Value = u64>,
+   {
+   }
+   ```
 
-    ```rust,ignore
-    impl<Context, Params> 
-        IsProviderFor<FooGetterAtComponent, Context, Params> 
-        for MyAppComponents
-    where
-        GetFooValue: IsProviderFor<FooGetterAtComponent, Context, Params>,
-    {
-    }
-    ```
+   ## Example Delegation
 
-    This means that `MyAppComponents` has an explicit implementation of `IsProviderFor`
-    for all possible `Context` and `Params`, with the `where` constraint propagating
-    the constraints coming from `GetFooValue` with the same `Context` and `Params`.
+   Given a component delegation such as:
 
-    Because of this is an explicit implementation and not a blanket implementation,
-    Rust would follow the implementation path and surface all unsatisfied constraints 
-    from `GetFooValue`.
- */
+   ```rust,ignore
+   delegate_component! {
+       MyAppComponents {
+           FooGetterAtComponent: GetFooValue,
+       }
+   }
+   ```
+
+   The following `IsProviderFor` implementation would be generated:
+
+   ```rust,ignore
+   impl<Context, Params>
+       IsProviderFor<FooGetterAtComponent, Context, Params>
+       for MyAppComponents
+   where
+       GetFooValue: IsProviderFor<FooGetterAtComponent, Context, Params>,
+   {
+   }
+   ```
+
+   This means that `MyAppComponents` has an explicit implementation of `IsProviderFor`
+   for all possible `Context` and `Params`, with the `where` constraint propagating
+   the constraints coming from `GetFooValue` with the same `Context` and `Params`.
+
+   Because of this is an explicit implementation and not a blanket implementation,
+   Rust would follow the implementation path and surface all unsatisfied constraints
+   from `GetFooValue`.
+*/
 #[diagnostic::on_unimplemented(
     note = "You need to add `#[cgp_provider({Component})]` on the impl block for CGP provider traits"
 )]
