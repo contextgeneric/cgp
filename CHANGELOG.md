@@ -1,5 +1,23 @@
 # Changelog
 
+## v0.4.1 (2025-05-24)
+
+- New `cgp-handler` Crate
+    - Introduce new `cgp-handler` crate - [#105](https://github.com/contextgeneric/cgp/pull/105)
+
+- Macro Improvements
+    - Support wrapping of `Preset::Provider` inside `cgp_preset!` macro - [#103](https://github.com/contextgeneric/cgp/pull/103)
+    - Support derivation of `UseDelegate` inside `#[cgp_component]` - [#106](https://github.com/contextgeneric/cgp/pull/106)
+
+- CGP Field Improvements
+    - Format `Char` statically without `self` - [#104](https://github.com/contextgeneric/cgp/pull/104)
+
+- Miscellaneous
+    - Minor improvements - [#107](https://github.com/contextgeneric/cgp/pull/107)
+
+- Documentation
+    - Add inline Rust documentation for common CGP constructs - [#109](https://github.com/contextgeneric/cgp/pull/109)
+
 ## v0.4.0 (2025-05-09)
 
 - Debugging Improvements
