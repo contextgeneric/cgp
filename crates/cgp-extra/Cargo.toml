@@ -1,6 +1,6 @@
 [package]
 name         = "cgp-extra"
-version      = "0.4.1-alpha"
+version      = "0.4.1"
 edition      = { workspace = true }
 license      = { workspace = true }
 repository   = { workspace = true }
@@ -15,8 +15,8 @@ default = [ "full" ]
 full = [ "cgp-error-extra/alloc" ]
 
 [dependencies]
-cgp-error-extra = { version = "0.4.1-alpha", default-features = false }
-cgp-inner       = { version = "0.4.1-alpha" }
-cgp-run         = { version = "0.4.1-alpha" }
-cgp-runtime     = { version = "0.4.1-alpha" }
-cgp-handler     = { version = "0.4.1-alpha" }
+cgp-error-extra = { version = "0.4.1", default-features = false }
+cgp-inner       = { version = "0.4.1" }
+cgp-run         = { version = "0.4.1" }
+cgp-runtime     = { version = "0.4.1" }
+cgp-handler     = { version = "0.4.1" }

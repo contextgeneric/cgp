@@ -1,6 +1,6 @@
 [package]
 name         = "cgp-async"
-version      = "0.4.1-alpha"
+version      = "0.4.1"
 edition      = { workspace = true }
 license      = { workspace = true }
 repository   = { workspace = true }
@@ -25,5 +25,5 @@ sync = [ "async" ]
 static = [ "async" ]
 
 [dependencies]
-cgp-async-macro = { version = "0.4.1-alpha" }
-cgp-sync        = { version = "0.4.1-alpha" }
+cgp-async-macro = { version = "0.4.1" }
+cgp-sync        = { version = "0.4.1" }

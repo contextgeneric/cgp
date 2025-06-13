@@ -1,6 +1,6 @@
 [package]
 name         = "cgp"
-version      = "0.4.1-alpha"
+version      = "0.4.1"
 edition      = { workspace = true }
 license      = { workspace = true }
 repository   = { workspace = true }
@@ -17,6 +17,6 @@ default             = [ "full" ]
 full                = [ "cgp-core/full", "cgp-extra/full" ]
 
 [dependencies]
-cgp-async      = { version = "0.4.1-alpha", default-features = false }
-cgp-core       = { version = "0.4.1-alpha", default-features = false }
-cgp-extra      = { version = "0.4.1-alpha", default-features = false }
+cgp-async      = { version = "0.4.1", default-features = false }
+cgp-core       = { version = "0.4.1", default-features = false }
+cgp-extra      = { version = "0.4.1", default-features = false }
