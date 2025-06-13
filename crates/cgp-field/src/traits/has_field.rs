@@ -3,6 +3,46 @@ use core::ops::Deref;
 
 use cgp_component::UseContext;
 
+/**
+    The `HasField` trait is used to implement getter methods for a type that
+    derives the trait.
+
+    When a struct uses `#[derive(HasField)]`, the macro would generate a `HasField`
+    implementation for each field in the struct, with the field name becoming a
+    type-level string to be used in the generic `Tag` parameter.
+
+    ## Example
+
+    Given the following struct:
+
+    ```rust
+    #[derive(HasField)]
+    pub struct Person {
+        pub name: String,
+        pub age: u8,
+    }
+    ```
+
+    The macro would generate the following implementation:
+
+    ```rust
+    impl HasField<symbol!("name")> for Person {
+        type Value = String;
+
+        fn get_field(&self, _tag: PhantomData<symbol!("name")>) -> &Self::Value {
+            &self.name
+        }
+    }
+
+    impl HasField<symbol!("age")> for Person {
+        type Value = u8;
+
+        fn get_field(&self, _tag: PhantomData<symbol!("age")>) -> &Self::Value {
+            &self.age
+        }
+    }
+    ```
+*/
 #[diagnostic::on_unimplemented(
     message = "HasField is not implemented for {Self} with the field: {Tag}",
     note = "You need to add #[derive(HasField)] to {Self} with the given field present in the struct"

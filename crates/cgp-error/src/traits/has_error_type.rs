@@ -5,7 +5,8 @@ use cgp_macro::cgp_type;
 use cgp_type::{ProvideType, UseType};
 
 /**
-    This is used for contexts to declare that they have a _unique_ `Self::Error` type.
+    The `HasErrorType` trait provides an abstract error type that can be used by
+    CGP components to decouple the code from any concrete error implementation.
 
     Although it is possible for each context to declare their own associated
     `Error` type, doing so may result in having multiple ambiguous `Self::Error` types,

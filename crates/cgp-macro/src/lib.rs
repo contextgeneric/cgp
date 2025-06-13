@@ -311,6 +311,155 @@ pub fn cgp_auto_getter(attr: TokenStream, item: TokenStream) -> TokenStream {
         .into()
 }
 
+/**
+    The `delegate_components!` macro is used to define wiring of CGP components
+    on a provider type.
+
+    ## Type-Level Maps
+
+    Conceptually, we can think of the use of `delegate_components!` as defining a
+    type-level map, with the keys and values being types. When the keys are the
+    CGP component name types and the values are the CGP providers, then
+    `delegate_components!` is effectively implementing the specified providers
+    on the target type by delegating them to the providers specified in the
+    type-level map.
+
+    The macro is implemented by having the target type implement the `DelegateComponent`
+    trait, with the key used in the `Name` parameter and the value being set as the
+    `Delegate` associated type.
+
+    Additionally, for each key/value entry, the macro also generates implementation for
+    the `IsProviderFor` trait, which would be used during provider trait implementation
+    to propagate any unsatisfied constraints error to be shown to the user.
+
+    ## Basic Syntax
+
+    In its most basic form, the macro can be used by specifying a list of key/value pairs
+    as follows:
+
+    ```rust,ignore
+    delegate_components! {
+        MyComponents {
+            KeyA: ValueA,
+            KeyB: ValueB,
+            ...
+        }
+    }
+    ```
+
+    This would turn the target type into a type-level map, which would contain the entries
+    `KeyA` -> `ValueA`, `KeyB` -> `ValueB`, etc. For each `Key` and `Value`, the macro
+    would generate the following implementation:
+
+    ```rust,ignore
+    impl DelegateComponent<Key> for MyComponents
+    {
+        type Delegate = Value;
+    }
+
+    impl<Context, Params> IsProviderFor<Key, Context, Params> for Value
+    where
+        Value: IsProviderFor<Key, Context, Params>,
+    {
+    }
+    ```
+
+    ## Grouping Keys
+
+    The macro also supports grouping multiple keys together using the list syntax,
+    when the grouped keys all map to the same value. This is useful when we want to
+    delegate multiple CGP components to the same target provider.
+
+    For example, given the following:
+
+    ```rust,ignore
+    delegate_components! {
+        MyComponents {
+            [
+                KeyA,
+                KeyB,
+                ...
+            ]:
+                Value,
+        }
+    }
+    ```
+
+    It would be equivalent to the following:
+
+    ```rust,ignore
+    delegate_components! {
+        MyComponents {
+            KeyA: Value,
+            KeyB: Value,
+            ...
+        }
+    }
+    ```
+
+    ## Generating Mapping Struct
+
+    By default, mapping types like `MyComponents` would be defined outside of `delegate_components!`
+    as a dummy struct, or generated through other macros such as `#[cgp_context]`. However,
+    `delegate_components!` also accepts an optional `new` keyword in front of the map type,
+    in which it would also generate the struct definition for the mapping type.
+
+    For example, given the following:
+
+    ```rust,ignore
+    delegate_components! {
+        new MyComponents {
+            KeyA: ValueA,
+            KeyB: ValueB,
+            ...
+        }
+    }
+    ```
+
+    The macro would also generate the `MyComponents` struct as follows:
+
+    ```rust,ignore
+    pub struct MyComponents;
+    ```
+
+    ## Inner Maps
+
+    When defining component wiring that involves inner maps, such as with the use of
+    `UseDelegate`, `delegate_components!` also supports defining the inner map type
+    as well as the definition of inner key/value pairs all within the same macro invocation.
+
+    For example, given the following:
+
+    ```rust,ignore
+    delegate_components! {
+        MyComponents {
+            OuterKey: UseDelegate<new InnerMap {
+                InnerKeyA: InnerValueA,
+                InnerKeyB: InnerValueB,
+                ...
+            }>,
+        }
+    }
+    ```
+
+    It would be the same as writing two separate calls to `delegate_components!` as follows:
+
+    ```rust,ignore
+    delegate_components! {
+        MyComponents {
+            OuterKey: UseDelegate<InnerMap>,
+        }
+    }
+
+    delegate_components! {
+        new InnerMap {
+            InnerKeyA: InnerValueA,
+            InnerKeyB: InnerValueB,
+            ...
+        }
+    }
+    ```
+*/
 #[proc_macro]
 pub fn delegate_components(body: TokenStream) -> TokenStream {
     cgp_macro_lib::delegate_components(body.into())
@@ -318,6 +467,33 @@ pub fn delegate_components(body: TokenStream) -> TokenStream {
         .into()
 }
 
+/**
+   The `check_components!` macro allows users to write compile-time tests to check
+   for the correctness of component wiring for a CGP context.
+
+   ## Example
+
+   Given the following:
+
+   ```rust
+   check_components! {
+       CanUsePerson for Person {
+           GreeterComponent,
+       }
+   }
+   ```
+
+
+   The code above generates a *check trait* called `CanUsePerson`, which verifies
+   whether the `Person` context implements the consumer trait for
+   `GreeterComponent` (i.e., `CanGreet`):
+
+   ```rust
+   trait CanUsePerson<Component, Params>: CanUseComponent<Component, Params> {}
+
+   impl CanUsePerson<GreeterComponent, ()> for Person {}
+   ```
+*/
 #[proc_macro]
 pub fn check_components(body: TokenStream) -> TokenStream {
     cgp_macro_lib::check_components(body.into())
@@ -325,6 +501,47 @@ pub fn check_components(body: TokenStream) -> TokenStream {
         .into()
 }
 
+/**
+   The `delegate_and_check_components!` macro combines both `delegate_components!`
+   and `check_components!`, allowing both delegation and checks within a single
+   macro call.
+
+   This is useful for the majority of simple cases, providing immediate feedback on
+   whether the wiring works as intended.
+
+   ## Example
+
+   Given the following code:
+
+   ```rust
+   delegate_and_check_components! {
+       CanUsePerson for Person;
+       PersonComponents {
+           GreeterComponent: GreetHello,
+       }
+   }
+   ```
+
+   is equivalent to writing the two separate macro calls:
+
+   ```rust
+   delegate_components! {
+       PersonComponents {
+           GreeterComponent: GreetHello,
+       }
+   }
+
+   check_components! {
+       CanUsePerson for Person {
+           GreeterComponent,
+       }
+   }
+   ```
+
+   In more advanced cases, it may still be necessary to call `delegate_components!`
+   and `check_components` separately. This applies to cases where the CGP traits
+   contain additional generic parameters, or when presets are used.
+*/
 #[proc_macro]
 pub fn delegate_and_check_components(body: TokenStream) -> TokenStream {
     cgp_macro_lib::delegate_and_check_components(body.into())
@@ -332,6 +549,83 @@ pub fn delegate_and_check_components(body: TokenStream) -> TokenStream {
         .into()
 }
 
+/**
+    CGP presets are made of extensible collection of key/value mappings, that can be inherited
+    to form new mappings.
+
+    Instead of defining regular structs and build mappings with `delegate_components!`,
+    presets are constructed as _modules_ using the `cgp_preset!` macro together with the
+    `#[re_export_imports]`. For example, the same mappings earlier would be rewritten as:
+
+    ```rust
+    #[cgp::re_export_imports]
+    mod preset {
+        use crate_a::{KeyA, ...};
+        use crate_b::{ValueA, ...};
+
+        cgp_preset! {
+            PresetA {
+                KeyA: ValueA,
+                KeyB: ValueB,
+                KeyC: ValueC1,
+            }
+        }
+    }
+    ```
+
+    The `#[cgp::re_export_imports]` macro is used over a surrogate `mod preset`, which wraps
+    around the inner module to re-export the imports, so that they can be reused during the
+    merging. This is required, because the merging works through macros, which don't have access to the actual type information. Aside from that, the macro re-exports all exports from the inner module, so that we can write regular code as if the `mod preset` modifier never existed.
+
+    The macro `cgp_preset!` works similar to `delegate_components!`, but it defines a new
+    _inner module_ that contains the mapping struct, together with macros and re-exports to
+    support the merging operation.
+
+    Similarly, the second preset would be re-written as:
+
+    ```rust
+    #[cgp::re_export_imports]
+    mod preset {
+        use crate_c::{KeyC, ...};
+        use crate_d::{ValueD, ...};
+
+        cgp_preset! {
+            PresetB {
+                KeyC: ValueC2,
+                KeyD: ValueD,
+                KeyE: ValueE,
+            }
+        }
+    }
+    ```
+
+    To merge the two presets, we can define a new `PresetC` that _inherits_ from both `PresetA`
+    and `PresetB`, like follows:
+
+    ```rust
+    #[cgp::re_export_imports]
+    mod preset {
+        use preset_a::PresetA;
+        use preset_b::PresetB;
+        use crate_f::{KeyF, ...};
+
+        cgp_preset! {
+            PresetC: PresetA + PresetB {
+                override KeyC: ValueC2,
+                KeyF: ValueF,
+            }
+        }
+    }
+    ```
+
+    As we can see, CGP supports *multiple inheritance* for presets by using macros to "copy"
+    over the entries from the parent preset. To resolve conflicts or override entries from
+    the parent presets, the `override` keyword can be used to exclude a given mapping from
+    being copied over and instead use the local definition. And since the underlying
+    implementation still uses `DelegateComponent` to implement the lookup, any non-overridden
+    conflicts would simply result in a trait error due to overlapping instances, thus preventing
+    the diamond inheritance dillema.
+*/
 #[proc_macro]
 pub fn cgp_preset(body: TokenStream) -> TokenStream {
     cgp_macro_lib::define_preset(body.into())
@@ -489,6 +783,30 @@ pub fn cgp_context(attr: TokenStream, item: TokenStream) -> TokenStream {
         .into()
 }
 
+/**
+   The `#[blanket_trait]` macro can be used to define trait aliases that contain
+   empty body and trivial blanket implementations.
+
+   Developers can use the `#[blanket_trait]` macro to define trait aliases,
+   as well as abstract type aliases for more advanced cases.
+
+   ## Example
+
+   Given the following:
+
+   ```rust
+   #[trait_alias]
+   pub trait HasAsyncErrorType: Async + HasErrorType<Error: Async> {}
+   ```
+
+   automatically generates the following blanket implementation:
+
+   ```rust
+   impl<Context> HasAsyncErrorType for Context
+   where
+       Context: Async + HasErrorType<Error: Async> {}
+   ```
+*/
 #[proc_macro_attribute]
 pub fn blanket_trait(attr: TokenStream, item: TokenStream) -> TokenStream {
     cgp_macro_lib::blanket_trait(attr.into(), item.into())
@@ -510,17 +828,104 @@ pub fn replace_with(body: TokenStream) -> TokenStream {
         .into()
 }
 
+/**
+    The `symbol!` macro is used to create a type-level string through the string literal
+    given to the macro.
+
+    The macro constructs the type-level string through a chain of `Char` types and
+    terminated with the `Nil` type. In other words, it constructs a type-level list
+    of characters to represent them as a type-level string.
+
+    Read more about type-level strings in the documentation for `Char`.
+
+    ## Example
+
+    Given the following symbol definition:
+
+    ```rust,ignore
+    type Hello = symbol!("hello");
+    ```
+
+    The following type would be generated:
+
+    ```rust,ignore
+    type Hello = Char<'h', Char<'e', Char<'l', Char<'l', Char<'o', Nil>>>>>;
+    ```
+
+    which would be shown with the shortened representation as:
+
+    ```rust,ignore
+    type Hello = ι<'h', ι<'e', ι<'l', ι<'l', ι<'o', ε>>>>>;
+    ```
+*/
 #[proc_macro]
 pub fn symbol(body: TokenStream) -> TokenStream {
     cgp_macro_lib::make_symbol(body.into()).into()
 }
 
+/**
+    The `Product!` macro is used to define a type-level list of types, a.k.a. a product type.
+
+    Given a list of types to the macro, it would generate a chain of `Cons` types
+    for each type in the list, and terminated with the `Nil` type.
+
+    Read more about product types in the documentation for `Cons`.
+
+    ## Example
+
+    Given the following product type definition:
+
+    ```rust,ignore
+    type MyTypes = Product![u32, String, bool];
+    ```
+
+    The following type would be generated:
+
+    ```rust,ignore
+    type MyTypes = Cons<u32, Cons<String, Cons<bool, Nil>>>;
+    ```
+
+    which would be shown with the shortened representation as:
+
+    ```rust,ignore
+    type MyTypes = π<u32, π<String, π<bool, ε>>>;
+    ```
+*/
 #[proc_macro]
 #[allow(non_snake_case)]
 pub fn Product(body: TokenStream) -> TokenStream {
     cgp_macro_lib::make_product_type(body.into()).into()
 }
 
+/**
+   The `Sum!` macro is used to define a sum type, with the given list of types
+   as disjoint variants.
+
+   Given a list of types to the macro, it would generate a chain of `Either` types
+   for each type in the list, and terminated with the `Void` type.
+
+   Read more about sum types in the documentation for `Either`.
+
+   ## Example
+
+   Given the following sum type definition:
+
+   ```rust,ignore
+   type MyUnion = Sum![u32, String, bool];
+   ```
+
+   The following type would be generated:
+
+   ```rust,ignore
+   type MyUnion = Either<u32, Either<String, Either<bool, Void>>>;
+   ```
+
+   which would be shown with the shortened representation as:
+
+   ```rust,ignore
+   type MyUnion = σ<u32, σ<String, σ<bool, θ>>>;
+   ```
+*/
 #[proc_macro]
 #[allow(non_snake_case)]
 pub fn Sum(body: TokenStream) -> TokenStream {
