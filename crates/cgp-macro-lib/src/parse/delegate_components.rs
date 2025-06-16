@@ -217,6 +217,7 @@ where
 {
     fn to_tokens(&self, tokens: &mut TokenStream) {
         let components = &self.keys;
+        let mode = &self.mode;
         let source = &self.value;
 
         let count = components.len();
@@ -224,13 +225,13 @@ where
         #[allow(clippy::comparison_chain)]
         if count == 1 {
             tokens.append_all(quote! {
-                #components : #source
+                #components #mode #source
             });
         } else if count > 1 {
             tokens.append_all(quote! {
                 [
                     #components
-                ] : #source
+                ] #mode #source
             });
         }
     }
@@ -243,6 +244,15 @@ where
     fn to_tokens(&self, tokens: &mut TokenStream) {
         tokens.extend(self.generics.to_token_stream());
         tokens.extend(self.ty.to_token_stream());
+    }
+}
+
+impl ToTokens for DelegateMode {
+    fn to_tokens(&self, tokens: &mut TokenStream) {
+        match self {
+            Self::Provider(colon) => colon.to_tokens(tokens),
+            Self::Direct(arrow) => arrow.to_tokens(tokens),
+        }
     }
 }
 
