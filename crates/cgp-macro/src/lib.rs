@@ -475,7 +475,7 @@ pub fn delegate_components(body: TokenStream) -> TokenStream {
 
    Given the following:
 
-   ```rust
+   ```rust,ignore
    check_components! {
        CanUsePerson for Person {
            GreeterComponent,
@@ -488,7 +488,7 @@ pub fn delegate_components(body: TokenStream) -> TokenStream {
    whether the `Person` context implements the consumer trait for
    `GreeterComponent` (i.e., `CanGreet`):
 
-   ```rust
+   ```rust,ignore
    trait CanUsePerson<Component, Params>: CanUseComponent<Component, Params> {}
 
    impl CanUsePerson<GreeterComponent, ()> for Person {}
@@ -513,7 +513,7 @@ pub fn check_components(body: TokenStream) -> TokenStream {
 
    Given the following code:
 
-   ```rust
+   ```rust,ignore
    delegate_and_check_components! {
        CanUsePerson for Person;
        PersonComponents {
@@ -524,7 +524,7 @@ pub fn check_components(body: TokenStream) -> TokenStream {
 
    is equivalent to writing the two separate macro calls:
 
-   ```rust
+   ```rust,ignore
    delegate_components! {
        PersonComponents {
            GreeterComponent: GreetHello,
@@ -557,7 +557,7 @@ pub fn delegate_and_check_components(body: TokenStream) -> TokenStream {
     presets are constructed as _modules_ using the `cgp_preset!` macro together with the
     `#[re_export_imports]`. For example, the same mappings earlier would be rewritten as:
 
-    ```rust
+    ```rust,ignore
     #[cgp::re_export_imports]
     mod preset {
         use crate_a::{KeyA, ...};
@@ -583,7 +583,7 @@ pub fn delegate_and_check_components(body: TokenStream) -> TokenStream {
 
     Similarly, the second preset would be re-written as:
 
-    ```rust
+    ```rust,ignore
     #[cgp::re_export_imports]
     mod preset {
         use crate_c::{KeyC, ...};
@@ -602,7 +602,7 @@ pub fn delegate_and_check_components(body: TokenStream) -> TokenStream {
     To merge the two presets, we can define a new `PresetC` that _inherits_ from both `PresetA`
     and `PresetB`, like follows:
 
-    ```rust
+    ```rust,ignore
     #[cgp::re_export_imports]
     mod preset {
         use preset_a::PresetA;
@@ -794,14 +794,14 @@ pub fn cgp_context(attr: TokenStream, item: TokenStream) -> TokenStream {
 
    Given the following:
 
-   ```rust
+   ```rust,ignore
    #[trait_alias]
    pub trait HasAsyncErrorType: Async + HasErrorType<Error: Async> {}
    ```
 
    automatically generates the following blanket implementation:
 
-   ```rust
+   ```rust,ignore
    impl<Context> HasAsyncErrorType for Context
    where
        Context: Async + HasErrorType<Error: Async> {}

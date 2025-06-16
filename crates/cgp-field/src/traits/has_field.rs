@@ -15,7 +15,7 @@ use cgp_component::UseContext;
 
     Given the following struct:
 
-    ```rust
+    ```rust,ignore
     #[derive(HasField)]
     pub struct Person {
         pub name: String,
@@ -25,7 +25,7 @@ use cgp_component::UseContext;
 
     The macro would generate the following implementation:
 
-    ```rust
+    ```rust,ignore
     impl HasField<symbol!("name")> for Person {
         type Value = String;
 
