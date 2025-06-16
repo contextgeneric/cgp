@@ -2,10 +2,10 @@ use core::iter;
 
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
-use syn::token::{Bracket, Colon, Comma, For, Lt, Semi};
+use syn::token::{Bracket, Comma, For, Lt, Semi};
 use syn::{braced, bracketed, Ident, Type};
 
-use crate::parse::ImplGenerics;
+use crate::parse::{DelegateMode, ImplGenerics};
 
 pub struct DelegateAndCheckSpec {
     pub impl_generics: ImplGenerics,
@@ -18,6 +18,7 @@ pub struct DelegateAndCheckSpec {
 #[derive(Clone)]
 pub struct DelegateAndCheckEntry {
     pub keys: Punctuated<Type, Comma>,
+    pub mode: DelegateMode,
     pub value: Type,
 }
 
@@ -66,10 +67,10 @@ impl Parse for DelegateAndCheckEntry {
             Punctuated::from_iter(iter::once(key))
         };
 
-        let _: Colon = input.parse()?;
+        let mode = input.parse()?;
 
         let value = input.parse()?;
 
-        Ok(Self { keys, value })
+        Ok(Self { keys, mode, value })
     }
 }

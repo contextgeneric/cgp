@@ -43,9 +43,14 @@ pub fn delegate_and_check_components(body: TokenStream) -> syn::Result<TokenStre
                     generics: ImplGenerics::default(),
                 })
                 .collect();
+
             let value = DelegateValue::Type(entry.value);
 
-            DelegateEntry { keys, value }
+            DelegateEntry {
+                keys,
+                value,
+                mode: entry.mode,
+            }
         })
         .collect();
 

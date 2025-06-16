@@ -5,7 +5,7 @@ use quote::{quote, ToTokens, TokenStreamExt};
 use syn::parse::discouraged::Speculative;
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
-use syn::token::{Bracket, Colon, Comma, Gt, Lt};
+use syn::token::{Bracket, Colon, Comma, Gt, Lt, RArrow};
 use syn::{braced, bracketed, parse_quote, Error, Generics, Ident, Token, Type};
 
 use crate::parse::{ImplGenerics, TypeGenerics};
@@ -20,6 +20,7 @@ pub struct DelegateComponents {
 #[derive(Clone)]
 pub struct DelegateEntry<T> {
     pub keys: Punctuated<DelegateKey<T>, Comma>,
+    pub mode: DelegateMode,
     pub value: DelegateValue,
 }
 
@@ -33,6 +34,12 @@ pub struct DelegateKey<T> {
 pub enum DelegateValue {
     Type(Type),
     New(DelegateNewValue),
+}
+
+#[derive(Clone)]
+pub enum DelegateMode {
+    Provider(Colon),
+    Direct(RArrow),
 }
 
 #[derive(Clone)]
@@ -108,12 +115,13 @@ where
             Punctuated::from_iter(iter::once(component))
         };
 
-        let _: Colon = input.parse()?;
+        let mode = input.parse()?;
 
         let source = input.parse()?;
 
         Ok(Self {
             keys: components,
+            mode,
             value: source,
         })
     }
@@ -136,6 +144,16 @@ where
             ty: component_type,
             generics: component_generics,
         })
+    }
+}
+
+impl Parse for DelegateMode {
+    fn parse(input: ParseStream) -> syn::Result<Self> {
+        if input.peek(RArrow) {
+            Ok(Self::Direct(input.parse()?))
+        } else {
+            Ok(Self::Provider(input.parse()?))
+        }
     }
 }
 
