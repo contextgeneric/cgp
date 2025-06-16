@@ -15,8 +15,8 @@ mod preset {
     }
 
     pub trait CheckDelegatesForMyPresetB:
-        DelegateComponent<FooTypeProviderComponent, Delegate = MyPresetA::Provider>
-        + DelegateComponent<BarTypeProviderComponent, Delegate = MyPresetA::Provider>
+        DelegateComponent<FooTypeProviderComponent, Delegate = UseType<()>>
+        + DelegateComponent<BarTypeProviderComponent, Delegate = UseType<()>>
         + DelegateComponent<FooGetterComponent, Delegate = UseField<symbol!("foo")>>
         + DelegateComponent<BarGetterComponent, Delegate = UseField<symbol!("bar")>>
     {

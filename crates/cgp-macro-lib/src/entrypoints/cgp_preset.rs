@@ -80,7 +80,7 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
                     cgp_preset! {
                         #wrapper_attribute
                         #preset_type_spec: #parent_presets {
-                            #parent_components_ident: #parent_ident :: Provider #parent_generics,
+                            #parent_components_ident -> #parent_ident :: Components #parent_generics,
                             #preset_entries
                         }
                     }
