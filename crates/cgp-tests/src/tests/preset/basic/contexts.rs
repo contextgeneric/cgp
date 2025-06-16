@@ -3,7 +3,7 @@ use cgp::prelude::*;
 use crate::tests::preset::basic::components::{
     BarGetterComponent, BarTypeProviderComponent, FooGetterComponent, FooTypeProviderComponent,
 };
-use crate::tests::preset::basic::preset::MyPreset;
+use crate::tests::preset::basic::preset::{CheckDelegatesForMyPreset, MyPreset};
 
 #[cgp_context(MyContextComponents: MyPreset)]
 #[derive(HasField)]
@@ -27,11 +27,4 @@ check_components! {
     }
 }
 
-pub trait CheckDelegatesForMyContextComponents:
-    DelegateComponent<FooTypeProviderComponent, Delegate = MyPreset::Provider>
-    + DelegateComponent<BarTypeProviderComponent, Delegate = MyPreset::Provider>
-    + DelegateComponent<FooGetterComponent, Delegate = MyPreset::Provider>
-{
-}
-
-impl CheckDelegatesForMyContextComponents for MyContextComponents {}
+impl CheckDelegatesForMyPreset for MyContextComponents {}

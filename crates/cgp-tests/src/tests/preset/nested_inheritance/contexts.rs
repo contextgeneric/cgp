@@ -3,7 +3,9 @@ use cgp::prelude::*;
 use crate::tests::preset::basic::components::{
     BarGetterComponent, BarTypeProviderComponent, FooGetterComponent, FooTypeProviderComponent,
 };
-use crate::tests::preset::nested_inheritance::preset_d::NestedPresetD;
+use crate::tests::preset::nested_inheritance::preset_d::{
+    CheckDelegatesForNestedPresetD, NestedPresetD,
+};
 
 #[cgp_context(MyContextComponents: NestedPresetD)]
 #[derive(HasField)]
@@ -21,12 +23,4 @@ check_components! {
     }
 }
 
-pub trait CheckDelegatesForMyContextComponents:
-    DelegateComponent<FooTypeProviderComponent, Delegate = NestedPresetD::Provider>
-    + DelegateComponent<BarTypeProviderComponent, Delegate = NestedPresetD::Provider>
-    + DelegateComponent<FooGetterComponent, Delegate = NestedPresetD::Provider>
-    + DelegateComponent<BarGetterComponent, Delegate = NestedPresetD::Provider>
-{
-}
-
-impl CheckDelegatesForMyContextComponents for MyContextComponents {}
+impl CheckDelegatesForNestedPresetD for MyContextComponents {}

@@ -42,7 +42,7 @@ pub fn derive_delegate_preset(
     };
 
     let preset_provider_name = quote! {
-        #preset_name :: Provider #preset_generics
+        #preset_name :: Components #preset_generics
     };
 
     let delegate_impl: ItemImpl = parse_quote! {
@@ -51,8 +51,9 @@ pub fn derive_delegate_preset(
             for #provider_name #provider_generics
         where
             Self: #preset_trait_name < __Name__ >,
+            #preset_provider_name: DelegateComponent<__Name__>,
         {
-            type Delegate = #preset_provider_name;
+            type Delegate = <#preset_provider_name as DelegateComponent<__Name__>>::Delegate;
         }
     };
 
