@@ -10,7 +10,7 @@ use syn::{parse2, ImplItem, ImplItemType, ItemImpl, Path, Type};
 
 use crate::delegate_components::define_struct;
 use crate::delegate_components::merge_generics::merge_generics;
-use crate::parse::{DelegateEntry, DelegateKey, DelegateValue, ImplGenerics};
+use crate::parse::{DelegateEntry, DelegateKey, DelegateMode, DelegateValue, ImplGenerics};
 
 pub fn impl_delegate_components<T>(
     target_type: &Type,
@@ -25,7 +25,13 @@ where
     for entry in delegate_entries.iter() {
         let source = &entry.value;
         for component in entry.keys.iter() {
-            let impls = impl_delegate_component(target_type, target_generics, component, source)?;
+            let impls = impl_delegate_component(
+                target_type,
+                target_generics,
+                component,
+                source,
+                &entry.mode,
+            )?;
 
             out.extend(impls);
         }
@@ -39,19 +45,38 @@ pub fn impl_delegate_component<T>(
     target_generics: &ImplGenerics,
     component: &DelegateKey<T>,
     value: &DelegateValue,
+    mode: &DelegateMode,
 ) -> syn::Result<TokenStream>
 where
     T: ToTokens,
 {
     let component_type = &component.ty;
 
-    let value_type = value.as_type();
+    let delegate_target_type = match mode {
+        DelegateMode::Provider(_) => value.as_type(),
+        DelegateMode::Direct(_) => {
+            let value_type = value.as_type();
+            parse2(quote! {
+                < #value_type as DelegateComponent< #component_type > >::Delegate
+            })?
+        }
+    };
 
     let delegate_trait_path: Path = parse2(quote!(DelegateComponent < #component_type >))?;
 
-    let delegate_type: ImplItemType = parse2(quote!(type Delegate = #value_type;))?;
+    let delegate_type: ImplItemType = parse2(quote!(type Delegate = #delegate_target_type;))?;
 
-    let delegate_generics = merge_generics(&target_generics.generics, &component.generics.generics);
+    let mut delegate_generics =
+        merge_generics(&target_generics.generics, &component.generics.generics);
+
+    if mode.is_direct() {
+        let value_type = value.as_type();
+        let where_clause = delegate_generics.make_where_clause();
+
+        where_clause.predicates.push(parse2(
+            quote!( #value_type : DelegateComponent< #component_type > ),
+        )?);
+    }
 
     let is_provider_generics = {
         let mut generics = delegate_generics.clone();
@@ -60,8 +85,9 @@ where
         generics.params.push(parse2(quote!(__Params__))?);
 
         let where_clause = generics.make_where_clause();
+
         where_clause.predicates.push(parse2(
-            quote!( #value_type : IsProviderFor< #component_type, __Context__, __Params__ > ),
+            quote!( #delegate_target_type : IsProviderFor< #component_type, __Context__, __Params__ > ),
         )?);
 
         generics

@@ -36,6 +36,7 @@ pub enum DelegateValue {
     New(DelegateNewValue),
 }
 
+#[allow(dead_code)]
 #[derive(Clone)]
 pub enum DelegateMode {
     Provider(Colon),
@@ -50,6 +51,11 @@ pub struct DelegateNewValue {
     pub entries: Punctuated<DelegateEntry<Type>, Comma>,
 }
 
+impl DelegateMode {
+    pub fn is_direct(&self) -> bool {
+        matches!(self, Self::Direct(_))
+    }
+}
 impl DelegateValue {
     pub fn as_type(&self) -> Type {
         match self {
