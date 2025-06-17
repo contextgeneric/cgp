@@ -1,5 +1,5 @@
 use proc_macro2::{Span, TokenStream};
-use quote::{quote, ToTokens};
+use quote::{quote, ToTokens, TokenStreamExt};
 use syn::punctuated::Punctuated;
 use syn::spanned::Spanned;
 use syn::token::{Colon, Comma};
@@ -17,11 +17,17 @@ pub fn derive_builder(body: TokenStream) -> syn::Result<TokenStream> {
 
     let has_builder_impl = derive_has_builder_impl(&context_struct, &builder_struct)?;
 
-    Ok(quote! {
+    let build_field_impls = derive_build_field_impls(&context_struct, &builder_struct)?;
+
+    let mut out = quote! {
         #builder_struct
 
         #has_builder_impl
-    })
+    };
+
+    out.append_all(build_field_impls);
+
+    Ok(out)
 }
 
 pub fn derive_builder_struct(context_struct: &ItemStruct) -> syn::Result<ItemStruct> {
@@ -113,31 +119,35 @@ pub fn derive_build_field_impls(
     let mut item_impls = Vec::new();
 
     let base_generic_args: AngleBracketedGenericArguments =
-        parse2(context_struct.generics.split_for_impl().1.to_token_stream())?;
+        if context_struct.generics.params.is_empty() {
+            parse2(quote! { < > })?
+        } else {
+            parse2(context_struct.generics.split_for_impl().1.to_token_stream())?
+        };
 
     for (i, field) in context_struct.fields.iter().enumerate() {
         let value_type = &field.ty;
 
         let mut generics = context_struct.generics.clone();
-        let mut source_generic_args = base_generic_args.clone();
-        let mut output_generic_args = base_generic_args.clone();
+        let mut source_generic_args = base_generic_args.args.clone();
+        let mut output_generic_args = base_generic_args.args.clone();
         let mut builder_fields = <Punctuated<FieldValue, Comma>>::new();
 
         for (j, field) in context_struct.fields.iter().enumerate() {
             let field_member = match &field.ident {
                 Some(ident) => Member::Named(ident.clone()),
-                None => Member::Unnamed(i.into()),
+                None => Member::Unnamed(j.into()),
             };
 
             if j != i {
                 let generic_param_name = Ident::new(&format!("__F{}__", j), Span::call_site());
-                generics
-                    .params
-                    .push(parse2(quote! { #generic_param_name })?);
+                generics.params.push(parse2(quote! {
+                    #generic_param_name: MapType
+                })?);
 
                 let generic_arg: GenericArgument = parse2(quote! { #generic_param_name })?;
-                source_generic_args.args.push(generic_arg.clone());
-                output_generic_args.args.push(generic_arg);
+                source_generic_args.push(generic_arg.clone());
+                output_generic_args.push(generic_arg);
 
                 builder_fields.push(FieldValue {
                     attrs: Vec::new(),
@@ -146,8 +156,8 @@ pub fn derive_build_field_impls(
                     expr: parse2(quote! { self. #field_member })?,
                 });
             } else {
-                source_generic_args.args.push(parse2(quote! { IsNothing })?);
-                output_generic_args.args.push(parse2(quote! { IsPresent })?);
+                source_generic_args.push(parse2(quote! { IsNothing })?);
+                output_generic_args.push(parse2(quote! { IsPresent })?);
 
                 builder_fields.push(FieldValue {
                     attrs: Vec::new(),
@@ -163,7 +173,7 @@ pub fn derive_build_field_impls(
         })?;
 
         let output_type: Type = parse2(quote! {
-            <#builder_ident < #output_generic_args > as HasBuilder>::Builder
+            #builder_ident < #output_generic_args >
         })?;
 
         let tag_type = match &field.ident {
@@ -186,8 +196,10 @@ pub fn derive_build_field_impls(
 
                 type Output = #output_type;
 
-                fn build_field(self, _tag: PhantomData< #tag_type >, value: Self::Value) -> Self::Output {
-                    todo!()
+                fn build_field(self, _tag: ::core::marker::PhantomData< #tag_type >, value: Self::Value) -> Self::Output {
+                    #builder_ident {
+                        #builder_fields
+                    }
                 }
             }
         })?;
