@@ -948,3 +948,10 @@ pub fn derive_has_fields(item: TokenStream) -> TokenStream {
         .unwrap_or_else(syn::Error::into_compile_error)
         .into()
 }
+
+#[proc_macro_derive(Builder)]
+pub fn derive_builder(item: TokenStream) -> TokenStream {
+    cgp_macro_lib::derive_builder(item.into())
+        .unwrap_or_else(syn::Error::into_compile_error)
+        .into()
+}
