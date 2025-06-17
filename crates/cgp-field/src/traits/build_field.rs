@@ -7,3 +7,9 @@ pub trait BuildField<Tag> {
 
     fn build_field(self, _tag: PhantomData<Tag>, value: Self::Value) -> Self::Output;
 }
+
+pub trait HasBuilder {
+    type Builder;
+
+    fn builder() -> Self::Builder;
+}

@@ -1,4 +1,5 @@
 mod blanket_trait;
+mod builder;
 mod cgp_auto_getter;
 mod cgp_component;
 mod cgp_context;
@@ -15,6 +16,7 @@ mod re_export_imports;
 mod replace_with;
 
 pub use blanket_trait::*;
+pub use builder::*;
 pub use cgp_auto_getter::*;
 pub use cgp_component::*;
 pub use cgp_context::*;
