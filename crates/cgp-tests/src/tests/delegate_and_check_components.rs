@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use cgp::prelude::*;
 
 pub fn test_basic_delegate_and_check_components() {
