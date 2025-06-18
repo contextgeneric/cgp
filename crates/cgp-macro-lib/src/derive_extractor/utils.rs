@@ -12,10 +12,10 @@ pub fn get_variant_type(variant: &Variant) -> syn::Result<&Type> {
         _ => {}
     }
 
-    return Err(syn::Error::new(
+    Err(syn::Error::new(
         variant.span(),
         "Expected variant to contain exactly one unnamed field",
-    ));
+    ))
 }
 
 pub fn type_to_variant_fields(type_: &Type) -> Fields {

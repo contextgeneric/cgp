@@ -14,7 +14,7 @@ pub trait HasExtractorRef {
     where
         Self: 'a;
 
-    fn extractor_ref<'a>(&'a self) -> Self::ExtractorRef<'a>;
+    fn extractor_ref(&self) -> Self::ExtractorRef<'_>;
 }
 
 pub trait ExtractField<Tag> {
