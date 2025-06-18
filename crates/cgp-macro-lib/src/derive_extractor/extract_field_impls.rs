@@ -12,10 +12,25 @@ pub fn derive_extract_field_impls(
 ) -> syn::Result<Vec<ItemImpl>> {
     let mut item_impls = Vec::new();
 
-    let base_generic_args = to_generic_args(&context_enum.generics)?;
+    let generics = {
+        let mut generics = context_enum.generics.clone();
+
+        if is_ref {
+            generics.params.insert(
+                0,
+                parse2(quote! {
+                    '__a__
+                })?,
+            );
+        }
+
+        generics
+    };
+
+    let base_generic_args = to_generic_args(&generics)?;
 
     for (current_index, current_variant) in context_enum.variants.iter().enumerate() {
-        let mut generics = context_enum.generics.clone();
+        let mut generics = generics.clone();
         let mut source_generic_args = base_generic_args.args.clone();
         let mut output_generic_args = base_generic_args.args.clone();
         let mut match_arms = Vec::<Arm>::new();
@@ -40,6 +55,9 @@ pub fn derive_extract_field_impls(
                     }
                 })?);
             } else {
+                source_generic_args.push(parse2(quote! { IsPresent })?);
+                output_generic_args.push(parse2(quote! { IsVoid })?);
+
                 match_arms.push(parse2(quote! {
                     #extractor_ident :: #variant_ident ( value ) => {
                         Either::Left( value )
@@ -71,7 +89,7 @@ pub fn derive_extract_field_impls(
                 type Remainder = #output_type;
 
                 fn extract_field(self, _tag: ::core::marker::PhantomData< #tag_type >) -> Either<Self::Value, Self::Remainder> {
-                    match value {
+                    match self {
                         #(#match_arms)*
                     }
                 }

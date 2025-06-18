@@ -10,8 +10,8 @@ pub use cgp_error::{
 pub use cgp_field::{
     BuildField, Char, Cons, Either, ExtractField, Field, FieldGetter, FinalizeBuild,
     FinalizeExtract, FromFields, HasBuilder, HasExtractor, HasExtractorRef, HasField, HasFieldMut,
-    HasFields, HasFieldsRef, Index, IsNothing, IsPresent, MapType, MutFieldGetter, Nil, ToFields,
-    ToFieldsRef, UseField, Void,
+    HasFields, HasFieldsRef, Index, IsNothing, IsPresent, IsVoid, MapType, MutFieldGetter, Nil,
+    ToFields, ToFieldsRef, UseField, Void,
 };
 pub use cgp_macro::{
     cgp_auto_getter, cgp_component, cgp_context, cgp_getter, cgp_new_provider, cgp_preset,

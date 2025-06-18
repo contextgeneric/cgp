@@ -2,7 +2,7 @@ use proc_macro2::TokenStream;
 use quote::quote;
 use syn::{parse2, Ident, ItemEnum};
 
-use crate::derive_extractor::derive_extractor_enum;
+use crate::derive_extractor::{derive_extract_field_impls, derive_extractor_enum};
 
 pub fn derive_extract_field(body: TokenStream) -> syn::Result<TokenStream> {
     let context_enum: ItemEnum = parse2(body)?;
@@ -18,9 +18,15 @@ pub fn derive_extract_field(body: TokenStream) -> syn::Result<TokenStream> {
     );
     let extractor_ref_enum = derive_extractor_enum(&context_enum, &extractor_ref_ident, true)?;
 
+    let extractor_impls = derive_extract_field_impls(&context_enum, &extractor_ident, false)?;
+    let extractor_ref_impls =
+        derive_extract_field_impls(&context_enum, &extractor_ref_ident, true)?;
+
     let out = quote! {
         #extractor_enum
         #extractor_ref_enum
+
+        #(#extractor_impls)*
     };
 
     Ok(out)
