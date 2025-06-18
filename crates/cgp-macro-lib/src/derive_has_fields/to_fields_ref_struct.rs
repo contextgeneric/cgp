@@ -1,17 +1,21 @@
 use quote::quote;
 use syn::{parse2, parse_quote, ItemImpl, ItemStruct, Lifetime};
 
-use crate::derive_has_fields::to_fields_struct::derive_to_fields_constructor;
+use crate::derive_has_fields::to_fields_struct::{derive_to_fields_constructor, FieldLabel};
 
 pub fn derive_to_fields_ref_for_struct(item_struct: &ItemStruct) -> syn::Result<ItemImpl> {
     let struct_name = &item_struct.ident;
     let (impl_generics, type_generics, where_clause) = item_struct.generics.split_for_impl();
 
-    let constructor = derive_to_fields_constructor(&item_struct.fields, |field_name| {
-        quote! {
-            ( &self . #field_name ) .into()
-        }
-    })?;
+    let constructor =
+        derive_to_fields_constructor(&item_struct.fields, |field_name| match field_name {
+            FieldLabel::None => quote! {
+                &self.0
+            },
+            _ => quote! {
+                ( &self #field_name ) .into()
+            },
+        })?;
 
     let life: Lifetime = parse_quote! { '__a };
 

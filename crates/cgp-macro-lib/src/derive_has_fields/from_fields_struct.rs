@@ -54,28 +54,35 @@ pub fn derive_from_field_params(fields: &Fields) -> syn::Result<(TokenStream, To
             ))
         }
         Fields::Unnamed(fields) => {
-            let mut fields_arg = quote! { Nil };
-            let mut constructor_args = quote! {};
+            if fields.unnamed.len() == 1 {
+                let fields_arg = quote! { field };
+                let constructor_args = quote! { ( field ) };
 
-            for (i, field) in fields.unnamed.iter().enumerate() {
-                let field_name: Ident = Ident::new(&format!("field_{i}"), field.span());
+                Ok((fields_arg, constructor_args))
+            } else {
+                let mut fields_arg = quote! { Nil };
+                let mut constructor_args = quote! {};
 
-                fields_arg = quote! {
-                    Cons( #field_name, #fields_arg )
-                };
+                for (i, field) in fields.unnamed.iter().enumerate() {
+                    let field_name: Ident = Ident::new(&format!("field_{i}"), field.span());
 
-                constructor_args = quote! {
-                    #field_name .value ,
-                    #constructor_args
-                };
+                    fields_arg = quote! {
+                        Cons( #field_name, #fields_arg )
+                    };
+
+                    constructor_args = quote! {
+                        #field_name .value ,
+                        #constructor_args
+                    };
+                }
+
+                Ok((
+                    fields_arg,
+                    quote! {
+                        ( #constructor_args )
+                    },
+                ))
             }
-
-            Ok((
-                fields_arg,
-                quote! {
-                    ( #constructor_args )
-                },
-            ))
         }
         Fields::Unit => Ok((quote! { Nil }, TokenStream::new())),
     }

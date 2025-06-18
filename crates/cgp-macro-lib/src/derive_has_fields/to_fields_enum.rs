@@ -52,6 +52,7 @@ pub fn derive_to_fields_match_arms(
                     #field_name .into()
                 }
             }
+            FieldLabel::None => quote! { field },
         })?;
 
         let variant_args = extract_variant_args(&variant.fields)?;
@@ -95,17 +96,19 @@ pub fn extract_variant_args(fields: &Fields) -> syn::Result<TokenStream> {
             Ok(quote! { { #args } })
         }
         Fields::Unnamed(fields) => {
-            let mut args = TokenStream::new();
-            let mut constructor = quote! { Nil };
+            if fields.unnamed.len() == 1 {
+                Ok(quote! { ( field ) })
+            } else {
+                let mut args = TokenStream::new();
 
-            for (i, field) in fields.unnamed.iter().enumerate().rev() {
-                let field_name = Ident::new(&format!("field_{i}"), field.span());
+                for (i, field) in fields.unnamed.iter().enumerate().rev() {
+                    let field_name = Ident::new(&format!("field_{i}"), field.span());
 
-                args = quote! { #field_name , #args };
-                constructor = quote! { Cons( #field_name .into(), #constructor ) }
+                    args = quote! { #field_name , #args };
+                }
+
+                Ok(quote! { ( #args ) })
             }
-
-            Ok(quote! { ( #args ) })
         }
         Fields::Unit => Ok(TokenStream::new()),
     }

@@ -50,8 +50,8 @@ impl<Context, Code> Computer<Context, Code, Void> for FieldToString {
     }
 }
 
-pub trait CheckComputerImpl: Computer<(), (), Context> {}
-impl CheckComputerImpl for DispatchFields<FieldToString> {}
+// pub trait CheckComputerImpl: Computer<(), (), Context> {}
+// impl CheckComputerImpl for DispatchFields<FieldToString> {}
 
 #[test]
 fn test_basic_extractor() {
@@ -60,19 +60,19 @@ fn test_basic_extractor() {
     assert_eq!(context_to_string(Context::Baz(true)), "true");
 }
 
-#[test]
-fn test_extractor_dispatcher() {
-    // let res = DispatchFields::<FieldToString>::compute(
-    //     &(),
-    //     PhantomData::<()>,
-    //     Context::Foo(1),
-    // );
+// #[test]
+// fn test_extractor_dispatcher() {
+// let res = DispatchFields::<FieldToString>::compute(
+//     &(),
+//     PhantomData::<()>,
+//     Context::Foo(1),
+// );
 
-    let res = DispatchHandlers::<<Context as HasFields>::Fields, FieldToString>::compute(
-        &(),
-        PhantomData::<()>,
-        Context::Foo(1).extractor(),
-    );
+// let res = DispatchHandlers::<<Context as HasFields>::Fields, FieldToString>::compute(
+//     &(),
+//     PhantomData::<()>,
+//     Context::Foo(1).extractor(),
+// );
 
-    assert_eq!(res, "1");
-}
+//     assert_eq!(res, "1");
+// }

@@ -24,15 +24,22 @@ pub fn item_fields_to_product_type(fields: &Fields, reference: &TokenStream) -> 
             }
         }
         Fields::Unnamed(fields) => {
-            for (i, field) in fields.unnamed.iter().enumerate().rev() {
-                let index = LitInt::new(&format!("{i}"), field.span());
-
-                let field_tag = quote! { Index< #index > };
-                let field_type = &field.ty;
-
+            if fields.unnamed.len() == 1 {
+                let field_type = &fields.unnamed[0].ty;
                 fields_type = parse2(quote! {
-                    Cons< Field< #field_tag, #reference #field_type >, #fields_type >
+                    #reference #field_type
                 })?;
+            } else {
+                for (i, field) in fields.unnamed.iter().enumerate().rev() {
+                    let index = LitInt::new(&format!("{i}"), field.span());
+
+                    let field_tag = quote! { Index< #index > };
+                    let field_type = &field.ty;
+
+                    fields_type = parse2(quote! {
+                        Cons< Field< #field_tag, #reference #field_type >, #fields_type >
+                    })?;
+                }
             }
         }
         Fields::Unit => {}

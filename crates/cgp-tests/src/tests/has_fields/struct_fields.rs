@@ -118,10 +118,10 @@ fn test_single_unnamed_field() {
     let person1 = Person(name.clone());
 
     let product = person1.clone().to_fields();
-    assert_eq!(product, Cons(name.clone().into(), Nil));
+    assert_eq!(product, name.clone());
 
     let product_ref = person1.to_fields_ref();
-    assert_eq!(product_ref, Cons((&name).into(), Nil));
+    assert_eq!(product_ref, &name);
 
     let person2 = Person::from_fields(product);
 
