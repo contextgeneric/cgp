@@ -27,6 +27,7 @@ pub fn derive_extract_field(body: TokenStream) -> syn::Result<TokenStream> {
         #extractor_ref_enum
 
         #(#extractor_impls)*
+        #(#extractor_ref_impls)*
     };
 
     Ok(out)

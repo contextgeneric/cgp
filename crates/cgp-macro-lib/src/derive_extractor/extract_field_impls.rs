@@ -66,7 +66,16 @@ pub fn derive_extract_field_impls(
             }
         }
 
-        let value_type = get_variant_type(current_variant)?;
+        let value_type = {
+            let value_type = get_variant_type(current_variant)?;
+
+            if is_ref {
+                parse2(quote! { &'__a__ #value_type })?
+            } else {
+                value_type.clone()
+            }
+        };
+
         let tag_type = symbol_from_string(&current_variant.ident.to_string());
 
         let source_type: Type = parse2(quote! {
