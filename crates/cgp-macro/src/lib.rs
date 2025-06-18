@@ -955,3 +955,10 @@ pub fn derive_builder(item: TokenStream) -> TokenStream {
         .unwrap_or_else(syn::Error::into_compile_error)
         .into()
 }
+
+#[proc_macro_derive(ExtractField)]
+pub fn derive_extractor(item: TokenStream) -> TokenStream {
+    cgp_macro_lib::derive_extract_field(item.into())
+        .unwrap_or_else(syn::Error::into_compile_error)
+        .into()
+}
