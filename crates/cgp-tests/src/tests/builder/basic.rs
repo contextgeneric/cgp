@@ -11,9 +11,14 @@ pub struct Context {
 }
 
 #[test]
-fn test_builder() {
-    let _context: PartialContext<IsPresent, IsPresent, IsPresent> = Context::builder()
+fn test_basic_builder() {
+    let context = Context::builder()
         .build_field(PhantomData::<symbol!("foo")>, 1)
         .build_field(PhantomData::<symbol!("bar")>, "bar".to_owned())
-        .build_field(PhantomData::<symbol!("baz")>, true);
+        .build_field(PhantomData::<symbol!("baz")>, true)
+        .finalize_build();
+
+    assert_eq!(context.foo, 1);
+    assert_eq!(context.bar, "bar");
+    assert_eq!(context.baz, true);
 }

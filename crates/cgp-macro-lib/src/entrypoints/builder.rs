@@ -22,10 +22,14 @@ pub fn derive_builder(body: TokenStream) -> syn::Result<TokenStream> {
 
     let build_field_impls = derive_build_field_impls(&context_struct, &builder_ident)?;
 
+    let finalize_build_impl = derive_finalize_build_impl(&context_struct, &builder_ident)?;
+
     let mut out = quote! {
         #builder_struct
 
         #has_builder_impl
+
+        #finalize_build_impl
     };
 
     out.append_all(build_field_impls);
@@ -242,10 +246,11 @@ pub fn derive_finalize_build_impl(
             expr: parse2(quote! { self. #field_member })?,
         });
     }
+
     let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
 
     let builder_type: Type = parse2(quote! {
-        #builder_ident < #generic_args >
+        #builder_ident #generic_args
     })?;
 
     let context_type: Type = parse2(quote! {
