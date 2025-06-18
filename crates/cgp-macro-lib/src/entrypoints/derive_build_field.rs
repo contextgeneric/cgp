@@ -1,10 +1,10 @@
 use proc_macro2::TokenStream;
-use quote::{quote, TokenStreamExt};
+use quote::quote;
 use syn::{parse2, Ident, ItemStruct};
 
 use crate::derive_builder::{
     derive_build_field_impls, derive_builder_struct, derive_finalize_build_impl,
-    derive_has_builder_impl,
+    derive_has_builder_impl, derive_has_field_impls,
 };
 
 pub fn derive_build_field(body: TokenStream) -> syn::Result<TokenStream> {
@@ -19,17 +19,21 @@ pub fn derive_build_field(body: TokenStream) -> syn::Result<TokenStream> {
 
     let build_field_impls = derive_build_field_impls(&context_struct, &builder_ident)?;
 
+    let has_field_impls = derive_has_field_impls(&context_struct, &builder_ident)?;
+
     let finalize_build_impl = derive_finalize_build_impl(&context_struct, &builder_ident)?;
 
-    let mut out = quote! {
+    let out = quote! {
         #builder_struct
 
         #has_builder_impl
 
+        #(#build_field_impls)*
+
+        #(#has_field_impls)*
+
         #finalize_build_impl
     };
-
-    out.append_all(build_field_impls);
 
     Ok(out)
 }

@@ -1,13 +1,11 @@
 use quote::quote;
 use syn::punctuated::Punctuated;
-use syn::spanned::Spanned;
 use syn::token::Comma;
-use syn::{parse2, FieldValue, GenericArgument, Ident, ItemImpl, ItemStruct, LitInt, Type};
+use syn::{parse2, FieldValue, GenericArgument, Ident, ItemImpl, ItemStruct, Type};
 
 use crate::derive_builder::{
-    field_to_member, field_value_expr, index_to_generic_ident, to_generic_args,
+    field_to_member, field_to_tag, field_value_expr, index_to_generic_ident, to_generic_args,
 };
-use crate::symbol::symbol_from_string;
 
 pub fn derive_build_field_impls(
     context_struct: &ItemStruct,
@@ -59,14 +57,7 @@ pub fn derive_build_field_impls(
             #builder_ident < #output_generic_args >
         })?;
 
-        let tag_type = match &current_field.ident {
-            Some(ident) => symbol_from_string(&ident.to_string()),
-            None => {
-                let index = LitInt::new(&format!("{current_index}"), current_field.span());
-
-                parse2(quote! { Index< #index > })?
-            }
-        };
+        let tag_type = field_to_tag(current_index, current_field)?;
 
         let (impl_generics, _, where_clause) = generics.split_for_impl();
 

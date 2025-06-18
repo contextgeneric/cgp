@@ -1,7 +1,13 @@
 use proc_macro2::{Span, TokenStream};
 use quote::{quote, ToTokens};
+use syn::spanned::Spanned;
 use syn::token::Colon;
-use syn::{parse2, AngleBracketedGenericArguments, Field, FieldValue, Generics, Ident, Member};
+use syn::{
+    parse2, AngleBracketedGenericArguments, Field, FieldValue, Generics, Ident, LitInt, Member,
+    Type,
+};
+
+use crate::symbol::symbol_from_string;
 
 pub fn to_generic_args(generics: &Generics) -> syn::Result<AngleBracketedGenericArguments> {
     if generics.params.is_empty() {
@@ -15,6 +21,16 @@ pub fn field_to_member(index: usize, field: &Field) -> Member {
     match &field.ident {
         Some(ident) => Member::Named(ident.clone()),
         None => Member::Unnamed(index.into()),
+    }
+}
+
+pub fn field_to_tag(index: usize, field: &Field) -> syn::Result<Type> {
+    match &field.ident {
+        Some(ident) => Ok(symbol_from_string(&ident.to_string())),
+        None => {
+            let index = LitInt::new(&format!("{index}"), field.span());
+            parse2(quote! { Index< #index > })
+        }
     }
 }
 
