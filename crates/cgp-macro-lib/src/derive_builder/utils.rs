@@ -1,7 +1,12 @@
 use proc_macro2::{Span, TokenStream};
 use quote::{quote, ToTokens};
+use syn::punctuated::Punctuated;
+use syn::spanned::Spanned;
 use syn::token::Colon;
-use syn::{parse2, AngleBracketedGenericArguments, Field, FieldValue, Generics, Ident, Member};
+use syn::{
+    parse2, AngleBracketedGenericArguments, Field, FieldMutability, FieldValue, Fields,
+    FieldsUnnamed, Generics, Ident, Member, Type, Variant, Visibility,
+};
 
 pub fn to_generic_args(generics: &Generics) -> syn::Result<AngleBracketedGenericArguments> {
     if generics.params.is_empty() {
@@ -28,5 +33,35 @@ pub fn field_value_expr(field_member: Member, expr: TokenStream) -> syn::Result<
         member: field_member,
         colon_token: Some(Colon(Span::call_site())),
         expr: parse2(expr)?,
+    })
+}
+
+pub fn get_variant_type(variant: &Variant) -> syn::Result<&Type> {
+    match &variant.fields {
+        Fields::Unnamed(fields) if fields.unnamed.len() == 1 => {
+            if let Some(field) = fields.unnamed.first() {
+                return Ok(&field.ty);
+            }
+        }
+        _ => {}
+    }
+
+    return Err(syn::Error::new(
+        variant.span(),
+        "Expected variant to contain exactly one unnamed field",
+    ));
+}
+
+pub fn type_to_variant_fields(type_: &Type) -> Fields {
+    Fields::Unnamed(FieldsUnnamed {
+        unnamed: Punctuated::from_iter([Field {
+            attrs: Vec::new(),
+            ident: None,
+            vis: Visibility::Inherited,
+            ty: type_.clone(),
+            colon_token: None,
+            mutability: FieldMutability::None,
+        }]),
+        paren_token: Default::default(),
     })
 }
