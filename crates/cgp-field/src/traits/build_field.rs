@@ -13,3 +13,9 @@ pub trait HasBuilder {
 
     fn builder() -> Self::Builder;
 }
+
+pub trait FinalizeBuild {
+    type Output;
+
+    fn finalize_build(self) -> Self::Output;
+}

@@ -13,11 +13,14 @@ use crate::symbol::symbol_from_string;
 pub fn derive_builder(body: TokenStream) -> syn::Result<TokenStream> {
     let context_struct: ItemStruct = parse2(body)?;
 
-    let builder_struct = derive_builder_struct(&context_struct)?;
+    let context_ident = &context_struct.ident;
+    let builder_ident = Ident::new(&format!("Partial{}", context_ident), context_ident.span());
 
-    let has_builder_impl = derive_has_builder_impl(&context_struct, &builder_struct)?;
+    let builder_struct = derive_builder_struct(&context_struct, &builder_ident)?;
 
-    let build_field_impls = derive_build_field_impls(&context_struct, &builder_struct)?;
+    let has_builder_impl = derive_has_builder_impl(&context_struct, &builder_ident)?;
+
+    let build_field_impls = derive_build_field_impls(&context_struct, &builder_ident)?;
 
     let mut out = quote! {
         #builder_struct
@@ -30,13 +33,12 @@ pub fn derive_builder(body: TokenStream) -> syn::Result<TokenStream> {
     Ok(out)
 }
 
-pub fn derive_builder_struct(context_struct: &ItemStruct) -> syn::Result<ItemStruct> {
-    let context_name = &context_struct.ident;
-
+pub fn derive_builder_struct(
+    context_struct: &ItemStruct,
+    builder_ident: &Ident,
+) -> syn::Result<ItemStruct> {
     let mut builder_struct = context_struct.clone();
-
-    let builder_name = Ident::new(&format!("Partial{}", context_name), context_name.span());
-    builder_struct.ident = builder_name;
+    builder_struct.ident = builder_ident.clone();
 
     let generics = &mut builder_struct.generics;
 
@@ -63,12 +65,11 @@ pub fn derive_builder_struct(context_struct: &ItemStruct) -> syn::Result<ItemStr
 
 pub fn derive_has_builder_impl(
     context_struct: &ItemStruct,
-    builder_struct: &ItemStruct,
+    builder_ident: &Ident,
 ) -> syn::Result<ItemImpl> {
     let (impl_generics, ty_generics, where_clause) = context_struct.generics.split_for_impl();
 
     let context_ident = &context_struct.ident;
-    let builder_ident = &builder_struct.ident;
 
     let mut builder_generics = parse2::<Generics>(ty_generics.to_token_stream())?.params;
 
@@ -112,10 +113,8 @@ pub fn derive_has_builder_impl(
 
 pub fn derive_build_field_impls(
     context_struct: &ItemStruct,
-    builder_struct: &ItemStruct,
+    builder_ident: &Ident,
 ) -> syn::Result<Vec<ItemImpl>> {
-    let builder_ident = &builder_struct.ident;
-
     let mut item_impls = Vec::new();
 
     let base_generic_args: AngleBracketedGenericArguments =
@@ -125,22 +124,23 @@ pub fn derive_build_field_impls(
             parse2(context_struct.generics.split_for_impl().1.to_token_stream())?
         };
 
-    for (i, field) in context_struct.fields.iter().enumerate() {
-        let value_type = &field.ty;
+    for (current_index, current_field) in context_struct.fields.iter().enumerate() {
+        let value_type = &current_field.ty;
 
         let mut generics = context_struct.generics.clone();
         let mut source_generic_args = base_generic_args.args.clone();
         let mut output_generic_args = base_generic_args.args.clone();
         let mut builder_fields = <Punctuated<FieldValue, Comma>>::new();
 
-        for (j, field) in context_struct.fields.iter().enumerate() {
-            let field_member = match &field.ident {
+        for (other_index, other_field) in context_struct.fields.iter().enumerate() {
+            let field_member = match &other_field.ident {
                 Some(ident) => Member::Named(ident.clone()),
-                None => Member::Unnamed(j.into()),
+                None => Member::Unnamed(other_index.into()),
             };
 
-            if j != i {
-                let generic_param_name = Ident::new(&format!("__F{}__", j), Span::call_site());
+            if other_index != current_index {
+                let generic_param_name =
+                    Ident::new(&format!("__F{}__", other_index), Span::call_site());
                 generics.params.push(parse2(quote! {
                     #generic_param_name: MapType
                 })?);
@@ -176,10 +176,10 @@ pub fn derive_build_field_impls(
             #builder_ident < #output_generic_args >
         })?;
 
-        let tag_type = match &field.ident {
+        let tag_type = match &current_field.ident {
             Some(ident) => symbol_from_string(&ident.to_string()),
             None => {
-                let index = LitInt::new(&format!("{i}"), field.span());
+                let index = LitInt::new(&format!("{current_index}"), current_field.span());
 
                 parse2(quote! { Index< #index > })?
             }

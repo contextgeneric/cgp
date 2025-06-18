@@ -12,7 +12,7 @@ pub struct Context {
 
 #[test]
 fn test_builder() {
-    let context = Context::builder()
+    let _context: PartialContext<IsPresent, IsPresent, IsPresent> = Context::builder()
         .build_field(PhantomData::<symbol!("foo")>, 1)
         .build_field(PhantomData::<symbol!("bar")>, "bar".to_owned())
         .build_field(PhantomData::<symbol!("baz")>, true);

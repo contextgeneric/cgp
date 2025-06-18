@@ -8,9 +8,9 @@ pub use cgp_error::{
     HasErrorType,
 };
 pub use cgp_field::{
-    BuildField, Char, Cons, Discharge, Either, ExtractField, Field, FieldGetter, FromFields,
-    HasBuilder, HasField, HasFieldMut, HasFields, HasFieldsRef, Index, IsNothing, IsPresent,
-    MapType, MutFieldGetter, Nil, ToFields, ToFieldsRef, UseField, Void,
+    BuildField, Char, Cons, Discharge, Either, ExtractField, Field, FieldGetter, FinalizeBuild,
+    FromFields, HasBuilder, HasField, HasFieldMut, HasFields, HasFieldsRef, Index, IsNothing,
+    IsPresent, MapType, MutFieldGetter, Nil, ToFields, ToFieldsRef, UseField, Void,
 };
 pub use cgp_macro::{
     cgp_auto_getter, cgp_component, cgp_context, cgp_getter, cgp_new_provider, cgp_preset,
