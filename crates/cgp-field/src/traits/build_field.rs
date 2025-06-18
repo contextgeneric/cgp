@@ -1,17 +1,17 @@
 use core::marker::PhantomData;
 
+pub trait HasBuilder {
+    type Builder;
+
+    fn builder() -> Self::Builder;
+}
+
 pub trait BuildField<Tag> {
     type Value;
 
     type Output;
 
     fn build_field(self, _tag: PhantomData<Tag>, value: Self::Value) -> Self::Output;
-}
-
-pub trait HasBuilder {
-    type Builder;
-
-    fn builder() -> Self::Builder;
 }
 
 pub trait FinalizeBuild {

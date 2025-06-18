@@ -949,9 +949,9 @@ pub fn derive_has_fields(item: TokenStream) -> TokenStream {
         .into()
 }
 
-#[proc_macro_derive(Builder)]
+#[proc_macro_derive(BuildField)]
 pub fn derive_builder(item: TokenStream) -> TokenStream {
-    cgp_macro_lib::derive_builder(item.into())
+    cgp_macro_lib::derive_build_field(item.into())
         .unwrap_or_else(syn::Error::into_compile_error)
         .into()
 }

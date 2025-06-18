@@ -1,5 +1,4 @@
 mod blanket_trait;
-mod builder;
 mod cgp_auto_getter;
 mod cgp_component;
 mod cgp_context;
@@ -11,12 +10,12 @@ mod cgp_type;
 mod check_components;
 mod delegate_and_check_components;
 mod delegate_components;
+mod derive_build_field;
 mod derive_has_fields;
 mod re_export_imports;
 mod replace_with;
 
 pub use blanket_trait::*;
-pub use builder::*;
 pub use cgp_auto_getter::*;
 pub use cgp_component::*;
 pub use cgp_context::*;
@@ -28,6 +27,7 @@ pub use cgp_type::*;
 pub use check_components::*;
 pub use delegate_and_check_components::*;
 pub use delegate_components::*;
+pub use derive_build_field::*;
 pub use derive_has_fields::*;
 pub use re_export_imports::*;
 pub use replace_with::*;

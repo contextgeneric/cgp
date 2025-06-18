@@ -10,7 +10,7 @@ use syn::{
 
 use crate::symbol::symbol_from_string;
 
-pub fn derive_builder(body: TokenStream) -> syn::Result<TokenStream> {
+pub fn derive_build_field(body: TokenStream) -> syn::Result<TokenStream> {
     let context_struct: ItemStruct = parse2(body)?;
 
     let context_ident = &context_struct.ident;

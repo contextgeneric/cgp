@@ -1,7 +1,6 @@
-use cgp::core::macros::Builder;
 use cgp::prelude::*;
 
-#[derive(Builder)]
+#[derive(BuildField)]
 pub struct Context<Foo, Bar, Baz>
 where
     Foo: Clone,
