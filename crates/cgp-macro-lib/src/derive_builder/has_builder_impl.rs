@@ -1,9 +1,9 @@
-use quote::{quote, ToTokens};
+use quote::quote;
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
-use syn::{parse2, FieldValue, Generics, Ident, ItemImpl, ItemStruct};
+use syn::{parse2, FieldValue, Ident, ItemImpl, ItemStruct};
 
-use crate::derive_builder::{field_to_member, field_value_expr};
+use crate::derive_builder::{field_to_member, field_value_expr, to_generic_args};
 
 pub fn derive_has_builder_impl(
     context_struct: &ItemStruct,
@@ -13,12 +13,12 @@ pub fn derive_has_builder_impl(
 
     let context_ident = &context_struct.ident;
 
-    let mut builder_generics = parse2::<Generics>(ty_generics.to_token_stream())?.params;
+    let mut builder_generics = to_generic_args(&context_struct.generics)?;
 
     let mut builder_fields = <Punctuated<FieldValue, Comma>>::new();
 
     for (i, field) in context_struct.fields.iter().enumerate() {
-        builder_generics.push(parse2(quote! {
+        builder_generics.args.push(parse2(quote! {
             IsNothing
         })?);
 
@@ -32,7 +32,7 @@ pub fn derive_has_builder_impl(
             for #context_ident #ty_generics
         #where_clause
         {
-            type Builder = #builder_ident < #builder_generics >;
+            type Builder = #builder_ident #builder_generics;
 
             fn builder() -> Self::Builder {
                 #builder_ident {
