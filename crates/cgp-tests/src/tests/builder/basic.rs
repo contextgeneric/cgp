@@ -19,5 +19,5 @@ fn test_basic_builder() {
 
     assert_eq!(context.foo, 1);
     assert_eq!(context.bar, "bar");
-    assert_eq!(context.baz, true);
+    assert!(context.baz);
 }
