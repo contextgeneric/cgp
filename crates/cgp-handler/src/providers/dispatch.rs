@@ -1,33 +1,35 @@
 use cgp_core::prelude::*;
 
-use crate::{CanCompute, Computer, ComputerComponent};
+use crate::{Computer, ComputerComponent};
 
-pub struct DispatchHandlers<Providers>(pub PhantomData<Providers>);
+pub struct DispatchHandlers<Fields, Provider>(pub PhantomData<(Fields, Provider)>);
 
 #[cgp_provider]
-impl<Context, Code, Tag, Input, Value, Remainder, RestFields, Output> Computer<Context, Code, Input>
-    for DispatchHandlers<Either<Field<Tag, Value>, RestFields>>
+impl<Context, Code, Tag, Value, Input, Provider, Index, Remainder, RestFields, Output>
+    Computer<Context, Code, Input>
+    for DispatchHandlers<Either<Field<Tag, Product![Field<Index,Value>]>, RestFields>, Provider>
 where
-    Context: CanCompute<Code, Field<Tag, Value>, Output = Output>,
+    Provider: Computer<Context, Code, Field<Tag, Value>, Output = Output>,
     Input: ExtractField<Tag, Value = Value, Remainder = Remainder>,
-    DispatchHandlers<RestFields>: Computer<Context, Code, Remainder, Output = Output>,
+    DispatchHandlers<RestFields, Provider>: Computer<Context, Code, Remainder, Output = Output>,
 {
     type Output = Output;
 
     fn compute(context: &Context, tag: PhantomData<Code>, input: Input) -> Output {
         match input.extract_field(PhantomData) {
-            Either::Left(value) => context.compute(PhantomData, value.into()),
+            Either::Left(value) => Provider::compute(context, tag, value.into()),
             Either::Right(remainder) => {
-                <DispatchHandlers<RestFields>>::compute(context, tag, remainder)
+                <DispatchHandlers<RestFields, Provider>>::compute(context, tag, remainder)
             }
         }
     }
 }
 
 #[cgp_provider]
-impl<Context, Code, Input, Output> Computer<Context, Code, Input> for DispatchHandlers<Void>
+impl<Context, Code, Input, Provider, Output> Computer<Context, Code, Input>
+    for DispatchHandlers<Void, Provider>
 where
-    Context: CanCompute<Code, Void, Output = Output>,
+    Provider: Computer<Context, Code, Void, Output = Output>,
     Input: FinalizeExtract,
 {
     type Output = Output;
