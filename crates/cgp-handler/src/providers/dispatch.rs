@@ -2,7 +2,23 @@ use cgp_core::prelude::*;
 
 use crate::{Computer, ComputerComponent};
 
-pub struct DispatchHandlers<Fields, Provider>(pub PhantomData<(Fields, Provider)>);
+pub struct DispatchFields<Provider = UseContext>(pub PhantomData<Provider>);
+
+#[cgp_provider]
+impl<Context, Code, Input, Output, Fields, Extractor, Provider> Computer<Context, Code, Input>
+    for DispatchFields<Provider>
+where
+    Input: HasFields<Fields = Fields> + HasExtractor<Extractor = Extractor>,
+    DispatchHandlers<Fields, Provider>: Computer<Context, Code, Extractor, Output = Output>,
+{
+    type Output = Output;
+
+    fn compute(_context: &Context, _tag: PhantomData<Code>, input: Input) -> Output {
+        DispatchHandlers::compute(_context, _tag, input.extractor())
+    }
+}
+
+pub struct DispatchHandlers<Fields, Provider = UseContext>(pub PhantomData<(Fields, Provider)>);
 
 #[cgp_provider]
 impl<Context, Code, Tag, Value, Input, Provider, Index, Remainder, RestFields, Output>

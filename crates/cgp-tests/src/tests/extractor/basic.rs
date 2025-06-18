@@ -1,7 +1,7 @@
 use core::fmt::Display;
 use core::marker::PhantomData;
 
-use cgp::extra::handler::{Computer, ComputerComponent, DispatchHandlers};
+use cgp::extra::handler::{Computer, ComputerComponent, DispatchFields, DispatchHandlers};
 use cgp::prelude::*;
 
 #[derive(HasFields, ExtractField)]
@@ -50,9 +50,8 @@ impl<Context, Code> Computer<Context, Code, Void> for FieldToString {
     }
 }
 
-pub trait CheckComputerImpl: Computer<(), (), <Context as HasExtractor>::Extractor> {}
-
-impl CheckComputerImpl for DispatchHandlers<<Context as HasFields>::Fields, FieldToString> {}
+pub trait CheckComputerImpl: Computer<(), (), Context> {}
+impl CheckComputerImpl for DispatchFields<FieldToString> {}
 
 #[test]
 fn test_basic_extractor() {
@@ -63,6 +62,12 @@ fn test_basic_extractor() {
 
 #[test]
 fn test_extractor_dispatcher() {
+    // let res = DispatchFields::<FieldToString>::compute(
+    //     &(),
+    //     PhantomData::<()>,
+    //     Context::Foo(1),
+    // );
+
     let res = DispatchHandlers::<<Context as HasFields>::Fields, FieldToString>::compute(
         &(),
         PhantomData::<()>,
