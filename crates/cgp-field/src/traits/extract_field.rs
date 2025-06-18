@@ -6,7 +6,15 @@ use crate::{Either, Void};
 pub trait HasExtractor {
     type Extractor;
 
-    fn extractor() -> Self::Extractor;
+    fn extractor(self) -> Self::Extractor;
+}
+
+pub trait HasExtractorRef {
+    type ExtractorRef<'a>
+    where
+        Self: 'a;
+
+    fn extractor_ref<'a>(&'a self) -> Self::ExtractorRef<'a>;
 }
 
 pub trait ExtractField<Tag> {
