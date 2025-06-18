@@ -21,9 +21,9 @@ where
 pub struct DispatchHandlers<Fields, Provider = UseContext>(pub PhantomData<(Fields, Provider)>);
 
 #[cgp_provider]
-impl<Context, Code, Tag, Value, Input, Provider, Index, Remainder, RestFields, Output>
+impl<Context, Code, Tag, Value, Input, Provider, Remainder, RestFields, Output>
     Computer<Context, Code, Input>
-    for DispatchHandlers<Either<Field<Tag, Product![Field<Index,Value>]>, RestFields>, Provider>
+    for DispatchHandlers<Either<Field<Tag, Value>, RestFields>, Provider>
 where
     Provider: Computer<Context, Code, Field<Tag, Value>, Output = Output>,
     Input: ExtractField<Tag, Value = Value, Remainder = Remainder>,
