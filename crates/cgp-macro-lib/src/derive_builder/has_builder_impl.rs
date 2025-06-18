@@ -1,8 +1,9 @@
-use proc_macro2::Span;
 use quote::{quote, ToTokens};
 use syn::punctuated::Punctuated;
-use syn::token::{Colon, Comma};
-use syn::{parse2, FieldValue, Generics, Ident, ItemImpl, ItemStruct, Member};
+use syn::token::Comma;
+use syn::{parse2, FieldValue, Generics, Ident, ItemImpl, ItemStruct};
+
+use crate::derive_builder::{field_to_member, field_value_expr};
 
 pub fn derive_has_builder_impl(
     context_struct: &ItemStruct,
@@ -21,17 +22,9 @@ pub fn derive_has_builder_impl(
             IsNothing
         })?);
 
-        let field_member = match &field.ident {
-            Some(ident) => Member::Named(ident.clone()),
-            None => Member::Unnamed(i.into()),
-        };
+        let field_member = field_to_member(i, field);
 
-        builder_fields.push(FieldValue {
-            attrs: Vec::new(),
-            member: field_member,
-            colon_token: Some(Colon(Span::call_site())),
-            expr: parse2(quote! { () })?,
-        });
+        builder_fields.push(field_value_expr(field_member, quote! { () })?);
     }
 
     let item_impl = parse2(quote! {

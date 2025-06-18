@@ -1,10 +1,9 @@
-use proc_macro2::Span;
-use quote::{quote, ToTokens};
+use quote::quote;
 use syn::punctuated::Punctuated;
-use syn::token::{Colon, Comma};
-use syn::{
-    parse2, AngleBracketedGenericArguments, FieldValue, Ident, ItemImpl, ItemStruct, Member, Type,
-};
+use syn::token::Comma;
+use syn::{parse2, FieldValue, Ident, ItemImpl, ItemStruct, Type};
+
+use crate::derive_builder::{field_to_member, field_value_expr, to_generic_args};
 
 pub fn derive_finalize_build_impl(
     context_struct: &ItemStruct,
@@ -13,11 +12,7 @@ pub fn derive_finalize_build_impl(
     let context_ident = &context_struct.ident;
     let generics = &context_struct.generics;
 
-    let mut generic_args: AngleBracketedGenericArguments = if generics.params.is_empty() {
-        parse2(quote! { < > })?
-    } else {
-        parse2(generics.split_for_impl().1.to_token_stream())?
-    };
+    let mut generic_args = to_generic_args(generics)?;
 
     let mut builder_fields = <Punctuated<FieldValue, Comma>>::new();
 
@@ -26,17 +21,12 @@ pub fn derive_finalize_build_impl(
             IsPresent
         })?);
 
-        let field_member = match &field.ident {
-            Some(ident) => Member::Named(ident.clone()),
-            None => Member::Unnamed(i.into()),
-        };
+        let field_member = field_to_member(i, field);
 
-        builder_fields.push(FieldValue {
-            attrs: Vec::new(),
-            member: field_member.clone(),
-            colon_token: Some(Colon(Span::call_site())),
-            expr: parse2(quote! { self. #field_member })?,
-        });
+        builder_fields.push(field_value_expr(
+            field_member.clone(),
+            quote! { self. #field_member },
+        )?);
     }
 
     let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();

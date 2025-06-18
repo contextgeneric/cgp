@@ -1,6 +1,7 @@
-use proc_macro2::Span;
 use quote::quote;
 use syn::{parse2, GenericParam, Ident, ItemStruct, Type, TypeParam};
+
+use crate::derive_builder::index_to_generic_ident;
 
 pub fn derive_builder_struct(
     context_struct: &ItemStruct,
@@ -12,7 +13,7 @@ pub fn derive_builder_struct(
     let generics = &mut builder_struct.generics;
 
     for (i, field) in builder_struct.fields.iter_mut().enumerate() {
-        let generic_param_name = Ident::new(&format!("__F{}__", i), Span::call_site());
+        let generic_param_name = index_to_generic_ident(i);
 
         let generic_param: TypeParam = parse2(quote! {
             #generic_param_name : MapType

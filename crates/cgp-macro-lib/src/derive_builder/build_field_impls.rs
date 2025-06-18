@@ -1,13 +1,12 @@
-use proc_macro2::Span;
-use quote::{quote, ToTokens};
+use quote::quote;
 use syn::punctuated::Punctuated;
 use syn::spanned::Spanned;
-use syn::token::{Colon, Comma};
-use syn::{
-    parse2, AngleBracketedGenericArguments, FieldValue, GenericArgument, Ident, ItemImpl,
-    ItemStruct, LitInt, Member, Type,
-};
+use syn::token::Comma;
+use syn::{parse2, FieldValue, GenericArgument, Ident, ItemImpl, ItemStruct, LitInt, Type};
 
+use crate::derive_builder::{
+    field_to_member, field_value_expr, index_to_generic_ident, to_generic_args,
+};
 use crate::symbol::symbol_from_string;
 
 pub fn derive_build_field_impls(
@@ -16,12 +15,7 @@ pub fn derive_build_field_impls(
 ) -> syn::Result<Vec<ItemImpl>> {
     let mut item_impls = Vec::new();
 
-    let base_generic_args: AngleBracketedGenericArguments =
-        if context_struct.generics.params.is_empty() {
-            parse2(quote! { < > })?
-        } else {
-            parse2(context_struct.generics.split_for_impl().1.to_token_stream())?
-        };
+    let base_generic_args = to_generic_args(&context_struct.generics)?;
 
     for (current_index, current_field) in context_struct.fields.iter().enumerate() {
         let value_type = &current_field.ty;
@@ -32,14 +26,11 @@ pub fn derive_build_field_impls(
         let mut builder_fields = <Punctuated<FieldValue, Comma>>::new();
 
         for (other_index, other_field) in context_struct.fields.iter().enumerate() {
-            let field_member = match &other_field.ident {
-                Some(ident) => Member::Named(ident.clone()),
-                None => Member::Unnamed(other_index.into()),
-            };
+            let field_member = field_to_member(other_index, other_field);
 
             if other_index != current_index {
-                let generic_param_name =
-                    Ident::new(&format!("__F{}__", other_index), Span::call_site());
+                let generic_param_name = index_to_generic_ident(other_index);
+
                 generics.params.push(parse2(quote! {
                     #generic_param_name: MapType
                 })?);
@@ -48,22 +39,15 @@ pub fn derive_build_field_impls(
                 source_generic_args.push(generic_arg.clone());
                 output_generic_args.push(generic_arg);
 
-                builder_fields.push(FieldValue {
-                    attrs: Vec::new(),
-                    member: field_member.clone(),
-                    colon_token: Some(Colon(Span::call_site())),
-                    expr: parse2(quote! { self. #field_member })?,
-                });
+                builder_fields.push(field_value_expr(
+                    field_member.clone(),
+                    quote! { self. #field_member },
+                )?);
             } else {
                 source_generic_args.push(parse2(quote! { IsNothing })?);
                 output_generic_args.push(parse2(quote! { IsPresent })?);
 
-                builder_fields.push(FieldValue {
-                    attrs: Vec::new(),
-                    member: field_member.clone(),
-                    colon_token: Some(Colon(Span::call_site())),
-                    expr: parse2(quote! { value })?,
-                });
+                builder_fields.push(field_value_expr(field_member, quote! { value })?);
             }
         }
 
