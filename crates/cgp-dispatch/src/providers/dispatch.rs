@@ -1,6 +1,5 @@
 use cgp_core::prelude::*;
-
-use crate::{Computer, ComputerComponent};
+use cgp_handler::{Computer, ComputerComponent};
 
 pub struct DispatchFields<Provider = UseContext>(pub PhantomData<Provider>);
 

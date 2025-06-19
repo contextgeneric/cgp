@@ -20,3 +20,4 @@ cgp-inner       = { version = "0.4.1" }
 cgp-run         = { version = "0.4.1" }
 cgp-runtime     = { version = "0.4.1" }
 cgp-handler     = { version = "0.4.1" }
+cgp-dispatch    = { version = "0.4.1" }

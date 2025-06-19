@@ -2,7 +2,8 @@ use core::fmt::Display;
 use core::marker::PhantomData;
 
 use cgp::core::field::CanExtractInto;
-use cgp::extra::handler::{Computer, ComputerComponent, DispatchFields};
+use cgp::extra::dispatch::DispatchFields;
+use cgp::extra::handler::{Computer, ComputerComponent};
 use cgp::prelude::*;
 
 #[derive(Debug, Eq, PartialEq, HasFields, ExtractField, FromVariant)]
@@ -127,9 +128,6 @@ where
         input.value.to_string()
     }
 }
-
-pub trait CheckComputerImpl: Computer<(), (), FooBarBaz> {}
-impl CheckComputerImpl for DispatchFields<FieldToString> {}
 
 #[test]
 fn test_extractor_dispatcher() {

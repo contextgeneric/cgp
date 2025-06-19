@@ -1,0 +1,14 @@
+[package]
+name         = "cgp-dispatch"
+version      = "0.4.1"
+edition      = { workspace = true }
+license      = { workspace = true }
+repository   = { workspace = true }
+authors      = { workspace = true }
+rust-version = { workspace = true }
+keywords     = { workspace = true }
+description  = "Generalized handler interfaces for functional programming"
+
+[dependencies]
+cgp-core    = { version = "0.4.1" }
+cgp-handler = { version = "0.4.1" }

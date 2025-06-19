@@ -57,6 +57,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "cgp-dispatch"
+version = "0.4.1"
+dependencies = [
+ "cgp-core",
+ "cgp-handler",
+]
+
+[[package]]
 name = "cgp-error"
 version = "0.4.1"
 dependencies = [
@@ -100,6 +108,7 @@ dependencies = [
 name = "cgp-extra"
 version = "0.4.1"
 dependencies = [
+ "cgp-dispatch",
  "cgp-error-extra",
  "cgp-handler",
  "cgp-inner",
