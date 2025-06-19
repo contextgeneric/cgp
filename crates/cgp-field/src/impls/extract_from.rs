@@ -38,7 +38,7 @@ where
     fn extract_from(extractor: Extractor) -> Result<Context, Remainder> {
         let res = extractor.extract_field(PhantomData);
         match res {
-            Ok(field) => Ok(Context::from_variant(PhantomData, field.into())),
+            Ok(field) => Ok(Context::from_variant(PhantomData, field)),
             Err(remainder) => RestFields::extract_from(remainder),
         }
     }

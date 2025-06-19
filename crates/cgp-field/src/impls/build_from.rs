@@ -2,21 +2,21 @@ use core::marker::PhantomData;
 
 use crate::{BuildField, Cons, Field, HasFields, IntoBuilder, Nil, TakeField};
 
-pub trait CanBuildInto<Builder>: Sized {
+pub trait CanBuildFrom<Source>: Sized {
     type Output;
 
-    fn build_into(self, builder: Builder) -> Self::Output;
+    fn build_from(self, source: Source) -> Self::Output;
 }
 
-impl<Context, Builder, Remainder> CanBuildInto<Builder> for Context
+impl<Builder, Source, Output> CanBuildFrom<Source> for Builder
 where
-    Context: HasFields + IntoBuilder,
-    Context::Fields: FieldsBuilder<Context::Builder, Builder, Output = Remainder>,
+    Source: HasFields + IntoBuilder,
+    Source::Fields: FieldsBuilder<Source::Builder, Builder, Output = Output>,
 {
-    type Output = Remainder;
+    type Output = Output;
 
-    fn build_into(self, builder: Builder) -> Remainder {
-        Context::Fields::build_field(self.into_builder(), builder)
+    fn build_from(self, source: Source) -> Output {
+        Source::Fields::build_field(source.into_builder(), self)
     }
 }
 
