@@ -1,8 +1,8 @@
-use core::fmt::Display;
+use core::fmt::{Debug, Display};
 use core::marker::PhantomData;
 
 use cgp::core::field::CanExtractInto;
-use cgp::extra::dispatch::DispatchFields;
+use cgp::extra::dispatch::{DispatchFields, DispatchHandlers, ExtractAndHandle};
 use cgp::extra::handler::{Computer, ComputerComponent};
 use cgp::prelude::*;
 
@@ -117,21 +117,46 @@ fn test_extract_from() {
     );
 }
 
-#[cgp_new_provider]
-impl<Context, Code, Tag, Value> Computer<Context, Code, Field<Tag, Value>> for FieldToString
-where
-    Value: Display,
-{
-    type Output = String;
-
-    fn compute(_context: &Context, _tag: PhantomData<Code>, input: Field<Tag, Value>) -> String {
-        input.value.to_string()
-    }
-}
-
 #[test]
 fn test_extractor_dispatcher() {
+    #[cgp_new_provider]
+    impl<Context, Code, Tag, Value> Computer<Context, Code, Field<Tag, Value>> for FieldToString
+    where
+        Value: Display,
+    {
+        type Output = String;
+
+        fn compute(
+            _context: &Context,
+            _tag: PhantomData<Code>,
+            input: Field<Tag, Value>,
+        ) -> String {
+            input.value.to_string()
+        }
+    }
+
     let res = DispatchFields::<FieldToString>::compute(&(), PhantomData::<()>, FooBarBaz::Foo(1));
 
     assert_eq!(res, "1");
+}
+
+#[test]
+fn test_dispatch_handlers() {
+    #[cgp_new_provider]
+    impl<Context, Code, Input> Computer<Context, Code, Input> for ShowDebug
+    where
+        Input: Debug,
+    {
+        type Output = String;
+
+        fn compute(_context: &Context, _tag: PhantomData<Code>, input: Input) -> String {
+            format!("{:?}", input)
+        }
+    }
+
+    let res = DispatchHandlers::<
+        Product![ExtractAndHandle<FooBar, ShowDebug>, ExtractAndHandle<Baz, ShowDebug>],
+    >::compute(&(), PhantomData::<()>, FooBarBaz::Foo(1));
+
+    assert_eq!(res, "Foo(1)");
 }
