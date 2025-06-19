@@ -5,13 +5,13 @@ use cgp::extra::handler::{Computer, ComputerComponent, DispatchFields, DispatchH
 use cgp::prelude::*;
 
 #[derive(HasFields, ExtractField)]
-pub enum Context {
+pub enum FooBarBaz {
     Foo(u64),
     Bar(String),
     Baz(bool),
 }
 
-fn context_to_string(context: Context) -> String {
+fn context_to_string(context: FooBarBaz) -> String {
     match context
         .extractor_ref()
         .extract_field(PhantomData::<symbol!("Foo")>)
@@ -41,24 +41,27 @@ where
     }
 }
 
-pub trait CheckComputerImpl: Computer<(), (), Context> {}
+pub trait CheckComputerImpl: Computer<(), (), FooBarBaz> {}
 impl CheckComputerImpl for DispatchFields<FieldToString> {}
 
 #[test]
 fn test_basic_extractor() {
-    assert_eq!(context_to_string(Context::Foo(1)), "1");
-    assert_eq!(context_to_string(Context::Bar("hello".to_owned())), "hello");
-    assert_eq!(context_to_string(Context::Baz(true)), "true");
+    assert_eq!(context_to_string(FooBarBaz::Foo(1)), "1");
+    assert_eq!(
+        context_to_string(FooBarBaz::Bar("hello".to_owned())),
+        "hello"
+    );
+    assert_eq!(context_to_string(FooBarBaz::Baz(true)), "true");
 }
 
 #[test]
 fn test_extractor_dispatcher() {
     // let res = DispatchFields::<FieldToString>::compute(&(), PhantomData::<()>, Context::Foo(1));
 
-    let res = DispatchHandlers::<<Context as HasFields>::Fields, FieldToString>::compute(
+    let res = DispatchHandlers::<<FooBarBaz as HasFields>::Fields, FieldToString>::compute(
         &(),
         PhantomData::<()>,
-        Context::Foo(1).extractor(),
+        FooBarBaz::Foo(1).extractor(),
     );
 
     assert_eq!(res, "1");
