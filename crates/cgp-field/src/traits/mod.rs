@@ -8,6 +8,7 @@ mod has_field_mut;
 mod has_fields;
 mod map_field;
 mod map_type;
+mod take_field;
 mod to_fields;
 
 pub use build_field::*;
@@ -20,4 +21,5 @@ pub use has_field_mut::*;
 pub use has_fields::*;
 pub use map_field::*;
 pub use map_type::*;
+pub use take_field::*;
 pub use to_fields::*;
