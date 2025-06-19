@@ -15,8 +15,8 @@ where
 {
     type Output = Output;
 
-    fn compute(_context: &Context, tag: PhantomData<Code>, input: Input) -> Output {
-        let res = Handlers::compute(_context, tag, input.extractor());
+    fn compute(_context: &Context, code: PhantomData<Code>, input: Input) -> Output {
+        let res = Handlers::compute(_context, code, input.extractor());
 
         match res {
             Ok(output) => output,

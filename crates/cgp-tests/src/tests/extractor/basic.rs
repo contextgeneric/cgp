@@ -143,20 +143,40 @@ fn test_extractor_dispatcher() {
 #[test]
 fn test_dispatch_handlers() {
     #[cgp_new_provider]
-    impl<Context, Code, Input> Computer<Context, Code, Input> for ShowDebug
-    where
-        Input: Debug,
-    {
+    impl<Context, Code> Computer<Context, Code, FooBar> for Show {
         type Output = String;
 
-        fn compute(_context: &Context, _tag: PhantomData<Code>, input: Input) -> String {
-            format!("{:?}", input)
+        fn compute(_context: &Context, _tag: PhantomData<Code>, input: FooBar) -> String {
+            format!("FooBar::{:?}", input)
         }
     }
 
-    let res = DispatchHandlers::<
-        Product![ExtractAndHandle<FooBar, ShowDebug>, ExtractAndHandle<Baz, ShowDebug>],
-    >::compute(&(), PhantomData::<()>, FooBarBaz::Foo(1));
+    #[cgp_provider]
+    impl<Context, Code> Computer<Context, Code, Baz> for Show {
+        type Output = String;
 
-    assert_eq!(res, "Foo(1)");
+        fn compute(_context: &Context, _tag: PhantomData<Code>, input: Baz) -> String {
+            format!("Baz::{:?}", input)
+        }
+    }
+
+    type Handlers = Product![ExtractAndHandle<FooBar, Show>, ExtractAndHandle<Baz, Show>];
+
+    let context = ();
+    let code = PhantomData::<()>;
+
+    assert_eq!(
+        DispatchHandlers::<Handlers>::compute(&context, code, FooBarBaz::Foo(1)),
+        "FooBar::Foo(1)"
+    );
+
+    assert_eq!(
+        DispatchHandlers::<Handlers>::compute(&context, code, FooBarBaz::Bar("hello".to_owned())),
+        "FooBar::Bar(\"hello\")"
+    );
+
+    assert_eq!(
+        DispatchHandlers::<Handlers>::compute(&context, code, FooBarBaz::Baz(true)),
+        "Baz::Baz(true)"
+    );
 }

@@ -15,5 +15,5 @@ use crate::UseInputDelegate;
 pub trait CanCompute<Code, Input> {
     type Output;
 
-    fn compute(&self, _tag: PhantomData<Code>, input: Input) -> Self::Output;
+    fn compute(&self, _code: PhantomData<Code>, input: Input) -> Self::Output;
 }
