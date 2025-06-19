@@ -2,7 +2,7 @@ use core::fmt::Display;
 use core::marker::PhantomData;
 
 use cgp::core::field::CanExtractInto;
-use cgp::extra::handler::{Computer, ComputerComponent, DispatchFields, DispatchHandlers};
+use cgp::extra::handler::{Computer, ComputerComponent, DispatchFields};
 use cgp::prelude::*;
 
 #[derive(Debug, Eq, PartialEq, HasFields, ExtractField, FromVariant)]
@@ -133,13 +133,7 @@ impl CheckComputerImpl for DispatchFields<FieldToString> {}
 
 #[test]
 fn test_extractor_dispatcher() {
-    // let res = DispatchFields::<FieldToString>::compute(&(), PhantomData::<()>, Context::Foo(1));
-
-    let res = DispatchHandlers::<<FooBarBaz as HasFields>::Fields, FieldToString>::compute(
-        &(),
-        PhantomData::<()>,
-        FooBarBaz::Foo(1).extractor(),
-    );
+    let res = DispatchFields::<FieldToString>::compute(&(), PhantomData::<()>, FooBarBaz::Foo(1));
 
     assert_eq!(res, "1");
 }
