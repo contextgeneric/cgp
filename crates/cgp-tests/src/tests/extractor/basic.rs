@@ -16,15 +16,13 @@ fn context_to_string(context: FooBarBaz) -> String {
         .extractor_ref()
         .extract_field(PhantomData::<symbol!("Foo")>)
     {
-        Either::Left(value) => value.to_string(),
-        Either::Right(remainder) => match remainder.extract_field(PhantomData::<symbol!("Bar")>) {
-            Either::Left(value) => value.to_string(),
-            Either::Right(remainder) => {
-                match remainder.extract_field(PhantomData::<symbol!("Baz")>) {
-                    Either::Left(value) => value.to_string(),
-                    Either::Right(remainder) => remainder.finalize_extract(),
-                }
-            }
+        Ok(value) => value.to_string(),
+        Err(remainder) => match remainder.extract_field(PhantomData::<symbol!("Bar")>) {
+            Ok(value) => value.to_string(),
+            Err(remainder) => match remainder.extract_field(PhantomData::<symbol!("Baz")>) {
+                Ok(value) => value.to_string(),
+                Err(remainder) => remainder.finalize_extract(),
+            },
         },
     }
 }

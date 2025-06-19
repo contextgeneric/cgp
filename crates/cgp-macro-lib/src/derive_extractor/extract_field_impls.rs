@@ -51,7 +51,7 @@ pub fn derive_extract_field_impls(
 
                 match_arms.push(parse2(quote! {
                     #extractor_ident :: #variant_ident ( value ) => {
-                        Either::Right(#extractor_ident :: #variant_ident ( value ))
+                        Err(#extractor_ident :: #variant_ident ( value ))
                     }
                 })?);
             } else {
@@ -60,7 +60,7 @@ pub fn derive_extract_field_impls(
 
                 match_arms.push(parse2(quote! {
                     #extractor_ident :: #variant_ident ( value ) => {
-                        Either::Left( value )
+                        Ok( value )
                     }
                 })?);
             }
@@ -97,7 +97,7 @@ pub fn derive_extract_field_impls(
 
                 type Remainder = #output_type;
 
-                fn extract_field(self, _tag: ::core::marker::PhantomData< #tag_type >) -> Either<Self::Value, Self::Remainder> {
+                fn extract_field(self, _tag: ::core::marker::PhantomData< #tag_type >) -> Result<Self::Value, Self::Remainder> {
                     match self {
                         #(#match_arms)*
                     }

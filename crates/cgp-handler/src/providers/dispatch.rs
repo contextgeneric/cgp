@@ -37,8 +37,8 @@ where
 
     fn compute(context: &Context, tag: PhantomData<Code>, input: Input) -> Output {
         match input.extract_field(PhantomData) {
-            Either::Left(value) => Provider::compute(context, tag, value.into()),
-            Either::Right(remainder) => DispatchHandlers::compute(context, tag, remainder),
+            Ok(value) => Provider::compute(context, tag, value.into()),
+            Err(remainder) => DispatchHandlers::compute(context, tag, remainder),
         }
     }
 }
@@ -55,8 +55,8 @@ where
 
     fn compute(context: &Context, tag: PhantomData<Code>, input: Input) -> Output {
         match input.extract_field(PhantomData) {
-            Either::Left(value) => Provider::compute(context, tag, value.into()),
-            Either::Right(remainder) => remainder.finalize_extract(),
+            Ok(value) => Provider::compute(context, tag, value.into()),
+            Err(remainder) => remainder.finalize_extract(),
         }
     }
 }

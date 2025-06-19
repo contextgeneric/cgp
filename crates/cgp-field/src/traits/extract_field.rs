@@ -1,7 +1,7 @@
 use core::convert::Infallible;
 use core::marker::PhantomData;
 
-use crate::{Either, Void};
+use crate::Void;
 
 pub trait HasExtractor {
     type Extractor;
@@ -22,7 +22,7 @@ pub trait ExtractField<Tag> {
 
     type Remainder;
 
-    fn extract_field(self, _tag: PhantomData<Tag>) -> Either<Self::Value, Self::Remainder>;
+    fn extract_field(self, _tag: PhantomData<Tag>) -> Result<Self::Value, Self::Remainder>;
 }
 
 pub trait FinalizeExtract {
