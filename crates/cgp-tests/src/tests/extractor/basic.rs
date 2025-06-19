@@ -2,7 +2,9 @@ use core::fmt::{Debug, Display};
 use core::marker::PhantomData;
 
 use cgp::core::field::CanExtractInto;
-use cgp::extra::dispatch::{DispatchFields, DispatchHandlers, ExtractAndHandle};
+use cgp::extra::dispatch::{
+    DispatchFields, DispatchHandlers, ExtractAndHandle, ExtractFieldAndHandle,
+};
 use cgp::extra::handler::{Computer, ComputerComponent};
 use cgp::prelude::*;
 
@@ -118,7 +120,7 @@ fn test_extract_from() {
 }
 
 #[test]
-fn test_extractor_dispatcher() {
+fn test_dispatch_fields() {
     #[cgp_new_provider]
     impl<Context, Code, Tag, Value> Computer<Context, Code, Field<Tag, Value>> for FieldToString
     where
@@ -135,9 +137,27 @@ fn test_extractor_dispatcher() {
         }
     }
 
-    let res = DispatchFields::<FieldToString>::compute(&(), PhantomData::<()>, FooBarBaz::Foo(1));
+    let context = ();
+    let code = PhantomData::<()>;
 
-    assert_eq!(res, "1");
+    assert_eq!(
+        DispatchFields::<FieldToString>::compute(&context, code, FooBarBaz::Foo(1)),
+        "1"
+    );
+
+    assert_eq!(
+        DispatchFields::<FieldToString>::compute(
+            &context,
+            code,
+            FooBarBaz::Bar("hello".to_owned())
+        ),
+        "hello"
+    );
+
+    assert_eq!(
+        DispatchFields::<FieldToString>::compute(&context, code, FooBarBaz::Baz(true)),
+        "true"
+    );
 }
 
 #[test]
@@ -152,15 +172,20 @@ fn test_dispatch_handlers() {
     }
 
     #[cgp_provider]
-    impl<Context, Code> Computer<Context, Code, Baz> for Show {
+    impl<Context, Code> Computer<Context, Code, Field<symbol!("Baz"), bool>> for Show {
         type Output = String;
 
-        fn compute(_context: &Context, _tag: PhantomData<Code>, input: Baz) -> String {
-            format!("Baz::{:?}", input)
+        fn compute(
+            _context: &Context,
+            _tag: PhantomData<Code>,
+            input: Field<symbol!("Baz"), bool>,
+        ) -> String {
+            format!("Baz({:?})", input)
         }
     }
 
-    type Handlers = Product![ExtractAndHandle<FooBar, Show>, ExtractAndHandle<Baz, Show>];
+    type Handlers =
+        Product![ExtractFieldAndHandle<symbol!("Baz"), Show>, ExtractAndHandle<FooBar, Show>];
 
     let context = ();
     let code = PhantomData::<()>;
@@ -177,6 +202,6 @@ fn test_dispatch_handlers() {
 
     assert_eq!(
         DispatchHandlers::<Handlers>::compute(&context, code, FooBarBaz::Baz(true)),
-        "Baz::Baz(true)"
+        "Baz(true)"
     );
 }
