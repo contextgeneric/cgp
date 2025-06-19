@@ -3,6 +3,8 @@ use core::marker::PhantomData;
 use cgp_core::component::UseDelegate;
 use cgp_core::prelude::*;
 
+use crate::UseInputDelegate;
+
 #[async_trait]
 #[cgp_component {
     provider: Handler,
@@ -20,5 +22,3 @@ pub trait CanHandle<Code: Send, Input: Send>: HasAsyncErrorType {
         input: Input,
     ) -> Result<Self::Output, Self::Error>;
 }
-
-pub struct UseInputDelegate<Components>(pub PhantomData<Components>);
