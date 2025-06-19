@@ -2,21 +2,21 @@ use core::marker::PhantomData;
 
 use crate::{Either, ExtractField, Field, FromVariant, HasFields, Void};
 
-pub trait CanExtractFrom<Extractor>: Sized {
+pub trait CanExtractInto<Target>: Sized {
     type Remainder;
 
-    fn extract_from(source: Extractor) -> Result<Self, Self::Remainder>;
+    fn extract_into(self, _tag: PhantomData<Target>) -> Result<Target, Self::Remainder>;
 }
 
-impl<Context, Extractor, Remainder> CanExtractFrom<Extractor> for Context
+impl<Target, Extractor, Remainder> CanExtractInto<Target> for Extractor
 where
-    Context: HasFields,
-    Context::Fields: FieldsExtractor<Context, Extractor, Remainder = Remainder>,
+    Target: HasFields,
+    Target::Fields: FieldsExtractor<Target, Extractor, Remainder = Remainder>,
 {
     type Remainder = Remainder;
 
-    fn extract_from(extractor: Extractor) -> Result<Self, Self::Remainder> {
-        Context::Fields::extract_from(extractor)
+    fn extract_into(self, _tag: PhantomData<Target>) -> Result<Target, Self::Remainder> {
+        Target::Fields::extract_from(self)
     }
 }
 

@@ -1,7 +1,7 @@
 use core::fmt::Display;
 use core::marker::PhantomData;
 
-use cgp::core::field::CanExtractFrom;
+use cgp::core::field::CanExtractInto;
 use cgp::extra::handler::{Computer, ComputerComponent, DispatchFields, DispatchHandlers};
 use cgp::prelude::*;
 
@@ -59,35 +59,59 @@ fn test_basic_extractor() {
 #[test]
 fn test_extract_from() {
     assert_eq!(
-        FooBar::extract_from(FooBarBaz::Foo(1).extractor()).ok(),
+        FooBarBaz::Foo(1)
+            .extractor()
+            .extract_into(PhantomData::<FooBar>)
+            .ok(),
         Some(FooBar::Foo(1))
     );
     assert_eq!(
-        FooBar::extract_from(FooBarBaz::Bar("hello".to_owned()).extractor()).ok(),
+        FooBarBaz::Bar("hello".to_owned())
+            .extractor()
+            .extract_into(PhantomData::<FooBar>)
+            .ok(),
         Some(FooBar::Bar("hello".to_owned()))
     );
     assert_eq!(
-        FooBar::extract_from(FooBarBaz::Baz(true).extractor()).ok(),
+        FooBarBaz::Baz(true)
+            .extractor()
+            .extract_into(PhantomData::<FooBar>)
+            .ok(),
         None
     );
 
     {
-        let remainder = FooBar::extract_from(FooBarBaz::Baz(true).extractor()).unwrap_err();
-        assert_eq!(Baz::extract_from(remainder).ok(), Some(Baz::Baz(true)));
+        let remainder = FooBarBaz::Baz(true)
+            .extractor()
+            .extract_into(PhantomData::<FooBar>)
+            .unwrap_err();
+        assert_eq!(
+            remainder.extract_into(PhantomData::<Baz>).ok(),
+            Some(Baz::Baz(true))
+        );
     }
 
     assert_eq!(
-        BazBarFoo::extract_from(FooBarBaz::Foo(1).extractor()).ok(),
+        FooBarBaz::Foo(1)
+            .extractor()
+            .extract_into(PhantomData::<BazBarFoo>)
+            .ok(),
         Some(BazBarFoo::Foo(1))
     );
 
     assert_eq!(
-        BazBarFoo::extract_from(FooBarBaz::Bar("hello".to_owned()).extractor()).ok(),
+        FooBarBaz::Bar("hello".to_owned())
+            .extractor()
+            .extract_into(PhantomData::<BazBarFoo>)
+            .ok(),
         Some(BazBarFoo::Bar("hello".to_owned()))
     );
 
     assert_eq!(
-        BazBarFoo::extract_from(FooBarBaz::Baz(true).extractor()).ok(),
+        FooBarBaz::Baz(true)
+            .extractor()
+            .extract_into(PhantomData::<BazBarFoo>)
+            .ok(),
         Some(BazBarFoo::Baz(true))
     );
 }
