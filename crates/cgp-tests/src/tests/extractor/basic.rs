@@ -1,14 +1,33 @@
 use core::fmt::Display;
 use core::marker::PhantomData;
 
+use cgp::core::field::CanExtractFrom;
 use cgp::extra::handler::{Computer, ComputerComponent, DispatchFields, DispatchHandlers};
 use cgp::prelude::*;
 
-#[derive(HasFields, ExtractField, FromVariant)]
+#[derive(Debug, Eq, PartialEq, HasFields, ExtractField, FromVariant)]
 pub enum FooBarBaz {
     Foo(u64),
     Bar(String),
     Baz(bool),
+}
+
+#[derive(Debug, Eq, PartialEq, HasFields, ExtractField, FromVariant)]
+pub enum FooBar {
+    Foo(u64),
+    Bar(String),
+}
+
+#[derive(Debug, Eq, PartialEq, HasFields, ExtractField, FromVariant)]
+pub enum Baz {
+    Baz(bool),
+}
+
+#[derive(Debug, Eq, PartialEq, HasFields, ExtractField, FromVariant)]
+pub enum BazBarFoo {
+    Baz(bool),
+    Bar(String),
+    Foo(u64),
 }
 
 fn context_to_string(context: FooBarBaz) -> String {
@@ -27,6 +46,52 @@ fn context_to_string(context: FooBarBaz) -> String {
     }
 }
 
+#[test]
+fn test_basic_extractor() {
+    assert_eq!(context_to_string(FooBarBaz::Foo(1)), "1");
+    assert_eq!(
+        context_to_string(FooBarBaz::Bar("hello".to_owned())),
+        "hello"
+    );
+    assert_eq!(context_to_string(FooBarBaz::Baz(true)), "true");
+}
+
+#[test]
+fn test_extract_from() {
+    assert_eq!(
+        FooBar::extract_from(FooBarBaz::Foo(1).extractor()).ok(),
+        Some(FooBar::Foo(1))
+    );
+    assert_eq!(
+        FooBar::extract_from(FooBarBaz::Bar("hello".to_owned()).extractor()).ok(),
+        Some(FooBar::Bar("hello".to_owned()))
+    );
+    assert_eq!(
+        FooBar::extract_from(FooBarBaz::Baz(true).extractor()).ok(),
+        None
+    );
+
+    {
+        let remainder = FooBar::extract_from(FooBarBaz::Baz(true).extractor()).unwrap_err();
+        assert_eq!(Baz::extract_from(remainder).ok(), Some(Baz::Baz(true)));
+    }
+
+    assert_eq!(
+        BazBarFoo::extract_from(FooBarBaz::Foo(1).extractor()).ok(),
+        Some(BazBarFoo::Foo(1))
+    );
+
+    assert_eq!(
+        BazBarFoo::extract_from(FooBarBaz::Bar("hello".to_owned()).extractor()).ok(),
+        Some(BazBarFoo::Bar("hello".to_owned()))
+    );
+
+    assert_eq!(
+        BazBarFoo::extract_from(FooBarBaz::Baz(true).extractor()).ok(),
+        Some(BazBarFoo::Baz(true))
+    );
+}
+
 #[cgp_new_provider]
 impl<Context, Code, Tag, Value> Computer<Context, Code, Field<Tag, Value>> for FieldToString
 where
@@ -41,16 +106,6 @@ where
 
 pub trait CheckComputerImpl: Computer<(), (), FooBarBaz> {}
 impl CheckComputerImpl for DispatchFields<FieldToString> {}
-
-#[test]
-fn test_basic_extractor() {
-    assert_eq!(context_to_string(FooBarBaz::Foo(1)), "1");
-    assert_eq!(
-        context_to_string(FooBarBaz::Bar("hello".to_owned())),
-        "hello"
-    );
-    assert_eq!(context_to_string(FooBarBaz::Baz(true)), "true");
-}
 
 #[test]
 fn test_extractor_dispatcher() {

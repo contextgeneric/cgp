@@ -1,49 +1,53 @@
 use core::marker::PhantomData;
 
-use crate::{Either, ExtractField, Field, FromVariant, HasExtractor, HasFields, Void};
+use crate::{Either, ExtractField, Field, FromVariant, HasFields, Void};
 
-pub trait CanExtractFrom<Source>: Sized {
+pub trait CanExtractFrom<Extractor>: Sized {
     type Remainder;
 
-    fn extract_from(source: Source) -> Result<Self, Self::Remainder>;
+    fn extract_from(source: Extractor) -> Result<Self, Self::Remainder>;
 }
 
-impl<Context, Source, Remainder> CanExtractFrom<Source> for Context
+impl<Context, Extractor, Remainder> CanExtractFrom<Extractor> for Context
 where
-    Context: HasFields + DoExtractFrom<Context::Fields, Source::Extractor, Remainder = Remainder>,
-    Source: HasExtractor,
+    Context: HasFields,
+    Context::Fields: FieldsExtractor<Context, Extractor, Remainder = Remainder>,
 {
     type Remainder = Remainder;
 
-    fn extract_from(source: Source) -> Result<Self, Self::Remainder> {
-        Context::extract_from(source.extractor())
+    fn extract_from(extractor: Extractor) -> Result<Self, Self::Remainder> {
+        Context::Fields::extract_from(extractor)
     }
 }
 
-pub trait DoExtractFrom<Fields, Extractor>: Sized {
+trait FieldsExtractor<Context, Extractor> {
     type Remainder;
 
-    fn extract_from(extractor: Extractor) -> Result<Self, Self::Remainder>;
+    fn extract_from(extractor: Extractor) -> Result<Context, Self::Remainder>;
 }
 
-impl<Context, Tag, Value, RestFields, Extractor>
-    DoExtractFrom<Either<Field<Tag, Value>, RestFields>, Extractor> for Context
+impl<Context, Tag, Value, RestFields, Extractor, Remainder> FieldsExtractor<Context, Extractor>
+    for Either<Field<Tag, Value>, RestFields>
 where
     Extractor: ExtractField<Tag, Value = Value>,
     Context: FromVariant<Tag, Value = Value>,
+    RestFields: FieldsExtractor<Context, Extractor::Remainder, Remainder = Remainder>,
 {
-    type Remainder = Extractor::Remainder;
+    type Remainder = Remainder;
 
-    fn extract_from(extractor: Extractor) -> Result<Self, Self::Remainder> {
-        let field = extractor.extract_field(PhantomData)?;
-        Ok(Context::from_variant(PhantomData, field.into()))
+    fn extract_from(extractor: Extractor) -> Result<Context, Remainder> {
+        let res = extractor.extract_field(PhantomData);
+        match res {
+            Ok(field) => Ok(Context::from_variant(PhantomData, field.into())),
+            Err(remainder) => RestFields::extract_from(remainder),
+        }
     }
 }
 
-impl<Context, Extractor> DoExtractFrom<Void, Extractor> for Context {
+impl<Context, Extractor> FieldsExtractor<Context, Extractor> for Void {
     type Remainder = Extractor;
 
-    fn extract_from(extractor: Extractor) -> Result<Self, Extractor> {
+    fn extract_from(extractor: Extractor) -> Result<Context, Extractor> {
         Err(extractor)
     }
 }
