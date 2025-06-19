@@ -41,15 +41,6 @@ where
     }
 }
 
-#[cgp_provider]
-impl<Context, Code> Computer<Context, Code, Void> for FieldToString {
-    type Output = String;
-
-    fn compute(_context: &Context, _tag: PhantomData<Code>, input: Void) -> String {
-        match input {}
-    }
-}
-
 pub trait CheckComputerImpl: Computer<(), (), Context> {}
 impl CheckComputerImpl for DispatchFields<FieldToString> {}
 
@@ -62,13 +53,13 @@ fn test_basic_extractor() {
 
 #[test]
 fn test_extractor_dispatcher() {
-    let res = DispatchFields::<FieldToString>::compute(&(), PhantomData::<()>, Context::Foo(1));
+    // let res = DispatchFields::<FieldToString>::compute(&(), PhantomData::<()>, Context::Foo(1));
 
-    // let res = DispatchHandlers::<<Context as HasFields>::Fields, FieldToString>::compute(
-    //     &(),
-    //     PhantomData::<()>,
-    //     Context::Foo(1).extractor(),
-    // );
+    let res = DispatchHandlers::<<Context as HasFields>::Fields, FieldToString>::compute(
+        &(),
+        PhantomData::<()>,
+        Context::Foo(1).extractor(),
+    );
 
     assert_eq!(res, "1");
 }

@@ -21,36 +21,42 @@ where
 pub struct DispatchHandlers<Fields, Provider = UseContext>(pub PhantomData<(Fields, Provider)>);
 
 #[cgp_provider]
-impl<Context, Code, Tag, Value, Input, Provider, Remainder, RestFields, Output>
+impl<Context, Code, TagA, ValueA, TagB, ValueB, Input, Provider, Remainder, RestFields, Output>
     Computer<Context, Code, Input>
-    for DispatchHandlers<Either<Field<Tag, Value>, RestFields>, Provider>
+    for DispatchHandlers<
+        Either<Field<TagA, ValueA>, Either<Field<TagB, ValueB>, RestFields>>,
+        Provider,
+    >
 where
-    Provider: Computer<Context, Code, Field<Tag, Value>, Output = Output>,
-    Input: ExtractField<Tag, Value = Value, Remainder = Remainder>,
-    DispatchHandlers<RestFields, Provider>: Computer<Context, Code, Remainder, Output = Output>,
+    Provider: Computer<Context, Code, Field<TagA, ValueA>, Output = Output>,
+    Input: ExtractField<TagA, Value = ValueA, Remainder = Remainder>,
+    DispatchHandlers<Either<Field<TagB, ValueB>, RestFields>, Provider>:
+        Computer<Context, Code, Remainder, Output = Output>,
 {
     type Output = Output;
 
     fn compute(context: &Context, tag: PhantomData<Code>, input: Input) -> Output {
         match input.extract_field(PhantomData) {
             Either::Left(value) => Provider::compute(context, tag, value.into()),
-            Either::Right(remainder) => {
-                <DispatchHandlers<RestFields, Provider>>::compute(context, tag, remainder)
-            }
+            Either::Right(remainder) => DispatchHandlers::compute(context, tag, remainder),
         }
     }
 }
 
 #[cgp_provider]
-impl<Context, Code, Input, Provider, Output> Computer<Context, Code, Input>
-    for DispatchHandlers<Void, Provider>
+impl<Context, Code, Input, Provider, Tag, Value, Remainder, Output> Computer<Context, Code, Input>
+    for DispatchHandlers<Either<Field<Tag, Value>, Void>, Provider>
 where
-    Provider: Computer<Context, Code, Void, Output = Output>,
-    Input: FinalizeExtract,
+    Provider: Computer<Context, Code, Field<Tag, Value>, Output = Output>,
+    Input: ExtractField<Tag, Value = Value, Remainder = Remainder>,
+    Remainder: FinalizeExtract,
 {
     type Output = Output;
 
-    fn compute(_context: &Context, _tag: PhantomData<Code>, input: Input) -> Output {
-        input.finalize_extract()
+    fn compute(context: &Context, tag: PhantomData<Code>, input: Input) -> Output {
+        match input.extract_field(PhantomData) {
+            Either::Left(value) => Provider::compute(context, tag, value.into()),
+            Either::Right(remainder) => remainder.finalize_extract(),
+        }
     }
 }
