@@ -962,3 +962,10 @@ pub fn derive_extractor(item: TokenStream) -> TokenStream {
         .unwrap_or_else(syn::Error::into_compile_error)
         .into()
 }
+
+#[proc_macro_derive(FromVariant)]
+pub fn derive_from_variant(item: TokenStream) -> TokenStream {
+    cgp_macro_lib::derive_from_variant(item.into())
+        .unwrap_or_else(syn::Error::into_compile_error)
+        .into()
+}

@@ -4,7 +4,7 @@ use core::marker::PhantomData;
 use cgp::extra::handler::{Computer, ComputerComponent, DispatchFields, DispatchHandlers};
 use cgp::prelude::*;
 
-#[derive(HasFields, ExtractField)]
+#[derive(HasFields, ExtractField, FromVariant)]
 pub enum FooBarBaz {
     Foo(u64),
     Bar(String),
