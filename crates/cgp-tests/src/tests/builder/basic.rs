@@ -62,9 +62,7 @@ cgp_producer! {
             bar: "bar".to_owned(),
         }
     }
-}
 
-cgp_producer! {
     BuildFoo: u64 {
         1
     }
@@ -84,6 +82,27 @@ fn test_build_with_handlers() {
     let code = PhantomData::<()>;
 
     pub type Handlers = Product![HandleAndBuild<Promote<BuildFooBar>>, HandleAndBuildField<symbol!("baz"), Promote<BuildBaz>>];
+
+    assert_eq!(
+        BuildWithHandlers::<FooBarBaz, Handlers>::compute(&context, code, ()),
+        FooBarBaz {
+            foo: 1,
+            bar: "bar".to_owned(),
+            baz: true,
+        }
+    );
+}
+
+#[test]
+fn test_build_with_fields() {
+    let context = ();
+    let code = PhantomData::<()>;
+
+    pub type Handlers = Product![
+        HandleAndBuildField<symbol!("baz"), Promote<BuildBaz>>,
+        HandleAndBuildField<symbol!("bar"), Promote<BuildBar>>,
+        HandleAndBuildField<symbol!("foo"), Promote<BuildFoo>>,
+    ];
 
     assert_eq!(
         BuildWithHandlers::<FooBarBaz, Handlers>::compute(&context, code, ()),

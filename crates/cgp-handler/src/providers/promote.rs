@@ -6,6 +6,10 @@ use crate::{Computer, ComputerComponent, Handler, HandlerComponent, Producer};
 
 pub struct Promote<Provider>(pub PhantomData<Provider>);
 
+pub type Promote2<Provider> = Promote<Promote<Provider>>;
+
+pub type Promote3<Provider> = Promote<Promote2<Provider>>;
+
 #[cgp_provider]
 impl<Context, Code, Input, Output, Provider> Handler<Context, Code, Input> for Promote<Provider>
 where
