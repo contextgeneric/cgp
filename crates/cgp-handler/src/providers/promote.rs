@@ -2,9 +2,11 @@ use core::marker::PhantomData;
 
 use cgp_core::prelude::*;
 
-use crate::{Computer, Handler, HandlerComponent};
+use crate::{Computer, ComputerComponent, Handler, HandlerComponent, Producer};
 
-#[cgp_new_provider]
+pub struct Promote<Provider>(pub PhantomData<Provider>);
+
+#[cgp_provider]
 impl<Context, Code, Input, Output, Provider> Handler<Context, Code, Input> for Promote<Provider>
 where
     Context: HasAsyncErrorType,
@@ -21,6 +23,18 @@ where
         input: Input,
     ) -> Result<Output, Context::Error> {
         Ok(Provider::compute(context, tag, input))
+    }
+}
+
+#[cgp_provider]
+impl<Context, Code, Input, Output, Provider> Computer<Context, Code, Input> for Promote<Provider>
+where
+    Provider: Producer<Context, Code, Output = Output>,
+{
+    type Output = Output;
+
+    fn compute(context: &Context, code: PhantomData<Code>, _input: Input) -> Self::Output {
+        Provider::produce(context, code)
     }
 }
 
