@@ -1,7 +1,7 @@
 use core::marker::PhantomData;
 
 use cgp_core::prelude::*;
-use cgp_handler::{Computer, ComputerComponent};
+use cgp_handler::{Computer, ComputerComponent, Handler, HandlerComponent};
 
 pub struct DispatchHandlers<Handlers>(pub PhantomData<Handlers>);
 
@@ -21,6 +21,31 @@ where
         match res {
             Ok(output) => output,
             Err(remainder) => remainder.finalize_extract(),
+        }
+    }
+}
+
+#[cgp_provider]
+impl<Context, Code: Send, Input: Send, Output: Send, Handlers> Handler<Context, Code, Input>
+    for DispatchHandlers<Handlers>
+where
+    Context: HasAsyncErrorType,
+    Input: HasExtractor,
+    Handlers: DispatchHandler<Context, Code, Input::Extractor, Output = Output>,
+    Handlers::Remainder: FinalizeExtract,
+{
+    type Output = Output;
+
+    async fn handle(
+        _context: &Context,
+        code: PhantomData<Code>,
+        input: Input,
+    ) -> Result<Output, Context::Error> {
+        let res = Handlers::handle(_context, code, input.extractor()).await?;
+
+        match res {
+            Ok(output) => Ok(output),
+            Err(remainder) => Err(remainder.finalize_extract()),
         }
     }
 }
@@ -87,5 +112,76 @@ where
         input: Input,
     ) -> Result<Self::Output, Self::Remainder> {
         Handler::compute(context, tag, input)
+    }
+}
+
+#[async_trait]
+trait DispatchHandler<Context, Code, Input>
+where
+    Context: HasAsyncErrorType,
+{
+    type Output: Send;
+
+    type Remainder: Send;
+
+    async fn handle(
+        context: &Context,
+        tag: PhantomData<Code>,
+        input: Input,
+    ) -> Result<Result<Self::Output, Self::Remainder>, Context::Error>;
+}
+
+impl<
+        Context,
+        Code: Send,
+        Input: Send,
+        CurrentHandler,
+        NextHandler,
+        RestHandlers,
+        Output: Send,
+        RemainderA: Send,
+        RemainderB: Send,
+    > DispatchHandler<Context, Code, Input>
+    for Cons<CurrentHandler, Cons<NextHandler, RestHandlers>>
+where
+    Context: HasAsyncErrorType,
+    CurrentHandler: Handler<Context, Code, Input, Output = Result<Output, RemainderA>>,
+    Cons<NextHandler, RestHandlers>:
+        DispatchHandler<Context, Code, RemainderA, Output = Output, Remainder = RemainderB>,
+{
+    type Output = Output;
+
+    type Remainder = RemainderB;
+
+    async fn handle(
+        context: &Context,
+        tag: PhantomData<Code>,
+        input: Input,
+    ) -> Result<Result<Self::Output, Self::Remainder>, Context::Error> {
+        let res = CurrentHandler::handle(context, tag, input).await?;
+
+        match res {
+            Ok(output) => Ok(Ok(output)),
+            Err(remainder) => Cons::handle(context, tag, remainder).await,
+        }
+    }
+}
+
+impl<Context, Code: Send, Input: Send, CurrentHandler, Remainder: Send, Output: Send>
+    DispatchHandler<Context, Code, Input> for Cons<CurrentHandler, Nil>
+where
+    Context: HasAsyncErrorType,
+    CurrentHandler: Handler<Context, Code, Input, Output = Result<Output, Remainder>>,
+{
+    type Output = Output;
+
+    type Remainder = Remainder;
+
+    async fn handle(
+        context: &Context,
+        tag: PhantomData<Code>,
+        input: Input,
+    ) -> Result<Result<Self::Output, Self::Remainder>, Context::Error> {
+        CurrentHandler::handle(context, tag, input).await
     }
 }
