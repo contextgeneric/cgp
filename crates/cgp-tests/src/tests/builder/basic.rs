@@ -2,7 +2,7 @@ use std::marker::PhantomData;
 
 use cgp::core::field::CanBuildFrom;
 use cgp::extra::dispatch::{BuildWithHandlers, HandleAndBuild, HandleAndBuildField};
-use cgp::extra::handler::{Computer, ComputerComponent};
+use cgp::extra::handler::{cgp_producer, Computer, Producer, ProducerComponent, Promote};
 use cgp::prelude::*;
 
 #[derive(Debug, Eq, PartialEq, HasFields, BuildField)]
@@ -55,11 +55,8 @@ fn test_build_from() {
     assert!(foo_bar_baz.baz);
 }
 
-#[cgp_new_provider]
-impl<Context, Code, Input> Computer<Context, Code, Input> for BuildFooBar {
-    type Output = FooBar;
-
-    fn compute(_context: &Context, _code: PhantomData<Code>, _input: Input) -> Self::Output {
+cgp_producer! {
+    BuildFooBar: FooBar {
         FooBar {
             foo: 1,
             bar: "bar".to_owned(),
@@ -67,11 +64,16 @@ impl<Context, Code, Input> Computer<Context, Code, Input> for BuildFooBar {
     }
 }
 
-#[cgp_new_provider]
-impl<Context, Code, Input> Computer<Context, Code, Input> for BuildBaz {
-    type Output = bool;
+cgp_producer! {
+    BuildFoo: u64 {
+        1
+    }
 
-    fn compute(_context: &Context, _code: PhantomData<Code>, _input: Input) -> Self::Output {
+    BuildBar: String {
+        "bar".to_owned()
+    }
+
+    BuildBaz: bool {
         true
     }
 }
@@ -81,8 +83,7 @@ fn test_build_with_handlers() {
     let context = ();
     let code = PhantomData::<()>;
 
-    pub type Handlers =
-        Product![HandleAndBuild<BuildFooBar>, HandleAndBuildField<symbol!("baz"), BuildBaz>];
+    pub type Handlers = Product![HandleAndBuild<Promote<BuildFooBar>>, HandleAndBuildField<symbol!("baz"), Promote<BuildBaz>>];
 
     assert_eq!(
         BuildWithHandlers::<FooBarBaz, Handlers>::compute(&context, code, ()),
