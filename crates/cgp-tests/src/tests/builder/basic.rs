@@ -52,3 +52,6 @@ fn test_build_from() {
     assert_eq!(foo_bar_baz.bar, "bar");
     assert!(foo_bar_baz.baz);
 }
+
+// #[cgp_new_provider]
+// impl<Context, Code,

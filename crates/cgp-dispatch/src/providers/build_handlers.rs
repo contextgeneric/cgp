@@ -8,45 +8,71 @@ impl<Context, Code, Input, Output, Builder, Handlers> Computer<Context, Code, In
     for BuildWithHandlers<Output, Handlers>
 where
     Output: HasBuilder<Builder = Builder>,
-    Handlers: BuilderComputer<Context, Code, Builder>,
+    Handlers: BuilderComputer<Context, Code, Input, Builder>,
     Handlers::Output: FinalizeBuild<Output = Output>,
 {
     type Output = Output;
 
-    fn compute(context: &Context, code: PhantomData<Code>, _input: Input) -> Self::Output {
-        Handlers::build(context, code, Output::builder()).finalize_build()
+    fn compute(context: &Context, code: PhantomData<Code>, input: Input) -> Self::Output {
+        Handlers::build(context, code, input, Output::builder()).finalize_build()
     }
 }
 
-trait BuilderComputer<Context, Code, Builder> {
+pub trait BuilderComputer<Context, Code, Input, Builder> {
     type Output;
 
-    fn build(context: &Context, code: PhantomData<Code>, input: Builder) -> Self::Output;
+    fn build(
+        context: &Context,
+        code: PhantomData<Code>,
+        input: Input,
+        builder: Builder,
+    ) -> Self::Output;
 }
 
-impl<Context, Code, Builder, NextBuilder, Output, CurrentHandler, NextHandler, RestHandlers>
-    BuilderComputer<Context, Code, Builder>
+impl<
+        Context,
+        Code,
+        Input,
+        Builder,
+        NextBuilder,
+        Output,
+        CurrentHandler,
+        NextHandler,
+        RestHandlers,
+    > BuilderComputer<Context, Code, Input, Builder>
     for Cons<CurrentHandler, Cons<NextHandler, RestHandlers>>
 where
-    CurrentHandler: Computer<Context, Code, Builder, Output = NextBuilder>,
-    Cons<NextHandler, RestHandlers>: BuilderComputer<Context, Code, NextBuilder, Output = Output>,
+    CurrentHandler: BuilderComputer<Context, Code, Input, Builder, Output = NextBuilder>,
+    Cons<NextHandler, RestHandlers>:
+        BuilderComputer<Context, Code, Input, NextBuilder, Output = Output>,
+    Input: Clone,
 {
     type Output = Output;
 
-    fn build(context: &Context, code: PhantomData<Code>, builder: Builder) -> Self::Output {
-        let next_builder = CurrentHandler::compute(context, code, builder);
-        Cons::build(context, code, next_builder)
+    fn build(
+        context: &Context,
+        code: PhantomData<Code>,
+        input: Input,
+        builder: Builder,
+    ) -> Self::Output {
+        let next_builder = CurrentHandler::build(context, code, input.clone(), builder);
+        Cons::build(context, code, input, next_builder)
     }
 }
 
-impl<Context, Code, Builder, Handler, Output> BuilderComputer<Context, Code, Builder>
+impl<Context, Code, Input, Builder, Handler, Output> BuilderComputer<Context, Code, Input, Builder>
     for Cons<Handler, Nil>
 where
-    Handler: Computer<Context, Code, Builder, Output = Output>,
+    Handler: BuilderComputer<Context, Code, Input, Builder, Output = Output>,
 {
     type Output = Output;
 
-    fn build(context: &Context, code: PhantomData<Code>, builder: Builder) -> Self::Output {
-        Handler::compute(context, code, builder)
+    fn build(
+        context: &Context,
+        code: PhantomData<Code>,
+        input: Input,
+        builder: Builder,
+    ) -> Self::Output {
+        Handler::build(context, code, input, builder)
     }
 }
