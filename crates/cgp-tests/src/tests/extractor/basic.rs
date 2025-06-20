@@ -1,12 +1,15 @@
+use core::convert::Infallible;
 use core::fmt::{Debug, Display};
 use core::marker::PhantomData;
 
+use cgp::core::error::ErrorTypeProviderComponent;
 use cgp::core::field::CanExtractInto;
 use cgp::extra::dispatch::{
     DispatchFields, DispatchHandlers, ExtractAndHandle, ExtractFieldAndHandle,
 };
-use cgp::extra::handler::{Computer, ComputerComponent};
+use cgp::extra::handler::{Computer, ComputerComponent, Handler, Promote};
 use cgp::prelude::*;
+use futures::executor::block_on;
 
 #[derive(Debug, Eq, PartialEq, HasFields, ExtractField, FromVariant)]
 pub enum FooBarBaz {
@@ -160,48 +163,98 @@ fn test_dispatch_fields() {
     );
 }
 
+#[cgp_context]
+pub struct App;
+
+delegate_components! {
+    AppComponents {
+        ErrorTypeProviderComponent: UseType<Infallible>,
+    }
+}
+
+#[cgp_new_provider]
+impl<Context, Code> Computer<Context, Code, FooBar> for Show {
+    type Output = String;
+
+    fn compute(_context: &Context, _tag: PhantomData<Code>, input: FooBar) -> String {
+        format!("FooBar::{:?}", input)
+    }
+}
+
+#[cgp_provider]
+impl<Context, Code> Computer<Context, Code, Field<symbol!("Baz"), bool>> for Show {
+    type Output = String;
+
+    fn compute(
+        _context: &Context,
+        _tag: PhantomData<Code>,
+        input: Field<symbol!("Baz"), bool>,
+    ) -> String {
+        format!("Baz({:?})", input)
+    }
+}
+
+type Computers =
+    Product![ExtractFieldAndHandle<symbol!("Baz"), Show>, ExtractAndHandle<FooBar, Show>];
+
+type Handlers = Product![
+    Promote<ExtractFieldAndHandle<symbol!("Baz"), Show>>,
+    Promote<ExtractAndHandle<FooBar, Show>>
+];
+
 #[test]
-fn test_dispatch_handlers() {
-    #[cgp_new_provider]
-    impl<Context, Code> Computer<Context, Code, FooBar> for Show {
-        type Output = String;
-
-        fn compute(_context: &Context, _tag: PhantomData<Code>, input: FooBar) -> String {
-            format!("FooBar::{:?}", input)
-        }
-    }
-
-    #[cgp_provider]
-    impl<Context, Code> Computer<Context, Code, Field<symbol!("Baz"), bool>> for Show {
-        type Output = String;
-
-        fn compute(
-            _context: &Context,
-            _tag: PhantomData<Code>,
-            input: Field<symbol!("Baz"), bool>,
-        ) -> String {
-            format!("Baz({:?})", input)
-        }
-    }
-
-    type Handlers =
-        Product![ExtractFieldAndHandle<symbol!("Baz"), Show>, ExtractAndHandle<FooBar, Show>];
-
-    let context = ();
+fn test_dispatch_computers() {
+    let context = App;
     let code = PhantomData::<()>;
 
     assert_eq!(
-        DispatchHandlers::<Handlers>::compute(&context, code, FooBarBaz::Foo(1)),
+        DispatchHandlers::<Computers>::compute(&context, code, FooBarBaz::Foo(1)),
         "FooBar::Foo(1)"
     );
 
     assert_eq!(
-        DispatchHandlers::<Handlers>::compute(&context, code, FooBarBaz::Bar("hello".to_owned())),
+        DispatchHandlers::<Computers>::compute(&context, code, FooBarBaz::Bar("hello".to_owned())),
         "FooBar::Bar(\"hello\")"
     );
 
     assert_eq!(
-        DispatchHandlers::<Handlers>::compute(&context, code, FooBarBaz::Baz(true)),
+        DispatchHandlers::<Computers>::compute(&context, code, FooBarBaz::Baz(true)),
+        "Baz(true)"
+    );
+}
+
+#[test]
+fn test_dispatch_handlers() {
+    let context = App;
+    let code = PhantomData::<()>;
+
+    assert_eq!(
+        block_on(DispatchHandlers::<Handlers>::handle(
+            &context,
+            code,
+            FooBarBaz::Foo(1)
+        ))
+        .unwrap(),
+        "FooBar::Foo(1)"
+    );
+
+    assert_eq!(
+        block_on(DispatchHandlers::<Handlers>::handle(
+            &context,
+            code,
+            FooBarBaz::Bar("hello".to_owned())
+        ))
+        .unwrap(),
+        "FooBar::Bar(\"hello\")"
+    );
+
+    assert_eq!(
+        block_on(DispatchHandlers::<Handlers>::handle(
+            &context,
+            code,
+            FooBarBaz::Baz(true)
+        ))
+        .unwrap(),
         "Baz(true)"
     );
 }
