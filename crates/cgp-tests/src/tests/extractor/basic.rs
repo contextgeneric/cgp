@@ -122,25 +122,30 @@ fn test_extract_from() {
     );
 }
 
+#[cgp_context]
+pub struct App;
+
+delegate_components! {
+    AppComponents {
+        ErrorTypeProviderComponent: UseType<Infallible>,
+    }
+}
+
+#[cgp_new_provider]
+impl<Context, Code, Tag, Value> Computer<Context, Code, Field<Tag, Value>> for FieldToString
+where
+    Value: Display,
+{
+    type Output = String;
+
+    fn compute(_context: &Context, _tag: PhantomData<Code>, input: Field<Tag, Value>) -> String {
+        input.value.to_string()
+    }
+}
+
 #[test]
 fn test_dispatch_fields() {
-    #[cgp_new_provider]
-    impl<Context, Code, Tag, Value> Computer<Context, Code, Field<Tag, Value>> for FieldToString
-    where
-        Value: Display,
-    {
-        type Output = String;
-
-        fn compute(
-            _context: &Context,
-            _tag: PhantomData<Code>,
-            input: Field<Tag, Value>,
-        ) -> String {
-            input.value.to_string()
-        }
-    }
-
-    let context = ();
+    let context = App;
     let code = PhantomData::<()>;
 
     assert_eq!(
@@ -163,13 +168,40 @@ fn test_dispatch_fields() {
     );
 }
 
-#[cgp_context]
-pub struct App;
+#[test]
+fn test_async_dispatch_fields() {
+    let context = App;
+    let code = PhantomData::<()>;
 
-delegate_components! {
-    AppComponents {
-        ErrorTypeProviderComponent: UseType<Infallible>,
-    }
+    assert_eq!(
+        block_on(DispatchFields::<Promote<FieldToString>>::handle(
+            &context,
+            code,
+            FooBarBaz::Foo(1)
+        ))
+        .unwrap(),
+        "1"
+    );
+
+    assert_eq!(
+        block_on(DispatchFields::<Promote<FieldToString>>::handle(
+            &context,
+            code,
+            FooBarBaz::Bar("hello".to_owned())
+        ))
+        .unwrap(),
+        "hello"
+    );
+
+    assert_eq!(
+        block_on(DispatchFields::<Promote<FieldToString>>::handle(
+            &context,
+            code,
+            FooBarBaz::Baz(true)
+        ))
+        .unwrap(),
+        "true"
+    );
 }
 
 #[cgp_new_provider]
