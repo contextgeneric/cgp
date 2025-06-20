@@ -1,22 +1,24 @@
 use std::marker::PhantomData;
 
 use cgp::core::field::CanBuildFrom;
+use cgp::extra::dispatch::{BuildWithHandlers, HandleAndBuild, HandleAndBuildField};
+use cgp::extra::handler::{Computer, ComputerComponent};
 use cgp::prelude::*;
 
-#[derive(HasFields, BuildField)]
+#[derive(Debug, Eq, PartialEq, HasFields, BuildField)]
 pub struct FooBarBaz {
     pub foo: u64,
     pub bar: String,
     pub baz: bool,
 }
 
-#[derive(HasFields, BuildField)]
+#[derive(Debug, Eq, PartialEq, HasFields, BuildField)]
 pub struct FooBar {
     pub foo: u64,
     pub bar: String,
 }
 
-#[derive(HasFields, BuildField)]
+#[derive(Debug, Eq, PartialEq, HasFields, BuildField)]
 pub struct Baz {
     pub baz: bool,
 }
@@ -53,5 +55,41 @@ fn test_build_from() {
     assert!(foo_bar_baz.baz);
 }
 
-// #[cgp_new_provider]
-// impl<Context, Code,
+#[cgp_new_provider]
+impl<Context, Code, Input> Computer<Context, Code, Input> for BuildFooBar {
+    type Output = FooBar;
+
+    fn compute(_context: &Context, _code: PhantomData<Code>, _input: Input) -> Self::Output {
+        FooBar {
+            foo: 1,
+            bar: "bar".to_owned(),
+        }
+    }
+}
+
+#[cgp_new_provider]
+impl<Context, Code, Input> Computer<Context, Code, Input> for BuildBaz {
+    type Output = bool;
+
+    fn compute(_context: &Context, _code: PhantomData<Code>, _input: Input) -> Self::Output {
+        true
+    }
+}
+
+#[test]
+fn test_build_with_handlers() {
+    let context = ();
+    let code = PhantomData::<()>;
+
+    pub type Handlers =
+        Product![HandleAndBuild<BuildFooBar>, HandleAndBuildField<symbol!("baz"), BuildBaz>];
+
+    assert_eq!(
+        BuildWithHandlers::<FooBarBaz, Handlers>::compute(&context, code, ()),
+        FooBarBaz {
+            foo: 1,
+            bar: "bar".to_owned(),
+            baz: true,
+        }
+    );
+}

@@ -4,10 +4,10 @@ use cgp_handler::Computer;
 
 use crate::BuilderComputer;
 
-pub struct HandleAndBuild<Input, Provider = UseContext>(pub PhantomData<(Input, Provider)>);
+pub struct HandleAndBuild<Provider = UseContext>(pub PhantomData<Provider>);
 
 impl<Context, Code, Input, Builder, Provider, Output> BuilderComputer<Context, Code, Input, Builder>
-    for HandleAndBuild<Input, Provider>
+    for HandleAndBuild<Provider>
 where
     Provider: Computer<Context, Code, Input>,
     Builder: CanBuildFrom<Provider::Output, Output = Output>,
