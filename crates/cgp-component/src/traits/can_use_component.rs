@@ -13,7 +13,7 @@ use crate::{HasCgpProvider, IsProviderFor};
     a given `Component` through its provider. When there are unsatisfied constraints,
     Rust would show the error messages from the `IsProviderFor` implementation.
 */
-pub trait CanUseComponent<Component, Params = ()> {}
+pub trait CanUseComponent<Component, Params: ?Sized = ()> {}
 
 impl<Context, Component, Params> CanUseComponent<Component, Params> for Context
 where
