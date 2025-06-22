@@ -1,11 +1,17 @@
 use core::marker::PhantomData;
 
-use crate::{Either, ExtractField, Field, FromVariant, HasFields, Void};
+use crate::{
+    Either, ExtractField, Field, FinalizeExtract, FromVariant, HasExtractor, HasFields, Void,
+};
 
-pub trait CanDowncast<Target>: Sized {
+pub trait CanDowncast<Target> {
     type Remainder;
 
     fn downcast(self, _tag: PhantomData<Target>) -> Result<Target, Self::Remainder>;
+}
+
+pub trait CanUpcast<Target> {
+    fn upcast(self, _tag: PhantomData<Target>) -> Target;
 }
 
 impl<Target, Extractor, Remainder> CanDowncast<Target> for Extractor
@@ -17,6 +23,20 @@ where
 
     fn downcast(self, _tag: PhantomData<Target>) -> Result<Target, Self::Remainder> {
         Target::Fields::extract_from(self)
+    }
+}
+
+impl<Target, Context, Remainder> CanUpcast<Target> for Context
+where
+    Context: HasFields + HasExtractor,
+    Context::Fields: FieldsExtractor<Target, Context::Extractor, Remainder = Remainder>,
+    Remainder: FinalizeExtract,
+{
+    fn upcast(self, _tag: PhantomData<Target>) -> Target {
+        match Context::Fields::extract_from(self.to_extractor()) {
+            Ok(target) => target,
+            Err(remainder) => remainder.finalize_extract(),
+        }
     }
 }
 

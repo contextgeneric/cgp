@@ -16,7 +16,7 @@ where
     type Output = Output;
 
     fn compute(_context: &Context, code: PhantomData<Code>, input: Input) -> Output {
-        let res = Handlers::compute(_context, code, input.extractor());
+        let res = Handlers::compute(_context, code, input.to_extractor());
 
         match res {
             Ok(output) => output,
@@ -41,7 +41,7 @@ where
         code: PhantomData<Code>,
         input: Input,
     ) -> Result<Output, Context::Error> {
-        let res = Handlers::handle(_context, code, input.extractor()).await?;
+        let res = Handlers::handle(_context, code, input.to_extractor()).await?;
 
         match res {
             Ok(output) => Ok(output),

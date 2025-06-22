@@ -13,7 +13,9 @@ pub fn derive_has_extractor_impl(
 
     let mut extractor_generics = to_generic_args(&context_enum.generics)?;
 
-    let mut match_arms = Vec::<Arm>::new();
+    let mut to_match_arms = Vec::<Arm>::new();
+
+    let mut from_match_arms = Vec::<Arm>::new();
 
     for variant in context_enum.variants.iter() {
         extractor_generics.args.push(parse2(quote! {
@@ -22,9 +24,15 @@ pub fn derive_has_extractor_impl(
 
         let variant_ident = &variant.ident;
 
-        match_arms.push(parse2(quote! {
+        to_match_arms.push(parse2(quote! {
             Self :: #variant_ident ( value ) => {
                 #extractor_ident:: #variant_ident ( value )
+            }
+        })?);
+
+        from_match_arms.push(parse2(quote! {
+            #extractor_ident:: #variant_ident ( value ) => {
+                Self :: #variant_ident ( value )
             }
         })?);
     }
@@ -36,9 +44,15 @@ pub fn derive_has_extractor_impl(
         {
             type Extractor = #extractor_ident #extractor_generics;
 
-            fn extractor(self) -> Self::Extractor {
+            fn to_extractor(self) -> Self::Extractor {
                 match self {
-                    #(#match_arms)*
+                    #(#to_match_arms)*
+                }
+            }
+
+            fn from_extractor(extractor: Self::Extractor) -> Self {
+                match extractor {
+                    #(#from_match_arms)*
                 }
             }
         }

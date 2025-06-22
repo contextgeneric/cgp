@@ -3,7 +3,7 @@ use core::fmt::{Debug, Display};
 use core::marker::PhantomData;
 
 use cgp::core::error::ErrorTypeProviderComponent;
-use cgp::core::field::CanDowncast;
+use cgp::core::field::{CanDowncast, CanUpcast};
 use cgp::extra::dispatch::{
     DispatchFields, DispatchHandlers, ExtractAndHandle, ExtractFieldAndHandle,
 };
@@ -63,24 +63,37 @@ fn test_basic_extractor() {
 }
 
 #[test]
+fn test_upcast() {
+    assert_eq!(
+        FooBar::Foo(1).upcast(PhantomData::<FooBarBaz>),
+        FooBarBaz::Foo(1)
+    );
+
+    assert_eq!(
+        FooBar::Bar("hello".to_owned()).upcast(PhantomData::<FooBarBaz>),
+        FooBarBaz::Bar("hello".to_owned())
+    );
+}
+
+#[test]
 fn test_downcast() {
     assert_eq!(
         FooBarBaz::Foo(1)
-            .extractor()
+            .to_extractor()
             .downcast(PhantomData::<FooBar>)
             .ok(),
         Some(FooBar::Foo(1))
     );
     assert_eq!(
         FooBarBaz::Bar("hello".to_owned())
-            .extractor()
+            .to_extractor()
             .downcast(PhantomData::<FooBar>)
             .ok(),
         Some(FooBar::Bar("hello".to_owned()))
     );
     assert_eq!(
         FooBarBaz::Baz(true)
-            .extractor()
+            .to_extractor()
             .downcast(PhantomData::<FooBar>)
             .ok(),
         None
@@ -88,7 +101,7 @@ fn test_downcast() {
 
     {
         let remainder = FooBarBaz::Baz(true)
-            .extractor()
+            .to_extractor()
             .downcast(PhantomData::<FooBar>)
             .unwrap_err();
         assert_eq!(
@@ -99,7 +112,7 @@ fn test_downcast() {
 
     assert_eq!(
         FooBarBaz::Foo(1)
-            .extractor()
+            .to_extractor()
             .downcast(PhantomData::<BazBarFoo>)
             .ok(),
         Some(BazBarFoo::Foo(1))
@@ -107,7 +120,7 @@ fn test_downcast() {
 
     assert_eq!(
         FooBarBaz::Bar("hello".to_owned())
-            .extractor()
+            .to_extractor()
             .downcast(PhantomData::<BazBarFoo>)
             .ok(),
         Some(BazBarFoo::Bar("hello".to_owned()))
@@ -115,7 +128,7 @@ fn test_downcast() {
 
     assert_eq!(
         FooBarBaz::Baz(true)
-            .extractor()
+            .to_extractor()
             .downcast(PhantomData::<BazBarFoo>)
             .ok(),
         Some(BazBarFoo::Baz(true))

@@ -6,7 +6,9 @@ use crate::Void;
 pub trait HasExtractor {
     type Extractor;
 
-    fn extractor(self) -> Self::Extractor;
+    fn to_extractor(self) -> Self::Extractor;
+
+    fn from_extractor(extractor: Self::Extractor) -> Self;
 }
 
 pub trait HasExtractorRef {
