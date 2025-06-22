@@ -81,12 +81,14 @@ fn test_downcast() {
         FooBarBaz::Foo(1).downcast(PhantomData::<FooBar>).ok(),
         Some(FooBar::Foo(1))
     );
+
     assert_eq!(
         FooBarBaz::Bar("hello".to_owned())
             .downcast(PhantomData::<FooBar>)
             .ok(),
         Some(FooBar::Bar("hello".to_owned()))
     );
+
     assert_eq!(
         FooBarBaz::Baz(true).downcast(PhantomData::<FooBar>).ok(),
         None
