@@ -1,4 +1,4 @@
-use cgp_core::field::CanDowncast;
+use cgp_core::field::CanDowncastFields;
 use cgp_core::prelude::*;
 use cgp_handler::{Computer, ComputerComponent, Handler, HandlerComponent};
 
@@ -8,7 +8,7 @@ pub struct ExtractAndHandle<Input, Provider = UseContext>(pub PhantomData<(Input
 impl<Context, Code, Input, Provider, Inner, Output, Remainder> Computer<Context, Code, Input>
     for ExtractAndHandle<Inner, Provider>
 where
-    Input: CanDowncast<Inner, Remainder = Remainder>,
+    Input: CanDowncastFields<Inner, Remainder = Remainder>,
     Provider: Computer<Context, Code, Inner, Output = Output>,
 {
     type Output = Result<Output, Remainder>;
@@ -18,7 +18,7 @@ where
         tag: PhantomData<Code>,
         input: Input,
     ) -> Result<Output, Remainder> {
-        let inner = input.downcast(PhantomData::<Inner>)?;
+        let inner = input.downcast_fields(PhantomData::<Inner>)?;
         let output = Provider::compute(context, tag, inner);
         Ok(output)
     }
@@ -29,7 +29,7 @@ impl<Context, Code: Send, Input: Send, Provider, Inner: Send, Output: Send, Rema
     Handler<Context, Code, Input> for ExtractAndHandle<Inner, Provider>
 where
     Context: HasAsyncErrorType,
-    Input: CanDowncast<Inner, Remainder = Remainder>,
+    Input: CanDowncastFields<Inner, Remainder = Remainder>,
     Provider: Handler<Context, Code, Inner, Output = Output>,
 {
     type Output = Result<Output, Remainder>;
@@ -39,7 +39,7 @@ where
         tag: PhantomData<Code>,
         input: Input,
     ) -> Result<Result<Output, Remainder>, Context::Error> {
-        let inner = input.downcast(PhantomData::<Inner>);
+        let inner = input.downcast_fields(PhantomData::<Inner>);
 
         match inner {
             Ok(inner) => {

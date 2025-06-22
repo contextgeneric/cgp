@@ -3,7 +3,7 @@ use core::fmt::{Debug, Display};
 use core::marker::PhantomData;
 
 use cgp::core::error::ErrorTypeProviderComponent;
-use cgp::core::field::{CanDowncast, CanUpcast};
+use cgp::core::field::{CanDowncast, CanDowncastFields, CanUpcast};
 use cgp::extra::dispatch::{
     DispatchFields, DispatchHandlers, ExtractAndHandle, ExtractFieldAndHandle,
 };
@@ -78,59 +78,44 @@ fn test_upcast() {
 #[test]
 fn test_downcast() {
     assert_eq!(
-        FooBarBaz::Foo(1)
-            .to_extractor()
-            .downcast(PhantomData::<FooBar>)
-            .ok(),
+        FooBarBaz::Foo(1).downcast(PhantomData::<FooBar>).ok(),
         Some(FooBar::Foo(1))
     );
     assert_eq!(
         FooBarBaz::Bar("hello".to_owned())
-            .to_extractor()
             .downcast(PhantomData::<FooBar>)
             .ok(),
         Some(FooBar::Bar("hello".to_owned()))
     );
     assert_eq!(
-        FooBarBaz::Baz(true)
-            .to_extractor()
-            .downcast(PhantomData::<FooBar>)
-            .ok(),
+        FooBarBaz::Baz(true).downcast(PhantomData::<FooBar>).ok(),
         None
     );
 
     {
         let remainder = FooBarBaz::Baz(true)
-            .to_extractor()
             .downcast(PhantomData::<FooBar>)
             .unwrap_err();
         assert_eq!(
-            remainder.downcast(PhantomData::<Baz>).ok(),
+            remainder.downcast_fields(PhantomData::<Baz>).ok(),
             Some(Baz::Baz(true))
         );
     }
 
     assert_eq!(
-        FooBarBaz::Foo(1)
-            .to_extractor()
-            .downcast(PhantomData::<BazBarFoo>)
-            .ok(),
+        FooBarBaz::Foo(1).downcast(PhantomData::<BazBarFoo>).ok(),
         Some(BazBarFoo::Foo(1))
     );
 
     assert_eq!(
         FooBarBaz::Bar("hello".to_owned())
-            .to_extractor()
             .downcast(PhantomData::<BazBarFoo>)
             .ok(),
         Some(BazBarFoo::Bar("hello".to_owned()))
     );
 
     assert_eq!(
-        FooBarBaz::Baz(true)
-            .to_extractor()
-            .downcast(PhantomData::<BazBarFoo>)
-            .ok(),
+        FooBarBaz::Baz(true).downcast(PhantomData::<BazBarFoo>).ok(),
         Some(BazBarFoo::Baz(true))
     );
 }
