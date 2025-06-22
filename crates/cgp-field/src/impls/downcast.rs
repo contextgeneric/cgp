@@ -2,20 +2,20 @@ use core::marker::PhantomData;
 
 use crate::{Either, ExtractField, Field, FromVariant, HasFields, Void};
 
-pub trait CanExtractInto<Target>: Sized {
+pub trait CanDowncast<Target>: Sized {
     type Remainder;
 
-    fn extract_into(self, _tag: PhantomData<Target>) -> Result<Target, Self::Remainder>;
+    fn downcast(self, _tag: PhantomData<Target>) -> Result<Target, Self::Remainder>;
 }
 
-impl<Target, Extractor, Remainder> CanExtractInto<Target> for Extractor
+impl<Target, Extractor, Remainder> CanDowncast<Target> for Extractor
 where
     Target: HasFields,
     Target::Fields: FieldsExtractor<Target, Extractor, Remainder = Remainder>,
 {
     type Remainder = Remainder;
 
-    fn extract_into(self, _tag: PhantomData<Target>) -> Result<Target, Self::Remainder> {
+    fn downcast(self, _tag: PhantomData<Target>) -> Result<Target, Self::Remainder> {
         Target::Fields::extract_from(self)
     }
 }
