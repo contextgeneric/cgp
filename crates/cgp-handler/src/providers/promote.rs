@@ -43,13 +43,15 @@ where
 }
 
 #[cgp_new_provider]
-impl<Context, Code, Input, Output, Provider> Handler<Context, Code, Input> for TryPromote<Provider>
+impl<Context, Code, Input, Output, Error, Provider> Handler<Context, Code, Input>
+    for TryPromote<Provider>
 where
-    Context: HasAsyncErrorType,
-    Provider: Computer<Context, Code, Input, Output = Result<Output, Context::Error>>,
+    Context: CanRaiseAsyncError<Error>,
+    Provider: Computer<Context, Code, Input, Output = Result<Output, Error>>,
     Code: Send,
     Input: Send,
     Output: Send,
+    Error: Send,
 {
     type Output = Output;
 
@@ -58,6 +60,6 @@ where
         tag: PhantomData<Code>,
         input: Input,
     ) -> Result<Output, Context::Error> {
-        Provider::compute(context, tag, input)
+        Provider::compute(context, tag, input).map_err(Context::raise_error)
     }
 }

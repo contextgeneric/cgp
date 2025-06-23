@@ -1,10 +1,11 @@
 use proc_macro2::TokenStream;
-use quote::quote;
+use quote::{quote, ToTokens};
 use syn::punctuated::Punctuated;
 use syn::spanned::Spanned;
 use syn::token::Comma;
 use syn::{parse2, FnArg, Ident, ItemFn, ItemImpl, ReturnType, Type};
 
+use crate::parse::MaybeResultType;
 use crate::utils::to_camel_case_str;
 
 pub fn cgp_computer(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
@@ -71,9 +72,27 @@ pub fn cgp_computer(attr: TokenStream, body: TokenStream) -> syn::Result<TokenSt
         }
     })?;
 
+    let maybe_result_type = parse2::<MaybeResultType>(fn_output.to_token_stream())?;
+
+    let promote = if maybe_result_type.error_type.is_some() {
+        quote!(Promote)
+    } else {
+        quote!(TryPromote)
+    };
+
+    let delegate = quote! {
+        delegate_components! {
+            #computer_ident {
+                HandlerComponent: #promote < #computer_ident >,
+            }
+        }
+    };
+
     Ok(quote! {
         #item_fn
 
         #computer
+
+        #delegate
     })
 }

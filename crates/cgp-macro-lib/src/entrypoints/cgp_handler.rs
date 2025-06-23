@@ -1,12 +1,11 @@
-use proc_macro2::{Span, TokenStream};
+use proc_macro2::TokenStream;
 use quote::{quote, ToTokens};
-use syn::parse::discouraged::Speculative;
-use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::spanned::Spanned;
-use syn::token::{Comma, Gt, Lt};
+use syn::token::Comma;
 use syn::{parse2, parse_quote, FnArg, Ident, ItemFn, ItemImpl, ReturnType, Type};
 
+use crate::parse::MaybeResultType;
 use crate::utils::to_camel_case_str;
 
 pub fn cgp_handler(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
@@ -112,38 +111,4 @@ pub fn cgp_handler(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStr
 
         #computer
     })
-}
-
-pub struct MaybeResultType {
-    pub success_type: Type,
-    pub error_type: Option<Type>,
-}
-
-impl Parse for MaybeResultType {
-    fn parse(input: ParseStream) -> syn::Result<Self> {
-        let fork = input.fork();
-        if fork.parse::<Ident>().ok() == Some(Ident::new("Result", Span::call_site())) {
-            input.advance_to(&fork);
-
-            let _: Lt = input.parse()?;
-
-            let success_type = input.parse()?;
-
-            let _: Comma = input.parse()?;
-
-            let error_type = input.parse()?;
-
-            let _: Gt = input.parse()?;
-
-            Ok(Self {
-                success_type,
-                error_type: Some(error_type),
-            })
-        } else {
-            Ok(Self {
-                success_type: input.parse()?,
-                error_type: None,
-            })
-        }
-    }
 }
