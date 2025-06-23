@@ -9,6 +9,8 @@ use crate::{
 
 pub struct Promote<Provider>(pub PhantomData<Provider>);
 
+pub struct TryPromote<Provider>(pub PhantomData<Provider>);
+
 pub type Promote2<Provider> = Promote<Promote<Provider>>;
 
 pub type Promote3<Provider> = Promote<Promote2<Provider>>;
@@ -62,7 +64,7 @@ where
     }
 }
 
-#[cgp_new_provider]
+#[cgp_provider]
 impl<Context, Code, Input, Output, Error, Provider> Handler<Context, Code, Input>
     for TryPromote<Provider>
 where
