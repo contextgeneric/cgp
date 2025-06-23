@@ -108,6 +108,7 @@ dependencies = [
 name = "cgp-extra"
 version = "0.4.1"
 dependencies = [
+ "cgp-core",
  "cgp-dispatch",
  "cgp-error-extra",
  "cgp-handler",

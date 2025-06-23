@@ -3,7 +3,7 @@ use quote::quote;
 use syn::spanned::Spanned;
 use syn::{parse2, Ident, ItemFn, ItemImpl, ReturnType};
 
-pub fn cgp_producer(body: TokenStream) -> syn::Result<TokenStream> {
+pub fn cgp_producer(_attr: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
     let item_fn: ItemFn = parse2(body)?;
 
     let fn_sig = &item_fn.sig;
@@ -39,8 +39,8 @@ pub fn cgp_producer(body: TokenStream) -> syn::Result<TokenStream> {
 
     let producer: ItemImpl = parse2(quote! {
         #[cgp_new_provider]
-        impl<__Context__, __Code__, __Input__>
-            Producer<__Context__, __Code__, __Input__>
+        impl<__Context__, __Code__>
+            Producer<__Context__, __Code__>
             for #producer_ident
         {
             type Output = #fn_output;

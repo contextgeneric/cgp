@@ -15,6 +15,7 @@ default = [ "full" ]
 full = [ "cgp-error-extra/alloc" ]
 
 [dependencies]
+cgp-core        = { version = "0.4.1" }
 cgp-error-extra = { version = "0.4.1", default-features = false }
 cgp-inner       = { version = "0.4.1" }
 cgp-run         = { version = "0.4.1" }

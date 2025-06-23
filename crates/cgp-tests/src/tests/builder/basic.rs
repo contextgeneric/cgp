@@ -2,7 +2,7 @@ use std::marker::PhantomData;
 
 use cgp::core::field::CanBuildFrom;
 use cgp::extra::dispatch::{BuildWithHandlers, HandleAndBuild, HandleAndBuildField};
-use cgp::extra::handler::{cgp_producer, Computer, Producer, ProducerComponent, Promote};
+use cgp::extra::handler::{Computer, Producer, ProducerComponent, Promote};
 use cgp::prelude::*;
 
 #[derive(Debug, Eq, PartialEq, HasFields, BuildField)]
@@ -55,25 +55,27 @@ fn test_build_from() {
     assert!(foo_bar_baz.baz);
 }
 
-cgp_producer! {
-    BuildFooBar: FooBar {
-        FooBar {
-            foo: 1,
-            bar: "bar".to_owned(),
-        }
+#[cgp_producer]
+fn build_foo_bar() -> FooBar {
+    FooBar {
+        foo: 1,
+        bar: "bar".to_owned(),
     }
+}
 
-    BuildFoo: u64 {
-        1
-    }
+#[cgp_producer]
+pub fn build_foo() -> u64 {
+    1
+}
 
-    BuildBar: String {
-        "bar".to_owned()
-    }
+#[cgp_producer]
+pub fn build_bar() -> String {
+    "bar".to_owned()
+}
 
-    BuildBaz: bool {
-        true
-    }
+#[cgp_producer]
+pub fn build_baz() -> bool {
+    true
 }
 
 #[test]
