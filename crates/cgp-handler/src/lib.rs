@@ -1,7 +1,6 @@
 #![no_std]
 
 mod components;
-mod macros;
 mod providers;
 mod types;
 
