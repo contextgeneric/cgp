@@ -131,16 +131,12 @@ delegate_components! {
     }
 }
 
-#[cgp_new_provider]
-impl<Context, Code, Tag, Value> Computer<Context, Code, Field<Tag, Value>> for FieldToString
+#[cgp_computer]
+pub fn field_to_string<Tag, Value>(Field { value, .. }: Field<Tag, Value>) -> String
 where
     Value: Display,
 {
-    type Output = String;
-
-    fn compute(_context: &Context, _tag: PhantomData<Code>, input: Field<Tag, Value>) -> String {
-        input.value.to_string()
-    }
+    value.to_string()
 }
 
 #[test]
@@ -204,34 +200,22 @@ fn test_async_dispatch_fields() {
     );
 }
 
-#[cgp_new_provider]
-impl<Context, Code> Computer<Context, Code, FooBar> for Show {
-    type Output = String;
-
-    fn compute(_context: &Context, _tag: PhantomData<Code>, input: FooBar) -> String {
-        format!("FooBar::{:?}", input)
-    }
+#[cgp_computer]
+pub fn show_foo_bar(input: FooBar) -> String {
+    format!("FooBar::{:?}", input)
 }
 
-#[cgp_provider]
-impl<Context, Code> Computer<Context, Code, Field<symbol!("Baz"), bool>> for Show {
-    type Output = String;
-
-    fn compute(
-        _context: &Context,
-        _tag: PhantomData<Code>,
-        input: Field<symbol!("Baz"), bool>,
-    ) -> String {
-        format!("Baz({:?})", input)
-    }
+#[cgp_computer]
+pub fn show_baz(input: Field<symbol!("Baz"), bool>) -> String {
+    format!("Baz({:?})", input)
 }
 
 type Computers =
-    Product![ExtractFieldAndHandle<symbol!("Baz"), Show>, ExtractAndHandle<FooBar, Show>];
+    Product![ExtractFieldAndHandle<symbol!("Baz"), ShowBaz>, ExtractAndHandle<FooBar, ShowFooBar>];
 
 type Handlers = Product![
-    Promote<ExtractFieldAndHandle<symbol!("Baz"), Show>>,
-    Promote<ExtractAndHandle<FooBar, Show>>
+    Promote<ExtractFieldAndHandle<symbol!("Baz"), ShowBaz>>,
+    Promote<ExtractAndHandle<FooBar, ShowFooBar>>
 ];
 
 #[test]
