@@ -12,5 +12,5 @@ description  = """
 """
 
 [dependencies]
-cgp     = { version = "0.4.1", default-features = false }
-futures = { version = "0.3.31" }
+cgp                 = { version = "0.4.1" }
+futures             = { version = "0.3.31" }
