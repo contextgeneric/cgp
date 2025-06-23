@@ -75,15 +75,15 @@ pub fn cgp_computer(attr: TokenStream, body: TokenStream) -> syn::Result<TokenSt
     let maybe_result_type = parse2::<MaybeResultType>(fn_output.to_token_stream())?;
 
     let promote = if maybe_result_type.error_type.is_some() {
-        quote!(Promote)
+        quote!(Promote<TryPromote< #computer_ident >>)
     } else {
-        quote!(TryPromote)
+        quote!(Promote<Promote< #computer_ident >>)
     };
 
     let delegate = quote! {
         delegate_components! {
             #computer_ident {
-                HandlerComponent: #promote < #computer_ident >,
+                HandlerComponent: #promote,
             }
         }
     };

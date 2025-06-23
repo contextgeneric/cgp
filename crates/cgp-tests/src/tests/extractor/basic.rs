@@ -7,7 +7,9 @@ use cgp::core::field::{CanDowncast, CanDowncastFields, CanUpcast};
 use cgp::extra::dispatch::{
     DispatchFields, DispatchHandlers, ExtractAndHandle, ExtractFieldAndHandle,
 };
-use cgp::extra::handler::{Computer, ComputerComponent, HandleFieldValue, Handler, Promote};
+use cgp::extra::handler::{
+    Computer, ComputerComponent, HandleFieldValue, Handler, Promote, Promote2,
+};
 use cgp::prelude::*;
 use futures::executor::block_on;
 
@@ -170,7 +172,7 @@ fn test_async_dispatch_fields() {
     let code = PhantomData::<()>;
 
     assert_eq!(
-        block_on(DispatchFields::<Promote<FieldToString>>::handle(
+        block_on(DispatchFields::<FieldToString>::handle(
             &context,
             code,
             FooBarBaz::Foo(1)
@@ -180,7 +182,7 @@ fn test_async_dispatch_fields() {
     );
 
     assert_eq!(
-        block_on(DispatchFields::<Promote<FieldToString>>::handle(
+        block_on(DispatchFields::<FieldToString>::handle(
             &context,
             code,
             FooBarBaz::Bar("hello".to_owned())
@@ -190,7 +192,7 @@ fn test_async_dispatch_fields() {
     );
 
     assert_eq!(
-        block_on(DispatchFields::<Promote<FieldToString>>::handle(
+        block_on(DispatchFields::<FieldToString>::handle(
             &context,
             code,
             FooBarBaz::Baz(true)
@@ -216,8 +218,8 @@ type Computers = Product![
 ];
 
 type Handlers = Product![
-    Promote<ExtractFieldAndHandle<symbol!("Baz"), HandleFieldValue<ShowBaz>>>,
-    Promote<ExtractAndHandle<FooBar, ShowFooBar>>
+    Promote2<ExtractFieldAndHandle<symbol!("Baz"), HandleFieldValue<ShowBaz>>>,
+    Promote2<ExtractAndHandle<FooBar, ShowFooBar>>
 ];
 
 #[test]

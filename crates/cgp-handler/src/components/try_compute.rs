@@ -12,8 +12,12 @@ use crate::UseInputDelegate;
         UseInputDelegate<Input>,
     ],
 }]
-pub trait CanTryCompute<Code, Input> {
+pub trait CanTryCompute<Code, Input>: HasErrorType {
     type Output;
 
-    fn try_compute(&self, _code: PhantomData<Code>, input: Input) -> Self::Output;
+    fn try_compute(
+        &self,
+        _code: PhantomData<Code>,
+        input: Input,
+    ) -> Result<Self::Output, Self::Error>;
 }

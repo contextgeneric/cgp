@@ -4,7 +4,7 @@ use core::marker::PhantomData;
 use cgp::core::error::ErrorTypeProviderComponent;
 use cgp::extra::handler::{
     CanCompute, CanHandle, Computer, ComputerComponent, Handler, HandlerComponent, PipeHandlers,
-    Promote,
+    Promote2,
 };
 use cgp::prelude::*;
 use futures::executor::block_on;
@@ -120,7 +120,7 @@ pub fn test_pipe_handlers() {
                 PipeHandlers<
                     Product! [
                         Multiply<symbol!("foo")>,
-                        Promote<Add<symbol!("bar")>>,
+                        Promote2<Add<symbol!("bar")>>,
                         Multiply<symbol!("baz")>,
                     ]
                 >,
