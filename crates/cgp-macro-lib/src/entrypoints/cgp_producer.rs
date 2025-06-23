@@ -3,11 +3,17 @@ use quote::quote;
 use syn::spanned::Spanned;
 use syn::{parse2, Ident, ItemFn, ItemImpl, ReturnType};
 
-pub fn cgp_producer(_attr: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
+pub fn cgp_producer(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
     let item_fn: ItemFn = parse2(body)?;
 
     let fn_sig = &item_fn.sig;
     let fn_ident = &fn_sig.ident;
+
+    let producer_ident = if attr.is_empty() {
+        Ident::new(&to_camel_case_str(&fn_ident.to_string()), fn_ident.span())
+    } else {
+        parse2(attr)?
+    };
 
     if !fn_sig.inputs.is_empty() {
         return Err(syn::Error::new(
@@ -34,8 +40,6 @@ pub fn cgp_producer(_attr: TokenStream, body: TokenStream) -> syn::Result<TokenS
         ReturnType::Type(_, ty) => ty.as_ref().clone(),
         ReturnType::Default => syn::parse_quote!(()),
     };
-
-    let producer_ident = Ident::new(&to_camel_case_str(&fn_ident.to_string()), fn_ident.span());
 
     let producer: ItemImpl = parse2(quote! {
         #[cgp_new_provider]
