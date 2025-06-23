@@ -3,6 +3,8 @@ use quote::quote;
 use syn::spanned::Spanned;
 use syn::{parse2, Ident, ItemFn, ItemImpl, ReturnType};
 
+use crate::utils::to_camel_case_str;
+
 pub fn cgp_producer(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
     let item_fn: ItemFn = parse2(body)?;
 
@@ -49,7 +51,7 @@ pub fn cgp_producer(attr: TokenStream, body: TokenStream) -> syn::Result<TokenSt
         {
             type Output = #fn_output;
 
-            fn produce(_context: &__Context__, _tag: PhantomData<__Code__>) -> Self::Output {
+            fn produce(_context: &__Context__, _code: PhantomData<__Code__>) -> Self::Output {
                 #fn_ident()
             }
         }
@@ -60,15 +62,4 @@ pub fn cgp_producer(attr: TokenStream, body: TokenStream) -> syn::Result<TokenSt
 
         #producer
     })
-}
-
-fn to_camel_case_str(val: &str) -> String {
-    val.split('_')
-        .filter(|word| !word.is_empty())
-        .flat_map(|word| {
-            word.chars()
-                .enumerate()
-                .map(|(i, c)| if i == 0 { c.to_ascii_uppercase() } else { c })
-        })
-        .collect()
 }

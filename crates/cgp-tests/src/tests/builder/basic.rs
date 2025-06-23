@@ -73,7 +73,7 @@ pub fn build_bar() -> String {
     "bar".to_owned()
 }
 
-#[cgp_producer]
+#[cgp_producer(BuildBaz)]
 pub fn build_baz() -> bool {
     true
 }

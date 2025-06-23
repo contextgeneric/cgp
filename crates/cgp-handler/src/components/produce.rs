@@ -10,5 +10,5 @@ use cgp_core::prelude::*;
 pub trait CanProduce<Code> {
     type Output;
 
-    fn produce(&self, _tag: PhantomData<Code>) -> Self::Output;
+    fn produce(&self, _code: PhantomData<Code>) -> Self::Output;
 }
