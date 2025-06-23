@@ -101,9 +101,9 @@ fn test_build_with_fields() {
     let code = PhantomData::<()>;
 
     pub type Handlers = Product![
-        HandleAndBuildField<symbol!("baz"), Promote<BuildBaz>>,
-        HandleAndBuildField<symbol!("bar"), Promote<BuildBar>>,
-        HandleAndBuildField<symbol!("foo"), Promote<BuildFoo>>,
+        HandleAndBuildField<symbol!("baz"), BuildBaz>,
+        HandleAndBuildField<symbol!("bar"), BuildBar>,
+        HandleAndBuildField<symbol!("foo"), BuildFoo>,
     ];
 
     assert_eq!(
