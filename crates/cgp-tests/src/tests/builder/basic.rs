@@ -1,5 +1,7 @@
+use core::convert::Infallible;
 use std::marker::PhantomData;
 
+use cgp::core::error::ErrorTypeProviderComponent;
 use cgp::core::field::CanBuildFrom;
 use cgp::extra::dispatch::{BuildWithHandlers, HandleAndBuild, HandleAndBuildField};
 use cgp::extra::handler::{Computer, Producer, ProducerComponent, Promote};
@@ -78,9 +80,18 @@ pub fn build_baz() -> bool {
     true
 }
 
+#[cgp_context]
+pub struct App;
+
+delegate_components! {
+    AppComponents {
+        ErrorTypeProviderComponent: UseType<Infallible>,
+    }
+}
+
 #[test]
 fn test_build_with_handlers() {
-    let context = ();
+    let context = App;
     let code = PhantomData::<()>;
 
     pub type Handlers = Product![HandleAndBuild<Promote<BuildFooBar>>, HandleAndBuildField<symbol!("baz"), Promote<BuildBaz>>];
@@ -93,11 +104,20 @@ fn test_build_with_handlers() {
             baz: true,
         }
     );
+
+    assert_eq!(
+        BuildWithHandlers::<FooBarBaz, Handlers>::try_compute(&context, code, ()),
+        Ok(FooBarBaz {
+            foo: 1,
+            bar: "bar".to_owned(),
+            baz: true,
+        })
+    );
 }
 
 #[test]
 fn test_build_with_fields() {
-    let context = ();
+    let context = App;
     let code = PhantomData::<()>;
 
     pub type Handlers = Product![
@@ -113,5 +133,14 @@ fn test_build_with_fields() {
             bar: "bar".to_owned(),
             baz: true,
         }
+    );
+
+    assert_eq!(
+        BuildWithHandlers::<FooBarBaz, Handlers>::try_compute(&context, code, ()),
+        Ok(FooBarBaz {
+            foo: 1,
+            bar: "bar".to_owned(),
+            baz: true,
+        })
     );
 }

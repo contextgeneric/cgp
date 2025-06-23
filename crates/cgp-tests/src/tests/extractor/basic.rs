@@ -233,6 +233,11 @@ fn test_dispatch_computers() {
     );
 
     assert_eq!(
+        DispatchHandlers::<Computers>::try_compute(&context, code, FooBarBaz::Foo(1)),
+        Ok("FooBar::Foo(1)".to_owned())
+    );
+
+    assert_eq!(
         DispatchHandlers::<Computers>::compute(&context, code, FooBarBaz::Bar("hello".to_owned())),
         "FooBar::Bar(\"hello\")"
     );
