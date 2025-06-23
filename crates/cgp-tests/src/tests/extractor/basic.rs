@@ -7,7 +7,7 @@ use cgp::core::field::{CanDowncast, CanDowncastFields, CanUpcast};
 use cgp::extra::dispatch::{
     DispatchFields, DispatchHandlers, ExtractAndHandle, ExtractFieldAndHandle,
 };
-use cgp::extra::handler::{Computer, ComputerComponent, Handler, Promote};
+use cgp::extra::handler::{Computer, ComputerComponent, HandleFieldValue, Handler, Promote};
 use cgp::prelude::*;
 use futures::executor::block_on;
 
@@ -206,15 +206,17 @@ pub fn show_foo_bar(input: FooBar) -> String {
 }
 
 #[cgp_computer]
-pub fn show_baz(input: Field<symbol!("Baz"), bool>) -> String {
+pub fn show_baz(input: bool) -> String {
     format!("Baz({:?})", input)
 }
 
-type Computers =
-    Product![ExtractFieldAndHandle<symbol!("Baz"), ShowBaz>, ExtractAndHandle<FooBar, ShowFooBar>];
+type Computers = Product![
+    ExtractFieldAndHandle<symbol!("Baz"), HandleFieldValue<ShowBaz>>,
+    ExtractAndHandle<FooBar, ShowFooBar>,
+];
 
 type Handlers = Product![
-    Promote<ExtractFieldAndHandle<symbol!("Baz"), ShowBaz>>,
+    Promote<ExtractFieldAndHandle<symbol!("Baz"), HandleFieldValue<ShowBaz>>>,
     Promote<ExtractAndHandle<FooBar, ShowFooBar>>
 ];
 
