@@ -4,7 +4,7 @@ use syn::parse::discouraged::Speculative;
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::spanned::Spanned;
-use syn::token::Comma;
+use syn::token::{Comma, Gt, Lt};
 use syn::{parse2, parse_quote, FnArg, Ident, ItemFn, ItemImpl, ReturnType, Type};
 
 use crate::utils::to_camel_case_str;
@@ -49,7 +49,7 @@ pub fn cgp_handler(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStr
 
     let mut generics = fn_sig.generics.clone();
     generics.params.push(parse2(quote! { __Context__ })?);
-    generics.params.push(parse2(quote! { __Code__ })?);
+    generics.params.push(parse2(quote! { __Code__: Send })?);
 
     let fn_output = match &fn_sig.output {
         ReturnType::Type(_, ty) => ty.as_ref().clone(),
@@ -62,7 +62,7 @@ pub fn cgp_handler(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStr
 
     if let Some(error_type) = &maybe_result_type.error_type {
         where_clause.predicates.push(parse_quote! {
-            __Context__: CanRaiseAsyncError<#error_type>
+            __Context__: CanRaiseAsyncError< #error_type >
         });
     } else {
         where_clause.predicates.push(parse_quote! {
@@ -70,12 +70,18 @@ pub fn cgp_handler(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStr
         });
     }
 
-    let map_error = if maybe_result_type.error_type.is_some() {
+    let body = quote! {
+        #fn_ident( #input_idents ).await
+    };
+
+    let body = if maybe_result_type.error_type.is_some() {
         quote! {
-            .map_err(__Context__::raise_error)
+            #body .map_err(__Context__::raise_error)
         }
     } else {
-        quote! {}
+        quote! {
+            Ok( #body )
+        }
     };
 
     let output_type = maybe_result_type.success_type;
@@ -96,8 +102,7 @@ pub fn cgp_handler(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStr
                 _code: PhantomData<__Code__>,
                 ( #input_idents ): ( #input_types )
             ) -> Result<Self::Output, __Context__::Error> {
-                #fn_ident( #input_idents ).await
-                    #map_error
+                #body
             }
         }
     })?;
@@ -119,8 +124,17 @@ impl Parse for MaybeResultType {
         let fork = input.fork();
         if fork.parse::<Ident>().ok() == Some(Ident::new("Result", Span::call_site())) {
             input.advance_to(&fork);
+
+            let _: Lt = input.parse()?;
+
             let success_type = input.parse()?;
+
+            let _: Comma = input.parse()?;
+
             let error_type = input.parse()?;
+
+            let _: Gt = input.parse()?;
+
             Ok(Self {
                 success_type,
                 error_type: Some(error_type),
