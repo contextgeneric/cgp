@@ -4,7 +4,7 @@ use crate::{
     Computer, ComputerComponent, Handler, HandlerComponent, TryComputer, TryComputerComponent,
 };
 
-pub struct HandleFieldValue<Provider>(pub PhantomData<Provider>);
+pub struct HandleFieldValue<Provider = UseContext>(pub PhantomData<Provider>);
 
 #[cgp_provider]
 impl<Context, Code, Tag, Input, Output, Provider> Computer<Context, Code, Field<Tag, Input>>
