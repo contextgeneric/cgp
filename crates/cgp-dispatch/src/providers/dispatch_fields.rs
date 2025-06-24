@@ -6,9 +6,9 @@ use cgp_handler::{
 
 use crate::{DispatchHandlers, DispatchHandlersRef, ExtractFieldAndHandle};
 
-pub struct DispatchFields<Provider = HandleFieldValue>(pub PhantomData<Provider>);
+pub struct DispatchFields<Provider = HandleFieldValue<UseContext>>(pub PhantomData<Provider>);
 
-pub struct DispatchFieldsRef<Provider = HandleFieldValue>(pub PhantomData<Provider>);
+pub struct DispatchFieldsRef<Provider = HandleFieldValue<UseContext>>(pub PhantomData<Provider>);
 
 #[cgp_provider]
 impl<Context, Code, Input, Output, Fields, Provider> Computer<Context, Code, Input>
