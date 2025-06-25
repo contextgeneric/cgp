@@ -79,7 +79,7 @@ where
 }
 
 #[cgp_provider]
-impl<'a, Context, Code, Input, Output, Handlers> TryComputer<Context, Code, &'a Input>
+impl<Context, Code, Input, Output, Handlers> TryComputer<Context, Code, &Input>
     for DispatchHandlersRef<Handlers>
 where
     Context: HasErrorType,
@@ -108,7 +108,7 @@ where
     }
 }
 #[cgp_provider]
-impl<'a, Context, Code, Input, Output, Handlers> Computer<Context, Code, &'a Input>
+impl<Context, Code, Input, Output, Handlers> Computer<Context, Code, &Input>
     for DispatchHandlersRef<Handlers>
 where
     Input: HasExtractorRef,
@@ -133,7 +133,7 @@ where
 }
 
 #[cgp_provider]
-impl<'a, Context, Code: Send, Input, Output: Send, Handlers> Handler<Context, Code, &'a Input>
+impl<Context, Code: Send, Input, Output: Send, Handlers> Handler<Context, Code, &Input>
     for DispatchHandlersRef<Handlers>
 where
     Context: HasAsyncErrorType,

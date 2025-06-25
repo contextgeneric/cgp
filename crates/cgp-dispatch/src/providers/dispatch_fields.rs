@@ -70,7 +70,7 @@ where
 }
 
 #[cgp_provider]
-impl<'a, Context, Code, Input, Output, Provider> Computer<Context, Code, &'a Input>
+impl<Context, Code, Input, Output, Provider> Computer<Context, Code, &Input>
     for DispatchFieldsRef<Provider>
 where
     Input: HasFieldsRef,
@@ -86,7 +86,7 @@ where
 }
 
 #[cgp_provider]
-impl<'a, Context, Code, Input, Output, Provider> TryComputer<Context, Code, &'a Input>
+impl<Context, Code, Input, Output, Provider> TryComputer<Context, Code, &Input>
     for DispatchFieldsRef<Provider>
 where
     Context: HasErrorType,
@@ -107,7 +107,7 @@ where
 }
 
 #[cgp_provider]
-impl<'a, Context, Code: Send, Input, Output: Send, Provider> Handler<Context, Code, &'a Input>
+impl<Context, Code: Send, Input, Output: Send, Provider> Handler<Context, Code, &Input>
     for DispatchFieldsRef<Provider>
 where
     Context: HasAsyncErrorType,
