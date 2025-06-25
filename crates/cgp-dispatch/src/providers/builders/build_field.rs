@@ -1,7 +1,7 @@
 use cgp_core::prelude::*;
-use cgp_handler::{Computer, TryComputer};
+use cgp_handler::{Computer, Handler, TryComputer};
 
-use crate::{BuilderComputer, TryBuilderComputer};
+use crate::{BuilderComputer, BuilderHandler, TryBuilderComputer};
 
 pub struct HandleAndBuildField<Tag, Provider = UseContext>(pub PhantomData<(Tag, Provider)>);
 
@@ -34,6 +34,25 @@ where
         builder: Builder,
     ) -> Result<Self::Output, Context::Error> {
         let value = Provider::try_compute(context, code, &builder)?;
+        Ok(builder.build_field(PhantomData::<Tag>, value))
+    }
+}
+
+impl<Context, Code: Send, Builder: Send + Sync, Tag, Value, Provider, Output>
+    BuilderHandler<Context, Code, Builder> for HandleAndBuildField<Tag, Provider>
+where
+    Context: HasAsyncErrorType,
+    Provider: for<'a> Handler<Context, Code, &'a Builder, Output = Value>,
+    Builder: BuildField<Tag, Value = Value, Output = Output>,
+{
+    type Output = Output;
+
+    async fn handle(
+        context: &Context,
+        code: PhantomData<Code>,
+        builder: Builder,
+    ) -> Result<Self::Output, Context::Error> {
+        let value = Provider::handle(context, code, &builder).await?;
         Ok(builder.build_field(PhantomData::<Tag>, value))
     }
 }

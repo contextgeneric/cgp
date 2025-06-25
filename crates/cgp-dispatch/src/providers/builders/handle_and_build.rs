@@ -1,8 +1,8 @@
 use cgp_core::field::CanBuildFrom;
 use cgp_core::prelude::*;
-use cgp_handler::{Computer, TryComputer};
+use cgp_handler::{Computer, Handler, TryComputer};
 
-use crate::{BuilderComputer, TryBuilderComputer};
+use crate::{BuilderComputer, BuilderHandler, TryBuilderComputer};
 
 pub struct HandleAndBuild<Provider = UseContext>(pub PhantomData<Provider>);
 
@@ -35,6 +35,25 @@ where
         builder: Builder,
     ) -> Result<Self::Output, Context::Error> {
         let output = Provider::try_compute(context, code, &builder)?;
+        Ok(builder.build_from(output))
+    }
+}
+
+impl<Context, Code: Send, Builder: Send + Sync, Provider, Output, Res>
+    BuilderHandler<Context, Code, Builder> for HandleAndBuild<Provider>
+where
+    Context: HasAsyncErrorType,
+    Provider: for<'a> Handler<Context, Code, &'a Builder, Output = Res>,
+    Builder: CanBuildFrom<Res, Output = Output>,
+{
+    type Output = Output;
+
+    async fn handle(
+        context: &Context,
+        code: PhantomData<Code>,
+        builder: Builder,
+    ) -> Result<Self::Output, Context::Error> {
+        let output = Provider::handle(context, code, &builder).await?;
         Ok(builder.build_from(output))
     }
 }

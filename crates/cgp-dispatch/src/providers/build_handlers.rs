@@ -1,5 +1,7 @@
 use cgp_core::prelude::*;
-use cgp_handler::{Computer, ComputerComponent, TryComputer, TryComputerComponent};
+use cgp_handler::{
+    Computer, ComputerComponent, Handler, HandlerComponent, TryComputer, TryComputerComponent,
+};
 
 pub struct BuildWithHandlers<Output, Handlers>(pub PhantomData<(Output, Handlers)>);
 
@@ -38,6 +40,28 @@ where
     }
 }
 
+#[cgp_provider]
+impl<Context, Code: Send, Input: Send, Output: Send, Builder, Handlers>
+    Handler<Context, Code, Input> for BuildWithHandlers<Output, Handlers>
+where
+    Context: HasAsyncErrorType,
+    Output: HasBuilder<Builder = Builder>,
+    Handlers: BuilderHandler<Context, Code, Builder>,
+    Handlers::Output: FinalizeBuild<Output = Output>,
+{
+    type Output = Output;
+
+    async fn handle(
+        context: &Context,
+        code: PhantomData<Code>,
+        _input: Input,
+    ) -> Result<Self::Output, Context::Error> {
+        Ok(Handlers::handle(context, code, Output::builder())
+            .await?
+            .finalize_build())
+    }
+}
+
 pub trait BuilderComputer<Context, Code, Builder> {
     type Output;
 
@@ -51,6 +75,20 @@ where
     type Output;
 
     fn try_build(
+        context: &Context,
+        code: PhantomData<Code>,
+        builder: Builder,
+    ) -> Result<Self::Output, Context::Error>;
+}
+
+#[async_trait]
+pub trait BuilderHandler<Context, Code, Builder>
+where
+    Context: HasAsyncErrorType,
+{
+    type Output;
+
+    async fn handle(
         context: &Context,
         code: PhantomData<Code>,
         builder: Builder,
@@ -93,6 +131,34 @@ where
     }
 }
 
+impl<
+        Context,
+        Code: Send,
+        Builder: Send,
+        NextBuilder,
+        Output,
+        CurrentHandler,
+        NextHandler,
+        RestHandlers,
+    > BuilderHandler<Context, Code, Builder>
+    for Cons<CurrentHandler, Cons<NextHandler, RestHandlers>>
+where
+    Context: HasAsyncErrorType,
+    CurrentHandler: BuilderHandler<Context, Code, Builder, Output = NextBuilder>,
+    Cons<NextHandler, RestHandlers>: BuilderHandler<Context, Code, NextBuilder, Output = Output>,
+{
+    type Output = Output;
+
+    async fn handle(
+        context: &Context,
+        code: PhantomData<Code>,
+        builder: Builder,
+    ) -> Result<Self::Output, Context::Error> {
+        let next_builder = CurrentHandler::handle(context, code, builder).await?;
+        Cons::handle(context, code, next_builder).await
+    }
+}
+
 impl<Context, Code, Builder, Handler, Output> BuilderComputer<Context, Code, Builder>
     for Cons<Handler, Nil>
 where
@@ -119,5 +185,22 @@ where
         builder: Builder,
     ) -> Result<Self::Output, Context::Error> {
         Handler::try_build(context, code, builder)
+    }
+}
+
+impl<Context, Code: Send, Builder: Send, Handler, Output> BuilderHandler<Context, Code, Builder>
+    for Cons<Handler, Nil>
+where
+    Context: HasAsyncErrorType,
+    Handler: BuilderHandler<Context, Code, Builder, Output = Output>,
+{
+    type Output = Output;
+
+    async fn handle(
+        context: &Context,
+        code: PhantomData<Code>,
+        builder: Builder,
+    ) -> Result<Self::Output, Context::Error> {
+        Handler::handle(context, code, builder).await
     }
 }
