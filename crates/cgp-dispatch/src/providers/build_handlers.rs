@@ -8,13 +8,13 @@ impl<Context, Code, Input, Output, Builder, Handlers> Computer<Context, Code, In
     for BuildWithHandlers<Output, Handlers>
 where
     Output: HasBuilder<Builder = Builder>,
-    Handlers: BuilderComputer<Context, Code, Input, Builder>,
+    Handlers: BuilderComputer<Context, Code, Builder>,
     Handlers::Output: FinalizeBuild<Output = Output>,
 {
     type Output = Output;
 
-    fn compute(context: &Context, code: PhantomData<Code>, input: Input) -> Self::Output {
-        Handlers::build(context, code, input, Output::builder()).finalize_build()
+    fn compute(context: &Context, code: PhantomData<Code>, _input: Input) -> Self::Output {
+        Handlers::build(context, code, Output::builder()).finalize_build()
     }
 }
 
@@ -24,7 +24,7 @@ impl<Context, Code, Input, Output, Builder, Handlers> TryComputer<Context, Code,
 where
     Context: HasErrorType,
     Output: HasBuilder<Builder = Builder>,
-    Handlers: TryBuilderComputer<Context, Code, Input, Builder>,
+    Handlers: TryBuilderComputer<Context, Code, Builder>,
     Handlers::Output: FinalizeBuild<Output = Output>,
 {
     type Output = Output;
@@ -32,24 +32,19 @@ where
     fn try_compute(
         context: &Context,
         code: PhantomData<Code>,
-        input: Input,
+        _input: Input,
     ) -> Result<Self::Output, Context::Error> {
-        Ok(Handlers::try_build(context, code, input, Output::builder())?.finalize_build())
+        Ok(Handlers::try_build(context, code, Output::builder())?.finalize_build())
     }
 }
 
-pub trait BuilderComputer<Context, Code, Input, Builder> {
+pub trait BuilderComputer<Context, Code, Builder> {
     type Output;
 
-    fn build(
-        context: &Context,
-        code: PhantomData<Code>,
-        input: Input,
-        builder: Builder,
-    ) -> Self::Output;
+    fn build(context: &Context, code: PhantomData<Code>, builder: Builder) -> Self::Output;
 }
 
-pub trait TryBuilderComputer<Context, Code, Input, Builder>
+pub trait TryBuilderComputer<Context, Code, Builder>
 where
     Context: HasErrorType,
 {
@@ -58,105 +53,71 @@ where
     fn try_build(
         context: &Context,
         code: PhantomData<Code>,
-        input: Input,
         builder: Builder,
     ) -> Result<Self::Output, Context::Error>;
 }
 
-impl<
-        Context,
-        Code,
-        Input,
-        Builder,
-        NextBuilder,
-        Output,
-        CurrentHandler,
-        NextHandler,
-        RestHandlers,
-    > BuilderComputer<Context, Code, Input, Builder>
+impl<Context, Code, Builder, NextBuilder, Output, CurrentHandler, NextHandler, RestHandlers>
+    BuilderComputer<Context, Code, Builder>
     for Cons<CurrentHandler, Cons<NextHandler, RestHandlers>>
 where
-    CurrentHandler: BuilderComputer<Context, Code, Input, Builder, Output = NextBuilder>,
-    Cons<NextHandler, RestHandlers>:
-        BuilderComputer<Context, Code, Input, NextBuilder, Output = Output>,
-    Input: Clone,
+    CurrentHandler: BuilderComputer<Context, Code, Builder, Output = NextBuilder>,
+    Cons<NextHandler, RestHandlers>: BuilderComputer<Context, Code, NextBuilder, Output = Output>,
 {
     type Output = Output;
 
-    fn build(
-        context: &Context,
-        code: PhantomData<Code>,
-        input: Input,
-        builder: Builder,
-    ) -> Self::Output {
-        let next_builder = CurrentHandler::build(context, code, input.clone(), builder);
-        Cons::build(context, code, input, next_builder)
+    fn build(context: &Context, code: PhantomData<Code>, builder: Builder) -> Self::Output {
+        let next_builder = CurrentHandler::build(context, code, builder);
+        Cons::build(context, code, next_builder)
     }
 }
 
-impl<
-        Context,
-        Code,
-        Input,
-        Builder,
-        NextBuilder,
-        Output,
-        CurrentHandler,
-        NextHandler,
-        RestHandlers,
-    > TryBuilderComputer<Context, Code, Input, Builder>
+impl<Context, Code, Builder, NextBuilder, Output, CurrentHandler, NextHandler, RestHandlers>
+    TryBuilderComputer<Context, Code, Builder>
     for Cons<CurrentHandler, Cons<NextHandler, RestHandlers>>
 where
     Context: HasErrorType,
-    CurrentHandler: TryBuilderComputer<Context, Code, Input, Builder, Output = NextBuilder>,
+    CurrentHandler: TryBuilderComputer<Context, Code, Builder, Output = NextBuilder>,
     Cons<NextHandler, RestHandlers>:
-        TryBuilderComputer<Context, Code, Input, NextBuilder, Output = Output>,
-    Input: Clone,
+        TryBuilderComputer<Context, Code, NextBuilder, Output = Output>,
 {
     type Output = Output;
 
     fn try_build(
         context: &Context,
         code: PhantomData<Code>,
-        input: Input,
         builder: Builder,
     ) -> Result<Self::Output, Context::Error> {
-        let next_builder = CurrentHandler::try_build(context, code, input.clone(), builder)?;
-        Cons::try_build(context, code, input, next_builder)
+        let next_builder = CurrentHandler::try_build(context, code, builder)?;
+        Cons::try_build(context, code, next_builder)
     }
 }
 
-impl<Context, Code, Input, Builder, Handler, Output> BuilderComputer<Context, Code, Input, Builder>
+impl<Context, Code, Builder, Handler, Output> BuilderComputer<Context, Code, Builder>
     for Cons<Handler, Nil>
 where
-    Handler: BuilderComputer<Context, Code, Input, Builder, Output = Output>,
+    Handler: BuilderComputer<Context, Code, Builder, Output = Output>,
 {
     type Output = Output;
 
-    fn build(
-        context: &Context,
-        code: PhantomData<Code>,
-        input: Input,
-        builder: Builder,
-    ) -> Self::Output {
-        Handler::build(context, code, input, builder)
+    fn build(context: &Context, code: PhantomData<Code>, builder: Builder) -> Self::Output {
+        Handler::build(context, code, builder)
     }
 }
 
-impl<Context, Code, Input, Builder, Handler, Output>
-    TryBuilderComputer<Context, Code, Input, Builder> for Cons<Handler, Nil>
+impl<Context, Code, Builder, Handler, Output> TryBuilderComputer<Context, Code, Builder>
+    for Cons<Handler, Nil>
 where
     Context: HasErrorType,
-    Handler: TryBuilderComputer<Context, Code, Input, Builder, Output = Output>,
+    Handler: TryBuilderComputer<Context, Code, Builder, Output = Output>,
 {
     type Output = Output;
 
     fn try_build(
         context: &Context,
         code: PhantomData<Code>,
-        input: Input,
         builder: Builder,
     ) -> Result<Self::Output, Context::Error> {
-        Handler::try_build(context, code, input, builder)
+        Handler::try_build(context, code, builder)
     }
 }
