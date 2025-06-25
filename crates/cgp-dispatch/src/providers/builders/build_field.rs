@@ -1,11 +1,12 @@
 use cgp_core::prelude::*;
-use cgp_handler::{Computer, Handler, TryComputer};
-
-use crate::{BuilderComputer, BuilderHandler, TryBuilderComputer};
+use cgp_handler::{
+    Computer, ComputerComponent, Handler, HandlerComponent, TryComputer, TryComputerComponent,
+};
 
 pub struct HandleAndBuildField<Tag, Provider = UseContext>(pub PhantomData<(Tag, Provider)>);
 
-impl<Context, Code, Tag, Value, Provider, Output, Builder> BuilderComputer<Context, Code, Builder>
+#[cgp_provider]
+impl<Context, Code, Tag, Value, Provider, Output, Builder> Computer<Context, Code, Builder>
     for HandleAndBuildField<Tag, Provider>
 where
     Provider: for<'a> Computer<Context, Code, &'a Builder, Output = Value>,
@@ -13,14 +14,15 @@ where
 {
     type Output = Output;
 
-    fn build(context: &Context, code: PhantomData<Code>, builder: Builder) -> Self::Output {
+    fn compute(context: &Context, code: PhantomData<Code>, builder: Builder) -> Self::Output {
         let value = Provider::compute(context, code, &builder);
         builder.build_field(PhantomData::<Tag>, value)
     }
 }
 
-impl<Context, Code, Tag, Value, Provider, Output, Builder>
-    TryBuilderComputer<Context, Code, Builder> for HandleAndBuildField<Tag, Provider>
+#[cgp_provider]
+impl<Context, Code, Tag, Value, Provider, Output, Builder> TryComputer<Context, Code, Builder>
+    for HandleAndBuildField<Tag, Provider>
 where
     Context: HasErrorType,
     Provider: for<'a> TryComputer<Context, Code, &'a Builder, Output = Value>,
@@ -28,7 +30,7 @@ where
 {
     type Output = Output;
 
-    fn try_build(
+    fn try_compute(
         context: &Context,
         code: PhantomData<Code>,
         builder: Builder,
@@ -38,8 +40,9 @@ where
     }
 }
 
-impl<Context, Code: Send, Builder: Send + Sync, Tag, Value, Provider, Output>
-    BuilderHandler<Context, Code, Builder> for HandleAndBuildField<Tag, Provider>
+#[cgp_provider]
+impl<Context, Code: Send, Builder: Send + Sync, Tag, Value, Provider, Output: Send>
+    Handler<Context, Code, Builder> for HandleAndBuildField<Tag, Provider>
 where
     Context: HasAsyncErrorType,
     Provider: for<'a> Handler<Context, Code, &'a Builder, Output = Value>,

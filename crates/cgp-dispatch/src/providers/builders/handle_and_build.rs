@@ -1,12 +1,13 @@
 use cgp_core::field::CanBuildFrom;
 use cgp_core::prelude::*;
-use cgp_handler::{Computer, Handler, TryComputer};
-
-use crate::{BuilderComputer, BuilderHandler, TryBuilderComputer};
+use cgp_handler::{
+    Computer, ComputerComponent, Handler, HandlerComponent, TryComputer, TryComputerComponent,
+};
 
 pub struct HandleAndBuild<Provider = UseContext>(pub PhantomData<Provider>);
 
-impl<Context, Code, Builder, Provider, Output, Res> BuilderComputer<Context, Code, Builder>
+#[cgp_provider]
+impl<Context, Code, Builder, Provider, Output, Res> Computer<Context, Code, Builder>
     for HandleAndBuild<Provider>
 where
     Provider: for<'a> Computer<Context, Code, &'a Builder, Output = Res>,
@@ -14,13 +15,14 @@ where
 {
     type Output = Output;
 
-    fn build(context: &Context, code: PhantomData<Code>, builder: Builder) -> Self::Output {
+    fn compute(context: &Context, code: PhantomData<Code>, builder: Builder) -> Self::Output {
         let output = Provider::compute(context, code, &builder);
         builder.build_from(output)
     }
 }
 
-impl<Context, Code, Builder, Provider, Output, Res> TryBuilderComputer<Context, Code, Builder>
+#[cgp_provider]
+impl<Context, Code, Builder, Provider, Output, Res> TryComputer<Context, Code, Builder>
     for HandleAndBuild<Provider>
 where
     Context: HasErrorType,
@@ -29,7 +31,7 @@ where
 {
     type Output = Output;
 
-    fn try_build(
+    fn try_compute(
         context: &Context,
         code: PhantomData<Code>,
         builder: Builder,
@@ -39,8 +41,9 @@ where
     }
 }
 
-impl<Context, Code: Send, Builder: Send + Sync, Provider, Output, Res>
-    BuilderHandler<Context, Code, Builder> for HandleAndBuild<Provider>
+#[cgp_provider]
+impl<Context, Code: Send, Builder: Send + Sync, Provider, Output: Send, Res>
+    Handler<Context, Code, Builder> for HandleAndBuild<Provider>
 where
     Context: HasAsyncErrorType,
     Provider: for<'a> Handler<Context, Code, &'a Builder, Output = Res>,

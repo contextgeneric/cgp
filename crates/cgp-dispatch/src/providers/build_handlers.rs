@@ -16,7 +16,7 @@ where
     type Output = Output;
 
     fn compute(context: &Context, code: PhantomData<Code>, _input: Input) -> Self::Output {
-        Handlers::build(context, code, Output::builder()).finalize_build()
+        Handlers::compute(context, code, Output::builder()).finalize_build()
     }
 }
 
@@ -36,7 +36,7 @@ where
         code: PhantomData<Code>,
         _input: Input,
     ) -> Result<Self::Output, Context::Error> {
-        Ok(Handlers::try_build(context, code, Output::builder())?.finalize_build())
+        Ok(Handlers::try_compute(context, code, Output::builder())?.finalize_build())
     }
 }
 
@@ -62,19 +62,19 @@ where
     }
 }
 
-pub trait BuilderComputer<Context, Code, Builder> {
+trait BuilderComputer<Context, Code, Builder> {
     type Output;
 
-    fn build(context: &Context, code: PhantomData<Code>, builder: Builder) -> Self::Output;
+    fn compute(context: &Context, code: PhantomData<Code>, builder: Builder) -> Self::Output;
 }
 
-pub trait TryBuilderComputer<Context, Code, Builder>
+trait TryBuilderComputer<Context, Code, Builder>
 where
     Context: HasErrorType,
 {
     type Output;
 
-    fn try_build(
+    fn try_compute(
         context: &Context,
         code: PhantomData<Code>,
         builder: Builder,
@@ -82,7 +82,7 @@ where
 }
 
 #[async_trait]
-pub trait BuilderHandler<Context, Code, Builder>
+trait BuilderHandler<Context, Code, Builder>
 where
     Context: HasAsyncErrorType,
 {
@@ -99,14 +99,14 @@ impl<Context, Code, Builder, NextBuilder, Output, CurrentHandler, NextHandler, R
     BuilderComputer<Context, Code, Builder>
     for Cons<CurrentHandler, Cons<NextHandler, RestHandlers>>
 where
-    CurrentHandler: BuilderComputer<Context, Code, Builder, Output = NextBuilder>,
+    CurrentHandler: Computer<Context, Code, Builder, Output = NextBuilder>,
     Cons<NextHandler, RestHandlers>: BuilderComputer<Context, Code, NextBuilder, Output = Output>,
 {
     type Output = Output;
 
-    fn build(context: &Context, code: PhantomData<Code>, builder: Builder) -> Self::Output {
-        let next_builder = CurrentHandler::build(context, code, builder);
-        Cons::build(context, code, next_builder)
+    fn compute(context: &Context, code: PhantomData<Code>, builder: Builder) -> Self::Output {
+        let next_builder = CurrentHandler::compute(context, code, builder);
+        Cons::compute(context, code, next_builder)
     }
 }
 
@@ -115,19 +115,19 @@ impl<Context, Code, Builder, NextBuilder, Output, CurrentHandler, NextHandler, R
     for Cons<CurrentHandler, Cons<NextHandler, RestHandlers>>
 where
     Context: HasErrorType,
-    CurrentHandler: TryBuilderComputer<Context, Code, Builder, Output = NextBuilder>,
+    CurrentHandler: TryComputer<Context, Code, Builder, Output = NextBuilder>,
     Cons<NextHandler, RestHandlers>:
         TryBuilderComputer<Context, Code, NextBuilder, Output = Output>,
 {
     type Output = Output;
 
-    fn try_build(
+    fn try_compute(
         context: &Context,
         code: PhantomData<Code>,
         builder: Builder,
     ) -> Result<Self::Output, Context::Error> {
-        let next_builder = CurrentHandler::try_build(context, code, builder)?;
-        Cons::try_build(context, code, next_builder)
+        let next_builder = CurrentHandler::try_compute(context, code, builder)?;
+        Cons::try_compute(context, code, next_builder)
     }
 }
 
@@ -144,7 +144,7 @@ impl<
     for Cons<CurrentHandler, Cons<NextHandler, RestHandlers>>
 where
     Context: HasAsyncErrorType,
-    CurrentHandler: BuilderHandler<Context, Code, Builder, Output = NextBuilder>,
+    CurrentHandler: Handler<Context, Code, Builder, Output = NextBuilder>,
     Cons<NextHandler, RestHandlers>: BuilderHandler<Context, Code, NextBuilder, Output = Output>,
 {
     type Output = Output;
@@ -162,12 +162,12 @@ where
 impl<Context, Code, Builder, Handler, Output> BuilderComputer<Context, Code, Builder>
     for Cons<Handler, Nil>
 where
-    Handler: BuilderComputer<Context, Code, Builder, Output = Output>,
+    Handler: Computer<Context, Code, Builder, Output = Output>,
 {
     type Output = Output;
 
-    fn build(context: &Context, code: PhantomData<Code>, builder: Builder) -> Self::Output {
-        Handler::build(context, code, builder)
+    fn compute(context: &Context, code: PhantomData<Code>, builder: Builder) -> Self::Output {
+        Handler::compute(context, code, builder)
     }
 }
 
@@ -175,24 +175,24 @@ impl<Context, Code, Builder, Handler, Output> TryBuilderComputer<Context, Code, 
     for Cons<Handler, Nil>
 where
     Context: HasErrorType,
-    Handler: TryBuilderComputer<Context, Code, Builder, Output = Output>,
+    Handler: TryComputer<Context, Code, Builder, Output = Output>,
 {
     type Output = Output;
 
-    fn try_build(
+    fn try_compute(
         context: &Context,
         code: PhantomData<Code>,
         builder: Builder,
     ) -> Result<Self::Output, Context::Error> {
-        Handler::try_build(context, code, builder)
+        Handler::try_compute(context, code, builder)
     }
 }
 
-impl<Context, Code: Send, Builder: Send, Handler, Output> BuilderHandler<Context, Code, Builder>
-    for Cons<Handler, Nil>
+impl<Context, Code: Send, Builder: Send, CurrentHandler, Output>
+    BuilderHandler<Context, Code, Builder> for Cons<CurrentHandler, Nil>
 where
     Context: HasAsyncErrorType,
-    Handler: BuilderHandler<Context, Code, Builder, Output = Output>,
+    CurrentHandler: Handler<Context, Code, Builder, Output = Output>,
 {
     type Output = Output;
 
@@ -201,6 +201,6 @@ where
         code: PhantomData<Code>,
         builder: Builder,
     ) -> Result<Self::Output, Context::Error> {
-        Handler::handle(context, code, builder).await
+        CurrentHandler::handle(context, code, builder).await
     }
 }
