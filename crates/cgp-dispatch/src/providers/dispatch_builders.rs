@@ -3,62 +3,54 @@ use cgp_handler::{
     Computer, ComputerComponent, Handler, HandlerComponent, TryComputer, TryComputerComponent,
 };
 
-pub struct BuildWithHandlers<Output, Handlers>(pub PhantomData<(Output, Handlers)>);
+pub struct DispatchBuilders<Handlers>(pub PhantomData<Handlers>);
 
 #[cgp_provider]
-impl<Context, Code, Input, Output, Builder, Handlers> Computer<Context, Code, Input>
-    for BuildWithHandlers<Output, Handlers>
+impl<Context, Code, Input, Output, Handlers> Computer<Context, Code, Input>
+    for DispatchBuilders<Handlers>
 where
-    Output: HasBuilder<Builder = Builder>,
-    Handlers: BuilderComputer<Context, Code, Builder>,
-    Handlers::Output: FinalizeBuild<Output = Output>,
+    Handlers: BuilderComputer<Context, Code, Input, Output = Output>,
 {
     type Output = Output;
 
-    fn compute(context: &Context, code: PhantomData<Code>, _input: Input) -> Self::Output {
-        Handlers::compute(context, code, Output::builder()).finalize_build()
+    fn compute(context: &Context, code: PhantomData<Code>, input: Input) -> Self::Output {
+        Handlers::compute(context, code, input)
     }
 }
 
 #[cgp_provider]
-impl<Context, Code, Input, Output, Builder, Handlers> TryComputer<Context, Code, Input>
-    for BuildWithHandlers<Output, Handlers>
+impl<Context, Code, Input, Output, Handlers> TryComputer<Context, Code, Input>
+    for DispatchBuilders<Handlers>
 where
     Context: HasErrorType,
-    Output: HasBuilder<Builder = Builder>,
-    Handlers: TryBuilderComputer<Context, Code, Builder>,
-    Handlers::Output: FinalizeBuild<Output = Output>,
+    Handlers: TryBuilderComputer<Context, Code, Input, Output = Output>,
 {
     type Output = Output;
 
     fn try_compute(
         context: &Context,
         code: PhantomData<Code>,
-        _input: Input,
+        input: Input,
     ) -> Result<Self::Output, Context::Error> {
-        Ok(Handlers::try_compute(context, code, Output::builder())?.finalize_build())
+        Handlers::try_compute(context, code, input)
     }
 }
 
 #[cgp_provider]
-impl<Context, Code: Send, Input: Send, Output: Send, Builder, Handlers>
-    Handler<Context, Code, Input> for BuildWithHandlers<Output, Handlers>
+impl<Context, Code: Send, Input: Send, Output: Send, Handlers> Handler<Context, Code, Input>
+    for DispatchBuilders<Handlers>
 where
     Context: HasAsyncErrorType,
-    Output: HasBuilder<Builder = Builder>,
-    Handlers: BuilderHandler<Context, Code, Builder>,
-    Handlers::Output: FinalizeBuild<Output = Output>,
+    Handlers: BuilderHandler<Context, Code, Input, Output = Output>,
 {
     type Output = Output;
 
     async fn handle(
         context: &Context,
         code: PhantomData<Code>,
-        _input: Input,
+        input: Input,
     ) -> Result<Self::Output, Context::Error> {
-        Ok(Handlers::handle(context, code, Output::builder())
-            .await?
-            .finalize_build())
+        Handlers::handle(context, code, input).await
     }
 }
 
