@@ -42,3 +42,23 @@ impl FinalizeExtract for Infallible {
         match self {}
     }
 }
+
+pub trait FinalizeExtractResult {
+    type Output;
+
+    fn finalize_extract_result(self) -> Self::Output;
+}
+
+impl<T, E> FinalizeExtractResult for Result<T, E>
+where
+    E: FinalizeExtract,
+{
+    type Output = T;
+
+    fn finalize_extract_result(self) -> T {
+        match self {
+            Ok(value) => value,
+            Err(remainder) => remainder.finalize_extract(),
+        }
+    }
+}
