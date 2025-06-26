@@ -4,7 +4,7 @@ use cgp_handler::{
     TryComputerComponent,
 };
 
-use crate::{DispatchHandlers, DispatchHandlersRef, ExtractFieldAndHandle};
+use crate::{ExtractFieldAndHandle, MatchWithHandlers, MatchWithHandlersRef};
 
 pub struct DispatchFields<Provider = UseContext>(pub PhantomData<Provider>);
 
@@ -20,12 +20,12 @@ impl<Context, Code, Input, Output, Fields, Provider> Computer<Context, Code, Inp
 where
     Input: HasFields<Fields = Fields>,
     Fields: FieldsToExtractFieldHandlers<Provider>,
-    DispatchHandlers<Fields::Handlers>: Computer<Context, Code, Input, Output = Output>,
+    MatchWithHandlers<Fields::Handlers>: Computer<Context, Code, Input, Output = Output>,
 {
     type Output = Output;
 
     fn compute(context: &Context, code: PhantomData<Code>, input: Input) -> Output {
-        DispatchHandlers::compute(context, code, input)
+        MatchWithHandlers::compute(context, code, input)
     }
 }
 
@@ -36,7 +36,7 @@ where
     Context: HasErrorType,
     Input: HasFields<Fields = Fields>,
     Fields: FieldsToExtractFieldHandlers<Provider>,
-    DispatchHandlers<Fields::Handlers>: TryComputer<Context, Code, Input, Output = Output>,
+    MatchWithHandlers<Fields::Handlers>: TryComputer<Context, Code, Input, Output = Output>,
 {
     type Output = Output;
 
@@ -45,7 +45,7 @@ where
         code: PhantomData<Code>,
         input: Input,
     ) -> Result<Output, Context::Error> {
-        DispatchHandlers::try_compute(context, code, input)
+        MatchWithHandlers::try_compute(context, code, input)
     }
 }
 
@@ -56,7 +56,7 @@ where
     Context: HasAsyncErrorType,
     Input: HasFields<Fields = Fields>,
     Fields: FieldsToExtractFieldHandlers<Provider>,
-    DispatchHandlers<Fields::Handlers>: Handler<Context, Code, Input, Output = Output>,
+    MatchWithHandlers<Fields::Handlers>: Handler<Context, Code, Input, Output = Output>,
 {
     type Output = Output;
 
@@ -65,7 +65,7 @@ where
         code: PhantomData<Code>,
         input: Input,
     ) -> Result<Output, Context::Error> {
-        DispatchHandlers::handle(context, code, input).await
+        MatchWithHandlers::handle(context, code, input).await
     }
 }
 
@@ -75,13 +75,14 @@ impl<Context, Code, Input, Output, Provider> Computer<Context, Code, &Input>
 where
     Input: HasFieldsRef,
     for<'b> Input::FieldsRef<'b>: FieldsToExtractFieldHandlers<Provider>,
-    for<'b> DispatchHandlersRef<<Input::FieldsRef<'b> as FieldsToExtractFieldHandlers<Provider>>::Handlers>:
-        Computer<Context, Code, &'b Input, Output = Output>,
+    for<'b> MatchWithHandlersRef<
+        <Input::FieldsRef<'b> as FieldsToExtractFieldHandlers<Provider>>::Handlers,
+    >: Computer<Context, Code, &'b Input, Output = Output>,
 {
     type Output = Output;
 
     fn compute(context: &Context, code: PhantomData<Code>, input: &Input) -> Output {
-        DispatchHandlersRef::compute(context, code, input)
+        MatchWithHandlersRef::compute(context, code, input)
     }
 }
 
@@ -92,8 +93,9 @@ where
     Context: HasErrorType,
     Input: HasFieldsRef,
     for<'b> Input::FieldsRef<'b>: FieldsToExtractFieldHandlers<Provider>,
-    for<'b> DispatchHandlersRef<<Input::FieldsRef<'b> as FieldsToExtractFieldHandlers<Provider>>::Handlers>:
-        TryComputer<Context, Code, &'b Input, Output = Output>,
+    for<'b> MatchWithHandlersRef<
+        <Input::FieldsRef<'b> as FieldsToExtractFieldHandlers<Provider>>::Handlers,
+    >: TryComputer<Context, Code, &'b Input, Output = Output>,
 {
     type Output = Output;
 
@@ -102,7 +104,7 @@ where
         code: PhantomData<Code>,
         input: &Input,
     ) -> Result<Output, Context::Error> {
-        DispatchHandlersRef::try_compute(context, code, input)
+        MatchWithHandlersRef::try_compute(context, code, input)
     }
 }
 
@@ -113,8 +115,9 @@ where
     Context: HasAsyncErrorType,
     Input: Send + Sync + HasFieldsRef,
     for<'b> Input::FieldsRef<'b>: FieldsToExtractFieldHandlers<Provider>,
-    for<'b> DispatchHandlersRef<<Input::FieldsRef<'b> as FieldsToExtractFieldHandlers<Provider>>::Handlers>:
-        Handler<Context, Code, &'b Input, Output = Output>,
+    for<'b> MatchWithHandlersRef<
+        <Input::FieldsRef<'b> as FieldsToExtractFieldHandlers<Provider>>::Handlers,
+    >: Handler<Context, Code, &'b Input, Output = Output>,
 {
     type Output = Output;
 
@@ -123,7 +126,7 @@ where
         code: PhantomData<Code>,
         input: &Input,
     ) -> Result<Output, Context::Error> {
-        DispatchHandlersRef::handle(context, code, input).await
+        MatchWithHandlersRef::handle(context, code, input).await
     }
 }
 
