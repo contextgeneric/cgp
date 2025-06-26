@@ -6,17 +6,17 @@ use cgp_handler::{
 
 use crate::{ExtractFieldAndHandle, MatchWithHandlers, MatchWithHandlersRef};
 
-pub struct DispatchFields<Provider = UseContext>(pub PhantomData<Provider>);
+pub struct MatchWithFieldHandlers<Provider = UseContext>(pub PhantomData<Provider>);
 
-pub struct DispatchFieldsRef<Provider = UseContext>(pub PhantomData<Provider>);
+pub struct MatchWithFieldHandlersRef<Provider = UseContext>(pub PhantomData<Provider>);
 
-pub type DispatchFieldValues = DispatchFields<HandleFieldValue<UseContext>>;
+pub type MatchWithValueHandlers = MatchWithFieldHandlers<HandleFieldValue<UseContext>>;
 
-pub type DispatchFieldValueRefs = DispatchFieldsRef<HandleFieldValue<UseContext>>;
+pub type MatchWithValueHandlersRef = MatchWithFieldHandlersRef<HandleFieldValue<UseContext>>;
 
 #[cgp_provider]
 impl<Context, Code, Input, Output, Fields, Provider> Computer<Context, Code, Input>
-    for DispatchFields<Provider>
+    for MatchWithFieldHandlers<Provider>
 where
     Input: HasFields<Fields = Fields>,
     Fields: FieldsToExtractFieldHandlers<Provider>,
@@ -31,7 +31,7 @@ where
 
 #[cgp_provider]
 impl<Context, Code, Input, Output, Fields, Provider> TryComputer<Context, Code, Input>
-    for DispatchFields<Provider>
+    for MatchWithFieldHandlers<Provider>
 where
     Context: HasErrorType,
     Input: HasFields<Fields = Fields>,
@@ -51,7 +51,7 @@ where
 
 #[cgp_provider]
 impl<Context, Code: Send, Input: Send, Output: Send, Fields, Provider> Handler<Context, Code, Input>
-    for DispatchFields<Provider>
+    for MatchWithFieldHandlers<Provider>
 where
     Context: HasAsyncErrorType,
     Input: HasFields<Fields = Fields>,
@@ -71,7 +71,7 @@ where
 
 #[cgp_provider]
 impl<Context, Code, Input, Output, Provider> Computer<Context, Code, &Input>
-    for DispatchFieldsRef<Provider>
+    for MatchWithFieldHandlersRef<Provider>
 where
     Input: HasFieldsRef,
     for<'b> Input::FieldsRef<'b>: FieldsToExtractFieldHandlers<Provider>,
@@ -88,7 +88,7 @@ where
 
 #[cgp_provider]
 impl<Context, Code, Input, Output, Provider> TryComputer<Context, Code, &Input>
-    for DispatchFieldsRef<Provider>
+    for MatchWithFieldHandlersRef<Provider>
 where
     Context: HasErrorType,
     Input: HasFieldsRef,
@@ -110,7 +110,7 @@ where
 
 #[cgp_provider]
 impl<Context, Code: Send, Input, Output: Send, Provider> Handler<Context, Code, &Input>
-    for DispatchFieldsRef<Provider>
+    for MatchWithFieldHandlersRef<Provider>
 where
     Context: HasAsyncErrorType,
     Input: Send + Sync + HasFieldsRef,

@@ -5,7 +5,7 @@ use core::marker::PhantomData;
 use cgp::core::error::ErrorTypeProviderComponent;
 use cgp::core::field::{CanDowncast, CanDowncastFields, CanUpcast};
 use cgp::extra::dispatch::{
-    DispatchFields, ExtractAndHandle, ExtractFieldAndHandle, MatchWithHandlers,
+    DowncastAndHandle, ExtractFieldAndHandle, MatchWithFieldHandlers, MatchWithHandlers,
 };
 use cgp::extra::handler::{
     Computer, ComputerComponent, HandleFieldValue, Handler, Promote, Promote2,
@@ -147,12 +147,12 @@ fn test_dispatch_fields() {
     let code = PhantomData::<()>;
 
     assert_eq!(
-        DispatchFields::<FieldToString>::compute(&context, code, FooBarBaz::Foo(1)),
+        MatchWithFieldHandlers::<FieldToString>::compute(&context, code, FooBarBaz::Foo(1)),
         "1"
     );
 
     assert_eq!(
-        DispatchFields::<FieldToString>::compute(
+        MatchWithFieldHandlers::<FieldToString>::compute(
             &context,
             code,
             FooBarBaz::Bar("hello".to_owned())
@@ -161,7 +161,7 @@ fn test_dispatch_fields() {
     );
 
     assert_eq!(
-        DispatchFields::<FieldToString>::compute(&context, code, FooBarBaz::Baz(true)),
+        MatchWithFieldHandlers::<FieldToString>::compute(&context, code, FooBarBaz::Baz(true)),
         "true"
     );
 }
@@ -172,7 +172,7 @@ fn test_async_dispatch_fields() {
     let code = PhantomData::<()>;
 
     assert_eq!(
-        block_on(DispatchFields::<FieldToString>::handle(
+        block_on(MatchWithFieldHandlers::<FieldToString>::handle(
             &context,
             code,
             FooBarBaz::Foo(1)
@@ -182,7 +182,7 @@ fn test_async_dispatch_fields() {
     );
 
     assert_eq!(
-        block_on(DispatchFields::<FieldToString>::handle(
+        block_on(MatchWithFieldHandlers::<FieldToString>::handle(
             &context,
             code,
             FooBarBaz::Bar("hello".to_owned())
@@ -192,7 +192,7 @@ fn test_async_dispatch_fields() {
     );
 
     assert_eq!(
-        block_on(DispatchFields::<FieldToString>::handle(
+        block_on(MatchWithFieldHandlers::<FieldToString>::handle(
             &context,
             code,
             FooBarBaz::Baz(true)
@@ -214,12 +214,12 @@ pub fn show_baz(input: bool) -> String {
 
 type Computers = Product![
     ExtractFieldAndHandle<symbol!("Baz"), HandleFieldValue<ShowBaz>>,
-    ExtractAndHandle<FooBar, ShowFooBar>,
+    DowncastAndHandle<FooBar, ShowFooBar>,
 ];
 
 type Handlers = Product![
     Promote2<ExtractFieldAndHandle<symbol!("Baz"), HandleFieldValue<ShowBaz>>>,
-    Promote2<ExtractAndHandle<FooBar, ShowFooBar>>
+    Promote2<DowncastAndHandle<FooBar, ShowFooBar>>
 ];
 
 #[test]

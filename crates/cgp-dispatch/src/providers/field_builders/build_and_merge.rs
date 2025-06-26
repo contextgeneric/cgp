@@ -4,11 +4,11 @@ use cgp_handler::{
     Computer, ComputerComponent, Handler, HandlerComponent, TryComputer, TryComputerComponent,
 };
 
-pub struct HandleAndBuild<Provider = UseContext>(pub PhantomData<Provider>);
+pub struct BuildAndMerge<Provider = UseContext>(pub PhantomData<Provider>);
 
 #[cgp_provider]
 impl<Context, Code, Builder, Provider, Output, Res> Computer<Context, Code, Builder>
-    for HandleAndBuild<Provider>
+    for BuildAndMerge<Provider>
 where
     Provider: for<'a> Computer<Context, Code, &'a Builder, Output = Res>,
     Builder: CanBuildFrom<Res, Output = Output>,
@@ -23,7 +23,7 @@ where
 
 #[cgp_provider]
 impl<Context, Code, Builder, Provider, Output, Res> TryComputer<Context, Code, Builder>
-    for HandleAndBuild<Provider>
+    for BuildAndMerge<Provider>
 where
     Context: HasErrorType,
     Provider: for<'a> TryComputer<Context, Code, &'a Builder, Output = Res>,
@@ -43,7 +43,7 @@ where
 
 #[cgp_provider]
 impl<Context, Code: Send, Builder: Send + Sync, Provider, Output: Send, Res>
-    Handler<Context, Code, Builder> for HandleAndBuild<Provider>
+    Handler<Context, Code, Builder> for BuildAndMerge<Provider>
 where
     Context: HasAsyncErrorType,
     Provider: for<'a> Handler<Context, Code, &'a Builder, Output = Res>,

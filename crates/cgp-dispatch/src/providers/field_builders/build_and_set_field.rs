@@ -3,11 +3,11 @@ use cgp_handler::{
     Computer, ComputerComponent, Handler, HandlerComponent, TryComputer, TryComputerComponent,
 };
 
-pub struct HandleAndBuildField<Tag, Provider = UseContext>(pub PhantomData<(Tag, Provider)>);
+pub struct BuildAndSetField<Tag, Provider = UseContext>(pub PhantomData<(Tag, Provider)>);
 
 #[cgp_provider]
 impl<Context, Code, Tag, Value, Provider, Output, Builder> Computer<Context, Code, Builder>
-    for HandleAndBuildField<Tag, Provider>
+    for BuildAndSetField<Tag, Provider>
 where
     Provider: for<'a> Computer<Context, Code, &'a Builder, Output = Value>,
     Builder: BuildField<Tag, Value = Value, Output = Output>,
@@ -22,7 +22,7 @@ where
 
 #[cgp_provider]
 impl<Context, Code, Tag, Value, Provider, Output, Builder> TryComputer<Context, Code, Builder>
-    for HandleAndBuildField<Tag, Provider>
+    for BuildAndSetField<Tag, Provider>
 where
     Context: HasErrorType,
     Provider: for<'a> TryComputer<Context, Code, &'a Builder, Output = Value>,
@@ -42,7 +42,7 @@ where
 
 #[cgp_provider]
 impl<Context, Code: Send, Builder: Send + Sync, Tag, Value, Provider, Output: Send>
-    Handler<Context, Code, Builder> for HandleAndBuildField<Tag, Provider>
+    Handler<Context, Code, Builder> for BuildAndSetField<Tag, Provider>
 where
     Context: HasAsyncErrorType,
     Provider: for<'a> Handler<Context, Code, &'a Builder, Output = Value>,

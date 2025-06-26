@@ -4,11 +4,11 @@ use cgp_handler::{
     Computer, ComputerComponent, Handler, HandlerComponent, TryComputer, TryComputerComponent,
 };
 
-pub struct ExtractAndHandle<Input, Provider = UseContext>(pub PhantomData<(Input, Provider)>);
+pub struct DowncastAndHandle<Input, Provider = UseContext>(pub PhantomData<(Input, Provider)>);
 
 #[cgp_provider]
 impl<Context, Code, Input, Provider, Inner, Output, Remainder> Computer<Context, Code, Input>
-    for ExtractAndHandle<Inner, Provider>
+    for DowncastAndHandle<Inner, Provider>
 where
     Input: CanDowncastFields<Inner, Remainder = Remainder>,
     Provider: Computer<Context, Code, Inner, Output = Output>,
@@ -28,7 +28,7 @@ where
 
 #[cgp_provider]
 impl<Context, Code, Input, Provider, Inner, Output, Remainder> TryComputer<Context, Code, Input>
-    for ExtractAndHandle<Inner, Provider>
+    for DowncastAndHandle<Inner, Provider>
 where
     Context: HasErrorType,
     Input: CanDowncastFields<Inner, Remainder = Remainder>,
@@ -55,7 +55,7 @@ where
 
 #[cgp_provider]
 impl<Context, Code: Send, Input: Send, Provider, Inner: Send, Output: Send, Remainder: Send>
-    Handler<Context, Code, Input> for ExtractAndHandle<Inner, Provider>
+    Handler<Context, Code, Input> for DowncastAndHandle<Inner, Provider>
 where
     Context: HasAsyncErrorType,
     Input: CanDowncastFields<Inner, Remainder = Remainder>,

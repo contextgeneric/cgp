@@ -3,7 +3,7 @@ use std::marker::PhantomData;
 
 use cgp::core::error::ErrorTypeProviderComponent;
 use cgp::core::field::CanBuildFrom;
-use cgp::extra::dispatch::{BuildWithHandlers, HandleAndBuild, HandleAndBuildField};
+use cgp::extra::dispatch::{BuildAndMerge, BuildAndSetField, BuildWithHandlers};
 use cgp::extra::handler::{Computer, Producer, ProducerComponent, Promote};
 use cgp::prelude::*;
 
@@ -94,7 +94,7 @@ fn test_build_with_handlers() {
     let context = App;
     let code = PhantomData::<()>;
 
-    pub type Handlers = Product![HandleAndBuild<Promote<BuildFooBar>>, HandleAndBuildField<symbol!("baz"), Promote<BuildBaz>>];
+    pub type Handlers = Product![BuildAndMerge<Promote<BuildFooBar>>, BuildAndSetField<symbol!("baz"), Promote<BuildBaz>>];
 
     assert_eq!(
         BuildWithHandlers::<FooBarBaz, Handlers>::compute(&context, code, ()),
@@ -121,9 +121,9 @@ fn test_build_with_fields() {
     let code = PhantomData::<()>;
 
     pub type Handlers = Product![
-        HandleAndBuildField<symbol!("baz"), BuildBaz>,
-        HandleAndBuildField<symbol!("bar"), BuildBar>,
-        HandleAndBuildField<symbol!("foo"), BuildFoo>,
+        BuildAndSetField<symbol!("baz"), BuildBaz>,
+        BuildAndSetField<symbol!("bar"), BuildBar>,
+        BuildAndSetField<symbol!("foo"), BuildFoo>,
     ];
 
     assert_eq!(
