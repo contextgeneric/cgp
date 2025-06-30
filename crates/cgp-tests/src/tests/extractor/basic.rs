@@ -5,10 +5,12 @@ use core::marker::PhantomData;
 use cgp::core::error::ErrorTypeProviderComponent;
 use cgp::core::field::{CanDowncast, CanDowncastFields, CanUpcast};
 use cgp::extra::dispatch::{
-    DowncastAndHandle, ExtractFieldAndHandle, MatchWithFieldHandlers, MatchWithHandlers,
+    DowncastAndHandle, ExtractFieldAndHandle, MatchWithFieldHandlers, MatchWithFieldHandlersRef,
+    MatchWithHandlers, MatchWithValueHandlersRef,
 };
 use cgp::extra::handler::{
-    Computer, ComputerComponent, HandleFieldValue, Handler, Promote, Promote2,
+    Computer, ComputerComponent, ComputerRef, ComputerRefComponent, HandleFieldValue, Handler,
+    Promote, Promote2,
 };
 use cgp::prelude::*;
 use futures::executor::block_on;
@@ -162,6 +164,47 @@ fn test_dispatch_fields() {
 
     assert_eq!(
         MatchWithFieldHandlers::<FieldToString>::compute(&context, code, FooBarBaz::Baz(true)),
+        "true"
+    );
+}
+
+#[cgp_new_provider]
+impl<Context, Code, Value> ComputerRef<Context, Code, Value> for ValueToString
+where
+    Value: Display,
+{
+    type Output = String;
+
+    fn compute_ref(context: &Context, code: PhantomData<Code>, input: &Value) -> Self::Output {
+        input.to_string()
+    }
+}
+
+#[test]
+fn test_dispatch_fields_ref() {
+    let context = App;
+    let code = PhantomData::<()>;
+
+    assert_eq!(
+        MatchWithValueHandlersRef::<ValueToString>::compute_ref(&context, code, &FooBarBaz::Foo(1)),
+        "1"
+    );
+
+    assert_eq!(
+        MatchWithValueHandlersRef::<ValueToString>::compute_ref(
+            &context,
+            code,
+            &FooBarBaz::Bar("hello".to_owned())
+        ),
+        "hello"
+    );
+
+    assert_eq!(
+        MatchWithValueHandlersRef::<ValueToString>::compute_ref(
+            &context,
+            code,
+            &FooBarBaz::Baz(true)
+        ),
         "true"
     );
 }

@@ -9,8 +9,8 @@ use crate::MatchWithHandlersRef;
 
 pub struct MatchWithFieldHandlersRef<Provider = UseContext>(pub PhantomData<Provider>);
 
-pub type MatchWithValueHandlersRef =
-    PromoteRef<MatchWithFieldHandlersRef<HandleFieldValue<PromoteRef<UseContext>>>>;
+pub type MatchWithValueHandlersRef<Provider = UseContext> =
+    PromoteRef<MatchWithFieldHandlersRef<HandleFieldValue<PromoteRef<Provider>>>>;
 
 #[cgp_provider]
 impl<Context, Code, Input, Output, Provider> Computer<Context, Code, &Input>
