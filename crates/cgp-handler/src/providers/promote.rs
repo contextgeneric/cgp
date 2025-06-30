@@ -1,5 +1,3 @@
-use core::marker::PhantomData;
-
 use cgp_core::prelude::*;
 
 use crate::{
