@@ -34,7 +34,7 @@ pub trait CanHandle<Code, Input>: HasErrorType {
 pub trait CanHandleRef<Code, Input>: HasErrorType {
     type Output;
 
-    async fn handle(
+    async fn handle_ref(
         &self,
         _tag: PhantomData<Code>,
         input: &Input,

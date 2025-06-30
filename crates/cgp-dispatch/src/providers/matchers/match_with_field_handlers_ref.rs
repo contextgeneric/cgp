@@ -1,7 +1,7 @@
 use cgp_core::prelude::*;
 use cgp_handler::{
-    Computer, ComputerComponent, HandleFieldValue, Handler, HandlerComponent, TryComputer,
-    TryComputerComponent,
+    Computer, ComputerComponent, HandleFieldValue, Handler, HandlerComponent, PromoteRef,
+    TryComputer, TryComputerComponent,
 };
 
 use crate::providers::matchers::to_field_handlers::ToFieldHandlers;
@@ -9,7 +9,8 @@ use crate::MatchWithHandlersRef;
 
 pub struct MatchWithFieldHandlersRef<Provider = UseContext>(pub PhantomData<Provider>);
 
-pub type MatchWithValueHandlersRef = MatchWithFieldHandlersRef<HandleFieldValue<UseContext>>;
+pub type MatchWithValueHandlersRef =
+    PromoteRef<MatchWithFieldHandlersRef<HandleFieldValue<PromoteRef<UseContext>>>>;
 
 #[cgp_provider]
 impl<Context, Code, Input, Output, Provider> Computer<Context, Code, &Input>

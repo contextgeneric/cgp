@@ -25,7 +25,7 @@ where
         tag: PhantomData<Code>,
         input: Input,
     ) -> Result<Self::Output, Context::Error> {
-        Provider::handle(context, tag, input.deref()).await
+        Provider::handle_ref(context, tag, input.deref()).await
     }
 }
 
@@ -40,7 +40,7 @@ where
 {
     type Output = Output;
 
-    async fn handle(
+    async fn handle_ref(
         context: &Context,
         tag: PhantomData<Code>,
         input: &Input,
@@ -64,7 +64,7 @@ where
         tag: PhantomData<Code>,
         input: Input,
     ) -> Result<Self::Output, Context::Error> {
-        Provider::try_compute(context, tag, input.deref())
+        Provider::try_compute_ref(context, tag, input.deref())
     }
 }
 
@@ -77,7 +77,7 @@ where
 {
     type Output = Output;
 
-    fn try_compute(
+    fn try_compute_ref(
         context: &Context,
         tag: PhantomData<Code>,
         input: &Input,
@@ -95,7 +95,7 @@ where
     type Output = Provider::Output;
 
     fn compute(context: &Context, tag: PhantomData<Code>, input: Input) -> Self::Output {
-        Provider::compute(context, tag, input.deref())
+        Provider::compute_ref(context, tag, input.deref())
     }
 }
 
@@ -107,7 +107,7 @@ where
 {
     type Output = Output;
 
-    fn compute(context: &Context, tag: PhantomData<Code>, input: &Input) -> Self::Output {
+    fn compute_ref(context: &Context, tag: PhantomData<Code>, input: &Input) -> Self::Output {
         Provider::compute(context, tag, input)
     }
 }

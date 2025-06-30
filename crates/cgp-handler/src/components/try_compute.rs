@@ -32,7 +32,7 @@ pub trait CanTryCompute<Code, Input>: HasErrorType {
 pub trait CanTryComputeRef<Code, Input>: HasErrorType {
     type Output;
 
-    fn try_compute(
+    fn try_compute_ref(
         &self,
         _code: PhantomData<Code>,
         input: &Input,

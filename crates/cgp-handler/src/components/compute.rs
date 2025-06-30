@@ -28,5 +28,5 @@ pub trait CanCompute<Code, Input> {
 pub trait CanComputeRef<Code, Input> {
     type Output;
 
-    fn compute(&self, _code: PhantomData<Code>, input: &Input) -> Self::Output;
+    fn compute_ref(&self, _code: PhantomData<Code>, input: &Input) -> Self::Output;
 }
