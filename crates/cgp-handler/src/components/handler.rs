@@ -22,3 +22,21 @@ pub trait CanHandle<Code, Input>: HasErrorType {
         input: Input,
     ) -> Result<Self::Output, Self::Error>;
 }
+
+#[async_trait]
+#[cgp_component {
+    provider: HandlerRef,
+    derive_delegate: [
+        UseDelegate<Code>,
+        UseInputDelegate<Input>,
+    ],
+}]
+pub trait CanHandleRef<Code, Input>: HasErrorType {
+    type Output;
+
+    async fn handle(
+        &self,
+        _tag: PhantomData<Code>,
+        input: &Input,
+    ) -> Result<Self::Output, Self::Error>;
+}

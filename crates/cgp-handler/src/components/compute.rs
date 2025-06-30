@@ -17,3 +17,16 @@ pub trait CanCompute<Code, Input> {
 
     fn compute(&self, _code: PhantomData<Code>, input: Input) -> Self::Output;
 }
+
+#[cgp_component {
+    provider: ComputerRef,
+    derive_delegate: [
+        UseDelegate<Code>,
+        UseInputDelegate<Input>,
+    ],
+}]
+pub trait CanComputeRef<Code, Input> {
+    type Output;
+
+    fn compute(&self, _code: PhantomData<Code>, input: &Input) -> Self::Output;
+}
