@@ -5,8 +5,8 @@ use core::marker::PhantomData;
 use cgp::core::error::ErrorTypeProviderComponent;
 use cgp::core::field::{CanDowncast, CanDowncastFields, CanUpcast};
 use cgp::extra::dispatch::{
-    DowncastAndHandle, ExtractFieldAndHandle, MatchWithFieldHandlers, MatchWithFieldHandlersRef,
-    MatchWithHandlers, MatchWithValueHandlersRef,
+    DowncastAndHandle, ExtractFieldAndHandle, MatchWithFieldHandlers, MatchWithHandlers,
+    MatchWithValueHandlersRef,
 };
 use cgp::extra::handler::{
     Computer, ComputerComponent, ComputerRef, ComputerRefComponent, HandleFieldValue, Handler,
@@ -175,7 +175,7 @@ where
 {
     type Output = String;
 
-    fn compute_ref(context: &Context, code: PhantomData<Code>, input: &Value) -> Self::Output {
+    fn compute_ref(_context: &Context, _code: PhantomData<Code>, input: &Value) -> Self::Output {
         input.to_string()
     }
 }

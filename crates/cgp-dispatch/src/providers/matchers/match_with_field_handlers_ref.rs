@@ -7,14 +7,17 @@ use cgp_handler::{
 use crate::providers::matchers::to_field_handlers::ToFieldHandlers;
 use crate::MatchWithHandlersRef;
 
-pub struct MatchWithFieldHandlersRef<Provider = UseContext>(pub PhantomData<Provider>);
+pub type MatchWithFieldHandlersRef<Provider = UseContext> =
+    MatchWithFieldHandlersRefImpl<PromoteRef<Provider>>;
 
 pub type MatchWithValueHandlersRef<Provider = UseContext> =
-    MatchWithFieldHandlersRef<HandleFieldValue<PromoteRef<Provider>>>;
+    MatchWithFieldHandlersRefImpl<HandleFieldValue<PromoteRef<Provider>>>;
+
+pub struct MatchWithFieldHandlersRefImpl<Provider = UseContext>(pub PhantomData<Provider>);
 
 delegate_components! {
     <Provider>
-    MatchWithFieldHandlersRef<Provider> {
+    MatchWithFieldHandlersRefImpl<Provider> {
         [
             ComputerRefComponent,
             TryComputerRefComponent,
@@ -26,7 +29,7 @@ delegate_components! {
 
 #[cgp_provider]
 impl<Context, Code, Input, Output, Provider> Computer<Context, Code, &Input>
-    for MatchWithFieldHandlersRef<Provider>
+    for MatchWithFieldHandlersRefImpl<Provider>
 where
     Input: HasFieldsRef,
     for<'b> Input::FieldsRef<'b>: ToFieldHandlers<Provider>,
@@ -42,7 +45,7 @@ where
 
 #[cgp_provider]
 impl<Context, Code, Input, Output, Provider> TryComputer<Context, Code, &Input>
-    for MatchWithFieldHandlersRef<Provider>
+    for MatchWithFieldHandlersRefImpl<Provider>
 where
     Context: HasErrorType,
     Input: HasFieldsRef,
@@ -63,7 +66,7 @@ where
 
 #[cgp_provider]
 impl<Context, Code: Send, Input, Output: Send, Provider> Handler<Context, Code, &Input>
-    for MatchWithFieldHandlersRef<Provider>
+    for MatchWithFieldHandlersRefImpl<Provider>
 where
     Context: HasAsyncErrorType,
     Input: Send + Sync + HasFieldsRef,
