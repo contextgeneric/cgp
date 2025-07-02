@@ -9,7 +9,8 @@ use crate::MatchWithHandlers;
 
 pub struct MatchWithFieldHandlers<Provider = UseContext>(pub PhantomData<Provider>);
 
-pub type MatchWithValueHandlers = MatchWithFieldHandlers<HandleFieldValue<UseContext>>;
+pub type MatchWithValueHandlers<Provider = UseContext> =
+    MatchWithFieldHandlers<HandleFieldValue<Provider>>;
 
 #[cgp_provider]
 impl<Context, Code, Input, Output, Fields, Provider> Computer<Context, Code, Input>
