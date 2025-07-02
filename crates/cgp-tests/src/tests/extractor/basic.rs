@@ -247,12 +247,12 @@ fn test_async_dispatch_fields() {
 
 #[cgp_computer]
 pub fn show_foo_bar(input: FooBar) -> String {
-    format!("FooBar::{:?}", input)
+    format!("FooBar::{input:?}")
 }
 
 #[cgp_computer]
 pub fn show_baz(input: bool) -> String {
-    format!("Baz({:?})", input)
+    format!("Baz({input:?})")
 }
 
 type Computers = Product![

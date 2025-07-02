@@ -35,7 +35,7 @@ pub fn field_to_tag(index: usize, field: &Field) -> syn::Result<Type> {
 }
 
 pub fn index_to_generic_ident(index: usize) -> Ident {
-    Ident::new(&format!("__F{}__", index), Span::call_site())
+    Ident::new(&format!("__F{index}__"), Span::call_site())
 }
 
 pub fn field_value_expr(field_member: Member, expr: TokenStream) -> syn::Result<FieldValue> {

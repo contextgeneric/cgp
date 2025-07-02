@@ -50,7 +50,7 @@ pub fn derive_type_alias(
     let type_generics_params = &type_generics.params;
 
     let type_name = &item_type.ident;
-    let alias_name = Ident::new(&format!("{}Of", type_name), type_name.span());
+    let alias_name = Ident::new(&format!("{type_name}Of"), type_name.span());
 
     let alias_type: ItemType = parse2(quote! {
         pub type #alias_name < #context_name, #type_generics_params > =

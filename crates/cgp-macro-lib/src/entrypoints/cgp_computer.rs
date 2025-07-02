@@ -41,7 +41,7 @@ pub fn cgp_computer(attr: TokenStream, body: TokenStream) -> syn::Result<TokenSt
             }
             FnArg::Typed(pat) => {
                 input_types.push(pat.ty.as_ref().clone());
-                input_idents.push(Ident::new(&format!("arg_{}", i), pat.span()));
+                input_idents.push(Ident::new(&format!("arg_{i}"), pat.span()));
             }
         }
     }

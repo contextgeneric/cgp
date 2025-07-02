@@ -12,8 +12,7 @@ pub fn assert_equal_token_stream(derived: &TokenStream, expected: &TokenStream) 
 
     if formatted_derived != formatted_expected {
         panic!(
-            "token stream does not match. expected:\n{}\ngot:\n{}",
-            formatted_expected, formatted_derived,
+            "token stream does not match. expected:\n{formatted_expected}\ngot:\n{formatted_derived}",
         );
     }
 }

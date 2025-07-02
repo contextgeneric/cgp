@@ -12,13 +12,11 @@ pub fn derive_extract_field(body: TokenStream) -> syn::Result<TokenStream> {
 
     let context_ident = &context_enum.ident;
 
-    let extractor_ident = Ident::new(&format!("Partial{}", context_ident), context_ident.span());
+    let extractor_ident = Ident::new(&format!("Partial{context_ident}"), context_ident.span());
     let extractor_enum = derive_extractor_enum(&context_enum, &extractor_ident, false)?;
 
-    let extractor_ref_ident = Ident::new(
-        &format!("PartialRef{}", context_ident),
-        context_ident.span(),
-    );
+    let extractor_ref_ident =
+        Ident::new(&format!("PartialRef{context_ident}"), context_ident.span());
     let extractor_ref_enum = derive_extractor_enum(&context_enum, &extractor_ref_ident, true)?;
 
     let has_extractor_impl = derive_has_extractor_impl(&context_enum, &extractor_ident)?;

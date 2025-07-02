@@ -98,7 +98,7 @@ impl ComponentSpec {
                 (component_name, component_params)
             } else {
                 (
-                    Ident::new(&format!("{}Component", provider_name), provider_name.span()),
+                    Ident::new(&format!("{provider_name}Component"), provider_name.span()),
                     Punctuated::default(),
                 )
             }
