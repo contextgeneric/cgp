@@ -51,7 +51,7 @@ pub fn derive_finalize_extract_impl(
         impl #impl_generics FinalizeExtract for #extractor_type
         #where_clause
         {
-            fn finalize_extract<T>(self) -> T {
+            fn finalize_extract<__T__>(self) -> __T__ {
                 match self {
                     #(#match_arms)*
                 }
