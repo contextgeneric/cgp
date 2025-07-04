@@ -1,9 +1,8 @@
 use cgp_core::prelude::*;
 use cgp_handler::{
-    Computer, ComputerComponent, Handler, HandlerComponent, TryComputer, TryComputerComponent,
+    Computer, ComputerComponent, Handler, HandlerComponent, PipeHandlers, TryComputer,
+    TryComputerComponent,
 };
-
-use crate::DispatchBuilders;
 
 pub struct BuildWithHandlers<Output, Handlers>(pub PhantomData<(Output, Handlers)>);
 
@@ -12,13 +11,13 @@ impl<Context, Code, Input, Output, Builder, Handlers, Res> Computer<Context, Cod
     for BuildWithHandlers<Output, Handlers>
 where
     Output: HasBuilder<Builder = Builder>,
-    DispatchBuilders<Handlers>: Computer<Context, Code, Builder, Output = Res>,
+    PipeHandlers<Handlers>: Computer<Context, Code, Builder, Output = Res>,
     Res: FinalizeBuild<Output = Output>,
 {
     type Output = Output;
 
     fn compute(context: &Context, code: PhantomData<Code>, _input: Input) -> Self::Output {
-        DispatchBuilders::compute(context, code, Output::builder()).finalize_build()
+        PipeHandlers::compute(context, code, Output::builder()).finalize_build()
     }
 }
 
@@ -28,7 +27,7 @@ impl<Context, Code, Input, Output, Builder, Handlers, Res> TryComputer<Context, 
 where
     Context: HasErrorType,
     Output: HasBuilder<Builder = Builder>,
-    DispatchBuilders<Handlers>: TryComputer<Context, Code, Builder, Output = Res>,
+    PipeHandlers<Handlers>: TryComputer<Context, Code, Builder, Output = Res>,
     Res: FinalizeBuild<Output = Output>,
 {
     type Output = Output;
@@ -38,7 +37,7 @@ where
         code: PhantomData<Code>,
         _input: Input,
     ) -> Result<Self::Output, Context::Error> {
-        Ok(DispatchBuilders::try_compute(context, code, Output::builder())?.finalize_build())
+        Ok(PipeHandlers::try_compute(context, code, Output::builder())?.finalize_build())
     }
 }
 
@@ -48,7 +47,7 @@ impl<Context, Code: Send, Input: Send, Output: Send, Builder: Send, Handlers, Re
 where
     Context: HasAsyncErrorType,
     Output: HasBuilder<Builder = Builder>,
-    DispatchBuilders<Handlers>: Handler<Context, Code, Builder, Output = Res>,
+    PipeHandlers<Handlers>: Handler<Context, Code, Builder, Output = Res>,
     Res: FinalizeBuild<Output = Output>,
 {
     type Output = Output;
@@ -58,7 +57,7 @@ where
         code: PhantomData<Code>,
         _input: Input,
     ) -> Result<Self::Output, Context::Error> {
-        Ok(DispatchBuilders::handle(context, code, Output::builder())
+        Ok(PipeHandlers::handle(context, code, Output::builder())
             .await?
             .finalize_build())
     }
