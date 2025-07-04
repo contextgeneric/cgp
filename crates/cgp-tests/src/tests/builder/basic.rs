@@ -94,7 +94,8 @@ fn test_build_with_handlers() {
     let context = App;
     let code = PhantomData::<()>;
 
-    pub type Handlers = Product![BuildAndMerge<Promote<BuildFooBar>>, BuildAndSetField<symbol!("baz"), Promote<BuildBaz>>];
+    pub type Handlers =
+        Product![BuildAndMerge<BuildFooBar>, BuildAndSetField<symbol!("baz"), BuildBaz>];
 
     assert_eq!(
         BuildWithHandlers::<FooBarBaz, Handlers>::compute(&context, code, ()),

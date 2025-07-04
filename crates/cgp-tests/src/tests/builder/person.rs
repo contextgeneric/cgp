@@ -1,4 +1,5 @@
 use cgp::core::field::CanBuildFrom;
+use cgp::extra::dispatch::{BuildAndMerge, BuildAndSetField, BuildWithHandlers};
 use cgp::prelude::*;
 
 #[derive(HasFields, BuildField)]
@@ -14,6 +15,19 @@ pub struct Employee {
     pub last_name: String,
 }
 
+#[cgp_producer]
+pub fn build_person() -> Person {
+    Person {
+        first_name: "John".to_owned(),
+        last_name: "Smith".to_owned(),
+    }
+}
+
+#[cgp_producer]
+pub fn build_employee_id() -> u64 {
+    1
+}
+
 #[test]
 fn test_person() {
     let person = Person {
@@ -25,4 +39,12 @@ fn test_person() {
         .build_from(person) // PartialEmployee<IsNothing, IsPresent, IsPresent>
         .build_field(PhantomData::<symbol!("employee_id")>, 1) // PartialEmployee<IsPresent, IsPresent, IsPresent>
         .finalize_build(); // Person
+}
+
+#[test]
+fn test_build_with_handler() {
+    let _employee = BuildWithHandlers::<
+        Employee,
+        Product![BuildAndMerge<BuildPerson>, BuildAndSetField<symbol!("employee_id"), BuildEmployeeId>],
+    >::compute(&(), PhantomData::<()>, ());
 }
