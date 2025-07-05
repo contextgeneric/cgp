@@ -1,9 +1,28 @@
-use cgp_core::field::{MapFields, MapType};
+use cgp_core::field::MapFields;
+use cgp_core::prelude::*;
+use cgp_handler::{
+    ComputerComponent, ComputerRefComponent, HandlerComponent, HandlerRefComponent,
+    TryComputerComponent, TryComputerRefComponent,
+};
 
 use crate::{BuildAndMerge, BuildWithHandlers};
 
-pub type BuildAndMergeOutputs<Output, Handlers> =
-    BuildWithHandlers<Output, <Handlers as MapFields<ToBuildAndMergeHandler>>::Mapped>;
+pub struct BuildAndMergeOutputs<Output, Handlers>(pub PhantomData<(Output, Handlers)>);
+
+delegate_components! {
+    <Output, Handlers: MapFields<ToBuildAndMergeHandler>>
+    BuildAndMergeOutputs<Output, Handlers> {
+        [
+            ComputerComponent,
+            ComputerRefComponent,
+            TryComputerComponent,
+            TryComputerRefComponent,
+            HandlerComponent,
+            HandlerRefComponent,
+        ]:
+            BuildWithHandlers<Output, Handlers::Mapped>
+    }
+}
 
 pub struct ToBuildAndMergeHandler;
 
