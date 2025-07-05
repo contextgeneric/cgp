@@ -17,6 +17,6 @@ delegate_components! {
             TryComputerComponent,
             HandlerComponent,
         ]:
-            MatchWithHandlers<Input::Handlers>
+            MatchWithHandlers<Input::Handlers>,
     }
 }
