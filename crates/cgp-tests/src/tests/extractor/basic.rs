@@ -149,12 +149,16 @@ fn test_dispatch_fields() {
     let code = PhantomData::<()>;
 
     assert_eq!(
-        MatchWithFieldHandlers::<FieldToString>::compute(&context, code, FooBarBaz::Foo(1)),
+        MatchWithFieldHandlers::<FooBarBaz, FieldToString>::compute(
+            &context,
+            code,
+            FooBarBaz::Foo(1)
+        ),
         "1"
     );
 
     assert_eq!(
-        MatchWithFieldHandlers::<FieldToString>::compute(
+        MatchWithFieldHandlers::<FooBarBaz, FieldToString>::compute(
             &context,
             code,
             FooBarBaz::Bar("hello".to_owned())
@@ -163,7 +167,11 @@ fn test_dispatch_fields() {
     );
 
     assert_eq!(
-        MatchWithFieldHandlers::<FieldToString>::compute(&context, code, FooBarBaz::Baz(true)),
+        MatchWithFieldHandlers::<FooBarBaz, FieldToString>::compute(
+            &context,
+            code,
+            FooBarBaz::Baz(true)
+        ),
         "true"
     );
 }
@@ -186,12 +194,16 @@ fn test_dispatch_fields_ref() {
     let code = PhantomData::<()>;
 
     assert_eq!(
-        MatchWithValueHandlersRef::<ValueToString>::compute_ref(&context, code, &FooBarBaz::Foo(1)),
+        MatchWithValueHandlersRef::<FooBarBaz, ValueToString>::compute_ref(
+            &context,
+            code,
+            &FooBarBaz::Foo(1)
+        ),
         "1"
     );
 
     assert_eq!(
-        MatchWithValueHandlersRef::<ValueToString>::compute_ref(
+        MatchWithValueHandlersRef::<FooBarBaz, ValueToString>::compute_ref(
             &context,
             code,
             &FooBarBaz::Bar("hello".to_owned())
@@ -200,7 +212,7 @@ fn test_dispatch_fields_ref() {
     );
 
     assert_eq!(
-        MatchWithValueHandlersRef::<ValueToString>::compute_ref(
+        MatchWithValueHandlersRef::<FooBarBaz, ValueToString>::compute_ref(
             &context,
             code,
             &FooBarBaz::Baz(true)
@@ -215,7 +227,7 @@ fn test_async_dispatch_fields() {
     let code = PhantomData::<()>;
 
     assert_eq!(
-        block_on(MatchWithFieldHandlers::<FieldToString>::handle(
+        block_on(MatchWithFieldHandlers::<FooBarBaz, FieldToString>::handle(
             &context,
             code,
             FooBarBaz::Foo(1)
@@ -225,7 +237,7 @@ fn test_async_dispatch_fields() {
     );
 
     assert_eq!(
-        block_on(MatchWithFieldHandlers::<FieldToString>::handle(
+        block_on(MatchWithFieldHandlers::<FooBarBaz, FieldToString>::handle(
             &context,
             code,
             FooBarBaz::Bar("hello".to_owned())
@@ -235,7 +247,7 @@ fn test_async_dispatch_fields() {
     );
 
     assert_eq!(
-        block_on(MatchWithFieldHandlers::<FieldToString>::handle(
+        block_on(MatchWithFieldHandlers::<FooBarBaz, FieldToString>::handle(
             &context,
             code,
             FooBarBaz::Baz(true)
