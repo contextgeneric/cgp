@@ -69,7 +69,7 @@ where
     fn compute_ref(context: &Context, code: PhantomData<Code>, input: &Input) -> String {
         let output_a = ProviderA::compute_ref(context, code, input);
         let output_b = ProviderB::compute_ref(context, code, input);
-        format!("{} {}", output_a, output_b)
+        format!("{output_a} {output_b}")
     }
 }
 
