@@ -7,11 +7,9 @@ use cgp_handler::{
 
 use crate::{BuildAndMerge, BuildWithHandlers};
 
-pub struct BuildAndMergeOutputs<Output, Handlers>(pub PhantomData<(Output, Handlers)>);
-
 delegate_components! {
     <Output, Handlers: MapFields<ToBuildAndMergeHandler>>
-    BuildAndMergeOutputs<Output, Handlers> {
+    new BuildAndMergeOutputs<Output, Handlers> {
         [
             ComputerComponent,
             ComputerRefComponent,

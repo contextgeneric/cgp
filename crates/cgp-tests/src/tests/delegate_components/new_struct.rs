@@ -34,6 +34,7 @@ pub fn test_delegate_components_with_new_generic_struct() {
     struct BarValue<T>(PhantomData<T>);
 
     delegate_components! {
+        <T>
         new MyComponents<T> {
             FooKey<T>: FooValue,
             BarKey: BarValue<T>,
