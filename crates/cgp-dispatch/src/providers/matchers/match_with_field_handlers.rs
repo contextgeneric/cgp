@@ -2,6 +2,7 @@ use cgp_core::prelude::*;
 use cgp_handler::{
     ComputerComponent, ComputerRefComponent, HandleFieldValue, HandlerComponent,
     HandlerRefComponent, PromoteRef, TryComputerComponent, TryComputerRefComponent,
+    UseInputDelegate,
 };
 
 use crate::providers::matchers::to_field_handlers::{
@@ -9,26 +10,45 @@ use crate::providers::matchers::to_field_handlers::{
 };
 use crate::{MatchWithHandlers, MatchWithHandlersRef};
 
-pub struct MatchWithFieldHandlers<Input, Provider = UseContext>(pub PhantomData<(Input, Provider)>);
+pub struct MatchWithFieldHandlers<Provider = UseContext>(pub PhantomData<Provider>);
 
-pub type MatchWithValueHandlers<Input, Provider = UseContext> =
-    MatchWithFieldHandlers<Input, HandleFieldValue<Provider>>;
+pub type MatchWithValueHandlers<Provider = UseContext> =
+    MatchWithFieldHandlers<HandleFieldValue<Provider>>;
 
-pub type MatchWithFieldHandlersRef<Input, Provider = UseContext> =
-    MatchWithFieldHandlers<Input, PromoteRef<Provider>>;
+pub type MatchWithFieldHandlersRef<Provider = UseContext> =
+    MatchWithFieldHandlers<PromoteRef<Provider>>;
 
-pub type MatchWithValueHandlersRef<Input, Provider = UseContext> =
-    MatchWithFieldHandlers<Input, HandleFieldValue<PromoteRef<Provider>>>;
+pub type MatchWithValueHandlersRef<Provider = UseContext> =
+    MatchWithFieldHandlers<HandleFieldValue<PromoteRef<Provider>>>;
 
 delegate_components! {
-    <Input: ToInputFieldHandlers<Provider>, Provider>
-    MatchWithFieldHandlers<Input, Provider> {
+    <Provider>
+    MatchWithFieldHandlers<Provider> {
         [
             ComputerComponent,
             TryComputerComponent,
             HandlerComponent,
         ]:
-            MatchWithHandlers<Input::Handlers>,
+            UseInputDelegate<MatchWithFieldHandlersInputs<Provider>>,
+    }
+}
+
+delegate_components! {
+    <Input: ToInputFieldHandlers<Provider>, Provider>
+    new MatchWithFieldHandlersInputs<Provider> {
+        Input: MatchWithHandlers<Input::Handlers>
+    }
+}
+
+delegate_components! {
+    <Provider>
+    MatchWithFieldHandlers<Provider> {
+        [
+            ComputerRefComponent,
+            TryComputerRefComponent,
+            HandlerRefComponent,
+        ]:
+            UseInputDelegate<MatchWithFieldHandlersInputsRef<Provider>>
     }
 }
 
@@ -38,12 +58,8 @@ delegate_components! {
         Provider,
         Handlers,
     >
-    MatchWithFieldHandlers<Input, Provider> {
-        [
-            ComputerRefComponent,
-            TryComputerRefComponent,
-            HandlerRefComponent,
-        ]:
+    new MatchWithFieldHandlersInputsRef<Provider> {
+        Input:
             PromoteRef<MatchWithHandlersRef<Handlers>>
     }
 }
