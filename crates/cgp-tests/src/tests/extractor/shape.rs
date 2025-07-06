@@ -1,9 +1,7 @@
 use std::f64::consts::PI;
 
-use cgp::{
-    core::field::{CanDowncast, CanDowncastFields, CanUpcast},
-    prelude::*,
-};
+use cgp::core::field::{CanDowncast, CanDowncastFields, CanUpcast};
+use cgp::prelude::*;
 
 #[derive(Debug, PartialEq, HasFields, FromVariant, ExtractField)]
 pub enum Shape {
