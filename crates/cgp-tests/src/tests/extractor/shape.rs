@@ -30,7 +30,6 @@ fn test_shape_area() {
         Err(remainder) => match remainder.extract_field(PhantomData::<symbol!("Rectangle")>) {
             Ok(rectangle) => rectangle.width * rectangle.height,
             // PartialShape<IsVoid, IsVoid>
-            Err(remainder) => match remainder {},
         },
     };
 }

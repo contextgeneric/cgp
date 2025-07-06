@@ -20,10 +20,10 @@ pub trait CanDowncastFields<Target> {
     fn downcast_fields(self, _tag: PhantomData<Target>) -> Result<Target, Self::Remainder>;
 }
 
-impl<Target, Context, Remainder> CanUpcast<Target> for Context
+impl<Target, Context, Source, Remainder> CanUpcast<Target> for Context
 where
-    Context: HasFields + HasExtractor,
-    Context::Fields: FieldsExtractor<Target, Context::Extractor, Remainder = Remainder>,
+    Context: HasFields + HasExtractor<Extractor = Source>,
+    Context::Fields: FieldsExtractor<Source, Target, Remainder = Remainder>,
     Remainder: FinalizeExtract,
 {
     fn upcast(self, _tag: PhantomData<Target>) -> Target {
@@ -34,11 +34,11 @@ where
     }
 }
 
-impl<Target, Context, Extractor, Remainder> CanDowncast<Target> for Context
+impl<Target, Context, Source, Remainder> CanDowncast<Target> for Context
 where
-    Context: HasExtractor<Extractor = Extractor>,
+    Context: HasExtractor<Extractor = Source>,
     Target: HasFields,
-    Target::Fields: FieldsExtractor<Target, Extractor, Remainder = Remainder>,
+    Target::Fields: FieldsExtractor<Source, Target, Remainder = Remainder>,
 {
     type Remainder = Remainder;
 
@@ -47,10 +47,10 @@ where
     }
 }
 
-impl<Target, Extractor, Remainder> CanDowncastFields<Target> for Extractor
+impl<Source, Target, Remainder> CanDowncastFields<Target> for Source
 where
     Target: HasFields,
-    Target::Fields: FieldsExtractor<Target, Extractor, Remainder = Remainder>,
+    Target::Fields: FieldsExtractor<Source, Target, Remainder = Remainder>,
 {
     type Remainder = Remainder;
 
@@ -59,34 +59,34 @@ where
     }
 }
 
-pub trait FieldsExtractor<Context, Extractor> {
+pub trait FieldsExtractor<Source, Target> {
     type Remainder;
 
-    fn extract_from(extractor: Extractor) -> Result<Context, Self::Remainder>;
+    fn extract_from(extractor: Source) -> Result<Target, Self::Remainder>;
 }
 
-impl<Context, Tag, Value, RestFields, Extractor, Remainder> FieldsExtractor<Context, Extractor>
+impl<Source, Target, Tag, Value, RestFields, Remainder> FieldsExtractor<Source, Target>
     for Either<Field<Tag, Value>, RestFields>
 where
-    Extractor: ExtractField<Tag, Value = Value>,
-    Context: FromVariant<Tag, Value = Value>,
-    RestFields: FieldsExtractor<Context, Extractor::Remainder, Remainder = Remainder>,
+    Source: ExtractField<Tag, Value = Value>,
+    Target: FromVariant<Tag, Value = Value>,
+    RestFields: FieldsExtractor<Source::Remainder, Target, Remainder = Remainder>,
 {
     type Remainder = Remainder;
 
-    fn extract_from(extractor: Extractor) -> Result<Context, Remainder> {
+    fn extract_from(extractor: Source) -> Result<Target, Remainder> {
         let res = extractor.extract_field(PhantomData);
         match res {
-            Ok(field) => Ok(Context::from_variant(PhantomData, field)),
+            Ok(field) => Ok(Target::from_variant(PhantomData, field)),
             Err(remainder) => RestFields::extract_from(remainder),
         }
     }
 }
 
-impl<Context, Extractor> FieldsExtractor<Context, Extractor> for Void {
-    type Remainder = Extractor;
+impl<Source, Target> FieldsExtractor<Source, Target> for Void {
+    type Remainder = Source;
 
-    fn extract_from(extractor: Extractor) -> Result<Context, Extractor> {
+    fn extract_from(extractor: Source) -> Result<Target, Source> {
         Err(extractor)
     }
 }
