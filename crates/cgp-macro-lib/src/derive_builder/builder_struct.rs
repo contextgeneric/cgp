@@ -24,7 +24,7 @@ pub fn derive_builder_struct(
         let field_type = &field.ty;
 
         let mapped_type: Type = parse2(quote! {
-            <#generic_param_name as MapType>::Mapped<#field_type>
+            <#generic_param_name as MapType>::Map<#field_type>
         })?;
 
         field.ty = mapped_type;

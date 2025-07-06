@@ -25,5 +25,5 @@ delegate_components! {
 pub struct ToBuildAndMergeHandler;
 
 impl MapType for ToBuildAndMergeHandler {
-    type Mapped<Handler> = BuildAndMerge<Handler>;
+    type Map<Handler> = BuildAndMerge<Handler>;
 }

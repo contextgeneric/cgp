@@ -38,11 +38,11 @@ pub fn derive_extractor_enum(
 
         let mapped_type: Type = if is_ref {
             parse2(quote! {
-                <#generic_param_name as MapType>::Mapped< &'__a__ #field_type >
+                <#generic_param_name as MapType>::Map< &'__a__ #field_type >
             })?
         } else {
             parse2(quote! {
-                <#generic_param_name as MapType>::Mapped<#field_type>
+                <#generic_param_name as MapType>::Map<#field_type>
             })?
         };
 

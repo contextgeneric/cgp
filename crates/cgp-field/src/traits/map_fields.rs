@@ -9,7 +9,7 @@ where
     Mapper: MapType,
     Rest: MapFields<Mapper>,
 {
-    type Mapped = Cons<Mapper::Mapped<Current>, Rest::Mapped>;
+    type Mapped = Cons<Mapper::Map<Current>, Rest::Mapped>;
 }
 
 impl<Mapper> MapFields<Mapper> for Nil {
@@ -21,7 +21,7 @@ where
     Mapper: MapType,
     Rest: MapFields<Mapper>,
 {
-    type Mapped = Either<Mapper::Mapped<Current>, Rest::Mapped>;
+    type Mapped = Either<Mapper::Map<Current>, Rest::Mapped>;
 }
 
 impl<Mapper> MapFields<Mapper> for Void {
