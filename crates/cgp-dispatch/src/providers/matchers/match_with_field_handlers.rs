@@ -1,49 +1,68 @@
 use cgp_core::prelude::*;
 use cgp_handler::{
-    ComputerComponent, ComputerRefComponent, HandleFieldValue, HandlerComponent,
-    HandlerRefComponent, PromoteRef, TryComputerComponent, TryComputerRefComponent,
+    Computer, ComputerComponent, HandleFieldValue, Handler, HandlerComponent, TryComputer,
+    TryComputerComponent,
 };
 
-use crate::providers::matchers::to_field_handlers::{
-    ToInputFieldHandlers, ToInputFieldHandlersRef,
-};
-use crate::{MatchWithHandlers, MatchWithHandlersRef};
+use crate::providers::matchers::to_field_handlers::ToFieldHandlers;
+use crate::MatchWithHandlers;
 
 pub struct MatchWithFieldHandlers<Input, Provider = UseContext>(pub PhantomData<(Input, Provider)>);
 
 pub type MatchWithValueHandlers<Input, Provider = UseContext> =
     MatchWithFieldHandlers<Input, HandleFieldValue<Provider>>;
 
-pub type MatchWithFieldHandlersRef<Input, Provider = UseContext> =
-    MatchWithFieldHandlers<Input, PromoteRef<Provider>>;
+#[cgp_provider]
+impl<Context, Code, Input, Output, Fields, Provider> Computer<Context, Code, Input>
+    for MatchWithFieldHandlers<Input, Provider>
+where
+    Input: HasFields<Fields = Fields>,
+    Fields: ToFieldHandlers<Provider>,
+    MatchWithHandlers<Fields::Handlers>: Computer<Context, Code, Input, Output = Output>,
+{
+    type Output = Output;
 
-pub type MatchWithValueHandlersRef<Input, Provider = UseContext> =
-    MatchWithFieldHandlers<Input, HandleFieldValue<PromoteRef<Provider>>>;
-
-delegate_components! {
-    <Input: ToInputFieldHandlers<Provider>, Provider>
-    MatchWithFieldHandlers<Input, Provider> {
-        [
-            ComputerComponent,
-            TryComputerComponent,
-            HandlerComponent,
-        ]:
-            MatchWithHandlers<Input::Handlers>,
+    fn compute(context: &Context, code: PhantomData<Code>, input: Input) -> Output {
+        MatchWithHandlers::compute(context, code, input)
     }
 }
 
-delegate_components! {
-    <
-        Input: for<'a> ToInputFieldHandlersRef<'a, Provider, Handlers = Handlers>,
-        Provider,
-        Handlers,
-    >
-    MatchWithFieldHandlers<Input, Provider> {
-        [
-            ComputerRefComponent,
-            TryComputerRefComponent,
-            HandlerRefComponent,
-        ]:
-            PromoteRef<MatchWithHandlersRef<Handlers>>
+#[cgp_provider]
+impl<Context, Code, Input, Output, Fields, Provider> TryComputer<Context, Code, Input>
+    for MatchWithFieldHandlers<Input, Provider>
+where
+    Context: HasErrorType,
+    Input: HasFields<Fields = Fields>,
+    Fields: ToFieldHandlers<Provider>,
+    MatchWithHandlers<Fields::Handlers>: TryComputer<Context, Code, Input, Output = Output>,
+{
+    type Output = Output;
+
+    fn try_compute(
+        context: &Context,
+        code: PhantomData<Code>,
+        input: Input,
+    ) -> Result<Output, Context::Error> {
+        MatchWithHandlers::try_compute(context, code, input)
+    }
+}
+
+#[cgp_provider]
+impl<Context, Code: Send, Input: Send, Output: Send, Fields, Provider> Handler<Context, Code, Input>
+    for MatchWithFieldHandlers<Input, Provider>
+where
+    Context: HasAsyncErrorType,
+    Input: HasFields<Fields = Fields>,
+    Fields: ToFieldHandlers<Provider>,
+    MatchWithHandlers<Fields::Handlers>: Handler<Context, Code, Input, Output = Output>,
+{
+    type Output = Output;
+
+    async fn handle(
+        context: &Context,
+        code: PhantomData<Code>,
+        input: Input,
+    ) -> Result<Output, Context::Error> {
+        MatchWithHandlers::handle(context, code, input).await
     }
 }

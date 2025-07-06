@@ -1,30 +1,6 @@
-use cgp_core::prelude::*;
+use cgp_core::field::{Cons, Either, Field, Nil, Void};
 
 use crate::ExtractFieldAndHandle;
-
-pub trait ToInputFieldHandlersRef<'a, Provider> {
-    type Handlers;
-}
-
-impl<'a, Input, Provider, Handlers> ToInputFieldHandlersRef<'a, Provider> for Input
-where
-    Input: 'a + HasFieldsRef,
-    Input::FieldsRef<'a>: ToFieldHandlers<Provider, Handlers = Handlers>,
-{
-    type Handlers = Handlers;
-}
-
-pub trait ToInputFieldHandlers<Provider> {
-    type Handlers;
-}
-
-impl<Input, Fields, Provider> ToInputFieldHandlers<Provider> for Input
-where
-    Input: HasFields<Fields = Fields>,
-    Fields: ToFieldHandlers<Provider>,
-{
-    type Handlers = Fields::Handlers;
-}
 
 pub trait ToFieldHandlers<Provider> {
     type Handlers;
