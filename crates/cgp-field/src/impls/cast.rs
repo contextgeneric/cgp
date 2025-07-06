@@ -20,7 +20,7 @@ pub trait CanDowncastFields<Target> {
     fn downcast_fields(self, _tag: PhantomData<Target>) -> Result<Target, Self::Remainder>;
 }
 
-impl<Target, Context, Source, Remainder> CanUpcast<Target> for Context
+impl<Context, Source, Target, Remainder> CanUpcast<Target> for Context
 where
     Context: HasFields + HasExtractor<Extractor = Source>,
     Context::Fields: FieldsExtractor<Source, Target, Remainder = Remainder>,
@@ -34,7 +34,7 @@ where
     }
 }
 
-impl<Target, Context, Source, Remainder> CanDowncast<Target> for Context
+impl<Context, Source, Target, Remainder> CanDowncast<Target> for Context
 where
     Context: HasExtractor<Extractor = Source>,
     Target: HasFields,
@@ -62,7 +62,7 @@ where
 pub trait FieldsExtractor<Source, Target> {
     type Remainder;
 
-    fn extract_from(extractor: Source) -> Result<Target, Self::Remainder>;
+    fn extract_from(source: Source) -> Result<Target, Self::Remainder>;
 }
 
 impl<Source, Target, Tag, Value, RestFields, Remainder> FieldsExtractor<Source, Target>
@@ -74,9 +74,8 @@ where
 {
     type Remainder = Remainder;
 
-    fn extract_from(extractor: Source) -> Result<Target, Remainder> {
-        let res = extractor.extract_field(PhantomData);
-        match res {
+    fn extract_from(source: Source) -> Result<Target, Remainder> {
+        match source.extract_field(PhantomData) {
             Ok(field) => Ok(Target::from_variant(PhantomData, field)),
             Err(remainder) => RestFields::extract_from(remainder),
         }
@@ -86,7 +85,7 @@ where
 impl<Source, Target> FieldsExtractor<Source, Target> for Void {
     type Remainder = Source;
 
-    fn extract_from(extractor: Source) -> Result<Target, Source> {
-        Err(extractor)
+    fn extract_from(source: Source) -> Result<Target, Source> {
+        Err(source)
     }
 }
