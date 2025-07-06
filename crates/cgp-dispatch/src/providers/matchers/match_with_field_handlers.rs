@@ -7,14 +7,14 @@ use cgp_handler::{
 use crate::providers::matchers::to_field_handlers::ToFieldHandlers;
 use crate::MatchWithHandlers;
 
-pub struct MatchWithFieldHandlers<Input, Provider = UseContext>(pub PhantomData<(Input, Provider)>);
+pub struct MatchWithFieldHandlers<Provider = UseContext>(pub PhantomData<Provider>);
 
-pub type MatchWithValueHandlers<Input, Provider = UseContext> =
-    MatchWithFieldHandlers<Input, HandleFieldValue<Provider>>;
+pub type MatchWithValueHandlers<Provider = UseContext> =
+    MatchWithFieldHandlers<HandleFieldValue<Provider>>;
 
 #[cgp_provider]
 impl<Context, Code, Input, Output, Fields, Provider> Computer<Context, Code, Input>
-    for MatchWithFieldHandlers<Input, Provider>
+    for MatchWithFieldHandlers<Provider>
 where
     Input: HasFields<Fields = Fields>,
     Fields: ToFieldHandlers<Provider>,
@@ -29,7 +29,7 @@ where
 
 #[cgp_provider]
 impl<Context, Code, Input, Output, Fields, Provider> TryComputer<Context, Code, Input>
-    for MatchWithFieldHandlers<Input, Provider>
+    for MatchWithFieldHandlers<Provider>
 where
     Context: HasErrorType,
     Input: HasFields<Fields = Fields>,
@@ -49,7 +49,7 @@ where
 
 #[cgp_provider]
 impl<Context, Code: Send, Input: Send, Output: Send, Fields, Provider> Handler<Context, Code, Input>
-    for MatchWithFieldHandlers<Input, Provider>
+    for MatchWithFieldHandlers<Provider>
 where
     Context: HasAsyncErrorType,
     Input: HasFields<Fields = Fields>,
