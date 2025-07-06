@@ -1,5 +1,5 @@
 use quote::quote;
-use syn::{parse2, Arm, Ident, ItemEnum, ItemImpl, Type};
+use syn::{parse2, Ident, ItemEnum, ItemImpl, Type};
 
 use crate::derive_builder::to_generic_args;
 
@@ -25,19 +25,9 @@ pub fn derive_finalize_extract_impl(
 
     let mut generic_args = to_generic_args(&generics)?;
 
-    let mut match_arms = Vec::<Arm>::new();
-
-    for variant in context_enum.variants.iter() {
+    for _variant in context_enum.variants.iter() {
         generic_args.args.push(parse2(quote! {
             IsVoid
-        })?);
-
-        let variant_ident = &variant.ident;
-
-        match_arms.push(parse2(quote! {
-            Self :: #variant_ident ( value ) => {
-                match value {}
-            }
         })?);
     }
 
@@ -52,9 +42,7 @@ pub fn derive_finalize_extract_impl(
         #where_clause
         {
             fn finalize_extract<__T__>(self) -> __T__ {
-                match self {
-                    #(#match_arms)*
-                }
+                match self {}
             }
         }
     })?;
