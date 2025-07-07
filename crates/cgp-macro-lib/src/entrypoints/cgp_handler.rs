@@ -30,6 +30,7 @@ pub fn cgp_handler(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStr
 
     let mut input_types = Punctuated::<Type, Comma>::new();
     let mut input_idents = Punctuated::<Ident, Comma>::new();
+    let mut ref_arg = false;
 
     for (i, input) in fn_inputs.iter().enumerate() {
         match input {
@@ -42,6 +43,12 @@ pub fn cgp_handler(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStr
             FnArg::Typed(pat) => {
                 input_types.push(pat.ty.as_ref().clone());
                 input_idents.push(Ident::new(&format!("arg_{i}"), pat.span()));
+
+                if let Type::Reference(_) = pat.ty.as_ref() {
+                    if fn_inputs.len() == 1 {
+                        ref_arg = true;
+                    }
+                }
             }
         }
     }
@@ -106,9 +113,23 @@ pub fn cgp_handler(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStr
         }
     })?;
 
+    let delegate_ref = if ref_arg {
+        quote! {
+            delegate_components! {
+                #handler_ident {
+                    HandlerRefComponent: PromoteRef<#handler_ident>,
+                }
+            }
+        }
+    } else {
+        quote! {}
+    };
+
     Ok(quote! {
         #item_fn
 
         #computer
+
+        #delegate_ref
     })
 }

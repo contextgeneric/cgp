@@ -1,5 +1,8 @@
+use core::fmt::Display;
+
 use cgp::core::error::{ErrorRaiserComponent, ErrorTypeProviderComponent};
 use cgp::extra::error::RaiseFrom;
+use cgp::extra::handler::HandlerRef;
 use cgp::prelude::*;
 use futures::executor::block_on;
 
@@ -42,5 +45,22 @@ fn test_generated_handlers() {
     assert_eq!(
         block_on(AddWithError::handle(&app, PhantomData::<()>, (u64::MAX, 1))),
         Err("Overflow".to_string()),
+    );
+}
+
+#[cgp_handler]
+async fn to_string_ref<Value: Display + Sync>(value: &Value) -> String {
+    value.to_string()
+}
+
+#[test]
+fn test_computer_ref() {
+    let app = App;
+    let code = PhantomData::<()>;
+
+    assert_eq!(block_on(ToStringRef::handle(&app, code, &1)).unwrap(), "1");
+    assert_eq!(
+        block_on(ToStringRef::handle_ref(&app, code, &1)).unwrap(),
+        "1"
     );
 }
