@@ -1,6 +1,6 @@
 [package]
 name         = "cgp-tests"
-version      = "0.4.1"
+version      = "0.4.2-alpha"
 edition      = { workspace = true }
 license      = { workspace = true }
 repository   = { workspace = true }
@@ -12,5 +12,5 @@ description  = """
 """
 
 [dependencies]
-cgp                 = { version = "0.4.1" }
+cgp                 = { version = "0.4.2-alpha" }
 futures             = { version = "0.3.31" }

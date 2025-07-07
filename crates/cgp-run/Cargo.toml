@@ -1,6 +1,6 @@
 [package]
 name         = "cgp-run"
-version      = "0.4.1"
+version      = "0.4.2-alpha"
 edition      = { workspace = true }
 license      = { workspace = true }
 repository   = { workspace = true }
@@ -12,7 +12,7 @@ description  = """
 """
 
 [dependencies]
-cgp-async           = { version = "0.4.1", default-features = false }
-cgp-error           = { version = "0.4.1" }
-cgp-component       = { version = "0.4.1" }
-cgp-macro           = { version = "0.4.1" }
+cgp-async           = { version = "0.4.2-alpha", default-features = false }
+cgp-error           = { version = "0.4.2-alpha" }
+cgp-component       = { version = "0.4.2-alpha" }
+cgp-macro           = { version = "0.4.2-alpha" }
