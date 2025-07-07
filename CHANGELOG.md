@@ -1,5 +1,23 @@
 # Changelog
 
+## v0.4.2 (2025-07-07)
+
+- Datatype-generic Programming Support
+    - Data-generic programming support in CGP - [#112](https://github.com/contextgeneric/cgp/pull/112)
+    - Implement `DispatchHandlersRef` for dispatching based on enum references - [#116](https://github.com/contextgeneric/cgp/pull/116)
+    - Builder dispatcher refactoring - [#117](https://github.com/contextgeneric/cgp/pull/117)
+    - Introduce ref version of handler traits - [#118](https://github.com/contextgeneric/cgp/pull/118)
+    - Dispatcher Refactoring - [#119](https://github.com/contextgeneric/cgp/pull/119)
+    - Remove Input param from `MatchWithFieldHandlers` - [#120](https://github.com/contextgeneric/cgp/pull/120)
+    - Support use of ref handlers in handler macros - [#121](https://github.com/contextgeneric/cgp/pull/121)
+
+- Preset Improvements
+    - Add new direct delegation mode and use it in preset inheritance - [#111](https://github.com/contextgeneric/cgp/pull/111)
+
+- Bug Fixes
+  - Derive `HasField<Index<{i}>>` for structs with unnamed fields - [#115](https://github.com/contextgeneric/cgp/pull/115)
+  - Allow unsized generic arguments in `IsProviderFor` trait - [#114](https://github.com/contextgeneric/cgp/pull/114)
+
 ## v0.4.1 (2025-05-24)
 
 - New `cgp-handler` Crate
