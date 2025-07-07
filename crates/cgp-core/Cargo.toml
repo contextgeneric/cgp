@@ -1,6 +1,6 @@
 [package]
 name         = "cgp-core"
-version      = "0.4.1"
+version      = "0.4.2-alpha"
 edition      = { workspace = true }
 license      = { workspace = true }
 repository   = { workspace = true }
@@ -17,8 +17,8 @@ full                = [ "cgp-async/full" ]
 
 [dependencies]
 cgp-async           = { version = "0.4.1", default-features = false }
-cgp-component       = { version = "0.4.1" }
-cgp-macro           = { version = "0.4.1" }
+cgp-component       = { version = "0.4.2-alpha" }
+cgp-macro           = { version = "0.4.2-alpha" }
 cgp-type            = { version = "0.4.1" }
 cgp-error           = { version = "0.4.1" }
-cgp-field           = { version = "0.4.1" }
+cgp-field           = { version = "0.4.2-alpha" }
