@@ -10,7 +10,7 @@ use cgp::extra::dispatch::{
 };
 use cgp::extra::handler::{
     Computer, ComputerComponent, ComputerRef, ComputerRefComponent, HandleFieldValue, Handler,
-    Promote, Promote2,
+    Promote, Promote2, PromoteRef,
 };
 use cgp::prelude::*;
 use futures::executor::block_on;
@@ -143,6 +143,14 @@ where
     value.to_string()
 }
 
+#[cgp_computer]
+pub fn value_to_string_ref<Value>(value: &Value) -> String
+where
+    Value: Display,
+{
+    value.to_string()
+}
+
 #[test]
 fn test_dispatch_fields() {
     let context = App;
@@ -164,6 +172,39 @@ fn test_dispatch_fields() {
 
     assert_eq!(
         MatchWithFieldHandlers::<FieldToString>::compute(&context, code, FooBarBaz::Baz(true)),
+        "true"
+    );
+}
+
+#[test]
+fn test_dispatch_values_ref() {
+    let context = App;
+    let code = PhantomData::<()>;
+
+    assert_eq!(
+        MatchWithValueHandlersRef::<ValueToStringRef>::compute_ref(
+            &context,
+            code,
+            &FooBarBaz::Foo(1)
+        ),
+        "1"
+    );
+
+    assert_eq!(
+        MatchWithValueHandlersRef::<ValueToStringRef>::compute_ref(
+            &context,
+            code,
+            &FooBarBaz::Bar("hello".to_owned())
+        ),
+        "hello"
+    );
+
+    assert_eq!(
+        MatchWithValueHandlersRef::<ValueToStringRef>::compute_ref(
+            &context,
+            code,
+            &FooBarBaz::Baz(true)
+        ),
         "true"
     );
 }

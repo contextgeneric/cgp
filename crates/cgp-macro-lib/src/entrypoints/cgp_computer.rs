@@ -30,6 +30,7 @@ pub fn cgp_computer(attr: TokenStream, body: TokenStream) -> syn::Result<TokenSt
 
     let mut input_types = Punctuated::<Type, Comma>::new();
     let mut input_idents = Punctuated::<Ident, Comma>::new();
+    let mut ref_arg = false;
 
     for (i, input) in fn_inputs.iter().enumerate() {
         match input {
@@ -42,6 +43,12 @@ pub fn cgp_computer(attr: TokenStream, body: TokenStream) -> syn::Result<TokenSt
             FnArg::Typed(pat) => {
                 input_types.push(pat.ty.as_ref().clone());
                 input_idents.push(Ident::new(&format!("arg_{i}"), pat.span()));
+
+                if let Type::Reference(_) = pat.ty.as_ref() {
+                    if fn_inputs.len() == 1 {
+                        ref_arg = true;
+                    }
+                }
             }
         }
     }
@@ -80,11 +87,22 @@ pub fn cgp_computer(attr: TokenStream, body: TokenStream) -> syn::Result<TokenSt
         quote!(Promote< #computer_ident >)
     };
 
+    let computer_ref = if ref_arg {
+        quote! {
+            ComputerRefComponent: PromoteRef<#computer_ident>,
+            TryComputerRefComponent: PromoteRef<#try_computer>,
+            HandlerRefComponent: PromoteRef<Promote<#try_computer>>,
+        }
+    } else {
+        quote! {}
+    };
+
     let delegate = quote! {
         delegate_components! {
             #computer_ident {
                 TryComputerComponent: #try_computer,
                 HandlerComponent: Promote<#try_computer>,
+                #computer_ref
             }
         }
     };
