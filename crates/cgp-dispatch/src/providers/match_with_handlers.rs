@@ -5,7 +5,7 @@ use cgp_handler::{
     Computer, ComputerComponent, Handler, HandlerComponent, TryComputer, TryComputerComponent,
 };
 
-use crate::DispatchMatchers;
+use crate::{dispatch_matchers2::DispatchMatchers2, DispatchMatchers};
 
 pub struct MatchWithHandlers<Handlers>(pub PhantomData<Handlers>);
 
@@ -16,12 +16,18 @@ where
     Input: HasExtractor,
     DispatchMatchers<Handlers>:
         Computer<Context, Code, Input::Extractor, Output = Result<Output, Remainder>>,
+    DispatchMatchers2<Handlers>: Computer<
+        Context,
+        Code,
+        Result<Output, Input::Extractor>,
+        Output = Result<Output, Remainder>,
+    >,
     Remainder: FinalizeExtract,
 {
     type Output = Output;
 
     fn compute(_context: &Context, code: PhantomData<Code>, input: Input) -> Output {
-        let res = DispatchMatchers::compute(_context, code, input.to_extractor());
+        let res = DispatchMatchers2::compute(_context, code, Err(input.to_extractor()));
 
         match res {
             Ok(output) => output,
