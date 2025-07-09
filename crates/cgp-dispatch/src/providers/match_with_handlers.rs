@@ -5,10 +5,7 @@ use cgp_handler::{
     Computer, ComputerComponent, Handler, HandlerComponent, TryComputer, TryComputerComponent,
 };
 
-use crate::{
-    dispatch_matchers2::{DispatchMatchers2, OnlyError},
-    DispatchMatchers,
-};
+use crate::dispatch_matchers2::{DispatchMatchers2, OnlyError};
 
 pub struct MatchWithHandlers<Handlers>(pub PhantomData<Handlers>);
 
@@ -39,8 +36,8 @@ impl<Context, Code, Input, Output, Remainder, Handlers> TryComputer<Context, Cod
 where
     Context: HasErrorType,
     Input: HasExtractor,
-    DispatchMatchers<Handlers>:
-        TryComputer<Context, Code, Input::Extractor, Output = Result<Output, Remainder>>,
+    DispatchMatchers2<Handlers>:
+        TryComputer<Context, Code, OnlyError<Input::Extractor>, Output = Result<Output, Remainder>>,
     Remainder: FinalizeExtract,
 {
     type Output = Output;
@@ -50,7 +47,7 @@ where
         code: PhantomData<Code>,
         input: Input,
     ) -> Result<Output, Context::Error> {
-        let res = DispatchMatchers::try_compute(_context, code, input.to_extractor())?;
+        let res = DispatchMatchers2::try_compute(_context, code, OnlyError(input.to_extractor()))?;
 
         match res {
             Ok(output) => Ok(output),
@@ -65,8 +62,8 @@ impl<Context, Code: Send, Input: Send, Output: Send, Remainder: Send, Handlers>
 where
     Context: HasAsyncErrorType,
     Input: HasExtractor<Extractor: Send>,
-    DispatchMatchers<Handlers>:
-        Handler<Context, Code, Input::Extractor, Output = Result<Output, Remainder>>,
+    DispatchMatchers2<Handlers>:
+        Handler<Context, Code, OnlyError<Input::Extractor>, Output = Result<Output, Remainder>>,
     Remainder: FinalizeExtract,
 {
     type Output = Output;
@@ -76,7 +73,8 @@ where
         code: PhantomData<Code>,
         input: Input,
     ) -> Result<Output, Context::Error> {
-        let res = DispatchMatchers::handle(_context, code, input.to_extractor()).await?;
+        let res =
+            DispatchMatchers2::handle(_context, code, OnlyError(input.to_extractor())).await?;
 
         match res {
             Ok(output) => Ok(output),

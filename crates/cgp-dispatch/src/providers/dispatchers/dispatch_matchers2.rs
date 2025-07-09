@@ -1,14 +1,21 @@
 use core::marker::PhantomData;
 
 use cgp_core::{field::MapFields, prelude::*};
-use cgp_handler::{Computer, ComputerComponent, PipeHandlers};
+use cgp_handler::{
+    Computer, ComputerComponent, Handler, HandlerComponent, PipeHandlers, TryComputer,
+    TryComputerComponent,
+};
 
 pub struct DispatchMatchers2<Handlers>(pub PhantomData<Handlers>);
 
 delegate_components! {
     <Handler: MapFields<ToPipeError>>
     DispatchMatchers2<Handler> {
-        ComputerComponent:
+        [
+            ComputerComponent,
+            TryComputerComponent,
+            HandlerComponent,
+        ]:
             PipeHandlers<Handler::Mapped>,
     }
 }
@@ -68,6 +75,50 @@ where
         match input.into_result() {
             Ok(output) => Ok(output),
             Err(remainder) => Handler::compute(context, code, remainder),
+        }
+    }
+}
+
+#[cgp_provider]
+impl<Context, Code, Input, Output, RemainderA, RemainderB, Handler>
+    TryComputer<Context, Code, Input> for PipeError<Handler>
+where
+    Context: HasErrorType,
+    Handler: TryComputer<Context, Code, RemainderA, Output = Result<Output, RemainderB>>,
+    Input: IntoResult<Output, Error = RemainderA>,
+{
+    type Output = Result<Output, RemainderB>;
+
+    fn try_compute(
+        context: &Context,
+        code: PhantomData<Code>,
+        input: Input,
+    ) -> Result<Self::Output, Context::Error> {
+        match input.into_result() {
+            Ok(output) => Ok(Ok(output)),
+            Err(remainder) => Handler::try_compute(context, code, remainder),
+        }
+    }
+}
+
+#[cgp_provider]
+impl<Context, Code: Send, Input: Send, Output: Send, RemainderA: Send, RemainderB, Provider>
+    Handler<Context, Code, Input> for PipeError<Provider>
+where
+    Context: HasAsyncErrorType,
+    Provider: Handler<Context, Code, RemainderA, Output = Result<Output, RemainderB>>,
+    Input: IntoResult<Output, Error = RemainderA>,
+{
+    type Output = Result<Output, RemainderB>;
+
+    async fn handle(
+        context: &Context,
+        code: PhantomData<Code>,
+        input: Input,
+    ) -> Result<Self::Output, Context::Error> {
+        match input.into_result() {
+            Ok(output) => Ok(Ok(output)),
+            Err(remainder) => Provider::handle(context, code, remainder).await,
         }
     }
 }
