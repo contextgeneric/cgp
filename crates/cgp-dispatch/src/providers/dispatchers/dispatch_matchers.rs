@@ -1,6 +1,7 @@
 use core::marker::PhantomData;
 
-use cgp_core::{field::MapFields, prelude::*};
+use cgp_core::field::MapFields;
+use cgp_core::prelude::*;
 use cgp_handler::{
     Computer, ComputerComponent, Handler, HandlerComponent, PipeHandlers, TryComputer,
     TryComputerComponent,
@@ -20,21 +21,23 @@ delegate_components! {
     }
 }
 
-pub trait HasOutput {
-    type Output;
-}
-
 pub struct ToPipeError;
 
 impl MapType for ToPipeError {
     type Map<Handler> = PipeError<Handler>;
 }
 
-pub trait HasResultError {
+trait HasResultError {
     type Error;
 }
 
-pub trait IntoResult<T>: HasResultError {
+/**
+    Helper trait to resolve ambiguity of the Ok type in the generic implementation.
+    This allows the `OnlyError<E>` type to be casted to any `Result<T, E>` type, without
+    knowing T upfront. This is important to resolve the ambiguity that the input type
+    of `MatchWithHandlers` depends on the output type due to the `Ok` type in `Result`.
+*/
+trait IntoResult<T>: HasResultError {
     fn into_result(self) -> Result<T, Self::Error>;
 }
 
