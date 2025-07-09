@@ -6,7 +6,7 @@ use cgp_handler::{
     Computer, ComputerComponent, Handler, HandlerComponent, TryComputer, TryComputerComponent,
 };
 
-use crate::DispatchMatchers;
+use crate::dispatch_matchers2::{DispatchMatchers2, OnlyError};
 
 pub struct MatchWithHandlersRef<Handlers>(pub PhantomData<Handlers>);
 
@@ -15,17 +15,18 @@ impl<Context, Code, Input, Output, Handlers> Computer<Context, Code, &Input>
     for MatchWithHandlersRef<Handlers>
 where
     Input: HasExtractorRef,
-    DispatchMatchers<Handlers>: for<'b> Computer<
+    DispatchMatchers2<Handlers>: for<'b> Computer<
         Context,
         Code,
-        Input::ExtractorRef<'b>,
+        OnlyError<Input::ExtractorRef<'b>>,
         Output: FinalizeExtractResult<Output = Output>,
     >,
 {
     type Output = Output;
 
     fn compute(context: &Context, code: PhantomData<Code>, input: &Input) -> Output {
-        DispatchMatchers::compute(context, code, input.extractor_ref()).finalize_extract_result()
+        DispatchMatchers2::compute(context, code, OnlyError(input.extractor_ref()))
+            .finalize_extract_result()
     }
 }
 
@@ -35,10 +36,10 @@ impl<Context, Code, Input, Output, Handlers> TryComputer<Context, Code, &Input>
 where
     Context: HasErrorType,
     Input: HasExtractorRef,
-    DispatchMatchers<Handlers>: for<'b> TryComputer<
+    DispatchMatchers2<Handlers>: for<'b> TryComputer<
         Context,
         Code,
-        Input::ExtractorRef<'b>,
+        OnlyError<Input::ExtractorRef<'b>>,
         Output: FinalizeExtractResult<Output = Output>,
     >,
 {
@@ -50,7 +51,7 @@ where
         input: &Input,
     ) -> Result<Output, Context::Error> {
         Ok(
-            DispatchMatchers::try_compute(context, code, input.extractor_ref())?
+            DispatchMatchers2::try_compute(context, code, OnlyError(input.extractor_ref()))?
                 .finalize_extract_result(),
         )
     }
@@ -62,10 +63,10 @@ impl<Context, Code: Send, Input, Output, Handlers> Handler<Context, Code, &Input
 where
     Context: HasAsyncErrorType,
     Input: Send + Sync + HasExtractorRef,
-    DispatchMatchers<Handlers>: for<'b> Handler<
+    DispatchMatchers2<Handlers>: for<'b> Handler<
         Context,
         Code,
-        Input::ExtractorRef<'b>,
+        OnlyError<Input::ExtractorRef<'b>>,
         Output: FinalizeExtractResult<Output = Output>,
     >,
 {
@@ -77,7 +78,7 @@ where
         input: &Input,
     ) -> Result<Output, Context::Error> {
         Ok(
-            DispatchMatchers::handle(_context, code, input.extractor_ref())
+            DispatchMatchers2::handle(_context, code, OnlyError(input.extractor_ref()))
                 .await?
                 .finalize_extract_result(),
         )
