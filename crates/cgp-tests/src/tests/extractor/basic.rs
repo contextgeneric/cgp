@@ -151,30 +151,30 @@ where
     value.to_string()
 }
 
-// #[test]
-// fn test_dispatch_fields() {
-//     let context = App;
-//     let code = PhantomData::<()>;
+#[test]
+fn test_dispatch_fields() {
+    let context = App;
+    let code = PhantomData::<()>;
 
-//     assert_eq!(
-//         MatchWithFieldHandlers::<FieldToString>::compute(&context, code, FooBarBaz::Foo(1)),
-//         "1"
-//     );
+    assert_eq!(
+        MatchWithFieldHandlers::<FieldToString>::compute(&context, code, FooBarBaz::Foo(1)),
+        "1"
+    );
 
-//     assert_eq!(
-//         MatchWithFieldHandlers::<FieldToString>::compute(
-//             &context,
-//             code,
-//             FooBarBaz::Bar("hello".to_owned())
-//         ),
-//         "hello"
-//     );
+    assert_eq!(
+        MatchWithFieldHandlers::<FieldToString>::compute(
+            &context,
+            code,
+            FooBarBaz::Bar("hello".to_owned())
+        ),
+        "hello"
+    );
 
-//     assert_eq!(
-//         MatchWithFieldHandlers::<FieldToString>::compute(&context, code, FooBarBaz::Baz(true)),
-//         "true"
-//     );
-// }
+    assert_eq!(
+        MatchWithFieldHandlers::<FieldToString>::compute(&context, code, FooBarBaz::Baz(true)),
+        "true"
+    );
+}
 
 #[test]
 fn test_dispatch_values_ref() {
@@ -316,20 +316,20 @@ fn test_dispatch_computers() {
         "FooBar::Foo(1)"
     );
 
-    //     assert_eq!(
-    //         MatchWithHandlers::<Computers>::try_compute(&context, code, FooBarBaz::Foo(1)),
-    //         Ok("FooBar::Foo(1)".to_owned())
-    //     );
+    assert_eq!(
+        MatchWithHandlers::<Computers>::try_compute(&context, code, FooBarBaz::Foo(1)),
+        Ok("FooBar::Foo(1)".to_owned())
+    );
 
-    //     assert_eq!(
-    //         MatchWithHandlers::<Computers>::compute(&context, code, FooBarBaz::Bar("hello".to_owned())),
-    //         "FooBar::Bar(\"hello\")"
-    //     );
+    assert_eq!(
+        MatchWithHandlers::<Computers>::compute(&context, code, FooBarBaz::Bar("hello".to_owned())),
+        "FooBar::Bar(\"hello\")"
+    );
 
-    //     assert_eq!(
-    //         MatchWithHandlers::<Computers>::compute(&context, code, FooBarBaz::Baz(true)),
-    //         "Baz(true)"
-    //     );
+    assert_eq!(
+        MatchWithHandlers::<Computers>::compute(&context, code, FooBarBaz::Baz(true)),
+        "Baz(true)"
+    );
 }
 
 #[test]
