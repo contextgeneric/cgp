@@ -7,17 +7,15 @@ use cgp_handler::{
     TryComputerComponent,
 };
 
-pub struct DispatchMatchers<Handlers>(pub PhantomData<Handlers>);
-
 delegate_components! {
-    <Handler: MapFields<ToPipeError>>
-    DispatchMatchers<Handler> {
+    <Providers: MapFields<ToPipeError>>
+    new DispatchMatchers<Providers> {
         [
             ComputerComponent,
             TryComputerComponent,
             HandlerComponent,
         ]:
-            PipeHandlers<Handler::Mapped>,
+            PipeHandlers<Providers::Mapped>,
     }
 }
 

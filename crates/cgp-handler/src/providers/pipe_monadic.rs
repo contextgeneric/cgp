@@ -35,6 +35,8 @@ trait PipeComputer<M, Context, Code, Input> {
     fn compute(context: &Context, _code: PhantomData<Code>, input: Input) -> Self::Output;
 }
 
+pub struct Pure<T>(pub T);
+
 impl<M1, M2, Context, Tag, Input, Intermediary, Output, CurrentProvider, RestProviders>
     PipeComputer<M1, Context, Tag, Input> for Cons<CurrentProvider, RestProviders>
 where

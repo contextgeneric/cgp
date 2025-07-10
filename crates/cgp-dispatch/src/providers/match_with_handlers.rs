@@ -5,7 +5,7 @@ use cgp_handler::{
     Computer, ComputerComponent, Handler, HandlerComponent, TryComputer, TryComputerComponent,
 };
 
-use crate::{DispatchMatchers, OnlyError};
+use crate::{DispatchMatchers, DispatchMatchers2, OnlyError};
 
 pub struct MatchWithHandlers<Handlers>(pub PhantomData<Handlers>);
 
@@ -14,14 +14,15 @@ impl<Context, Code, Input, Output, Remainder, Handlers> Computer<Context, Code, 
     for MatchWithHandlers<Handlers>
 where
     Input: HasExtractor,
-    DispatchMatchers<Handlers>:
-        Computer<Context, Code, OnlyError<Input::Extractor>, Output = Result<Output, Remainder>>,
+    DispatchMatchers2<Handlers>:
+        Computer<Context, Code, Input::Extractor, Output = Result<Output, Remainder>>,
     Remainder: FinalizeExtract,
 {
     type Output = Output;
 
-    fn compute(_context: &Context, code: PhantomData<Code>, input: Input) -> Output {
-        let res = DispatchMatchers::compute(_context, code, OnlyError(input.to_extractor()));
+    fn compute(context: &Context, code: PhantomData<Code>, input: Input) -> Output {
+        // todo!()
+        let res = DispatchMatchers2::compute(context, code, input.to_extractor());
 
         match res {
             Ok(output) => output,
