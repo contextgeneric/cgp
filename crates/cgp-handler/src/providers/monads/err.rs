@@ -1,11 +1,17 @@
 use core::marker::PhantomData;
 
-use crate::{ContainsValue, MonadicBind, Pure};
+use crate::{ContainsValue, MonadicBind, MonadicPure, Pure};
 
 pub struct ErrMonadic;
 
 impl<T, E> ContainsValue<Result<T, E>> for ErrMonadic {
     type Value = T;
+}
+
+impl<T, E> MonadicPure<Result<T, E>> for ErrMonadic {
+    fn pure(value: T) -> Result<T, E> {
+        Ok(value)
+    }
 }
 
 impl<T1, T2, E> MonadicBind<Result<T1, E>, Result<T2, E>> for ErrMonadic {

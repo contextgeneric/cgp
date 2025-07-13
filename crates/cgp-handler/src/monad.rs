@@ -8,6 +8,10 @@ pub trait MonadicTrans<T> {
     type M;
 }
 
+pub trait MonadicPure<T>: ContainsValue<T> {
+    fn pure(value: Self::Value) -> T;
+}
+
 pub trait MonadicBind<T, Next>: ContainsValue<T> {
     type Output;
 

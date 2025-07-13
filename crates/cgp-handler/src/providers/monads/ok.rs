@@ -1,11 +1,17 @@
 use core::marker::PhantomData;
 
-use crate::{ContainsValue, MonadicBind, MonadicTrans, Pure};
+use crate::{ContainsValue, MonadicBind, MonadicPure, MonadicTrans, Pure};
 
 pub struct OkMonadic;
 
 impl<T, E> ContainsValue<Result<T, E>> for OkMonadic {
     type Value = E;
+}
+
+impl<T, E> MonadicPure<Result<T, E>> for OkMonadic {
+    fn pure(value: E) -> Result<T, E> {
+        Err(value)
+    }
 }
 
 impl<T, E1, E2> MonadicBind<Result<T, E1>, Result<T, E2>> for OkMonadic {
@@ -40,16 +46,22 @@ impl<M, T, E> ContainsValue<Result<T, E>> for OkMonadicTrans<M> {
     type Value = E;
 }
 
-impl<M, N, T, E1> MonadicBind<Result<T, E1>, N> for OkMonadicTrans<M>
+impl<M, N, T, E1, E2, V, Out> MonadicBind<Result<T, E1>, N> for OkMonadicTrans<M>
 where
-    M: ContainsValue<N>,
+    M: ContainsValue<N, Value = V>
+        + MonadicBind<N, Result<T, E2>, Output = Out>
+        + MonadicPure<Out, Value = Result<T, E2>>,
+    V: IntoOk<T, E = E2>,
 {
-    type Output = N;
+    type Output = Out;
 
-    fn bind(value: Result<T, E1>, cont: impl Fn(E1) -> N) -> N {
+    fn bind(value: Result<T, E1>, cont: impl Fn(E1) -> N) -> Out {
         match value {
-            Ok(value) => todo!(),
-            Err(err) => cont(err),
+            Ok(value) => M::pure(Ok(value)),
+            Err(err) => {
+                let res = cont(err);
+                M::bind(res, |value| value.into_ok())
+            }
         }
     }
 }
