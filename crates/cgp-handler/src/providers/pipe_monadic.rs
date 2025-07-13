@@ -41,8 +41,10 @@ pub trait Monadic<T> {
 
 pub trait MonadicBind<T, Next>: Monadic<T> {
     type Output;
+    type OutValue;
 
     fn bind(wrapped: T, cont: impl Fn(Self::Value) -> Next) -> Self::Output;
+    fn pure(value: Self::OutValue) -> Next;
 }
 
 trait PipeComputer<M, Context, Code, Input> {
