@@ -1,6 +1,6 @@
 use core::marker::PhantomData;
 
-use crate::{Monadic, MonadicBind, Pure};
+use crate::{Monadic, MonadicBind, MonadicTrans, Pure};
 
 pub struct OkMonadic;
 
@@ -40,6 +40,10 @@ impl<T, E1, E2> MonadicBind<Result<T, E1>, Pure<E2>> for OkMonadic {
     }
 }
 
+impl<M> MonadicTrans<M> for OkMonadic {
+    type M = OkMonadicTrans<M>;
+}
+
 pub struct OkMonadicTrans<M>(pub PhantomData<M>);
 
 impl<M, V, T, E> Monadic<V> for OkMonadicTrans<M>
@@ -58,12 +62,34 @@ where
 
     fn bind(value: V, cont: impl Fn(E1) -> N) -> M::Output {
         M::bind(value, |res| match res {
-            Err(value) => cont(value),
-            Ok(err) => M::pure(Ok(err)),
+            Err(err) => cont(err),
+            Ok(value) => M::pure(Ok(value)),
         })
     }
 
-    fn pure(value: E2) -> N {
-        M::pure(Err(value))
+    fn pure(err: E2) -> N {
+        M::pure(Err(err))
+    }
+}
+
+trait IntoOk<T> {
+    type E;
+
+    fn into_ok(self) -> Result<T, Self::E>;
+}
+
+impl<T, E> IntoOk<T> for Result<T, E> {
+    type E = E;
+
+    fn into_ok(self) -> Result<T, E> {
+        self
+    }
+}
+
+impl<T, E> IntoOk<T> for Pure<E> {
+    type E = E;
+
+    fn into_ok(self) -> Result<T, E> {
+        Err(self.0)
     }
 }

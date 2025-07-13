@@ -1,6 +1,6 @@
 use cgp_core::prelude::*;
 
-use crate::{Computer, ComputerComponent, TryComputer, TryComputerComponent};
+use crate::{Computer, ComputerComponent, ErrMonadic, TryComputer, TryComputerComponent};
 
 pub struct PipeMonadic<M, Providers>(pub PhantomData<(M, Providers)>);
 
@@ -37,6 +37,10 @@ where
 
 pub trait Monadic<T> {
     type Value;
+}
+
+pub trait MonadicTrans<T> {
+    type M;
 }
 
 pub trait MonadicBind<T, Next>: Monadic<T> {
@@ -94,14 +98,22 @@ where
     ) -> Result<Self::Output, Context::Error>;
 }
 
-impl<M, Context, Tag, Input, Intermediary, Output, CurrentProvider, RestProviders>
-    PipeTryComputer<M, Context, Tag, Input> for Cons<CurrentProvider, RestProviders>
+impl<M1, M2, Context, Tag, Input, Intermediary, Output, CurrentProvider, RestProviders>
+    PipeTryComputer<M1, Context, Tag, Input> for Cons<CurrentProvider, RestProviders>
 where
-    M: Monadic<CurrentProvider::Output, Value = Intermediary>
+    M1: MonadicTrans<ErrMonadic, M = M2>,
+    // M2: Monadic<Result<CurrentProvider::Output, Context::Error>, Value = Intermediary>,
+    //     + MonadicBind<
+    //         Result<CurrentProvider::Output, Context::Error>,
+    //         Result<RestProviders::Output, Context::Error>,
+    //         // Output = Result<Output, Context::Error>,
+    //     >
+    // ,
+    M1: Monadic<CurrentProvider::Output, Value = Intermediary>
         + MonadicBind<CurrentProvider::Output, RestProviders::Output, Output = Output>,
     Context: HasErrorType,
     CurrentProvider: TryComputer<Context, Tag, Input>,
-    RestProviders: PipeTryComputer<M, Context, Tag, Intermediary>,
+    RestProviders: PipeTryComputer<M1, Context, Tag, Intermediary>,
 {
     type Output = Output;
 
@@ -111,10 +123,11 @@ where
         input: Input,
     ) -> Result<Output, Context::Error> {
         let intermediate = CurrentProvider::try_compute(context, tag, input)?;
-        Ok(M::bind(intermediate, |intermediate| {
-            todo!()
-            // RestProviders::try_compute(context, tag, intermediate)
-        }))
+        todo!()
+        // Ok(M1::bind(intermediate, |intermediate| {
+        //     todo!()
+        //     // RestProviders::try_compute(context, tag, intermediate)
+        // }))
     }
 }
 
