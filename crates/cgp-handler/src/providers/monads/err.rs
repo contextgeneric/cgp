@@ -1,6 +1,6 @@
 use core::marker::PhantomData;
 
-use crate::{ContainsValue, MonadicBind, MonadicPure, Pure};
+use crate::{CanWrap, ContainsValue, Functorial, MonadicBind, Pure};
 
 pub struct ErrMonadic;
 
@@ -8,9 +8,17 @@ impl<T, E> ContainsValue<Result<T, E>> for ErrMonadic {
     type Value = T;
 }
 
-impl<T, E> MonadicPure<Result<T, E>> for ErrMonadic {
-    fn pure(value: T) -> Result<T, E> {
+impl<T, E> CanWrap<Result<T, E>> for ErrMonadic {
+    fn wrap(value: T) -> Result<T, E> {
         Ok(value)
+    }
+}
+
+impl<T1, T2, E> Functorial<Result<T1, E>, T2> for ErrMonadic {
+    type Output = Result<T2, E>;
+
+    fn map(value: Result<T1, E>, cont: impl Fn(T1) -> T2) -> Result<T2, E> {
+        value.map(cont)
     }
 }
 

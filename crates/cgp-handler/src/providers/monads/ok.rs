@@ -1,6 +1,6 @@
 use core::marker::PhantomData;
 
-use crate::{ContainsValue, MonadicBind, MonadicPure, MonadicTrans, Pure};
+use crate::{CanWrap, ContainsValue, Functorial, MonadicBind, MonadicTrans, Pure};
 
 pub struct OkMonadic;
 
@@ -8,9 +8,17 @@ impl<T, E> ContainsValue<Result<T, E>> for OkMonadic {
     type Value = E;
 }
 
-impl<T, E> MonadicPure<Result<T, E>> for OkMonadic {
-    fn pure(value: E) -> Result<T, E> {
+impl<T, E> CanWrap<Result<T, E>> for OkMonadic {
+    fn wrap(value: E) -> Result<T, E> {
         Err(value)
+    }
+}
+
+impl<T, E1, E2> Functorial<Result<T, E1>, E2> for OkMonadic {
+    type Output = Result<T, E2>;
+
+    fn map(value: Result<T, E1>, cont: impl Fn(E1) -> E2) -> Result<T, E2> {
+        value.map_err(cont)
     }
 }
 
@@ -46,54 +54,25 @@ impl<M, T, E> ContainsValue<Result<T, E>> for OkMonadicTrans<M> {
     type Value = E;
 }
 
-impl<M, T, E1, E2, E3, Next> MonadicBind<Result<T, E1>, Result<Next, E3>> for OkMonadicTrans<M>
+impl<M, Next, T, E1, E2, V, Out> MonadicBind<Result<T, E1>, Next> for OkMonadicTrans<M>
 where
-    Next: IntoOk<T, E = E2>,
+    M: ContainsValue<Next, Value = V>
+        + Functorial<Next, Result<T, E2>, Output = Out>
+        + CanWrap<Out, Value = Result<T, E2>>,
+    V: IntoOk<T, E = E2>,
 {
-    type Output = Result<Result<T, E2>, E3>;
+    type Output = Out;
 
-    fn bind(
-        value: Result<T, E1>,
-        cont: impl Fn(E1) -> Result<Next, E3>,
-    ) -> Result<Result<T, E2>, E3> {
-        todo!()
+    fn bind(value: Result<T, E1>, cont: impl Fn(E1) -> Next) -> Out {
+        match value {
+            Ok(value) => M::wrap(Ok(value)),
+            Err(err) => {
+                let res = cont(err);
+                M::map(res, |value| value.into_ok())
+            }
+        }
     }
 }
-
-// impl<M, T, E1, E2, E3> MonadicBind<Result<T, E1>, Result<Pure<E2>, E3>> for OkMonadicTrans<M> {
-//     type Output = Result<Result<T, E2>, E3>;
-
-//     fn bind(
-//         value: Result<T, E1>,
-//         cont: impl Fn(E1) -> Result<Pure<E2>, E3>,
-//     ) -> Result<Result<T, E2>, E3> {
-//         todo!()
-//     }
-// }
-
-// impl<M, T, E> ContainsValue<Result<T, E>> for OkMonadicTrans<M> {
-//     type Value = E;
-// }
-
-// impl<M, N, T, E1, E2, V, Out> MonadicBind<Result<T, E1>, N> for OkMonadicTrans<M>
-// where
-//     M: ContainsValue<N, Value = V>
-//         + MonadicBind<N, Result<T, E2>, Output = Out>
-//         + MonadicPure<Out, Value = Result<T, E2>>,
-//     V: IntoOk<T, E = E2>,
-// {
-//     type Output = Out;
-
-//     fn bind(value: Result<T, E1>, cont: impl Fn(E1) -> N) -> Out {
-//         match value {
-//             Ok(value) => M::pure(Ok(value)),
-//             Err(err) => {
-//                 let res = cont(err);
-//                 M::bind(res, |value| value.into_ok())
-//             }
-//         }
-//     }
-// }
 
 trait IntoOk<T> {
     type E;
