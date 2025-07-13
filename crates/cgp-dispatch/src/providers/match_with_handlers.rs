@@ -21,7 +21,6 @@ where
     type Output = Output;
 
     fn compute(context: &Context, code: PhantomData<Code>, input: Input) -> Output {
-        // todo!()
         let res = DispatchMatchers2::compute(context, code, input.to_extractor());
 
         match res {
@@ -37,8 +36,8 @@ impl<Context, Code, Input, Output, Remainder, Handlers> TryComputer<Context, Cod
 where
     Context: HasErrorType,
     Input: HasExtractor,
-    DispatchMatchers<Handlers>:
-        TryComputer<Context, Code, OnlyError<Input::Extractor>, Output = Result<Output, Remainder>>,
+    DispatchMatchers2<Handlers>:
+        TryComputer<Context, Code, Input::Extractor, Output = Result<Output, Remainder>>,
     Remainder: FinalizeExtract,
 {
     type Output = Output;
@@ -48,7 +47,7 @@ where
         code: PhantomData<Code>,
         input: Input,
     ) -> Result<Output, Context::Error> {
-        let res = DispatchMatchers::try_compute(_context, code, OnlyError(input.to_extractor()))?;
+        let res = DispatchMatchers2::try_compute(_context, code, input.to_extractor())?;
 
         match res {
             Ok(output) => Ok(output),
