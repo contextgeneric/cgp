@@ -46,25 +46,54 @@ impl<M, T, E> ContainsValue<Result<T, E>> for OkMonadicTrans<M> {
     type Value = E;
 }
 
-impl<M, N, T, E1, E2, V, Out> MonadicBind<Result<T, E1>, N> for OkMonadicTrans<M>
+impl<M, T, E1, E2, E3, Next> MonadicBind<Result<T, E1>, Result<Next, E3>> for OkMonadicTrans<M>
 where
-    M: ContainsValue<N, Value = V>
-        + MonadicBind<N, Result<T, E2>, Output = Out>
-        + MonadicPure<Out, Value = Result<T, E2>>,
-    V: IntoOk<T, E = E2>,
+    Next: IntoOk<T, E = E2>,
 {
-    type Output = Out;
+    type Output = Result<Result<T, E2>, E3>;
 
-    fn bind(value: Result<T, E1>, cont: impl Fn(E1) -> N) -> Out {
-        match value {
-            Ok(value) => M::pure(Ok(value)),
-            Err(err) => {
-                let res = cont(err);
-                M::bind(res, |value| value.into_ok())
-            }
-        }
+    fn bind(
+        value: Result<T, E1>,
+        cont: impl Fn(E1) -> Result<Next, E3>,
+    ) -> Result<Result<T, E2>, E3> {
+        todo!()
     }
 }
+
+// impl<M, T, E1, E2, E3> MonadicBind<Result<T, E1>, Result<Pure<E2>, E3>> for OkMonadicTrans<M> {
+//     type Output = Result<Result<T, E2>, E3>;
+
+//     fn bind(
+//         value: Result<T, E1>,
+//         cont: impl Fn(E1) -> Result<Pure<E2>, E3>,
+//     ) -> Result<Result<T, E2>, E3> {
+//         todo!()
+//     }
+// }
+
+// impl<M, T, E> ContainsValue<Result<T, E>> for OkMonadicTrans<M> {
+//     type Value = E;
+// }
+
+// impl<M, N, T, E1, E2, V, Out> MonadicBind<Result<T, E1>, N> for OkMonadicTrans<M>
+// where
+//     M: ContainsValue<N, Value = V>
+//         + MonadicBind<N, Result<T, E2>, Output = Out>
+//         + MonadicPure<Out, Value = Result<T, E2>>,
+//     V: IntoOk<T, E = E2>,
+// {
+//     type Output = Out;
+
+//     fn bind(value: Result<T, E1>, cont: impl Fn(E1) -> N) -> Out {
+//         match value {
+//             Ok(value) => M::pure(Ok(value)),
+//             Err(err) => {
+//                 let res = cont(err);
+//                 M::bind(res, |value| value.into_ok())
+//             }
+//         }
+//     }
+// }
 
 trait IntoOk<T> {
     type E;
