@@ -1,6 +1,10 @@
-use core::marker::PhantomData;
+use core::future::Future;
 
-use crate::{CanWrap, ContainsValue, Functorial, MonadicBind, MonadicTrans, Pure};
+use cgp_core::prelude::*;
+
+use crate::{
+    CanWrap, ContainsValue, Functorial, MonadicBind, MonadicBindAsync, MonadicTrans, Pure,
+};
 
 pub struct OkMonadic;
 
@@ -68,6 +72,31 @@ where
             Ok(value) => M::wrap(Ok(value)),
             Err(err) => {
                 let res = cont(err);
+                M::map(res, |value| value.into_ok())
+            }
+        }
+    }
+}
+
+impl<M: Async, Next: Async, T: Async, E1: Async, E2: Async, V: Async, Out: Async>
+    MonadicBindAsync<Result<T, E1>, Next> for OkMonadicTrans<M>
+where
+    M: ContainsValue<Next, Value = V>
+        + Functorial<Next, Result<T, E2>, Output = Out>
+        + CanWrap<Out, Value = Result<T, E2>>,
+    V: IntoOk<T, E = E2>,
+{
+    type Output = Out;
+
+    async fn bind<Cont, F>(value: Result<T, E1>, cont: Cont) -> Out
+    where
+        Cont: Fn(Self::Value) -> F + Send,
+        F: Future<Output = Next> + Send,
+    {
+        match value {
+            Ok(value) => M::wrap(Ok(value)),
+            Err(err) => {
+                let res = cont(err).await;
                 M::map(res, |value| value.into_ok())
             }
         }

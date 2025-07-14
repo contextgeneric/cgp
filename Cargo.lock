@@ -125,6 +125,7 @@ name = "cgp-handler"
 version = "0.4.2"
 dependencies = [
  "cgp-core",
+ "futures",
 ]
 
 [[package]]

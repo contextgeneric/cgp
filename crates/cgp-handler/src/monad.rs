@@ -1,3 +1,7 @@
+use core::future::Future;
+
+use cgp_core::prelude::*;
+
 pub struct Pure<T>(pub T);
 
 pub trait ContainsValue<T> {
@@ -22,4 +26,14 @@ pub trait MonadicBind<T, Next>: ContainsValue<T> {
     type Output;
 
     fn bind(wrapped: T, cont: impl Fn(Self::Value) -> Next) -> Self::Output;
+}
+
+#[async_trait]
+pub trait MonadicBindAsync<T, Next>: ContainsValue<T> {
+    type Output;
+
+    async fn bind<Cont, F>(wrapped: T, cont: Cont) -> Self::Output
+    where
+        Cont: Fn(Self::Value) -> F + Send,
+        F: Future<Output = Next> + Send;
 }
