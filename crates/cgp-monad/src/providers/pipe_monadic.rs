@@ -1,5 +1,5 @@
 use cgp_core::prelude::*;
-use cgp_handler::{Computer, ComputerComponent};
+use cgp_handler::{Computer, ComputerComponent, TryComputer, TryComputerComponent};
 
 use crate::traits::MonadicBind;
 
@@ -15,6 +15,24 @@ where
 
     fn compute(context: &Context, _code: PhantomData<Code>, input: Input) -> Self::Output {
         Providers::compute(context, input)
+    }
+}
+
+#[cgp_provider]
+impl<Context, Code, Input, Output, M, Providers> TryComputer<Context, Code, Input>
+    for PipeMonadic<M, Providers>
+where
+    Context: HasErrorType,
+    Providers: PipeTryComputer<M, Context, Code, Input, Output = Output>,
+{
+    type Output = Output;
+
+    fn try_compute(
+        context: &Context,
+        _code: PhantomData<Code>,
+        input: Input,
+    ) -> Result<Self::Output, Context::Error> {
+        Providers::try_compute(context, input)
     }
 }
 
@@ -53,19 +71,45 @@ where
     }
 }
 
-// struct Bind<ProviderA, ProviderB>(pub PhantomData<(ProviderA, ProviderB)>);
+trait PipeTryComputer<M, Context, Code, Input>
+where
+    Context: HasErrorType,
+{
+    type Output;
 
-// impl<M, Context, Code, Input, ProviderA, ProviderB, ProviderC> PipeComputer<M, Context, Code, Input>
-//     for Bind<ProviderA, ProviderB>
-// where
-//     M: MonadicBind<ProviderA, ProviderB, Provider = ProviderC>,
-//     ProviderC: Computer<Context, Code, Input>,
-// {
-//     type Output = ProviderC::Output;
+    fn try_compute(context: &Context, input: Input) -> Result<Self::Output, Context::Error>;
+}
 
-//     fn compute(context: &Context, input: Input) -> Self::Output {
-//         ProviderC::compute(context, PhantomData, input)
-//     }
-// }
+impl<Context, Code, Input, M, ProviderA, ProviderB, RestProviders, OutProvider>
+    PipeTryComputer<M, Context, Code, Input> for Cons<ProviderA, Cons<ProviderB, RestProviders>>
+where
+    Context: HasErrorType,
+    M: MonadicBind<
+        ProviderA,
+        PipeMonadic<M, Cons<ProviderB, RestProviders>>,
+        Provider = OutProvider,
+    >,
+    OutProvider: TryComputer<Context, Code, Input>,
+{
+    type Output = OutProvider::Output;
 
-// impl<M, Context, Code, Input, ProviderA, ProviderB> PipeComputer<M,
+    fn try_compute(context: &Context, input: Input) -> Result<Self::Output, Context::Error> {
+        OutProvider::try_compute(context, PhantomData, input)
+    }
+}
+
+impl<Context, Code, Input, M, Provider> PipeTryComputer<M, Context, Code, Input>
+    for Cons<Provider, Nil>
+where
+    Context: HasErrorType,
+    Provider: TryComputer<Context, Code, Input>,
+{
+    type Output = Provider::Output;
+
+    fn try_compute(
+        context: &Context,
+        input: Input,
+    ) -> Result<Self::Output, <Context as HasErrorType>::Error> {
+        Provider::try_compute(context, PhantomData, input)
+    }
+}
