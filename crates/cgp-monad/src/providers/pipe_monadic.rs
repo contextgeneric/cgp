@@ -1,5 +1,7 @@
 use cgp_core::prelude::*;
-use cgp_handler::{Computer, ComputerComponent, TryComputer, TryComputerComponent};
+use cgp_handler::{
+    Computer, ComputerComponent, Handler, HandlerComponent, TryComputer, TryComputerComponent,
+};
 
 use crate::traits::MonadicBind;
 
@@ -33,6 +35,24 @@ where
         input: Input,
     ) -> Result<Self::Output, Context::Error> {
         Providers::try_compute(context, input)
+    }
+}
+
+#[cgp_provider]
+impl<Context, Code: Send, Input: Send, Output, M, Providers> Handler<Context, Code, Input>
+    for PipeMonadic<M, Providers>
+where
+    Context: HasAsyncErrorType,
+    Providers: PipeHandler<M, Context, Code, Input, Output = Output>,
+{
+    type Output = Output;
+
+    async fn handle(
+        context: &Context,
+        _code: PhantomData<Code>,
+        input: Input,
+    ) -> Result<Self::Output, Context::Error> {
+        Providers::handle(context, input).await
     }
 }
 
@@ -111,5 +131,49 @@ where
         input: Input,
     ) -> Result<Self::Output, <Context as HasErrorType>::Error> {
         Provider::try_compute(context, PhantomData, input)
+    }
+}
+
+#[async_trait]
+trait PipeHandler<M, Context, Code, Input>
+where
+    Context: HasAsyncErrorType,
+{
+    type Output;
+
+    async fn handle(context: &Context, input: Input) -> Result<Self::Output, Context::Error>;
+}
+
+impl<Context, Code: Send, Input: Send, M, ProviderA, ProviderB, RestProviders, OutProvider>
+    PipeHandler<M, Context, Code, Input> for Cons<ProviderA, Cons<ProviderB, RestProviders>>
+where
+    Context: HasAsyncErrorType,
+    M: MonadicBind<
+        ProviderA,
+        PipeMonadic<M, Cons<ProviderB, RestProviders>>,
+        Provider = OutProvider,
+    >,
+    OutProvider: Handler<Context, Code, Input>,
+{
+    type Output = OutProvider::Output;
+
+    async fn handle(context: &Context, input: Input) -> Result<Self::Output, Context::Error> {
+        OutProvider::handle(context, PhantomData, input).await
+    }
+}
+
+impl<Context, Code: Send, Input: Send, M, Provider> PipeHandler<M, Context, Code, Input>
+    for Cons<Provider, Nil>
+where
+    Context: HasAsyncErrorType,
+    Provider: Handler<Context, Code, Input>,
+{
+    type Output = Provider::Output;
+
+    async fn handle(
+        context: &Context,
+        input: Input,
+    ) -> Result<Self::Output, <Context as HasErrorType>::Error> {
+        Provider::handle(context, PhantomData, input).await
     }
 }
