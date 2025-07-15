@@ -4,6 +4,7 @@ use cgp_core::prelude::*;
 use cgp_handler::{
     Computer, ComputerComponent, Handler, HandlerComponent, TryComputer, TryComputerComponent,
 };
+use cgp_monad::{monads::ok::OkMonadic, providers::PipeMonadic};
 
 pub struct DispatchMatchers<Handlers>(pub PhantomData<Handlers>);
 
@@ -12,6 +13,7 @@ impl<Context, Code, Input, Providers, Output, Remainder> Computer<Context, Code,
     for DispatchMatchers<Providers>
 where
     Providers: DispatchComputer<Context, Code, Input, Output = Output, Remainder = Remainder>,
+    // PipeMonadic<OkMonadic, Providers>: Computer<Context, Code, Input>,
 {
     type Output = Result<Output, Remainder>;
 

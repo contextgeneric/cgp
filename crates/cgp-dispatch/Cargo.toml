@@ -11,4 +11,5 @@ description  = "Generalized handler interfaces for functional programming"
 
 [dependencies]
 cgp-core    = { version = "0.4.2" }
+cgp-monad   = { version = "0.4.2" }
 cgp-handler = { version = "0.4.2" }
