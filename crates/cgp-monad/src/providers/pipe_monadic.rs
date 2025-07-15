@@ -65,11 +65,7 @@ trait PipeComputer<M, Context, Code, Input> {
 impl<Context, Code, Input, M, ProviderA, ProviderB, RestProviders, OutProvider>
     PipeComputer<M, Context, Code, Input> for Cons<ProviderA, Cons<ProviderB, RestProviders>>
 where
-    M: Compose<
-        ProviderA,
-        PipeMonadic<M, Cons<ProviderB, RestProviders>>,
-        Provider = OutProvider,
-    >,
+    M: Compose<ProviderA, PipeMonadic<M, Cons<ProviderB, RestProviders>>, Provider = OutProvider>,
     OutProvider: Computer<Context, Code, Input>,
 {
     type Output = OutProvider::Output;
@@ -104,11 +100,7 @@ impl<Context, Code, Input, M, ProviderA, ProviderB, RestProviders, OutProvider>
     PipeTryComputer<M, Context, Code, Input> for Cons<ProviderA, Cons<ProviderB, RestProviders>>
 where
     Context: HasErrorType,
-    M: Compose<
-        ProviderA,
-        PipeMonadic<M, Cons<ProviderB, RestProviders>>,
-        Provider = OutProvider,
-    >,
+    M: Compose<ProviderA, PipeMonadic<M, Cons<ProviderB, RestProviders>>, Provider = OutProvider>,
     OutProvider: TryComputer<Context, Code, Input>,
 {
     type Output = OutProvider::Output;
@@ -148,11 +140,7 @@ impl<Context, Code: Send, Input: Send, M, ProviderA, ProviderB, RestProviders, O
     PipeHandler<M, Context, Code, Input> for Cons<ProviderA, Cons<ProviderB, RestProviders>>
 where
     Context: HasAsyncErrorType,
-    M: Compose<
-        ProviderA,
-        PipeMonadic<M, Cons<ProviderB, RestProviders>>,
-        Provider = OutProvider,
-    >,
+    M: Compose<ProviderA, PipeMonadic<M, Cons<ProviderB, RestProviders>>, Provider = OutProvider>,
     OutProvider: Handler<Context, Code, Input>,
 {
     type Output = OutProvider::Output;
