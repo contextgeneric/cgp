@@ -1,5 +1,5 @@
 #![no_std]
 
-pub mod monads;
+pub mod monadic;
 pub mod providers;
 pub mod traits;

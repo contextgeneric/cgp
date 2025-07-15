@@ -3,19 +3,19 @@ use cgp_handler::{
     Computer, ComputerComponent, Handler, HandlerComponent, TryComputer, TryComputerComponent,
 };
 
-use crate::traits::MonadicBind;
+use crate::traits::Compose;
 
 pub struct OkMonadic;
 
-impl<ProviderA, ProviderB> MonadicBind<ProviderA, ProviderB> for OkMonadic {
-    type Provider = BindOk<ProviderA, ProviderB>;
+impl<ProviderA, ProviderB> Compose<ProviderA, ProviderB> for OkMonadic {
+    type Provider = ComposeOk<ProviderA, ProviderB>;
 }
 
-pub struct BindOk<ProviderA, ProviderB>(pub PhantomData<(ProviderA, ProviderB)>);
+pub struct ComposeOk<ProviderA, ProviderB>(pub PhantomData<(ProviderA, ProviderB)>);
 
 #[cgp_provider]
 impl<Context, Code, Input, ProviderA, ProviderB, T, E1, E2> Computer<Context, Code, Input>
-    for BindOk<ProviderA, ProviderB>
+    for ComposeOk<ProviderA, ProviderB>
 where
     ProviderA: Computer<Context, Code, Input, Output = Result<T, E1>>,
     ProviderB: Computer<Context, Code, E1, Output = Result<T, E2>>,
@@ -33,7 +33,7 @@ where
 
 #[cgp_provider]
 impl<Context, Code, Input, ProviderA, ProviderB, T, E1, E2> TryComputer<Context, Code, Input>
-    for BindOk<ProviderA, ProviderB>
+    for ComposeOk<ProviderA, ProviderB>
 where
     Context: HasErrorType,
     ProviderA: TryComputer<Context, Code, Input, Output = Result<T, E1>>,
@@ -56,7 +56,7 @@ where
 
 #[cgp_provider]
 impl<Context, Code: Send, Input: Send, ProviderA, ProviderB, T: Send, E1: Send, E2: Send>
-    Handler<Context, Code, Input> for BindOk<ProviderA, ProviderB>
+    Handler<Context, Code, Input> for ComposeOk<ProviderA, ProviderB>
 where
     Context: HasAsyncErrorType,
     ProviderA: Handler<Context, Code, Input, Output = Result<T, E1>>,

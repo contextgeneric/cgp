@@ -3,19 +3,19 @@ use cgp_handler::{
     Computer, ComputerComponent, Handler, HandlerComponent, TryComputer, TryComputerComponent,
 };
 
-use crate::traits::MonadicBind;
+use crate::traits::Compose;
 
 pub struct IdentMonadic;
 
-impl<ProviderA, ProviderB> MonadicBind<ProviderA, ProviderB> for IdentMonadic {
-    type Provider = BindIdent<ProviderA, ProviderB>;
+impl<ProviderA, ProviderB> Compose<ProviderA, ProviderB> for IdentMonadic {
+    type Provider = ComposeIdent<ProviderA, ProviderB>;
 }
 
-pub struct BindIdent<ProviderA, ProviderB>(pub PhantomData<(ProviderA, ProviderB)>);
+pub struct ComposeIdent<ProviderA, ProviderB>(pub PhantomData<(ProviderA, ProviderB)>);
 
 #[cgp_provider]
 impl<Context, Code, Input, ProviderA, ProviderB> Computer<Context, Code, Input>
-    for BindIdent<ProviderA, ProviderB>
+    for ComposeIdent<ProviderA, ProviderB>
 where
     ProviderA: Computer<Context, Code, Input>,
     ProviderB: Computer<Context, Code, ProviderA::Output>,
@@ -30,7 +30,7 @@ where
 
 #[cgp_provider]
 impl<Context, Code, Input, ProviderA, ProviderB> TryComputer<Context, Code, Input>
-    for BindIdent<ProviderA, ProviderB>
+    for ComposeIdent<ProviderA, ProviderB>
 where
     Context: HasErrorType,
     ProviderA: TryComputer<Context, Code, Input>,
@@ -50,7 +50,7 @@ where
 
 #[cgp_provider]
 impl<Context, Code: Send, Input: Send, ProviderA, ProviderB> Handler<Context, Code, Input>
-    for BindIdent<ProviderA, ProviderB>
+    for ComposeIdent<ProviderA, ProviderB>
 where
     Context: HasAsyncErrorType,
     ProviderA: Handler<Context, Code, Input>,

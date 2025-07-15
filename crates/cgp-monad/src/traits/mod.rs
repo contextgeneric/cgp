@@ -1,3 +1,3 @@
-mod monadic;
+mod compose;
 
-pub use monadic::*;
+pub use compose::*;

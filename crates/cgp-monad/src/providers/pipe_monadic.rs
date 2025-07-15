@@ -3,7 +3,7 @@ use cgp_handler::{
     Computer, ComputerComponent, Handler, HandlerComponent, TryComputer, TryComputerComponent,
 };
 
-use crate::traits::MonadicBind;
+use crate::traits::Compose;
 
 pub struct PipeMonadic<M, Providers>(pub PhantomData<(M, Providers)>);
 
@@ -65,7 +65,7 @@ trait PipeComputer<M, Context, Code, Input> {
 impl<Context, Code, Input, M, ProviderA, ProviderB, RestProviders, OutProvider>
     PipeComputer<M, Context, Code, Input> for Cons<ProviderA, Cons<ProviderB, RestProviders>>
 where
-    M: MonadicBind<
+    M: Compose<
         ProviderA,
         PipeMonadic<M, Cons<ProviderB, RestProviders>>,
         Provider = OutProvider,
@@ -104,7 +104,7 @@ impl<Context, Code, Input, M, ProviderA, ProviderB, RestProviders, OutProvider>
     PipeTryComputer<M, Context, Code, Input> for Cons<ProviderA, Cons<ProviderB, RestProviders>>
 where
     Context: HasErrorType,
-    M: MonadicBind<
+    M: Compose<
         ProviderA,
         PipeMonadic<M, Cons<ProviderB, RestProviders>>,
         Provider = OutProvider,
@@ -148,7 +148,7 @@ impl<Context, Code: Send, Input: Send, M, ProviderA, ProviderB, RestProviders, O
     PipeHandler<M, Context, Code, Input> for Cons<ProviderA, Cons<ProviderB, RestProviders>>
 where
     Context: HasAsyncErrorType,
-    M: MonadicBind<
+    M: Compose<
         ProviderA,
         PipeMonadic<M, Cons<ProviderB, RestProviders>>,
         Provider = OutProvider,
