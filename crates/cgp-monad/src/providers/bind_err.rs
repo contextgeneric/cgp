@@ -1,10 +1,8 @@
 use cgp_core::prelude::*;
 use cgp_handler::{Computer, ComputerComponent, Handler, HandlerComponent};
 
-use crate::{
-    monads::IntoErr,
-    traits::{CanWrap, ContainsValue, Functorial},
-};
+use crate::monads::IntoErr;
+use crate::traits::{CanWrap, ContainsValue, Functorial};
 
 pub struct BindErr<M, Cont>(pub PhantomData<(M, Cont)>);
 

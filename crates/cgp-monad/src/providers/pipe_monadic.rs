@@ -1,11 +1,8 @@
 use cgp_core::prelude::*;
-
 use cgp_handler::{Computer, ComputerComponent, TryComputer, TryComputerComponent};
 
-use crate::{
-    monads::ErrMonadic,
-    traits::{ContainsValue, MonadicBind, MonadicTrans, Pure},
-};
+use crate::monads::ErrMonadic;
+use crate::traits::{ContainsValue, MonadicBind, MonadicTrans, Pure};
 
 pub struct PipeMonadic<M, Providers>(pub PhantomData<(M, Providers)>);
 
