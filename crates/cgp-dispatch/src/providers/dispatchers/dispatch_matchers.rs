@@ -12,13 +12,13 @@ pub struct DispatchMatchers<Handlers>(pub PhantomData<Handlers>);
 impl<Context, Code, Input, Providers, Output, Remainder> Computer<Context, Code, Input>
     for DispatchMatchers<Providers>
 where
-    Providers: DispatchComputer<Context, Code, Input, Output = Output, Remainder = Remainder>,
-    // PipeMonadic<OkMonadic, Providers>: Computer<Context, Code, Input>,
+    PipeMonadic<OkMonadic, Providers>:
+        Computer<Context, Code, Input, Output = Result<Output, Remainder>>,
 {
     type Output = Result<Output, Remainder>;
 
     fn compute(context: &Context, code: PhantomData<Code>, input: Input) -> Self::Output {
-        Providers::compute(context, code, input)
+        PipeMonadic::compute(context, code, input)
     }
 }
 
@@ -58,18 +58,6 @@ where
     }
 }
 
-trait DispatchComputer<Context, Code, Input> {
-    type Output;
-
-    type Remainder;
-
-    fn compute(
-        context: &Context,
-        tag: PhantomData<Code>,
-        input: Input,
-    ) -> Result<Self::Output, Self::Remainder>;
-}
-
 trait TryDispatchComputer<Context, Code, Input>
 where
     Context: HasErrorType,
@@ -105,41 +93,6 @@ impl<
         Context,
         Code,
         Input,
-        CurrentHandler,
-        CurrentProvider,
-        RestProviders,
-        Output,
-        RemainderA,
-        RemainderB,
-    > DispatchComputer<Context, Code, Input>
-    for Cons<CurrentHandler, Cons<CurrentProvider, RestProviders>>
-where
-    CurrentHandler: Computer<Context, Code, Input, Output = Result<Output, RemainderA>>,
-    Cons<CurrentProvider, RestProviders>:
-        DispatchComputer<Context, Code, RemainderA, Output = Output, Remainder = RemainderB>,
-{
-    type Output = Output;
-
-    type Remainder = RemainderB;
-
-    fn compute(
-        context: &Context,
-        tag: PhantomData<Code>,
-        input: Input,
-    ) -> Result<Self::Output, Self::Remainder> {
-        let res = CurrentHandler::compute(context, tag, input);
-
-        match res {
-            Ok(output) => Ok(output),
-            Err(remainder) => Cons::compute(context, tag, remainder),
-        }
-    }
-}
-
-impl<
-        Context,
-        Code,
-        Input,
         CurrentProvider,
         NextProvider,
         RestProviders,
@@ -169,24 +122,6 @@ where
             Ok(output) => Ok(Ok(output)),
             Err(remainder) => Cons::try_compute(context, tag, remainder),
         }
-    }
-}
-
-impl<Context, Code, Input, Provider, Remainder, Output> DispatchComputer<Context, Code, Input>
-    for Cons<Provider, Nil>
-where
-    Provider: Computer<Context, Code, Input, Output = Result<Output, Remainder>>,
-{
-    type Output = Output;
-
-    type Remainder = Remainder;
-
-    fn compute(
-        context: &Context,
-        tag: PhantomData<Code>,
-        input: Input,
-    ) -> Result<Self::Output, Self::Remainder> {
-        Provider::compute(context, tag, input)
     }
 }
 

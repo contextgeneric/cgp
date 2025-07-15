@@ -1,3 +1,5 @@
+#![allow(unused)]
+
 use core::future::Future;
 
 use cgp::extra::run::{Runner, RunnerComponent};
