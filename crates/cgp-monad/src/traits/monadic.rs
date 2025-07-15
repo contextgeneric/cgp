@@ -1,3 +1,3 @@
-pub trait Monadic {
-    type BindHandlers<ProviderA, ProviderB>;
+pub trait MonadicBind<ProviderA, ProviderB> {
+    type Provider;
 }

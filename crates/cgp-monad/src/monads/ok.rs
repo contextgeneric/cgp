@@ -3,12 +3,12 @@ use cgp_handler::{
     Computer, ComputerComponent, Handler, HandlerComponent, TryComputer, TryComputerComponent,
 };
 
-use crate::traits::Monadic;
+use crate::traits::MonadicBind;
 
 pub struct OkMonadic;
 
-impl Monadic for OkMonadic {
-    type BindHandlers<ProviderA, ProviderB> = BindOk<ProviderA, ProviderB>;
+impl<ProviderA, ProviderB> MonadicBind<ProviderA, ProviderB> for OkMonadic {
+    type Provider = BindOk<ProviderA, ProviderB>;
 }
 
 pub struct BindOk<ProviderA, ProviderB>(pub PhantomData<(ProviderA, ProviderB)>);
