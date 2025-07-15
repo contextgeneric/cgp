@@ -1,8 +1,10 @@
 use cgp_core::prelude::*;
 
+use cgp_handler::{Computer, ComputerComponent, TryComputer, TryComputerComponent};
+
 use crate::{
-    Computer, ComputerComponent, ContainsValue, ErrMonadic, MonadicBind, MonadicTrans, Pure,
-    TryComputer, TryComputerComponent,
+    monads::ErrMonadic,
+    traits::{ContainsValue, MonadicBind, MonadicTrans, Pure},
 };
 
 pub struct PipeMonadic<M, Providers>(pub PhantomData<(M, Providers)>);
@@ -91,11 +93,8 @@ where
         + MonadicBind<
             CurrentProvider::Output,
             Result<RestProviders::Output, Context::Error>,
-            // Output = Output,
             Output = Result<Output, Context::Error>,
         >,
-    // M1: ContainsValue<CurrentProvider::Output, Value = Intermediary>
-    //     + MonadicBind<CurrentProvider::Output, RestProviders::Output, Output = Output>,
     Context: HasErrorType,
     CurrentProvider: TryComputer<Context, Tag, Input>,
     RestProviders: PipeTryComputer<M1, Context, Tag, Intermediary>,

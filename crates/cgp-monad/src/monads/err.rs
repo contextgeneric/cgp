@@ -1,6 +1,6 @@
 use core::marker::PhantomData;
 
-use crate::{CanWrap, ContainsValue, Functorial, MonadicBind, Pure};
+use crate::traits::{CanWrap, ContainsValue, Functorial, MonadicBind, Pure};
 
 pub struct ErrMonadic;
 

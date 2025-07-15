@@ -2,7 +2,7 @@ use core::future::Future;
 
 use cgp_core::prelude::*;
 
-use crate::{
+use crate::traits::{
     CanWrap, ContainsValue, Functorial, MonadicBind, MonadicBindAsync, MonadicTrans, Pure,
 };
 

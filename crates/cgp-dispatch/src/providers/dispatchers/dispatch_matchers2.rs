@@ -1,7 +1,6 @@
 use cgp_core::prelude::*;
-use cgp_handler::{
-    ComputerComponent, HandlerComponent, OkMonadic, PipeMonadic, TryComputerComponent,
-};
+use cgp_handler::{ComputerComponent, HandlerComponent, TryComputerComponent};
+use cgp_monad::{monads::OkMonadic, providers::PipeMonadic};
 
 delegate_components! {
     <Providers>
