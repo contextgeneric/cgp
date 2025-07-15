@@ -2,7 +2,7 @@ use cgp_core::prelude::*;
 use cgp_handler::{Computer, ComputerComponent, TryComputer, TryComputerComponent};
 
 use crate::monads::ErrMonadic;
-use crate::traits::{ContainsValue, MonadicBind, MonadicTrans, Pure};
+use crate::traits::{CanBindHandler, ContainsValue, MonadicBind, MonadicTrans, Pure};
 
 pub struct PipeMonadic<M, Providers>(pub PhantomData<(M, Providers)>);
 
@@ -43,21 +43,16 @@ trait PipeComputer<M, Context, Code, Input> {
     fn compute(context: &Context, _code: PhantomData<Code>, input: Input) -> Self::Output;
 }
 
-impl<M, Context, Tag, Input, Intermediary, CurrentProvider, RestProviders, Output>
+impl<M, Context, Tag, Input, CurrentProvider, RestProviders, Cont, Output>
     PipeComputer<M, Context, Tag, Input> for Cons<CurrentProvider, RestProviders>
 where
-    M: ContainsValue<CurrentProvider::Output, Value = Intermediary>
-        + MonadicBind<CurrentProvider::Output, RestProviders::Output, Output = Output>,
-    CurrentProvider: Computer<Context, Tag, Input>,
-    RestProviders: PipeComputer<M, Context, Tag, Intermediary>,
+    M: CanBindHandler<Bind<PipeMonadic<M, RestProviders>> = Cont>,
+    Cont: Computer<Context, Tag, Input, Output = Output>,
 {
     type Output = Output;
 
     fn compute(context: &Context, tag: PhantomData<Tag>, input: Input) -> Self::Output {
-        let intermediate = CurrentProvider::compute(context, tag, input);
-        M::bind(intermediate, |intermediate| {
-            RestProviders::compute(context, tag, intermediate)
-        })
+        todo!()
     }
 }
 

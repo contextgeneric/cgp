@@ -108,6 +108,7 @@ dependencies = [
  "cgp-error-extra",
  "cgp-handler",
  "cgp-inner",
+ "cgp-monad",
  "cgp-run",
  "cgp-runtime",
 ]

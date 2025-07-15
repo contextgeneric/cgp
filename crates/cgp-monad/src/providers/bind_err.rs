@@ -2,7 +2,13 @@ use cgp_core::prelude::*;
 use cgp_handler::{Computer, ComputerComponent, Handler, HandlerComponent};
 
 use crate::monads::IntoErr;
-use crate::traits::{CanWrap, ContainsValue, Functorial};
+use crate::traits::{CanBindHandler, CanWrap, ContainsValue, Functorial};
+
+pub struct ErrBinder<M>(pub PhantomData<M>);
+
+impl<M> CanBindHandler for ErrBinder<M> {
+    type Bind<Handler> = BindErr<M, Handler>;
+}
 
 pub struct BindErr<M, Cont>(pub PhantomData<(M, Cont)>);
 

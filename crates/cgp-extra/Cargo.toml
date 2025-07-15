@@ -21,4 +21,5 @@ cgp-inner       = { version = "0.4.2" }
 cgp-run         = { version = "0.4.2" }
 cgp-runtime     = { version = "0.4.2" }
 cgp-handler     = { version = "0.4.2" }
+cgp-monad       = { version = "0.4.2" }
 cgp-dispatch    = { version = "0.4.2" }
