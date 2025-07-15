@@ -2,23 +2,19 @@ use core::marker::PhantomData;
 
 use cgp_core::prelude::*;
 use cgp_handler::{
-    Computer, ComputerComponent, Handler, HandlerComponent, TryComputer, TryComputerComponent,
+    ComputerComponent, Handler, HandlerComponent, TryComputer, TryComputerComponent,
 };
 use cgp_monad::{monads::ok::OkMonadic, providers::PipeMonadic};
 
 pub struct DispatchMatchers<Handlers>(pub PhantomData<Handlers>);
 
-#[cgp_provider]
-impl<Context, Code, Input, Providers, Output, Remainder> Computer<Context, Code, Input>
-    for DispatchMatchers<Providers>
-where
-    PipeMonadic<OkMonadic, Providers>:
-        Computer<Context, Code, Input, Output = Result<Output, Remainder>>,
-{
-    type Output = Result<Output, Remainder>;
-
-    fn compute(context: &Context, code: PhantomData<Code>, input: Input) -> Self::Output {
-        PipeMonadic::compute(context, code, input)
+delegate_components! {
+    <Providers>
+    DispatchMatchers<Providers> {
+        [
+            ComputerComponent,
+        ]:
+            PipeMonadic<OkMonadic, Providers>,
     }
 }
 
