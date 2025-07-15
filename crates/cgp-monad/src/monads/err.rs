@@ -22,19 +22,14 @@ impl<T1, T2, E> Functorial<Result<T1, E>, T2> for ErrMonadic {
     }
 }
 
-impl<T1, T2, E> MonadicBind<Result<T1, E>, Result<T2, E>> for ErrMonadic {
+impl<T1, T2, E, N> MonadicBind<Result<T1, E>, N> for ErrMonadic
+where
+    N: IntoErr<E, T = T2>,
+{
     type Output = Result<T2, E>;
 
-    fn bind(value: Result<T1, E>, cont: impl Fn(T1) -> Result<T2, E>) -> Result<T2, E> {
-        cont(value?)
-    }
-}
-
-impl<T1, T2, E> MonadicBind<Result<T1, E>, Pure<T2>> for ErrMonadic {
-    type Output = Result<T2, E>;
-
-    fn bind(value: Result<T1, E>, cont: impl Fn(T1) -> Pure<T2>) -> Result<T2, E> {
-        Ok(cont(value?).0)
+    fn bind(value: Result<T1, E>, cont: impl Fn(T1) -> N) -> Result<T2, E> {
+        cont(value?).into_err()
     }
 }
 
@@ -47,20 +42,24 @@ where
     type Value = T;
 }
 
-// impl<M, V, N, T1, E> MonadicBind<V, N> for ErrMonadicTrans<M>
-// where
-//     M: MonadicBind<V, N, Value = Result<T1, E>, OutValue = Result<T2, E>>,
-// {
-//     type Output = M::Output;
+trait IntoErr<E> {
+    type T;
 
-//     fn bind(value: V, cont: impl Fn(T1) -> N) -> M::Output {
-//         M::bind(value, |res| match res {
-//             Ok(value) => cont(value),
-//             Err(err) => M::pure(Err(err)),
-//         })
-//     }
+    fn into_err(self) -> Result<Self::T, E>;
+}
 
-//     fn pure(value: T2) -> N {
-//         M::pure(Ok(value))
-//     }
-// }
+impl<T, E> IntoErr<E> for Result<T, E> {
+    type T = T;
+
+    fn into_err(self) -> Result<Self::T, E> {
+        self
+    }
+}
+
+impl<T, E> IntoErr<E> for Pure<T> {
+    type T = T;
+
+    fn into_err(self) -> Result<Self::T, E> {
+        Ok(self.0)
+    }
+}

@@ -26,24 +26,16 @@ impl<T, E1, E2> Functorial<Result<T, E1>, E2> for OkMonadic {
     }
 }
 
-impl<T, E1, E2> MonadicBind<Result<T, E1>, Result<T, E2>> for OkMonadic {
+impl<T, E1, E2, N> MonadicBind<Result<T, E1>, N> for OkMonadic
+where
+    N: IntoOk<T, E = E2>,
+{
     type Output = Result<T, E2>;
 
-    fn bind(value: Result<T, E1>, cont: impl Fn(E1) -> Result<T, E2>) -> Result<T, E2> {
+    fn bind(value: Result<T, E1>, cont: impl Fn(E1) -> N) -> Result<T, E2> {
         match value {
             Ok(value) => Ok(value),
-            Err(err) => cont(err),
-        }
-    }
-}
-
-impl<T, E1, E2> MonadicBind<Result<T, E1>, Pure<E2>> for OkMonadic {
-    type Output = Result<T, E2>;
-
-    fn bind(value: Result<T, E1>, cont: impl Fn(E1) -> Pure<E2>) -> Result<T, E2> {
-        match value {
-            Ok(value) => Ok(value),
-            Err(err) => Err(cont(err).0),
+            Err(err) => cont(err).into_ok(),
         }
     }
 }
