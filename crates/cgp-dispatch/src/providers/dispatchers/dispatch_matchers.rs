@@ -8,51 +8,51 @@ use cgp_handler::{
 pub struct DispatchMatchers<Handlers>(pub PhantomData<Handlers>);
 
 #[cgp_provider]
-impl<Context, Code, Input, Handlers, Output, Remainder> Computer<Context, Code, Input>
-    for DispatchMatchers<Handlers>
+impl<Context, Code, Input, Providers, Output, Remainder> Computer<Context, Code, Input>
+    for DispatchMatchers<Providers>
 where
-    Handlers: DispatchComputer<Context, Code, Input, Output = Output, Remainder = Remainder>,
+    Providers: DispatchComputer<Context, Code, Input, Output = Output, Remainder = Remainder>,
 {
     type Output = Result<Output, Remainder>;
 
-    fn compute(_context: &Context, code: PhantomData<Code>, input: Input) -> Self::Output {
-        Handlers::compute(_context, code, input)
+    fn compute(context: &Context, code: PhantomData<Code>, input: Input) -> Self::Output {
+        Providers::compute(context, code, input)
     }
 }
 
 #[cgp_provider]
-impl<Context, Code, Input, Handlers, Output, Remainder> TryComputer<Context, Code, Input>
-    for DispatchMatchers<Handlers>
+impl<Context, Code, Input, Providers, Output, Remainder> TryComputer<Context, Code, Input>
+    for DispatchMatchers<Providers>
 where
     Context: HasErrorType,
-    Handlers: TryDispatchComputer<Context, Code, Input, Output = Output, Remainder = Remainder>,
+    Providers: TryDispatchComputer<Context, Code, Input, Output = Output, Remainder = Remainder>,
 {
     type Output = Result<Output, Remainder>;
 
     fn try_compute(
-        _context: &Context,
+        context: &Context,
         code: PhantomData<Code>,
         input: Input,
     ) -> Result<Self::Output, Context::Error> {
-        Handlers::try_compute(_context, code, input)
+        Providers::try_compute(context, code, input)
     }
 }
 
 #[cgp_provider]
-impl<Context, Code: Send, Input: Send, Handlers, Output: Send, Remainder: Send>
-    Handler<Context, Code, Input> for DispatchMatchers<Handlers>
+impl<Context, Code: Send, Input: Send, Providers, Output: Send, Remainder: Send>
+    Handler<Context, Code, Input> for DispatchMatchers<Providers>
 where
     Context: HasAsyncErrorType,
-    Handlers: DispatchHandler<Context, Code, Input, Output = Output, Remainder = Remainder>,
+    Providers: DispatchHandler<Context, Code, Input, Output = Output, Remainder = Remainder>,
 {
     type Output = Result<Output, Remainder>;
 
     async fn handle(
-        _context: &Context,
+        context: &Context,
         code: PhantomData<Code>,
         input: Input,
     ) -> Result<Self::Output, Context::Error> {
-        Handlers::handle(_context, code, input).await
+        Providers::handle(context, code, input).await
     }
 }
 
@@ -83,21 +83,37 @@ where
     ) -> Result<Result<Self::Output, Self::Remainder>, Context::Error>;
 }
 
+#[async_trait]
+trait DispatchHandler<Context, Code, Input>
+where
+    Context: HasErrorType,
+{
+    type Output;
+
+    type Remainder;
+
+    async fn handle(
+        context: &Context,
+        tag: PhantomData<Code>,
+        input: Input,
+    ) -> Result<Result<Self::Output, Self::Remainder>, Context::Error>;
+}
+
 impl<
         Context,
         Code,
         Input,
         CurrentHandler,
-        NextHandler,
-        RestHandlers,
+        CurrentProvider,
+        RestProviders,
         Output,
         RemainderA,
         RemainderB,
     > DispatchComputer<Context, Code, Input>
-    for Cons<CurrentHandler, Cons<NextHandler, RestHandlers>>
+    for Cons<CurrentHandler, Cons<CurrentProvider, RestProviders>>
 where
     CurrentHandler: Computer<Context, Code, Input, Output = Result<Output, RemainderA>>,
-    Cons<NextHandler, RestHandlers>:
+    Cons<CurrentProvider, RestProviders>:
         DispatchComputer<Context, Code, RemainderA, Output = Output, Remainder = RemainderB>,
 {
     type Output = Output;
@@ -122,18 +138,18 @@ impl<
         Context,
         Code,
         Input,
-        CurrentHandler,
-        NextHandler,
-        RestHandlers,
+        CurrentProvider,
+        NextProvider,
+        RestProviders,
         Output,
         RemainderA,
         RemainderB,
     > TryDispatchComputer<Context, Code, Input>
-    for Cons<CurrentHandler, Cons<NextHandler, RestHandlers>>
+    for Cons<CurrentProvider, Cons<NextProvider, RestProviders>>
 where
     Context: HasErrorType,
-    CurrentHandler: TryComputer<Context, Code, Input, Output = Result<Output, RemainderA>>,
-    Cons<NextHandler, RestHandlers>:
+    CurrentProvider: TryComputer<Context, Code, Input, Output = Result<Output, RemainderA>>,
+    Cons<NextProvider, RestProviders>:
         TryDispatchComputer<Context, Code, RemainderA, Output = Output, Remainder = RemainderB>,
 {
     type Output = Output;
@@ -144,8 +160,8 @@ where
         context: &Context,
         tag: PhantomData<Code>,
         input: Input,
-    ) -> Result<Result<Self::Output, Self::Remainder>, Context::Error> {
-        let res = CurrentHandler::try_compute(context, tag, input)?;
+    ) -> Result<Result<Output, RemainderB>, Context::Error> {
+        let res = CurrentProvider::try_compute(context, tag, input)?;
 
         match res {
             Ok(output) => Ok(Ok(output)),
@@ -154,10 +170,10 @@ where
     }
 }
 
-impl<Context, Code, Input, Handler, Remainder, Output> DispatchComputer<Context, Code, Input>
-    for Cons<Handler, Nil>
+impl<Context, Code, Input, Provider, Remainder, Output> DispatchComputer<Context, Code, Input>
+    for Cons<Provider, Nil>
 where
-    Handler: Computer<Context, Code, Input, Output = Result<Output, Remainder>>,
+    Provider: Computer<Context, Code, Input, Output = Result<Output, Remainder>>,
 {
     type Output = Output;
 
@@ -168,15 +184,15 @@ where
         tag: PhantomData<Code>,
         input: Input,
     ) -> Result<Self::Output, Self::Remainder> {
-        Handler::compute(context, tag, input)
+        Provider::compute(context, tag, input)
     }
 }
 
-impl<Context, Code, Input, Handler, Remainder, Output> TryDispatchComputer<Context, Code, Input>
-    for Cons<Handler, Nil>
+impl<Context, Code, Input, Provider, Remainder, Output> TryDispatchComputer<Context, Code, Input>
+    for Cons<Provider, Nil>
 where
     Context: HasErrorType,
-    Handler: TryComputer<Context, Code, Input, Output = Result<Output, Remainder>>,
+    Provider: TryComputer<Context, Code, Input, Output = Result<Output, Remainder>>,
 {
     type Output = Output;
 
@@ -187,42 +203,26 @@ where
         tag: PhantomData<Code>,
         input: Input,
     ) -> Result<Result<Self::Output, Self::Remainder>, Context::Error> {
-        Handler::try_compute(context, tag, input)
+        Provider::try_compute(context, tag, input)
     }
-}
-
-#[async_trait]
-trait DispatchHandler<Context, Code, Input>
-where
-    Context: HasErrorType,
-{
-    type Output;
-
-    type Remainder;
-
-    async fn handle(
-        context: &Context,
-        tag: PhantomData<Code>,
-        input: Input,
-    ) -> Result<Result<Self::Output, Self::Remainder>, Context::Error>;
 }
 
 impl<
         Context,
         Code: Send,
         Input: Send,
-        CurrentHandler,
-        NextHandler,
-        RestHandlers,
+        CurrentProvider,
+        NextProvider,
+        RestProviders,
         Output: Send,
         RemainderA: Send,
         RemainderB: Send,
     > DispatchHandler<Context, Code, Input>
-    for Cons<CurrentHandler, Cons<NextHandler, RestHandlers>>
+    for Cons<CurrentProvider, Cons<NextProvider, RestProviders>>
 where
     Context: HasAsyncErrorType,
-    CurrentHandler: Handler<Context, Code, Input, Output = Result<Output, RemainderA>>,
-    Cons<NextHandler, RestHandlers>:
+    CurrentProvider: Handler<Context, Code, Input, Output = Result<Output, RemainderA>>,
+    Cons<NextProvider, RestProviders>:
         DispatchHandler<Context, Code, RemainderA, Output = Output, Remainder = RemainderB>,
 {
     type Output = Output;
@@ -234,7 +234,7 @@ where
         tag: PhantomData<Code>,
         input: Input,
     ) -> Result<Result<Self::Output, Self::Remainder>, Context::Error> {
-        let res = CurrentHandler::handle(context, tag, input).await?;
+        let res = CurrentProvider::handle(context, tag, input).await?;
 
         match res {
             Ok(output) => Ok(Ok(output)),
@@ -243,11 +243,11 @@ where
     }
 }
 
-impl<Context, Code: Send, Input: Send, CurrentHandler, Remainder: Send, Output: Send>
-    DispatchHandler<Context, Code, Input> for Cons<CurrentHandler, Nil>
+impl<Context, Code: Send, Input: Send, CurrentProvider, Remainder: Send, Output: Send>
+    DispatchHandler<Context, Code, Input> for Cons<CurrentProvider, Nil>
 where
     Context: HasAsyncErrorType,
-    CurrentHandler: Handler<Context, Code, Input, Output = Result<Output, Remainder>>,
+    CurrentProvider: Handler<Context, Code, Input, Output = Result<Output, Remainder>>,
 {
     type Output = Output;
 
@@ -258,6 +258,6 @@ where
         tag: PhantomData<Code>,
         input: Input,
     ) -> Result<Result<Self::Output, Self::Remainder>, Context::Error> {
-        CurrentHandler::handle(context, tag, input).await
+        CurrentProvider::handle(context, tag, input).await
     }
 }
