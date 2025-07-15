@@ -155,6 +155,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "cgp-monad"
+version = "0.4.2"
+dependencies = [
+ "cgp-core",
+ "cgp-handler",
+]
+
+[[package]]
 name = "cgp-run"
 version = "0.4.2"
 dependencies = [
