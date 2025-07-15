@@ -1,26 +1,78 @@
-use core::marker::PhantomData;
+use cgp_core::prelude::*;
+use cgp_handler::{
+    Computer, ComputerComponent, Handler, HandlerComponent, TryComputer, TryComputerComponent,
+};
 
-use cgp_core::field::MapType;
+use crate::traits::Monadic;
 
-use crate::traits::{CanBindValue, CanWrapValue};
+pub struct OkMonadic;
 
-pub struct OkMonad<T>(pub PhantomData<T>);
-
-impl<T> MapType for OkMonad<T> {
-    type Map<E> = Result<T, E>;
+impl Monadic for OkMonadic {
+    type BindHandlers<ProviderA, ProviderB> = BindOk<ProviderA, ProviderB>;
 }
 
-impl<T> CanWrapValue for OkMonad<T> {
-    fn wrap<E>(e: E) -> Result<T, E> {
-        Err(e)
+pub struct BindOk<ProviderA, ProviderB>(pub PhantomData<(ProviderA, ProviderB)>);
+
+#[cgp_provider]
+impl<Context, Code, Input, ProviderA, ProviderB, T, E1, E2> Computer<Context, Code, Input>
+    for BindOk<ProviderA, ProviderB>
+where
+    ProviderA: Computer<Context, Code, Input, Output = Result<T, E1>>,
+    ProviderB: Computer<Context, Code, E1, Output = Result<T, E2>>,
+{
+    type Output = Result<T, E2>;
+
+    fn compute(context: &Context, code: PhantomData<Code>, input: Input) -> Self::Output {
+        let res = ProviderA::compute(context, code, input);
+        match res {
+            Err(value) => ProviderB::compute(context, code, value),
+            Ok(err) => Ok(err),
+        }
     }
 }
 
-impl<T> CanBindValue for OkMonad<T> {
-    fn bind<E1, E2>(res: Result<T, E1>, f: impl Fn(E1) -> Result<T, E2>) -> Result<T, E2> {
+#[cgp_provider]
+impl<Context, Code, Input, ProviderA, ProviderB, T, E1, E2> TryComputer<Context, Code, Input>
+    for BindOk<ProviderA, ProviderB>
+where
+    Context: HasErrorType,
+    ProviderA: TryComputer<Context, Code, Input, Output = Result<T, E1>>,
+    ProviderB: TryComputer<Context, Code, E1, Output = Result<T, E2>>,
+{
+    type Output = Result<T, E2>;
+
+    fn try_compute(
+        context: &Context,
+        code: PhantomData<Code>,
+        input: Input,
+    ) -> Result<Self::Output, Context::Error> {
+        let res = ProviderA::try_compute(context, code, input)?;
         match res {
-            Ok(value) => Ok(value),
-            Err(err) => f(err),
+            Err(value) => ProviderB::try_compute(context, code, value),
+            Ok(err) => Ok(Ok(err)),
+        }
+    }
+}
+
+#[cgp_provider]
+impl<Context, Code: Send, Input: Send, ProviderA, ProviderB, T: Send, E1: Send, E2: Send>
+    Handler<Context, Code, Input> for BindOk<ProviderA, ProviderB>
+where
+    Context: HasAsyncErrorType,
+    ProviderA: Handler<Context, Code, Input, Output = Result<T, E1>>,
+    ProviderB: Handler<Context, Code, E1, Output = Result<T, E2>>,
+{
+    type Output = Result<T, E2>;
+
+    async fn handle(
+        context: &Context,
+        code: PhantomData<Code>,
+        input: Input,
+    ) -> Result<Self::Output, Context::Error> {
+        let res = ProviderA::handle(context, code, input).await?;
+        match res {
+            Err(value) => ProviderB::handle(context, code, value).await,
+            Ok(err) => Ok(Ok(err)),
         }
     }
 }

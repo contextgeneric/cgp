@@ -1,7 +1,3 @@
-use cgp_core::field::MapType;
-
-pub trait Monadic<T> {
-    type Value;
-
-    type Monad: MapType<Map<Self::Value> = T>;
+pub trait Monadic {
+    type BindHandlers<ProviderA, ProviderB>;
 }
