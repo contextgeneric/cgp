@@ -42,7 +42,7 @@ where
     type Value = T;
 }
 
-trait IntoErr<E> {
+pub trait IntoErr<E> {
     type T;
 
     fn into_err(self) -> Result<Self::T, E>;

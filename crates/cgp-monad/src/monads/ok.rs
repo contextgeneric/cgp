@@ -95,7 +95,7 @@ where
     }
 }
 
-trait IntoOk<T> {
+pub trait IntoOk<T> {
     type E;
 
     fn into_ok(self) -> Result<T, Self::E>;
