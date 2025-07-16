@@ -1,6 +1,8 @@
 use std::f64::consts::PI;
 
 use cgp::core::field::{CanDowncast, CanDowncastFields, CanUpcast};
+use cgp::extra::dispatch::{ExtractFieldAndHandle, MatchWithHandlers};
+use cgp::extra::handler::HandleFieldValue;
 use cgp::prelude::*;
 
 #[derive(Debug, PartialEq, HasFields, FromVariant, ExtractField)]
@@ -85,4 +87,43 @@ fn test_shape_downcast() {
             Ok(TriangleOnly::Triangle(triangle)) => triangle.base * triangle.height / 2.0,
         },
     };
+}
+
+pub trait HasArea {
+    fn area(self) -> f64;
+}
+
+#[cgp_computer]
+fn compute_area<T: HasArea>(shape: T) -> f64 {
+    shape.area()
+}
+
+impl HasArea for Circle {
+    fn area(self) -> f64 {
+        PI * self.radius * self.radius
+    }
+}
+
+impl HasArea for Rectangle {
+    fn area(self) -> f64 {
+        self.width * self.height
+    }
+}
+
+impl HasArea for Triangle {
+    fn area(self) -> f64 {
+        self.base * self.height / 2.0
+    }
+}
+
+#[test]
+fn test_match_with_handlers() {
+    let circle = Shape::Circle(Circle { radius: 5.0 });
+
+    let _area = MatchWithHandlers::<
+        Product![
+            ExtractFieldAndHandle<symbol!("Circle"), HandleFieldValue<ComputeArea>>,
+            ExtractFieldAndHandle<symbol!("Rectangle"), HandleFieldValue<ComputeArea>>,
+        ],
+    >::compute(&(), PhantomData::<()>, circle);
 }
