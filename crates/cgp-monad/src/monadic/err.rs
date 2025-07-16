@@ -3,7 +3,7 @@ use cgp_handler::{
     Computer, ComputerComponent, Handler, HandlerComponent, TryComputer, TryComputerComponent,
 };
 
-use crate::traits::Compose;
+use crate::traits::{Compose, ContainsValue, MonadicLift};
 
 pub struct ErrMonadic;
 
@@ -12,6 +12,25 @@ impl<ProviderA, ProviderB> Compose<ProviderA, ProviderB> for ErrMonadic {
 }
 
 pub struct ComposeErr<ProviderA, ProviderB>(pub PhantomData<(ProviderA, ProviderB)>);
+
+pub struct BindErr<M, Cont>(pub PhantomData<(M, Cont)>);
+
+#[cgp_provider]
+impl<Context, Code, T1, T2, E, M, Cont> Computer<Context, Code, Result<T1, E>> for BindErr<M, Cont>
+where
+    Cont: Computer<Context, Code, T1>,
+    M: ContainsValue<Cont::Output, Value = Result<T2, E>>
+        + MonadicLift<Result<T2, E>, Cont::Output>,
+{
+    type Output = M::Output;
+
+    fn compute(context: &Context, code: PhantomData<Code>, input: Result<T1, E>) -> Self::Output {
+        match input {
+            Ok(value) => M::lift_output(Cont::compute(context, code, value)),
+            Err(err) => M::lift_value(Err(err)),
+        }
+    }
+}
 
 #[cgp_provider]
 impl<Context, Code, Input, ProviderA, ProviderB, T1, T2, E> Computer<Context, Code, Input>

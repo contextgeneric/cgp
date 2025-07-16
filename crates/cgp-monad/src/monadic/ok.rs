@@ -3,7 +3,7 @@ use cgp_handler::{
     Computer, ComputerComponent, Handler, HandlerComponent, TryComputer, TryComputerComponent,
 };
 
-use crate::traits::Compose;
+use crate::traits::{Compose, ContainsValue, MonadicLift};
 
 pub struct OkMonadic;
 
@@ -12,6 +12,25 @@ impl<ProviderA, ProviderB> Compose<ProviderA, ProviderB> for OkMonadic {
 }
 
 pub struct ComposeOk<ProviderA, ProviderB>(pub PhantomData<(ProviderA, ProviderB)>);
+
+pub struct BindOk<M, Cont>(pub PhantomData<(M, Cont)>);
+
+#[cgp_provider]
+impl<Context, Code, T, E1, E2, M, Cont> Computer<Context, Code, Result<T, E1>> for BindOk<M, Cont>
+where
+    Cont: Computer<Context, Code, E1>,
+    M: ContainsValue<Cont::Output, Value = Result<T, E2>>
+        + MonadicLift<Result<T, E2>, Cont::Output>,
+{
+    type Output = M::Output;
+
+    fn compute(context: &Context, code: PhantomData<Code>, input: Result<T, E1>) -> Self::Output {
+        match input {
+            Err(value) => M::lift_output(Cont::compute(context, code, value)),
+            Ok(err) => M::lift_value(Ok(err)),
+        }
+    }
+}
 
 #[cgp_provider]
 impl<Context, Code, Input, ProviderA, ProviderB, T, E1, E2> Computer<Context, Code, Input>
