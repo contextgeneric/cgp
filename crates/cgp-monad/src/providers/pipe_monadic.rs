@@ -3,7 +3,7 @@ use cgp_handler::{
     Computer, ComputerComponent, Handler, HandlerComponent, TryComputer, TryComputerComponent,
 };
 
-use crate::traits::Compose;
+use crate::traits::{Compose, MonadicBind};
 
 pub struct PipeMonadic<M, Providers>(pub PhantomData<(M, Providers)>);
 
@@ -65,13 +65,15 @@ trait PipeComputer<M, Context, Code, Input> {
 impl<Context, Code, Input, M, ProviderA, ProviderB, RestProviders, OutProvider>
     PipeComputer<M, Context, Code, Input> for Cons<ProviderA, Cons<ProviderB, RestProviders>>
 where
-    M: Compose<ProviderA, PipeMonadic<M, Cons<ProviderB, RestProviders>>, Provider = OutProvider>,
-    OutProvider: Computer<Context, Code, Input>,
+    M: MonadicBind<PipeMonadic<M, Cons<ProviderB, RestProviders>>, Provider = OutProvider>,
+    ProviderA: Computer<Context, Code, Input>,
+    OutProvider: Computer<Context, Code, ProviderA::Output>,
 {
     type Output = OutProvider::Output;
 
     fn compute(context: &Context, input: Input) -> Self::Output {
-        OutProvider::compute(context, PhantomData, input)
+        let intermediary = ProviderA::compute(context, PhantomData, input);
+        OutProvider::compute(context, PhantomData, intermediary)
     }
 }
 

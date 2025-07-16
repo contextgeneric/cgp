@@ -3,7 +3,10 @@ use cgp_handler::{
     Computer, ComputerComponent, Handler, HandlerComponent, TryComputer, TryComputerComponent,
 };
 
-use crate::traits::{Compose, ContainsValue, MonadicBind, MonadicLift};
+use crate::{
+    monadic::ident::IdentMonadic,
+    traits::{Compose, ContainsValue, MonadicBind, MonadicLift},
+};
 
 pub struct OkMonadic;
 
@@ -11,6 +14,10 @@ pub struct OkMonadicTrans<M>(pub PhantomData<M>);
 
 impl<M, Provider> MonadicBind<Provider> for OkMonadicTrans<M> {
     type Provider = BindOk<M, Provider>;
+}
+
+impl<Provider> MonadicBind<Provider> for OkMonadic {
+    type Provider = BindOk<IdentMonadic, Provider>;
 }
 
 impl<ProviderA, ProviderB> Compose<ProviderA, ProviderB> for OkMonadic {
