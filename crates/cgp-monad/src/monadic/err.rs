@@ -3,9 +3,15 @@ use cgp_handler::{
     Computer, ComputerComponent, Handler, HandlerComponent, TryComputer, TryComputerComponent,
 };
 
-use crate::traits::{Compose, ContainsValue, MonadicLift};
+use crate::traits::{Compose, ContainsValue, MonadicBind, MonadicLift};
 
 pub struct ErrMonadic;
+
+pub struct ErrMonadicTrans<M>(pub PhantomData<M>);
+
+impl<M, Provider> MonadicBind<Provider> for ErrMonadicTrans<M> {
+    type Provider = BindErr<M, Provider>;
+}
 
 impl<ProviderA, ProviderB> Compose<ProviderA, ProviderB> for ErrMonadic {
     type Provider = ComposeErr<ProviderA, ProviderB>;
