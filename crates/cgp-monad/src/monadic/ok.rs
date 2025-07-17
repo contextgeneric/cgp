@@ -4,13 +4,24 @@ use cgp_handler::{
 };
 
 use crate::monadic::ident::IdentMonadic;
-use crate::traits::{ContainsValue, LiftValue, MonadicBind};
+use crate::traits::{ContainsValue, LiftValue, MonadicBind, MonadicTrans};
 
 pub struct OkMonadic;
 
 pub struct OkMonadicTrans<M>(pub PhantomData<M>);
 
 pub struct BindOk<M, Cont>(pub PhantomData<(M, Cont)>);
+
+impl<M> MonadicTrans<M> for OkMonadic {
+    type M = OkMonadicTrans<M>;
+}
+
+impl<M1, M2, M3> MonadicTrans<M2> for OkMonadicTrans<M1>
+where
+    M1: MonadicTrans<M2, M = M3>,
+{
+    type M = OkMonadicTrans<M3>;
+}
 
 impl<M, Provider> MonadicBind<Provider> for OkMonadicTrans<M>
 where
@@ -76,14 +87,6 @@ where
         }
     }
 }
-
-// delegate_components! {
-//     <M: MonadicTrans<ErrMonadic>, Cont>
-//     BindOk<M, Cont> {
-//         TryComputerComponent:
-//             TryPromote<BindOk<ErrMonadicTrans<M::M>, TryPromote<Cont>>>,
-//     }
-// }
 
 #[cgp_provider]
 impl<Context, Code, T, E1, E2, M, Cont> TryComputer<Context, Code, Result<T, E1>>

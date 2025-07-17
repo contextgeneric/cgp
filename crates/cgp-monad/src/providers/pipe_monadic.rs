@@ -1,14 +1,18 @@
 use cgp_core::prelude::*;
-use cgp_handler::ComposeHandlers;
+use cgp_handler::{ComposeHandlers, HandlerComponent, ComputerComponent, TryComputerComponent};
 
 use crate::traits::MonadicBind;
 
 pub struct PipeMonadic<M, Providers>(pub PhantomData<(M, Providers)>);
 
 delegate_components! {
-    <Component, Provider, M, Providers: BindProviders<M, Provider = Provider>>
+    <Provider, M, Providers: BindProviders<M, Provider = Provider>>
     PipeMonadic<M, Providers> {
-        Component: Provider,
+        [
+            ComputerComponent,
+            TryComputerComponent,
+            HandlerComponent,
+        ]: Provider,
     }
 }
 

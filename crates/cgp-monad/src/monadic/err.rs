@@ -14,6 +14,13 @@ impl<M> MonadicTrans<M> for ErrMonadic {
     type M = ErrMonadicTrans<M>;
 }
 
+impl<M1, M2, M3> MonadicTrans<M2> for ErrMonadicTrans<M1>
+where
+    M1: MonadicTrans<M2, M = M3>,
+{
+    type M = ErrMonadicTrans<M3>;
+}
+
 impl<M, Provider> MonadicBind<Provider> for ErrMonadicTrans<M>
 where
     M: MonadicBind<BindErr<M, Provider>>,
