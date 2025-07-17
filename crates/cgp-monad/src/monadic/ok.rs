@@ -12,8 +12,11 @@ pub struct OkMonadicTrans<M>(pub PhantomData<M>);
 
 pub struct BindOk<M, Cont>(pub PhantomData<(M, Cont)>);
 
-impl<M, Provider> MonadicBind<Provider> for OkMonadicTrans<M> {
-    type Provider = BindOk<M, Provider>;
+impl<M, Provider> MonadicBind<Provider> for OkMonadicTrans<M>
+where
+    M: MonadicBind<BindOk<M, Provider>>,
+{
+    type Provider = M::Provider;
 }
 
 impl<Provider> MonadicBind<Provider> for OkMonadic {
