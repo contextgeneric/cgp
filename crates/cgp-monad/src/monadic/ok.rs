@@ -1,8 +1,9 @@
 use cgp_core::prelude::*;
 use cgp_handler::{
-    Computer, ComputerComponent, Handler, HandlerComponent, TryComputer, TryComputerComponent,
+    Computer, ComputerComponent, Handler, HandlerComponent, TryComputer, TryComputerComponent, TryPromote,
 };
 
+use crate::monadic::err::ErrMonadicTrans;
 use crate::monadic::ident::IdentMonadic;
 use crate::traits::{ContainsValue, LiftValue, MonadicBind};
 
@@ -51,6 +52,14 @@ where
         }
     }
 }
+
+// delegate_components! {
+//     <M, Cont>
+//     BindOk<M, Cont> {
+//         TryComputerComponent:
+//             TryPromote<BindOk<ErrMonadicTrans<M>, TryPromote<Cont>>>,
+//     }
+// }
 
 #[cgp_provider]
 impl<Context, Code, T, E1, E2, M, Cont> TryComputer<Context, Code, Result<T, E1>>

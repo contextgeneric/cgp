@@ -35,6 +35,28 @@ impl<T, E> LiftValue<T, Result<T, E>> for ErrMonadic {
     }
 }
 
+impl<T, E, V, M> ContainsValue<V> for ErrMonadicTrans<M>
+where
+    M: ContainsValue<V, Value = Result<T, E>>
+{
+    type Value = T;
+}
+
+impl<T, E, V, M> LiftValue<T, V> for ErrMonadicTrans<M>
+where
+    M: ContainsValue<V, Value = Result<T, E>> + LiftValue<Result<T, E>, V>,
+{
+    type Output = M::Output;
+
+    fn lift_value(value: T) -> Self::Output {
+        M::lift_value(Ok(value))
+    }
+
+    fn lift_output(output: V) -> Self::Output {
+        M::lift_output(output)
+    }
+}
+
 #[cgp_provider]
 impl<Context, Code, T1, T2, E, M, Cont> Computer<Context, Code, Result<T1, E>> for BindErr<M, Cont>
 where
