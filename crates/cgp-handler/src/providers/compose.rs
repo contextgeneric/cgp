@@ -1,5 +1,6 @@
 use cgp_core::prelude::*;
-use cgp_handler::{
+
+use crate::{
     Computer, ComputerComponent, Handler, HandlerComponent, TryComputer, TryComputerComponent,
 };
 

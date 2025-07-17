@@ -1,6 +1,6 @@
 use cgp_core::prelude::*;
+use cgp_handler::ComposeHandlers;
 
-use crate::providers::ComposeHandlers;
 use crate::traits::MonadicBind;
 
 pub struct PipeMonadic<M, Providers>(pub PhantomData<(M, Providers)>);
