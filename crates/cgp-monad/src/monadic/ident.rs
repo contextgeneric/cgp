@@ -1,23 +1,16 @@
-use cgp_core::prelude::*;
-use cgp_handler::{
-    Computer, ComputerComponent, Handler, HandlerComponent, TryComputer, TryComputerComponent,
-};
-
-use crate::traits::{ContainsValue, MonadicLift};
+use crate::traits::{ContainsValue, LiftValue, MonadicBind};
 
 pub struct IdentMonadic;
 
-impl<ProviderA, ProviderB> Compose<ProviderA, ProviderB> for IdentMonadic {
-    type Provider = ComposeIdent<ProviderA, ProviderB>;
+impl<Provider> MonadicBind<Provider> for IdentMonadic {
+    type Provider = Provider;
 }
-
-pub struct ComposeIdent<ProviderA, ProviderB>(pub PhantomData<(ProviderA, ProviderB)>);
 
 impl<T> ContainsValue<T> for IdentMonadic {
     type Value = T;
 }
 
-impl<T> MonadicLift<T, T> for IdentMonadic {
+impl<T> LiftValue<T, T> for IdentMonadic {
     type Output = T;
 
     fn lift_value(value: T) -> T {

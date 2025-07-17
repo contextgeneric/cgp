@@ -4,7 +4,7 @@ use cgp_handler::{
 };
 
 use crate::monadic::ident::IdentMonadic;
-use crate::traits::{ContainsValue, MonadicBind, MonadicLift};
+use crate::traits::{ContainsValue, LiftValue, MonadicBind};
 
 pub struct ErrMonadic;
 
@@ -19,12 +19,27 @@ impl<Provider> MonadicBind<Provider> for ErrMonadic {
 }
 pub struct BindErr<M, Cont>(pub PhantomData<(M, Cont)>);
 
+impl<T, E> ContainsValue<Result<T, E>> for ErrMonadic {
+    type Value = T;
+}
+
+impl<T, E> LiftValue<T, Result<T, E>> for ErrMonadic {
+    type Output = Result<T, E>;
+
+    fn lift_value(value: T) -> Self::Output {
+        Ok(value)
+    }
+
+    fn lift_output(output: Result<T, E>) -> Self::Output {
+        output
+    }
+}
+
 #[cgp_provider]
 impl<Context, Code, T1, T2, E, M, Cont> Computer<Context, Code, Result<T1, E>> for BindErr<M, Cont>
 where
     Cont: Computer<Context, Code, T1>,
-    M: ContainsValue<Cont::Output, Value = Result<T2, E>>
-        + MonadicLift<Result<T2, E>, Cont::Output>,
+    M: ContainsValue<Cont::Output, Value = Result<T2, E>> + LiftValue<Result<T2, E>, Cont::Output>,
 {
     type Output = M::Output;
 
@@ -42,8 +57,7 @@ impl<Context, Code, T1, T2, E, M, Cont> TryComputer<Context, Code, Result<T1, E>
 where
     Context: HasErrorType,
     Cont: TryComputer<Context, Code, T1>,
-    M: ContainsValue<Cont::Output, Value = Result<T2, E>>
-        + MonadicLift<Result<T2, E>, Cont::Output>,
+    M: ContainsValue<Cont::Output, Value = Result<T2, E>> + LiftValue<Result<T2, E>, Cont::Output>,
 {
     type Output = M::Output;
 
@@ -65,8 +79,7 @@ impl<Context, Code: Send, T1: Send, T2, E: Send, M, Cont> Handler<Context, Code,
 where
     Context: HasAsyncErrorType,
     Cont: Handler<Context, Code, T1>,
-    M: ContainsValue<Cont::Output, Value = Result<T2, E>>
-        + MonadicLift<Result<T2, E>, Cont::Output>,
+    M: ContainsValue<Cont::Output, Value = Result<T2, E>> + LiftValue<Result<T2, E>, Cont::Output>,
 {
     type Output = M::Output;
 

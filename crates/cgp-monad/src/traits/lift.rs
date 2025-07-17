@@ -1,4 +1,4 @@
-pub trait MonadicLift<Value, Output> {
+pub trait LiftValue<Value, Output> {
     type Output;
 
     fn lift_value(value: Value) -> Self::Output;

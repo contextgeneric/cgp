@@ -4,11 +4,13 @@ use cgp_handler::{
 };
 
 use crate::monadic::ident::IdentMonadic;
-use crate::traits::{ContainsValue, MonadicBind, MonadicLift};
+use crate::traits::{ContainsValue, LiftValue, MonadicBind};
 
 pub struct OkMonadic;
 
 pub struct OkMonadicTrans<M>(pub PhantomData<M>);
+
+pub struct BindOk<M, Cont>(pub PhantomData<(M, Cont)>);
 
 impl<M, Provider> MonadicBind<Provider> for OkMonadicTrans<M> {
     type Provider = BindOk<M, Provider>;
@@ -18,14 +20,27 @@ impl<Provider> MonadicBind<Provider> for OkMonadic {
     type Provider = BindOk<IdentMonadic, Provider>;
 }
 
-pub struct BindOk<M, Cont>(pub PhantomData<(M, Cont)>);
+impl<T, E> ContainsValue<Result<T, E>> for OkMonadic {
+    type Value = E;
+}
+
+impl<T, E> LiftValue<E, Result<T, E>> for OkMonadic {
+    type Output = Result<T, E>;
+
+    fn lift_value(value: E) -> Self::Output {
+        Err(value)
+    }
+
+    fn lift_output(output: Result<T, E>) -> Self::Output {
+        output
+    }
+}
 
 #[cgp_provider]
 impl<Context, Code, T, E1, E2, M, Cont> Computer<Context, Code, Result<T, E1>> for BindOk<M, Cont>
 where
     Cont: Computer<Context, Code, E1>,
-    M: ContainsValue<Cont::Output, Value = Result<T, E2>>
-        + MonadicLift<Result<T, E2>, Cont::Output>,
+    M: ContainsValue<Cont::Output, Value = Result<T, E2>> + LiftValue<Result<T, E2>, Cont::Output>,
 {
     type Output = M::Output;
 
@@ -43,8 +58,7 @@ impl<Context, Code, T, E1, E2, M, Cont> TryComputer<Context, Code, Result<T, E1>
 where
     Context: HasErrorType,
     Cont: TryComputer<Context, Code, E1>,
-    M: ContainsValue<Cont::Output, Value = Result<T, E2>>
-        + MonadicLift<Result<T, E2>, Cont::Output>,
+    M: ContainsValue<Cont::Output, Value = Result<T, E2>> + LiftValue<Result<T, E2>, Cont::Output>,
 {
     type Output = M::Output;
 
@@ -66,8 +80,7 @@ impl<Context, Code: Send, T: Send, E1: Send, E2: Send, M, Cont>
 where
     Context: HasAsyncErrorType,
     Cont: Handler<Context, Code, E1>,
-    M: ContainsValue<Cont::Output, Value = Result<T, E2>>
-        + MonadicLift<Result<T, E2>, Cont::Output>,
+    M: ContainsValue<Cont::Output, Value = Result<T, E2>> + LiftValue<Result<T, E2>, Cont::Output>,
 {
     type Output = M::Output;
 
