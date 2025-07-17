@@ -102,13 +102,15 @@ impl<Context, Code, Input, M, ProviderA, ProviderB, RestProviders, OutProvider>
     PipeTryComputer<M, Context, Code, Input> for Cons<ProviderA, Cons<ProviderB, RestProviders>>
 where
     Context: HasErrorType,
-    M: Compose<ProviderA, PipeMonadic<M, Cons<ProviderB, RestProviders>>, Provider = OutProvider>,
-    OutProvider: TryComputer<Context, Code, Input>,
+    M: MonadicBind<PipeMonadic<M, Cons<ProviderB, RestProviders>>, Provider = OutProvider>,
+    ProviderA: TryComputer<Context, Code, Input>,
+    OutProvider: TryComputer<Context, Code, ProviderA::Output>,
 {
     type Output = OutProvider::Output;
 
     fn try_compute(context: &Context, input: Input) -> Result<Self::Output, Context::Error> {
-        OutProvider::try_compute(context, PhantomData, input)
+        let intermediary = ProviderA::try_compute(context, PhantomData, input)?;
+        OutProvider::try_compute(context, PhantomData, intermediary)
     }
 }
 
