@@ -1,6 +1,10 @@
-use crate::traits::{ContainsValue, LiftValue, MonadicBind};
+use crate::traits::{ContainsValue, LiftValue, MonadicBind, MonadicTrans};
 
 pub struct IdentMonadic;
+
+impl<M> MonadicTrans<M> for IdentMonadic {
+    type M = M;
+}
 
 impl<Provider> MonadicBind<Provider> for IdentMonadic {
     type Provider = Provider;

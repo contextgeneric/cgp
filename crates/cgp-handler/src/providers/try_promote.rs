@@ -1,7 +1,7 @@
 use cgp_core::prelude::*;
 
 use crate::{
-    Computer, ComputerComponent, HandlerComponent, Promote, TryComputer, TryComputerComponent
+    Computer, ComputerComponent, HandlerComponent, Promote, TryComputer, TryComputerComponent,
 };
 
 pub struct TryPromote<Provider>(pub PhantomData<Provider>);
@@ -14,11 +14,11 @@ delegate_components! {
 }
 
 #[cgp_provider]
-impl<Context, Code, Input, Output, Error, Provider> TryComputer<Context, Code, Input>
+impl<Context, Code, Input, Output, Provider> TryComputer<Context, Code, Input>
     for TryPromote<Provider>
 where
-    Context: CanRaiseError<Error>,
-    Provider: Computer<Context, Code, Input, Output = Result<Output, Error>>,
+    Context: HasErrorType,
+    Provider: Computer<Context, Code, Input, Output = Result<Output, Context::Error>>,
 {
     type Output = Output;
 
@@ -27,14 +27,12 @@ where
         tag: PhantomData<Code>,
         input: Input,
     ) -> Result<Output, Context::Error> {
-        Provider::compute(context, tag, input).map_err(Context::raise_error)
+        Provider::compute(context, tag, input)
     }
 }
 
-
 #[cgp_provider]
-impl<Context, Code, Input, Provider, Output> Computer<Context, Code, Input>
-    for TryPromote<Provider>
+impl<Context, Code, Input, Provider, Output> Computer<Context, Code, Input> for TryPromote<Provider>
 where
     Context: HasErrorType,
     Provider: TryComputer<Context, Code, Input, Output = Output>,

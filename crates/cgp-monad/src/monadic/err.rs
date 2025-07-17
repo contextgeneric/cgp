@@ -4,11 +4,15 @@ use cgp_handler::{
 };
 
 use crate::monadic::ident::IdentMonadic;
-use crate::traits::{ContainsValue, LiftValue, MonadicBind};
+use crate::traits::{ContainsValue, LiftValue, MonadicBind, MonadicTrans};
 
 pub struct ErrMonadic;
 
 pub struct ErrMonadicTrans<M>(pub PhantomData<M>);
+
+impl<M> MonadicTrans<M> for ErrMonadic {
+    type M = ErrMonadicTrans<M>;
+}
 
 impl<M, Provider> MonadicBind<Provider> for ErrMonadicTrans<M> {
     type Provider = BindErr<M, Provider>;
@@ -37,7 +41,7 @@ impl<T, E> LiftValue<T, Result<T, E>> for ErrMonadic {
 
 impl<T, E, V, M> ContainsValue<V> for ErrMonadicTrans<M>
 where
-    M: ContainsValue<V, Value = Result<T, E>>
+    M: ContainsValue<V, Value = Result<T, E>>,
 {
     type Value = T;
 }

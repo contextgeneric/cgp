@@ -1,9 +1,8 @@
 use cgp_core::prelude::*;
 use cgp_handler::{
-    Computer, ComputerComponent, Handler, HandlerComponent, TryComputer, TryComputerComponent, TryPromote,
+    Computer, ComputerComponent, Handler, HandlerComponent, TryComputer, TryComputerComponent,
 };
 
-use crate::monadic::err::ErrMonadicTrans;
 use crate::monadic::ident::IdentMonadic;
 use crate::traits::{ContainsValue, LiftValue, MonadicBind};
 
@@ -37,6 +36,28 @@ impl<T, E> LiftValue<E, Result<T, E>> for OkMonadic {
     }
 }
 
+impl<T, E, V, M> ContainsValue<V> for OkMonadicTrans<M>
+where
+    M: ContainsValue<V, Value = Result<T, E>>,
+{
+    type Value = E;
+}
+
+impl<T, E, V, M> LiftValue<E, V> for OkMonadicTrans<M>
+where
+    M: ContainsValue<V, Value = Result<T, E>> + LiftValue<Result<T, E>, V>,
+{
+    type Output = M::Output;
+
+    fn lift_value(value: E) -> Self::Output {
+        M::lift_value(Err(value))
+    }
+
+    fn lift_output(output: V) -> Self::Output {
+        M::lift_output(output)
+    }
+}
+
 #[cgp_provider]
 impl<Context, Code, T, E1, E2, M, Cont> Computer<Context, Code, Result<T, E1>> for BindOk<M, Cont>
 where
@@ -54,10 +75,10 @@ where
 }
 
 // delegate_components! {
-//     <M, Cont>
+//     <M: MonadicTrans<ErrMonadic>, Cont>
 //     BindOk<M, Cont> {
 //         TryComputerComponent:
-//             TryPromote<BindOk<ErrMonadicTrans<M>, TryPromote<Cont>>>,
+//             TryPromote<BindOk<ErrMonadicTrans<M::M>, TryPromote<Cont>>>,
 //     }
 // }
 
