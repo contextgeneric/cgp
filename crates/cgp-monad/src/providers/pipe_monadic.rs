@@ -1,173 +1,30 @@
 use cgp_core::prelude::*;
-use cgp_handler::{
-    Computer, ComputerComponent, Handler, HandlerComponent, TryComputer, TryComputerComponent,
-};
 
+use crate::providers::ComposeHandlers;
 use crate::traits::MonadicBind;
 
 pub struct PipeMonadic<M, Providers>(pub PhantomData<(M, Providers)>);
 
-#[cgp_provider]
-impl<Context, Code, Input, Output, M, Providers> Computer<Context, Code, Input>
-    for PipeMonadic<M, Providers>
-where
-    Providers: PipeComputer<M, Context, Code, Input, Output = Output>,
-{
-    type Output = Output;
-
-    fn compute(context: &Context, _code: PhantomData<Code>, input: Input) -> Self::Output {
-        Providers::compute(context, input)
+delegate_components! {
+    <Component, Provider, M, Providers: BindProviders<M, Provider = Provider>>
+    PipeMonadic<M, Providers> {
+        Component: Provider,
     }
 }
 
-#[cgp_provider]
-impl<Context, Code, Input, Output, M, Providers> TryComputer<Context, Code, Input>
-    for PipeMonadic<M, Providers>
-where
-    Context: HasErrorType,
-    Providers: PipeTryComputer<M, Context, Code, Input, Output = Output>,
-{
-    type Output = Output;
-
-    fn try_compute(
-        context: &Context,
-        _code: PhantomData<Code>,
-        input: Input,
-    ) -> Result<Self::Output, Context::Error> {
-        Providers::try_compute(context, input)
-    }
+trait BindProviders<M> {
+    type Provider;
 }
 
-#[cgp_provider]
-impl<Context, Code: Send, Input: Send, Output, M, Providers> Handler<Context, Code, Input>
-    for PipeMonadic<M, Providers>
+impl<M, ProviderA, ProviderB, RestProviders, OutProviders> BindProviders<M>
+    for Cons<ProviderA, Cons<ProviderB, RestProviders>>
 where
-    Context: HasAsyncErrorType,
-    Providers: PipeHandler<M, Context, Code, Input, Output = Output>,
+    Cons<ProviderB, RestProviders>: BindProviders<M, Provider = OutProviders>,
+    M: MonadicBind<OutProviders>,
 {
-    type Output = Output;
-
-    async fn handle(
-        context: &Context,
-        _code: PhantomData<Code>,
-        input: Input,
-    ) -> Result<Self::Output, Context::Error> {
-        Providers::handle(context, input).await
-    }
+    type Provider = ComposeHandlers<ProviderA, M::Provider>;
 }
 
-trait PipeComputer<M, Context, Code, Input> {
-    type Output;
-
-    fn compute(context: &Context, input: Input) -> Self::Output;
-}
-
-impl<Context, Code, Input, M, ProviderA, ProviderB, RestProviders, OutProvider>
-    PipeComputer<M, Context, Code, Input> for Cons<ProviderA, Cons<ProviderB, RestProviders>>
-where
-    M: MonadicBind<PipeMonadic<M, Cons<ProviderB, RestProviders>>, Provider = OutProvider>,
-    ProviderA: Computer<Context, Code, Input>,
-    OutProvider: Computer<Context, Code, ProviderA::Output>,
-{
-    type Output = OutProvider::Output;
-
-    fn compute(context: &Context, input: Input) -> Self::Output {
-        let intermediary = ProviderA::compute(context, PhantomData, input);
-        OutProvider::compute(context, PhantomData, intermediary)
-    }
-}
-
-impl<Context, Code, Input, M, Provider> PipeComputer<M, Context, Code, Input>
-    for Cons<Provider, Nil>
-where
-    Provider: Computer<Context, Code, Input>,
-{
-    type Output = Provider::Output;
-
-    fn compute(context: &Context, input: Input) -> Self::Output {
-        Provider::compute(context, PhantomData, input)
-    }
-}
-
-trait PipeTryComputer<M, Context, Code, Input>
-where
-    Context: HasErrorType,
-{
-    type Output;
-
-    fn try_compute(context: &Context, input: Input) -> Result<Self::Output, Context::Error>;
-}
-
-impl<Context, Code, Input, M, ProviderA, ProviderB, RestProviders, OutProvider>
-    PipeTryComputer<M, Context, Code, Input> for Cons<ProviderA, Cons<ProviderB, RestProviders>>
-where
-    Context: HasErrorType,
-    M: MonadicBind<PipeMonadic<M, Cons<ProviderB, RestProviders>>, Provider = OutProvider>,
-    ProviderA: TryComputer<Context, Code, Input>,
-    OutProvider: TryComputer<Context, Code, ProviderA::Output>,
-{
-    type Output = OutProvider::Output;
-
-    fn try_compute(context: &Context, input: Input) -> Result<Self::Output, Context::Error> {
-        let intermediary = ProviderA::try_compute(context, PhantomData, input)?;
-        OutProvider::try_compute(context, PhantomData, intermediary)
-    }
-}
-
-impl<Context, Code, Input, M, Provider> PipeTryComputer<M, Context, Code, Input>
-    for Cons<Provider, Nil>
-where
-    Context: HasErrorType,
-    Provider: TryComputer<Context, Code, Input>,
-{
-    type Output = Provider::Output;
-
-    fn try_compute(
-        context: &Context,
-        input: Input,
-    ) -> Result<Self::Output, <Context as HasErrorType>::Error> {
-        Provider::try_compute(context, PhantomData, input)
-    }
-}
-
-#[async_trait]
-trait PipeHandler<M, Context, Code, Input>
-where
-    Context: HasAsyncErrorType,
-{
-    type Output;
-
-    async fn handle(context: &Context, input: Input) -> Result<Self::Output, Context::Error>;
-}
-
-impl<Context, Code: Send, Input: Send, M, ProviderA, ProviderB, RestProviders, OutProvider>
-    PipeHandler<M, Context, Code, Input> for Cons<ProviderA, Cons<ProviderB, RestProviders>>
-where
-    Context: HasAsyncErrorType,
-    M: MonadicBind<PipeMonadic<M, Cons<ProviderB, RestProviders>>, Provider = OutProvider>,
-    ProviderA: Handler<Context, Code, Input>,
-    OutProvider: Handler<Context, Code, ProviderA::Output>,
-{
-    type Output = OutProvider::Output;
-
-    async fn handle(context: &Context, input: Input) -> Result<Self::Output, Context::Error> {
-        let intermediary = ProviderA::handle(context, PhantomData, input).await?;
-        OutProvider::handle(context, PhantomData, intermediary).await
-    }
-}
-
-impl<Context, Code: Send, Input: Send, M, Provider> PipeHandler<M, Context, Code, Input>
-    for Cons<Provider, Nil>
-where
-    Context: HasAsyncErrorType,
-    Provider: Handler<Context, Code, Input>,
-{
-    type Output = Provider::Output;
-
-    async fn handle(
-        context: &Context,
-        input: Input,
-    ) -> Result<Self::Output, <Context as HasErrorType>::Error> {
-        Provider::handle(context, PhantomData, input).await
-    }
+impl<M, Provider> BindProviders<M> for Cons<Provider, Nil> {
+    type Provider = Provider;
 }
