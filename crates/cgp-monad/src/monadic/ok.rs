@@ -62,6 +62,24 @@ where
 }
 
 #[cgp_provider]
+impl<Context, Code: Send, T: Send, E1: Send, E2: Send, M, Cont> Handler<Context, Code, Result<T, E1>> for BindOk<M, Cont>
+where
+    Context: HasAsyncErrorType,
+    Cont: Handler<Context, Code, E1>,
+    M: ContainsValue<Cont::Output, Value = Result<T, E2>>
+        + MonadicLift<Result<T, E2>, Cont::Output>,
+{
+    type Output = M::Output;
+
+    async fn handle(context: &Context, code: PhantomData<Code>, input: Result<T, E1>) -> Result<Self::Output, Context::Error> {
+        match input {
+            Err(value) => Ok(M::lift_output(Cont::handle(context, code, value).await?)),
+            Ok(err) => Ok(M::lift_value(Ok(err))),
+        }
+    }
+}
+
+#[cgp_provider]
 impl<Context, Code, Input, ProviderA, ProviderB, T, E1, E2> Computer<Context, Code, Input>
     for ComposeOk<ProviderA, ProviderB>
 where

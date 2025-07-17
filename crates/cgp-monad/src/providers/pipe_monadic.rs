@@ -3,7 +3,7 @@ use cgp_handler::{
     Computer, ComputerComponent, Handler, HandlerComponent, TryComputer, TryComputerComponent,
 };
 
-use crate::traits::{Compose, MonadicBind};
+use crate::traits::MonadicBind;
 
 pub struct PipeMonadic<M, Providers>(pub PhantomData<(M, Providers)>);
 
@@ -144,13 +144,15 @@ impl<Context, Code: Send, Input: Send, M, ProviderA, ProviderB, RestProviders, O
     PipeHandler<M, Context, Code, Input> for Cons<ProviderA, Cons<ProviderB, RestProviders>>
 where
     Context: HasAsyncErrorType,
-    M: Compose<ProviderA, PipeMonadic<M, Cons<ProviderB, RestProviders>>, Provider = OutProvider>,
-    OutProvider: Handler<Context, Code, Input>,
+    M: MonadicBind<PipeMonadic<M, Cons<ProviderB, RestProviders>>, Provider = OutProvider>,
+    ProviderA: Handler<Context, Code, Input>,
+    OutProvider: Handler<Context, Code, ProviderA::Output>,
 {
     type Output = OutProvider::Output;
 
     async fn handle(context: &Context, input: Input) -> Result<Self::Output, Context::Error> {
-        OutProvider::handle(context, PhantomData, input).await
+        let intermediary = ProviderA::handle(context, PhantomData, input).await?;
+        OutProvider::handle(context, PhantomData, intermediary).await
     }
 }
 
