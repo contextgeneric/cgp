@@ -1,7 +1,5 @@
 use cgp_core::prelude::*;
-use cgp_handler::{
-    Computer, ComputerComponent, Handler, HandlerComponent, TryComputer, TryComputerComponent,
-};
+use cgp_handler::{Computer, ComputerComponent, Handler, HandlerComponent};
 
 use crate::monadic::ident::IdentMonadic;
 use crate::traits::{ContainsValue, LiftValue, MonadicBind, MonadicTrans};
@@ -84,28 +82,6 @@ where
         match input {
             Err(value) => M::lift_output(Cont::compute(context, code, value)),
             Ok(err) => M::lift_value(Ok(err)),
-        }
-    }
-}
-
-#[cgp_provider]
-impl<Context, Code, T, E1, E2, M, Cont> TryComputer<Context, Code, Result<T, E1>>
-    for BindOk<M, Cont>
-where
-    Context: HasErrorType,
-    Cont: TryComputer<Context, Code, E1>,
-    M: ContainsValue<Cont::Output, Value = Result<T, E2>> + LiftValue<Result<T, E2>, Cont::Output>,
-{
-    type Output = M::Output;
-
-    fn try_compute(
-        context: &Context,
-        code: PhantomData<Code>,
-        input: Result<T, E1>,
-    ) -> Result<Self::Output, Context::Error> {
-        match input {
-            Err(value) => Ok(M::lift_output(Cont::try_compute(context, code, value)?)),
-            Ok(err) => Ok(M::lift_value(Ok(err))),
         }
     }
 }

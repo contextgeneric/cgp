@@ -1,7 +1,11 @@
+use cgp_core::field::MapFields;
 use cgp_core::prelude::*;
-use cgp_handler::{ComposeHandlers, HandlerComponent, ComputerComponent, TryComputerComponent};
+use cgp_handler::{
+    ComposeHandlers, ComputerComponent, HandlerComponent, TryComputerComponent, TryPromote,
+};
 
-use crate::traits::MonadicBind;
+use crate::monadic::err::ErrMonadic;
+use crate::traits::{MonadicBind, MonadicTrans};
 
 pub struct PipeMonadic<M, Providers>(pub PhantomData<(M, Providers)>);
 
@@ -10,10 +14,32 @@ delegate_components! {
     PipeMonadic<M, Providers> {
         [
             ComputerComponent,
-            TryComputerComponent,
             HandlerComponent,
         ]: Provider,
     }
+}
+
+// Support monadic piping of TryComputer by first demoting them to Computer,
+// together with a monad transformer application of ErrMonadic to the base monad,
+// compose them, and then TryPromote them again back into TryComputer.
+
+delegate_components! {
+    <
+        Provider,
+        M1: MonadicTrans<ErrMonadic, M = M2>,
+        M2,
+        ProvidersA: MapFields<TryPromoteProviders, Mapped = ProvidersB>,
+        ProvidersB: BindProviders<M2, Provider = Provider>,
+    >
+    PipeMonadic<M1, ProvidersA> {
+        TryComputerComponent: TryPromote<Provider>,
+    }
+}
+
+pub struct TryPromoteProviders;
+
+impl MapType for TryPromoteProviders {
+    type Map<Provider> = TryPromote<Provider>;
 }
 
 trait BindProviders<M> {
