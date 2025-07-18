@@ -3,7 +3,9 @@ mod cast;
 mod chain;
 mod use_field;
 mod use_ref;
+mod build_default;
 
+pub use build_default::*;
 pub use build_from::*;
 pub use cast::*;
 pub use chain::*;
