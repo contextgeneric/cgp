@@ -11,7 +11,7 @@ mod map_fields;
 mod map_type;
 mod take_field;
 mod to_fields;
-mod transform_type;
+mod transform_map;
 
 pub use build_field::*;
 pub use extract_field::*;
@@ -26,4 +26,4 @@ pub use map_fields::*;
 pub use map_type::*;
 pub use take_field::*;
 pub use to_fields::*;
-pub use transform_type::*;
+pub use transform_map::*;
