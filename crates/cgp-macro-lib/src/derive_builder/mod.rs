@@ -6,6 +6,7 @@ mod has_field_impls;
 mod into_builder_impl;
 mod take_field_impls;
 mod utils;
+mod transform_map_impl;
 
 pub use build_field_impls::*;
 pub use builder_struct::*;
@@ -15,3 +16,4 @@ pub use has_field_impls::*;
 pub use into_builder_impl::*;
 pub use take_field_impls::*;
 pub use utils::*;
+pub use transform_map_impl::*;
