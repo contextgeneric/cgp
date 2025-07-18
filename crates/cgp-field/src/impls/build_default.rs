@@ -1,5 +1,6 @@
-use crate::{CanBuildFrom, FinalizeBuild, HasBuilder, IsNothing, IsPresent, TransformMap, TransformMapFields};
-
+use crate::{
+    CanBuildFrom, FinalizeBuild, HasBuilder, IsNothing, IsPresent, TransformMap, TransformMapFields,
+};
 
 pub trait CanBuildWithDefault<Source> {
     fn build_with_default(source: Source) -> Self;
@@ -10,7 +11,7 @@ where
     Target: HasBuilder<Builder = BuilderA>,
     BuilderA: CanBuildFrom<Source, Output = BuilderB>,
     BuilderB: TransformMapFields<TransformMapDefault, IsPresent, Output = BuilderC>,
-    BuilderC: FinalizeBuild<Output = Target>
+    BuilderC: FinalizeBuild<Output = Target>,
 {
     fn build_with_default(source: Source) -> Target {
         Target::builder()

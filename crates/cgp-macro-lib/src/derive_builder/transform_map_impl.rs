@@ -3,7 +3,9 @@ use syn::punctuated::Punctuated;
 use syn::token::Comma;
 use syn::{parse2, FieldValue, Ident, ItemImpl, ItemStruct, Type};
 
-use crate::derive_builder::{field_to_member, field_value_expr, index_to_generic_ident, to_generic_args};
+use crate::derive_builder::{
+    field_to_member, field_value_expr, index_to_generic_ident, to_generic_args,
+};
 
 pub fn derive_transform_map_impl(
     context_struct: &ItemStruct,
@@ -52,9 +54,9 @@ pub fn derive_transform_map_impl(
         builder_fields.push(field_value_expr(
             field_member.clone(),
             quote! {
-                <__Transform__ as
-                    TransformMap< #generic_param_name, __TargetMap__, #field_type >
-                > ::transform_mapped(self. #field_member) },
+            <__Transform__ as
+                TransformMap< #generic_param_name, __TargetMap__, #field_type >
+            > ::transform_mapped(self. #field_member) },
         )?);
     }
 
