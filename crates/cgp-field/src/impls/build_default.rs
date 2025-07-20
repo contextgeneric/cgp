@@ -6,18 +6,32 @@ pub trait CanBuildWithDefault<Source> {
     fn build_with_default(source: Source) -> Self;
 }
 
-impl<Source, Target, BuilderA, BuilderB, BuilderC> CanBuildWithDefault<Source> for Target
+pub trait CanFinalizeWithDefault {
+    type Output;
+
+    fn finalize_with_default(self) -> Self::Output;
+}
+
+impl<Source, Target, Builder> CanBuildWithDefault<Source> for Target
 where
-    Target: HasBuilder<Builder = BuilderA>,
-    BuilderA: CanBuildFrom<Source, Output = BuilderB>,
-    BuilderB: TransformMapFields<TransformMapDefault, IsPresent, Output = BuilderC>,
-    BuilderC: FinalizeBuild<Output = Target>,
+    Target: HasBuilder<Builder = Builder>,
+    Builder: CanBuildFrom<Source>,
+    Builder::Output: CanFinalizeWithDefault<Output = Target>,
 {
     fn build_with_default(source: Source) -> Target {
-        Target::builder()
-            .build_from(source)
-            .transform_map_fields()
-            .finalize_build()
+        Target::builder().build_from(source).finalize_with_default()
+    }
+}
+
+impl<Builder, Output> CanFinalizeWithDefault for Builder
+where
+    Builder: TransformMapFields<TransformMapDefault, IsPresent>,
+    Builder::Output: FinalizeBuild<Output = Output>,
+{
+    type Output = Output;
+
+    fn finalize_with_default(self) -> Output {
+        self.transform_map_fields().finalize_build()
     }
 }
 
