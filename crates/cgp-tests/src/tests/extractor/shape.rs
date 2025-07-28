@@ -1,7 +1,7 @@
 use std::f64::consts::PI;
 
 use cgp::core::field::{CanDowncast, CanDowncastFields, CanUpcast};
-use cgp::extra::dispatch::{ExtractFieldAndHandle, MatchWithHandlers};
+use cgp::extra::dispatch::{ExtractFieldAndHandle, MatchWithHandlers, MatchWithValueHandlers};
 use cgp::extra::handler::HandleFieldValue;
 use cgp::prelude::*;
 
@@ -113,6 +113,12 @@ impl HasArea for Rectangle {
 impl HasArea for Triangle {
     fn area(self) -> f64 {
         self.base * self.height / 2.0
+    }
+}
+
+impl HasArea for Shape {
+    fn area(self) -> f64 {
+        <MatchWithValueHandlers<ComputeArea>>::compute(&(), PhantomData::<()>, self)
     }
 }
 
