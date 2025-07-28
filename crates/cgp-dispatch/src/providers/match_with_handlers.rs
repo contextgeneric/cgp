@@ -20,8 +20,8 @@ where
 {
     type Output = Output;
 
-    fn compute(_context: &Context, code: PhantomData<Code>, input: Input) -> Output {
-        let res = DispatchMatchers::compute(_context, code, input.to_extractor());
+    fn compute(context: &Context, code: PhantomData<Code>, input: Input) -> Output {
+        let res = DispatchMatchers::compute(context, code, input.to_extractor());
 
         match res {
             Ok(output) => output,
@@ -43,11 +43,11 @@ where
     type Output = Output;
 
     fn try_compute(
-        _context: &Context,
+        context: &Context,
         code: PhantomData<Code>,
         input: Input,
     ) -> Result<Output, Context::Error> {
-        let res = DispatchMatchers::try_compute(_context, code, input.to_extractor())?;
+        let res = DispatchMatchers::try_compute(context, code, input.to_extractor())?;
 
         match res {
             Ok(output) => Ok(output),
@@ -69,11 +69,11 @@ where
     type Output = Output;
 
     async fn handle(
-        _context: &Context,
+        context: &Context,
         code: PhantomData<Code>,
         input: Input,
     ) -> Result<Output, Context::Error> {
-        let res = DispatchMatchers::handle(_context, code, input.to_extractor()).await?;
+        let res = DispatchMatchers::handle(context, code, input.to_extractor()).await?;
 
         match res {
             Ok(output) => Ok(output),

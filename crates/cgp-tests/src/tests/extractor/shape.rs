@@ -1,8 +1,10 @@
 use std::f64::consts::PI;
 
 use cgp::core::field::{CanDowncast, CanDowncastFields, CanUpcast};
-use cgp::extra::dispatch::{ExtractFieldAndHandle, MatchWithHandlers, MatchWithValueHandlers};
-use cgp::extra::handler::HandleFieldValue;
+use cgp::extra::dispatch::{
+    ExtractFieldAndHandle, MatchWithHandlers, MatchWithValueHandlers, MatchWithValueHandlersRef,
+};
+use cgp::extra::handler::{ComputerRef, HandleFieldValue};
 use cgp::prelude::*;
 
 #[derive(Debug, PartialEq, HasFields, FromVariant, ExtractField)]
@@ -118,7 +120,13 @@ impl HasArea for Triangle {
 
 impl HasArea for Shape {
     fn area(self) -> f64 {
-        <MatchWithValueHandlers<ComputeArea>>::compute(&(), PhantomData::<()>, self)
+        MatchWithValueHandlers::<ComputeArea>::compute(&(), PhantomData::<()>, self)
+    }
+}
+
+impl HasArea for ShapePlus {
+    fn area(self) -> f64 {
+        MatchWithValueHandlers::<ComputeArea>::compute(&(), PhantomData::<()>, self)
     }
 }
 
@@ -132,4 +140,43 @@ fn test_match_with_handlers() {
             ExtractFieldAndHandle<symbol!("Rectangle"), HandleFieldValue<ComputeArea>>,
         ],
     >::compute(&(), PhantomData::<()>, circle);
+}
+
+pub trait HasAreaRef {
+    fn area(&self) -> f64;
+}
+
+impl HasAreaRef for Circle {
+    fn area(&self) -> f64 {
+        PI * self.radius * self.radius
+    }
+}
+
+impl HasAreaRef for Rectangle {
+    fn area(&self) -> f64 {
+        self.width * self.height
+    }
+}
+
+impl HasAreaRef for Triangle {
+    fn area(&self) -> f64 {
+        self.base * self.height / 2.0
+    }
+}
+
+#[cgp_computer]
+fn compute_area_ref<T: HasAreaRef>(shape: &T) -> f64 {
+    shape.area()
+}
+
+impl HasAreaRef for Shape {
+    fn area(&self) -> f64 {
+        MatchWithValueHandlersRef::<ComputeAreaRef>::compute_ref(&(), PhantomData::<()>, self)
+    }
+}
+
+impl HasAreaRef for ShapePlus {
+    fn area(&self) -> f64 {
+        MatchWithValueHandlersRef::<ComputeAreaRef>::compute_ref(&(), PhantomData::<()>, self)
+    }
 }

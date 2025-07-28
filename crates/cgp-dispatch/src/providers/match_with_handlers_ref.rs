@@ -72,12 +72,12 @@ where
     type Output = Output;
 
     async fn handle(
-        _context: &Context,
+        context: &Context,
         code: PhantomData<Code>,
         input: &Input,
     ) -> Result<Output, Context::Error> {
         Ok(
-            DispatchMatchers::handle(_context, code, input.extractor_ref())
+            DispatchMatchers::handle(context, code, input.extractor_ref())
                 .await?
                 .finalize_extract_result(),
         )
