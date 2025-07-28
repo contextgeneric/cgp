@@ -30,3 +30,16 @@ pub trait CanComputeRef<Code, Input> {
 
     fn compute_ref(&self, _code: PhantomData<Code>, input: &Input) -> Self::Output;
 }
+
+#[cgp_provider]
+impl<Context, Code, Input, Tag, Output> Computer<Context, Code, Input> for UseField<Tag>
+where
+    Context: HasField<Tag>,
+    Context::Value: CanCompute<Code, Input, Output = Output>,
+{
+    type Output = Output;
+
+    fn compute(context: &Context, code: PhantomData<Code>, input: Input) -> Output {
+        context.get_field(PhantomData).compute(code, input)
+    }
+}

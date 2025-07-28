@@ -4,7 +4,7 @@ use cgp::core::field::{CanDowncast, CanDowncastFields, CanUpcast};
 use cgp::extra::dispatch::{
     ExtractFieldAndHandle, MatchWithHandlers, MatchWithValueHandlers, MatchWithValueHandlersRef,
 };
-use cgp::extra::handler::{ComputerRef, HandleFieldValue};
+use cgp::extra::handler::{ComputerRef, HandleFieldValue, NoCode};
 use cgp::prelude::*;
 
 #[derive(Debug, PartialEq, HasFields, FromVariant, ExtractField)]
@@ -120,13 +120,13 @@ impl HasArea for Triangle {
 
 impl HasArea for Shape {
     fn area(self) -> f64 {
-        MatchWithValueHandlers::<ComputeArea>::compute(&(), PhantomData::<()>, self)
+        MatchWithValueHandlers::<ComputeArea>::compute(&(), NoCode, self)
     }
 }
 
 impl HasArea for ShapePlus {
     fn area(self) -> f64 {
-        MatchWithValueHandlers::<ComputeArea>::compute(&(), PhantomData::<()>, self)
+        MatchWithValueHandlers::<ComputeArea>::compute(&(), NoCode, self)
     }
 }
 
@@ -171,12 +171,12 @@ fn compute_area_ref<T: HasAreaRef>(shape: &T) -> f64 {
 
 impl HasAreaRef for Shape {
     fn area(&self) -> f64 {
-        MatchWithValueHandlersRef::<ComputeAreaRef>::compute_ref(&(), PhantomData::<()>, self)
+        MatchWithValueHandlersRef::<ComputeAreaRef>::compute_ref(&(), NoCode, self)
     }
 }
 
 impl HasAreaRef for ShapePlus {
     fn area(&self) -> f64 {
-        MatchWithValueHandlersRef::<ComputeAreaRef>::compute_ref(&(), PhantomData::<()>, self)
+        MatchWithValueHandlersRef::<ComputeAreaRef>::compute_ref(&(), NoCode, self)
     }
 }
