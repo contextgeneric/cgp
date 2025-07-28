@@ -6,7 +6,7 @@ use crate::providers::matchers::to_field_handlers::{
 };
 use crate::{MatchWithHandlers, MatchWithHandlersRef};
 
-pub type MatchWithFieldHandlers<Provider> =
+pub type MatchWithFieldHandlers<Provider = UseContext> =
     UseInputDelegate<MatchWithFieldHandlersInputs<Provider>>;
 
 pub type MatchWithValueHandlers<Provider = UseContext> =
