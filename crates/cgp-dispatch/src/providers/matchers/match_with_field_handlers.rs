@@ -24,13 +24,9 @@ delegate_components! {
 }
 
 delegate_components! {
-    <
-        Input: HasFieldHandlers<Provider, Handlers = Handlers>,
-        Provider,
-        Handlers,
-    >
+    <Input: HasFieldHandlers<Provider>, Provider>
     new MatchWithFieldHandlersInputsRef<Provider> {
         Input:
-            PromoteRef<MatchWithHandlersRef<Handlers>>
+            PromoteRef<MatchWithHandlersRef<Input::Handlers>>
     }
 }

@@ -11,34 +11,34 @@ use crate::DispatchMatchers;
 pub struct MatchWithHandlersRef<Handlers>(pub PhantomData<Handlers>);
 
 #[cgp_provider]
-impl<Context, Code, Input, Output, Handlers> Computer<Context, Code, &Input>
+impl<'a, Context, Code, Input, Output, Handlers> Computer<Context, Code, &'a Input>
     for MatchWithHandlersRef<Handlers>
 where
     Input: HasExtractorRef,
-    DispatchMatchers<Handlers>: for<'b> Computer<
+    DispatchMatchers<Handlers>: Computer<
         Context,
         Code,
-        Input::ExtractorRef<'b>,
+        Input::ExtractorRef<'a>,
         Output: FinalizeExtractResult<Output = Output>,
     >,
 {
     type Output = Output;
 
-    fn compute(context: &Context, code: PhantomData<Code>, input: &Input) -> Output {
+    fn compute(context: &Context, code: PhantomData<Code>, input: &'a Input) -> Output {
         DispatchMatchers::compute(context, code, input.extractor_ref()).finalize_extract_result()
     }
 }
 
 #[cgp_provider]
-impl<Context, Code, Input, Output, Handlers> TryComputer<Context, Code, &Input>
+impl<'a, Context, Code, Input, Output, Handlers> TryComputer<Context, Code, &'a Input>
     for MatchWithHandlersRef<Handlers>
 where
     Context: HasErrorType,
     Input: HasExtractorRef,
-    DispatchMatchers<Handlers>: for<'b> TryComputer<
+    DispatchMatchers<Handlers>: TryComputer<
         Context,
         Code,
-        Input::ExtractorRef<'b>,
+        Input::ExtractorRef<'a>,
         Output: FinalizeExtractResult<Output = Output>,
     >,
 {
@@ -47,7 +47,7 @@ where
     fn try_compute(
         context: &Context,
         code: PhantomData<Code>,
-        input: &Input,
+        input: &'a Input,
     ) -> Result<Output, Context::Error> {
         Ok(
             DispatchMatchers::try_compute(context, code, input.extractor_ref())?
@@ -57,15 +57,15 @@ where
 }
 
 #[cgp_provider]
-impl<Context, Code: Send, Input, Output, Handlers> Handler<Context, Code, &Input>
+impl<'a, Context, Code: Send, Input, Output, Handlers> Handler<Context, Code, &'a Input>
     for MatchWithHandlersRef<Handlers>
 where
     Context: HasAsyncErrorType,
     Input: Send + Sync + HasExtractorRef,
-    DispatchMatchers<Handlers>: for<'b> Handler<
+    DispatchMatchers<Handlers>: Handler<
         Context,
         Code,
-        Input::ExtractorRef<'b>,
+        Input::ExtractorRef<'a>,
         Output: FinalizeExtractResult<Output = Output>,
     >,
 {
@@ -74,7 +74,7 @@ where
     async fn handle(
         context: &Context,
         code: PhantomData<Code>,
-        input: &Input,
+        input: &'a Input,
     ) -> Result<Output, Context::Error> {
         Ok(
             DispatchMatchers::handle(context, code, input.extractor_ref())
