@@ -4,7 +4,7 @@ use cgp::core::field::{CanDowncast, CanDowncastFields, CanUpcast, FinalizeExtrac
 use cgp::extra::dispatch::{
     ExtractFieldAndHandle, MatchWithHandlers, MatchWithValueHandlers, MatchWithValueHandlersRef,
 };
-use cgp::extra::handler::{ComputerRef, HandleFieldValue, NoCode};
+use cgp::extra::handler::{ComputerRef, HandleFieldValue, NoCode, UseInputDelegate};
 use cgp::prelude::*;
 
 #[derive(Debug, PartialEq, HasFields, FromVariant, ExtractField)]
@@ -148,6 +148,35 @@ fn test_match_with_handlers() {
     >::compute(&(), PhantomData::<()>, circle);
 }
 
+#[cgp_context]
+pub struct App;
+
+delegate_components! {
+    AppComponents {
+        ComputerComponent: UseInputDelegate<new AreaComputers {
+            [
+                Circle,
+                Rectangle,
+                Triangle,
+            ]:
+                ComputeArea,
+            [
+                Shape,
+                ShapePlus,
+            ]: MatchWithValueHandlers,
+        }>
+    }
+}
+
+check_components! {
+    CanUseApp for App {
+        ComputerComponent: [
+            ((), Shape),
+            ((), ShapePlus),
+        ],
+    }
+}
+
 pub trait HasAreaRef {
     fn area(&self) -> f64;
 }
@@ -170,19 +199,21 @@ impl HasAreaRef for Triangle {
     }
 }
 
+impl<Context> HasAreaRef for Context
+where
+    Context: HasExtractorRef,
+    MatchWithValueHandlersRef<ComputeAreaRef>: ComputerRef<(), (), Context, Output = f64>,
+{
+    fn area(&self) -> f64 {
+        MatchWithValueHandlersRef::<ComputeAreaRef>::compute_ref(&(), NoCode, self)
+    }
+}
+
 #[cgp_computer]
 fn compute_area_ref<T: HasAreaRef>(shape: &T) -> f64 {
     shape.area()
 }
 
-impl HasAreaRef for Shape {
-    fn area(&self) -> f64 {
-        MatchWithValueHandlersRef::<ComputeAreaRef>::compute_ref(&(), NoCode, self)
-    }
-}
-
-impl HasAreaRef for ShapePlus {
-    fn area(&self) -> f64 {
-        MatchWithValueHandlersRef::<ComputeAreaRef>::compute_ref(&(), NoCode, self)
-    }
-}
+pub trait CheckHasArea: HasAreaRef {}
+impl CheckHasArea for Shape {}
+impl CheckHasArea for ShapePlus {}
