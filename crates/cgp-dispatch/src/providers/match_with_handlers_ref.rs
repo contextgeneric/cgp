@@ -11,16 +11,13 @@ use crate::DispatchMatchers;
 pub struct MatchWithHandlersRef<Handlers>(pub PhantomData<Handlers>);
 
 #[cgp_provider]
-impl<'a, Context, Code, Input, Output, Handlers> Computer<Context, Code, &'a Input>
+impl<'a, Context, Code, Input, Output, Remainder, Handlers> Computer<Context, Code, &'a Input>
     for MatchWithHandlersRef<Handlers>
 where
     Input: HasExtractorRef,
-    DispatchMatchers<Handlers>: Computer<
-        Context,
-        Code,
-        Input::ExtractorRef<'a>,
-        Output: FinalizeExtractResult<Output = Output>,
-    >,
+    DispatchMatchers<Handlers>:
+        Computer<Context, Code, Input::ExtractorRef<'a>, Output = Result<Output, Remainder>>,
+    Remainder: FinalizeExtract,
 {
     type Output = Output;
 
@@ -30,17 +27,14 @@ where
 }
 
 #[cgp_provider]
-impl<'a, Context, Code, Input, Output, Handlers> TryComputer<Context, Code, &'a Input>
+impl<'a, Context, Code, Input, Output, Remainder, Handlers> TryComputer<Context, Code, &'a Input>
     for MatchWithHandlersRef<Handlers>
 where
     Context: HasErrorType,
     Input: HasExtractorRef,
-    DispatchMatchers<Handlers>: TryComputer<
-        Context,
-        Code,
-        Input::ExtractorRef<'a>,
-        Output: FinalizeExtractResult<Output = Output>,
-    >,
+    DispatchMatchers<Handlers>:
+        TryComputer<Context, Code, Input::ExtractorRef<'a>, Output = Result<Output, Remainder>>,
+    Remainder: FinalizeExtract,
 {
     type Output = Output;
 
@@ -57,17 +51,14 @@ where
 }
 
 #[cgp_provider]
-impl<'a, Context, Code: Send, Input, Output, Handlers> Handler<Context, Code, &'a Input>
+impl<'a, Context, Code: Send, Input, Output, Remainder, Handlers> Handler<Context, Code, &'a Input>
     for MatchWithHandlersRef<Handlers>
 where
     Context: HasAsyncErrorType,
     Input: Send + Sync + HasExtractorRef,
-    DispatchMatchers<Handlers>: Handler<
-        Context,
-        Code,
-        Input::ExtractorRef<'a>,
-        Output: FinalizeExtractResult<Output = Output>,
-    >,
+    DispatchMatchers<Handlers>:
+        Handler<Context, Code, Input::ExtractorRef<'a>, Output = Result<Output, Remainder>>,
+    Remainder: FinalizeExtract,
 {
     type Output = Output;
 

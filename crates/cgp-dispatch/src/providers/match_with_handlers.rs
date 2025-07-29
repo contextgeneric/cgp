@@ -1,5 +1,6 @@
 use core::marker::PhantomData;
 
+use cgp_core::field::FinalizeExtractResult;
 use cgp_core::prelude::*;
 use cgp_handler::{
     Computer, ComputerComponent, Handler, HandlerComponent, TryComputer, TryComputerComponent,
@@ -21,12 +22,7 @@ where
     type Output = Output;
 
     fn compute(context: &Context, code: PhantomData<Code>, input: Input) -> Output {
-        let res = DispatchMatchers::compute(context, code, input.to_extractor());
-
-        match res {
-            Ok(output) => output,
-            Err(remainder) => remainder.finalize_extract(),
-        }
+        DispatchMatchers::compute(context, code, input.to_extractor()).finalize_extract_result()
     }
 }
 
@@ -47,12 +43,10 @@ where
         code: PhantomData<Code>,
         input: Input,
     ) -> Result<Output, Context::Error> {
-        let res = DispatchMatchers::try_compute(context, code, input.to_extractor())?;
-
-        match res {
-            Ok(output) => Ok(output),
-            Err(remainder) => remainder.finalize_extract(),
-        }
+        Ok(
+            DispatchMatchers::try_compute(context, code, input.to_extractor())?
+                .finalize_extract_result(),
+        )
     }
 }
 
@@ -73,11 +67,10 @@ where
         code: PhantomData<Code>,
         input: Input,
     ) -> Result<Output, Context::Error> {
-        let res = DispatchMatchers::handle(context, code, input.to_extractor()).await?;
-
-        match res {
-            Ok(output) => Ok(output),
-            Err(remainder) => Err(remainder.finalize_extract()),
-        }
+        Ok(
+            DispatchMatchers::handle(context, code, input.to_extractor())
+                .await?
+                .finalize_extract_result(),
+        )
     }
 }
