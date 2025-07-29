@@ -1,6 +1,6 @@
 use std::f64::consts::PI;
 
-use cgp::core::field::{CanDowncast, CanDowncastFields, CanUpcast};
+use cgp::core::field::{CanDowncast, CanDowncastFields, CanUpcast, FinalizeExtractResult};
 use cgp::extra::dispatch::{
     ExtractFieldAndHandle, MatchWithHandlers, MatchWithValueHandlers, MatchWithValueHandlersRef,
 };
@@ -52,10 +52,13 @@ fn test_shape_area() {
     {
         Ok(circle) => PI * circle.radius * circle.radius,
         // PartialShape<IsVoid, IsPresent>
-        Err(remainder) => match remainder.extract_field(PhantomData::<symbol!("Rectangle")>) {
-            Ok(rectangle) => rectangle.width * rectangle.height,
-            // PartialShape<IsVoid, IsVoid>
-        },
+        Err(remainder) => {
+            let rectangle = remainder
+                .extract_field(PhantomData::<symbol!("Rectangle")>)
+                .finalize_extract_result();
+
+            rectangle.width * rectangle.height
+        }
     };
 }
 
@@ -85,9 +88,12 @@ fn test_shape_downcast() {
             Shape::Rectangle(rectangle) => rectangle.width * rectangle.height,
         },
         // PartialShapePlus<IsPresent, IsVoid, IsVoid>
-        Err(remainder) => match remainder.downcast_fields(PhantomData::<TriangleOnly>) {
-            Ok(TriangleOnly::Triangle(triangle)) => triangle.base * triangle.height / 2.0,
-        },
+        Err(remainder) => {
+            let TriangleOnly::Triangle(triangle) = remainder
+                .downcast_fields(PhantomData::<TriangleOnly>)
+                .finalize_extract_result();
+            triangle.base * triangle.height / 2.0
+        }
     };
 }
 

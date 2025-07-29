@@ -1,7 +1,8 @@
 use core::marker::PhantomData;
 
 use crate::{
-    Either, ExtractField, Field, FinalizeExtract, FromVariant, HasExtractor, HasFields, Void,
+    Either, ExtractField, Field, FinalizeExtract, FinalizeExtractResult, FromVariant, HasExtractor,
+    HasFields, Void,
 };
 
 pub trait CanUpcast<Target> {
@@ -27,10 +28,7 @@ where
     Remainder: FinalizeExtract,
 {
     fn upcast(self, _tag: PhantomData<Target>) -> Target {
-        match Context::Fields::extract_from(self.to_extractor()) {
-            Ok(target) => target,
-            Err(remainder) => remainder.finalize_extract(),
-        }
+        Context::Fields::extract_from(self.to_extractor()).finalize_extract_result()
     }
 }
 
