@@ -22,6 +22,13 @@ pub fn derive_extract_field_impls(
                     '__a__
                 })?,
             );
+
+            generics.params.insert(
+                1,
+                parse2(quote! {
+                    __R__: MapTypeRef
+                })?,
+            );
         }
 
         generics
@@ -70,7 +77,7 @@ pub fn derive_extract_field_impls(
             let value_type = get_variant_type(current_variant)?;
 
             if is_ref {
-                parse2(quote! { &'__a__ #value_type })?
+                parse2(quote! { <__R__ as MapTypeRef>::Map<'__a__, #value_type> })?
             } else {
                 value_type.clone()
             }

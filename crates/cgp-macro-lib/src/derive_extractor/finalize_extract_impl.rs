@@ -18,6 +18,13 @@ pub fn derive_finalize_extract_impl(
                     'a
                 })?,
             );
+
+            generics.params.insert(
+                0,
+                parse2(quote! {
+                    __R__: MapTypeRef
+                })?,
+            );
         }
 
         generics

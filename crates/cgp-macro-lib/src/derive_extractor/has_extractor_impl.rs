@@ -77,6 +77,13 @@ pub fn derive_has_extractor_ref_impl(
         })?,
     );
 
+    extractor_generics.args.insert(
+        1,
+        parse2(quote! {
+            IsRef
+        })?,
+    );
+
     let mut match_arms = Vec::<Arm>::new();
 
     for variant in context_enum.variants.iter() {
