@@ -2,7 +2,8 @@ use std::f64::consts::PI;
 
 use cgp::core::field::{CanDowncast, CanDowncastFields, CanUpcast, FinalizeExtractResult};
 use cgp::extra::dispatch::{
-    ExtractFieldAndHandle, MatchWithHandlers, MatchWithValueHandlers, MatchWithValueHandlersRef,
+    ExtractFieldAndHandle, ExtractFirstFieldAndHandle, HandleFirstFieldValue,
+    MatchFirstWithHandlers, MatchWithHandlers, MatchWithValueHandlers, MatchWithValueHandlersRef,
 };
 use cgp::extra::handler::{ComputerRef, HandleFieldValue, NoCode, UseInputDelegate};
 use cgp::prelude::*;
@@ -147,6 +148,45 @@ fn test_match_with_handlers() {
         ],
     >::compute(&(), PhantomData::<()>, circle);
 }
+
+pub trait Container {
+    fn contains(&self, x: f64, y: f64) -> bool;
+}
+
+impl Container for Circle {
+    fn contains(&self, _x: f64, _y: f64) -> bool {
+        true // stub
+    }
+}
+
+impl Container for Rectangle {
+    fn contains(&self, _x: f64, _y: f64) -> bool {
+        true // stub
+    }
+}
+
+impl Container for Triangle {
+    fn contains(&self, _x: f64, _y: f64) -> bool {
+        true // stub
+    }
+}
+
+#[cgp_computer]
+fn contains<T: Container>(shape: T, (x, y): (f64, f64)) -> bool {
+    shape.contains(x, y)
+}
+
+// #[test]
+// fn test_dispatch_contains() {
+//     let circle = Shape::Circle(Circle { radius: 5.0 });
+
+//     let _area = MatchFirstWithHandlers::<
+//         Product![
+//             ExtractFirstFieldAndHandle<symbol!("Circle"), HandleFirstFieldValue<Contains>>,
+//             ExtractFirstFieldAndHandle<symbol!("Rectangle"), HandleFirstFieldValue<Contains>>,
+//         ],
+//     >::compute(&(), PhantomData::<()>, (circle, (1.0, 2.0)));
+// }
 
 #[cgp_context]
 pub struct App;
