@@ -19,6 +19,14 @@ pub trait HasExtractorRef {
     fn extractor_ref(&self) -> Self::ExtractorRef<'_>;
 }
 
+pub trait HasExtractorMut {
+    type ExtractorMut<'a>
+    where
+        Self: 'a;
+
+    fn extractor_mut(&mut self) -> Self::ExtractorMut<'_>;
+}
+
 pub trait ExtractField<Tag> {
     type Value;
 

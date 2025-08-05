@@ -4,7 +4,8 @@ use syn::{parse2, Ident, ItemEnum};
 
 use crate::derive_extractor::{
     derive_extract_field_impls, derive_extractor_enum, derive_extractor_enum_ref,
-    derive_finalize_extract_impl, derive_has_extractor_impl, derive_has_extractor_ref_impl,
+    derive_finalize_extract_impl, derive_has_extractor_impl, derive_has_extractor_mut_impl,
+    derive_has_extractor_ref_impl,
 };
 
 pub fn derive_extract_field(body: TokenStream) -> syn::Result<TokenStream> {
@@ -20,11 +21,16 @@ pub fn derive_extract_field(body: TokenStream) -> syn::Result<TokenStream> {
     let extractor_ref_enum = derive_extractor_enum_ref(&context_enum, &extractor_ref_ident)?;
 
     let has_extractor_impl = derive_has_extractor_impl(&context_enum, &extractor_ident)?;
+
     let has_extractor_ref_impl =
         derive_has_extractor_ref_impl(&context_enum, &extractor_ref_ident)?;
 
+    let has_extractor_mut_impl =
+        derive_has_extractor_mut_impl(&context_enum, &extractor_ref_ident)?;
+
     let finalize_extract_impl =
         derive_finalize_extract_impl(&context_enum, &extractor_ident, false)?;
+
     let finalize_extract_ref_impl =
         derive_finalize_extract_impl(&context_enum, &extractor_ref_ident, true)?;
 
@@ -38,6 +44,7 @@ pub fn derive_extract_field(body: TokenStream) -> syn::Result<TokenStream> {
 
         #has_extractor_impl
         #has_extractor_ref_impl
+        #has_extractor_mut_impl
 
         #finalize_extract_impl
         #finalize_extract_ref_impl

@@ -119,3 +119,62 @@ pub fn derive_has_extractor_ref_impl(
 
     Ok(item_impl)
 }
+
+pub fn derive_has_extractor_mut_impl(
+    context_enum: &ItemEnum,
+    extractor_ident: &Ident,
+) -> syn::Result<ItemImpl> {
+    let (impl_generics, ty_generics, where_clause) = context_enum.generics.split_for_impl();
+
+    let context_ident = &context_enum.ident;
+
+    let mut extractor_generics = to_generic_args(&context_enum.generics)?;
+    extractor_generics.args.insert(
+        0,
+        parse2(quote! {
+            'a
+        })?,
+    );
+
+    extractor_generics.args.insert(
+        1,
+        parse2(quote! {
+            IsMut
+        })?,
+    );
+
+    let mut match_arms = Vec::<Arm>::new();
+
+    for variant in context_enum.variants.iter() {
+        extractor_generics.args.push(parse2(quote! {
+            IsPresent
+        })?);
+
+        let variant_ident = &variant.ident;
+
+        match_arms.push(parse2(quote! {
+            Self :: #variant_ident ( value ) => {
+                #extractor_ident:: #variant_ident ( value )
+            }
+        })?);
+    }
+
+    let item_impl = parse2(quote! {
+        impl #impl_generics HasExtractorMut
+            for #context_ident #ty_generics
+        #where_clause
+        {
+            type ExtractorMut<'a> = #extractor_ident #extractor_generics
+            where
+                Self: 'a;
+
+            fn extractor_mut<'a>(&'a mut self) -> Self::ExtractorMut<'a> {
+                match self {
+                    #(#match_arms)*
+                }
+            }
+        }
+    })?;
+
+    Ok(item_impl)
+}
