@@ -1,6 +1,8 @@
 use std::f64::consts::PI;
 
-use cgp::extra::dispatch::{MatchFirstWithValueHandlersRef, MatchWithValueHandlersRef};
+use cgp::extra::dispatch::{
+    MatchFirstWithValueHandlersMut, MatchFirstWithValueHandlersRef, MatchWithValueHandlersRef,
+};
 use cgp::extra::handler::{ComputerRef, NoCode};
 use cgp::prelude::*;
 
@@ -81,6 +83,45 @@ fn contains_ref<T: ContainerRef>(shape: &T, (x, y): (f64, f64)) -> bool {
     shape.contains_ref(x, y)
 }
 
-pub trait CheckHasArea: HasAreaRef + ContainerRef {}
+pub trait CanScale {
+    fn scale(&mut self, factor: f64);
+}
+
+impl CanScale for Circle {
+    fn scale(&mut self, factor: f64) {
+        self.radius *= factor;
+    }
+}
+
+impl CanScale for Rectangle {
+    fn scale(&mut self, factor: f64) {
+        self.width *= factor;
+        self.height *= factor;
+    }
+}
+
+impl CanScale for Triangle {
+    fn scale(&mut self, factor: f64) {
+        self.base *= factor;
+        self.height *= factor;
+    }
+}
+
+#[cgp_computer]
+pub fn scale<T: CanScale>(shape: &mut T, factor: f64) {
+    shape.scale(factor)
+}
+
+impl<Context> CanScale for Context
+where
+    Context: HasExtractorMut,
+    MatchFirstWithValueHandlersMut<Scale>: for<'a> Computer<(), (), (&'a mut Context, f64)>,
+{
+    fn scale(&mut self, factor: f64) {
+        MatchFirstWithValueHandlersMut::compute(&(), NoCode, (self, factor));
+    }
+}
+
+pub trait CheckHasArea: HasAreaRef + ContainerRef + CanScale {}
 impl CheckHasArea for Shape {}
 impl CheckHasArea for ShapePlus {}

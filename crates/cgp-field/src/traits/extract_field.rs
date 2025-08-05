@@ -1,7 +1,7 @@
 use core::convert::Infallible;
 use core::marker::PhantomData;
 
-use crate::{IsMut, IsRef, MapTypeRef, Void};
+use crate::Void;
 
 pub trait HasExtractor {
     type Extractor;
@@ -48,50 +48,6 @@ impl FinalizeExtract for Void {
 impl FinalizeExtract for Infallible {
     fn finalize_extract<T>(self) -> T {
         match self {}
-    }
-}
-
-pub trait HasExtractorAnyRef<M: MapTypeRef>: Sized {
-    type ExtractorAnyRef<'a>
-    where
-        Self: 'a;
-
-    fn extractor_any_ref<'a>(context: M::Map<'a, Self>) -> Self::ExtractorAnyRef<'a>
-    where
-        Self: 'a;
-}
-
-impl<Context> HasExtractorAnyRef<IsRef> for Context
-where
-    Context: HasExtractorRef,
-{
-    type ExtractorAnyRef<'a>
-        = Context::ExtractorRef<'a>
-    where
-        Self: 'a;
-
-    fn extractor_any_ref<'a>(context: &'a Context) -> Self::ExtractorAnyRef<'a>
-    where
-        Self: 'a,
-    {
-        context.extractor_ref()
-    }
-}
-
-impl<Context> HasExtractorAnyRef<IsMut> for Context
-where
-    Context: HasExtractorMut,
-{
-    type ExtractorAnyRef<'a>
-        = Context::ExtractorMut<'a>
-    where
-        Self: 'a;
-
-    fn extractor_any_ref<'a>(context: &'a mut Context) -> Self::ExtractorAnyRef<'a>
-    where
-        Self: 'a,
-    {
-        context.extractor_mut()
     }
 }
 
