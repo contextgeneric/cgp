@@ -43,45 +43,44 @@ fn compute_area_ref<T: HasAreaRef>(shape: &T) -> f64 {
     shape.area()
 }
 
-pub trait CheckHasArea: HasAreaRef {}
-impl CheckHasArea for Shape {}
-impl CheckHasArea for ShapePlus {}
-
-pub trait Container {
-    fn contains(&self, x: f64, y: f64) -> bool;
+pub trait ContainerRef {
+    fn contains_ref(&self, x: f64, y: f64) -> bool;
 }
 
-impl Container for Circle {
-    fn contains(&self, _x: f64, _y: f64) -> bool {
+impl ContainerRef for Circle {
+    fn contains_ref(&self, _x: f64, _y: f64) -> bool {
         true // stub
     }
 }
 
-impl Container for Rectangle {
-    fn contains(&self, _x: f64, _y: f64) -> bool {
+impl ContainerRef for Rectangle {
+    fn contains_ref(&self, _x: f64, _y: f64) -> bool {
         true // stub
     }
 }
 
-impl Container for Triangle {
-    fn contains(&self, _x: f64, _y: f64) -> bool {
+impl ContainerRef for Triangle {
+    fn contains_ref(&self, _x: f64, _y: f64) -> bool {
         true // stub
     }
 }
 
-impl Container for Shape {
-    fn contains(&self, x: f64, y: f64) -> bool {
-        MatchFirstWithValueHandlersRef::<Contains>::compute(&(), NoCode, (self, (x, y)))
-    }
-}
-
-impl Container for ShapePlus {
-    fn contains(&self, x: f64, y: f64) -> bool {
-        MatchFirstWithValueHandlersRef::<Contains>::compute(&(), NoCode, (self, (x, y)))
+impl<Context> ContainerRef for Context
+where
+    Context: HasExtractorRef,
+    MatchFirstWithValueHandlersRef<ContainsRef>:
+        for<'a> Computer<(), (), (&'a Context, (f64, f64)), Output = bool>,
+{
+    fn contains_ref(&self, x: f64, y: f64) -> bool {
+        MatchFirstWithValueHandlersRef::compute(&(), NoCode, (self, (x, y)))
     }
 }
 
 #[cgp_computer]
-fn contains<T: Container>(shape: &T, (x, y): (f64, f64)) -> bool {
-    shape.contains(x, y)
+fn contains_ref<T: ContainerRef>(shape: &T, (x, y): (f64, f64)) -> bool {
+    shape.contains_ref(x, y)
 }
+
+pub trait CheckHasArea: HasAreaRef + ContainerRef {}
+impl CheckHasArea for Shape {}
+impl CheckHasArea for ShapePlus {}
