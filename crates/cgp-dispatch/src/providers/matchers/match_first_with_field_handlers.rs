@@ -1,5 +1,5 @@
 use cgp_core::prelude::*;
-use cgp_handler::{PromoteRef, UseInputDelegate};
+use cgp_handler::UseInputDelegate;
 
 use crate::providers::matchers::to_first_field_handlers::HasFirstFieldHandlers;
 use crate::{HandleFirstFieldValue, MatchFirstWithHandlers, MatchFirstWithHandlersRef};
@@ -11,11 +11,10 @@ pub type MatchFirstWithValueHandlers<Provider = UseContext> =
     UseInputDelegate<MatchFirstWithFieldHandlersInputs<HandleFirstFieldValue<Provider>>>;
 
 pub type MatchFirstWithFieldHandlersRef<Provider = UseContext> =
-    UseInputDelegate<MatchFirstWithFieldHandlersInputsRef<PromoteRef<Provider>>>;
+    UseInputDelegate<MatchFirstWithFieldHandlersInputsRef<Provider>>;
 
-pub type MatchFirstWithValueHandlersRef<Provider = UseContext> = UseInputDelegate<
-    MatchFirstWithFieldHandlersInputsRef<HandleFirstFieldValue<PromoteRef<Provider>>>,
->;
+pub type MatchFirstWithValueHandlersRef<Provider = UseContext> =
+    UseInputDelegate<MatchFirstWithFieldHandlersInputsRef<HandleFirstFieldValue<Provider>>>;
 
 delegate_components! {
     <Input: HasFirstFieldHandlers<Provider>, Args, Provider>
@@ -25,9 +24,9 @@ delegate_components! {
 }
 
 delegate_components! {
-    <Input: HasFirstFieldHandlers<Provider>, Provider>
+    <Input: HasFirstFieldHandlers<Provider>, Args, Provider>
     new MatchFirstWithFieldHandlersInputsRef<Provider> {
-        Input:
-            PromoteRef<MatchFirstWithHandlersRef<Input::Handlers>>
+        <'a> (&'a Input, Args):
+            MatchFirstWithHandlersRef<Input::Handlers>
     }
 }
