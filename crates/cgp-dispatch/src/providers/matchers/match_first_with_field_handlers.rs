@@ -1,7 +1,9 @@
 use cgp_core::prelude::*;
 use cgp_handler::UseInputDelegate;
 
-use crate::providers::matchers::to_first_field_handlers::HasFirstFieldHandlers;
+use crate::providers::matchers::to_field_handlers::{
+    HasFieldHandlers, MapExtractFirstFieldAndHandle,
+};
 use crate::{HandleFirstFieldValue, MatchFirstWithHandlers, MatchFirstWithHandlersRef};
 
 pub type MatchFirstWithFieldHandlers<Provider = UseContext> =
@@ -17,14 +19,14 @@ pub type MatchFirstWithValueHandlersRef<Provider = UseContext> =
     UseInputDelegate<MatchFirstWithFieldHandlersInputsRef<HandleFirstFieldValue<Provider>>>;
 
 delegate_components! {
-    <Input: HasFirstFieldHandlers<Provider>, Args, Provider>
+    <Input: HasFieldHandlers<MapExtractFirstFieldAndHandle<Provider>>, Args, Provider>
     new MatchFirstWithFieldHandlersInputs<Provider> {
         (Input, Args): MatchFirstWithHandlers<Input::Handlers>
     }
 }
 
 delegate_components! {
-    <Input: HasFirstFieldHandlers<Provider>, Args, Provider>
+    <Input: HasFieldHandlers<MapExtractFirstFieldAndHandle<Provider>>, Args, Provider>
     new MatchFirstWithFieldHandlersInputsRef<Provider> {
         <'a> (&'a Input, Args):
             MatchFirstWithHandlersRef<Input::Handlers>
