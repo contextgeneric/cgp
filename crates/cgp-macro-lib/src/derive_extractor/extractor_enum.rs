@@ -46,16 +46,38 @@ pub fn derive_extractor_enum_ref(
 
     let generics = &mut extractor_enum.generics;
 
-    generics.params.push(GenericParam::Lifetime(LifetimeParam {
-        attrs: Vec::new(),
-        lifetime: Lifetime::new("'__a__", Span::call_site()),
-        bounds: Default::default(),
-        colon_token: Default::default(),
-    }));
+    for param in generics.params.iter_mut() {
+        match param {
+            GenericParam::Type(param) => {
+                param.bounds.push(parse2(quote! {
+                    '__a__
+                })?);
+            }
+            GenericParam::Lifetime(param) => {
+                param.bounds.push(parse2(quote! {
+                    '__a__
+                })?);
+            }
+            _ => {}
+        }
+    }
 
-    generics.params.push(parse2(quote! {
-        __R__: MapTypeRef
-    })?);
+    generics.params.insert(
+        0,
+        GenericParam::Lifetime(LifetimeParam {
+            attrs: Vec::new(),
+            lifetime: Lifetime::new("'__a__", Span::call_site()),
+            bounds: Default::default(),
+            colon_token: Default::default(),
+        }),
+    );
+
+    generics.params.insert(
+        1,
+        parse2(quote! {
+            __R__: MapTypeRef
+        })?,
+    );
 
     for (i, variant) in extractor_enum.variants.iter_mut().enumerate() {
         let generic_param_name = index_to_generic_ident(i);
