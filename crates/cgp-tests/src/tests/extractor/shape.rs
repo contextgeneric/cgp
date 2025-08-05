@@ -3,7 +3,8 @@ use std::f64::consts::PI;
 use cgp::core::field::{CanDowncast, CanDowncastFields, CanUpcast, FinalizeExtractResult};
 use cgp::extra::dispatch::{
     ExtractFieldAndHandle, ExtractFirstFieldAndHandle, HandleFirstFieldValue,
-    MatchFirstWithHandlers, MatchWithHandlers, MatchWithValueHandlers, MatchWithValueHandlersRef,
+    MatchFirstWithHandlers, MatchFirstWithValueHandlers, MatchWithHandlers, MatchWithValueHandlers,
+    MatchWithValueHandlersRef,
 };
 use cgp::extra::handler::{ComputerRef, HandleFieldValue, NoCode, UseInputDelegate};
 use cgp::prelude::*;
@@ -150,24 +151,30 @@ fn test_match_with_handlers() {
 }
 
 pub trait Container {
-    fn contains(&self, x: f64, y: f64) -> bool;
+    fn contains(self, x: f64, y: f64) -> bool;
 }
 
 impl Container for Circle {
-    fn contains(&self, _x: f64, _y: f64) -> bool {
+    fn contains(self, _x: f64, _y: f64) -> bool {
         true // stub
     }
 }
 
 impl Container for Rectangle {
-    fn contains(&self, _x: f64, _y: f64) -> bool {
+    fn contains(self, _x: f64, _y: f64) -> bool {
         true // stub
     }
 }
 
 impl Container for Triangle {
-    fn contains(&self, _x: f64, _y: f64) -> bool {
+    fn contains(self, _x: f64, _y: f64) -> bool {
         true // stub
+    }
+}
+
+impl Container for Shape {
+    fn contains(self, x: f64, y: f64) -> bool {
+        MatchFirstWithValueHandlers::<Contains>::compute(&(), NoCode, (self, (x, y)))
     }
 }
 
