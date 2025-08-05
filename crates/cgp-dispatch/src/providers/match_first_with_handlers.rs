@@ -1,6 +1,5 @@
 use core::marker::PhantomData;
 
-use cgp_core::field::FinalizeExtractResult;
 use cgp_core::prelude::*;
 use cgp_handler::{
     Computer, ComputerComponent, Handler, HandlerComponent, TryComputer, TryComputerComponent,
@@ -15,15 +14,22 @@ impl<Context, Code, Input, Args, Output, Remainder, Handlers> Computer<Context, 
     for MatchFirstWithHandlers<Handlers>
 where
     Input: HasExtractor,
-    DispatchMatchers<Handlers>:
-        Computer<Context, Code, (Input::Extractor, Args), Output = Result<Output, Remainder>>,
+    DispatchMatchers<Handlers>: Computer<
+        Context,
+        Code,
+        (Input::Extractor, Args),
+        Output = Result<Output, (Remainder, Args)>,
+    >,
     Remainder: FinalizeExtract,
 {
     type Output = Output;
 
     fn compute(context: &Context, code: PhantomData<Code>, (input, args): (Input, Args)) -> Output {
-        DispatchMatchers::compute(context, code, (input.to_extractor(), args))
-            .finalize_extract_result()
+        let res = DispatchMatchers::compute(context, code, (input.to_extractor(), args));
+        match res {
+            Ok(output) => output,
+            Err((remainder, _)) => remainder.finalize_extract(),
+        }
     }
 }
 
@@ -33,8 +39,12 @@ impl<Context, Code, Input, Args, Output, Remainder, Handlers>
 where
     Context: HasErrorType,
     Input: HasExtractor,
-    DispatchMatchers<Handlers>:
-        TryComputer<Context, Code, (Input::Extractor, Args), Output = Result<Output, Remainder>>,
+    DispatchMatchers<Handlers>: TryComputer<
+        Context,
+        Code,
+        (Input::Extractor, Args),
+        Output = Result<Output, (Remainder, Args)>,
+    >,
     Remainder: FinalizeExtract,
 {
     type Output = Output;
@@ -44,10 +54,12 @@ where
         code: PhantomData<Code>,
         (input, args): (Input, Args),
     ) -> Result<Output, Context::Error> {
-        Ok(
-            DispatchMatchers::try_compute(context, code, (input.to_extractor(), args))?
-                .finalize_extract_result(),
-        )
+        let res = DispatchMatchers::try_compute(context, code, (input.to_extractor(), args))?;
+
+        match res {
+            Ok(output) => Ok(output),
+            Err((remainder, _)) => remainder.finalize_extract(),
+        }
     }
 }
 
@@ -57,8 +69,12 @@ impl<Context, Code: Send, Input: Send, Args: Send, Output: Send, Remainder: Send
 where
     Context: HasAsyncErrorType,
     Input: HasExtractor<Extractor: Send>,
-    DispatchMatchers<Handlers>:
-        Handler<Context, Code, (Input::Extractor, Args), Output = Result<Output, Remainder>>,
+    DispatchMatchers<Handlers>: Handler<
+        Context,
+        Code,
+        (Input::Extractor, Args),
+        Output = Result<Output, (Remainder, Args)>,
+    >,
     Remainder: FinalizeExtract,
 {
     type Output = Output;
@@ -68,10 +84,11 @@ where
         code: PhantomData<Code>,
         (input, args): (Input, Args),
     ) -> Result<Output, Context::Error> {
-        Ok(
-            DispatchMatchers::handle(context, code, (input.to_extractor(), args))
-                .await?
-                .finalize_extract_result(),
-        )
+        let res = DispatchMatchers::handle(context, code, (input.to_extractor(), args)).await?;
+
+        match res {
+            Ok(output) => Ok(output),
+            Err((remainder, _)) => remainder.finalize_extract(),
+        }
     }
 }

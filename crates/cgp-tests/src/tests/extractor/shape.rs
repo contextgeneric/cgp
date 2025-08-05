@@ -176,17 +176,17 @@ fn contains<T: Container>(shape: T, (x, y): (f64, f64)) -> bool {
     shape.contains(x, y)
 }
 
-// #[test]
-// fn test_dispatch_contains() {
-//     let circle = Shape::Circle(Circle { radius: 5.0 });
+#[test]
+fn test_dispatch_contains() {
+    let circle = Shape::Circle(Circle { radius: 5.0 });
 
-//     let _area = MatchFirstWithHandlers::<
-//         Product![
-//             ExtractFirstFieldAndHandle<symbol!("Circle"), HandleFirstFieldValue<Contains>>,
-//             ExtractFirstFieldAndHandle<symbol!("Rectangle"), HandleFirstFieldValue<Contains>>,
-//         ],
-//     >::compute(&(), PhantomData::<()>, (circle, (1.0, 2.0)));
-// }
+    let _is_contained = MatchFirstWithHandlers::<
+        Product![
+            ExtractFirstFieldAndHandle<symbol!("Circle"), HandleFirstFieldValue<Contains>>,
+            ExtractFirstFieldAndHandle<symbol!("Rectangle"), HandleFirstFieldValue<Contains>>,
+        ],
+    >::compute(&(), PhantomData::<()>, (circle, (1.0, 2.0)));
+}
 
 #[cgp_context]
 pub struct App;
