@@ -7,7 +7,7 @@ repository   = { workspace = true }
 authors      = { workspace = true }
 rust-version = { workspace = true }
 keywords     = { workspace = true }
-description  = "Generalized handler interfaces for functional programming"
+description  = "Extensible data type dispatchers for CGP handlers"
 
 [dependencies]
 cgp-core    = { version = "0.4.2" }
