@@ -89,9 +89,10 @@ pub fn cgp_computer(attr: TokenStream, body: TokenStream) -> syn::Result<TokenSt
 
     let computer_ref = if ref_arg {
         quote! {
-            ComputerRefComponent: PromoteRef<#computer_ident>,
-            TryComputerRefComponent: PromoteRef<#try_computer>,
-            HandlerRefComponent: PromoteRef<PromoteAsync<#try_computer>>,
+            ComputerRefComponent: PromoteRef<Self>,
+            TryComputerRefComponent: PromoteRef<Self>,
+            AsyncComputerComponent: PromoteAsync<Self>,
+            HandlerRefComponent: PromoteRef<Self>,
         }
     } else {
         quote! {}
@@ -101,7 +102,7 @@ pub fn cgp_computer(attr: TokenStream, body: TokenStream) -> syn::Result<TokenSt
         delegate_components! {
             #computer_ident {
                 TryComputerComponent: #try_computer,
-                HandlerComponent: PromoteAsync<#try_computer>,
+                HandlerComponent: PromoteAsync<Self>,
                 #computer_ref
             }
         }

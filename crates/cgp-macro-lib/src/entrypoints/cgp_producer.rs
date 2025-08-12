@@ -61,11 +61,13 @@ pub fn cgp_producer(attr: TokenStream, body: TokenStream) -> syn::Result<TokenSt
         delegate_components! {
             #producer_ident {
                 ComputerComponent: Promote<#producer_ident>,
-                ComputerRefComponent: PromoteRef<Promote<#producer_ident>>,
-                TryComputerComponent: Promote<Promote<#producer_ident>>,
-                TryComputerRefComponent: PromoteRef<Promote<Promote<#producer_ident>>>,
-                HandlerComponent: PromoteAsync<Promote<Promote<#producer_ident>>>,
-                HandlerRefComponent: PromoteRef<PromoteAsync<Promote<Promote<#producer_ident>>>>,
+                ComputerRefComponent: PromoteRef<Self>,
+                TryComputerComponent: Promote<Self>,
+                TryComputerRefComponent: PromoteRef<Self>,
+                AsyncComputerComponent: PromoteAsync<Self>,
+                AsyncComputerRefComponent: PromoteRef<Self>,
+                HandlerComponent: PromoteAsync<Self>,
+                HandlerRefComponent: PromoteRef<Self>,
             }
         }
     };
