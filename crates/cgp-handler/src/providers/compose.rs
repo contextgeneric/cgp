@@ -1,7 +1,8 @@
 use cgp_core::prelude::*;
 
 use crate::{
-    Computer, ComputerComponent, Handler, HandlerComponent, TryComputer, TryComputerComponent,
+    AsyncComputer, AsyncComputerComponent, Computer, ComputerComponent, Handler, HandlerComponent,
+    TryComputer, TryComputerComponent,
 };
 
 pub struct ComposeHandlers<ProviderA, ProviderB>(pub PhantomData<(ProviderA, ProviderB)>);
@@ -38,6 +39,25 @@ where
     ) -> Result<Self::Output, Context::Error> {
         let intermediary = ProviderA::try_compute(context, code, input)?;
         ProviderB::try_compute(context, code, intermediary)
+    }
+}
+
+#[cgp_provider]
+impl<Context: Async, Code: Send, Input: Send, ProviderA, ProviderB>
+    AsyncComputer<Context, Code, Input> for ComposeHandlers<ProviderA, ProviderB>
+where
+    ProviderA: AsyncComputer<Context, Code, Input>,
+    ProviderB: AsyncComputer<Context, Code, ProviderA::Output>,
+{
+    type Output = ProviderB::Output;
+
+    async fn compute_async(
+        context: &Context,
+        code: PhantomData<Code>,
+        input: Input,
+    ) -> Self::Output {
+        let intermediary = ProviderA::compute_async(context, code, input).await;
+        ProviderB::compute_async(context, code, intermediary).await
     }
 }
 
