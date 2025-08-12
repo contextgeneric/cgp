@@ -1,5 +1,7 @@
 use cgp_core::prelude::*;
-use cgp_handler::{Computer, ComputerComponent, Handler, HandlerComponent};
+use cgp_handler::{
+    AsyncComputer, AsyncComputerComponent, Computer, ComputerComponent, Handler, HandlerComponent,
+};
 
 use crate::monadic::ident::IdentMonadic;
 use crate::traits::{ContainsValue, LiftValue, MonadicBind, MonadicTrans};
@@ -81,6 +83,27 @@ where
     fn compute(context: &Context, code: PhantomData<Code>, input: Result<T, E1>) -> Self::Output {
         match input {
             Err(value) => M::lift_output(Cont::compute(context, code, value)),
+            Ok(err) => M::lift_value(Ok(err)),
+        }
+    }
+}
+
+#[cgp_provider]
+impl<Context: Async, Code: Send, T: Send, E1: Send, E2, M, Cont>
+    AsyncComputer<Context, Code, Result<T, E1>> for BindOk<M, Cont>
+where
+    Cont: AsyncComputer<Context, Code, E1>,
+    M: ContainsValue<Cont::Output, Value = Result<T, E2>> + LiftValue<Result<T, E2>, Cont::Output>,
+{
+    type Output = M::Output;
+
+    async fn compute_async(
+        context: &Context,
+        code: PhantomData<Code>,
+        input: Result<T, E1>,
+    ) -> Self::Output {
+        match input {
+            Err(value) => M::lift_output(Cont::compute_async(context, code, value).await),
             Ok(err) => M::lift_value(Ok(err)),
         }
     }
