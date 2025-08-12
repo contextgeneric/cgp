@@ -3,8 +3,9 @@ use core::ops::Deref;
 use cgp_core::prelude::*;
 
 use crate::{
-    Computer, ComputerComponent, ComputerRef, ComputerRefComponent, Handler, HandlerComponent,
-    HandlerRef, HandlerRefComponent, TryComputer, TryComputerComponent, TryComputerRef,
+    AsyncComputer, AsyncComputerComponent, AsyncComputerRef, AsyncComputerRefComponent, Computer,
+    ComputerComponent, ComputerRef, ComputerRefComponent, Handler, HandlerComponent, HandlerRef,
+    HandlerRefComponent, TryComputer, TryComputerComponent, TryComputerRef,
     TryComputerRefComponent,
 };
 
@@ -15,7 +16,7 @@ impl<Context, Code, Input, Target, Provider> Handler<Context, Code, Input> for P
 where
     Context: HasAsyncErrorType,
     Provider: HandlerRef<Context, Code, Target>,
-    Input: Deref<Target = Target> + Async,
+    Input: Deref<Target = Target> + Send,
     Code: Send,
 {
     type Output = Provider::Output;
@@ -46,6 +47,46 @@ where
         input: &Input,
     ) -> Result<Self::Output, Context::Error> {
         Provider::handle(context, tag, input).await
+    }
+}
+
+#[cgp_provider]
+impl<Context, Code, Input, Target, Provider> AsyncComputer<Context, Code, Input>
+    for PromoteRef<Provider>
+where
+    Context: Async,
+    Provider: AsyncComputerRef<Context, Code, Target>,
+    Input: Deref<Target = Target> + Send,
+    Code: Send,
+{
+    type Output = Provider::Output;
+
+    async fn compute_async(
+        context: &Context,
+        tag: PhantomData<Code>,
+        input: Input,
+    ) -> Self::Output {
+        Provider::compute_async_ref(context, tag, input.deref()).await
+    }
+}
+
+#[cgp_provider]
+impl<Context, Code, Input, Provider, Output> AsyncComputerRef<Context, Code, Input>
+    for PromoteRef<Provider>
+where
+    Context: Async,
+    Provider: for<'a> AsyncComputer<Context, Code, &'a Input, Output = Output>,
+    Code: Send,
+    Input: Sync,
+{
+    type Output = Output;
+
+    async fn compute_async_ref(
+        context: &Context,
+        tag: PhantomData<Code>,
+        input: &Input,
+    ) -> Self::Output {
+        Provider::compute_async(context, tag, input).await
     }
 }
 
