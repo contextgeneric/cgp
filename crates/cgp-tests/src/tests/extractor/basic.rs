@@ -10,7 +10,7 @@ use cgp::extra::dispatch::{
 };
 use cgp::extra::handler::{
     Computer, ComputerComponent, ComputerRef, ComputerRefComponent, HandleFieldValue, Handler,
-    Promote,
+    Promote, PromoteAsync,
 };
 use cgp::prelude::*;
 use futures::executor::block_on;

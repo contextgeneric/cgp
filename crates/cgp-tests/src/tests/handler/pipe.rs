@@ -4,6 +4,7 @@ use core::marker::PhantomData;
 use cgp::core::error::ErrorTypeProviderComponent;
 use cgp::extra::handler::{
     CanCompute, CanHandle, Computer, ComputerComponent, Handler, HandlerComponent, PipeHandlers,
+    Promote, PromoteAsync,
 };
 use cgp::prelude::*;
 use futures::executor::block_on;
