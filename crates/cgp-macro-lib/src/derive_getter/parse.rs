@@ -116,10 +116,10 @@ fn parse_method_args(args: &Punctuated<FnArg, Comma>) -> syn::Result<(&FnArg, Op
 
         Ok((arg, Some(phantom_arg_type)))
     } else {
-        return Err(Error::new(
+        Err(Error::new(
             args.span(),
             "getter method must contain exactly one `&self` argument",
-        ));
+        ))
     }
 }
 
