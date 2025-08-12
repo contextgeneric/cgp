@@ -1,7 +1,8 @@
 use cgp_core::field::MapFields;
 use cgp_core::prelude::*;
 use cgp_handler::{
-    ComposeHandlers, ComputerComponent, HandlerComponent, TryComputerComponent, TryPromote,
+    AsyncComputerComponent, ComposeHandlers, ComputerComponent, HandlerComponent,
+    TryComputerComponent, TryPromote,
 };
 
 use crate::monadic::err::ErrMonadic;
@@ -14,7 +15,7 @@ delegate_components! {
     PipeMonadic<M, Providers> {
         [
             ComputerComponent,
-            HandlerComponent,
+            AsyncComputerComponent,
         ]: Provider,
     }
 }
@@ -33,6 +34,7 @@ delegate_components! {
     >
     PipeMonadic<M1, ProvidersA> {
         TryComputerComponent: TryPromote<Provider>,
+        HandlerComponent: TryPromote<Provider>,
     }
 }
 
