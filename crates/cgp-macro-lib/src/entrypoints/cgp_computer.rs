@@ -21,16 +21,8 @@ pub fn cgp_computer(attr: TokenStream, body: TokenStream) -> syn::Result<TokenSt
         parse2(attr)?
     };
 
-    if fn_sig.asyncness.is_some() {
-        return Err(syn::Error::new(
-            fn_sig.asyncness.span(),
-            "Computer functions cannot be async",
-        ));
-    }
-
     let mut input_types = Punctuated::<Type, Comma>::new();
     let mut input_idents = Punctuated::<Ident, Comma>::new();
-    let mut ref_arg = false;
 
     for (i, input) in fn_inputs.iter().enumerate() {
         match input {
@@ -43,41 +35,14 @@ pub fn cgp_computer(attr: TokenStream, body: TokenStream) -> syn::Result<TokenSt
             FnArg::Typed(pat) => {
                 input_types.push(pat.ty.as_ref().clone());
                 input_idents.push(Ident::new(&format!("arg_{i}"), pat.span()));
-
-                if let Type::Reference(_) = pat.ty.as_ref() {
-                    if fn_inputs.len() == 1 {
-                        ref_arg = true;
-                    }
-                }
             }
         }
     }
-
-    let mut generics = fn_sig.generics.clone();
-    generics.params.push(parse2(quote! { __Context__ })?);
-    generics.params.push(parse2(quote! { __Code__ })?);
-
-    let (impl_generics, _, where_clause) = generics.split_for_impl();
 
     let fn_output = match &fn_sig.output {
         ReturnType::Type(_, ty) => ty.as_ref().clone(),
         ReturnType::Default => syn::parse_quote!(()),
     };
-
-    let computer: ItemImpl = parse2(quote! {
-        #[cgp_new_provider]
-        impl #impl_generics
-            Computer<__Context__, __Code__, ( #input_types )>
-            for #computer_ident
-        #where_clause
-        {
-            type Output = #fn_output;
-
-            fn compute(_context: &__Context__, _code: PhantomData<__Code__>, ( #input_idents ): ( #input_types )) -> Self::Output {
-                #fn_ident( #input_idents )
-            }
-        }
-    })?;
 
     let maybe_result_type = parse2::<MaybeResultType>(fn_output.to_token_stream())?;
 
@@ -87,32 +52,90 @@ pub fn cgp_computer(attr: TokenStream, body: TokenStream) -> syn::Result<TokenSt
         quote!(Promote< #computer_ident >)
     };
 
-    let computer_ref = if ref_arg {
-        quote! {
-            ComputerRefComponent: PromoteRef<Self>,
-            TryComputerRefComponent: PromoteRef<Self>,
-            AsyncComputerComponent: PromoteAsync<Self>,
-            HandlerRefComponent: PromoteRef<Self>,
-        }
-    } else {
-        quote! {}
-    };
+    if fn_sig.asyncness.is_none() {
+        let mut generics = fn_sig.generics.clone();
+        generics.params.push(parse2(quote! { __Context__ })?);
+        generics.params.push(parse2(quote! { __Code__ })?);
 
-    let delegate = quote! {
-        delegate_components! {
-            #computer_ident {
-                TryComputerComponent: #try_computer,
-                HandlerComponent: PromoteAsync<Self>,
-                #computer_ref
+        let (impl_generics, _, where_clause) = generics.split_for_impl();
+
+        let computer: ItemImpl = parse2(quote! {
+            #[cgp_new_provider]
+            impl #impl_generics
+                Computer<__Context__, __Code__, ( #input_types )>
+                for #computer_ident
+            #where_clause
+            {
+                type Output = #fn_output;
+
+                fn compute(_context: &__Context__, _code: PhantomData<__Code__>, ( #input_idents ): ( #input_types )) -> Self::Output {
+                    #fn_ident( #input_idents )
+                }
             }
-        }
-    };
+        })?;
 
-    Ok(quote! {
-        #item_fn
+        let delegate = quote! {
+            delegate_components! {
+                #computer_ident {
+                    TryComputerComponent: #try_computer,
+                    HandlerComponent: PromoteAsync<Self>,
+                    ComputerRefComponent: PromoteRef<Self>,
+                    TryComputerRefComponent: PromoteRef<Self>,
+                    AsyncComputerComponent: PromoteAsync<Self>,
+                    HandlerRefComponent: PromoteRef<Self>,
+                }
+            }
+        };
 
-        #computer
+        Ok(quote! {
+            #item_fn
 
-        #delegate
-    })
+            #computer
+
+            #delegate
+        })
+    } else {
+        let mut generics = fn_sig.generics.clone();
+        generics.params.push(parse2(quote! { __Context__: Async })?);
+        generics.params.push(parse2(quote! { __Code__: Send })?);
+
+        let (impl_generics, _, where_clause) = generics.split_for_impl();
+
+        let computer: ItemImpl = parse2(quote! {
+            #[cgp_new_provider]
+            impl #impl_generics
+                AsyncComputer<__Context__, __Code__, ( #input_types )>
+                for #computer_ident
+            #where_clause
+            {
+                type Output = #fn_output;
+
+                async fn compute_async(
+                    _context: &__Context__,
+                    _code: PhantomData<__Code__>,
+                    ( #input_idents ): ( #input_types )
+                ) -> Self::Output {
+                    #fn_ident( #input_idents ).await
+                }
+            }
+        })?;
+
+        let delegate_ref = quote! {
+            delegate_components! {
+                #computer_ident {
+                    AsyncComputerRefComponent: PromoteRef<Self>,
+                    HandlerComponent: #try_computer,
+                    HandlerRefComponent: PromoteRef<Self>,
+                }
+            }
+        };
+
+        Ok(quote! {
+            #item_fn
+
+            #computer
+
+            #delegate_ref
+        })
+    }
 }

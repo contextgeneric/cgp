@@ -6,12 +6,12 @@ use cgp::extra::handler::HandlerRef;
 use cgp::prelude::*;
 use futures::executor::block_on;
 
-#[cgp_handler]
+#[cgp_computer]
 async fn add(a: u64, b: u64) -> u64 {
     a + b
 }
 
-#[cgp_handler]
+#[cgp_computer]
 async fn add_with_error(a: u64, b: u64) -> Result<u64, String> {
     a.checked_add(b).ok_or_else(|| "Overflow".to_string())
 }
@@ -48,7 +48,7 @@ fn test_generated_handlers() {
     );
 }
 
-#[cgp_handler]
+#[cgp_computer]
 async fn to_string_ref<Value: Display + Sync>(value: &Value) -> String {
     value.to_string()
 }
