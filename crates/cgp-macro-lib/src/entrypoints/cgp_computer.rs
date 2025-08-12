@@ -46,12 +46,6 @@ pub fn cgp_computer(attr: TokenStream, body: TokenStream) -> syn::Result<TokenSt
 
     let maybe_result_type = parse2::<MaybeResultType>(fn_output.to_token_stream())?;
 
-    let try_computer = if maybe_result_type.error_type.is_some() {
-        quote!(TryPromote< #computer_ident >)
-    } else {
-        quote!(Promote< #computer_ident >)
-    };
-
     if fn_sig.asyncness.is_none() {
         let mut generics = fn_sig.generics.clone();
         generics.params.push(parse2(quote! { __Context__ })?);
@@ -74,15 +68,36 @@ pub fn cgp_computer(attr: TokenStream, body: TokenStream) -> syn::Result<TokenSt
             }
         })?;
 
-        let delegate = quote! {
-            delegate_components! {
-                #computer_ident {
-                    TryComputerComponent: #try_computer,
-                    HandlerComponent: PromoteAsync<Self>,
-                    ComputerRefComponent: PromoteRef<Self>,
-                    TryComputerRefComponent: PromoteRef<Self>,
-                    AsyncComputerComponent: PromoteAsync<Self>,
-                    HandlerRefComponent: PromoteRef<Self>,
+        let delegate = if maybe_result_type.error_type.is_some() {
+            quote! {
+                delegate_components! {
+                    #computer_ident {
+                        [
+                            TryComputerComponent,
+                            HandlerComponent,
+                            ComputerRefComponent,
+                            TryComputerRefComponent,
+                            AsyncComputerComponent,
+                            HandlerRefComponent,
+                        ] ->
+                            PromoteTryComputer<Self>,
+                    }
+                }
+            }
+        } else {
+            quote! {
+                delegate_components! {
+                    #computer_ident {
+                        [
+                            TryComputerComponent,
+                            HandlerComponent,
+                            ComputerRefComponent,
+                            TryComputerRefComponent,
+                            AsyncComputerComponent,
+                            HandlerRefComponent,
+                        ] ->
+                            PromoteComputer<Self>,
+                    }
                 }
             }
         };
@@ -120,12 +135,30 @@ pub fn cgp_computer(attr: TokenStream, body: TokenStream) -> syn::Result<TokenSt
             }
         })?;
 
-        let delegate_ref = quote! {
-            delegate_components! {
-                #computer_ident {
-                    AsyncComputerRefComponent: PromoteRef<Self>,
-                    HandlerComponent: #try_computer,
-                    HandlerRefComponent: PromoteRef<Self>,
+        let delegate_ref = if maybe_result_type.error_type.is_some() {
+            quote! {
+                delegate_components! {
+                    #computer_ident {
+                        [
+                            AsyncComputerRefComponent,
+                            HandlerComponent,
+                            HandlerRefComponent,
+                        ] ->
+                            PromoteHandler<Self>,
+                    }
+                }
+            }
+        } else {
+            quote! {
+                delegate_components! {
+                    #computer_ident {
+                        [
+                            AsyncComputerRefComponent,
+                            HandlerComponent,
+                            HandlerRefComponent,
+                        ] ->
+                            PromoteAsyncComputer<Self>,
+                    }
                 }
             }
         };
