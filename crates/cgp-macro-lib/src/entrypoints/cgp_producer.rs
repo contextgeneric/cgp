@@ -64,8 +64,8 @@ pub fn cgp_producer(attr: TokenStream, body: TokenStream) -> syn::Result<TokenSt
                 ComputerRefComponent: PromoteRef<Promote<#producer_ident>>,
                 TryComputerComponent: Promote<Promote<#producer_ident>>,
                 TryComputerRefComponent: PromoteRef<Promote<Promote<#producer_ident>>>,
-                HandlerComponent: Promote<Promote<Promote<#producer_ident>>>,
-                HandlerRefComponent: PromoteRef<Promote<Promote<Promote<#producer_ident>>>>,
+                HandlerComponent: PromoteAsync<Promote<Promote<#producer_ident>>>,
+                HandlerRefComponent: PromoteRef<PromoteAsync<Promote<Promote<#producer_ident>>>>,
             }
         }
     };

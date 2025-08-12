@@ -10,7 +10,7 @@ use cgp::extra::dispatch::{
 };
 use cgp::extra::handler::{
     Computer, ComputerComponent, ComputerRef, ComputerRefComponent, HandleFieldValue, Handler,
-    Promote, Promote2, PromoteRef,
+    Promote, PromoteRef,
 };
 use cgp::prelude::*;
 use futures::executor::block_on;
@@ -302,8 +302,8 @@ type Computers = Product![
 ];
 
 type Handlers = Product![
-    Promote2<ExtractFieldAndHandle<symbol!("Baz"), HandleFieldValue<ShowBaz>>>,
-    Promote2<DowncastAndHandle<FooBar, ShowFooBar>>
+    PromoteAsync<Promote<ExtractFieldAndHandle<symbol!("Baz"), HandleFieldValue<ShowBaz>>>>,
+    PromoteAsync<Promote<DowncastAndHandle<FooBar, ShowFooBar>>>,
 ];
 
 #[test]
