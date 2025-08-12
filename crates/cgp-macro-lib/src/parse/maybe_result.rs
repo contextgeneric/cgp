@@ -5,7 +5,6 @@ use syn::token::{Comma, Gt, Lt};
 use syn::{Ident, Type};
 
 pub struct MaybeResultType {
-    pub success_type: Type,
     pub error_type: Option<Type>,
 }
 
@@ -17,7 +16,7 @@ impl Parse for MaybeResultType {
 
             let _: Lt = input.parse()?;
 
-            let success_type = input.parse()?;
+            input.parse::<Type>()?;
 
             let _: Comma = input.parse()?;
 
@@ -26,14 +25,12 @@ impl Parse for MaybeResultType {
             let _: Gt = input.parse()?;
 
             Ok(Self {
-                success_type,
                 error_type: Some(error_type),
             })
         } else {
-            Ok(Self {
-                success_type: input.parse()?,
-                error_type: None,
-            })
+            input.parse::<Type>()?;
+
+            Ok(Self { error_type: None })
         }
     }
 }

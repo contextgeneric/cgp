@@ -3,7 +3,7 @@ use quote::{quote, ToTokens};
 use syn::punctuated::Punctuated;
 use syn::spanned::Spanned;
 use syn::token::Comma;
-use syn::{parse2, parse_quote, FnArg, Ident, ItemFn, ItemImpl, ReturnType, Type};
+use syn::{parse2, FnArg, Ident, ItemFn, ItemImpl, ReturnType, Type};
 
 use crate::parse::MaybeResultType;
 use crate::utils::to_camel_case_str;
@@ -30,7 +30,6 @@ pub fn cgp_handler(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStr
 
     let mut input_types = Punctuated::<Type, Comma>::new();
     let mut input_idents = Punctuated::<Ident, Comma>::new();
-    let mut ref_arg = false;
 
     for (i, input) in fn_inputs.iter().enumerate() {
         match input {
@@ -43,86 +42,60 @@ pub fn cgp_handler(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStr
             FnArg::Typed(pat) => {
                 input_types.push(pat.ty.as_ref().clone());
                 input_idents.push(Ident::new(&format!("arg_{i}"), pat.span()));
-
-                if let Type::Reference(_) = pat.ty.as_ref() {
-                    if fn_inputs.len() == 1 {
-                        ref_arg = true;
-                    }
-                }
             }
         }
     }
 
     let mut generics = fn_sig.generics.clone();
-    generics.params.push(parse2(quote! { __Context__ })?);
+    generics.params.push(parse2(quote! { __Context__: Async })?);
     generics.params.push(parse2(quote! { __Code__: Send })?);
 
-    let fn_output = match &fn_sig.output {
+    let output_type = match &fn_sig.output {
         ReturnType::Type(_, ty) => ty.as_ref().clone(),
         ReturnType::Default => syn::parse_quote!(()),
     };
 
-    let maybe_result_type = parse2::<MaybeResultType>(fn_output.to_token_stream())?;
+    let maybe_result_type = parse2::<MaybeResultType>(output_type.to_token_stream())?;
 
-    let where_clause = generics.make_where_clause();
-
-    if let Some(error_type) = &maybe_result_type.error_type {
-        where_clause.predicates.push(parse_quote! {
-            __Context__: CanRaiseAsyncError< #error_type >
-        });
+    let try_computer = if maybe_result_type.error_type.is_some() {
+        quote!(TryPromote<Self>)
     } else {
-        where_clause.predicates.push(parse_quote! {
-            __Context__: HasAsyncErrorType
-        });
-    }
+        quote!(Promote<Self>)
+    };
 
     let body = quote! {
         #fn_ident( #input_idents ).await
     };
-
-    let body = if maybe_result_type.error_type.is_some() {
-        quote! {
-            #body .map_err(__Context__::raise_error)
-        }
-    } else {
-        quote! {
-            Ok( #body )
-        }
-    };
-
-    let output_type = maybe_result_type.success_type;
 
     let (impl_generics, _, where_clause) = generics.split_for_impl();
 
     let computer: ItemImpl = parse2(quote! {
         #[cgp_new_provider]
         impl #impl_generics
-            Handler<__Context__, __Code__, ( #input_types )>
+            AsyncComputer<__Context__, __Code__, ( #input_types )>
             for #handler_ident
         #where_clause
         {
             type Output = #output_type;
 
-            async fn handle(
+            async fn compute_async(
                 _context: &__Context__,
                 _code: PhantomData<__Code__>,
                 ( #input_idents ): ( #input_types )
-            ) -> Result<Self::Output, __Context__::Error> {
+            ) -> Self::Output {
                 #body
             }
         }
     })?;
 
-    let delegate_ref = if ref_arg {
-        quote! {
-            delegate_components! {
-                #handler_ident {
-                    HandlerRefComponent: PromoteRef<#handler_ident>,
-                }
+    let delegate_ref = quote! {
+        delegate_components! {
+            #handler_ident {
+                AsyncComputerRefComponent: PromoteRef<Self>,
+                HandlerComponent: #try_computer,
+                HandlerRefComponent: PromoteRef<Self>,
             }
         }
-    } else {
-        quote! {}
     };
 
     Ok(quote! {
