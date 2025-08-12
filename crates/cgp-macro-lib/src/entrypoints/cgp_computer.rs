@@ -73,11 +73,12 @@ pub fn cgp_computer(attr: TokenStream, body: TokenStream) -> syn::Result<TokenSt
                 delegate_components! {
                     #computer_ident {
                         [
-                            TryComputerComponent,
-                            HandlerComponent,
                             ComputerRefComponent,
+                            TryComputerComponent,
                             TryComputerRefComponent,
                             AsyncComputerComponent,
+                            AsyncComputerRefComponent,
+                            HandlerComponent,
                             HandlerRefComponent,
                         ] ->
                             PromoteTryComputer<Self>,
@@ -89,11 +90,12 @@ pub fn cgp_computer(attr: TokenStream, body: TokenStream) -> syn::Result<TokenSt
                 delegate_components! {
                     #computer_ident {
                         [
-                            TryComputerComponent,
-                            HandlerComponent,
                             ComputerRefComponent,
+                            TryComputerComponent,
                             TryComputerRefComponent,
                             AsyncComputerComponent,
+                            AsyncComputerRefComponent,
+                            HandlerComponent,
                             HandlerRefComponent,
                         ] ->
                             PromoteComputer<Self>,

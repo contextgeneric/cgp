@@ -29,11 +29,26 @@ delegate_components! {
 }
 
 #[test]
-fn test_generated_handlers() {
+fn test_add() {
     let app = App;
 
     assert_eq!(
+        block_on(Add::compute_async(&app, PhantomData::<()>, (1, 2))),
+        3,
+    );
+
+    assert_eq!(
         block_on(Add::handle(&app, PhantomData::<()>, (1, 2))),
+        Ok(3),
+    );
+}
+
+#[test]
+fn test_add_with_error() {
+    let app = App;
+
+    assert_eq!(
+        block_on(AddWithError::compute_async(&app, PhantomData::<()>, (1, 2))),
         Ok(3),
     );
 
@@ -54,13 +69,24 @@ async fn to_string_ref<Value: Display + Sync>(value: &Value) -> String {
 }
 
 #[test]
-fn test_computer_ref() {
+fn test_handler_ref() {
     let app = App;
     let code = PhantomData::<()>;
 
-    assert_eq!(block_on(ToStringRef::handle(&app, code, &1)).unwrap(), "1");
+    assert_eq!(block_on(ToStringRef::compute_async(&app, code, &1)), "1");
+
     assert_eq!(
-        block_on(ToStringRef::handle_ref(&app, code, &1)).unwrap(),
+        block_on(ToStringRef::compute_async_ref(&app, code, &1)),
         "1"
+    );
+
+    assert_eq!(
+        block_on(ToStringRef::handle(&app, code, &1)),
+        Ok("1".to_owned())
+    );
+
+    assert_eq!(
+        block_on(ToStringRef::handle_ref(&app, code, &1)),
+        Ok("1".to_owned())
     );
 }

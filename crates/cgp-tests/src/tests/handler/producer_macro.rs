@@ -24,11 +24,24 @@ fn test_producer_macro() {
     let input = ();
 
     assert_eq!(MagicNumber::produce(&app, code), 42);
+
     assert_eq!(MagicNumber::compute(&app, code, &input), 42);
+
     assert_eq!(MagicNumber::compute_ref(&app, code, &input), 42);
+
     assert_eq!(MagicNumber::try_compute(&app, code, &input), Ok(42));
+
     assert_eq!(MagicNumber::try_compute_ref(&app, code, &input), Ok(42));
+
+    assert_eq!(block_on(MagicNumber::compute_async(&app, code, &input)), 42);
+
+    assert_eq!(
+        block_on(MagicNumber::compute_async_ref(&app, code, &input)),
+        42
+    );
+
     assert_eq!(block_on(MagicNumber::handle(&app, code, &input)), Ok(42));
+
     assert_eq!(
         block_on(MagicNumber::handle_ref(&app, code, &input)),
         Ok(42)

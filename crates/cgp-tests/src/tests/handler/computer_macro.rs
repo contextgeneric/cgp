@@ -29,12 +29,32 @@ delegate_components! {
 }
 
 #[test]
-fn test_generated_computers() {
+fn test_add() {
     let app = App;
 
-    assert_eq!(Add::compute(&app, PhantomData::<()>, (1, 2)), 3,);
+    assert_eq!(Add::compute(&app, PhantomData::<()>, (1, 2)), 3);
 
-    assert_eq!(Add::try_compute(&app, PhantomData::<()>, (1, 2)), Ok(3),);
+    assert_eq!(Add::try_compute(&app, PhantomData::<()>, (1, 2)), Ok(3));
+
+    assert_eq!(
+        block_on(Add::compute_async(&app, PhantomData::<()>, (1, 2))),
+        3,
+    );
+
+    assert_eq!(
+        block_on(Add::handle(&app, PhantomData::<()>, (1, 2))),
+        Ok(3),
+    );
+}
+
+#[test]
+fn test_add_with_error() {
+    let app = App;
+
+    assert_eq!(
+        AddWithError::compute(&app, PhantomData::<()>, (1, 2)),
+        Ok(3),
+    );
 
     assert_eq!(
         AddWithError::try_compute(&app, PhantomData::<()>, (1, 2)),
@@ -47,7 +67,7 @@ fn test_generated_computers() {
     );
 
     assert_eq!(
-        block_on(Add::handle(&app, PhantomData::<()>, (1, 2))),
+        block_on(AddWithError::compute_async(&app, PhantomData::<()>, (1, 2))),
         Ok(3),
     );
 
@@ -73,12 +93,30 @@ fn test_computer_ref() {
     let code = PhantomData::<()>;
 
     assert_eq!(ToStringRef::compute(&app, code, &1), "1");
+
     assert_eq!(ToStringRef::compute_ref(&app, code, &1), "1");
-    assert_eq!(ToStringRef::try_compute(&app, code, &1).unwrap(), "1");
-    assert_eq!(ToStringRef::try_compute_ref(&app, code, &1).unwrap(), "1");
-    assert_eq!(block_on(ToStringRef::handle(&app, code, &1)).unwrap(), "1");
+
+    assert_eq!(ToStringRef::try_compute(&app, code, &1), Ok("1".to_owned()));
+
     assert_eq!(
-        block_on(ToStringRef::handle_ref(&app, code, &1)).unwrap(),
+        ToStringRef::try_compute_ref(&app, code, &1),
+        Ok("1".to_owned())
+    );
+
+    assert_eq!(block_on(ToStringRef::compute_async(&app, code, &1)), "1");
+
+    assert_eq!(
+        block_on(ToStringRef::compute_async_ref(&app, code, &1)),
         "1"
+    );
+
+    assert_eq!(
+        block_on(ToStringRef::handle(&app, code, &1)),
+        Ok("1".to_owned())
+    );
+
+    assert_eq!(
+        block_on(ToStringRef::handle_ref(&app, code, &1)),
+        Ok("1".to_owned())
     );
 }
