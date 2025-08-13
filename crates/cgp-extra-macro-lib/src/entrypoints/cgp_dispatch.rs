@@ -14,7 +14,7 @@ pub fn cgp_dispatch(_attr: TokenStream, mut out: TokenStream) -> syn::Result<Tok
     let item_trait: ItemTrait = parse2(out.clone())?;
 
     let blanket_impl = derive_blanket_impl(&item_trait)?;
-    out.extend(blanket_impl.to_token_stream());
+    out.extend(blanket_impl);
 
     for item in item_trait.items.iter() {
         match item {
@@ -34,7 +34,7 @@ pub fn cgp_dispatch(_attr: TokenStream, mut out: TokenStream) -> syn::Result<Tok
     Ok(out)
 }
 
-fn derive_blanket_impl(item_trait: &ItemTrait) -> syn::Result<ItemImpl> {
+fn derive_blanket_impl(item_trait: &ItemTrait) -> syn::Result<TokenStream> {
     let trait_ident = &item_trait.ident;
     let context_ident = quote! { __Variants__ };
 
@@ -209,13 +209,13 @@ fn derive_blanket_impl(item_trait: &ItemTrait) -> syn::Result<ItemImpl> {
     let ty_generics = item_trait.generics.split_for_impl().1;
     let (impl_generics, _, where_clause) = generics.split_for_impl();
 
-    let item_impl: ItemImpl = parse2(quote! {
+    let item_impl = quote! {
         impl #impl_generics #trait_ident #ty_generics for #context_ident
             #where_clause
         {
             #(#impl_items)*
         }
-    })?;
+    };
 
     Ok(item_impl)
 }
