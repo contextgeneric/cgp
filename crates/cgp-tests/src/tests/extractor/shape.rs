@@ -98,13 +98,9 @@ fn test_shape_downcast() {
     };
 }
 
+#[cgp_dispatch]
 pub trait HasArea {
     fn area(self) -> f64;
-}
-
-#[cgp_computer]
-fn compute_area<T: HasArea>(shape: T) -> f64 {
-    shape.area()
 }
 
 impl HasArea for Circle {
@@ -125,26 +121,14 @@ impl HasArea for Triangle {
     }
 }
 
-impl HasArea for Shape {
-    fn area(self) -> f64 {
-        MatchWithValueHandlers::<ComputeArea>::compute(&(), NoCode, self)
-    }
-}
-
-impl HasArea for ShapePlus {
-    fn area(self) -> f64 {
-        MatchWithValueHandlers::<ComputeArea>::compute(&(), NoCode, self)
-    }
-}
-
 #[test]
 fn test_match_with_handlers() {
     let circle = Shape::Circle(Circle { radius: 5.0 });
 
     let _area = MatchWithHandlers::<
         Product![
-            ExtractFieldAndHandle<symbol!("Circle"), HandleFieldValue<ComputeArea>>,
-            ExtractFieldAndHandle<symbol!("Rectangle"), HandleFieldValue<ComputeArea>>,
+            ExtractFieldAndHandle<symbol!("Circle"), HandleFieldValue<Area>>,
+            ExtractFieldAndHandle<symbol!("Rectangle"), HandleFieldValue<Area>>,
         ],
     >::compute(&(), PhantomData::<()>, circle);
 }
@@ -211,7 +195,7 @@ delegate_components! {
                 Rectangle,
                 Triangle,
             ]:
-                ComputeArea,
+                Area,
             [
                 Shape,
                 ShapePlus,

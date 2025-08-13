@@ -13,6 +13,9 @@ use crate::utils::to_camel_case_str;
 pub fn cgp_dispatch(_attr: TokenStream, mut out: TokenStream) -> syn::Result<TokenStream> {
     let item_trait: ItemTrait = parse2(out.clone())?;
 
+    let blanket_impl = derive_blanket_impl(&item_trait)?;
+    out.extend(blanket_impl.to_token_stream());
+
     for item in item_trait.items.iter() {
         match item {
             syn::TraitItem::Fn(fn_item) => {
@@ -27,9 +30,6 @@ pub fn cgp_dispatch(_attr: TokenStream, mut out: TokenStream) -> syn::Result<Tok
             }
         }
     }
-
-    let blanket_impl = derive_blanket_impl(&item_trait)?;
-    out.extend(blanket_impl.to_token_stream());
 
     Ok(out)
 }
