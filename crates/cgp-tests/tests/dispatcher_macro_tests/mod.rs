@@ -4,5 +4,6 @@ pub mod async_self_ref_only;
 pub mod self_mut_only;
 pub mod self_only;
 pub mod self_ref_only;
-pub mod self_ref_return_ref;
+pub mod self_ref_return_explicit_ref;
+pub mod self_ref_return_implicit_ref;
 pub mod types;

@@ -184,20 +184,6 @@ fn derive_blanket_impl(item_trait: &ItemTrait) -> syn::Result<TokenStream> {
             }
         }
 
-        // let hrtbs = hrtbs.into_iter()
-        //     .map(|ident| {
-        //         let lifetime = Lifetime {
-        //             apostrophe: Span::call_site(),
-        //             ident,
-        //         };
-        //         quote! { for<#lifetime> }
-        //     })
-        //     .collect::<Vec<_>>();
-
-        // let hrtb = quote! {
-        //     #( #hrtbs )*
-        // };
-
         let input_type = if arg_types.is_empty() {
             quote! { #context_type }
         } else {
@@ -283,14 +269,13 @@ fn derive_method_computer(
     item_trait: &ItemTrait,
     method: &TraitItemFn,
 ) -> syn::Result<TokenStream> {
-    let signature = &method.sig;
+    let mut signature = method.sig.clone();
     let method_ident = &signature.ident;
-    let return_type = &signature.output;
     let async_token = signature.asyncness;
 
     let context_ident = quote! { __Variants__ };
 
-    let generics = {
+    let mut generics = {
         let mut generics = item_trait.generics.clone();
 
         generics
@@ -323,7 +308,7 @@ fn derive_method_computer(
         generics
     };
 
-    let mut args = signature.inputs.iter();
+    let mut args = signature.inputs.iter_mut();
 
     let receiver = if let Some(FnArg::Receiver(receiver)) = args.next() {
         receiver
@@ -334,9 +319,26 @@ fn derive_method_computer(
         ));
     };
 
+    let extra_life: Lifetime = parse2(quote! { '__a__ })?;
+    let mut use_extra_life = false;
+
     let context_type = match (&receiver.reference, &receiver.mutability) {
-        (Some((_, life)), Some(_)) => quote! { &#life mut #context_ident },
-        (Some((_, life)), None) => quote! { & #life #context_ident },
+        (Some((_, life)), Some(_)) => {
+            let life = life.as_ref().unwrap_or_else(|| {
+                use_extra_life = true;
+                &extra_life
+            });
+
+            quote! { &#life mut #context_ident }
+        }
+        (Some((_, life)), None) => {
+            let life = life.as_ref().unwrap_or_else(|| {
+                use_extra_life = true;
+                &extra_life
+            });
+
+            quote! { & #life #context_ident }
+        }
         _ => quote! { #context_ident },
     };
 
@@ -345,6 +347,14 @@ fn derive_method_computer(
 
     for (i, arg) in args.enumerate() {
         if let FnArg::Typed(pat_type) = arg {
+            let mut arg_type = pat_type.ty.as_ref().clone();
+            if let Type::Reference(arg_type) = &mut arg_type {
+                if arg_type.lifetime.is_none() {
+                    use_extra_life = true;
+                    arg_type.lifetime = Some(extra_life.clone());
+                }
+            }
+
             arg_idents.push(Ident::new(&format!("arg_{}", i), pat_type.span()));
             arg_types.push(pat_type.ty.as_ref().clone());
         } else {
@@ -353,6 +363,21 @@ fn derive_method_computer(
                 "Dispatcher method arguments must be typed",
             ));
         }
+    }
+
+    let return_type = &mut signature.output;
+
+    if let ReturnType::Type(_, return_type) = return_type {
+        if let Type::Reference(return_type) = return_type.as_mut() {
+            if return_type.lifetime.is_none() {
+                use_extra_life = true;
+                return_type.lifetime = Some(extra_life.clone());
+            }
+        }
+    }
+
+    if use_extra_life {
+        generics.params.insert(0, parse2(quote! { #extra_life })?);
     }
 
     let arg_params = if arg_idents.is_empty() {
