@@ -2,9 +2,7 @@ use core::marker::PhantomData;
 
 use cgp_core::field::FinalizeExtractResult;
 use cgp_core::prelude::*;
-use cgp_handler::{
-    Computer, ComputerComponent, Handler, HandlerComponent, TryComputer, TryComputerComponent,
-};
+use cgp_handler::{AsyncComputer, AsyncComputerComponent, Computer, ComputerComponent};
 
 use crate::DispatchMatchers;
 
@@ -27,50 +25,19 @@ where
 }
 
 #[cgp_provider]
-impl<'a, Context, Code, Input, Output, Remainder, Handlers> TryComputer<Context, Code, &'a Input>
-    for MatchWithHandlersRef<Handlers>
+impl<'a, Context: Async, Code: Send, Input, Output, Remainder, Handlers>
+    AsyncComputer<Context, Code, &'a Input> for MatchWithHandlersRef<Handlers>
 where
-    Context: HasErrorType,
-    Input: HasExtractorRef,
-    DispatchMatchers<Handlers>:
-        TryComputer<Context, Code, Input::ExtractorRef<'a>, Output = Result<Output, Remainder>>,
-    Remainder: FinalizeExtract,
-{
-    type Output = Output;
-
-    fn try_compute(
-        context: &Context,
-        code: PhantomData<Code>,
-        input: &'a Input,
-    ) -> Result<Output, Context::Error> {
-        Ok(
-            DispatchMatchers::try_compute(context, code, input.extractor_ref())?
-                .finalize_extract_result(),
-        )
-    }
-}
-
-#[cgp_provider]
-impl<'a, Context, Code: Send, Input, Output, Remainder, Handlers> Handler<Context, Code, &'a Input>
-    for MatchWithHandlersRef<Handlers>
-where
-    Context: HasAsyncErrorType,
     Input: Send + Sync + HasExtractorRef,
     DispatchMatchers<Handlers>:
-        Handler<Context, Code, Input::ExtractorRef<'a>, Output = Result<Output, Remainder>>,
+        AsyncComputer<Context, Code, Input::ExtractorRef<'a>, Output = Result<Output, Remainder>>,
     Remainder: FinalizeExtract,
 {
     type Output = Output;
 
-    async fn handle(
-        context: &Context,
-        code: PhantomData<Code>,
-        input: &'a Input,
-    ) -> Result<Output, Context::Error> {
-        Ok(
-            DispatchMatchers::handle(context, code, input.extractor_ref())
-                .await?
-                .finalize_extract_result(),
-        )
+    async fn compute_async(context: &Context, code: PhantomData<Code>, input: &'a Input) -> Output {
+        DispatchMatchers::compute_async(context, code, input.extractor_ref())
+            .await
+            .finalize_extract_result()
     }
 }

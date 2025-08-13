@@ -1,7 +1,8 @@
 use cgp_core::prelude::*;
 
 use crate::{
-    Computer, ComputerComponent, Handler, HandlerComponent, TryComputer, TryComputerComponent,
+    AsyncComputer, AsyncComputerComponent, Computer, ComputerComponent, Handler, HandlerComponent,
+    TryComputer, TryComputerComponent,
 };
 
 pub struct HandleFieldValue<Provider = UseContext>(pub PhantomData<Provider>);
@@ -38,6 +39,23 @@ where
         input: Field<Tag, Input>,
     ) -> Result<Self::Output, Context::Error> {
         Provider::try_compute(context, tag, input.value)
+    }
+}
+
+#[cgp_provider]
+impl<Context: Async, Code: Send, Tag: Send, Input: Send, Provider>
+    AsyncComputer<Context, Code, Field<Tag, Input>> for HandleFieldValue<Provider>
+where
+    Provider: AsyncComputer<Context, Code, Input>,
+{
+    type Output = Provider::Output;
+
+    async fn compute_async(
+        context: &Context,
+        tag: PhantomData<Code>,
+        input: Field<Tag, Input>,
+    ) -> Self::Output {
+        Provider::compute_async(context, tag, input.value).await
     }
 }
 

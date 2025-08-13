@@ -1,7 +1,8 @@
 use cgp_core::field::CanDowncastFields;
 use cgp_core::prelude::*;
 use cgp_handler::{
-    Computer, ComputerComponent, Handler, HandlerComponent, TryComputer, TryComputerComponent,
+    AsyncComputer, AsyncComputerComponent, Computer, ComputerComponent, Handler, HandlerComponent,
+    TryComputer, TryComputerComponent,
 };
 
 pub struct DowncastAndHandle<Input, Provider = UseContext>(pub PhantomData<(Input, Provider)>);
@@ -49,6 +50,40 @@ where
                 Ok(Ok(output))
             }
             Err(remainder) => Ok(Err(remainder)),
+        }
+    }
+}
+
+#[cgp_provider]
+impl<
+        Context: Async,
+        Code: Send,
+        Input: Send,
+        Provider,
+        Inner: Send,
+        Output: Send,
+        Remainder: Send,
+    > AsyncComputer<Context, Code, Input> for DowncastAndHandle<Inner, Provider>
+where
+    Context: HasAsyncErrorType,
+    Input: CanDowncastFields<Inner, Remainder = Remainder>,
+    Provider: AsyncComputer<Context, Code, Inner, Output = Output>,
+{
+    type Output = Result<Output, Remainder>;
+
+    async fn compute_async(
+        context: &Context,
+        tag: PhantomData<Code>,
+        input: Input,
+    ) -> Result<Output, Remainder> {
+        let inner = input.downcast_fields(PhantomData::<Inner>);
+
+        match inner {
+            Ok(inner) => {
+                let output = Provider::compute_async(context, tag, inner).await;
+                Ok(output)
+            }
+            Err(remainder) => Err(remainder),
         }
     }
 }
