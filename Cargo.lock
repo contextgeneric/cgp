@@ -106,6 +106,7 @@ dependencies = [
  "cgp-core",
  "cgp-dispatch",
  "cgp-error-extra",
+ "cgp-extra-macro",
  "cgp-handler",
  "cgp-inner",
  "cgp-monad",

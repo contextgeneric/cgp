@@ -28,7 +28,6 @@ pub(crate) mod preset;
 pub(crate) mod product;
 pub(crate) mod symbol;
 pub(crate) mod type_component;
-pub(crate) mod utils;
 
 pub use field::derive_fields;
 pub use product::{make_product_expr, make_product_type, make_sum_type};
