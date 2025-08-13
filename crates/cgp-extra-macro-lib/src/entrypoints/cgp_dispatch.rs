@@ -3,7 +3,12 @@ use quote::quote;
 use syn::punctuated::Punctuated;
 use syn::spanned::Spanned;
 use syn::token::Comma;
-use syn::{parse2, FnArg, Ident, ItemTrait, TraitItemFn};
+use syn::{
+    parse2, FnArg, Ident, ImplItem, ImplItemFn, ItemImpl, ItemTrait, Lifetime, ReturnType,
+    TraitItemFn, Type, Visibility,
+};
+
+use crate::utils::to_camel_case_str;
 
 pub fn cgp_dispatch(_attr: TokenStream, mut out: TokenStream) -> syn::Result<TokenStream> {
     let item_trait: ItemTrait = parse2(out.clone())?;
@@ -26,6 +31,162 @@ pub fn cgp_dispatch(_attr: TokenStream, mut out: TokenStream) -> syn::Result<Tok
     Ok(out)
 }
 
+fn derive_blanket_impl(item_trait: &ItemTrait) -> syn::Result<ItemImpl> {
+    let trait_ident = &item_trait.ident;
+    let context_ident = quote! { __Variants__ };
+
+    let mut generics = item_trait.generics.clone();
+    generics
+        .params
+        .insert(0, parse2(quote! { #context_ident })?);
+
+    let where_clause = generics.make_where_clause();
+    where_clause.predicates.push(parse2(quote! {
+        #context_ident: HasExtractor
+    })?);
+
+    let extra_life: Lifetime = parse2(quote! { '__a__ })?;
+
+    let mut impl_items: Vec<ImplItem> = Vec::new();
+
+    for trait_item in item_trait.items.iter() {
+        let method = if let syn::TraitItem::Fn(method) = trait_item {
+            method
+        } else {
+            return Err(syn::Error::new(
+                trait_item.span(),
+                "Only function items are allowed in a dispatch trait",
+            ));
+        };
+
+        let signature = &method.sig;
+        let method_ident = &signature.ident;
+        let mut use_extra_life = false;
+
+        let computer_ident = Ident::new(
+            &to_camel_case_str(&method_ident.to_string()),
+            method_ident.span(),
+        );
+
+        let mut args = signature.inputs.iter();
+
+        let receiver = if let Some(FnArg::Receiver(receiver)) = args.next() {
+            receiver
+        } else {
+            return Err(syn::Error::new(
+                signature.span(),
+                "Dispatcher method must have a self argument",
+            ));
+        };
+
+        let mut arg_idents = Punctuated::<_, Comma>::new();
+        let mut arg_types = Punctuated::<_, Comma>::new();
+
+        for (i, arg) in args.enumerate() {
+            if let FnArg::Typed(pat_type) = arg {
+                arg_idents.push(Ident::new(&format!("arg_{}", i), pat_type.span()));
+
+                let mut arg_type = pat_type.ty.as_ref().clone();
+                if let Type::Reference(arg_type) = &mut arg_type {
+                    if arg_type.lifetime.is_none() {
+                        use_extra_life = true;
+                        arg_type.lifetime = Some(extra_life.clone());
+                    }
+                }
+
+                arg_types.push(arg_type);
+            } else {
+                return Err(syn::Error::new(
+                    arg.span(),
+                    "Dispatcher method arguments must be typed",
+                ));
+            }
+        }
+
+        let output_type = match &signature.output {
+            ReturnType::Default => {
+                quote! { () }
+            }
+            ReturnType::Type(_, output) => {
+                let mut output = output.as_ref().clone();
+                if let Type::Reference(output_type) = &mut output {
+                    if output_type.lifetime.is_none() {
+                        use_extra_life = true;
+                        output_type.lifetime = Some(extra_life.clone());
+                    }
+                }
+                quote! { #output }
+            }
+        };
+
+        let (context_type, matcher) = if let Some((_, life)) = &receiver.reference {
+            let life = life.as_ref().unwrap_or_else(|| {
+                use_extra_life = true;
+                &extra_life
+            });
+
+            let mutability = &receiver.mutability;
+            let context_type = quote! { & #mutability #life #context_ident };
+            let matcher = if mutability.is_some() {
+                quote! { MatchFirstWithValueHandlersMut }
+            } else {
+                quote! { MatchFirstWithValueHandlersRef }
+            };
+
+            (context_type, matcher)
+        } else {
+            let context_type = quote! { #context_ident  };
+            let matcher = quote! { MatchFirstWithFieldHandlers };
+
+            (context_type, matcher)
+        };
+
+        let hrtb = if use_extra_life {
+            quote! { for<#extra_life> }
+        } else {
+            TokenStream::new()
+        };
+
+        where_clause.predicates.push(parse2(quote! {
+            #matcher<#computer_ident>: #hrtb
+                Computer<(), (), (#context_type, (#arg_types)), Output = #output_type>
+        })?);
+
+        let method_body = quote! {
+            #matcher::<#computer_ident>::compute(
+                &(),
+                ::core::marker::PhantomData::<()>,
+                (self, (#arg_idents)),
+            )
+        };
+
+        let impl_item = ImplItem::Fn(ImplItemFn {
+            attrs: Default::default(),
+            vis: Visibility::Inherited,
+            defaultness: None,
+            sig: signature.clone(),
+            block: parse2(quote! {
+                { #method_body }
+            })?,
+        });
+
+        impl_items.push(impl_item);
+    }
+
+    let ty_generics = item_trait.generics.split_for_impl().1;
+    let (impl_generics, _, where_clause) = generics.split_for_impl();
+
+    let item_impl: ItemImpl = parse2(quote! {
+        impl #impl_generics #trait_ident #ty_generics for #context_ident
+            #where_clause
+        {
+            #(#impl_items)*
+        }
+    })?;
+
+    Ok(item_impl)
+}
+
 fn derive_method_computer(
     item_trait: &ItemTrait,
     method: &TraitItemFn,
@@ -34,6 +195,8 @@ fn derive_method_computer(
     let method_ident = &signature.ident;
     let return_type = &signature.output;
     let async_token = signature.asyncness;
+
+    let context_ident = quote! { __Variants__ };
 
     let generics = {
         let mut generics = item_trait.generics.clone();
@@ -53,7 +216,7 @@ fn derive_method_computer(
         generics.params.insert(
             0,
             parse2(quote! {
-                __Variants__: #trait_ident #impl_generics
+                #context_ident: #trait_ident #impl_generics
             })?,
         );
 
@@ -72,9 +235,9 @@ fn derive_method_computer(
     };
 
     let context_type = match (&receiver.reference, &receiver.mutability) {
-        (Some((_, life)), Some(_)) => quote! { &mut #life __Variants__ },
-        (Some((_, life)), None) => quote! { & #life __Variants__ },
-        _ => quote! { __Variants__ },
+        (Some((_, life)), Some(_)) => quote! { &mut #life #context_ident },
+        (Some((_, life)), None) => quote! { & #life #context_ident },
+        _ => quote! { #context_ident },
     };
 
     let mut arg_idents = Punctuated::<_, Comma>::new();
@@ -111,12 +274,12 @@ fn derive_method_computer(
     Ok(quote! {
         #[cgp_computer]
         #async_token fn #method_ident #impl_generics (
-            __Variants__: #context_type,
+            #context_ident: #context_type,
             #arg_params
         ) #return_type
         #where_clause
         {
-            __Variants__. #method_ident( #arg_idents ) #dot_await
+            #context_ident. #method_ident( #arg_idents ) #dot_await
         }
     })
 }
