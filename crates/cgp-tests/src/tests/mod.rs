@@ -6,6 +6,7 @@ pub mod check_components;
 pub mod compose;
 pub mod delegate_and_check_components;
 pub mod delegate_components;
+pub mod dispatcher_macro;
 pub mod extractor;
 pub mod getter;
 pub mod handler;

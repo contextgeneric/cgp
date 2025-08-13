@@ -2,7 +2,7 @@ use cgp_core::prelude::*;
 use cgp_handler::{HandleFieldValue, PromoteRef, UseInputDelegate};
 
 use crate::providers::matchers::to_field_handlers::{HasFieldHandlers, MapExtractFieldAndHandle};
-use crate::{MatchWithHandlers, MatchWithHandlersRef};
+use crate::{MatchWithHandlers, MatchWithHandlersMut, MatchWithHandlersRef};
 
 pub type MatchWithFieldHandlers<Provider = UseContext> =
     UseInputDelegate<MatchWithFieldHandlersInputs<Provider>>;
@@ -16,6 +16,9 @@ pub type MatchWithFieldHandlersRef<Provider = UseContext> =
 pub type MatchWithValueHandlersRef<Provider = UseContext> =
     UseInputDelegate<MatchWithFieldHandlersInputsRef<HandleFieldValue<Provider>>>;
 
+pub type MatchWithValueHandlersMut<Provider = UseContext> =
+    UseInputDelegate<MatchWithFieldHandlersInputsMut<HandleFieldValue<Provider>>>;
+
 delegate_components! {
     <Input: HasFieldHandlers<MapExtractFieldAndHandle<Provider>>, Provider>
     new MatchWithFieldHandlersInputs<Provider> {
@@ -28,5 +31,13 @@ delegate_components! {
     new MatchWithFieldHandlersInputsRef<Provider> {
         <'a> &'a Input:
             MatchWithHandlersRef<Input::Handlers>,
+    }
+}
+
+delegate_components! {
+    <Input: HasFieldHandlers<MapExtractFieldAndHandle<Provider>>, Args, Provider>
+    new MatchWithFieldHandlersInputsMut<Provider> {
+        <'a> (&'a mut Input, Args):
+            MatchWithHandlersMut<Input::Handlers>
     }
 }
