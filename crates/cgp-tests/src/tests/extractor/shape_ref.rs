@@ -45,6 +45,7 @@ fn compute_area_ref<T: HasAreaRef>(shape: &T) -> f64 {
     shape.area()
 }
 
+#[cgp_dispatch]
 pub trait ContainerRef {
     fn contains_ref(&self, x: f64, y: f64) -> bool;
 }
@@ -78,10 +79,10 @@ where
     }
 }
 
-#[cgp_computer]
-fn contains_ref<T: ContainerRef>(shape: &T, (x, y): (f64, f64)) -> bool {
-    shape.contains_ref(x, y)
-}
+// #[cgp_computer]
+// fn contains_ref<T: ContainerRef>(shape: &T, (x, y): (f64, f64)) -> bool {
+//     shape.contains_ref(x, y)
+// }
 
 pub trait CanScale {
     fn scale(&mut self, factor: f64);

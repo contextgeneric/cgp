@@ -5,10 +5,8 @@ use syn::spanned::Spanned;
 use syn::token::Comma;
 use syn::{parse2, FnArg, Ident, ItemTrait, TraitItemFn};
 
-pub fn cgp_dispatch(_attr: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
-    let item_trait: ItemTrait = parse2(body)?;
-
-    let mut out = TokenStream::new();
+pub fn cgp_dispatch(_attr: TokenStream, mut out: TokenStream) -> syn::Result<TokenStream> {
+    let item_trait: ItemTrait = parse2(out.clone())?;
 
     for item in item_trait.items.iter() {
         match item {
@@ -55,7 +53,7 @@ fn derive_method_computer(
         generics.params.insert(
             0,
             parse2(quote! {
-                __Context__: #trait_ident #impl_generics
+                __Variants__: #trait_ident #impl_generics
             })?,
         );
 
@@ -74,9 +72,9 @@ fn derive_method_computer(
     };
 
     let context_type = match (&receiver.reference, &receiver.mutability) {
-        (Some((_, life)), Some(_)) => quote! { &mut #life __Context__ },
-        (Some((_, life)), None) => quote! { & #life __Context__ },
-        _ => quote! { __Context__ },
+        (Some((_, life)), Some(_)) => quote! { &mut #life __Variants__ },
+        (Some((_, life)), None) => quote! { & #life __Variants__ },
+        _ => quote! { __Variants__ },
     };
 
     let mut arg_idents = Punctuated::<_, Comma>::new();
@@ -108,17 +106,17 @@ fn derive_method_computer(
         TokenStream::new()
     };
 
-    let (_, trait_generics, where_clause) = generics.split_for_impl();
+    let (impl_generics, _, where_clause) = generics.split_for_impl();
 
     Ok(quote! {
         #[cgp_computer]
-        #async_token fn #method_ident #trait_generics (
-            __context__: #context_type,
+        #async_token fn #method_ident #impl_generics (
+            __Variants__: #context_type,
             #arg_params
         ) #return_type
         #where_clause
         {
-            __context__. #method_ident( #arg_idents ) #dot_await
+            __Variants__. #method_ident( #arg_idents ) #dot_await
         }
     })
 }
