@@ -44,11 +44,9 @@ fn derive_blanket_impl(item_trait: &ItemTrait) -> syn::Result<TokenStream> {
         .insert(0, parse2(quote! { #context_ident })?);
 
     let where_clause = generics.make_where_clause();
-    where_clause.predicates.push(parse2(quote! {
-        #context_ident: HasExtractor
-    })?);
 
     let extra_life: Lifetime = parse2(quote! { '__a__ })?;
+    let mut has_async = false;
 
     let mut impl_items: Vec<ImplItem> = Vec::new();
 
@@ -174,10 +172,19 @@ fn derive_blanket_impl(item_trait: &ItemTrait) -> syn::Result<TokenStream> {
             quote! { (#context_type, (#arg_types)) }
         };
 
-        where_clause.predicates.push(parse2(quote! {
-            #matcher<#computer_ident>: #hrtb
-                Computer<(), (), #input_type, Output = #output_type>
-        })?);
+        if signature.asyncness.is_some() {
+            where_clause.predicates.push(parse2(quote! {
+                #matcher<#computer_ident>: #hrtb
+                    AsyncComputer<(), (), #input_type, Output = #output_type>
+            })?);
+
+            has_async = true;
+        } else {
+            where_clause.predicates.push(parse2(quote! {
+                #matcher<#computer_ident>: #hrtb
+                    Computer<(), (), #input_type, Output = #output_type>
+            })?);
+        }
 
         let args = if arg_idents.is_empty() {
             quote! { self }
@@ -185,12 +192,22 @@ fn derive_blanket_impl(item_trait: &ItemTrait) -> syn::Result<TokenStream> {
             quote! { (self, (#arg_idents)) }
         };
 
-        let method_body = quote! {
-            #matcher::<#computer_ident>::compute(
-                &(),
-                ::core::marker::PhantomData::<()>,
-                #args,
-            )
+        let method_body = if signature.asyncness.is_some() {
+            quote! {
+                #matcher::<#computer_ident>::compute_async(
+                    &(),
+                    ::core::marker::PhantomData::<()>,
+                    #args,
+                ).await
+            }
+        } else {
+            quote! {
+                #matcher::<#computer_ident>::compute(
+                    &(),
+                    ::core::marker::PhantomData::<()>,
+                    #args,
+                )
+            }
         };
 
         let impl_item = ImplItem::Fn(ImplItemFn {
@@ -204,6 +221,16 @@ fn derive_blanket_impl(item_trait: &ItemTrait) -> syn::Result<TokenStream> {
         });
 
         impl_items.push(impl_item);
+    }
+
+    if has_async {
+        where_clause.predicates.push(parse2(quote! {
+            #context_ident: HasExtractor + Async
+        })?);
+    } else {
+        where_clause.predicates.push(parse2(quote! {
+            #context_ident: HasExtractor
+        })?);
     }
 
     let ty_generics = item_trait.generics.split_for_impl().1;
@@ -246,10 +273,17 @@ fn derive_method_computer(
 
         let impl_generics = generics.split_for_impl().0;
         let trait_ident = &item_trait.ident;
+
+        let async_bound = if async_token.is_some() {
+            quote! { + Async }
+        } else {
+            TokenStream::new()
+        };
+
         generics.params.insert(
             0,
             parse2(quote! {
-                #context_ident: #trait_ident #impl_generics
+                #context_ident: #trait_ident #impl_generics #async_bound
             })?,
         );
 
