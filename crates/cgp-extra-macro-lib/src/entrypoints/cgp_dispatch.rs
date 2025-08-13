@@ -67,7 +67,7 @@ fn derive_blanket_impl(item_trait: &ItemTrait) -> syn::Result<TokenStream> {
         let mut hrtbs: BTreeSet<Ident> = BTreeSet::new();
 
         let computer_ident = Ident::new(
-            &to_camel_case_str(&method_ident.to_string()),
+            &format!("Compute{}", to_camel_case_str(&method_ident.to_string())),
             method_ident.span(),
         );
 
@@ -394,10 +394,15 @@ fn derive_method_computer(
         TokenStream::new()
     };
 
+    let computer_ident = Ident::new(
+        &format!("Compute{}", to_camel_case_str(&method_ident.to_string())),
+        method_ident.span(),
+    );
+
     let (impl_generics, _, where_clause) = generics.split_for_impl();
 
     Ok(quote! {
-        #[cgp_computer]
+        #[cgp_computer( #computer_ident )]
         #async_token fn #method_ident #impl_generics (
             #context_ident: #context_type,
             #arg_params

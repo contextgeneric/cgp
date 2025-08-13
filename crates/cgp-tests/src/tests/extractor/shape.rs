@@ -127,8 +127,8 @@ fn test_match_with_handlers() {
 
     let _area = MatchWithHandlers::<
         Product![
-            ExtractFieldAndHandle<symbol!("Circle"), HandleFieldValue<Area>>,
-            ExtractFieldAndHandle<symbol!("Rectangle"), HandleFieldValue<Area>>,
+            ExtractFieldAndHandle<symbol!("Circle"), HandleFieldValue<ComputeArea>>,
+            ExtractFieldAndHandle<symbol!("Rectangle"), HandleFieldValue<ComputeArea>>,
         ],
     >::compute(&(), PhantomData::<()>, circle);
 }
@@ -195,7 +195,7 @@ delegate_components! {
                 Rectangle,
                 Triangle,
             ]:
-                Area,
+                ComputeArea,
             [
                 Shape,
                 ShapePlus,
