@@ -2,7 +2,7 @@ use core::marker::PhantomData;
 
 use cgp_core::field::FinalizeExtractResult;
 use cgp_core::prelude::*;
-use cgp_handler::{Computer, ComputerComponent, Handler, HandlerComponent};
+use cgp_handler::{AsyncComputer, AsyncComputerComponent, Computer, ComputerComponent};
 
 use crate::DispatchMatchers;
 
@@ -25,26 +25,23 @@ where
 }
 
 #[cgp_provider]
-impl<'a, Context, Code: Send, Input, Output, Remainder, Handlers>
-    Handler<Context, Code, &'a mut Input> for MatchWithHandlersMut<Handlers>
+impl<'a, Context: Async, Code: Send, Input, Output, Remainder, Handlers>
+    AsyncComputer<Context, Code, &'a mut Input> for MatchWithHandlersMut<Handlers>
 where
-    Context: HasAsyncErrorType,
     Input: Send + Sync + HasExtractorMut,
     DispatchMatchers<Handlers>:
-        Handler<Context, Code, Input::ExtractorMut<'a>, Output = Result<Output, Remainder>>,
+        AsyncComputer<Context, Code, Input::ExtractorMut<'a>, Output = Result<Output, Remainder>>,
     Remainder: FinalizeExtract,
 {
     type Output = Output;
 
-    async fn handle(
+    async fn compute_async(
         context: &Context,
         code: PhantomData<Code>,
         input: &'a mut Input,
-    ) -> Result<Output, Context::Error> {
-        Ok(
-            DispatchMatchers::handle(context, code, input.extractor_mut())
-                .await?
-                .finalize_extract_result(),
-        )
+    ) -> Output {
+        DispatchMatchers::compute_async(context, code, input.extractor_mut())
+            .await
+            .finalize_extract_result()
     }
 }
