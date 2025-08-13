@@ -1,7 +1,5 @@
 use cgp_core::prelude::*;
-use cgp_handler::{
-    Computer, ComputerComponent, Handler, HandlerComponent, TryComputer, TryComputerComponent,
-};
+use cgp_handler::{AsyncComputer, AsyncComputerComponent, Computer, ComputerComponent};
 
 pub struct ExtractFirstFieldAndHandle<Tag, Provider = UseContext>(pub PhantomData<(Tag, Provider)>);
 
@@ -31,35 +29,8 @@ where
 }
 
 #[cgp_provider]
-impl<Context, Code, Input, Args, Tag, Value, Provider, Output, Remainder>
-    TryComputer<Context, Code, (Input, Args)> for ExtractFirstFieldAndHandle<Tag, Provider>
-where
-    Context: HasErrorType,
-    Input: ExtractField<Tag, Value = Value, Remainder = Remainder>,
-    Provider: TryComputer<Context, Code, (Field<Tag, Value>, Args), Output = Output>,
-{
-    type Output = Result<Output, (Remainder, Args)>;
-
-    fn try_compute(
-        context: &Context,
-        tag: PhantomData<Code>,
-        (input, args): (Input, Args),
-    ) -> Result<Result<Output, (Remainder, Args)>, Context::Error> {
-        let value = input.extract_field(PhantomData::<Tag>);
-
-        match value {
-            Ok(value) => {
-                let output = Provider::try_compute(context, tag, (value.into(), args))?;
-                Ok(Ok(output))
-            }
-            Err(remainder) => Ok(Err((remainder, args))),
-        }
-    }
-}
-
-#[cgp_provider]
 impl<
-        Context,
+        Context: Async,
         Code: Send,
         Input: Send,
         Args: Send,
@@ -68,27 +39,26 @@ impl<
         Provider,
         Output: Send,
         Remainder: Send,
-    > Handler<Context, Code, (Input, Args)> for ExtractFirstFieldAndHandle<Tag, Provider>
+    > AsyncComputer<Context, Code, (Input, Args)> for ExtractFirstFieldAndHandle<Tag, Provider>
 where
-    Context: HasAsyncErrorType,
     Input: ExtractField<Tag, Value = Value, Remainder = Remainder>,
-    Provider: Handler<Context, Code, (Field<Tag, Value>, Args), Output = Output>,
+    Provider: AsyncComputer<Context, Code, (Field<Tag, Value>, Args), Output = Output>,
 {
     type Output = Result<Output, (Remainder, Args)>;
 
-    async fn handle(
+    async fn compute_async(
         context: &Context,
         tag: PhantomData<Code>,
         (input, args): (Input, Args),
-    ) -> Result<Result<Output, (Remainder, Args)>, Context::Error> {
+    ) -> Result<Output, (Remainder, Args)> {
         let value = input.extract_field(PhantomData::<Tag>);
 
         match value {
             Ok(value) => {
-                let output = Provider::handle(context, tag, (value.into(), args)).await?;
-                Ok(Ok(output))
+                let output = Provider::compute_async(context, tag, (value.into(), args)).await;
+                Ok(output)
             }
-            Err(remainder) => Ok(Err((remainder, args))),
+            Err(remainder) => Err((remainder, args)),
         }
     }
 }
