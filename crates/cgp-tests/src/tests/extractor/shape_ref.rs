@@ -3,11 +3,12 @@ use std::f64::consts::PI;
 use cgp::extra::dispatch::{
     MatchFirstWithValueHandlersMut, MatchFirstWithValueHandlersRef, MatchWithValueHandlersRef,
 };
-use cgp::extra::handler::{ComputerRef, NoCode};
+use cgp::extra::handler::NoCode;
 use cgp::prelude::*;
 
 use crate::tests::extractor::shape::{Circle, Rectangle, Shape, ShapePlus, Triangle};
 
+#[cgp_dispatch]
 pub trait HasAreaRef {
     fn area(&self) -> f64;
 }
@@ -30,15 +31,17 @@ impl HasAreaRef for Triangle {
     }
 }
 
-impl<Context> HasAreaRef for Context
-where
-    Context: HasExtractorRef,
-    MatchWithValueHandlersRef<ComputeAreaRef>: ComputerRef<(), (), Context, Output = f64>,
-{
-    fn area(&self) -> f64 {
-        MatchWithValueHandlersRef::<ComputeAreaRef>::compute_ref(&(), NoCode, self)
-    }
-}
+// impl<Context> HasAreaRef for Context
+// where
+//     Context: HasExtractorRef,
+//     MatchWithValueHandlersRef<ComputeAreaRef>: ComputerRef<(), (), Context, Output = f64>,
+//     // MatchWithValueHandlersRef<ComputeAreaRef>:
+//     //     for<'a> Computer<(), (), &'a Context, Output = f64>,
+// {
+//     fn area(&self) -> f64 {
+//         MatchWithValueHandlersRef::<ComputeAreaRef>::compute_ref(&(), NoCode, self)
+//     }
+// }
 
 #[cgp_computer]
 fn compute_area_ref<T: HasAreaRef>(shape: &T) -> f64 {
@@ -67,22 +70,6 @@ impl ContainerRef for Triangle {
         true // stub
     }
 }
-
-// impl<Context> ContainerRef for Context
-// where
-//     Context: HasExtractorRef,
-//     MatchFirstWithValueHandlersRef<ContainsRef>:
-//         for<'a> Computer<(), (), (&'a Context, (f64, f64)), Output = bool>,
-// {
-//     fn contains_ref(&self, x: f64, y: f64) -> bool {
-//         MatchFirstWithValueHandlersRef::compute(&(), NoCode, (self, (x, y)))
-//     }
-// }
-
-// #[cgp_computer]
-// fn contains_ref<T: ContainerRef>(shape: &T, (x, y): (f64, f64)) -> bool {
-//     shape.contains_ref(x, y)
-// }
 
 pub trait CanScale {
     fn scale(&mut self, factor: f64);

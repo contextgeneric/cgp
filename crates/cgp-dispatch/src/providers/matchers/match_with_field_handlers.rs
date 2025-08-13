@@ -14,7 +14,7 @@ pub type MatchWithFieldHandlersRef<Provider = UseContext> =
     UseInputDelegate<MatchWithFieldHandlersInputsRef<PromoteRef<Provider>>>;
 
 pub type MatchWithValueHandlersRef<Provider = UseContext> =
-    UseInputDelegate<MatchWithFieldHandlersInputsRef<HandleFieldValue<PromoteRef<Provider>>>>;
+    UseInputDelegate<MatchWithFieldHandlersInputsRef<HandleFieldValue<Provider>>>;
 
 delegate_components! {
     <Input: HasFieldHandlers<MapExtractFieldAndHandle<Provider>>, Provider>
@@ -26,7 +26,7 @@ delegate_components! {
 delegate_components! {
     <Input: HasFieldHandlers<MapExtractFieldAndHandle<Provider>>, Provider>
     new MatchWithFieldHandlersInputsRef<Provider> {
-        Input:
-            PromoteRef<MatchWithHandlersRef<Input::Handlers>>
+        <'a> &'a Input:
+            MatchWithHandlersRef<Input::Handlers>,
     }
 }

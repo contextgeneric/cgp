@@ -139,15 +139,27 @@ fn derive_blanket_impl(item_trait: &ItemTrait) -> syn::Result<ItemImpl> {
             let mutability = &receiver.mutability;
             let context_type = quote! { & #mutability #life #context_ident };
             let matcher = if mutability.is_some() {
-                quote! { MatchFirstWithValueHandlersMut }
+                if arg_types.is_empty() {
+                    quote! { MatchWithValueHandlersMut }
+                } else {
+                    quote! { MatchFirstWithValueHandlersMut }
+                }
             } else {
-                quote! { MatchFirstWithValueHandlersRef }
+                if arg_types.is_empty() {
+                    quote! { MatchWithValueHandlersRef }
+                } else {
+                    quote! { MatchFirstWithValueHandlersRef }
+                }
             };
 
             (context_type, matcher)
         } else {
             let context_type = quote! { #context_ident  };
-            let matcher = quote! { MatchFirstWithFieldHandlers };
+            let matcher = if arg_types.is_empty() {
+                quote! { MatchWithValueHandlers }
+            } else {
+                quote! { MatchFirstWithValueHandlers }
+            };
 
             (context_type, matcher)
         };
@@ -158,16 +170,28 @@ fn derive_blanket_impl(item_trait: &ItemTrait) -> syn::Result<ItemImpl> {
             TokenStream::new()
         };
 
+        let input_type = if arg_types.is_empty() {
+            quote! { #context_type }
+        } else {
+            quote! { (#context_type, (#arg_types)) }
+        };
+
         where_clause.predicates.push(parse2(quote! {
             #matcher<#computer_ident>: #hrtb
-                Computer<(), (), (#context_type, (#arg_types)), Output = #output_type>
+                Computer<(), (), #input_type, Output = #output_type>
         })?);
+
+        let args = if arg_idents.is_empty() {
+            quote! { self }
+        } else {
+            quote! { (self, (#arg_idents)) }
+        };
 
         let method_body = quote! {
             #matcher::<#computer_ident>::compute(
                 &(),
                 ::core::marker::PhantomData::<()>,
-                (self, (#arg_idents)),
+                #args,
             )
         };
 

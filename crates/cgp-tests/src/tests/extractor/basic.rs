@@ -9,8 +9,8 @@ use cgp::extra::dispatch::{
     MatchWithValueHandlersRef,
 };
 use cgp::extra::handler::{
-    Computer, ComputerComponent, ComputerRef, ComputerRefComponent, HandleFieldValue, Handler,
-    Promote, PromoteAsync,
+    Computer, ComputerComponent, ComputerRefComponent, HandleFieldValue, Handler, Promote,
+    PromoteAsync,
 };
 use cgp::prelude::*;
 use futures::executor::block_on;
@@ -182,16 +182,12 @@ fn test_dispatch_values_ref() {
     let code = PhantomData::<()>;
 
     assert_eq!(
-        MatchWithValueHandlersRef::<ValueToStringRef>::compute_ref(
-            &context,
-            code,
-            &FooBarBaz::Foo(1)
-        ),
+        MatchWithValueHandlersRef::<ValueToStringRef>::compute(&context, code, &FooBarBaz::Foo(1)),
         "1"
     );
 
     assert_eq!(
-        MatchWithValueHandlersRef::<ValueToStringRef>::compute_ref(
+        MatchWithValueHandlersRef::<ValueToStringRef>::compute(
             &context,
             code,
             &FooBarBaz::Bar("hello".to_owned())
@@ -200,7 +196,7 @@ fn test_dispatch_values_ref() {
     );
 
     assert_eq!(
-        MatchWithValueHandlersRef::<ValueToStringRef>::compute_ref(
+        MatchWithValueHandlersRef::<ValueToStringRef>::compute(
             &context,
             code,
             &FooBarBaz::Baz(true)
@@ -210,13 +206,13 @@ fn test_dispatch_values_ref() {
 }
 
 #[cgp_new_provider]
-impl<Context, Code, Value> ComputerRef<Context, Code, Value> for ValueToString
+impl<Context, Code, Value> Computer<Context, Code, &Value> for ValueToString
 where
     Value: Display,
 {
     type Output = String;
 
-    fn compute_ref(_context: &Context, _code: PhantomData<Code>, input: &Value) -> Self::Output {
+    fn compute(_context: &Context, _code: PhantomData<Code>, input: &Value) -> Self::Output {
         input.to_string()
     }
 }
@@ -227,12 +223,12 @@ fn test_dispatch_fields_ref() {
     let code = PhantomData::<()>;
 
     assert_eq!(
-        MatchWithValueHandlersRef::<ValueToString>::compute_ref(&context, code, &FooBarBaz::Foo(1)),
+        MatchWithValueHandlersRef::<ValueToString>::compute(&context, code, &FooBarBaz::Foo(1)),
         "1"
     );
 
     assert_eq!(
-        MatchWithValueHandlersRef::<ValueToString>::compute_ref(
+        MatchWithValueHandlersRef::<ValueToString>::compute(
             &context,
             code,
             &FooBarBaz::Bar("hello".to_owned())
@@ -241,11 +237,7 @@ fn test_dispatch_fields_ref() {
     );
 
     assert_eq!(
-        MatchWithValueHandlersRef::<ValueToString>::compute_ref(
-            &context,
-            code,
-            &FooBarBaz::Baz(true)
-        ),
+        MatchWithValueHandlersRef::<ValueToString>::compute(&context, code, &FooBarBaz::Baz(true)),
         "true"
     );
 }
