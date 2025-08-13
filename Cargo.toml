@@ -19,6 +19,8 @@ members = [
     "crates/cgp-error-anyhow",
     "crates/cgp-error-eyre",
     "crates/cgp-error-std",
+    "crates/cgp-extra-macro",
+    "crates/cgp-extra-macro-lib",
     "crates/cgp-handler",
     "crates/cgp-monad",
     "crates/cgp-dispatch",
@@ -33,7 +35,7 @@ rust-version    = "1.81"
 edition         = "2021"
 license         = "Apache-2.0"
 repository      = "https://github.com/contextgeneric/cgp"
-authors         = ["Soares Chen <soares.chen@maybevoid.com>", "Informal Systems <hello@informal.systems>"]
+authors         = ["Soares Chen <soares.chen@maybevoid.com>"]
 keywords        = ["cgp"]
 
 [patch.crates-io]
@@ -50,6 +52,8 @@ cgp-type                    = { path = "./crates/cgp-type" }
 cgp-field                   = { path = "./crates/cgp-field" }
 cgp-error                   = { path = "./crates/cgp-error" }
 cgp-error-extra             = { path = "./crates/cgp-error-extra" }
+cgp-extra-macro             = { path = "./crates/cgp-extra-macro" }
+cgp-extra-macro-lib         = { path = "./crates/cgp-extra-macro-lib" }
 cgp-handler                 = { path = "./crates/cgp-handler" }
 cgp-monad                   = { path = "./crates/cgp-monad" }
 cgp-dispatch                = { path = "./crates/cgp-dispatch" }

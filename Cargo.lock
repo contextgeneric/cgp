@@ -114,6 +114,23 @@ dependencies = [
 ]
 
 [[package]]
+name = "cgp-extra-macro"
+version = "0.4.2"
+dependencies = [
+ "cgp-extra-macro-lib",
+ "syn",
+]
+
+[[package]]
+name = "cgp-extra-macro-lib"
+version = "0.4.2"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
 name = "cgp-field"
 version = "0.4.2"
 dependencies = [

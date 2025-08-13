@@ -1,0 +1,22 @@
+[package]
+name         = "cgp-extra-macro"
+version      = "0.4.2"
+edition      = { workspace = true }
+license      = { workspace = true }
+repository   = { workspace = true }
+authors      = { workspace = true }
+rust-version = { workspace = true }
+keywords     = { workspace = true }
+description  = """
+    Context-generic programming extra component macros
+"""
+
+[lib]
+proc-macro = true
+
+[features]
+default = []
+
+[dependencies]
+syn                     = { version = "2.0.95", features = [ "full", "extra-traits" ] }
+cgp-extra-macro-lib     = { version = "0.4.2" }
