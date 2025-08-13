@@ -2,10 +2,10 @@ use std::f64::consts::PI;
 
 use cgp::core::field::{CanDowncast, CanDowncastFields, CanUpcast, FinalizeExtractResult};
 use cgp::extra::dispatch::{
-    ExtractFieldAndHandle, ExtractFirstFieldAndHandle, HandleFirstFieldValue,
+    ExtractFieldAndHandle, ExtractFirstFieldAndHandle, HandleFieldValue, HandleFirstFieldValue,
     MatchFirstWithHandlers, MatchFirstWithValueHandlers, MatchWithHandlers, MatchWithValueHandlers,
 };
-use cgp::extra::handler::{HandleFieldValue, NoCode, UseInputDelegate};
+use cgp::extra::handler::{NoCode, UseInputDelegate};
 use cgp::prelude::*;
 
 #[derive(Debug, PartialEq, HasFields, FromVariant, ExtractField)]

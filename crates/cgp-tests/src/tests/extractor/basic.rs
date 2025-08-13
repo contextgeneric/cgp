@@ -5,12 +5,10 @@ use core::marker::PhantomData;
 use cgp::core::error::ErrorTypeProviderComponent;
 use cgp::core::field::{CanDowncast, CanDowncastFields, CanUpcast};
 use cgp::extra::dispatch::{
-    DowncastAndHandle, ExtractFieldAndHandle, MatchWithFieldHandlers, MatchWithHandlers,
-    MatchWithValueHandlersRef,
+    DowncastAndHandle, ExtractFieldAndHandle, HandleFieldValue, MatchWithFieldHandlers,
+    MatchWithHandlers, MatchWithValueHandlersRef,
 };
-use cgp::extra::handler::{
-    Computer, ComputerComponent, ComputerRefComponent, HandleFieldValue, PromoteAsync,
-};
+use cgp::extra::handler::{Computer, ComputerComponent, ComputerRefComponent, PromoteAsync};
 use cgp::prelude::*;
 use futures::executor::block_on;
 

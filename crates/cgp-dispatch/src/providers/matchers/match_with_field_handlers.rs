@@ -1,8 +1,8 @@
 use cgp_core::prelude::*;
-use cgp_handler::{HandleFieldValue, PromoteRef, UseInputDelegate};
+use cgp_handler::{PromoteRef, UseInputDelegate};
 
 use crate::providers::matchers::to_field_handlers::{HasFieldHandlers, MapExtractFieldAndHandle};
-use crate::{MatchWithHandlers, MatchWithHandlersMut, MatchWithHandlersRef};
+use crate::{HandleFieldValue, MatchWithHandlers, MatchWithHandlersMut, MatchWithHandlersRef};
 
 pub type MatchWithFieldHandlers<Provider = UseContext> =
     UseInputDelegate<MatchWithFieldHandlersInputs<Provider>>;
