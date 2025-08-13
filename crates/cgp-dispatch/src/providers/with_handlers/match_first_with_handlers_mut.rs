@@ -2,7 +2,8 @@ use core::marker::PhantomData;
 
 use cgp_core::prelude::*;
 use cgp_handler::{
-    Computer, ComputerComponent, Handler, HandlerComponent, TryComputer, TryComputerComponent,
+    AsyncComputer, AsyncComputerComponent, Computer, ComputerComponent, Handler, HandlerComponent,
+    TryComputer, TryComputerComponent,
 };
 
 use crate::DispatchMatchers;
@@ -61,6 +62,36 @@ where
         let res = DispatchMatchers::try_compute(context, code, (input.extractor_mut(), args))?;
         match res {
             Ok(output) => Ok(output),
+            Err((remainder, _)) => remainder.finalize_extract(),
+        }
+    }
+}
+
+#[cgp_provider]
+impl<'a, Context: Async, Code: Send, Input, Args: Send, Output, Remainder, Handlers>
+    AsyncComputer<Context, Code, (&'a mut Input, Args)> for MatchFirstWithHandlersMut<Handlers>
+where
+    Input: Send + Sync + HasExtractorMut,
+    DispatchMatchers<Handlers>: AsyncComputer<
+        Context,
+        Code,
+        (Input::ExtractorMut<'a>, Args),
+        Output = Result<Output, (Remainder, Args)>,
+    >,
+    Remainder: FinalizeExtract,
+{
+    type Output = Output;
+
+    async fn compute_async(
+        context: &Context,
+        code: PhantomData<Code>,
+        (input, args): (&'a mut Input, Args),
+    ) -> Output {
+        let res =
+            DispatchMatchers::compute_async(context, code, (input.extractor_mut(), args)).await;
+
+        match res {
+            Ok(output) => output,
             Err((remainder, _)) => remainder.finalize_extract(),
         }
     }

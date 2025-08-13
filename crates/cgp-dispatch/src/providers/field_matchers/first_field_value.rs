@@ -24,7 +24,6 @@ where
 impl<Context: Async, Code: Send, Tag: Send, Input: Send, Args: Send, Provider>
     AsyncComputer<Context, Code, (Field<Tag, Input>, Args)> for HandleFirstFieldValue<Provider>
 where
-    Context: HasAsyncErrorType,
     Provider: AsyncComputer<Context, Code, (Input, Args)>,
 {
     type Output = Provider::Output;
