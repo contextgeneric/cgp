@@ -54,3 +54,16 @@ impl CanScale for Rectangle {
 
 pub trait CheckShapeImpl: HasArea + CanScale {}
 impl CheckShapeImpl for Shape {}
+
+#[test]
+fn test_shape() {
+    let mut shape = Shape::Rectangle(Rectangle {
+        width: 2.0,
+        height: 2.0,
+    });
+
+    assert_eq!(shape.area(), 4.0);
+
+    shape.scale(2.0);
+    assert_eq!(shape.area(), 16.0);
+}
