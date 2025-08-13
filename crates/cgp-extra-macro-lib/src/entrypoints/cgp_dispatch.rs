@@ -144,12 +144,10 @@ fn derive_blanket_impl(item_trait: &ItemTrait) -> syn::Result<ItemImpl> {
                 } else {
                     quote! { MatchFirstWithValueHandlersMut }
                 }
+            } else if arg_types.is_empty() {
+                quote! { MatchWithValueHandlersRef }
             } else {
-                if arg_types.is_empty() {
-                    quote! { MatchWithValueHandlersRef }
-                } else {
-                    quote! { MatchFirstWithValueHandlersRef }
-                }
+                quote! { MatchFirstWithValueHandlersRef }
             };
 
             (context_type, matcher)
