@@ -68,16 +68,16 @@ impl ContainerRef for Triangle {
     }
 }
 
-impl<Context> ContainerRef for Context
-where
-    Context: HasExtractorRef,
-    MatchFirstWithValueHandlersRef<ContainsRef>:
-        for<'a> Computer<(), (), (&'a Context, (f64, f64)), Output = bool>,
-{
-    fn contains_ref(&self, x: f64, y: f64) -> bool {
-        MatchFirstWithValueHandlersRef::compute(&(), NoCode, (self, (x, y)))
-    }
-}
+// impl<Context> ContainerRef for Context
+// where
+//     Context: HasExtractorRef,
+//     MatchFirstWithValueHandlersRef<ContainsRef>:
+//         for<'a> Computer<(), (), (&'a Context, (f64, f64)), Output = bool>,
+// {
+//     fn contains_ref(&self, x: f64, y: f64) -> bool {
+//         MatchFirstWithValueHandlersRef::compute(&(), NoCode, (self, (x, y)))
+//     }
+// }
 
 // #[cgp_computer]
 // fn contains_ref<T: ContainerRef>(shape: &T, (x, y): (f64, f64)) -> bool {

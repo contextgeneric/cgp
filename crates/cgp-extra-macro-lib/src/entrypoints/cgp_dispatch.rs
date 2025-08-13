@@ -1,11 +1,11 @@
 use proc_macro2::TokenStream;
-use quote::quote;
+use quote::{quote, ToTokens};
 use syn::punctuated::Punctuated;
 use syn::spanned::Spanned;
 use syn::token::Comma;
 use syn::{
-    parse2, FnArg, Ident, ImplItem, ImplItemFn, ItemImpl, ItemTrait, Lifetime, ReturnType,
-    TraitItemFn, Type, Visibility,
+    parse2, FnArg, Ident, ImplItem, ImplItemFn, ItemImpl, ItemTrait, Lifetime, Pat, PatIdent,
+    ReturnType, TraitItemFn, Type, Visibility,
 };
 
 use crate::utils::to_camel_case_str;
@@ -27,6 +27,9 @@ pub fn cgp_dispatch(_attr: TokenStream, mut out: TokenStream) -> syn::Result<Tok
             }
         }
     }
+
+    let blanket_impl = derive_blanket_impl(&item_trait)?;
+    out.extend(blanket_impl.to_token_stream());
 
     Ok(out)
 }
@@ -59,7 +62,7 @@ fn derive_blanket_impl(item_trait: &ItemTrait) -> syn::Result<ItemImpl> {
             ));
         };
 
-        let signature = &method.sig;
+        let mut signature = method.sig.clone();
         let method_ident = &signature.ident;
         let mut use_extra_life = false;
 
@@ -68,7 +71,7 @@ fn derive_blanket_impl(item_trait: &ItemTrait) -> syn::Result<ItemImpl> {
             method_ident.span(),
         );
 
-        let mut args = signature.inputs.iter();
+        let mut args = signature.inputs.iter_mut();
 
         let receiver = if let Some(FnArg::Receiver(receiver)) = args.next() {
             receiver
@@ -84,7 +87,15 @@ fn derive_blanket_impl(item_trait: &ItemTrait) -> syn::Result<ItemImpl> {
 
         for (i, arg) in args.enumerate() {
             if let FnArg::Typed(pat_type) = arg {
-                arg_idents.push(Ident::new(&format!("arg_{}", i), pat_type.span()));
+                let arg_ident = Ident::new(&format!("arg_{}", i), pat_type.span());
+                arg_idents.push(arg_ident.clone());
+                pat_type.pat = Box::new(Pat::Ident(PatIdent {
+                    ident: arg_ident,
+                    attrs: Default::default(),
+                    by_ref: Default::default(),
+                    mutability: Default::default(),
+                    subpat: Default::default(),
+                }));
 
                 let mut arg_type = pat_type.ty.as_ref().clone();
                 if let Type::Reference(arg_type) = &mut arg_type {
@@ -164,7 +175,7 @@ fn derive_blanket_impl(item_trait: &ItemTrait) -> syn::Result<ItemImpl> {
             attrs: Default::default(),
             vis: Visibility::Inherited,
             defaultness: None,
-            sig: signature.clone(),
+            sig: signature,
             block: parse2(quote! {
                 { #method_body }
             })?,
