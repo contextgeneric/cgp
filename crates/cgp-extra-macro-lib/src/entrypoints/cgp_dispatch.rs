@@ -1,4 +1,6 @@
-use proc_macro2::TokenStream;
+use std::collections::BTreeSet;
+
+use proc_macro2::{Span, TokenStream};
 use quote::quote;
 use syn::punctuated::Punctuated;
 use syn::spanned::Spanned;
@@ -62,7 +64,7 @@ fn derive_blanket_impl(item_trait: &ItemTrait) -> syn::Result<TokenStream> {
 
         let mut signature = method.sig.clone();
         let method_ident = &signature.ident;
-        let mut use_extra_life = false;
+        let mut hrtbs: BTreeSet<Ident> = BTreeSet::new();
 
         let computer_ident = Ident::new(
             &to_camel_case_str(&method_ident.to_string()),
@@ -97,9 +99,14 @@ fn derive_blanket_impl(item_trait: &ItemTrait) -> syn::Result<TokenStream> {
 
                 let mut arg_type = pat_type.ty.as_ref().clone();
                 if let Type::Reference(arg_type) = &mut arg_type {
-                    if arg_type.lifetime.is_none() {
-                        use_extra_life = true;
-                        arg_type.lifetime = Some(extra_life.clone());
+                    match &arg_type.lifetime {
+                        Some(lifetime) => {
+                            hrtbs.insert(lifetime.ident.clone());
+                        }
+                        None => {
+                            hrtbs.insert(extra_life.ident.clone());
+                            arg_type.lifetime = Some(extra_life.clone());
+                        }
                     }
                 }
 
@@ -119,9 +126,14 @@ fn derive_blanket_impl(item_trait: &ItemTrait) -> syn::Result<TokenStream> {
             ReturnType::Type(_, output) => {
                 let mut output = output.as_ref().clone();
                 if let Type::Reference(output_type) = &mut output {
-                    if output_type.lifetime.is_none() {
-                        use_extra_life = true;
-                        output_type.lifetime = Some(extra_life.clone());
+                    match &output_type.lifetime {
+                        Some(lifetime) => {
+                            hrtbs.insert(lifetime.ident.clone());
+                        }
+                        None => {
+                            hrtbs.insert(extra_life.ident.clone());
+                            output_type.lifetime = Some(extra_life.clone());
+                        }
                     }
                 }
                 quote! { #output }
@@ -130,7 +142,7 @@ fn derive_blanket_impl(item_trait: &ItemTrait) -> syn::Result<TokenStream> {
 
         let (context_type, matcher) = if let Some((_, life)) = &receiver.reference {
             let life = life.as_ref().unwrap_or_else(|| {
-                use_extra_life = true;
+                hrtbs.insert(extra_life.ident.clone());
                 &extra_life
             });
 
@@ -160,11 +172,31 @@ fn derive_blanket_impl(item_trait: &ItemTrait) -> syn::Result<TokenStream> {
             (context_type, matcher)
         };
 
-        let hrtb = if use_extra_life {
-            quote! { for<#extra_life> }
-        } else {
-            TokenStream::new()
-        };
+        let mut hrtb = TokenStream::new();
+
+        for ident in hrtbs {
+            if ident != "static" {
+                let lifetime = Lifetime {
+                    apostrophe: Span::call_site(),
+                    ident,
+                };
+                hrtb = quote! { for<#lifetime> }
+            }
+        }
+
+        // let hrtbs = hrtbs.into_iter()
+        //     .map(|ident| {
+        //         let lifetime = Lifetime {
+        //             apostrophe: Span::call_site(),
+        //             ident,
+        //         };
+        //         quote! { for<#lifetime> }
+        //     })
+        //     .collect::<Vec<_>>();
+
+        // let hrtb = quote! {
+        //     #( #hrtbs )*
+        // };
 
         let input_type = if arg_types.is_empty() {
             quote! { #context_type }
@@ -271,7 +303,6 @@ fn derive_method_computer(
                 .extend(method_where_clause.predicates.iter().cloned());
         }
 
-        let impl_generics = generics.split_for_impl().0;
         let trait_ident = &item_trait.ident;
 
         let async_bound = if async_token.is_some() {
@@ -280,10 +311,12 @@ fn derive_method_computer(
             TokenStream::new()
         };
 
+        let type_generics = item_trait.generics.split_for_impl().1;
+
         generics.params.insert(
             0,
             parse2(quote! {
-                #context_ident: #trait_ident #impl_generics #async_bound
+                #context_ident: #trait_ident #type_generics #async_bound
             })?,
         );
 
