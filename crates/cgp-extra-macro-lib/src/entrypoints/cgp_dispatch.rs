@@ -1,11 +1,11 @@
 use proc_macro2::TokenStream;
-use quote::{quote, ToTokens};
+use quote::quote;
 use syn::punctuated::Punctuated;
 use syn::spanned::Spanned;
 use syn::token::Comma;
 use syn::{
-    parse2, FnArg, Ident, ImplItem, ImplItemFn, ItemImpl, ItemTrait, Lifetime, Pat, PatIdent,
-    ReturnType, TraitItemFn, Type, Visibility,
+    parse2, FnArg, Ident, ImplItem, ImplItemFn, ItemTrait, Lifetime, Pat, PatIdent, ReturnType,
+    TraitItemFn, Type, Visibility,
 };
 
 use crate::utils::to_camel_case_str;
@@ -137,7 +137,7 @@ fn derive_blanket_impl(item_trait: &ItemTrait) -> syn::Result<TokenStream> {
             });
 
             let mutability = &receiver.mutability;
-            let context_type = quote! { & #mutability #life #context_ident };
+            let context_type = quote! { & #life #mutability #context_ident };
             let matcher = if mutability.is_some() {
                 if arg_types.is_empty() {
                     quote! { MatchWithValueHandlersMut }
@@ -268,7 +268,7 @@ fn derive_method_computer(
     };
 
     let context_type = match (&receiver.reference, &receiver.mutability) {
-        (Some((_, life)), Some(_)) => quote! { &mut #life #context_ident },
+        (Some((_, life)), Some(_)) => quote! { &#life mut #context_ident },
         (Some((_, life)), None) => quote! { & #life #context_ident },
         _ => quote! { #context_ident },
     };

@@ -35,9 +35,9 @@ delegate_components! {
 }
 
 delegate_components! {
-    <Input: HasFieldHandlers<MapExtractFieldAndHandle<Provider>>, Args, Provider>
+    <Input: HasFieldHandlers<MapExtractFieldAndHandle<Provider>>, Provider>
     new MatchWithFieldHandlersInputsMut<Provider> {
-        <'a> (&'a mut Input, Args):
+        <'a> &'a mut Input:
             MatchWithHandlersMut<Input::Handlers>
     }
 }

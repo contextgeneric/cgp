@@ -1,6 +1,6 @@
 use cgp::prelude::*;
 
-use crate::dispatcher_macro_tests::types::{Foo, Bar, FooBar};
+use crate::dispatcher_macro_tests::types::{Bar, Foo, FooBar};
 
 #[cgp_dispatch]
 pub trait CanCall {
