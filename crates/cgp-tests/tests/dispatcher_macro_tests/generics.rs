@@ -4,17 +4,17 @@ use crate::dispatcher_macro_tests::types::{Bar, Foo, FooBar};
 
 #[cgp_dispatch]
 pub trait CanCall {
-    fn call(self, _a: &mut u64, _b: bool) -> &str;
+    fn call<T>(&self, _a: u64, _b: bool) -> &'static str;
 }
 
 impl CanCall for Foo {
-    fn call(self, _a: &mut u64, _b: bool) -> &str {
+    fn call<T>(&self, _a: u64, _b: bool) -> &'static str {
         "foo"
     }
 }
 
 impl CanCall for Bar {
-    fn call(self, _a: &mut u64, _b: bool) -> &str {
+    fn call<T>(&self, _a: u64, _b: bool) -> &'static str {
         "bar"
     }
 }
@@ -24,5 +24,5 @@ impl CheckCanCallFooBar for FooBar {}
 
 #[test]
 fn test_call_self_only() {
-    assert_eq!(FooBar::Foo(Foo).call(&mut 42, true), "foo");
+    assert_eq!(FooBar::Foo(Foo).call(42, true), "foo");
 }

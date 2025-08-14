@@ -347,16 +347,17 @@ fn derive_method_computer(
 
     for (i, arg) in args.enumerate() {
         if let FnArg::Typed(pat_type) = arg {
-            let mut arg_type = pat_type.ty.as_ref().clone();
-            if let Type::Reference(arg_type) = &mut arg_type {
+            arg_idents.push(Ident::new(&format!("arg_{}", i), pat_type.span()));
+
+            let arg_type = pat_type.ty.as_mut();
+            if let Type::Reference(arg_type) = arg_type {
                 if arg_type.lifetime.is_none() {
                     use_extra_life = true;
                     arg_type.lifetime = Some(extra_life.clone());
                 }
             }
 
-            arg_idents.push(Ident::new(&format!("arg_{}", i), pat_type.span()));
-            arg_types.push(pat_type.ty.as_ref().clone());
+            arg_types.push(arg_type);
         } else {
             return Err(syn::Error::new(
                 arg.span(),
@@ -399,6 +400,22 @@ fn derive_method_computer(
         method_ident.span(),
     );
 
+    let method_generics = {
+        let method_generics = method
+            .sig
+            .generics
+            .params
+            .iter()
+            .filter(|param| !matches!(param, syn::GenericParam::Lifetime(_)))
+            .collect::<Punctuated<_, Comma>>();
+
+        if method_generics.is_empty() {
+            TokenStream::new()
+        } else {
+            quote! { ::< #method_generics > }
+        }
+    };
+
     let (impl_generics, _, where_clause) = generics.split_for_impl();
 
     Ok(quote! {
@@ -409,7 +426,7 @@ fn derive_method_computer(
         ) #return_type
         #where_clause
         {
-            #context_ident. #method_ident( #arg_idents ) #dot_await
+            #context_ident. #method_ident #method_generics ( #arg_idents ) #dot_await
         }
     })
 }
