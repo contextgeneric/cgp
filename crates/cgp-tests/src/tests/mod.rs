@@ -8,7 +8,6 @@ pub mod delegate_and_check_components;
 pub mod delegate_components;
 pub mod extractor;
 pub mod getter;
-pub mod handler;
 pub mod has_field;
 pub mod has_fields;
 pub mod monad;

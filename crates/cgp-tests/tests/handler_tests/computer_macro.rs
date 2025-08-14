@@ -120,3 +120,8 @@ fn test_computer_ref() {
         Ok("1".to_owned())
     );
 }
+
+#[cgp_computer]
+pub fn add_generic<T: core::ops::Add<Output = T>>(a: T, b: T) -> T {
+    a + b
+}
