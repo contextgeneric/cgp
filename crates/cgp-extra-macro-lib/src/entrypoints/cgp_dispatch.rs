@@ -6,8 +6,8 @@ use syn::punctuated::Punctuated;
 use syn::spanned::Spanned;
 use syn::token::Comma;
 use syn::{
-    parse2, FnArg, Ident, ImplItem, ImplItemFn, ItemTrait, Lifetime, Pat, PatIdent, ReturnType,
-    TraitItemFn, Type, Visibility,
+    parse2, FnArg, GenericParam, Ident, ImplItem, ImplItemFn, ItemTrait, Lifetime, Pat, PatIdent,
+    ReturnType, TraitItemFn, Type, Visibility,
 };
 
 use crate::utils::to_camel_case_str;
@@ -70,6 +70,18 @@ fn derive_blanket_impl(item_trait: &ItemTrait) -> syn::Result<TokenStream> {
             &format!("Compute{}", to_camel_case_str(&method_ident.to_string())),
             method_ident.span(),
         );
+
+        for generic_param in signature.generics.params.iter() {
+            match generic_param {
+                GenericParam::Lifetime(_) => {}
+                _ => {
+                    return Err(syn::Error::new(
+                        generic_param.span(),
+                        "Dispatch trait methods cannot contain non-lifetime generic parameters due to the lack of quantified constraints in Rust",
+                    ));
+                }
+            }
+        }
 
         let mut args = signature.inputs.iter_mut();
 
@@ -281,6 +293,7 @@ fn derive_method_computer(
         generics
             .params
             .extend(signature.generics.params.iter().cloned());
+
         if let Some(method_where_clause) = &signature.generics.where_clause {
             generics
                 .make_where_clause()
