@@ -1,4 +1,5 @@
 use std::collections::btree_map::Entry;
+use std::collections::BTreeMap;
 
 use proc_macro2::TokenStream;
 use quote::{quote, ToTokens};
@@ -13,7 +14,11 @@ use crate::derive_provider::derive_is_provider_for;
 use crate::parse::{ComponentSpec, Entries};
 
 pub fn cgp_getter(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
-    let Entries { mut entries } = parse2(attr)?;
+    let mut entries = if let Ok(provider_ident) = parse2::<Ident>(attr.clone()) {
+        BTreeMap::from([("provider".to_owned(), provider_ident.to_token_stream())])
+    } else {
+        parse2::<Entries>(attr)?.entries
+    };
 
     let consumer_trait: ItemTrait = syn::parse2(body)?;
 
