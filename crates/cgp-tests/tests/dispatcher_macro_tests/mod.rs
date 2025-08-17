@@ -1,3 +1,4 @@
+pub mod async_generics;
 pub mod async_multi_args;
 pub mod async_multi_args_owned_self;
 pub mod async_multi_args_ref;

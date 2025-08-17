@@ -1,7 +1,8 @@
 use cgp_core::prelude::*;
 
 use crate::{
-    Computer, ComputerComponent, Handler, HandlerComponent, TryComputer, TryComputerComponent,
+    AsyncComputer, AsyncComputerComponent, Computer, ComputerComponent, Handler, HandlerComponent,
+    TryComputer, TryComputerComponent,
 };
 
 pub struct ReturnInput;
@@ -28,6 +29,19 @@ where
         input: Input,
     ) -> Result<Self::Output, Context::Error> {
         Ok(input)
+    }
+}
+
+#[cgp_provider]
+impl<Context: Async, Code: Send, Input: Send> AsyncComputer<Context, Code, Input> for ReturnInput {
+    type Output = Input;
+
+    async fn compute_async(
+        _context: &Context,
+        _code: PhantomData<Code>,
+        input: Input,
+    ) -> Self::Output {
+        input
     }
 }
 
