@@ -71,7 +71,7 @@ pub fn derive_is_provider_for(
 
             let mut context_arg: Option<GenericArgument> = None;
 
-            while let Some(arg) = generic_args.next() {
+            for arg in generic_args.by_ref() {
                 if let GenericArgument::Lifetime(life) = arg {
                     // Lifetime params are forced to be pushed to the front of a provider trait.
                     // Skip those and put them in the form of `&'a ()` inside the IsProviderFor params
