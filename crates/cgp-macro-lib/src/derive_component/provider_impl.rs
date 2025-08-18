@@ -13,7 +13,7 @@ use syn::{
 
 use crate::derive_component::delegate_fn::derive_delegated_fn_impl;
 use crate::derive_component::delegate_type::derive_delegate_type_impl;
-use crate::parse::TypeGenerics;
+use crate::parse::{parse_is_provider_params, TypeGenerics};
 
 pub fn derive_provider_impl(
     context_type: &Ident,
@@ -38,9 +38,7 @@ pub fn derive_provider_impl(
             .insert(0, parse2(quote!(#component_type))?);
 
         {
-            let is_provider_params = TypeGenerics::try_from(&consumer_trait.generics)?
-                .generics
-                .params;
+            let is_provider_params = parse_is_provider_params(&consumer_trait.generics)?;
 
             let mut delegate_constraint: Punctuated<TypeParamBound, Plus> = Punctuated::default();
 

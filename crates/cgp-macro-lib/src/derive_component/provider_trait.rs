@@ -9,7 +9,7 @@ use crate::derive_component::replace_self_receiver::replace_self_receiver;
 use crate::derive_component::replace_self_type::{
     iter_parse_and_replace_self_type, parse_and_replace_self_type,
 };
-use crate::parse::TypeGenerics;
+use crate::parse::parse_is_provider_params;
 
 pub fn derive_provider_trait(
     component_name: &Ident,
@@ -50,9 +50,7 @@ pub fn derive_provider_trait(
             &local_assoc_types,
         )?;
 
-        let is_provider_params = TypeGenerics::try_from(&consumer_trait.generics)?
-            .generics
-            .params;
+        let is_provider_params = parse_is_provider_params(&consumer_trait.generics)?;
 
         let provider_supertrait: TypeParamBound = parse2(quote!(
             IsProviderFor< #component_name < #component_params >, #context_type, ( #is_provider_params ) >

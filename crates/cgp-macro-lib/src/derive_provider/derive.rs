@@ -67,16 +67,32 @@ pub fn derive_is_provider_for(
         PathArguments::AngleBracketed(generics) => {
             let mut generic_args = generics.clone().args.into_iter();
 
-            let context_arg = generic_args.next().ok_or_else(|| {
+            let mut is_provider_params: Punctuated<GenericArgument, Comma> = Punctuated::default();
+
+            let mut context_arg: Option<GenericArgument> = None;
+
+            while let Some(arg) = generic_args.next() {
+                if let GenericArgument::Lifetime(life) = arg {
+                    // Lifetime params are forced to be pushed to the front of a provider trait.
+                    // Skip those and put them in the form of `&'a ()` inside the IsProviderFor params
+                    is_provider_params.push(parse_quote! { & #life () })
+                } else {
+                    // Find the first non-lifetime context type argument and break
+                    context_arg = Some(arg);
+                    break;
+                }
+            }
+
+            let context_arg = context_arg.ok_or_else(|| {
                 Error::new(
                     provider_impl.span(),
                     "provider impl should contain trait path containing at least one generic parameter",
                 )
             })?;
 
-            let rest: Punctuated<GenericArgument, Comma> = generic_args.collect();
+            is_provider_params.extend(generic_args);
 
-            parse_quote!( < #component_name, #context_arg, ( #rest ) > )
+            parse_quote!( < #component_name, #context_arg, ( #is_provider_params ) > )
         }
         _ => {
             return Err(Error::new(
