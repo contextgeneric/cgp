@@ -2,7 +2,7 @@ use cgp::prelude::*;
 
 #[test]
 pub fn test_symbol_display() {
-    let val = <symbol!("hello")>::default();
+    let val = <Symbol!("hello")>::default();
     assert_eq!(val.to_string(), "hello");
 }
 

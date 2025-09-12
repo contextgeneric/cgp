@@ -22,7 +22,7 @@ fn test_chained_getter() {
     };
 
     let name: &String = <ChainGetters<
-        Product![UseField<symbol!("inner")>, UseField<symbol!("name")>],
+        Product![UseField<Symbol!("inner")>, UseField<Symbol!("name")>],
     >>::get_field(&context, PhantomData::<()>);
     assert_eq!(name, "test");
 }
@@ -46,7 +46,7 @@ fn test_chained_getter_with_outer_life() {
     };
 
     let name: &String = <ChainGetters<
-        Product![UseField<symbol!("inner")>, UseField<symbol!("name")>],
+        Product![UseField<Symbol!("inner")>, UseField<Symbol!("name")>],
     >>::get_field(&context, PhantomData::<()>);
     assert_eq!(name, "test");
 }
@@ -70,7 +70,7 @@ fn test_chained_getter_with_inner_life() {
     };
 
     let name: &String = <ChainGetters<
-        Product![UseField<symbol!("inner")>, UseField<symbol!("name")>],
+        Product![UseField<Symbol!("inner")>, UseField<Symbol!("name")>],
     >>::get_field(&context, PhantomData::<()>);
 
     assert_eq!(name, "test");
@@ -114,11 +114,11 @@ fn test_deeply_nested_getter() {
         MyContextComponents {
             NameGetterComponent: WithProvider<
                 ChainGetters<Product![
-                    UseField<symbol!("a")>,
-                    UseField<symbol!("b")>,
-                    UseField<symbol!("c")>,
-                    UseField<symbol!("d")>,
-                    UseField<symbol!("name")>
+                    UseField<Symbol!("a")>,
+                    UseField<Symbol!("b")>,
+                    UseField<Symbol!("c")>,
+                    UseField<Symbol!("d")>,
+                    UseField<Symbol!("name")>
                 ]>>
         }
     }

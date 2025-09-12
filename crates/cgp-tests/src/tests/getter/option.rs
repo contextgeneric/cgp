@@ -15,7 +15,7 @@ pub fn test_option_getter() {
 
     delegate_components! {
         AppComponents {
-            FooGetterComponent: UseField<symbol!("bar")>,
+            FooGetterComponent: UseField<Symbol!("bar")>,
         }
     }
 

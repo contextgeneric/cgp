@@ -40,12 +40,12 @@ pub enum BazBarFoo {
 fn context_to_string(context: FooBarBaz) -> String {
     match context
         .extractor_ref()
-        .extract_field(PhantomData::<symbol!("Foo")>)
+        .extract_field(PhantomData::<Symbol!("Foo")>)
     {
         Ok(value) => value.to_string(),
-        Err(remainder) => match remainder.extract_field(PhantomData::<symbol!("Bar")>) {
+        Err(remainder) => match remainder.extract_field(PhantomData::<Symbol!("Bar")>) {
             Ok(value) => value.to_string(),
-            Err(remainder) => match remainder.extract_field(PhantomData::<symbol!("Baz")>) {
+            Err(remainder) => match remainder.extract_field(PhantomData::<Symbol!("Baz")>) {
                 Ok(value) => value.to_string(),
                 Err(remainder) => remainder.finalize_extract(),
             },
@@ -283,12 +283,12 @@ pub fn show_baz(input: bool) -> String {
 }
 
 type Computers = Product![
-    ExtractFieldAndHandle<symbol!("Baz"), HandleFieldValue<ShowBaz>>,
+    ExtractFieldAndHandle<Symbol!("Baz"), HandleFieldValue<ShowBaz>>,
     DowncastAndHandle<FooBar, ShowFooBar>,
 ];
 
 type Handlers = Product![
-    PromoteAsync<ExtractFieldAndHandle<symbol!("Baz"), HandleFieldValue<ShowBaz>>>,
+    PromoteAsync<ExtractFieldAndHandle<Symbol!("Baz"), HandleFieldValue<ShowBaz>>>,
     PromoteAsync<DowncastAndHandle<FooBar, ShowFooBar>>,
 ];
 

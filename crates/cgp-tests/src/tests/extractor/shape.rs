@@ -50,13 +50,13 @@ fn test_shape_area() {
 
     let _area = match shape
         .to_extractor() // PartialShape<IsPresent, IsPresent>
-        .extract_field(PhantomData::<symbol!("Circle")>)
+        .extract_field(PhantomData::<Symbol!("Circle")>)
     {
         Ok(circle) => PI * circle.radius * circle.radius,
         // PartialShape<IsVoid, IsPresent>
         Err(remainder) => {
             let rectangle = remainder
-                .extract_field(PhantomData::<symbol!("Rectangle")>)
+                .extract_field(PhantomData::<Symbol!("Rectangle")>)
                 .finalize_extract_result();
 
             rectangle.width * rectangle.height
@@ -128,8 +128,8 @@ fn test_match_with_handlers() {
 
     let _area = MatchWithHandlers::<
         Product![
-            ExtractFieldAndHandle<symbol!("Circle"), HandleFieldValue<ComputeArea>>,
-            ExtractFieldAndHandle<symbol!("Rectangle"), HandleFieldValue<ComputeArea>>,
+            ExtractFieldAndHandle<Symbol!("Circle"), HandleFieldValue<ComputeArea>>,
+            ExtractFieldAndHandle<Symbol!("Rectangle"), HandleFieldValue<ComputeArea>>,
         ],
     >::compute(&(), PhantomData::<()>, circle);
 }
@@ -179,8 +179,8 @@ fn test_dispatch_contains() {
 
     let _is_contained = MatchFirstWithHandlers::<
         Product![
-            ExtractFirstFieldAndHandle<symbol!("Circle"), HandleFirstFieldValue<Contains>>,
-            ExtractFirstFieldAndHandle<symbol!("Rectangle"), HandleFirstFieldValue<Contains>>,
+            ExtractFirstFieldAndHandle<Symbol!("Circle"), HandleFirstFieldValue<Contains>>,
+            ExtractFirstFieldAndHandle<Symbol!("Rectangle"), HandleFirstFieldValue<Contains>>,
         ],
     >::compute(&(), PhantomData::<()>, (circle, (1.0, 2.0)));
 }

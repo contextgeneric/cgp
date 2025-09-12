@@ -9,7 +9,7 @@ mod preset {
     cgp_preset! {
         MyGenericPresetB<T>: MyGenericPresetA<T> {
             override <I> FooGetterComponent<I>:
-                UseField<symbol!("food")>,
+                UseField<Symbol!("food")>,
         }
     }
 }

@@ -7,7 +7,7 @@ use core::marker::PhantomData;
 
    `Field` is parameterized by a phantom `Tag` type, which is used to represent
    the field name as type. Typically, this would either be a type-level string
-   such as `symbol!("name")`, or a type-level index such as `Index<0>`.
+   such as `Symbol!("name")`, or a type-level index such as `Index<0>`.
    Aside from that, `Field` is essentially a wrapper around `Value`.
 
    `Field` is mainly used within the derived [`HasFields`](crate::traits::HasFields)
@@ -35,7 +35,7 @@ use core::marker::PhantomData;
 
    ```rust,ignore
    impl HasFields for MyContext {
-       type Fields = Product![Field<symbol!("name"), String>, Field<symbol!("age"), u8>];
+       type Fields = Product![Field<Symbol!("name"), String>, Field<Symbol!("age"), u8>];
    }
    ```
 
@@ -44,8 +44,8 @@ use core::marker::PhantomData;
    ```rust,ignore
    impl HasFields for MyContext {
        type Fields =
-           π<ω<symbol!("name"), String>,
-               π<ω<symbol!("age"), u8>,
+           π<ω<Symbol!("name"), String>,
+               π<ω<Symbol!("age"), u8>,
                    ε>>;
    }
    ```

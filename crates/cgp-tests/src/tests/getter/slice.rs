@@ -15,7 +15,7 @@ pub fn test_slice_getter() {
 
     delegate_components! {
         AppComponents {
-            FooGetterComponent: UseField<symbol!("bar")>,
+            FooGetterComponent: UseField<Symbol!("bar")>,
         }
     }
 

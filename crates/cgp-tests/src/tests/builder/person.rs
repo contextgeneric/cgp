@@ -42,7 +42,7 @@ fn test_person() {
 
     let _employee: Employee = Employee::builder() // PartialEmployee<IsNothing, IsNothing, IsNothing>
         .build_from(person) // PartialEmployee<IsNothing, IsPresent, IsPresent>
-        .build_field(PhantomData::<symbol!("employee_id")>, 1) // PartialEmployee<IsPresent, IsPresent, IsPresent>
+        .build_field(PhantomData::<Symbol!("employee_id")>, 1) // PartialEmployee<IsPresent, IsPresent, IsPresent>
         .finalize_build(); // Person
 }
 
@@ -65,6 +65,6 @@ fn test_person2() {
 fn test_build_with_handler() {
     let _employee = BuildWithHandlers::<
         Employee,
-        Product![BuildAndMerge<BuildPerson>, BuildAndSetField<symbol!("employee_id"), BuildEmployeeId>],
+        Product![BuildAndMerge<BuildPerson>, BuildAndSetField<Symbol!("employee_id"), BuildEmployeeId>],
     >::compute(&(), PhantomData::<()>, ());
 }

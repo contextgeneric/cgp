@@ -8,17 +8,17 @@ mod preset {
     cgp_preset! {
         MyPresetB: MyPresetA {
             FooGetterComponent:
-                UseField<symbol!("foo")>,
+                UseField<Symbol!("foo")>,
             BarGetterComponent:
-                UseField<symbol!("bar")>,
+                UseField<Symbol!("bar")>,
         }
     }
 
     pub trait CheckDelegatesForMyPresetB:
         DelegateComponent<FooTypeProviderComponent, Delegate = UseType<()>>
         + DelegateComponent<BarTypeProviderComponent, Delegate = UseType<()>>
-        + DelegateComponent<FooGetterComponent, Delegate = UseField<symbol!("foo")>>
-        + DelegateComponent<BarGetterComponent, Delegate = UseField<symbol!("bar")>>
+        + DelegateComponent<FooGetterComponent, Delegate = UseField<Symbol!("foo")>>
+        + DelegateComponent<BarGetterComponent, Delegate = UseField<Symbol!("bar")>>
     {
     }
 

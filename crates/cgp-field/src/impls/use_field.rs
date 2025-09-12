@@ -15,7 +15,7 @@ use crate::traits::{FieldGetter, HasField, HasFieldMut, MutFieldGetter};
     generated.
 
     Typically, the `Tag` type would be a type-level string defined through
-    the `symbol!` macro, such as `symbol!("name")`. It may also be a type-level
+    the `Symbol!` macro, such as `Symbol!("name")`. It may also be a type-level
     integer that is wrapped in the `Index` type, such as `Index<0>`.
     The `HasField` implementation for these tag types would be automatically
     implemented following the field names in the struct when `#[derive(HasField)]`

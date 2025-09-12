@@ -7,13 +7,13 @@ mod preset {
     cgp_preset! {
         NestedPresetC {
             BarTypeProviderComponent: UseType<()>,
-            BarGetterComponent: UseField<symbol!("bar")>,
+            BarGetterComponent: UseField<Symbol!("bar")>,
         }
     }
 
     pub trait CheckDelegatesForNestedPresetC:
         DelegateComponent<BarTypeProviderComponent, Delegate = UseType<()>>
-        + DelegateComponent<BarGetterComponent, Delegate = UseField<symbol!("bar")>>
+        + DelegateComponent<BarGetterComponent, Delegate = UseField<Symbol!("bar")>>
     {
     }
 

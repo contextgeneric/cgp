@@ -21,7 +21,7 @@ pub fn test_abstract_type_getter() {
     delegate_components! {
         AppComponents {
             NameTypeProviderComponent: UseType<String>,
-            NameGetterComponent: UseField<symbol!("name")>,
+            NameGetterComponent: UseField<Symbol!("name")>,
         }
     }
 

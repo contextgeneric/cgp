@@ -14,7 +14,7 @@ pub struct MyContext {
 
 delegate_components! {
     MyContextComponents {
-        BarGetterComponent: UseField<symbol!("bar")>,
+        BarGetterComponent: UseField<Symbol!("bar")>,
     }
 }
 

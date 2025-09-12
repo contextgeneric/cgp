@@ -14,9 +14,9 @@ mod preset {
             ]:
                 UseType<T>,
             <const I: usize> FooGetterComponent<Index<I>>:
-                UseField<symbol!("foo")>,
+                UseField<Symbol!("foo")>,
             BarGetterComponent:
-                UseField<symbol!("bar")>,
+                UseField<Symbol!("bar")>,
         }
     }
 }

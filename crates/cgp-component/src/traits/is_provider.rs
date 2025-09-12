@@ -65,7 +65,7 @@
    #[cgp_provider(FooGetterAt)]
    impl<I, J> FooGetterAt<Context, I, J> for GetFooValue
    where
-       Context: HasField<symbol!("foo"), Value = u64>,
+       Context: HasField<Symbol!("foo"), Value = u64>,
    {
        fn foo_at(context: &Context, _phantom: PhantomData<(I, J)>) -> u64 {
            context.get_field(PhantomData)
@@ -80,7 +80,7 @@
        IsProviderFor<FooGetterAtComponent, Context, (I, J)>
        for GetFooValue
    where
-       Context: HasField<symbol!("foo"), Value = u64>,
+       Context: HasField<Symbol!("foo"), Value = u64>,
    {
    }
    ```

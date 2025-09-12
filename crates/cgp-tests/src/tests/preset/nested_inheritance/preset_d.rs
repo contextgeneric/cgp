@@ -8,7 +8,7 @@ mod preset {
     cgp_preset! {
         NestedPresetD: NestedPresetB + NestedPresetC {
             override FooGetterComponent:
-                UseField<symbol!("fool")>,
+                UseField<Symbol!("fool")>,
             override BarTypeProviderComponent ->
                 NestedPresetC::Provider,
         }
@@ -17,8 +17,8 @@ mod preset {
     pub trait CheckDelegatesForNestedPresetD:
         DelegateComponent<FooTypeProviderComponent, Delegate = UseType<()>>
         + DelegateComponent<BarTypeProviderComponent, Delegate = UseType<()>>
-        + DelegateComponent<BarGetterComponent, Delegate = UseField<symbol!("bar")>>
-        + DelegateComponent<FooGetterComponent, Delegate = UseField<symbol!("fool")>>
+        + DelegateComponent<BarGetterComponent, Delegate = UseField<Symbol!("bar")>>
+        + DelegateComponent<FooGetterComponent, Delegate = UseField<Symbol!("fool")>>
     {
     }
 

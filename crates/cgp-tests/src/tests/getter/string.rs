@@ -15,7 +15,7 @@ pub fn test_string_getter() {
 
     delegate_components! {
         AppComponents {
-            FooGetterComponent: UseField<symbol!("bar")>,
+            FooGetterComponent: UseField<Symbol!("bar")>,
         }
     }
 
@@ -41,7 +41,7 @@ pub fn test_string_getter_with_custom_name() {
 
     delegate_components! {
         AppComponents {
-            GetStringComponent: UseField<symbol!("bar")>,
+            GetStringComponent: UseField<Symbol!("bar")>,
         }
     }
 
@@ -70,7 +70,7 @@ pub fn test_string_getter_with_custom_spec() {
 
     delegate_components! {
         AppComponents {
-            GetStringComp: UseField<symbol!("bar")>,
+            GetStringComp: UseField<Symbol!("bar")>,
         }
     }
 

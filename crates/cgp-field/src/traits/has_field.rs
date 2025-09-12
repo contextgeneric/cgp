@@ -26,18 +26,18 @@ use cgp_component::UseContext;
     The macro would generate the following implementation:
 
     ```rust,ignore
-    impl HasField<symbol!("name")> for Person {
+    impl HasField<Symbol!("name")> for Person {
         type Value = String;
 
-        fn get_field(&self, _tag: PhantomData<symbol!("name")>) -> &Self::Value {
+        fn get_field(&self, _tag: PhantomData<Symbol!("name")>) -> &Self::Value {
             &self.name
         }
     }
 
-    impl HasField<symbol!("age")> for Person {
+    impl HasField<Symbol!("age")> for Person {
         type Value = u8;
 
-        fn get_field(&self, _tag: PhantomData<symbol!("age")>) -> &Self::Value {
+        fn get_field(&self, _tag: PhantomData<Symbol!("age")>) -> &Self::Value {
             &self.age
         }
     }

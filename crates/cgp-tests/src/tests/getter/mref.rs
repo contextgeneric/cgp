@@ -16,7 +16,7 @@ pub fn test_mref_getter() {
 
     delegate_components! {
         AppComponents {
-            FooGetterComponent: UseField<symbol!("bar")>,
+            FooGetterComponent: UseField<Symbol!("bar")>,
         }
     }
 

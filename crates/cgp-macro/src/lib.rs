@@ -228,7 +228,7 @@ pub fn cgp_new_provider(attr: TokenStream, item: TokenStream) -> TokenStream {
     #[cgp_provider]
     impl<Context> NameGetter<Context> for UseFields
     where
-        Context: HasField<symbol!("name"), Value = String>,
+        Context: HasField<Symbol!("name"), Value = String>,
     {
         fn get(context: &Context) -> &str {
             context.get_field(PhantomData).as_str()
@@ -829,7 +829,7 @@ pub fn replace_with(body: TokenStream) -> TokenStream {
 }
 
 /**
-    The `symbol!` macro is used to create a type-level string through the string literal
+    The `Symbol!` macro is used to create a type-level string through the string literal
     given to the macro.
 
     The macro constructs the type-level string through a chain of `Char` types and
@@ -843,7 +843,7 @@ pub fn replace_with(body: TokenStream) -> TokenStream {
     Given the following symbol definition:
 
     ```rust,ignore
-    type Hello = symbol!("hello");
+    type Hello = Symbol!("hello");
     ```
 
     The following type would be generated:
@@ -859,7 +859,8 @@ pub fn replace_with(body: TokenStream) -> TokenStream {
     ```
 */
 #[proc_macro]
-pub fn symbol(body: TokenStream) -> TokenStream {
+#[allow(non_snake_case)]
+pub fn Symbol(body: TokenStream) -> TokenStream {
     cgp_macro_lib::make_symbol(body.into()).into()
 }
 

@@ -23,7 +23,7 @@ pub fn test_basic_delegate_and_check_components() {
         CanUseMyContext for MyContext;
         MyContextComponents {
             NameTypeProviderComponent: UseType<String>,
-            NameGetterComponent: UseField<symbol!("name")>,
+            NameGetterComponent: UseField<Symbol!("name")>,
         }
     }
 }
@@ -50,7 +50,7 @@ pub fn test_generic_delegate_and_check_components() {
         CanUseMyContext for MyContext<T>;
         MyContextComponents<T> {
             NameTypeProviderComponent: UseType<T>,
-            NameGetterComponent: UseField<symbol!("name")>,
+            NameGetterComponent: UseField<Symbol!("name")>,
         }
     }
 }

@@ -48,9 +48,9 @@ pub fn test_pipe_computers() {
             ComputerComponent:
                 PipeHandlers<
                     Product! [
-                        Multiply<symbol!("foo")>,
-                        Add<symbol!("bar")>,
-                        Multiply<symbol!("baz")>,
+                        Multiply<Symbol!("foo")>,
+                        Add<Symbol!("bar")>,
+                        Multiply<Symbol!("baz")>,
                     ]
                 >,
         }
@@ -118,9 +118,9 @@ pub fn test_pipe_handlers() {
             HandlerComponent:
                 PipeHandlers<
                     Product! [
-                        Multiply<symbol!("foo")>,
-                        PromoteAsync<Promote<Add<symbol!("bar")>>>,
-                        Multiply<symbol!("baz")>,
+                        Multiply<Symbol!("foo")>,
+                        PromoteAsync<Promote<Add<Symbol!("bar")>>>,
+                        Multiply<Symbol!("baz")>,
                     ]
                 >,
         }

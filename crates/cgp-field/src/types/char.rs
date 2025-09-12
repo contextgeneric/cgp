@@ -22,7 +22,7 @@ use core::marker::PhantomData;
     and so we can workaround the limitation by combining a type-level list of
     `char`s to represent a type-level string.
 
-    `Char` is most often not used directly, but rather through the `symbol!` macro,
+    `Char` is most often not used directly, but rather through the `Symbol!` macro,
     which accepts a string literal and converts it into a list of `Char`s.
 
     ## Example
@@ -30,7 +30,7 @@ use core::marker::PhantomData;
     Given the following symbol definition:
 
     ```rust,ignore
-    type Hello = symbol!("hello");
+    type Hello = Symbol!("hello");
     ```
 
     The following type would be generated:

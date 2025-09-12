@@ -47,7 +47,7 @@ pub fn test_basic_check_components() {
                 FooGetterAtComponent,
                 BarGetterAtComponent,
             ]:
-                UseField<symbol!("dummy")>,
+                UseField<Symbol!("dummy")>,
         }
     }
 
@@ -122,7 +122,7 @@ pub fn test_generic_check_components() {
                 FooGetterAtComponent,
                 <I> BarGetterAtComponent<I>,
             ]:
-                UseField<symbol!("dummy")>,
+                UseField<Symbol!("dummy")>,
         }
     }
 

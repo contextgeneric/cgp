@@ -5,22 +5,22 @@ use cgp::prelude::*;
 
 pub fn first_name_to_string<Context>(context: &Context) -> String
 where
-    Context: HasField<symbol!("first_name"), Value: Display>,
+    Context: HasField<Symbol!("first_name"), Value: Display>,
 {
     context.get_field(PhantomData).to_string()
 }
 
 pub fn last_name_to_string<Context>(context: &Context) -> String
 where
-    Context: HasField<symbol!("last_name"), Value: Display>,
+    Context: HasField<Symbol!("last_name"), Value: Display>,
 {
     context.get_field(PhantomData).to_string()
 }
 
 pub fn full_name_to_string<Context>(context: &Context) -> String
 where
-    Context: HasField<symbol!("first_name"), Value: Display>
-        + HasField<symbol!("last_name"), Value: Display>,
+    Context: HasField<Symbol!("first_name"), Value: Display>
+        + HasField<Symbol!("last_name"), Value: Display>,
 {
     let composed = concate_outputs(first_name_to_string, last_name_to_string);
     composed(context)
@@ -36,7 +36,7 @@ pub fn concate_outputs<Context>(
 #[cgp_new_provider]
 impl<Context, Code, Input> ComputerRef<Context, Code, Input> for FirstNameToString
 where
-    Context: HasField<symbol!("first_name"), Value: Display>,
+    Context: HasField<Symbol!("first_name"), Value: Display>,
 {
     type Output = String;
 
@@ -48,7 +48,7 @@ where
 #[cgp_new_provider]
 impl<Context, Code, Input> ComputerRef<Context, Code, Input> for LastNameToString
 where
-    Context: HasField<symbol!("last_name"), Value: Display>,
+    Context: HasField<Symbol!("last_name"), Value: Display>,
 {
     type Output = String;
 

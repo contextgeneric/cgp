@@ -28,9 +28,9 @@ pub struct Baz {
 #[test]
 fn test_basic_builder() {
     let context: FooBarBaz = FooBarBaz::builder()
-        .build_field(PhantomData::<symbol!("foo")>, 1)
-        .build_field(PhantomData::<symbol!("bar")>, "bar".to_owned())
-        .build_field(PhantomData::<symbol!("baz")>, true)
+        .build_field(PhantomData::<Symbol!("foo")>, 1)
+        .build_field(PhantomData::<Symbol!("bar")>, "bar".to_owned())
+        .build_field(PhantomData::<Symbol!("baz")>, true)
         .finalize_build();
 
     assert_eq!(context.foo, 1);
@@ -95,7 +95,7 @@ fn test_build_with_handlers() {
     let code = PhantomData::<()>;
 
     pub type Handlers =
-        Product![BuildAndMerge<BuildFooBar>, BuildAndSetField<symbol!("baz"), BuildBaz>];
+        Product![BuildAndMerge<BuildFooBar>, BuildAndSetField<Symbol!("baz"), BuildBaz>];
 
     assert_eq!(
         BuildWithHandlers::<FooBarBaz, Handlers>::compute(&context, code, ()),
@@ -122,9 +122,9 @@ fn test_build_with_fields() {
     let code = PhantomData::<()>;
 
     pub type Handlers = Product![
-        BuildAndSetField<symbol!("baz"), BuildBaz>,
-        BuildAndSetField<symbol!("bar"), BuildBar>,
-        BuildAndSetField<symbol!("foo"), BuildFoo>,
+        BuildAndSetField<Symbol!("baz"), BuildBaz>,
+        BuildAndSetField<Symbol!("bar"), BuildBar>,
+        BuildAndSetField<Symbol!("foo"), BuildFoo>,
     ];
 
     assert_eq!(

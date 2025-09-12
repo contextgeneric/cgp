@@ -45,8 +45,8 @@ pub fn test_derive_delegate() {
             >,
             FooGetterAtComponent: UseDelegate<
                 new FooGetters {
-                    Index<1>: UseField<symbol!("foo")>,
-                    Index<0>: UseField<symbol!("bar")>,
+                    Index<1>: UseField<Symbol!("foo")>,
+                    Index<0>: UseField<Symbol!("bar")>,
                 }
             >
         }
@@ -89,8 +89,8 @@ pub fn test_derive_delegate2() {
             >,
             FooGetterAtComponent: UseDelegate2<
                 new FooGetters {
-                    (Index<1>, Index<0>): UseField<symbol!("foo")>,
-                    (Index<0>, Index<1>): UseField<symbol!("bar")>,
+                    (Index<1>, Index<0>): UseField<Symbol!("foo")>,
+                    (Index<0>, Index<1>): UseField<Symbol!("bar")>,
                 }
             >
         }
