@@ -1,4 +1,4 @@
-use crate::{HasFields, HasFieldsRef};
+use crate::traits::{HasFields, HasFieldsRef};
 
 pub trait ToFields: HasFields {
     fn to_fields(self) -> Self::Fields;

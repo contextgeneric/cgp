@@ -1,4 +1,4 @@
-use cgp::core::field::{CanDowncast, CanUpcast};
+use cgp::core::field::impls::{CanDowncast, CanUpcast};
 use cgp::prelude::*;
 
 #[derive(Debug, Eq, PartialEq, HasFields, ExtractField, FromVariant)]

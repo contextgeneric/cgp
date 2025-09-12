@@ -1,4 +1,4 @@
-use crate::StaticFormat;
+use crate::traits::StaticFormat;
 
 /**
     The `Cons` type, a.k.a. `π`, is used to represent the head of a _type-level list_,

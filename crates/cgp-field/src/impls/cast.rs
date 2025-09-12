@@ -1,9 +1,9 @@
 use core::marker::PhantomData;
 
-use crate::{
-    Either, ExtractField, Field, FinalizeExtract, FinalizeExtractResult, FromVariant, HasExtractor,
-    HasFields, Void,
+use crate::traits::{
+    ExtractField, FinalizeExtract, FinalizeExtractResult, FromVariant, HasExtractor, HasFields,
 };
+use crate::types::{Either, Field, Void};
 
 pub trait CanUpcast<Target> {
     fn upcast(self, _tag: PhantomData<Target>) -> Target;

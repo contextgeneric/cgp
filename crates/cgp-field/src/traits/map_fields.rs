@@ -1,4 +1,5 @@
-use crate::{Cons, Either, MapType, Nil, Void};
+use crate::traits::MapType;
+use crate::types::{Cons, Either, Nil, Void};
 
 pub trait MapFields<Mapper> {
     type Mapped;

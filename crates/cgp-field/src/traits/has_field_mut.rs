@@ -1,8 +1,7 @@
 use core::marker::PhantomData;
 use core::ops::DerefMut;
 
-use crate::traits::has_field::HasField;
-use crate::FieldGetter;
+use crate::traits::{FieldGetter, HasField};
 
 #[diagnostic::on_unimplemented(
     message = "HasFieldMut is not implemented for {Self} with the field: {Tag}",

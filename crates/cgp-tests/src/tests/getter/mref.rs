@@ -1,4 +1,4 @@
-use cgp::core::field::MRef;
+use cgp::core::field::types::MRef;
 use cgp::prelude::*;
 
 #[test]

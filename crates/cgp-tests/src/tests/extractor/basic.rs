@@ -3,7 +3,7 @@ use core::fmt::{Debug, Display};
 use core::marker::PhantomData;
 
 use cgp::core::error::ErrorTypeProviderComponent;
-use cgp::core::field::{CanDowncast, CanDowncastFields, CanUpcast};
+use cgp::core::field::impls::{CanDowncast, CanDowncastFields, CanUpcast};
 use cgp::extra::dispatch::{
     DowncastAndHandle, ExtractFieldAndHandle, HandleFieldValue, MatchWithFieldHandlers,
     MatchWithHandlers, MatchWithValueHandlersRef,

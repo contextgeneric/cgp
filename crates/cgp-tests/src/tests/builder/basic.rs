@@ -2,7 +2,7 @@ use core::convert::Infallible;
 use std::marker::PhantomData;
 
 use cgp::core::error::ErrorTypeProviderComponent;
-use cgp::core::field::CanBuildFrom;
+use cgp::core::field::impls::CanBuildFrom;
 use cgp::extra::dispatch::{BuildAndMerge, BuildAndSetField, BuildWithHandlers};
 use cgp::extra::handler::{Computer, Producer, ProducerComponent};
 use cgp::prelude::*;

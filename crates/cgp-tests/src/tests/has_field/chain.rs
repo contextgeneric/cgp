@@ -1,6 +1,6 @@
 use core::marker::PhantomData;
 
-use cgp::core::field::ChainGetters;
+use cgp::core::field::impls::ChainGetters;
 use cgp::prelude::*;
 
 #[test]

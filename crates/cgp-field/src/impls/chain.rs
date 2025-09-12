@@ -1,6 +1,7 @@
 use core::marker::PhantomData;
 
-use crate::{Cons, FieldGetter, FieldMapper, Nil};
+use crate::traits::{FieldGetter, FieldMapper};
+use crate::types::{Cons, Nil};
 
 pub struct ChainGetters<Getters>(pub PhantomData<Getters>);
 

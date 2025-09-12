@@ -6,13 +6,14 @@ pub use cgp_component::{
     UseFields, WithContext, WithProvider,
 };
 pub use cgp_error::{CanRaiseError, CanWrapError, HasErrorType};
-pub use cgp_field::{
-    BuildField, Char, Cons, Either, ExtractField, Field, FieldGetter, FinalizeBuild,
-    FinalizeExtract, FromFields, FromVariant, HasBuilder, HasExtractor, HasExtractorMut,
-    HasExtractorRef, HasField, HasFieldMut, HasFields, HasFieldsRef, Index, IntoBuilder, IsMut,
-    IsNothing, IsPresent, IsRef, IsVoid, MapType, MapTypeRef, MutFieldGetter, Nil, PartialData,
-    ToFields, ToFieldsRef, UpdateField, UseField, Void,
+pub use cgp_field::impls::UseField;
+pub use cgp_field::traits::{
+    BuildField, ExtractField, FieldGetter, FinalizeBuild, FinalizeExtract, FromFields, FromVariant,
+    HasBuilder, HasExtractor, HasExtractorMut, HasExtractorRef, HasField, HasFieldMut, HasFields,
+    HasFieldsRef, IntoBuilder, IsMut, IsNothing, IsPresent, IsRef, IsVoid, MapType, MapTypeRef,
+    MutFieldGetter, PartialData, ToFields, ToFieldsRef, UpdateField,
 };
+pub use cgp_field::types::{Char, Cons, Either, Field, Index, Nil, Void};
 pub use cgp_macro::{
     cgp_auto_getter, cgp_component, cgp_context, cgp_getter, cgp_new_provider, cgp_preset,
     cgp_provider, cgp_type, check_components, delegate_and_check_components, delegate_components,

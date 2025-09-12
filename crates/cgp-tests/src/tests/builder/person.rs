@@ -1,4 +1,4 @@
-use cgp::core::field::CanBuildFrom;
+use cgp::core::field::impls::CanBuildFrom;
 use cgp::extra::dispatch::{BuildAndMerge, BuildAndSetField, BuildWithHandlers};
 use cgp::prelude::*;
 

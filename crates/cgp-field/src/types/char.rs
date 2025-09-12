@@ -50,7 +50,7 @@ pub struct ι<const CHAR: char, Tail>(pub PhantomData<Tail>);
 
 pub use ι as Char;
 
-use crate::StaticFormat;
+use crate::traits::StaticFormat;
 
 impl<const CHAR: char, Tail> Display for Char<CHAR, Tail>
 where

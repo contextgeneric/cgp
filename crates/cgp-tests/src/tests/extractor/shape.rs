@@ -1,6 +1,7 @@
 use std::f64::consts::PI;
 
-use cgp::core::field::{CanDowncast, CanDowncastFields, CanUpcast, FinalizeExtractResult};
+use cgp::core::field::impls::{CanDowncast, CanDowncastFields, CanUpcast};
+use cgp::core::field::traits::FinalizeExtractResult;
 use cgp::extra::dispatch::{
     ExtractFieldAndHandle, ExtractFirstFieldAndHandle, HandleFieldValue, HandleFirstFieldValue,
     MatchFirstWithHandlers, MatchFirstWithValueHandlers, MatchWithHandlers, MatchWithValueHandlers,

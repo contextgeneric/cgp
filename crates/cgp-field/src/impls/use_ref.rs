@@ -2,7 +2,7 @@ use core::marker::PhantomData;
 
 use cgp_component::WithProvider;
 
-use crate::{FieldGetter, HasField, HasFieldMut, MutFieldGetter};
+use crate::traits::{FieldGetter, HasField, HasFieldMut, MutFieldGetter};
 
 pub struct UseFieldRef<Tag, Value>(pub PhantomData<(Tag, Value)>);
 

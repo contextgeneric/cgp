@@ -1,5 +1,6 @@
-use crate::{
-    CanBuildFrom, FinalizeBuild, HasBuilder, IsNothing, IsPresent, TransformMap, TransformMapFields,
+use crate::impls::CanBuildFrom;
+use crate::traits::{
+    FinalizeBuild, HasBuilder, IsNothing, IsPresent, TransformMap, TransformMapFields,
 };
 
 pub trait CanBuildWithDefault<Source> {

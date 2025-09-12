@@ -1,7 +1,7 @@
 use core::convert::Infallible;
 use core::marker::PhantomData;
 
-use crate::Void;
+use crate::types::Void;
 
 pub trait HasExtractor {
     type Extractor;

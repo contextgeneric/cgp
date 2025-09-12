@@ -1,4 +1,4 @@
-use crate::Void;
+use crate::types::Void;
 
 pub trait MapType {
     type Map<T>;

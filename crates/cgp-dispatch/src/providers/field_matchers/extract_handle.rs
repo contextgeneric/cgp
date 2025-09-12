@@ -1,4 +1,4 @@
-use cgp_core::field::CanDowncastFields;
+use cgp_core::field::impls::CanDowncastFields;
 use cgp_core::prelude::*;
 use cgp_handler::{AsyncComputer, AsyncComputerComponent, Computer, ComputerComponent};
 

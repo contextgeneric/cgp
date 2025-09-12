@@ -1,4 +1,4 @@
-use cgp::core::field::CanBuildWithDefault;
+use cgp::core::field::impls::CanBuildWithDefault;
 use cgp::prelude::*;
 
 #[derive(Debug, Clone, Eq, PartialEq, HasFields, BuildField)]

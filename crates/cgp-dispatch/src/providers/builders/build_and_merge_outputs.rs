@@ -1,4 +1,4 @@
-use cgp_core::field::MapFields;
+use cgp_core::field::traits::MapFields;
 use cgp_core::prelude::*;
 use cgp_handler::{
     ComputerComponent, ComputerRefComponent, HandlerComponent, HandlerRefComponent,
