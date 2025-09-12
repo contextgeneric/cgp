@@ -29,23 +29,17 @@ pub fn derive_finalize_build_impl(
         )?);
     }
 
-    let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
+    let (impl_generics, _, where_clause) = generics.split_for_impl();
 
     let builder_type: Type = parse2(quote! {
         #builder_ident #generic_args
-    })?;
-
-    let context_type: Type = parse2(quote! {
-        #context_ident #ty_generics
     })?;
 
     let item_impl = parse2(quote! {
         impl #impl_generics FinalizeBuild for #builder_type
         #where_clause
         {
-            type Output = #context_type;
-
-            fn finalize_build(self) -> Self::Output {
+            fn finalize_build(self) -> Self::Target {
                 #context_ident {
                     #builder_fields
                 }

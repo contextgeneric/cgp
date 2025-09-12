@@ -25,7 +25,7 @@ where
 impl<Builder, Output> CanFinalizeWithDefault for Builder
 where
     Builder: TransformMapFields<TransformMapDefault, IsPresent>,
-    Builder::Output: FinalizeBuild<Output = Output>,
+    Builder::Output: FinalizeBuild<Target = Output>,
 {
     type Output = Output;
 

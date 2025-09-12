@@ -1,7 +1,7 @@
 use core::marker::PhantomData;
 
 use crate::impls::{IsNothing, IsPresent};
-use crate::traits::UpdateField;
+use crate::traits::{PartialData, UpdateField};
 
 pub trait BuildField<Tag> {
     type Value;
@@ -24,8 +24,6 @@ where
     }
 }
 
-pub trait FinalizeBuild {
-    type Output;
-
-    fn finalize_build(self) -> Self::Output;
+pub trait FinalizeBuild: PartialData {
+    fn finalize_build(self) -> Self::Target;
 }

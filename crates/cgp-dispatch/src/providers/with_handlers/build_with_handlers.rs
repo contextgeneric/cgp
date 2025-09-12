@@ -12,7 +12,7 @@ impl<Context, Code, Input, Output, Builder, Handlers, Res> Computer<Context, Cod
 where
     Output: HasBuilder<Builder = Builder>,
     PipeHandlers<Handlers>: Computer<Context, Code, Builder, Output = Res>,
-    Res: FinalizeBuild<Output = Output>,
+    Res: FinalizeBuild<Target = Output>,
 {
     type Output = Output;
 
@@ -28,7 +28,7 @@ where
     Context: HasErrorType,
     Output: HasBuilder<Builder = Builder>,
     PipeHandlers<Handlers>: TryComputer<Context, Code, Builder, Output = Res>,
-    Res: FinalizeBuild<Output = Output>,
+    Res: FinalizeBuild<Target = Output>,
 {
     type Output = Output;
 
@@ -48,7 +48,7 @@ where
     Context: HasErrorType,
     Output: HasBuilder<Builder = Builder>,
     PipeHandlers<Handlers>: Handler<Context, Code, Builder, Output = Res>,
-    Res: FinalizeBuild<Output = Output>,
+    Res: FinalizeBuild<Target = Output>,
 {
     type Output = Output;
 
