@@ -50,9 +50,6 @@ impl<T: Default> TransformMap<IsNothing, IsPresent, T> for TransformMapDefault {
 
 impl<T: Default> TransformMap<IsOptional, IsPresent, T> for TransformMapDefault {
     fn transform_mapped(value: Option<T>) -> T {
-        match value {
-            Some(value) => value,
-            None => T::default(),
-        }
+        value.unwrap_or_default()
     }
 }
