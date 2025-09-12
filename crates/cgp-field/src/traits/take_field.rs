@@ -1,6 +1,7 @@
 use core::marker::PhantomData;
 
-use crate::traits::{IsNothing, IsPresent, UpdateField};
+use crate::impls::{IsNothing, IsPresent};
+use crate::traits::UpdateField;
 
 pub trait TakeField<Tag> {
     type Value;
