@@ -82,7 +82,7 @@ pub fn derive_update_field_impls(
 
                 type Output = #output_type;
 
-                fn build_field(
+                fn update_field(
                     self,
                     _tag: ::core::marker::PhantomData< #tag_type >,
                     value: __M2__::Map<Self::Value>,
