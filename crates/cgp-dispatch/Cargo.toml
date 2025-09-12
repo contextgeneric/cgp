@@ -1,6 +1,6 @@
 [package]
 name         = "cgp-dispatch"
-version      = "0.4.2"
+version      = "0.5.0-alpha"
 edition      = { workspace = true }
 license      = { workspace = true }
 repository   = { workspace = true }
@@ -10,6 +10,6 @@ keywords     = { workspace = true }
 description  = "Extensible data type dispatchers for CGP handlers"
 
 [dependencies]
-cgp-core    = { version = "0.4.2" }
-cgp-monad   = { version = "0.4.2" }
-cgp-handler = { version = "0.4.2" }
+cgp-core    = { version = "0.5.0-alpha" }
+cgp-monad   = { version = "0.5.0-alpha" }
+cgp-handler = { version = "0.5.0-alpha" }

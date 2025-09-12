@@ -1,6 +1,6 @@
 [package]
 name         = "cgp-monad"
-version      = "0.4.2"
+version      = "0.5.0-alpha"
 edition      = { workspace = true }
 license      = { workspace = true }
 repository   = { workspace = true }
@@ -9,5 +9,5 @@ rust-version = { workspace = true }
 keywords     = { workspace = true }
 
 [dependencies]
-cgp-core    = { version = "0.4.2" }
-cgp-handler = { version = "0.4.2" }
+cgp-core    = { version = "0.5.0-alpha" }
+cgp-handler = { version = "0.5.0-alpha" }
