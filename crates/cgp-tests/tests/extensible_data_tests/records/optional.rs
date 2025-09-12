@@ -1,4 +1,6 @@
-use cgp::extra::field::impls::{FinalizeOptional, HasOptionalBuilder, SetOptional};
+use cgp::extra::field::impls::{
+    CanFinalizeWithDefault, FinalizeOptional, HasOptionalBuilder, SetOptional,
+};
 use cgp::prelude::*;
 
 #[derive(HasFields, BuildField)]
@@ -21,4 +23,16 @@ fn test_optional_fields() {
     let context = builder.finalize_optional().unwrap();
     assert_eq!(context.foo, "bar");
     assert_eq!(context.bar, 42);
+}
+
+#[test]
+fn test_optional_and_default_fields() {
+    let builder = Context::optional_builder();
+
+    let builder = builder.set(PhantomData::<Symbol!("foo")>, "foo".to_owned());
+
+    let context = builder.finalize_with_default();
+
+    assert_eq!(context.foo, "foo");
+    assert_eq!(context.bar, 0);
 }
