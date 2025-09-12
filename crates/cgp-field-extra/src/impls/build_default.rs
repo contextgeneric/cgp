@@ -1,5 +1,5 @@
-use crate::impls::{CanBuildFrom, IsNothing, IsPresent};
-use crate::traits::{FinalizeBuild, HasBuilder, TransformMap, TransformMapFields};
+use cgp_field::impls::{CanBuildFrom, IsNothing, IsPresent};
+use cgp_field::traits::{FinalizeBuild, HasBuilder, TransformMap, TransformMapFields};
 
 pub trait CanBuildWithDefault<Source> {
     fn build_with_default(source: Source) -> Self;
