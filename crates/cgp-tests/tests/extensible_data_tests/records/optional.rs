@@ -1,4 +1,4 @@
-use cgp::extra::field::impls::{FinalizeOptional, SetOptional, ToOptional};
+use cgp::extra::field::impls::{FinalizeOptional, HasOptionalBuilder, SetOptional};
 use cgp::prelude::*;
 
 #[derive(HasFields, BuildField)]
@@ -9,7 +9,7 @@ pub struct Context {
 
 #[test]
 fn test_optional_fields() {
-    let builder = Context::builder().to_optional();
+    let builder = Context::optional_builder();
 
     let builder = builder
         .set(PhantomData::<Symbol!("foo")>, "foo".to_owned())
