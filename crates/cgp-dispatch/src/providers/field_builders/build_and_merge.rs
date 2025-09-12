@@ -45,7 +45,7 @@ where
 impl<Context, Code: Send, Builder: Send + Sync, Provider, Output: Send, Res>
     Handler<Context, Code, Builder> for BuildAndMerge<Provider>
 where
-    Context: HasAsyncErrorType,
+    Context: HasErrorType,
     Provider: for<'a> Handler<Context, Code, &'a Builder, Output = Res>,
     Builder: CanBuildFrom<Res, Output = Output>,
 {

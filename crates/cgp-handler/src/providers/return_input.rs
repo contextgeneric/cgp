@@ -48,7 +48,7 @@ impl<Context: Async, Code: Send, Input: Send> AsyncComputer<Context, Code, Input
 #[cgp_provider]
 impl<Context, Code: Send, Input: Send> Handler<Context, Code, Input> for ReturnInput
 where
-    Context: HasAsyncErrorType,
+    Context: HasErrorType,
 {
     type Output = Input;
 

@@ -796,13 +796,13 @@ pub fn cgp_context(attr: TokenStream, item: TokenStream) -> TokenStream {
 
    ```rust,ignore
    #[trait_alias]
-   pub trait HasAsyncErrorType: Async + HasErrorType<Error: Async> {}
+   pub trait HasErrorType: Async + HasErrorType<Error: Async> {}
    ```
 
    automatically generates the following blanket implementation:
 
    ```rust,ignore
-   impl<Context> HasAsyncErrorType for Context
+   impl<Context> HasErrorType for Context
    where
        Context: Async + HasErrorType<Error: Async> {}
    ```

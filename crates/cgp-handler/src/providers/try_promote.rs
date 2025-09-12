@@ -46,7 +46,7 @@ where
 impl<Context, Code: Send, Input: Send, Output, Provider> Handler<Context, Code, Input>
     for TryPromote<Provider>
 where
-    Context: HasAsyncErrorType,
+    Context: HasErrorType,
     Provider: AsyncComputer<Context, Code, Input, Output = Result<Output, Context::Error>>,
 {
     type Output = Output;
@@ -64,7 +64,7 @@ where
 impl<Context, Code: Send, Input: Send, Provider, Output> AsyncComputer<Context, Code, Input>
     for TryPromote<Provider>
 where
-    Context: HasAsyncErrorType,
+    Context: HasErrorType,
     Provider: Handler<Context, Code, Input, Output = Output>,
 {
     type Output = Result<Output, Context::Error>;

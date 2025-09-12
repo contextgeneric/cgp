@@ -44,7 +44,7 @@ where
 impl<Context, Code: Send, Builder: Send + Sync, Tag, Value, Provider, Output: Send>
     Handler<Context, Code, Builder> for BuildAndSetField<Tag, Provider>
 where
-    Context: HasAsyncErrorType,
+    Context: HasErrorType,
     Provider: for<'a> Handler<Context, Code, &'a Builder, Output = Value>,
     Builder: BuildField<Tag, Value = Value, Output = Output>,
 {

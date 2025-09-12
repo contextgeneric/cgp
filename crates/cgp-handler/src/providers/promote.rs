@@ -40,7 +40,7 @@ where
 impl<Context, Code: Send, Input: Send, Output, Provider> Handler<Context, Code, Input>
     for Promote<Provider>
 where
-    Context: HasAsyncErrorType,
+    Context: HasErrorType,
     Provider: AsyncComputer<Context, Code, Input, Output = Output>,
 {
     type Output = Output;

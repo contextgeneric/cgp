@@ -13,7 +13,7 @@ use crate::UseInputDelegate;
         UseInputDelegate<Input>,
     ],
 }]
-pub trait CanHandle<Code, Input>: HasAsyncErrorType {
+pub trait CanHandle<Code, Input>: HasErrorType {
     type Output;
 
     async fn handle(
@@ -31,7 +31,7 @@ pub trait CanHandle<Code, Input>: HasAsyncErrorType {
         UseInputDelegate<Input>,
     ],
 }]
-pub trait CanHandleRef<Code, Input>: HasAsyncErrorType {
+pub trait CanHandleRef<Code, Input>: HasErrorType {
     type Output;
 
     async fn handle_ref(

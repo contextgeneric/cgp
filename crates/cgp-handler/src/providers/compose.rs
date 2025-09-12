@@ -65,7 +65,7 @@ where
 impl<Context, Code: Send, Input: Send, ProviderA, ProviderB> Handler<Context, Code, Input>
     for ComposeHandlers<ProviderA, ProviderB>
 where
-    Context: HasAsyncErrorType,
+    Context: HasErrorType,
     ProviderA: Handler<Context, Code, Input>,
     ProviderB: Handler<Context, Code, ProviderA::Output>,
 {
