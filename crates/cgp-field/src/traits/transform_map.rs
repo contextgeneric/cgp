@@ -1,6 +1,6 @@
 use core::marker::PhantomData;
 
-use crate::{Cons, Field, HasFields, IsNothing, MapType, Nil, UpdateField};
+use crate::{Cons, Field, HasFields, IsNothing, MapType, Nil, PartialData, UpdateField};
 
 /// Natural transformation from M1::Map<T> to M2::Map<T>
 pub trait TransformMap<M1: MapType, M2: MapType, T> {
@@ -13,15 +13,17 @@ pub trait TransformMapFields<Transform, TargetMap> {
     fn transform_map_fields(self) -> Self::Output;
 }
 
-impl<Context, Transform, TargetMap, Output> TransformMapFields<Transform, TargetMap> for Context
+impl<ContextA, ContextB, Transform, TargetMap, Output> TransformMapFields<Transform, TargetMap>
+    for ContextA
 where
-    Context: HasFields,
-    Context::Fields: TransformMapFieldsImpl<Context, Transform, TargetMap, Output = Output>,
+    ContextA: PartialData<Target = ContextB>,
+    ContextB: HasFields,
+    ContextB::Fields: TransformMapFieldsImpl<ContextA, Transform, TargetMap, Output = Output>,
 {
     type Output = Output;
 
     fn transform_map_fields(self) -> Self::Output {
-        Context::Fields::transform_map_fields(self)
+        ContextB::Fields::transform_map_fields(self)
     }
 }
 

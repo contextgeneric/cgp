@@ -5,7 +5,7 @@ use syn::{parse2, Ident, ItemStruct};
 use crate::derive_builder::{
     derive_builder_struct, derive_finalize_build_impl, derive_has_builder_impl,
     derive_has_field_impls, derive_into_builder_impl, derive_partial_data_impl,
-    derive_transform_map_impl, derive_update_field_impls,
+    derive_update_field_impls,
 };
 
 pub fn derive_build_field(body: TokenStream) -> syn::Result<TokenStream> {
@@ -28,8 +28,6 @@ pub fn derive_build_field(body: TokenStream) -> syn::Result<TokenStream> {
 
     let finalize_build_impl = derive_finalize_build_impl(&context_struct, &builder_ident)?;
 
-    let transform_map_impl = derive_transform_map_impl(&context_struct, &builder_ident)?;
-
     let out = quote! {
         #builder_struct
 
@@ -44,8 +42,6 @@ pub fn derive_build_field(body: TokenStream) -> syn::Result<TokenStream> {
         #(#has_field_impls)*
 
         #finalize_build_impl
-
-        #transform_map_impl
     };
 
     Ok(out)
