@@ -25,7 +25,7 @@ where
         match chars.next() {
             Some(c) => {
                 if c != CHAR {
-                    return false;
+                    false
                 } else {
                     Tail::match_chars(chars)
                 }
