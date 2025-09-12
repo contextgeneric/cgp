@@ -21,7 +21,7 @@ where
 }
 
 #[cgp_provider]
-impl<Context: Async, Code: Send, Tag: Send, Input: Send, Args: Send, Provider>
+impl<Context, Code, Tag, Input, Args, Provider>
     AsyncComputer<Context, Code, (Field<Tag, Input>, Args)> for HandleFirstFieldValue<Provider>
 where
     Provider: AsyncComputer<Context, Code, (Input, Args)>,

@@ -41,8 +41,8 @@ where
 }
 
 #[cgp_provider]
-impl<Context, Code: Send, Builder: Send + Sync, Tag, Value, Provider, Output: Send>
-    Handler<Context, Code, Builder> for BuildAndSetField<Tag, Provider>
+impl<Context, Code, Builder, Tag, Value, Provider, Output> Handler<Context, Code, Builder>
+    for BuildAndSetField<Tag, Provider>
 where
     Context: HasErrorType,
     Provider: for<'a> Handler<Context, Code, &'a Builder, Output = Value>,

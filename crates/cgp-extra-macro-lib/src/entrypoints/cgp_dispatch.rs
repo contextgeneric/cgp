@@ -48,7 +48,6 @@ fn derive_blanket_impl(item_trait: &ItemTrait) -> syn::Result<TokenStream> {
     let where_clause = generics.make_where_clause();
 
     let extra_life: Lifetime = parse2(quote! { '__a__ })?;
-    let mut has_async = false;
 
     let mut impl_items: Vec<ImplItem> = Vec::new();
 
@@ -207,8 +206,6 @@ fn derive_blanket_impl(item_trait: &ItemTrait) -> syn::Result<TokenStream> {
                 #matcher<#computer_ident>: #hrtb
                     AsyncComputer<(), (), #input_type, Output = #output_type>
             })?);
-
-            has_async = true;
         } else {
             where_clause.predicates.push(parse2(quote! {
                 #matcher<#computer_ident>: #hrtb
@@ -253,15 +250,9 @@ fn derive_blanket_impl(item_trait: &ItemTrait) -> syn::Result<TokenStream> {
         impl_items.push(impl_item);
     }
 
-    if has_async {
-        where_clause.predicates.push(parse2(quote! {
-            #context_ident: HasExtractor + Async
-        })?);
-    } else {
-        where_clause.predicates.push(parse2(quote! {
-            #context_ident: HasExtractor
-        })?);
-    }
+    where_clause.predicates.push(parse2(quote! {
+        #context_ident: HasExtractor
+    })?);
 
     let ty_generics = item_trait.generics.split_for_impl().1;
     let (impl_generics, _, where_clause) = generics.split_for_impl();
@@ -303,18 +294,12 @@ fn derive_method_computer(
 
         let trait_ident = &item_trait.ident;
 
-        let async_bound = if async_token.is_some() {
-            quote! { + Async }
-        } else {
-            TokenStream::new()
-        };
-
         let type_generics = item_trait.generics.split_for_impl().1;
 
         generics.params.insert(
             0,
             parse2(quote! {
-                #context_ident: #trait_ident #type_generics #async_bound
+                #context_ident: #trait_ident #type_generics
             })?,
         );
 

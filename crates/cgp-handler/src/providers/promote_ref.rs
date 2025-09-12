@@ -16,8 +16,7 @@ impl<Context, Code, Input, Target, Provider> Handler<Context, Code, Input> for P
 where
     Context: HasErrorType,
     Provider: HandlerRef<Context, Code, Target>,
-    Input: Deref<Target = Target> + Send,
-    Code: Send,
+    Input: Deref<Target = Target>,
 {
     type Output = Provider::Output;
 
@@ -36,8 +35,6 @@ impl<Context, Code, Input, Provider, Output> HandlerRef<Context, Code, Input>
 where
     Context: HasErrorType,
     Provider: for<'a> Handler<Context, Code, &'a Input, Output = Output>,
-    Code: Send,
-    Input: Sync,
 {
     type Output = Output;
 
@@ -54,10 +51,8 @@ where
 impl<Context, Code, Input, Target, Provider> AsyncComputer<Context, Code, Input>
     for PromoteRef<Provider>
 where
-    Context: Async,
     Provider: AsyncComputerRef<Context, Code, Target>,
-    Input: Deref<Target = Target> + Send,
-    Code: Send,
+    Input: Deref<Target = Target>,
 {
     type Output = Provider::Output;
 
@@ -74,10 +69,7 @@ where
 impl<Context, Code, Input, Provider, Output> AsyncComputerRef<Context, Code, Input>
     for PromoteRef<Provider>
 where
-    Context: Async,
     Provider: for<'a> AsyncComputer<Context, Code, &'a Input, Output = Output>,
-    Code: Send,
-    Input: Sync,
 {
     type Output = Output;
 

@@ -25,15 +25,8 @@ where
 }
 
 #[cgp_provider]
-impl<
-        Context: Async,
-        Code: Send,
-        Input: Send,
-        Provider,
-        Inner: Send,
-        Output: Send,
-        Remainder: Send,
-    > AsyncComputer<Context, Code, Input> for DowncastAndHandle<Inner, Provider>
+impl<Context, Code, Input, Provider, Inner, Output, Remainder> AsyncComputer<Context, Code, Input>
+    for DowncastAndHandle<Inner, Provider>
 where
     Input: CanDowncastFields<Inner, Remainder = Remainder>,
     Provider: AsyncComputer<Context, Code, Inner, Output = Output>,

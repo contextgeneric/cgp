@@ -113,8 +113,8 @@ pub fn cgp_computer(attr: TokenStream, body: TokenStream) -> syn::Result<TokenSt
         })
     } else {
         let mut generics = fn_sig.generics.clone();
-        generics.params.push(parse2(quote! { __Context__: Async })?);
-        generics.params.push(parse2(quote! { __Code__: Send })?);
+        generics.params.push(parse2(quote! { __Context__ })?);
+        generics.params.push(parse2(quote! { __Code__ })?);
 
         let (impl_generics, _, where_clause) = generics.split_for_impl();
 

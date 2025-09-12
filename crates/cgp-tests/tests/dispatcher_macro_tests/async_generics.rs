@@ -7,13 +7,13 @@ use crate::dispatcher_macro_tests::types::{Bar, Foo, FooBar};
 
 #[cgp_dispatch]
 #[async_trait]
-pub trait CanCall<T: Async> {
+pub trait CanCall<T> {
     async fn call_a(&self, _a: u64, _b: &T) -> String;
 
     fn call_b(self, _a: u64, b: &mut T) -> &str;
 }
 
-impl<T: Display + Async> CanCall<T> for Foo {
+impl<T: Display> CanCall<T> for Foo {
     async fn call_a(&self, _a: u64, b: &T) -> String {
         format!("foo-{}", b)
     }
@@ -23,7 +23,7 @@ impl<T: Display + Async> CanCall<T> for Foo {
     }
 }
 
-impl<T: Async> CanCall<T> for Bar {
+impl<T> CanCall<T> for Bar {
     async fn call_a(&self, _a: u64, _b: &T) -> String {
         "bar".to_owned()
     }

@@ -36,10 +36,10 @@ where
 }
 
 #[cgp_provider]
-impl<'a, Context: Async, Code: Send, Input, Args: Send, Output, Remainder, Handlers>
+impl<'a, Context, Code, Input, Args, Output, Remainder, Handlers>
     AsyncComputer<Context, Code, (&'a mut Input, Args)> for MatchFirstWithHandlersMut<Handlers>
 where
-    Input: Send + Sync + HasExtractorMut,
+    Input: HasExtractorMut,
     DispatchMatchers<Handlers>: AsyncComputer<
         Context,
         Code,

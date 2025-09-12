@@ -43,8 +43,8 @@ where
 }
 
 #[cgp_provider]
-impl<Context: Async, Code: Send, Input: Send, ProviderA, ProviderB>
-    AsyncComputer<Context, Code, Input> for ComposeHandlers<ProviderA, ProviderB>
+impl<Context, Code, Input, ProviderA, ProviderB> AsyncComputer<Context, Code, Input>
+    for ComposeHandlers<ProviderA, ProviderB>
 where
     ProviderA: AsyncComputer<Context, Code, Input>,
     ProviderB: AsyncComputer<Context, Code, ProviderA::Output>,
@@ -62,7 +62,7 @@ where
 }
 
 #[cgp_provider]
-impl<Context, Code: Send, Input: Send, ProviderA, ProviderB> Handler<Context, Code, Input>
+impl<Context, Code, Input, ProviderA, ProviderB> Handler<Context, Code, Input>
     for ComposeHandlers<ProviderA, ProviderB>
 where
     Context: HasErrorType,

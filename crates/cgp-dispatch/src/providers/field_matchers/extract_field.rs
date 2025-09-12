@@ -24,16 +24,8 @@ where
 }
 
 #[cgp_provider]
-impl<
-        Context: Async,
-        Code: Send,
-        Input: Send,
-        Tag: Send,
-        Value: Send,
-        Provider,
-        Output: Send,
-        Remainder: Send,
-    > AsyncComputer<Context, Code, Input> for ExtractFieldAndHandle<Tag, Provider>
+impl<Context, Code, Input, Tag, Value, Provider, Output, Remainder>
+    AsyncComputer<Context, Code, Input> for ExtractFieldAndHandle<Tag, Provider>
 where
     Input: ExtractField<Tag, Value = Value, Remainder = Remainder>,
     Provider: AsyncComputer<Context, Code, Field<Tag, Value>, Output = Output>,

@@ -37,8 +37,7 @@ where
 }
 
 #[cgp_provider]
-impl<Context, Code: Send, Input: Send, Output, Provider> Handler<Context, Code, Input>
-    for Promote<Provider>
+impl<Context, Code, Input, Output, Provider> Handler<Context, Code, Input> for Promote<Provider>
 where
     Context: HasErrorType,
     Provider: AsyncComputer<Context, Code, Input, Output = Output>,

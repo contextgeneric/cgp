@@ -25,10 +25,10 @@ where
 }
 
 #[cgp_provider]
-impl<'a, Context: Async, Code: Send, Input, Output, Remainder, Handlers>
-    AsyncComputer<Context, Code, &'a Input> for MatchWithHandlersRef<Handlers>
+impl<'a, Context, Code, Input, Output, Remainder, Handlers> AsyncComputer<Context, Code, &'a Input>
+    for MatchWithHandlersRef<Handlers>
 where
-    Input: Send + Sync + HasExtractorRef,
+    Input: HasExtractorRef,
     DispatchMatchers<Handlers>:
         AsyncComputer<Context, Code, Input::ExtractorRef<'a>, Output = Result<Output, Remainder>>,
     Remainder: FinalizeExtract,

@@ -42,8 +42,8 @@ where
 }
 
 #[cgp_provider]
-impl<Context, Code: Send, Builder: Send + Sync, Provider, Output: Send, Res>
-    Handler<Context, Code, Builder> for BuildAndMerge<Provider>
+impl<Context, Code, Builder, Provider, Output, Res> Handler<Context, Code, Builder>
+    for BuildAndMerge<Provider>
 where
     Context: HasErrorType,
     Provider: for<'a> Handler<Context, Code, &'a Builder, Output = Res>,

@@ -86,8 +86,8 @@ where
 }
 
 #[cgp_provider]
-impl<Context: Async, Code: Send, T1: Send, T2, E: Send, M, Cont>
-    AsyncComputer<Context, Code, Result<T1, E>> for BindErr<M, Cont>
+impl<Context, Code, T1, T2, E, M, Cont> AsyncComputer<Context, Code, Result<T1, E>>
+    for BindErr<M, Cont>
 where
     Cont: AsyncComputer<Context, Code, T1>,
     M: ContainsValue<Cont::Output, Value = Result<T2, E>> + LiftValue<Result<T2, E>, Cont::Output>,

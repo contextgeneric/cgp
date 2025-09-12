@@ -34,8 +34,7 @@ pub trait CanComputeAsyncRef<Code, Input> {
 }
 
 #[cgp_provider]
-impl<Context: Async, Code: Send, Input: Send, Tag, Output> AsyncComputer<Context, Code, Input>
-    for UseField<Tag>
+impl<Context, Code, Input, Tag, Output> AsyncComputer<Context, Code, Input> for UseField<Tag>
 where
     Context: HasField<Tag>,
     Context::Value: CanComputeAsync<Code, Input, Output = Output>,

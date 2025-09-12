@@ -1,6 +1,6 @@
 pub use core::marker::PhantomData;
 
-pub use cgp_async::{async_trait, Async, MaybeSend, MaybeSync};
+pub use cgp_async::async_trait;
 pub use cgp_component::{
     CanUseComponent, DelegateComponent, HasCgpProvider, IsProviderFor, UseContext, UseDelegate,
     UseFields, WithContext, WithProvider,

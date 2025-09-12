@@ -80,7 +80,6 @@ pub fn test_pipe_handlers() {
     impl<Context, Tag, Field> Handler<Context, Tag, u64> for Multiply<Field>
     where
         Context: HasErrorType + HasField<Field, Value = u64>,
-        Tag: Send,
     {
         type Output = u64;
 
