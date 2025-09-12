@@ -20,6 +20,8 @@ dependencies = [
 [[package]]
 name = "cgp-async"
 version = "0.4.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "93b20a917a8fd981dffacd74f2e5cfd9d316e132ab96089bd1a8756e3b45e224"
 dependencies = [
  "cgp-async-macro",
  "cgp-sync",
@@ -42,7 +44,7 @@ version = "0.4.2"
 name = "cgp-core"
 version = "0.4.2"
 dependencies = [
- "cgp-async",
+ "cgp-async-macro",
  "cgp-component",
  "cgp-error",
  "cgp-field",
@@ -186,10 +188,7 @@ dependencies = [
 name = "cgp-run"
 version = "0.4.2"
 dependencies = [
- "cgp-async",
- "cgp-component",
- "cgp-error",
- "cgp-macro",
+ "cgp-core",
 ]
 
 [[package]]

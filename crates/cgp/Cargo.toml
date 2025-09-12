@@ -12,10 +12,6 @@ description  = """
     Main crate for using context-generic programming
 """
 
-[features]
-default             = [ "full" ]
-full                = [ "cgp-core/full", "cgp-extra/full" ]
-
 [dependencies]
 cgp-async      = { version = "0.4.2", default-features = false }
 cgp-core       = { version = "0.4.2", default-features = false }

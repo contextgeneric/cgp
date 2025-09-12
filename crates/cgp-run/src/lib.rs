@@ -3,10 +3,7 @@
 use core::future::Future;
 use core::marker::PhantomData;
 
-use cgp_async::*;
-use cgp_component::*;
-use cgp_error::HasErrorType;
-use cgp_macro::*;
+use cgp_core::prelude::*;
 
 #[cgp_component {
     provider: Runner,

@@ -12,7 +12,4 @@ description  = """
 """
 
 [dependencies]
-cgp-async           = { version = "0.4.2", default-features = false }
-cgp-error           = { version = "0.4.2" }
-cgp-component       = { version = "0.4.2" }
-cgp-macro           = { version = "0.4.2" }
+cgp-core            = { version = "0.4.2" }

@@ -6,7 +6,6 @@ members = [
     "crates/cgp",
     "crates/cgp-core",
     "crates/cgp-extra",
-    "crates/cgp-async",
     "crates/cgp-async-macro",
     "crates/cgp-sync",
     "crates/cgp-component",
@@ -42,7 +41,6 @@ keywords        = ["cgp"]
 cgp                         = { path = "./crates/cgp" }
 cgp-core                    = { path = "./crates/cgp-core" }
 cgp-extra                   = { path = "./crates/cgp-extra" }
-cgp-async                   = { path = "./crates/cgp-async" }
 cgp-async-macro             = { path = "./crates/cgp-async-macro" }
 cgp-sync                    = { path = "./crates/cgp-sync" }
 cgp-component               = { path = "./crates/cgp-component" }

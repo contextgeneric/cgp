@@ -11,12 +11,8 @@ description  = """
     Context-generic programming core traits
 """
 
-[features]
-default             = [ "full" ]
-full                = [ "cgp-async/full" ]
-
 [dependencies]
-cgp-async           = { version = "0.4.2", default-features = false }
+cgp-async-macro     = { version = "0.4.2" }
 cgp-component       = { version = "0.4.2" }
 cgp-macro           = { version = "0.4.2" }
 cgp-type            = { version = "0.4.2" }

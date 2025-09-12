@@ -64,6 +64,6 @@ pub fn strip_async(_attr: TokenStream, stream: TokenStream) -> TokenStream {
     ```
 */
 #[proc_macro_attribute]
-pub fn native_async(_attr: TokenStream, stream: TokenStream) -> TokenStream {
+pub fn async_trait(_attr: TokenStream, stream: TokenStream) -> TokenStream {
     impl_async::impl_async(stream.into()).into()
 }
