@@ -1,15 +1,32 @@
 use quote::quote;
-use syn::{parse2, Ident, ItemImpl, ItemStruct};
+use syn::{parse2, Ident, ItemEnum, ItemImpl};
 
 use crate::derive_builder::index_to_generic_ident;
 
 pub fn derive_partial_data_impl(
-    context_struct: &ItemStruct,
+    context_struct: &ItemEnum,
     builder_ident: &Ident,
+    is_ref: bool,
 ) -> syn::Result<ItemImpl> {
     let mut generics = context_struct.generics.clone();
 
-    for (index, _) in context_struct.fields.iter().enumerate() {
+    if is_ref {
+        generics.params.insert(
+            0,
+            parse2(quote! {
+                '__a__
+            })?,
+        );
+
+        generics.params.insert(
+            0,
+            parse2(quote! {
+                __R__: MapTypeRef
+            })?,
+        );
+    }
+
+    for (index, _) in context_struct.variants.iter().enumerate() {
         let generic_param_name = index_to_generic_ident(index);
 
         generics.params.push(parse2(quote! {
