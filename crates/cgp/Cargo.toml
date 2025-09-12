@@ -13,6 +13,5 @@ description  = """
 """
 
 [dependencies]
-cgp-async      = { version = "0.4.2", default-features = false }
 cgp-core       = { version = "0.4.2", default-features = false }
 cgp-extra      = { version = "0.4.2", default-features = false }

@@ -127,7 +127,7 @@ pub fn test_pipe_handlers() {
     }
 
     check_components! {
-        <Tag: Send>
+        <Tag>
         CanUseMyContext for MyContext {
             HandlerComponent: (Tag, u64),
         }
