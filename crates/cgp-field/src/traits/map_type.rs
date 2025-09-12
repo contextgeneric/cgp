@@ -21,3 +21,9 @@ pub struct IsVoid;
 impl MapType for IsVoid {
     type Map<T> = Void;
 }
+
+pub struct IsOptional;
+
+impl MapType for IsOptional {
+    type Map<T> = Option<T>;
+}
