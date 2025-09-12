@@ -5,8 +5,8 @@ use syn::{parse_quote, LitStr, Type};
 pub fn symbol_from_string(value: &str) -> Type {
     value
         .chars()
-        .rfold(parse_quote! { Nil }, |tail, c: char| -> Type {
-            parse_quote!( Char< #c, #tail > )
+        .rfold(parse_quote! { ε }, |tail, c: char| -> Type {
+            parse_quote!( ι< #c, #tail > )
         })
 }
 

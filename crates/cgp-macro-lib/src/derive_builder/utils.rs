@@ -29,7 +29,7 @@ pub fn field_to_tag(index: usize, field: &Field) -> syn::Result<Type> {
         Some(ident) => Ok(symbol_from_string(&ident.to_string())),
         None => {
             let index = LitInt::new(&format!("{index}"), field.span());
-            parse2(quote! { Index< #index > })
+            parse2(quote! { δ< #index > })
         }
     }
 }

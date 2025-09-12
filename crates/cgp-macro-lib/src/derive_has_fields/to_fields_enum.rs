@@ -58,14 +58,14 @@ pub fn derive_to_fields_match_arms(
         let variant_args = extract_variant_args(&variant.fields)?;
 
         let inject_variant = inject_prefix(quote! {
-            Either::Left( #constructor .into() )
+            σ::Left( #constructor .into() )
         });
 
         inject_prefix = Box::new(move |inner| {
             let outer = inject_prefix(inner);
 
             quote! {
-                Either::Right( #outer )
+                σ::Right( #outer )
             }
         });
 

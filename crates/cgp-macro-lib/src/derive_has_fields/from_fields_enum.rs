@@ -18,11 +18,11 @@ pub fn derive_from_fields_for_enum(item_enum: &ItemEnum) -> syn::Result<ItemImpl
 
         match_expr = quote! {
             match rest {
-                Either::Left( field ) => {
+                σ::Left( field ) => {
                     let #product_arg = field.value;
                     Self:: #variant_ident #product_constructor_args
                 }
-                Either::Right(rest) => {
+                σ::Right(rest) => {
                     #match_expr
                 }
             }

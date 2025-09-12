@@ -11,7 +11,7 @@ pub fn variants_to_sum_type(
     variants: &Punctuated<Variant, Comma>,
     reference: &TokenStream,
 ) -> syn::Result<Type> {
-    let mut out = quote! { Void };
+    let mut out = quote! { θ };
 
     for variant in variants.iter().rev() {
         let variant_ident = &variant.ident;
@@ -20,8 +20,8 @@ pub fn variants_to_sum_type(
         let variant_fields = item_fields_to_product_type(&variant.fields, reference)?;
 
         out = quote! {
-            Either<
-                Field< #variant_symbol, #variant_fields >,
+            σ<
+                ω< #variant_symbol, #variant_fields >,
                 #out,
             >
         };

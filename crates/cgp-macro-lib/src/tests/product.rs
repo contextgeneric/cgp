@@ -13,13 +13,13 @@ fn test_product_type() {
     });
 
     let expected = quote! {
-        Cons<
+        π<
             Foo,
-            Cons<
+            π<
                 Bar<T>,
-                Cons<
+                π<
                     Baz<T, U>,
-                    Nil> > >
+                    ε> > >
     };
 
     assert_eq!(derived.to_string(), expected.to_string());
@@ -34,13 +34,13 @@ fn test_product_ident() {
     });
 
     let expected = quote! {
-        Cons(
+        π(
             foo,
-            Cons(
+            π(
                 bar,
-                Cons(
+                π(
                     baz,
-                    Nil ) ) )
+                    ε ) ) )
     };
 
     assert_eq!(derived.to_string(), expected.to_string());
@@ -55,13 +55,13 @@ fn test_product_expr() {
     });
 
     let expected = quote! {
-        Cons(
+        π(
             foo.0,
-            Cons(
+            π(
                 Bar { bar },
-                Cons(
+                π(
                     Baz::baz(),
-                    Nil ) ) )
+                    ε ) ) )
     };
 
     assert_eq!(derived.to_string(), expected.to_string());
@@ -76,13 +76,13 @@ fn test_sum_type() {
     });
 
     let expected = quote! {
-        Either<
+        σ<
             Foo,
-            Either<
+            σ<
                 Bar<T>,
-                Either<
+                σ<
                     Baz<T, U>,
-                    Void> > >
+                    θ> > >
     };
 
     assert_eq!(derived.to_string(), expected.to_string());

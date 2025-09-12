@@ -13,7 +13,9 @@ pub use cgp_field::traits::{
     HasFieldsRef, IntoBuilder, MapType, MapTypeRef, MutFieldGetter, PartialData, ToFields,
     ToFieldsRef, UpdateField,
 };
-pub use cgp_field::types::{Char, Cons, Either, Field, Index, Nil, Void};
+pub use cgp_field::types::{
+    δ, ε, θ, ι, π, σ, ω, Char, Cons, Either, Field, Index, Nil, Void
+};
 pub use cgp_macro::{
     cgp_auto_getter, cgp_component, cgp_context, cgp_getter, cgp_new_provider, cgp_preset,
     cgp_provider, cgp_type, check_components, delegate_and_check_components, delegate_components,

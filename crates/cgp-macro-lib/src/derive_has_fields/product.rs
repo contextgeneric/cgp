@@ -6,7 +6,7 @@ use syn::{parse2, Error, Fields, LitInt, Type};
 use crate::symbol::symbol_from_string;
 
 pub fn item_fields_to_product_type(fields: &Fields, reference: &TokenStream) -> syn::Result<Type> {
-    let mut fields_type = quote! { Nil };
+    let mut fields_type = quote! { ε };
 
     match fields {
         Fields::Named(fields) => {
@@ -19,7 +19,7 @@ pub fn item_fields_to_product_type(fields: &Fields, reference: &TokenStream) -> 
                 let field_type = &field.ty;
 
                 fields_type = parse2(quote! {
-                    Cons< Field< #field_tag, #reference #field_type >, #fields_type >
+                    π< ω< #field_tag, #reference #field_type >, #fields_type >
                 })?;
             }
         }
@@ -33,11 +33,11 @@ pub fn item_fields_to_product_type(fields: &Fields, reference: &TokenStream) -> 
                 for (i, field) in fields.unnamed.iter().enumerate().rev() {
                     let index = LitInt::new(&format!("{i}"), field.span());
 
-                    let field_tag = quote! { Index< #index > };
+                    let field_tag = quote! { δ< #index > };
                     let field_type = &field.ty;
 
                     fields_type = parse2(quote! {
-                        Cons< Field< #field_tag, #reference #field_type >, #fields_type >
+                        π< ω< #field_tag, #reference #field_type >, #fields_type >
                     })?;
                 }
             }

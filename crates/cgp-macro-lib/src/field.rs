@@ -63,7 +63,7 @@ pub fn derive_has_field_impls(item_struct: &ItemStruct) -> Vec<ItemImpl> {
         Fields::Unnamed(fields) => {
             for (i, field) in fields.unnamed.iter().enumerate() {
                 let field_ident = LitInt::new(&format!("{i}"), field.span());
-                let field_symbol = quote! { Index< #field_ident > };
+                let field_symbol = quote! { δ< #field_ident > };
 
                 let field_type = &field.ty;
 
