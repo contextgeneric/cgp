@@ -6,7 +6,7 @@ use cgp::extra::dispatch::{
 use cgp::extra::handler::NoCode;
 use cgp::prelude::*;
 
-use crate::tests::extractor::shape::{Circle, Rectangle, Shape, ShapePlus, Triangle};
+use super::shape::{Circle, Rectangle, Shape, ShapePlus, Triangle};
 
 #[cgp_dispatch]
 pub trait HasAreaRef {
