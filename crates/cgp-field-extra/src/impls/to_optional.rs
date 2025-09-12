@@ -1,5 +1,5 @@
-use crate::impls::{IsNothing, IsOptional, IsPresent};
-use crate::traits::{TransformMap, TransformMapFields};
+use cgp_field::impls::{IsNothing, IsOptional, IsPresent};
+use cgp_field::traits::{TransformMap, TransformMapFields};
 
 pub trait ToOptional {
     type Output;

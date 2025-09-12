@@ -18,6 +18,7 @@ full = [ "cgp-error-extra/alloc" ]
 cgp-core        = { version = "0.5.0-alpha" }
 cgp-extra-macro = { version = "0.5.0-alpha" }
 cgp-error-extra = { version = "0.5.0-alpha", default-features = false }
+cgp-field-extra = { version = "0.5.0-alpha" }
 cgp-inner       = { version = "0.5.0-alpha" }
 cgp-run         = { version = "0.5.0-alpha" }
 cgp-runtime     = { version = "0.5.0-alpha" }

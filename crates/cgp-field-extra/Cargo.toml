@@ -1,5 +1,5 @@
 [package]
-name         = "cgp-field"
+name         = "cgp-field-extra"
 version      = "0.5.0-alpha"
 edition      = { workspace = true }
 license      = { workspace = true }
@@ -12,5 +12,4 @@ description  = """
 """
 
 [dependencies]
-cgp-component       = { version = "0.5.0-alpha" }
-cgp-type            = { version = "0.5.0-alpha" }
+cgp-field       = { version = "0.5.0-alpha" }

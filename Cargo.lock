@@ -97,6 +97,7 @@ dependencies = [
  "cgp-dispatch",
  "cgp-error-extra",
  "cgp-extra-macro",
+ "cgp-field-extra",
  "cgp-handler",
  "cgp-inner",
  "cgp-monad",
@@ -126,8 +127,14 @@ name = "cgp-field"
 version = "0.5.0-alpha"
 dependencies = [
  "cgp-component",
- "cgp-macro",
  "cgp-type",
+]
+
+[[package]]
+name = "cgp-field-extra"
+version = "0.5.0-alpha"
+dependencies = [
+ "cgp-field",
 ]
 
 [[package]]
