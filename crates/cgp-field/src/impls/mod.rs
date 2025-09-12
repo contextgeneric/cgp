@@ -4,6 +4,7 @@ mod cast;
 mod chain;
 mod map_type;
 mod map_type_ref;
+mod to_optional;
 mod use_field;
 mod use_ref;
 
@@ -13,5 +14,6 @@ pub use cast::*;
 pub use chain::*;
 pub use map_type::*;
 pub use map_type_ref::*;
+pub use to_optional::*;
 pub use use_field::*;
 pub use use_ref::*;
