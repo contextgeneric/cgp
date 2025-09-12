@@ -201,6 +201,8 @@ dependencies = [
 [[package]]
 name = "cgp-sync"
 version = "0.4.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "dd878148a7773c4f9792d4c884de9b154720ae1d7a91f747ef84a3ddf16a22a8"
 dependencies = [
  "cgp-async-macro",
 ]
