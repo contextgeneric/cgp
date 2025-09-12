@@ -16,7 +16,7 @@ pub fn impl_async(item: TokenStream) -> TokenStream {
                         };
 
                         let impl_return: ReturnType = parse_quote! {
-                            -> impl ::core::future::Future<Output = #return_type> + MaybeSend
+                            -> impl ::core::future::Future<Output = #return_type>
                         };
 
                         trait_fn.sig.output = impl_return;
