@@ -1,4 +1,4 @@
-use cgp_field::impls::{CanBuildFrom, IsNothing, IsPresent};
+use cgp_field::impls::{CanBuildFrom, IsNothing, IsOptional, IsPresent};
 use cgp_field::traits::{FinalizeBuild, HasBuilder, TransformMap, TransformMapFields};
 
 pub trait CanBuildWithDefault<Source> {
@@ -45,5 +45,14 @@ impl<T> TransformMap<IsPresent, IsPresent, T> for TransformMapDefault {
 impl<T: Default> TransformMap<IsNothing, IsPresent, T> for TransformMapDefault {
     fn transform_mapped(_value: ()) -> T {
         T::default()
+    }
+}
+
+impl<T: Default> TransformMap<IsOptional, IsPresent, T> for TransformMapDefault {
+    fn transform_mapped(value: Option<T>) -> T {
+        match value {
+            Some(value) => value,
+            None => T::default(),
+        }
     }
 }
