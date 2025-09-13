@@ -29,7 +29,7 @@ pub(crate) mod product;
 pub(crate) mod symbol;
 pub(crate) mod type_component;
 
-pub use field::derive_fields;
+pub use field::derive_has_field;
 pub use product::{make_product_expr, make_product_type, make_sum_type};
 pub use symbol::make_symbol;
 

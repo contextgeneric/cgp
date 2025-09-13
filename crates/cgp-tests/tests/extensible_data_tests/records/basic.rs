@@ -7,7 +7,7 @@ use cgp::extra::dispatch::{BuildAndMerge, BuildAndSetField, BuildWithHandlers};
 use cgp::extra::handler::{Computer, Producer, ProducerComponent};
 use cgp::prelude::*;
 
-#[derive(Debug, Eq, PartialEq, HasFields, BuildField)]
+#[derive(Debug, Eq, PartialEq, CgpRecord)]
 pub struct FooBarBaz {
     pub foo: u64,
     pub bar: String,

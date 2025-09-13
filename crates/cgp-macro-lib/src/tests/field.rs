@@ -1,11 +1,11 @@
 use quote::quote;
 
-use crate::field::derive_fields;
+use crate::field::derive_has_field;
 use crate::tests::helper::equal::equal_token_stream;
 
 #[test]
 fn test_basic_derive_fields() {
-    let derived = derive_fields(quote! {
+    let derived = derive_has_field(quote! {
         pub struct Foo {
             pub bar: Bar,
             pub baz: Baz,
@@ -59,7 +59,7 @@ fn test_basic_derive_fields() {
 
 #[test]
 fn test_generic_derive_fields() {
-    let derived = derive_fields(quote! {
+    let derived = derive_has_field(quote! {
         pub struct Foo<FooParamA, FooParamB: Clone>
         where
             FooParamA: Eq,

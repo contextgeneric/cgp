@@ -940,7 +940,7 @@ pub fn product(body: TokenStream) -> TokenStream {
 
 #[proc_macro_derive(HasField)]
 pub fn derive_fields(item: TokenStream) -> TokenStream {
-    cgp_macro_lib::derive_fields(item.into()).into()
+    cgp_macro_lib::derive_has_field(item.into()).into()
 }
 
 #[proc_macro_derive(HasFields)]
@@ -974,6 +974,13 @@ pub fn derive_from_variant(item: TokenStream) -> TokenStream {
 #[proc_macro_derive(CgpVariant)]
 pub fn derive_cgp_variant(item: TokenStream) -> TokenStream {
     cgp_macro_lib::derive_cgp_variant(item.into())
+        .unwrap_or_else(syn::Error::into_compile_error)
+        .into()
+}
+
+#[proc_macro_derive(CgpRecord)]
+pub fn derive_cgp_record(item: TokenStream) -> TokenStream {
+    cgp_macro_lib::derive_cgp_record(item.into())
         .unwrap_or_else(syn::Error::into_compile_error)
         .into()
 }
