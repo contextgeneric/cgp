@@ -15,7 +15,7 @@ pub fn derive_build_field(body: TokenStream) -> syn::Result<TokenStream> {
 
 pub fn derive_build_field_from_struct(context_struct: &ItemStruct) -> syn::Result<TokenStream> {
     let context_ident = &context_struct.ident;
-    let builder_ident = Ident::new(&format!("Partial{context_ident}"), context_ident.span());
+    let builder_ident = Ident::new(&format!("__Partial{context_ident}"), context_ident.span());
 
     let builder_struct = derive_builder_struct(context_struct, &builder_ident)?;
 
