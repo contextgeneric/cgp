@@ -33,7 +33,4 @@ pub use field::derive_has_field;
 pub use product::{make_product_expr, make_product_type, make_sum_type};
 pub use symbol::make_symbol;
 
-#[cfg(test)]
-mod tests;
-
 pub use crate::entrypoints::*;
