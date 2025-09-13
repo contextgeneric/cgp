@@ -973,7 +973,7 @@ pub fn derive_from_variant(item: TokenStream) -> TokenStream {
 
 #[proc_macro_derive(CgpVariant)]
 pub fn derive_cgp_variant(item: TokenStream) -> TokenStream {
-    cgp_macro_lib::cgp_variant(item.into())
+    cgp_macro_lib::derive_cgp_variant(item.into())
         .unwrap_or_else(syn::Error::into_compile_error)
         .into()
 }

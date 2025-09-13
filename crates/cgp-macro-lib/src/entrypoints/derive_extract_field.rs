@@ -10,7 +10,10 @@ use crate::derive_extractor::{
 
 pub fn derive_extract_field(body: TokenStream) -> syn::Result<TokenStream> {
     let context_enum: ItemEnum = parse2(body)?;
+    derive_extract_field_from_enum(&context_enum)
+}
 
+pub fn derive_extract_field_from_enum(context_enum: &ItemEnum) -> syn::Result<TokenStream> {
     let context_ident = &context_enum.ident;
 
     let extractor_ident = Ident::new(&format!("Partial{context_ident}"), context_ident.span());

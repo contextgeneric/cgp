@@ -7,13 +7,18 @@ use crate::symbol::symbol_from_string;
 
 pub fn derive_from_variant(body: TokenStream) -> syn::Result<TokenStream> {
     let item_enum: ItemEnum = parse2(body)?;
+
+    derive_from_variant_from_enum(&item_enum)
+}
+
+pub fn derive_from_variant_from_enum(item_enum: &ItemEnum) -> syn::Result<TokenStream> {
     let enum_ident = &item_enum.ident;
 
     let (impl_generics, ty_generics, where_clause) = item_enum.generics.split_for_impl();
 
     let mut item_impls: Vec<ItemImpl> = Vec::new();
 
-    for variant in item_enum.variants {
+    for variant in item_enum.variants.iter() {
         let variant_ident = &variant.ident;
         let variant_tag = symbol_from_string(&variant_ident.to_string());
         let variant_type = get_variant_type(&variant)?;
