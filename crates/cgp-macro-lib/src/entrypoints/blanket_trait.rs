@@ -6,7 +6,7 @@ use crate::blanket_trait::derive_blanket_trait;
 
 pub fn blanket_trait(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
     let context_ident: Ident = if attr.is_empty() {
-        Ident::new("Context", Span::call_site())
+        Ident::new("__Context__", Span::call_site())
     } else {
         parse2(attr)?
     };

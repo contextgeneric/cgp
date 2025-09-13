@@ -29,7 +29,7 @@ impl Parse for ComponentSpec {
         if input.peek2(End) {
             let provider_name: Ident = input.parse()?;
 
-            let context_type = Ident::new("Context", Span::call_site());
+            let context_type = Ident::new("__Context__", Span::call_site());
 
             let component_name =
                 Ident::new(&format!("{provider_name}Component"), provider_name.span());
@@ -75,7 +75,7 @@ impl ComponentSpec {
             if let Some(context_type) = raw_context_type {
                 syn::parse2(context_type.clone())?
             } else {
-                Ident::new("Context", Span::call_site())
+                Ident::new("__Context__", Span::call_site())
             }
         };
 

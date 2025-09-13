@@ -24,7 +24,7 @@ pub fn derive_provider_impl(
 ) -> syn::Result<ItemImpl> {
     let provider_name = &provider_trait.ident;
 
-    let component_type = Ident::new("Component", Span::call_site());
+    let component_type = Ident::new("__Component__", Span::call_site());
 
     let provider_generic_args = TypeGenerics::try_from(&provider_trait.generics)?
         .generics
