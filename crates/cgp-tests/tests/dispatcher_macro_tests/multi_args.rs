@@ -2,7 +2,7 @@ use cgp::prelude::*;
 
 use crate::dispatcher_macro_tests::types::{Bar, Foo, FooBar};
 
-#[cgp_dispatch]
+#[cgp_auto_dispatch]
 pub trait CanCall {
     fn call(&self, _a: u64, _b: bool) -> &'static str;
 }

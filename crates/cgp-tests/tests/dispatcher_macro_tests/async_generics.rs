@@ -5,7 +5,7 @@ use futures::executor::block_on;
 
 use crate::dispatcher_macro_tests::types::{Bar, Foo, FooBar};
 
-#[cgp_dispatch]
+#[cgp_auto_dispatch]
 #[async_trait]
 pub trait CanCall<T> {
     async fn call_a(&self, _a: u64, _b: &T) -> String;

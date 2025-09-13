@@ -17,7 +17,7 @@ pub struct Rectangle {
     pub height: f64,
 }
 
-#[cgp_dispatch]
+#[cgp_auto_dispatch]
 pub trait HasArea {
     fn area(&self) -> f64;
 }
@@ -34,7 +34,7 @@ impl HasArea for Rectangle {
     }
 }
 
-#[cgp_dispatch]
+#[cgp_auto_dispatch]
 pub trait CanScale {
     fn scale(&mut self, factor: f64);
 }

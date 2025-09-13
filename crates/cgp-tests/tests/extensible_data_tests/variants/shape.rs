@@ -99,7 +99,7 @@ fn test_shape_downcast() {
     };
 }
 
-#[cgp_dispatch]
+#[cgp_auto_dispatch]
 pub trait HasArea {
     fn area(self) -> f64;
 }

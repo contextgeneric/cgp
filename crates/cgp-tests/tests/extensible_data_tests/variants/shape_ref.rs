@@ -8,7 +8,7 @@ use cgp::prelude::*;
 
 use super::shape::{Circle, Rectangle, Shape, ShapePlus, Triangle};
 
-#[cgp_dispatch]
+#[cgp_auto_dispatch]
 pub trait HasAreaRef {
     fn area(&self) -> f64;
 }
@@ -48,7 +48,7 @@ fn compute_area_ref<T: HasAreaRef>(shape: &T) -> f64 {
     shape.area()
 }
 
-#[cgp_dispatch]
+#[cgp_auto_dispatch]
 pub trait ContainerRef {
     fn contains_ref(&self, x: f64, y: f64) -> bool;
 }

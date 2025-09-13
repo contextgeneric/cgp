@@ -3,7 +3,7 @@ use futures::executor::block_on;
 
 use crate::dispatcher_macro_tests::types::{Bar, Foo, FooBar};
 
-#[cgp_dispatch]
+#[cgp_auto_dispatch]
 #[async_trait]
 pub trait CanCall {
     async fn call<'a>(&'a mut self, _a: &'a u64, _b: bool) -> &'a str;

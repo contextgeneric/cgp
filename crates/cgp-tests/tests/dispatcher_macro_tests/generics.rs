@@ -4,7 +4,7 @@ use cgp::prelude::*;
 
 use crate::dispatcher_macro_tests::types::{Bar, Foo, FooBar};
 
-#[cgp_dispatch]
+#[cgp_auto_dispatch]
 pub trait CanCall<T> {
     fn call_a(&self, _a: u64, _b: &T) -> String;
 
