@@ -1,6 +1,6 @@
 use cgp::prelude::*;
 
-#[derive(BuildField)]
+#[derive(CgpData)]
 pub struct Context<Foo, Bar, Baz>
 where
     Foo: Clone,

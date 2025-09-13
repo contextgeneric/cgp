@@ -1,14 +1,14 @@
 use cgp::core::field::impls::{CanDowncast, CanUpcast};
 use cgp::prelude::*;
 
-#[derive(Debug, Eq, PartialEq, HasFields, ExtractField, FromVariant)]
+#[derive(Debug, Eq, PartialEq, CgpData)]
 pub enum FooBarBazGeneric<Foo, Bar, Baz> {
     Foo(Foo),
     Bar(Bar),
     Baz(Baz),
 }
 
-#[derive(Debug, Eq, PartialEq, HasFields, ExtractField, FromVariant)]
+#[derive(Debug, Eq, PartialEq, CgpData)]
 pub enum FooBarGeneric<Foo, Bar> {
     Foo(Foo),
     Bar(Bar),

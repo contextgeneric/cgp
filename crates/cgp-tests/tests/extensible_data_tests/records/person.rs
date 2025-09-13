@@ -2,20 +2,20 @@ use cgp::core::field::impls::CanBuildFrom;
 use cgp::extra::dispatch::{BuildAndMerge, BuildAndSetField, BuildWithHandlers};
 use cgp::prelude::*;
 
-#[derive(HasFields, BuildField)]
+#[derive(CgpData)]
 pub struct Person {
     pub first_name: String,
     pub last_name: String,
 }
 
-#[derive(HasFields, BuildField)]
+#[derive(CgpData)]
 pub struct Employee {
     pub employee_id: u64,
     pub first_name: String,
     pub last_name: String,
 }
 
-#[derive(HasFields, BuildField)]
+#[derive(CgpData)]
 pub struct EmployeeId {
     pub employee_id: u64,
 }

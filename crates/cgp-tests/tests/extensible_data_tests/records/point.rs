@@ -1,20 +1,20 @@
 use cgp::extra::field::impls::CanBuildWithDefault;
 use cgp::prelude::*;
 
-#[derive(Debug, Clone, Eq, PartialEq, HasFields, BuildField)]
+#[derive(Debug, Clone, Eq, PartialEq, CgpData)]
 struct Point2d {
     x: u64,
     y: u64,
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, HasFields, BuildField)]
+#[derive(Debug, Clone, Eq, PartialEq, CgpData)]
 struct Point3d {
     x: u64,
     y: u64,
     z: u64,
 }
 
-#[derive(Debug, Clone, Eq, PartialEq, HasFields, BuildField)]
+#[derive(Debug, Clone, Eq, PartialEq, CgpData)]
 struct Point4d {
     x: u64,
     y: u64,

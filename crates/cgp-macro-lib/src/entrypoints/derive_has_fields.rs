@@ -1,5 +1,5 @@
 use proc_macro2::TokenStream;
-use quote::TokenStreamExt;
+use quote::quote;
 use syn::{parse2, Error, Item};
 
 use crate::derive_has_fields::{
@@ -20,9 +20,7 @@ pub fn derive_has_fields(body: TokenStream) -> syn::Result<TokenStream> {
         }
     };
 
-    let mut out = TokenStream::new();
-
-    out.append_all(impls);
-
-    Ok(out)
+    Ok(quote! {
+        #( #impls )*
+    })
 }

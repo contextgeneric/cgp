@@ -3,7 +3,7 @@ use cgp::extra::field::impls::{
 };
 use cgp::prelude::*;
 
-#[derive(HasFields, BuildField)]
+#[derive(CgpData)]
 pub struct Context {
     pub foo: String,
     pub bar: u64,

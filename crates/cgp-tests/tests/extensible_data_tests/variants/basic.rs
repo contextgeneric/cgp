@@ -12,25 +12,25 @@ use cgp::extra::handler::{Computer, ComputerComponent, ComputerRefComponent, Pro
 use cgp::prelude::*;
 use futures::executor::block_on;
 
-#[derive(Debug, Eq, PartialEq, HasFields, ExtractField, FromVariant)]
+#[derive(Debug, Eq, PartialEq, CgpData)]
 pub enum FooBarBaz {
     Foo(u64),
     Bar(String),
     Baz(bool),
 }
 
-#[derive(Debug, Eq, PartialEq, HasFields, ExtractField, FromVariant)]
+#[derive(Debug, Eq, PartialEq, CgpData)]
 pub enum FooBar {
     Foo(u64),
     Bar(String),
 }
 
-#[derive(Debug, Eq, PartialEq, HasFields, ExtractField, FromVariant)]
+#[derive(Debug, Eq, PartialEq, CgpData)]
 pub enum Baz {
     Baz(bool),
 }
 
-#[derive(Debug, Eq, PartialEq, HasFields, ExtractField, FromVariant)]
+#[derive(Debug, Eq, PartialEq, CgpData)]
 pub enum BazBarFoo {
     Baz(bool),
     Bar(String),

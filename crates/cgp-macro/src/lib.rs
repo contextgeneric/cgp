@@ -984,3 +984,10 @@ pub fn derive_cgp_record(item: TokenStream) -> TokenStream {
         .unwrap_or_else(syn::Error::into_compile_error)
         .into()
 }
+
+#[proc_macro_derive(CgpData)]
+pub fn derive_cgp_data(item: TokenStream) -> TokenStream {
+    cgp_macro_lib::derive_cgp_data(item.into())
+        .unwrap_or_else(syn::Error::into_compile_error)
+        .into()
+}

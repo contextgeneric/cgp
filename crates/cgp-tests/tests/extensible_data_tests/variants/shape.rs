@@ -9,18 +9,18 @@ use cgp::extra::dispatch::{
 use cgp::extra::handler::{NoCode, UseInputDelegate};
 use cgp::prelude::*;
 
-#[derive(Debug, PartialEq, HasFields, FromVariant, ExtractField)]
+#[derive(Debug, PartialEq, CgpData)]
 pub enum Shape {
     Circle(Circle),
     Rectangle(Rectangle),
 }
 
-#[derive(Debug, PartialEq, HasFields, FromVariant, ExtractField)]
+#[derive(Debug, PartialEq, CgpData)]
 pub enum TriangleOnly {
     Triangle(Triangle),
 }
 
-#[derive(Debug, PartialEq, HasFields, FromVariant, ExtractField)]
+#[derive(Debug, PartialEq, CgpData)]
 pub enum ShapePlus {
     Triangle(Triangle),
     Rectangle(Rectangle),
