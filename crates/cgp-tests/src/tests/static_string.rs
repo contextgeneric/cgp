@@ -1,4 +1,6 @@
-use cgp::core::field::traits::{static_chars, MaybeChars};
+use core::mem::transmute;
+
+use cgp::core::field::traits::{static_chars, MaybeChars, Nat, StaticString};
 use cgp::prelude::*;
 
 pub const TEST_STR: &'static str = const {
@@ -9,6 +11,20 @@ pub const TEST_STR: &'static str = const {
         Err(_) => panic!("error"),
     }
 };
+
+// pub const TEST_A: [u8; 3] = const {
+//     unsafe {
+//         transmute((1u8, (2u8, 3u8)))
+//     }
+// };
+
+// pub const TEST_A: &'static (u8, (u8, (u8, ()))) = &(1, (2, (3, ())));
+
+// pub const TEST_B: &'static [u8] = const {
+//     unsafe {
+//         transmute(TEST_A)
+//     }
+// };
 
 pub trait TestB<const LEN: usize> {
     const CHARS: &'static [u8];
@@ -37,7 +53,20 @@ where
     };
 }
 
+// pub trait TestD {
+//     const CHARS: &'static str;
+// }
+
+// impl<T, N: Nat> TestD for T
+// where
+//     T: TestC<{N::VALUE}> + MaybeChars<Len = N>,
+// {
+//     const CHARS: &'static str = T::CHARS;
+// }
+
 #[test]
 fn test_static_chars() {
-    assert_eq!(<Symbol!("abc") as TestC<3>>::CHARS, "abc");
+    // assert_eq!(TEST_A, [1, 2, 3]);
+
+    assert_eq!(<Symbol!("abc") as StaticString>::VALUE, "abc");
 }

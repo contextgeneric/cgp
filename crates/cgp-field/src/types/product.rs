@@ -1,4 +1,4 @@
-use crate::traits::{MaybeChars, StaticDisplay, StaticFormat};
+use crate::traits::{MaybeChars, StaticDisplay, StaticFormat, Z};
 
 /**
     The `Cons` type, a.k.a. `π`, is used to represent the head of a _type-level list_,
@@ -62,7 +62,8 @@ impl StaticDisplay for Nil {
 }
 
 impl MaybeChars for Nil {
-    const LEN: usize = 0;
+    type Len = Z;
+    // const LEN: usize = 0;
 
     const VALUE: Option<char> = None;
 
