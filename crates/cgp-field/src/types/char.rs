@@ -50,7 +50,7 @@ pub struct ι<const CHAR: char, Tail>(pub PhantomData<Tail>);
 
 pub use ι as Char;
 
-use crate::traits::StaticFormat;
+use crate::traits::{StaticDisplay, StaticFormat};
 
 impl<const CHAR: char, Tail> Display for Char<CHAR, Tail>
 where
@@ -69,4 +69,12 @@ where
         write!(f, "{CHAR}")?;
         Tail::fmt(f)
     }
+}
+
+impl<const CHAR: char, Tail> StaticDisplay for Char<CHAR, Tail>
+where
+    Self: StaticFormat,
+    Tail: 'static,
+{
+    const VALUE: &'static dyn Display = &Self(PhantomData);
 }
