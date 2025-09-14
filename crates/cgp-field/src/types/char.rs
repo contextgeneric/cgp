@@ -50,7 +50,7 @@ pub struct ι<const CHAR: char, Tail>(pub PhantomData<Tail>);
 
 pub use ι as Char;
 
-use crate::traits::{StaticDisplay, StaticFormat};
+use crate::traits::{MaybeChars, StaticDisplay, StaticFormat};
 
 impl<const CHAR: char, Tail> Display for Char<CHAR, Tail>
 where
@@ -77,4 +77,15 @@ where
     Tail: 'static,
 {
     const VALUE: &'static dyn Display = &Self(PhantomData);
+}
+
+impl<const CHAR: char, Tail> MaybeChars for Char<CHAR, Tail>
+where
+    Tail: MaybeChars,
+{
+    const LEN: usize = Tail::LEN + CHAR.len_utf8();
+
+    const VALUE: Option<char> = Some(CHAR);
+
+    type Next = Tail;
 }

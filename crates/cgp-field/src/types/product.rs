@@ -1,4 +1,4 @@
-use crate::traits::{StaticDisplay, StaticFormat};
+use crate::traits::{MaybeChars, StaticDisplay, StaticFormat};
 
 /**
     The `Cons` type, a.k.a. `π`, is used to represent the head of a _type-level list_,
@@ -59,4 +59,12 @@ impl StaticFormat for Nil {
 
 impl StaticDisplay for Nil {
     const VALUE: &'static dyn core::fmt::Display = &"";
+}
+
+impl MaybeChars for Nil {
+    const LEN: usize = 0;
+
+    const VALUE: Option<char> = None;
+
+    type Next = Nil;
 }
