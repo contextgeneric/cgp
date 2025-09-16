@@ -1,6 +1,3 @@
-#![allow(confusable_idents)]
-#![allow(mixed_script_confusables)]
-
 /*!
    This is an internal crate used by the `cgp-macro` crate. We implement the
    proc macros for `cgp-component` as a library, so that it can be more easily tested.

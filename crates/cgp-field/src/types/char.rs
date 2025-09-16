@@ -48,9 +48,9 @@ use crate::traits::{MaybeChars, StaticDisplay, StaticFormat};
     ```
 */
 #[derive(Eq, PartialEq, Clone, Copy, Default)]
-pub struct ι<const CHAR: char, Tail>(pub PhantomData<Tail>);
+pub struct ζ<const CHAR: char, Tail>(pub PhantomData<Tail>);
 
-pub use ι as Char;
+pub use ζ as Char;
 
 impl<const CHAR: char, Tail> Display for Char<CHAR, Tail>
 where

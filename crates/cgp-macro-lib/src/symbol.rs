@@ -3,11 +3,15 @@ use quote::ToTokens;
 use syn::{parse_quote, LitStr, Type};
 
 pub fn symbol_from_string(value: &str) -> Type {
-    value
+    let chars = value
         .chars()
         .rfold(parse_quote! { ε }, |tail, c: char| -> Type {
-            parse_quote!( ι< #c, #tail > )
-        })
+            parse_quote!( ζ< #c, #tail > )
+        });
+
+    let len = value.len();
+
+    parse_quote!( ψ< #len, #chars > )
 }
 
 pub fn make_symbol(input: TokenStream) -> TokenStream {

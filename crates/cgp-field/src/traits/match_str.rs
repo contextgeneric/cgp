@@ -1,7 +1,16 @@
-use crate::types::{Char, Nil};
+use crate::types::{Char, Nil, Symbol};
 
 pub trait MatchStr {
     fn match_str(value: &str) -> bool;
+}
+
+impl<const LEN: usize, Chars> MatchStr for Symbol<LEN, Chars>
+where
+    Chars: MatchChars,
+{
+    fn match_str(value: &str) -> bool {
+        Chars::match_chars(value.chars())
+    }
 }
 
 impl<T> MatchStr for T
