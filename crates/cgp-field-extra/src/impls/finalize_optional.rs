@@ -43,7 +43,7 @@ where
         let context = Rest::finalize_optional(context)?;
         let (m_value, context) = context.update_field(PhantomData, ());
 
-        let value = m_value.ok_or_else(|| Tag::VALUE)?;
+        let value = m_value.ok_or(Tag::VALUE)?;
         let context = context.build_field(PhantomData, value);
 
         Ok(context)
