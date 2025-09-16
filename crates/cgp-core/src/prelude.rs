@@ -14,7 +14,7 @@ pub use cgp_field::traits::{
     ToFieldsRef, UpdateField,
 };
 pub use cgp_field::types::{
-    δ, ε, θ, ι, π, σ, ω, Char, Cons, Either, Field, Index, Nil, Void
+    δ, ε, θ, ι, π, σ, ω, Char, Cons, Either, Field, Index, Nil, Symbol, Void,
 };
 pub use cgp_macro::{
     cgp_auto_getter, cgp_component, cgp_context, cgp_getter, cgp_new_provider, cgp_preset,

@@ -1,7 +1,6 @@
 use core::fmt::{self, Display, Formatter};
 
-use crate::traits::Nat;
-use crate::types::{Char, Nil};
+use crate::types::{Nil, Symbol};
 
 pub trait StaticFormat {
     fn fmt(f: &mut Formatter<'_>) -> Result<(), fmt::Error>;
@@ -12,7 +11,7 @@ pub trait StaticDisplay {
 }
 
 pub trait MaybeChars {
-    type Len: Nat;
+    const LEN: usize;
 
     const VALUE: Option<char>;
 
@@ -27,17 +26,11 @@ impl StaticBytes for Nil {
     const BYTES: &'static [u8] = &[];
 }
 
-// impl<const C: char, R> StaticBytes for Char<C, R>
-// where
-//     R: MaybeChars,
-// {
-//     const BYTES: &'static [u8] = &static_chars::<{R::Len::VALUE}, Self>();
-// }
-
-impl<const C1: char, const C2: char, const C3: char> StaticBytes
-    for Char<C1, Char<C2, Char<C3, Nil>>>
+impl<const LEN: usize, Chars> StaticBytes for Symbol<LEN, Chars>
+where
+    Chars: MaybeChars,
 {
-    const BYTES: &'static [u8] = &static_chars::<3, Self>();
+    const BYTES: &'static [u8] = &static_chars::<LEN, Chars>();
 }
 
 pub trait StaticString {

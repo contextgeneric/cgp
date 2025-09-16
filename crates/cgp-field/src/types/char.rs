@@ -1,6 +1,8 @@
 use core::fmt::Display;
 use core::marker::PhantomData;
 
+use crate::traits::{MaybeChars, StaticDisplay, StaticFormat};
+
 /**
     The `Char` type, a.k.a. `ι`, is used to represent _type-level_ list of
     `char`s, which are equivalent to type-level strings.
@@ -50,8 +52,6 @@ pub struct ι<const CHAR: char, Tail>(pub PhantomData<Tail>);
 
 pub use ι as Char;
 
-use crate::traits::{MaybeChars, StaticDisplay, StaticFormat, S};
-
 impl<const CHAR: char, Tail> Display for Char<CHAR, Tail>
 where
     Self: StaticFormat,
@@ -83,8 +83,7 @@ impl<const CHAR: char, Tail> MaybeChars for Char<CHAR, Tail>
 where
     Tail: MaybeChars,
 {
-    type Len = S<Tail::Len>;
-    // const LEN: usize = Tail::LEN + 1;
+    const LEN: usize = Tail::LEN + 1;
 
     const VALUE: Option<char> = Some(CHAR);
 

@@ -1,6 +1,4 @@
-use core::mem::transmute;
-
-use cgp::core::field::traits::{static_chars, MaybeChars, Nat, StaticString};
+use cgp::core::field::traits::{static_chars, MaybeChars, StaticString};
 use cgp::prelude::*;
 
 pub const TEST_STR: &'static str = const {
@@ -68,5 +66,5 @@ where
 fn test_static_chars() {
     // assert_eq!(TEST_A, [1, 2, 3]);
 
-    assert_eq!(<Symbol!("abc") as StaticString>::VALUE, "abc");
+    assert_eq!(<Symbol<3, Symbol!("abc")> as StaticString>::VALUE, "abc");
 }
