@@ -855,7 +855,7 @@ pub fn replace_with(body: TokenStream) -> TokenStream {
     which would be shown with the shortened representation as:
 
     ```rust,ignore
-    type Hello = ι<'h', ι<'e', ι<'l', ι<'l', ι<'o', ε>>>>>;
+    type Hello = ζ<'h', ζ<'e', ζ<'l', ζ<'l', ζ<'o', ε>>>>>;
     ```
 */
 #[proc_macro]
