@@ -1,4 +1,4 @@
-use proc_macro2::TokenStream;
+use proc_macro2::{Literal, TokenStream};
 use quote::ToTokens;
 use syn::{parse_quote, LitStr, Type};
 
@@ -9,7 +9,7 @@ pub fn symbol_from_string(value: &str) -> Type {
             parse_quote!( ζ< #c, #tail > )
         });
 
-    let len = value.len();
+    let len = Literal::usize_unsuffixed(value.len());
 
     parse_quote!( ψ< #len, #chars > )
 }
