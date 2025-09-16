@@ -1,4 +1,3 @@
-use alloc::string::String;
 use core::marker::PhantomData;
 
 use cgp_field::impls::{IsNothing, IsOptional};
@@ -8,7 +7,7 @@ use cgp_field::traits::{
 use cgp_field::types::{Cons, Field, Nil};
 
 pub trait FinalizeOptional: PartialData {
-    fn finalize_optional(self) -> Result<Self::Target, String>;
+    fn finalize_optional(self) -> Result<Self::Target, &'static str>;
 }
 
 impl<ContextA, ContextB, Target> FinalizeOptional for ContextA
@@ -18,7 +17,7 @@ where
     Target::Fields: FinalizeOptionalImpl<ContextA, Output = ContextB>,
     ContextB: FinalizeBuild<Target = Target>,
 {
-    fn finalize_optional(self) -> Result<Self::Target, String> {
+    fn finalize_optional(self) -> Result<Self::Target, &'static str> {
         let context = Target::Fields::finalize_optional(self)?;
         Ok(context.finalize_build())
     }
