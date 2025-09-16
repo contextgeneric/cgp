@@ -1,5 +1,3 @@
-use crate::traits::{MaybeChars, StaticFormat};
-
 /**
     The `Cons` type, a.k.a. `π`, is used to represent the head of a _type-level list_,
     also known as an _anonymous product type_.
@@ -50,17 +48,3 @@ pub struct π<Head, Tail>(pub Head, pub Tail);
 pub struct ε;
 
 pub use {ε as Nil, π as Cons};
-
-impl StaticFormat for Nil {
-    fn fmt(_f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-        Ok(())
-    }
-}
-
-impl MaybeChars for Nil {
-    const LEN: usize = 0;
-
-    const VALUE: Option<char> = None;
-
-    type Next = Nil;
-}
