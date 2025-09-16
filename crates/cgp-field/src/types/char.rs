@@ -1,7 +1,7 @@
 use core::fmt::Display;
 use core::marker::PhantomData;
 
-use crate::traits::{MaybeChars, StaticDisplay, StaticFormat};
+use crate::traits::{MaybeChars, StaticFormat};
 
 /**
     The `Char` type, a.k.a. `ι`, is used to represent _type-level_ list of
@@ -69,14 +69,6 @@ where
         write!(f, "{CHAR}")?;
         Tail::fmt(f)
     }
-}
-
-impl<const CHAR: char, Tail> StaticDisplay for Char<CHAR, Tail>
-where
-    Self: StaticFormat,
-    Tail: 'static,
-{
-    const VALUE: &'static dyn Display = &Self(PhantomData);
 }
 
 impl<const CHAR: char, Tail> MaybeChars for Char<CHAR, Tail>

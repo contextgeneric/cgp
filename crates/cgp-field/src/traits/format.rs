@@ -1,13 +1,9 @@
-use core::fmt::{self, Display, Formatter};
+use core::fmt::{self, Formatter};
 
 use crate::types::{Nil, Symbol};
 
 pub trait StaticFormat {
     fn fmt(f: &mut Formatter<'_>) -> Result<(), fmt::Error>;
-}
-
-pub trait StaticDisplay {
-    const VALUE: &'static dyn Display;
 }
 
 pub trait MaybeChars {
