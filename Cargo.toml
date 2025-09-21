@@ -1,6 +1,6 @@
 [workspace]
 
-resolver = "2"
+resolver = "3"
 
 members = [
     "crates/cgp",
@@ -30,8 +30,8 @@ members = [
 ]
 
 [workspace.package]
-rust-version    = "1.87"
-edition         = "2021"
+rust-version    = "1.90"
+edition         = "2024"
 license         = "Apache-2.0"
 repository      = "https://github.com/contextgeneric/cgp"
 authors         = ["Soares Chen <soares.chen@maybevoid.com>"]
