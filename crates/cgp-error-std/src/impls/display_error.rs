@@ -7,8 +7,8 @@ use cgp_core::error::{
 };
 use cgp_core::prelude::*;
 
-use crate::types::{Error, StringError};
 use crate::WrapError;
+use crate::types::{Error, StringError};
 
 pub struct DisplayBoxedStdError;
 

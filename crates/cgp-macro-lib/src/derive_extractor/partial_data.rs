@@ -1,5 +1,5 @@
 use quote::quote;
-use syn::{parse2, Ident, ItemEnum, ItemImpl};
+use syn::{Ident, ItemEnum, ItemImpl, parse2};
 
 use crate::derive_builder::index_to_generic_ident;
 

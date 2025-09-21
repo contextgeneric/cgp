@@ -1,6 +1,6 @@
 use proc_macro2::TokenStream;
-use quote::{quote, ToTokens, TokenStreamExt};
-use syn::{parse2, ItemImpl, ItemStruct, ItemTrait};
+use quote::{ToTokens, TokenStreamExt, quote};
+use syn::{ItemImpl, ItemStruct, ItemTrait, parse2};
 
 use crate::derive_component::component_name::derive_component_name_struct;
 use crate::derive_component::consumer_impl::derive_consumer_impl;

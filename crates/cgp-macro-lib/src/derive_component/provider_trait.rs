@@ -3,7 +3,7 @@ use alloc::vec::Vec;
 use quote::quote;
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
-use syn::{parse2, Ident, ItemTrait, TraitItem, TypeParamBound};
+use syn::{Ident, ItemTrait, TraitItem, TypeParamBound, parse2};
 
 use crate::derive_component::replace_self_receiver::replace_self_receiver;
 use crate::derive_component::replace_self_type::{

@@ -1,7 +1,7 @@
 use alloc::format;
 use core::fmt::Debug;
 
-use anyhow::{anyhow, Error};
+use anyhow::{Error, anyhow};
 use cgp_core::error::{ErrorRaiser, ErrorRaiserComponent, ErrorWrapper, ErrorWrapperComponent};
 use cgp_core::prelude::*;
 

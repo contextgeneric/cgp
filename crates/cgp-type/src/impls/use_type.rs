@@ -3,8 +3,8 @@ use core::marker::PhantomData;
 use cgp_component::{IsProviderFor, WithProvider};
 use cgp_macro::cgp_provider;
 
-use crate::traits::ProvideType;
 use crate::TypeComponent;
+use crate::traits::ProvideType;
 
 /**
     The `UseType` pattern is used to implement a CGP abstract type with the

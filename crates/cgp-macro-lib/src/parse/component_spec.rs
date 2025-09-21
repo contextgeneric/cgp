@@ -5,7 +5,7 @@ use proc_macro2::{Span, TokenStream};
 use syn::parse::{End, Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::token::{Bracket, Comma, Gt, Lt, Paren};
-use syn::{bracketed, parenthesized, parse2, Error, Ident};
+use syn::{Error, Ident, bracketed, parenthesized, parse2};
 
 use crate::parse::Entries;
 

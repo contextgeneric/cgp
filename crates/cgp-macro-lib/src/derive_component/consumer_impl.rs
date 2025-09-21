@@ -2,12 +2,12 @@ use alloc::boxed::Box;
 use alloc::vec::Vec;
 
 use proc_macro2::Span;
-use quote::{quote, ToTokens};
+use quote::{ToTokens, quote};
 use syn::spanned::Spanned;
 use syn::token::{Brace, Eq, For, Impl};
 use syn::{
-    parse2, Error, GenericParam, Generics, Ident, ImplItem, ImplItemConst, ItemImpl, ItemTrait,
-    Path, TraitItem, TypeParamBound, Visibility,
+    Error, GenericParam, Generics, Ident, ImplItem, ImplItemConst, ItemImpl, ItemTrait, Path,
+    TraitItem, TypeParamBound, Visibility, parse2,
 };
 
 use crate::derive_component::delegate_fn::derive_delegated_fn_impl;

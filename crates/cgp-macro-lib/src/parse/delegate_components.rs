@@ -1,12 +1,12 @@
 use core::iter;
 
 use proc_macro2::TokenStream;
-use quote::{quote, ToTokens, TokenStreamExt};
+use quote::{ToTokens, TokenStreamExt, quote};
 use syn::parse::discouraged::Speculative;
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::token::{Bracket, Colon, Comma, Gt, Lt, RArrow};
-use syn::{braced, bracketed, parse_quote, Error, Generics, Ident, Token, Type};
+use syn::{Error, Generics, Ident, Token, Type, braced, bracketed, parse_quote};
 
 use crate::parse::{ImplGenerics, TypeGenerics};
 

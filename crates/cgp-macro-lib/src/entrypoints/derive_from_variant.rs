@@ -1,6 +1,6 @@
 use proc_macro2::TokenStream;
 use quote::quote;
-use syn::{parse2, ItemEnum, ItemImpl};
+use syn::{ItemEnum, ItemImpl, parse2};
 
 use crate::derive_extractor::get_variant_type;
 use crate::symbol::symbol_from_string;

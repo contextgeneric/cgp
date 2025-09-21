@@ -1,7 +1,7 @@
 use proc_macro2::TokenStream;
 use quote::ToTokens;
 use syn::parse::{Parse, ParseStream};
-use syn::{parse2, Error, Generics, TypeGenerics};
+use syn::{Error, Generics, TypeGenerics, parse2};
 
 #[derive(Clone, Default)]
 pub struct ImplGenerics {

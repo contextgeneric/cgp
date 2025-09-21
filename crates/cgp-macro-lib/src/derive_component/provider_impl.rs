@@ -7,13 +7,13 @@ use syn::punctuated::Punctuated;
 use syn::spanned::Spanned;
 use syn::token::{Brace, Comma, Eq, For, Impl, Plus};
 use syn::{
-    parse2, Error, GenericParam, Ident, ImplItem, ImplItemConst, ItemImpl, ItemTrait, Path,
-    TraitItem, TypeParamBound, Visibility,
+    Error, GenericParam, Ident, ImplItem, ImplItemConst, ItemImpl, ItemTrait, Path, TraitItem,
+    TypeParamBound, Visibility, parse2,
 };
 
 use crate::derive_component::delegate_fn::derive_delegated_fn_impl;
 use crate::derive_component::delegate_type::derive_delegate_type_impl;
-use crate::parse::{parse_is_provider_params, TypeGenerics};
+use crate::parse::{TypeGenerics, parse_is_provider_params};
 
 pub fn derive_provider_impl(
     context_type: &Ident,

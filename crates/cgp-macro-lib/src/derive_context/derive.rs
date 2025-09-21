@@ -1,5 +1,5 @@
 use quote::quote;
-use syn::{parse2, parse_quote, AngleBracketedGenericArguments, Ident, ItemImpl, ItemStruct};
+use syn::{AngleBracketedGenericArguments, Ident, ItemImpl, ItemStruct, parse_quote, parse2};
 
 use crate::parse::TypeGenerics;
 

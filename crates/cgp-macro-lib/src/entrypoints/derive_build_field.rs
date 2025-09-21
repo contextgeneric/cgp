@@ -1,6 +1,6 @@
 use proc_macro2::TokenStream;
 use quote::quote;
-use syn::{parse2, Ident, ItemStruct};
+use syn::{Ident, ItemStruct, parse2};
 
 use crate::derive_builder::{
     derive_builder_struct, derive_finalize_build_impl, derive_has_builder_impl,

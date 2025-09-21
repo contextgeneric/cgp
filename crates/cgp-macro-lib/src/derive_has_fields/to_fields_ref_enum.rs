@@ -1,5 +1,5 @@
 use quote::quote;
-use syn::{parse2, ItemEnum, ItemImpl};
+use syn::{ItemEnum, ItemImpl, parse2};
 
 use crate::derive_has_fields::to_fields_enum::derive_to_fields_match_arms;
 

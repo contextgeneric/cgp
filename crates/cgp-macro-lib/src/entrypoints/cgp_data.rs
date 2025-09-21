@@ -1,5 +1,5 @@
 use proc_macro2::TokenStream;
-use syn::{parse2, Error, Item};
+use syn::{Error, Item, parse2};
 
 use crate::{derive_cgp_record_from_struct, derive_cgp_variant_from_enum};
 

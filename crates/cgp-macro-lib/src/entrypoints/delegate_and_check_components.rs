@@ -3,7 +3,7 @@ use quote::{ToTokens, TokenStreamExt};
 use syn::punctuated::Punctuated;
 use syn::spanned::Spanned;
 use syn::token::{Comma, Where};
-use syn::{parse2, Type, WhereClause};
+use syn::{Type, WhereClause, parse2};
 
 use crate::check_components::derive_check_components;
 use crate::delegate_components::impl_delegate_components;

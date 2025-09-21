@@ -6,8 +6,8 @@ use syn::punctuated::Punctuated;
 use syn::spanned::Spanned;
 use syn::token::{Comma, For};
 use syn::{
-    parse_quote, AngleBracketedGenericArguments, Error, GenericArgument, ItemImpl, ItemStruct,
-    Path, PathArguments, Type,
+    AngleBracketedGenericArguments, Error, GenericArgument, ItemImpl, ItemStruct, Path,
+    PathArguments, Type, parse_quote,
 };
 
 use crate::derive_provider::replace_provider_in_generics;

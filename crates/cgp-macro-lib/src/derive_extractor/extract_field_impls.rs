@@ -1,5 +1,5 @@
 use quote::quote;
-use syn::{parse2, Arm, GenericArgument, Ident, ItemEnum, ItemImpl, Type};
+use syn::{Arm, GenericArgument, Ident, ItemEnum, ItemImpl, Type, parse2};
 
 use crate::derive_builder::{index_to_generic_ident, to_generic_args};
 use crate::derive_extractor::get_variant_type;

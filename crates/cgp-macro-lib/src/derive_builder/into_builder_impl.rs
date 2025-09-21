@@ -1,7 +1,7 @@
 use quote::quote;
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
-use syn::{parse2, FieldValue, Ident, ItemImpl, ItemStruct};
+use syn::{FieldValue, Ident, ItemImpl, ItemStruct, parse2};
 
 use crate::derive_builder::{field_to_member, field_value_expr, to_generic_args};
 

@@ -1,6 +1,6 @@
 use quote::ToTokens;
 use syn::spanned::Spanned;
-use syn::{parse2, Error, Ident, ItemImpl, Type};
+use syn::{Error, Ident, ItemImpl, Type, parse2};
 
 use crate::parse::SimpleType;
 

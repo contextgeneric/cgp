@@ -1,6 +1,6 @@
 use proc_macro2::TokenStream;
 use quote::quote;
-use syn::{parse2, ItemImpl, ItemStruct};
+use syn::{ItemImpl, ItemStruct, parse2};
 
 use crate::derive_has_fields::from_fields_struct::derive_from_fields_for_struct;
 use crate::derive_has_fields::product::item_fields_to_product_type;

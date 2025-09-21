@@ -4,7 +4,7 @@ use proc_macro2::TokenStream;
 use quote::quote;
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
-use syn::{parse2, ImplItemFn, Signature, Visibility};
+use syn::{ImplItemFn, Signature, Visibility, parse2};
 
 use crate::derive_component::signature_args::signature_to_args;
 

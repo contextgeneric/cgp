@@ -1,6 +1,6 @@
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
-use syn::{parse_quote, GenericParam, Generics, Type};
+use syn::{GenericParam, Generics, Type, parse_quote};
 
 use crate::parse::TypeGenerics;
 

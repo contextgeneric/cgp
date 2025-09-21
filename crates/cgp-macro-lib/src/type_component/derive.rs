@@ -1,10 +1,10 @@
 use alloc::format;
 use alloc::vec::Vec;
 
-use quote::{quote, ToTokens};
+use quote::{ToTokens, quote};
 use syn::spanned::Spanned;
 use syn::{
-    parse2, Error, Generics, Ident, ItemImpl, ItemTrait, ItemType, TraitItem, TraitItemType, Type,
+    Error, Generics, Ident, ItemImpl, ItemTrait, ItemType, TraitItem, TraitItemType, Type, parse2,
 };
 
 use crate::derive_provider::derive_is_provider_for;

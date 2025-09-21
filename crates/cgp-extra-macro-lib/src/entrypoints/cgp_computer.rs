@@ -1,9 +1,9 @@
 use proc_macro2::TokenStream;
-use quote::{quote, ToTokens};
+use quote::{ToTokens, quote};
 use syn::punctuated::Punctuated;
 use syn::spanned::Spanned;
 use syn::token::Comma;
-use syn::{parse2, FnArg, Ident, ItemFn, ItemImpl, ReturnType, Type};
+use syn::{FnArg, Ident, ItemFn, ItemImpl, ReturnType, Type, parse2};
 
 use crate::parse::MaybeResultType;
 use crate::utils::to_camel_case_str;

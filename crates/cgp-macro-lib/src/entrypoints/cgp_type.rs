@@ -1,8 +1,8 @@
 use alloc::format;
 
 use proc_macro2::TokenStream;
-use quote::{quote, TokenStreamExt};
-use syn::{parse_quote, Ident, ItemTrait};
+use quote::{TokenStreamExt, quote};
+use syn::{Ident, ItemTrait, parse_quote};
 
 use crate::derive_component::derive_component_with_ast;
 use crate::parse::{ComponentSpec, Entries};

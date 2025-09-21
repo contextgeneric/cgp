@@ -1,6 +1,6 @@
 use proc_macro2::TokenStream;
 use quote::quote;
-use syn::{parse2, Ident, ItemImpl, ItemStruct};
+use syn::{Ident, ItemImpl, ItemStruct, parse2};
 
 use crate::derive_context::{derive_delegate_preset, derive_has_components};
 use crate::parse::ContextSpec;

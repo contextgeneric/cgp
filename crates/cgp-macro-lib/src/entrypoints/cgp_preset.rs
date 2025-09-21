@@ -1,10 +1,10 @@
 use std::collections::HashSet;
 
 use proc_macro2::{Span, TokenStream};
-use quote::{quote, ToTokens, TokenStreamExt};
+use quote::{ToTokens, TokenStreamExt, quote};
 use syn::punctuated::Punctuated;
 use syn::token::{At, Comma};
-use syn::{parse2, parse_quote, GenericParam, Ident, ItemTrait, TypeParamBound};
+use syn::{GenericParam, Ident, ItemTrait, TypeParamBound, parse_quote, parse2};
 
 use crate::delegate_components::{define_struct, impl_delegate_components};
 use crate::derive_component::to_snake_case_str;
@@ -225,9 +225,10 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
                     if let GenericParam::Type(param) = param {
                         for bound in param.bounds.iter() {
                             if let TypeParamBound::Trait(bound) = bound
-                                && let Some(segment) = bound.path.segments.first() {
-                                    components.insert(segment.ident.clone());
-                                }
+                                && let Some(segment) = bound.path.segments.first()
+                            {
+                                components.insert(segment.ident.clone());
+                            }
                         }
                     }
                 }

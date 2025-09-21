@@ -1,10 +1,10 @@
 use proc_macro2::{Span, TokenStream};
-use quote::{quote, ToTokens};
+use quote::{ToTokens, quote};
 use syn::spanned::Spanned;
 use syn::token::Colon;
 use syn::{
-    parse2, AngleBracketedGenericArguments, Field, FieldValue, Generics, Ident, LitInt, Member,
-    Type,
+    AngleBracketedGenericArguments, Field, FieldValue, Generics, Ident, LitInt, Member, Type,
+    parse2,
 };
 
 use crate::symbol::symbol_from_string;

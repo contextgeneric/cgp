@@ -1,6 +1,6 @@
 use proc_macro2::{Literal, TokenStream};
 use quote::ToTokens;
-use syn::{parse_quote, LitStr, Type};
+use syn::{LitStr, Type, parse_quote};
 
 pub fn symbol_from_string(value: &str) -> Type {
     let chars = value

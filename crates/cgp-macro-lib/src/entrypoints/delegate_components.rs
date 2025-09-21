@@ -1,5 +1,5 @@
 use proc_macro2::TokenStream;
-use quote::{quote, ToTokens};
+use quote::{ToTokens, quote};
 use syn::parse2;
 
 use crate::delegate_components::{define_struct, impl_delegate_components};

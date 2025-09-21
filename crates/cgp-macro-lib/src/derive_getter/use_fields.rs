@@ -4,10 +4,10 @@ use proc_macro2::TokenStream;
 use quote::quote;
 use syn::punctuated::Punctuated;
 use syn::token::Plus;
-use syn::{parse2, ItemImpl, ItemTrait, TypeParamBound};
+use syn::{ItemImpl, ItemTrait, TypeParamBound, parse2};
 
 use crate::derive_getter::getter_field::GetterField;
-use crate::derive_getter::{derive_getter_constraint, derive_getter_method, ContextArg};
+use crate::derive_getter::{ContextArg, derive_getter_constraint, derive_getter_method};
 use crate::parse::ComponentSpec;
 use crate::symbol::symbol_from_string;
 

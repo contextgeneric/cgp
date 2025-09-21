@@ -2,7 +2,7 @@ use proc_macro2::TokenStream;
 use quote::quote;
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
-use syn::{parse2, Type, Variant};
+use syn::{Type, Variant, parse2};
 
 use crate::derive_has_fields::product::item_fields_to_product_type;
 use crate::symbol::symbol_from_string;

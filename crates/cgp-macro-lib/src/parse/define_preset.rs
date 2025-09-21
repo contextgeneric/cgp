@@ -3,7 +3,7 @@ use quote::ToTokens;
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::token::{At, Colon, Comma, Override, Plus, Pound};
-use syn::{braced, bracketed, parenthesized, Error, Ident};
+use syn::{Error, Ident, braced, bracketed, parenthesized};
 
 use crate::parse::{DelegateEntry, SimpleType, TypeSpec};
 

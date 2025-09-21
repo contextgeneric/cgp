@@ -1,7 +1,7 @@
 use quote::quote;
-use syn::{parse2, parse_quote, ItemImpl, ItemStruct, Lifetime};
+use syn::{ItemImpl, ItemStruct, Lifetime, parse_quote, parse2};
 
-use crate::derive_has_fields::to_fields_struct::{derive_to_fields_constructor, FieldLabel};
+use crate::derive_has_fields::to_fields_struct::{FieldLabel, derive_to_fields_constructor};
 
 pub fn derive_to_fields_ref_for_struct(item_struct: &ItemStruct) -> syn::Result<ItemImpl> {
     let struct_name = &item_struct.ident;

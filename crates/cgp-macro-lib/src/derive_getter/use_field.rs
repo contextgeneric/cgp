@@ -1,10 +1,10 @@
-use quote::{quote, ToTokens};
+use quote::{ToTokens, quote};
 use syn::punctuated::Punctuated;
 use syn::token::Plus;
-use syn::{parse2, Generics, ItemImpl, ItemTrait, TypeParamBound};
+use syn::{Generics, ItemImpl, ItemTrait, TypeParamBound, parse2};
 
 use crate::derive_getter::getter_field::GetterField;
-use crate::derive_getter::{derive_getter_constraint, derive_getter_method, ContextArg};
+use crate::derive_getter::{ContextArg, derive_getter_constraint, derive_getter_method};
 use crate::parse::ComponentSpec;
 
 pub fn derive_use_field_impl(

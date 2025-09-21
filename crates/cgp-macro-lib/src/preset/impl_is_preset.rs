@@ -2,7 +2,7 @@ use alloc::vec::Vec;
 
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
-use syn::{parse_quote, Ident, ItemImpl, Type};
+use syn::{Ident, ItemImpl, Type, parse_quote};
 
 use crate::parse::{DelegateEntry, DelegateKey, ImplGenerics, SimpleType};
 

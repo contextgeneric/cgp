@@ -3,7 +3,7 @@ use quote::quote;
 use syn::spanned::Spanned;
 use syn::token::{Brace, Eq, For, Impl};
 use syn::{
-    parse2, Error, Ident, ImplItem, ImplItemConst, ItemImpl, ItemTrait, Path, TraitItem, Visibility,
+    Error, Ident, ImplItem, ImplItemConst, ItemImpl, ItemTrait, Path, TraitItem, Visibility, parse2,
 };
 
 use crate::derive_component::delegate_fn::derive_delegated_fn_impl;

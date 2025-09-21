@@ -7,7 +7,7 @@ use syn::parse::discouraged::Speculative;
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::token::{Comma, Or};
-use syn::{braced, Ident};
+use syn::{Ident, braced};
 
 use crate::parse::{DelegateKey, SimpleType};
 

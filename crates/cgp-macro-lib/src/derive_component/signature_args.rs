@@ -1,5 +1,5 @@
 use proc_macro2::Span;
-use syn::{parse_quote, FnArg, Ident, Signature};
+use syn::{FnArg, Ident, Signature, parse_quote};
 
 pub fn signature_to_args(sig: &Signature) -> impl Iterator<Item = Ident> + '_ {
     sig.inputs.iter().map(|arg| -> Ident {

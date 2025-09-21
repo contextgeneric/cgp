@@ -1,7 +1,7 @@
 use proc_macro2::TokenStream;
 use quote::quote;
 use syn::spanned::Spanned;
-use syn::{parse2, Ident, ItemFn, ItemImpl, ReturnType};
+use syn::{Ident, ItemFn, ItemImpl, ReturnType, parse2};
 
 use crate::utils::to_camel_case_str;
 

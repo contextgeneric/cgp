@@ -13,11 +13,11 @@ impl<Context, Code, Input, Args, Output, Remainder, Handlers> Computer<Context, 
 where
     Input: HasExtractor,
     DispatchMatchers<Handlers>: Computer<
-        Context,
-        Code,
-        (Input::Extractor, Args),
-        Output = Result<Output, (Remainder, Args)>,
-    >,
+            Context,
+            Code,
+            (Input::Extractor, Args),
+            Output = Result<Output, (Remainder, Args)>,
+        >,
     Remainder: FinalizeExtract,
 {
     type Output = Output;
@@ -37,11 +37,11 @@ impl<Context, Code, Input, Args, Output, Remainder, Handlers>
 where
     Input: HasExtractor,
     DispatchMatchers<Handlers>: AsyncComputer<
-        Context,
-        Code,
-        (Input::Extractor, Args),
-        Output = Result<Output, (Remainder, Args)>,
-    >,
+            Context,
+            Code,
+            (Input::Extractor, Args),
+            Output = Result<Output, (Remainder, Args)>,
+        >,
     Remainder: FinalizeExtract,
 {
     type Output = Output;

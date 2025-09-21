@@ -3,10 +3,10 @@ use alloc::vec;
 use alloc::vec::Vec;
 
 use proc_macro2::TokenStream;
-use quote::{quote, ToTokens};
+use quote::{ToTokens, quote};
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
-use syn::{parse2, ImplItem, ImplItemType, ItemImpl, Path, Type};
+use syn::{ImplItem, ImplItemType, ItemImpl, Path, Type, parse2};
 
 use crate::delegate_components::define_struct;
 use crate::delegate_components::merge_generics::merge_generics;

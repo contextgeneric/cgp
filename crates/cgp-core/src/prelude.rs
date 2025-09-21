@@ -14,12 +14,12 @@ pub use cgp_field::traits::{
     ToFieldsRef, UpdateField,
 };
 pub use cgp_field::types::{
-    δ, ε, ζ, θ, π, σ, ψ, ω, Char, Cons, Either, Field, Index, Nil, Symbol, Void,
+    Char, Cons, Either, Field, Index, Nil, Symbol, Void, δ, ε, ζ, θ, π, σ, ψ, ω,
 };
 pub use cgp_macro::{
-    cgp_auto_getter, cgp_component, cgp_context, cgp_getter, cgp_new_provider, cgp_preset,
-    cgp_provider, cgp_type, check_components, delegate_and_check_components, delegate_components,
-    product, re_export_imports, replace_with, BuildField, CgpData, CgpRecord, CgpVariant,
-    ExtractField, FromVariant, HasField, HasFields, Product, Sum, Symbol, Symbol as symbol,
+    BuildField, CgpData, CgpRecord, CgpVariant, ExtractField, FromVariant, HasField, HasFields,
+    Product, Sum, Symbol, Symbol as symbol, cgp_auto_getter, cgp_component, cgp_context,
+    cgp_getter, cgp_new_provider, cgp_preset, cgp_provider, cgp_type, check_components,
+    delegate_and_check_components, delegate_components, product, re_export_imports, replace_with,
 };
 pub use cgp_type::{HasType, ProvideType, UseType};

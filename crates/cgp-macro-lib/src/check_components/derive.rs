@@ -1,5 +1,5 @@
 use quote::quote;
-use syn::{parse2, ItemImpl, ItemTrait, Type};
+use syn::{ItemImpl, ItemTrait, Type, parse2};
 
 use crate::check_components::override_span;
 use crate::parse::{CheckComponents, CheckEntry};

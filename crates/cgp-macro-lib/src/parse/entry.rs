@@ -2,11 +2,11 @@ use alloc::collections::BTreeMap;
 use alloc::string::{String, ToString};
 
 use proc_macro2::TokenStream;
-use quote::{quote, ToTokens};
+use quote::{ToTokens, quote};
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::token::{Bracket, Colon, Comma};
-use syn::{bracketed, Ident, Type};
+use syn::{Ident, Type, bracketed};
 
 pub struct Entry {
     pub key: Ident,

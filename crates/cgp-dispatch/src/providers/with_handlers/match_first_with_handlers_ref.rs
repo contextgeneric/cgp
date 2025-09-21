@@ -13,11 +13,11 @@ impl<'a, Context, Code, Input, Args, Output, Remainder, Handlers>
 where
     Input: HasExtractorRef,
     DispatchMatchers<Handlers>: Computer<
-        Context,
-        Code,
-        (Input::ExtractorRef<'a>, Args),
-        Output = Result<Output, (Remainder, Args)>,
-    >,
+            Context,
+            Code,
+            (Input::ExtractorRef<'a>, Args),
+            Output = Result<Output, (Remainder, Args)>,
+        >,
     Remainder: FinalizeExtract,
 {
     type Output = Output;
@@ -41,11 +41,11 @@ impl<'a, Context, Code, Input, Args, Output, Remainder, Handlers>
 where
     Input: HasExtractorRef,
     DispatchMatchers<Handlers>: AsyncComputer<
-        Context,
-        Code,
-        (Input::ExtractorRef<'a>, Args),
-        Output = Result<Output, (Remainder, Args)>,
-    >,
+            Context,
+            Code,
+            (Input::ExtractorRef<'a>, Args),
+            Output = Result<Output, (Remainder, Args)>,
+        >,
     Remainder: FinalizeExtract,
 {
     type Output = Output;

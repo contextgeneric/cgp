@@ -1,6 +1,6 @@
 use proc_macro2::Span;
 use quote::quote;
-use syn::{parse2, GenericParam, Ident, ItemEnum, Lifetime, LifetimeParam, Type, TypeParam};
+use syn::{GenericParam, Ident, ItemEnum, Lifetime, LifetimeParam, Type, TypeParam, parse2};
 
 use crate::derive_builder::index_to_generic_ident;
 use crate::derive_extractor::{get_variant_type, type_to_variant_fields};

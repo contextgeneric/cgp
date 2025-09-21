@@ -1,6 +1,6 @@
 use proc_macro2::TokenStream;
 use quote::quote;
-use syn::{parse2, Error, Item};
+use syn::{Error, Item, parse2};
 
 use crate::derive_has_fields::{
     derive_has_fields_impls_from_enum, derive_has_fields_impls_from_struct,

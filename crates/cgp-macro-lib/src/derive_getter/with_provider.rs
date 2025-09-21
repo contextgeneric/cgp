@@ -1,9 +1,9 @@
 use proc_macro2::Span;
-use quote::{quote, ToTokens};
-use syn::{parse2, Generics, Ident, ItemImpl, ItemTrait};
+use quote::{ToTokens, quote};
+use syn::{Generics, Ident, ItemImpl, ItemTrait, parse2};
 
 use crate::derive_getter::getter_field::GetterField;
-use crate::derive_getter::{derive_getter_method, ContextArg, FieldMode};
+use crate::derive_getter::{ContextArg, FieldMode, derive_getter_method};
 use crate::parse::ComponentSpec;
 
 pub fn derive_with_provider_impl(

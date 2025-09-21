@@ -4,7 +4,7 @@ use alloc::vec::Vec;
 use proc_macro2::TokenStream;
 use quote::quote;
 use syn::spanned::Spanned;
-use syn::{parse_quote, Fields, ItemImpl, ItemStruct, LitInt};
+use syn::{Fields, ItemImpl, ItemStruct, LitInt, parse_quote};
 
 use crate::symbol::symbol_from_string;
 

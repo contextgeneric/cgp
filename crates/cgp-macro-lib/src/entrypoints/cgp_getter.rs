@@ -1,14 +1,14 @@
-use std::collections::btree_map::Entry;
 use std::collections::BTreeMap;
+use std::collections::btree_map::Entry;
 
 use proc_macro2::TokenStream;
-use quote::{quote, ToTokens};
-use syn::{parse2, parse_quote, Ident, ItemTrait, Type};
+use quote::{ToTokens, quote};
+use syn::{Ident, ItemTrait, Type, parse_quote, parse2};
 
 use crate::derive_component::derive_component_with_ast;
 use crate::derive_getter::{
-    derive_use_field_impl, derive_use_fields_impl, derive_with_provider_impl, parse_getter_fields,
-    GetterField,
+    GetterField, derive_use_field_impl, derive_use_fields_impl, derive_with_provider_impl,
+    parse_getter_fields,
 };
 use crate::derive_provider::derive_is_provider_for;
 use crate::parse::{ComponentSpec, Entries};
@@ -27,11 +27,12 @@ pub fn cgp_getter(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStre
     if let Entry::Vacant(entry) = provider_entry {
         let consumer_name = consumer_trait.ident.to_string();
         if let Some(field_name) = consumer_name.strip_prefix("Has")
-            && !field_name.is_empty() {
-                let provider_name =
-                    Ident::new(&format!("{field_name}Getter"), consumer_trait.ident.span());
-                entry.insert(parse2(provider_name.to_token_stream())?);
-            }
+            && !field_name.is_empty()
+        {
+            let provider_name =
+                Ident::new(&format!("{field_name}Getter"), consumer_trait.ident.span());
+            entry.insert(parse2(provider_name.to_token_stream())?);
+        }
     }
 
     let spec = ComponentSpec::from_entries(&entries)?;

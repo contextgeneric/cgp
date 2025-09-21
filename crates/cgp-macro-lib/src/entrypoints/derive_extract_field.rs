@@ -1,6 +1,6 @@
 use proc_macro2::TokenStream;
 use quote::quote;
-use syn::{parse2, Ident, ItemEnum};
+use syn::{Ident, ItemEnum, parse2};
 
 use crate::derive_extractor::{
     derive_extract_field_impls, derive_extractor_enum, derive_extractor_enum_ref,

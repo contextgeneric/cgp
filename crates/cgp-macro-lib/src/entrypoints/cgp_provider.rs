@@ -1,6 +1,6 @@
 use proc_macro2::TokenStream;
 use quote::quote;
-use syn::{parse2, ItemImpl, Type};
+use syn::{ItemImpl, Type, parse2};
 
 use crate::derive_provider::{derive_component_name_from_provider_impl, derive_is_provider_for};
 

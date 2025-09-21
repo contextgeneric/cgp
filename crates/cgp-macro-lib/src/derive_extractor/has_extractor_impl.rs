@@ -1,5 +1,5 @@
 use quote::quote;
-use syn::{parse2, Arm, Ident, ItemEnum, ItemImpl};
+use syn::{Arm, Ident, ItemEnum, ItemImpl, parse2};
 
 use crate::derive_builder::to_generic_args;
 
