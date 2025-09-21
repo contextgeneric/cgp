@@ -21,8 +21,6 @@ trait StaticBytes {
 }
 
 trait MaybeChars {
-    const LEN: usize;
-
     const VALUE: Option<char>;
 
     type Next: MaybeChars;
@@ -43,16 +41,12 @@ impl<const CHAR: char, Tail> MaybeChars for Char<CHAR, Tail>
 where
     Tail: MaybeChars,
 {
-    const LEN: usize = Tail::LEN + 1;
-
     const VALUE: Option<char> = Some(CHAR);
 
     type Next = Tail;
 }
 
 impl MaybeChars for Nil {
-    const LEN: usize = 0;
-
     const VALUE: Option<char> = None;
 
     type Next = Nil;

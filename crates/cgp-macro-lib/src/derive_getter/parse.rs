@@ -253,13 +253,11 @@ fn parse_single_segment_type_path(type_path: &TypePath) -> syn::Result<&PathSegm
 }
 
 fn try_parse_phantom_arg_type_path(segment: &PathSegment) -> Option<Type> {
-    if segment.ident == "PhantomData" {
-        if let PathArguments::AngleBracketed(args) = &segment.arguments {
-            if let Some(GenericArgument::Type(ty)) = args.args.first() {
+    if segment.ident == "PhantomData"
+        && let PathArguments::AngleBracketed(args) = &segment.arguments
+            && let Some(GenericArgument::Type(ty)) = args.args.first() {
                 return Some(ty.clone());
             }
-        }
-    }
 
     None
 }
@@ -267,15 +265,14 @@ fn try_parse_phantom_arg_type_path(segment: &PathSegment) -> Option<Type> {
 fn try_parse_option_ref(type_path: &TypePath) -> Option<&Type> {
     let segment = parse_single_segment_type_path(type_path).ok()?;
 
-    if segment.ident == "Option" {
-        if let PathArguments::AngleBracketed(args) = &segment.arguments {
+    if segment.ident == "Option"
+        && let PathArguments::AngleBracketed(args) = &segment.arguments {
             let [arg] = Vec::from_iter(args.args.iter()).try_into().ok()?;
 
             if let GenericArgument::Type(Type::Reference(type_ref)) = arg {
                 return Some(type_ref.elem.as_ref());
             }
         }
-    }
 
     None
 }
@@ -283,15 +280,14 @@ fn try_parse_option_ref(type_path: &TypePath) -> Option<&Type> {
 fn try_parse_mref(type_path: &TypePath) -> Option<&Type> {
     let segment = parse_single_segment_type_path(type_path).ok()?;
 
-    if segment.ident == "MRef" {
-        if let PathArguments::AngleBracketed(args) = &segment.arguments {
+    if segment.ident == "MRef"
+        && let PathArguments::AngleBracketed(args) = &segment.arguments {
             let [arg1, arg2] = Vec::from_iter(args.args.iter()).try_into().ok()?;
 
             if let (GenericArgument::Lifetime(_), GenericArgument::Type(ty)) = (arg1, arg2) {
                 return Some(ty);
             }
         }
-    }
 
     None
 }

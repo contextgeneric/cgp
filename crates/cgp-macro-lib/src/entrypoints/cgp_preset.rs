@@ -224,11 +224,10 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
                 for param in component.generics.generics.params.iter() {
                     if let GenericParam::Type(param) = param {
                         for bound in param.bounds.iter() {
-                            if let TypeParamBound::Trait(bound) = bound {
-                                if let Some(segment) = bound.path.segments.first() {
+                            if let TypeParamBound::Trait(bound) = bound
+                                && let Some(segment) = bound.path.segments.first() {
                                     components.insert(segment.ident.clone());
                                 }
-                            }
                         }
                     }
                 }

@@ -6,8 +6,8 @@ pub fn impl_async(item: TokenStream) -> TokenStream {
     match syn::parse2::<ItemTrait>(item.clone()) {
         Ok(mut target_trait) => {
             for trait_item in target_trait.items.iter_mut() {
-                if let TraitItem::Fn(trait_fn) = trait_item {
-                    if trait_fn.sig.asyncness.is_some() {
+                if let TraitItem::Fn(trait_fn) = trait_item
+                    && trait_fn.sig.asyncness.is_some() {
                         let return_type: Type = match &trait_fn.sig.output {
                             ReturnType::Default => {
                                 parse_quote!(())
@@ -22,7 +22,6 @@ pub fn impl_async(item: TokenStream) -> TokenStream {
                         trait_fn.sig.output = impl_return;
                         trait_fn.sig.asyncness = None;
                     }
-                }
             }
 
             target_trait.to_token_stream()

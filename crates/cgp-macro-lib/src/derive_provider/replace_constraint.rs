@@ -37,10 +37,10 @@ pub fn replace_provider_in_type_params(
     let mut new_bounds: Punctuated<TypeParamBound, Plus> = Punctuated::default();
 
     for bound in type_params.iter() {
-        if let TypeParamBound::Trait(trait_bound) = bound {
-            if let Some(segment) = trait_bound.path.segments.last() {
-                if let Some(component_type) = provider_map.get(&segment.ident).cloned() {
-                    if let PathArguments::AngleBracketed(args) = &segment.arguments {
+        if let TypeParamBound::Trait(trait_bound) = bound
+            && let Some(segment) = trait_bound.path.segments.last()
+                && let Some(component_type) = provider_map.get(&segment.ident).cloned()
+                    && let PathArguments::AngleBracketed(args) = &segment.arguments {
                         let mut generics = args.args.iter().map(Clone::clone);
                         if let Some(GenericArgument::Type(context_type)) = generics.next() {
                             let rest_generics: Punctuated<GenericArgument, Comma> = generics
@@ -60,9 +60,6 @@ pub fn replace_provider_in_type_params(
                             new_bounds.push(TypeParamBound::Trait(new_bound));
                         }
                     }
-                }
-            }
-        }
     }
 
     if !new_bounds.is_empty() {
