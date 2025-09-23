@@ -1,5 +1,9 @@
 use cgp_core::prelude::*;
-use cgp_handler::{PromoteRef, UseInputDelegate};
+use cgp_handler::{
+    AsyncComputerComponent, AsyncComputerRefComponent, ComputerComponent, ComputerRefComponent,
+    HandlerComponent, HandlerRefComponent, PromoteRef, TryComputerComponent,
+    TryComputerRefComponent, UseInputDelegate,
+};
 
 use crate::providers::matchers::to_field_handlers::{HasFieldHandlers, MapExtractFieldAndHandle};
 use crate::{HandleFieldValue, MatchWithHandlers, MatchWithHandlersMut, MatchWithHandlersRef};
@@ -10,14 +14,71 @@ pub type MatchWithFieldHandlers<Provider = UseContext> =
 pub type MatchWithValueHandlers<Provider = UseContext> =
     UseInputDelegate<MatchWithFieldHandlersInputs<HandleFieldValue<Provider>>>;
 
-pub type MatchWithFieldHandlersRef<Provider = UseContext> =
-    UseInputDelegate<MatchWithFieldHandlersInputsRef<PromoteRef<Provider>>>;
+pub struct MatchWithFieldHandlersRef<Provider = UseContext>(pub PhantomData<Provider>);
 
-pub type MatchWithValueHandlersRef<Provider = UseContext> =
-    UseInputDelegate<MatchWithFieldHandlersInputsRef<HandleFieldValue<Provider>>>;
+pub struct MatchWithValueHandlersRef<Provider = UseContext>(pub PhantomData<Provider>);
 
-pub type MatchWithValueHandlersMut<Provider = UseContext> =
-    UseInputDelegate<MatchWithFieldHandlersInputsMut<HandleFieldValue<Provider>>>;
+pub struct MatchWithValueHandlersMut<Provider = UseContext>(pub PhantomData<Provider>);
+
+delegate_components! {
+    <Provider>
+    MatchWithFieldHandlersRef<Provider> {
+        [
+            ComputerComponent,
+            TryComputerComponent,
+            AsyncComputerComponent,
+            HandlerComponent,
+        ]:
+            UseInputDelegate<MatchWithFieldHandlersInputsRef<Provider>>,
+        [
+            ComputerRefComponent,
+            TryComputerRefComponent,
+            AsyncComputerRefComponent,
+            HandlerRefComponent,
+        ]:
+            PromoteRef<UseInputDelegate<MatchWithFieldHandlersInputsRef<PromoteRef<Provider>>>>,
+    }
+}
+
+delegate_components! {
+    <Provider>
+    MatchWithValueHandlersRef<Provider> {
+        [
+            ComputerComponent,
+            TryComputerComponent,
+            AsyncComputerComponent,
+            HandlerComponent,
+        ]:
+            UseInputDelegate<MatchWithFieldHandlersInputsRef<HandleFieldValue<Provider>>>,
+        [
+            ComputerRefComponent,
+            TryComputerRefComponent,
+            AsyncComputerRefComponent,
+            HandlerRefComponent,
+        ]:
+            PromoteRef<UseInputDelegate<MatchWithFieldHandlersInputsRef<HandleFieldValue<PromoteRef<Provider>>>>>,
+    }
+}
+
+delegate_components! {
+    <Provider>
+    MatchWithValueHandlersMut<Provider> {
+        [
+            ComputerComponent,
+            TryComputerComponent,
+            AsyncComputerComponent,
+            HandlerComponent,
+        ]:
+            UseInputDelegate<MatchWithFieldHandlersInputsMut<HandleFieldValue<Provider>>>,
+        [
+            ComputerRefComponent,
+            TryComputerRefComponent,
+            AsyncComputerRefComponent,
+            HandlerRefComponent,
+        ]:
+            PromoteRef<UseInputDelegate<MatchWithFieldHandlersInputsMut<HandleFieldValue<PromoteRef<Provider>>>>>,
+    }
+}
 
 delegate_components! {
     <Input: HasFieldHandlers<MapExtractFieldAndHandle<Provider>>, Provider>

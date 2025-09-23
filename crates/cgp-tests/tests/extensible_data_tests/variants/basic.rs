@@ -8,7 +8,9 @@ use cgp::extra::dispatch::{
     DowncastAndHandle, ExtractFieldAndHandle, HandleFieldValue, MatchWithFieldHandlers,
     MatchWithHandlers, MatchWithValueHandlersRef,
 };
-use cgp::extra::handler::{Computer, ComputerComponent, ComputerRefComponent, PromoteAsync};
+use cgp::extra::handler::{
+    Computer, ComputerComponent, ComputerRef, ComputerRefComponent, PromoteAsync,
+};
 use cgp::prelude::*;
 use futures::executor::block_on;
 
@@ -180,6 +182,15 @@ fn test_dispatch_values_ref() {
 
     assert_eq!(
         MatchWithValueHandlersRef::<ValueToStringRef>::compute(&context, code, &FooBarBaz::Foo(1)),
+        "1"
+    );
+
+    assert_eq!(
+        MatchWithValueHandlersRef::<ValueToStringRef>::compute_ref(
+            &context,
+            code,
+            &FooBarBaz::Foo(1)
+        ),
         "1"
     );
 

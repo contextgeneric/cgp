@@ -31,18 +31,6 @@ impl HasAreaRef for Triangle {
     }
 }
 
-// impl<Context> HasAreaRef for Context
-// where
-//     Context: HasExtractorRef,
-//     MatchWithValueHandlersRef<ComputeAreaRef>: ComputerRef<(), (), Context, Output = f64>,
-//     // MatchWithValueHandlersRef<ComputeAreaRef>:
-//     //     for<'a> Computer<(), (), &'a Context, Output = f64>,
-// {
-//     fn area(&self) -> f64 {
-//         MatchWithValueHandlersRef::<ComputeAreaRef>::compute_ref(&(), NoCode, self)
-//     }
-// }
-
 #[cgp_computer]
 fn compute_area_ref<T: HasAreaRef>(shape: &T) -> f64 {
     shape.area()
