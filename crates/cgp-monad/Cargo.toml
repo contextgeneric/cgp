@@ -10,5 +10,5 @@ keywords     = { workspace = true }
 description  = "Monadic constructs for CGP computation"
 
 [dependencies]
-cgp-core    = { version = "0.5.0-beta" }
-cgp-handler = { version = "0.5.0-beta" }
+cgp-core    = { workspace = true }
+cgp-handler = { workspace = true }

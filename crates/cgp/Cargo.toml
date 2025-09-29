@@ -13,5 +13,5 @@ description  = """
 """
 
 [dependencies]
-cgp-core       = { version = "0.5.0-beta", default-features = false }
-cgp-extra      = { version = "0.5.0-beta", default-features = false }
+cgp-core       = { workspace = true }
+cgp-extra      = { workspace = true }

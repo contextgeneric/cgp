@@ -37,24 +37,24 @@ repository      = "https://github.com/contextgeneric/cgp"
 authors         = ["Soares Chen <soares.chen@maybevoid.com>"]
 keywords        = ["cgp"]
 
-[patch.crates-io]
-cgp                         = { path = "./crates/cgp" }
-cgp-core                    = { path = "./crates/cgp-core" }
-cgp-extra                   = { path = "./crates/cgp-extra" }
-cgp-async-macro             = { path = "./crates/cgp-async-macro" }
-cgp-component               = { path = "./crates/cgp-component" }
-cgp-macro                   = { path = "./crates/cgp-macro" }
-cgp-macro-lib               = { path = "./crates/cgp-macro-lib" }
-cgp-type                    = { path = "./crates/cgp-type" }
-cgp-field                   = { path = "./crates/cgp-field" }
-cgp-field-extra             = { path = "./crates/cgp-field-extra" }
-cgp-error                   = { path = "./crates/cgp-error" }
-cgp-error-extra             = { path = "./crates/cgp-error-extra" }
-cgp-extra-macro             = { path = "./crates/cgp-extra-macro" }
-cgp-extra-macro-lib         = { path = "./crates/cgp-extra-macro-lib" }
-cgp-handler                 = { path = "./crates/cgp-handler" }
-cgp-monad                   = { path = "./crates/cgp-monad" }
-cgp-dispatch                = { path = "./crates/cgp-dispatch" }
-cgp-run                     = { path = "./crates/cgp-run" }
-cgp-runtime                 = { path = "./crates/cgp-runtime" }
-cgp-inner                   = { path = "./crates/cgp-inner" }
+[workspace.dependencies]
+cgp                         = { version = "0.5.0-beta", path = "./crates/cgp" }
+cgp-core                    = { version = "0.5.0-beta", path = "./crates/cgp-core" }
+cgp-extra                   = { version = "0.5.0-beta", path = "./crates/cgp-extra" }
+cgp-async-macro             = { version = "0.5.0-beta", path = "./crates/cgp-async-macro" }
+cgp-component               = { version = "0.5.0-beta", path = "./crates/cgp-component" }
+cgp-macro                   = { version = "0.5.0-beta", path = "./crates/cgp-macro" }
+cgp-macro-lib               = { version = "0.5.0-beta", path = "./crates/cgp-macro-lib" }
+cgp-type                    = { version = "0.5.0-beta", path = "./crates/cgp-type" }
+cgp-field                   = { version = "0.5.0-beta", path = "./crates/cgp-field" }
+cgp-field-extra             = { version = "0.5.0-beta", path = "./crates/cgp-field-extra" }
+cgp-error                   = { version = "0.5.0-beta", path = "./crates/cgp-error" }
+cgp-error-extra             = { version = "0.5.0-beta", path = "./crates/cgp-error-extra" }
+cgp-extra-macro             = { version = "0.5.0-beta", path = "./crates/cgp-extra-macro" }
+cgp-extra-macro-lib         = { version = "0.5.0-beta", path = "./crates/cgp-extra-macro-lib" }
+cgp-handler                 = { version = "0.5.0-beta", path = "./crates/cgp-handler" }
+cgp-monad                   = { version = "0.5.0-beta", path = "./crates/cgp-monad" }
+cgp-dispatch                = { version = "0.5.0-beta", path = "./crates/cgp-dispatch" }
+cgp-run                     = { version = "0.5.0-beta", path = "./crates/cgp-run" }
+cgp-runtime                 = { version = "0.5.0-beta", path = "./crates/cgp-runtime" }
+cgp-inner                   = { version = "0.5.0-beta", path = "./crates/cgp-inner" }

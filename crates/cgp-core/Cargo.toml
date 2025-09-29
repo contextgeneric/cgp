@@ -12,9 +12,9 @@ description  = """
 """
 
 [dependencies]
-cgp-async-macro     = { version = "0.5.0-beta" }
-cgp-component       = { version = "0.5.0-beta" }
-cgp-macro           = { version = "0.5.0-beta" }
-cgp-type            = { version = "0.5.0-beta" }
-cgp-error           = { version = "0.5.0-beta" }
-cgp-field           = { version = "0.5.0-beta" }
+cgp-async-macro     = { workspace = true }
+cgp-component       = { workspace = true }
+cgp-macro           = { workspace = true }
+cgp-type            = { workspace = true }
+cgp-error           = { workspace = true }
+cgp-field           = { workspace = true }

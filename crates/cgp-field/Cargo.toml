@@ -12,5 +12,5 @@ description  = """
 """
 
 [dependencies]
-cgp-component       = { version = "0.5.0-beta" }
-cgp-type            = { version = "0.5.0-beta" }
+cgp-component       = { workspace = true }
+cgp-type            = { workspace = true }

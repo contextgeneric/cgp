@@ -15,13 +15,13 @@ default = [ "full" ]
 full = [ "cgp-error-extra/alloc" ]
 
 [dependencies]
-cgp-core        = { version = "0.5.0-beta" }
-cgp-extra-macro = { version = "0.5.0-beta" }
-cgp-error-extra = { version = "0.5.0-beta", default-features = false }
-cgp-field-extra = { version = "0.5.0-beta" }
-cgp-inner       = { version = "0.5.0-beta" }
-cgp-run         = { version = "0.5.0-beta" }
-cgp-runtime     = { version = "0.5.0-beta" }
-cgp-handler     = { version = "0.5.0-beta" }
-cgp-monad       = { version = "0.5.0-beta" }
-cgp-dispatch    = { version = "0.5.0-beta" }
+cgp-core        = { workspace = true }
+cgp-extra-macro = { workspace = true }
+cgp-error-extra = { workspace = true }
+cgp-field-extra = { workspace = true }
+cgp-inner       = { workspace = true }
+cgp-run         = { workspace = true }
+cgp-runtime     = { workspace = true }
+cgp-handler     = { workspace = true }
+cgp-monad       = { workspace = true }
+cgp-dispatch    = { workspace = true }
