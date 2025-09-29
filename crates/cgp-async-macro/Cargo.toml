@@ -5,7 +5,7 @@ license      = { workspace = true }
 repository   = { workspace = true }
 authors      = { workspace = true }
 rust-version = { workspace = true }
-version      = "0.5.0-alpha"
+version      = "0.5.0-beta"
 keywords     = { workspace = true }
 description  = """
     Context-generic programming async macros

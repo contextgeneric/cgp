@@ -30,7 +30,7 @@ members = [
 ]
 
 [workspace.package]
-rust-version    = "1.90"
+rust-version    = "1.89"
 edition         = "2024"
 license         = "Apache-2.0"
 repository      = "https://github.com/contextgeneric/cgp"

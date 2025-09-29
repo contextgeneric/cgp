@@ -10,7 +10,7 @@ checksum = "e16d2d3311acee920a9eb8d33b8cbc1787ce4a264e85f964c2404b969bdcd487"
 
 [[package]]
 name = "cgp"
-version = "0.5.0-alpha"
+version = "0.5.0-beta"
 dependencies = [
  "cgp-core",
  "cgp-extra",
@@ -18,7 +18,7 @@ dependencies = [
 
 [[package]]
 name = "cgp-async-macro"
-version = "0.5.0-alpha"
+version = "0.5.0-beta"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -27,11 +27,11 @@ dependencies = [
 
 [[package]]
 name = "cgp-component"
-version = "0.5.0-alpha"
+version = "0.5.0-beta"
 
 [[package]]
 name = "cgp-core"
-version = "0.5.0-alpha"
+version = "0.5.0-beta"
 dependencies = [
  "cgp-async-macro",
  "cgp-component",
@@ -43,7 +43,7 @@ dependencies = [
 
 [[package]]
 name = "cgp-dispatch"
-version = "0.5.0-alpha"
+version = "0.5.0-beta"
 dependencies = [
  "cgp-core",
  "cgp-handler",
@@ -52,7 +52,7 @@ dependencies = [
 
 [[package]]
 name = "cgp-error"
-version = "0.5.0-alpha"
+version = "0.5.0-beta"
 dependencies = [
  "cgp-component",
  "cgp-macro",
@@ -61,7 +61,7 @@ dependencies = [
 
 [[package]]
 name = "cgp-error-anyhow"
-version = "0.5.0-alpha"
+version = "0.5.0-beta"
 dependencies = [
  "anyhow",
  "cgp-core",
@@ -69,14 +69,14 @@ dependencies = [
 
 [[package]]
 name = "cgp-error-extra"
-version = "0.5.0-alpha"
+version = "0.5.0-beta"
 dependencies = [
  "cgp-core",
 ]
 
 [[package]]
 name = "cgp-error-eyre"
-version = "0.5.0-alpha"
+version = "0.5.0-beta"
 dependencies = [
  "cgp-core",
  "eyre",
@@ -84,14 +84,14 @@ dependencies = [
 
 [[package]]
 name = "cgp-error-std"
-version = "0.5.0-alpha"
+version = "0.5.0-beta"
 dependencies = [
  "cgp-core",
 ]
 
 [[package]]
 name = "cgp-extra"
-version = "0.5.0-alpha"
+version = "0.5.0-beta"
 dependencies = [
  "cgp-core",
  "cgp-dispatch",
@@ -107,7 +107,7 @@ dependencies = [
 
 [[package]]
 name = "cgp-extra-macro"
-version = "0.5.0-alpha"
+version = "0.5.0-beta"
 dependencies = [
  "cgp-extra-macro-lib",
  "syn",
@@ -115,7 +115,7 @@ dependencies = [
 
 [[package]]
 name = "cgp-extra-macro-lib"
-version = "0.5.0-alpha"
+version = "0.5.0-beta"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -124,7 +124,7 @@ dependencies = [
 
 [[package]]
 name = "cgp-field"
-version = "0.5.0-alpha"
+version = "0.5.0-beta"
 dependencies = [
  "cgp-component",
  "cgp-type",
@@ -132,21 +132,21 @@ dependencies = [
 
 [[package]]
 name = "cgp-field-extra"
-version = "0.5.0-alpha"
+version = "0.5.0-beta"
 dependencies = [
  "cgp-field",
 ]
 
 [[package]]
 name = "cgp-handler"
-version = "0.5.0-alpha"
+version = "0.5.0-beta"
 dependencies = [
  "cgp-core",
 ]
 
 [[package]]
 name = "cgp-inner"
-version = "0.5.0-alpha"
+version = "0.5.0-beta"
 dependencies = [
  "cgp-component",
  "cgp-macro",
@@ -154,7 +154,7 @@ dependencies = [
 
 [[package]]
 name = "cgp-macro"
-version = "0.5.0-alpha"
+version = "0.5.0-beta"
 dependencies = [
  "cgp-macro-lib",
  "syn",
@@ -162,7 +162,7 @@ dependencies = [
 
 [[package]]
 name = "cgp-macro-lib"
-version = "0.5.0-alpha"
+version = "0.5.0-beta"
 dependencies = [
  "itertools",
  "prettyplease",
@@ -173,7 +173,7 @@ dependencies = [
 
 [[package]]
 name = "cgp-monad"
-version = "0.5.0-alpha"
+version = "0.5.0-beta"
 dependencies = [
  "cgp-core",
  "cgp-handler",
@@ -181,21 +181,21 @@ dependencies = [
 
 [[package]]
 name = "cgp-run"
-version = "0.5.0-alpha"
+version = "0.5.0-beta"
 dependencies = [
  "cgp-core",
 ]
 
 [[package]]
 name = "cgp-runtime"
-version = "0.5.0-alpha"
+version = "0.5.0-beta"
 dependencies = [
  "cgp-core",
 ]
 
 [[package]]
 name = "cgp-tests"
-version = "0.5.0-alpha"
+version = "0.5.0-beta"
 dependencies = [
  "cgp",
  "const_format",
@@ -204,7 +204,7 @@ dependencies = [
 
 [[package]]
 name = "cgp-type"
-version = "0.5.0-alpha"
+version = "0.5.0-beta"
 dependencies = [
  "cgp-component",
  "cgp-macro",
