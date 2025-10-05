@@ -26,7 +26,7 @@ pub fn define_struct(ident: &Ident, generics: &Generics) -> syn::Result<ItemStru
                     life_param.bounds.clear();
 
                     let lifetime = &life_param.lifetime;
-                    phantom_params.push(parse2(quote!( & #lifetime () ))?);
+                    phantom_params.push(parse2(quote!( Life<#lifetime> ))?);
                 }
                 _ => {}
             }

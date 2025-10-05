@@ -15,7 +15,7 @@ pub fn parse_is_provider_params(generics: &Generics) -> syn::Result<Punctuated<T
             }
             GenericParam::Lifetime(life_param) => {
                 let life = &life_param.lifetime;
-                parse_quote! { & #life () }
+                parse_quote! { Life<#life> }
             }
             GenericParam::Const(_) => {
                 unimplemented!("const generic parameters are not yet supported in CGP traits")

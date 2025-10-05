@@ -26,3 +26,10 @@ impl<'a> ReferenceGetter<'a, App<'a>, str> for AppComponents {
         app.value
     }
 }
+
+// check_components! {
+//     <'a> CanUseApp for App<'a> {
+//         ReferenceGetterComponent:
+//             (Life<'a>, str),
+//     }
+// }

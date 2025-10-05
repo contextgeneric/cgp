@@ -74,8 +74,8 @@ pub fn derive_is_provider_for(
             for arg in generic_args.by_ref() {
                 if let GenericArgument::Lifetime(life) = arg {
                     // Lifetime params are forced to be pushed to the front of a provider trait.
-                    // Skip those and put them in the form of `&'a ()` inside the IsProviderFor params
-                    is_provider_params.push(parse_quote! { & #life () })
+                    // Skip those and put them in the form of `Life<'a>` inside the IsProviderFor params
+                    is_provider_params.push(parse_quote! { Life<#life> })
                 } else {
                     // Find the first non-lifetime context type argument and break
                     context_arg = Some(arg);
