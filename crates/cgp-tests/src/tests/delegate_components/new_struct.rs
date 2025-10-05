@@ -108,6 +108,26 @@ pub fn test_delegate_components_with_generic_new_value() {
     impl<T> CheckInnerDelegates<T> for BarValue<T> {}
 }
 
+pub fn test_delegate_new_with_array_key() {
+    pub struct FooKey;
+    pub struct BarKey;
+    pub struct BazKey;
+
+    delegate_components! {
+        new MyComponents {
+            [
+                FooKey,
+                BarKey,
+                BazKey,
+            ]:
+                UseDelegate<new InnerComponents {
+                    u32: String,
+                    u64: bool,
+                }>,
+        }
+    }
+}
+
 pub mod test_delegate_new_value_in_preset {
     #[cgp::re_export_imports]
     mod preset {

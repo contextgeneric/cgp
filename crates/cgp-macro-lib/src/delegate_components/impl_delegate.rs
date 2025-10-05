@@ -35,6 +35,24 @@ where
 
             out.extend(impls);
         }
+
+        if let DelegateValue::New(value) = source {
+            let struct_ident = &value.struct_ident;
+
+            let item_struct = define_struct(struct_ident, &value.struct_generics)?;
+
+            let (impl_generics, type_generics, _) = value.struct_generics.split_for_impl();
+
+            let target_type: Type = parse2(quote! { #struct_ident #type_generics })?;
+
+            let impl_generics = parse2(quote! { #impl_generics })?;
+
+            let inner_impls =
+                impl_delegate_components(&target_type, &impl_generics, &value.entries)?;
+
+            out.extend(item_struct.to_token_stream());
+            out.extend(inner_impls);
+        }
     }
 
     Ok(out)
@@ -120,27 +138,10 @@ where
         items: Default::default(),
     };
 
-    let mut out = quote! {
+    let out = quote! {
         #delegate_impl
         #is_provider_impl
     };
-
-    if let DelegateValue::New(value) = value {
-        let struct_ident = &value.struct_ident;
-
-        let item_struct = define_struct(struct_ident, &value.struct_generics)?;
-
-        let (impl_generics, type_generics, _) = value.struct_generics.split_for_impl();
-
-        let target_type: Type = parse2(quote! { #struct_ident #type_generics })?;
-
-        let impl_generics = parse2(quote! { #impl_generics })?;
-
-        let inner_impls = impl_delegate_components(&target_type, &impl_generics, &value.entries)?;
-
-        out.extend(item_struct.to_token_stream());
-        out.extend(inner_impls);
-    }
 
     Ok(out)
 }
