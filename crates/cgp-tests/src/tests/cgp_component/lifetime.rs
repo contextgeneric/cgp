@@ -27,9 +27,9 @@ impl<'a> ReferenceGetter<'a, App<'a>, str> for AppComponents {
     }
 }
 
-// check_components! {
-//     <'a> CanUseApp for App<'a> {
-//         ReferenceGetterComponent:
-//             (Life<'a>, str),
-//     }
-// }
+check_components! {
+    <'a> CanUseApp for App<'a> {
+        ReferenceGetterComponent:
+            (Life<'a>, str),
+    }
+}

@@ -14,7 +14,7 @@ pub fn derive_check_components(spec: &CheckComponents) -> syn::Result<(ItemTrait
     let where_clause = &spec.where_clause;
 
     let item_trait = parse2(quote! {
-        trait #trait_name <__Component__, __Params__>: CanUseComponent<__Component__, __Params__> {}
+        trait #trait_name <__Component__, __Params__: ?Sized>: CanUseComponent<__Component__, __Params__> {}
     })?;
 
     for CheckEntry {
