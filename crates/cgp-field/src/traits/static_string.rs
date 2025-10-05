@@ -1,4 +1,4 @@
-use crate::types::{Char, Nil, Symbol};
+use crate::types::{Chars, Nil, Symbol};
 
 pub trait StaticString {
     const VALUE: &'static str;
@@ -37,7 +37,7 @@ impl StaticBytes for Nil {
     const BYTES: &'static [u8] = &[];
 }
 
-impl<const CHAR: char, Tail> MaybeChars for Char<CHAR, Tail>
+impl<const CHAR: char, Tail> MaybeChars for Chars<CHAR, Tail>
 where
     Tail: MaybeChars,
 {

@@ -1,4 +1,4 @@
-mod char;
+mod chars;
 mod field;
 mod index;
 mod mref;
@@ -6,7 +6,7 @@ mod product;
 mod sum;
 mod symbol;
 
-pub use char::*;
+pub use chars::*;
 pub use field::*;
 pub use index::*;
 pub use mref::*;

@@ -1,12 +1,12 @@
 use core::fmt::{self, Formatter};
 
-use crate::types::{Char, Nil};
+use crate::types::{Chars, Nil};
 
 pub trait StaticFormat {
     fn fmt(f: &mut Formatter<'_>) -> Result<(), fmt::Error>;
 }
 
-impl<const CHAR: char, Tail> StaticFormat for Char<CHAR, Tail>
+impl<const CHAR: char, Tail> StaticFormat for Chars<CHAR, Tail>
 where
     Tail: StaticFormat,
 {
