@@ -1,15 +1,20 @@
 use alloc::format;
+use std::collections::BTreeMap;
 
 use proc_macro2::TokenStream;
-use quote::{TokenStreamExt, quote};
-use syn::{Ident, ItemTrait, parse_quote};
+use quote::{ToTokens, TokenStreamExt, quote};
+use syn::{Ident, ItemTrait, parse_quote, parse2};
 
 use crate::derive_component::derive_component_with_ast;
 use crate::parse::{ComponentSpec, Entries};
 use crate::type_component::{derive_type_alias, derive_type_providers, extract_item_type};
 
 pub fn cgp_type(attrs: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
-    let Entries { mut entries } = syn::parse2(attrs)?;
+    let mut entries = if let Ok(provider_ident) = parse2::<Ident>(attrs.clone()) {
+        BTreeMap::from([("provider".to_owned(), provider_ident.to_token_stream())])
+    } else {
+        parse2::<Entries>(attrs)?.entries
+    };
 
     let consumer_trait: ItemTrait = syn::parse2(body)?;
 

@@ -1,6 +1,6 @@
 use cgp::prelude::*;
 
-#[cgp_type]
+#[cgp_type(ProvideFooType)]
 pub trait HasFooType<T: ?Sized> {
     type Foo;
 }
