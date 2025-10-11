@@ -4,7 +4,9 @@ use syn::token::Plus;
 use syn::{Generics, ItemImpl, ItemTrait, TypeParamBound, parse2};
 
 use crate::derive_getter::getter_field::GetterField;
-use crate::derive_getter::{ContextArg, derive_getter_constraint, derive_getter_method};
+use crate::derive_getter::{
+    ContextArg, ReceiverMode, derive_getter_constraint, derive_getter_method,
+};
 use crate::parse::ComponentSpec;
 
 pub fn derive_use_field_impl(
@@ -15,11 +17,16 @@ pub fn derive_use_field_impl(
     let context_type = &spec.context_type;
     let provider_name = &provider_trait.ident;
 
+    let receiver_type = match &field.receiver_mode {
+        ReceiverMode::SelfReceiver => context_type.to_token_stream(),
+        ReceiverMode::Type(ty) => ty.to_token_stream(),
+    };
+
     let mut field_constraints: Punctuated<TypeParamBound, Plus> = Punctuated::default();
 
     let tag_type = quote! { __Tag__ };
 
-    let method = derive_getter_method(&ContextArg::Ident(context_type.clone()), field, None, None);
+    let method = derive_getter_method(&ContextArg::Ident(receiver_type.clone()), field, None, None);
 
     let constraint = derive_getter_constraint(field, quote! { #tag_type })?;
 
@@ -30,7 +37,7 @@ pub fn derive_use_field_impl(
     let mut where_clause = provider_generics.make_where_clause().clone();
     where_clause
         .predicates
-        .push(parse2(quote! { #context_type: #field_constraints })?);
+        .push(parse2(quote! { #receiver_type: #field_constraints })?);
 
     let (impl_generics, type_generics, _) = provider_generics.split_for_impl();
 

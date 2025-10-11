@@ -1,7 +1,7 @@
 use alloc::string::ToString;
 
 use proc_macro2::TokenStream;
-use quote::quote;
+use quote::{ToTokens, quote};
 use syn::punctuated::Punctuated;
 use syn::token::Plus;
 use syn::{ItemImpl, ItemTrait, TypeParamBound, parse2};
@@ -17,6 +17,7 @@ pub fn derive_use_fields_impl(
     fields: &[GetterField],
 ) -> syn::Result<ItemImpl> {
     let context_type = &spec.context_type;
+
     let provider_name = &spec.provider_name;
 
     // FIXME: replace `Self` with `Context` inside super trait bound
@@ -28,7 +29,7 @@ pub fn derive_use_fields_impl(
         let field_symbol = symbol_from_string(&field.field_name.to_string());
 
         let method = derive_getter_method(
-            &ContextArg::Ident(context_type.clone()),
+            &ContextArg::Ident(context_type.to_token_stream()),
             field,
             Some(quote! { ::< #field_symbol > }),
             None,

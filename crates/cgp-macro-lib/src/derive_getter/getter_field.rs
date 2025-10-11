@@ -8,6 +8,7 @@ pub struct GetterField {
     pub field_mut: Option<Mut>,
     pub phantom_arg_type: Option<Type>,
     pub field_mode: FieldMode,
+    pub receiver_mode: ReceiverMode,
 }
 
 pub enum FieldMode {
@@ -17,4 +18,9 @@ pub enum FieldMode {
     Str,
     Clone,
     Slice,
+}
+
+pub enum ReceiverMode {
+    SelfReceiver,
+    Type(Type),
 }

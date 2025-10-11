@@ -6,7 +6,7 @@ use crate::derive_getter::{FieldMode, GetterField};
 
 pub enum ContextArg {
     SelfArg,
-    Ident(Ident),
+    Ident(TokenStream),
 }
 
 pub fn derive_getter_method(

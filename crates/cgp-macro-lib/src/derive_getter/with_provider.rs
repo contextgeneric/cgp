@@ -40,7 +40,7 @@ pub fn derive_with_provider_impl(
     };
 
     let method = derive_getter_method(
-        &ContextArg::Ident(context_type.clone()),
+        &ContextArg::Ident(context_type.to_token_stream()),
         field,
         None,
         Some(provider_ident.clone()),

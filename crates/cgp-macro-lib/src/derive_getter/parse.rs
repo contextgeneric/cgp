@@ -10,8 +10,8 @@ use syn::{
 };
 
 use crate::derive_component::replace_self_type;
-use crate::derive_getter::FieldMode;
 use crate::derive_getter::getter_field::GetterField;
+use crate::derive_getter::{FieldMode, ReceiverMode};
 
 pub fn parse_getter_fields(
     context_type: &Ident,
@@ -47,13 +47,14 @@ fn parse_getter_method(context_type: &Ident, method: &TraitItemFn) -> syn::Resul
 
     let (arg, phantom) = parse_method_args(&signature.inputs)?;
 
-    let field_mut = parse_field_mut(arg)?;
+    let (receiver_mode, field_mut) = parse_receiver(context_type, arg)?;
 
     let return_type = parse_return_type(context_type, &signature.output)?;
 
     let (field_type, field_mode) = parse_field_type(&return_type, &field_mut)?;
 
     Ok(GetterField {
+        receiver_mode,
         field_name,
         field_type,
         return_type,
@@ -157,7 +158,7 @@ fn parse_phantom_arg_type(phantom_arg: &FnArg) -> syn::Result<Type> {
     }
 }
 
-fn parse_field_mut(arg: &FnArg) -> syn::Result<Option<Mut>> {
+fn parse_receiver(context_ident: &Ident, arg: &FnArg) -> syn::Result<(ReceiverMode, Option<Mut>)> {
     match arg {
         FnArg::Receiver(receiver) => {
             if receiver.reference.is_none() {
@@ -166,11 +167,18 @@ fn parse_field_mut(arg: &FnArg) -> syn::Result<Option<Mut>> {
                     "first argument to getter method must be a reference to self, i.e. `&self`",
                 ))
             } else {
-                Ok(receiver.mutability)
+                Ok((ReceiverMode::SelfReceiver, receiver.mutability))
             }
         }
         FnArg::Typed(arg) => match arg.ty.as_ref() {
-            Type::Reference(ty) => Ok(ty.mutability.clone()),
+            Type::Reference(ty) => {
+                let receiver = parse2(replace_self_type(
+                    ty.elem.to_token_stream(),
+                    context_ident,
+                    &Vec::new(),
+                ))?;
+                Ok((ReceiverMode::Type(receiver), ty.mutability.clone()))
+            }
             _ => Err(Error::new(
                 arg.span(),
                 "first argument to getter method must be a reference",
