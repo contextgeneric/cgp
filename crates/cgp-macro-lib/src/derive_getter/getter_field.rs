@@ -22,5 +22,5 @@ pub enum FieldMode {
 
 pub enum ReceiverMode {
     SelfReceiver,
-    Type(Type),
+    Type(Box<Type>),
 }

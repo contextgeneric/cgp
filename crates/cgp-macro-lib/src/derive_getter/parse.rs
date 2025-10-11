@@ -177,7 +177,7 @@ fn parse_receiver(context_ident: &Ident, arg: &FnArg) -> syn::Result<(ReceiverMo
                     context_ident,
                     &Vec::new(),
                 ))?;
-                Ok((ReceiverMode::Type(receiver), ty.mutability.clone()))
+                Ok((ReceiverMode::Type(receiver), ty.mutability))
             }
             _ => Err(Error::new(
                 arg.span(),
