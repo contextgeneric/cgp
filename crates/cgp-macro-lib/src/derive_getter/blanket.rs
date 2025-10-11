@@ -28,9 +28,12 @@ pub fn derive_blanket_impl(
         .insert(0, parse2(context_type.to_token_stream())?);
 
     let where_clause = generics.make_where_clause();
-    where_clause.predicates.push(parse2(quote! {
-        #context_type: #supertrait_constraints
-    })?);
+
+    if !supertrait_constraints.is_empty() {
+        where_clause.predicates.push(parse2(quote! {
+            #context_type: #supertrait_constraints
+        })?);
+    }
 
     for field in fields {
         let (receiver_type, context_arg) = match &field.receiver_mode {
@@ -62,26 +65,13 @@ pub fn derive_blanket_impl(
     let (_, type_generics, _) = consumer_trait.generics.split_for_impl();
     let (impl_generics, _, where_clause) = generics.split_for_impl();
 
-    let mut item_impl: ItemImpl = parse2(quote! {
+    let item_impl: ItemImpl = parse2(quote! {
         impl #impl_generics #consumer_name #type_generics for #context_type
         #where_clause
         {
             #methods
         }
     })?;
-
-    item_impl
-        .generics
-        .params
-        .extend(consumer_trait.generics.params.clone());
-
-    if let Some(consumer_where_clause) = &consumer_trait.generics.where_clause {
-        item_impl
-            .generics
-            .make_where_clause()
-            .predicates
-            .extend(consumer_where_clause.predicates.clone());
-    }
 
     Ok(item_impl)
 }
