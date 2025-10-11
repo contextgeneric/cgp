@@ -169,10 +169,13 @@ fn parse_field_mut(arg: &FnArg) -> syn::Result<Option<Mut>> {
                 Ok(receiver.mutability)
             }
         }
-        _ => Err(Error::new(
-            arg.span(),
-            "first argument to getter method must be `&self`",
-        )),
+        FnArg::Typed(arg) => match arg.ty.as_ref() {
+            Type::Reference(ty) => Ok(ty.mutability.clone()),
+            _ => Err(Error::new(
+                arg.span(),
+                "first argument to getter method must be a reference",
+            )),
+        },
     }
 }
 
