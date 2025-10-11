@@ -1,5 +1,56 @@
 # Changelog
 
+## v0.5.0 (2025-10-11)
+
+- Monadic computation support
+    - Use Monadic composition to simplify the implementation of `DispatchMatchers` - [#127](https://github.com/contextgeneric/cgp/pull/127)
+    - Add full monad transformer support for monadic composition of CGP handlers - [#129](https://github.com/contextgeneric/cgp/pull/129)
+
+- Extensible data types improvements
+    - Add generalized field transformation on partial records to support building with default values. - [#128](https://github.com/contextgeneric/cgp/pull/128)
+    - Add `CanFinalizeWithDefault` method for partial records - [#130](https://github.com/contextgeneric/cgp/pull/130)
+    - Extensible Visitor Improvements - [#132](https://github.com/contextgeneric/cgp/pull/132)
+    - Add support for passing additional arguments to extensible visitors - [#134](https://github.com/contextgeneric/cgp/pull/134)
+    - Add extensible visitor support mutable partial variants - [#135](https://github.com/contextgeneric/cgp/pull/135)
+    - Introduce `UpdateField` trait to generalize field transformation in partial data - [#148](https://github.com/contextgeneric/cgp/pull/148)
+    - Add optional field builder constructs for extensible records - [#152](https://github.com/contextgeneric/cgp/pull/152)
+    - Introduce `#[derive(CgpData)]` and `#[derive(CgpRecord)]` Macros - [#154](https://github.com/contextgeneric/cgp/pull/154)
+    - Add `__` prefix to Partial data types generated - [#156](https://github.com/contextgeneric/cgp/pull/156)
+    - Implement ref variants of matcher providers - [#161](https://github.com/contextgeneric/cgp/pull/161)
+
+- Handler improvements
+    - Introduce `AsyncComputer` Component - [#136](https://github.com/contextgeneric/cgp/pull/136)
+    - Derive `AsyncComputer` when using `#[cgp_computer]` with async functions - [137](https://github.com/contextgeneric/cgp/pull/137)
+    - Add new `cgp-extra-macro` crate - [#138](https://github.com/contextgeneric/cgp/pull/138)
+
+- Dispatch macro
+    - Implement `#[cgp_dispatch]` macro - [#139](https://github.com/contextgeneric/cgp/pull/139)
+    - `#[cgp_dispatch]` macro improvements - [142](https://github.com/contextgeneric/cgp/pull/142)
+    - Rename `#[cgp_dispatch]` to `#[cgp_auto_dispatch]` - [#155](https://github.com/contextgeneric/cgp/pull/155)
+
+- Component system improvements
+    - Allow only provider name to be specified inside `#[cgp_getter]` - [#143](https://github.com/contextgeneric/cgp/pull/143)
+    - Support use of lifetime parameters inside CGP traits - [#145](https://github.com/contextgeneric/cgp/pull/145)
+    - Add `?Sized` bound to `DelegateComponent`'s `Name` parameter - [#147](https://github.com/contextgeneric/cgp/pull/147)
+    - Allow shortcut definition of provider name in `#[cgp_type]` - [#163](https://github.com/contextgeneric/cgp/pull/163)
+    - Fix use of `new` in `delegate_components!` when keys array are used - [#164](https://github.com/contextgeneric/cgp/pull/164)
+    - Add `Life` type to represent lifetimes as types - [#166](https://github.com/contextgeneric/cgp/pull/166)
+
+- Field improvements
+    - Desugar field constructs into their symbolic forms - [#151](https://github.com/contextgeneric/cgp/pull/151)
+    - Allow first argument in `#[cgp_getter]` methods to be non-self - [#169](https://github.com/contextgeneric/cgp/pull/169)
+
+- Symbol improvements
+    - Implement `MatchStr` for static string matching with symbols - [#153](https://github.com/contextgeneric/cgp/pull/153)
+    - Implement `StaticString` trait to produce `&'static str` from symbol types - [#159](https://github.com/contextgeneric/cgp/pull/159)
+
+- Breaking changes toward stabilization
+    - Remove `Async` trait and `Send` bounds in async functions - [#149](https://github.com/contextgeneric/cgp/pull/149)
+    - Reorganize exports in `cgp-field` - [#150](https://github.com/contextgeneric/cgp/pull/150)
+    - Rename `Char` to `Chars` - [#165](https://github.com/contextgeneric/cgp/pull/165)
+    - Remove `HasInner` trait - [#170](https://github.com/contextgeneric/cgp/pull/170)
+    - Remove lowercase `symbol!` macro - [#173](https://github.com/contextgeneric/cgp/pull/173)
+
 ## v0.4.2 (2025-07-07)
 
 - Datatype-generic Programming Support
