@@ -3,7 +3,7 @@ use quote::{ToTokens, quote};
 use syn::{Generics, Ident, ItemImpl, ItemTrait, parse2};
 
 use crate::derive_getter::getter_field::GetterField;
-use crate::derive_getter::{ContextArg, FieldMode, derive_getter_method};
+use crate::derive_getter::{ContextArg, FieldMode, ReceiverMode, derive_getter_method};
 use crate::parse::ComponentSpec;
 
 pub fn derive_with_provider_impl(
@@ -17,6 +17,11 @@ pub fn derive_with_provider_impl(
     let context_type = &spec.context_type;
     let provider_name = &spec.provider_name;
 
+    let receiver_type = match &field.receiver_mode {
+        ReceiverMode::SelfReceiver => context_type.to_token_stream(),
+        ReceiverMode::Type(ty) => ty.to_token_stream(),
+    };
+
     let provider_type = &field.field_type;
 
     let provider_ident = Ident::new("__Provider__", Span::call_site());
@@ -26,21 +31,21 @@ pub fn derive_with_provider_impl(
     let provider_constraint = if field.field_mut.is_none() {
         if let FieldMode::Slice = field.field_mode {
             quote! {
-                FieldGetter< #context_type, #component_type, Value: AsRef< [ #provider_type ] > + 'static >
+                FieldGetter< #receiver_type, #component_type, Value: AsRef< [ #provider_type ] > + 'static >
             }
         } else {
             quote! {
-                FieldGetter< #context_type, #component_type , Value = #provider_type >
+                FieldGetter< #receiver_type, #component_type , Value = #provider_type >
             }
         }
     } else {
         quote! {
-            MutFieldGetter< #context_type, #component_type, Value = #provider_type >
+            MutFieldGetter< #receiver_type, #component_type, Value = #provider_type >
         }
     };
 
     let method = derive_getter_method(
-        &ContextArg::Ident(context_type.to_token_stream()),
+        &ContextArg::Ident(receiver_type),
         field,
         None,
         Some(provider_ident.clone()),
