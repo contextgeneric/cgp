@@ -19,7 +19,6 @@ cgp-core        = { workspace = true }
 cgp-extra-macro = { workspace = true }
 cgp-error-extra = { workspace = true }
 cgp-field-extra = { workspace = true }
-cgp-inner       = { workspace = true }
 cgp-run         = { workspace = true }
 cgp-runtime     = { workspace = true }
 cgp-handler     = { workspace = true }

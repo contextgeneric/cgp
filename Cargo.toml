@@ -25,7 +25,6 @@ members = [
     "crates/cgp-dispatch",
     "crates/cgp-run",
     "crates/cgp-runtime",
-    "crates/cgp-inner",
     "crates/cgp-tests",
 ]
 
@@ -57,4 +56,3 @@ cgp-monad                   = { version = "0.5.0-beta3", path = "./crates/cgp-mo
 cgp-dispatch                = { version = "0.5.0-beta3", path = "./crates/cgp-dispatch" }
 cgp-run                     = { version = "0.5.0-beta3", path = "./crates/cgp-run" }
 cgp-runtime                 = { version = "0.5.0-beta3", path = "./crates/cgp-runtime" }
-cgp-inner                   = { version = "0.5.0-beta3", path = "./crates/cgp-inner" }

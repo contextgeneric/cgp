@@ -99,7 +99,6 @@ dependencies = [
  "cgp-extra-macro",
  "cgp-field-extra",
  "cgp-handler",
- "cgp-inner",
  "cgp-monad",
  "cgp-run",
  "cgp-runtime",
@@ -142,14 +141,6 @@ name = "cgp-handler"
 version = "0.5.0-beta3"
 dependencies = [
  "cgp-core",
-]
-
-[[package]]
-name = "cgp-inner"
-version = "0.5.0-beta3"
-dependencies = [
- "cgp-component",
- "cgp-macro",
 ]
 
 [[package]]
