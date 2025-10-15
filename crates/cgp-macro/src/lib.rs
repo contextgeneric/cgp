@@ -143,6 +143,13 @@ pub fn cgp_provider(attr: TokenStream, item: TokenStream) -> TokenStream {
         .into()
 }
 
+#[proc_macro_attribute]
+pub fn cgp_impl(attr: TokenStream, item: TokenStream) -> TokenStream {
+    cgp_macro_lib::cgp_impl(attr.into(), item.into())
+        .unwrap_or_else(syn::Error::into_compile_error)
+        .into()
+}
+
 /**
     The `#[cgp_new_provider]` macro is an extension to [`#[cgp_provider]`](macro@cgp_provider)
     that in addition to the derivation of `IsProviderFor`, also generates a new provider

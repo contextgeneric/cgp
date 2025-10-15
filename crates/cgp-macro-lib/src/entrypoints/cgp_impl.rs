@@ -1,10 +1,42 @@
 use proc_macro2::{Group, Span, TokenStream, TokenTree};
 use quote::{ToTokens, format_ident, quote};
-use syn::token::For;
+use syn::parse::{Parse, ParseStream};
+use syn::token::{Colon, For};
 use syn::{Ident, ImplItem, ItemImpl, Type, parse2};
 
 use crate::derive_component::{replace_self_receiver, replace_self_type, to_snake_case_ident};
 use crate::parse::SimpleType;
+
+pub fn cgp_impl(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
+    let spec: ImplProviderSpec = parse2(attr)?;
+    let item_impl: ItemImpl = parse2(body)?;
+
+    let out_impl =
+        transform_impl_trait(&item_impl, &spec.provider_trait_ident, &spec.provider_type)?;
+
+    Ok(quote! {
+        #[cgp_provider]
+        #out_impl
+    })
+}
+
+pub struct ImplProviderSpec {
+    pub provider_type: Type,
+    pub provider_trait_ident: Ident,
+}
+
+impl Parse for ImplProviderSpec {
+    fn parse(input: ParseStream) -> syn::Result<Self> {
+        let provider_type = input.parse()?;
+        let _colon: Colon = input.parse()?;
+        let provider_trait_ident = input.parse()?;
+
+        Ok(ImplProviderSpec {
+            provider_type,
+            provider_trait_ident,
+        })
+    }
+}
 
 pub fn transform_impl_trait(
     item_impl: &ItemImpl,
