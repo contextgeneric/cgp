@@ -13,5 +13,6 @@ mod use_context_impl;
 mod use_delegate_impl;
 
 pub use derive::*;
+pub use replace_self_receiver::*;
 pub use replace_self_type::*;
 pub use snake_case::*;

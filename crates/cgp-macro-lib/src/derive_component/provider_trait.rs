@@ -89,7 +89,7 @@ pub fn derive_provider_trait(
                 parse_and_replace_self_type(item, context_type, &local_assoc_types)?;
 
             if let TraitItem::Fn(func) = &mut replaced_item {
-                replace_self_receiver(func, context_type);
+                replace_self_receiver(&mut func.sig, context_type);
             }
 
             *item = replaced_item;

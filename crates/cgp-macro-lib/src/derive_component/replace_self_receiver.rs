@@ -1,10 +1,10 @@
 use proc_macro2::Ident;
-use syn::{FnArg, TraitItemFn, parse_quote};
+use syn::{FnArg, Signature, parse_quote};
 
 use crate::derive_component::snake_case::to_snake_case_ident;
 
-pub fn replace_self_receiver(func: &mut TraitItemFn, replaced_type: &Ident) {
-    if let Some(arg) = func.sig.inputs.first_mut()
+pub fn replace_self_receiver(sig: &mut Signature, replaced_type: &Ident) {
+    if let Some(arg) = sig.inputs.first_mut()
         && let FnArg::Receiver(receiver) = arg
     {
         let replaced_var = to_snake_case_ident(replaced_type);
