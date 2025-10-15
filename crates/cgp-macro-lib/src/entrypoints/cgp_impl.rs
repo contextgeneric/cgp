@@ -1,37 +1,88 @@
 use proc_macro2::{Group, Span, TokenStream, TokenTree};
 use quote::{ToTokens, format_ident, quote};
+use syn::parse::discouraged::Speculative;
 use syn::parse::{Parse, ParseStream};
+use syn::spanned::Spanned;
 use syn::token::{Colon, For};
-use syn::{Ident, ImplItem, ItemImpl, Type, parse2};
+use syn::{Error, Ident, ImplItem, ItemImpl, Type, parse2};
 
 use crate::derive_component::{replace_self_receiver, replace_self_type, to_snake_case_ident};
+use crate::derive_provider::{
+    derive_component_name_from_provider_impl, derive_is_provider_for, derive_provider_struct,
+};
 use crate::parse::SimpleType;
 
 pub fn cgp_impl(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
     let spec: ImplProviderSpec = parse2(attr)?;
     let item_impl: ItemImpl = parse2(body)?;
 
-    let out_impl =
-        transform_impl_trait(&item_impl, &spec.provider_trait_ident, &spec.provider_type)?;
+    let consumer_trait_path = &item_impl
+        .trait_
+        .as_ref()
+        .ok_or_else(|| Error::new(item_impl.span(), "expect impl trait to contain path"))?
+        .1;
+
+    let consumer_trait_path: SimpleType = parse2(consumer_trait_path.to_token_stream())?;
+
+    let provider_impl = transform_impl_trait(
+        &item_impl,
+        &consumer_trait_path,
+        &spec.provider_trait_ident,
+        &spec.provider_type,
+    )?;
+
+    let component_name = derive_component_name_from_provider_impl(&provider_impl)?;
+
+    let is_provider_for_impl: ItemImpl = derive_is_provider_for(&component_name, &provider_impl)?;
+
+    let provider_struct = if spec.new_struct {
+        Some(derive_provider_struct(&provider_impl)?)
+    } else {
+        None
+    };
+
+    let consumer_trait_name = &consumer_trait_path.name;
 
     Ok(quote! {
-        #[cgp_provider]
-        #out_impl
+        #[allow(unused_imports)]
+        use #consumer_trait_name as _;
+
+        #provider_struct
+
+        #provider_impl
+
+        #is_provider_for_impl
     })
 }
 
 pub struct ImplProviderSpec {
+    pub new_struct: bool,
     pub provider_type: Type,
     pub provider_trait_ident: Ident,
 }
 
 impl Parse for ImplProviderSpec {
     fn parse(input: ParseStream) -> syn::Result<Self> {
+        let new_struct = {
+            let fork = input.fork();
+            let new_ident: Option<Ident> = fork.parse().ok();
+            match new_ident {
+                Some(new_ident) if new_ident == "new" => {
+                    input.advance_to(&fork);
+                    true
+                }
+                _ => false,
+            }
+        };
+
         let provider_type = input.parse()?;
+
         let _colon: Colon = input.parse()?;
+
         let provider_trait_ident = input.parse()?;
 
         Ok(ImplProviderSpec {
+            new_struct,
             provider_type,
             provider_trait_ident,
         })
@@ -40,6 +91,7 @@ impl Parse for ImplProviderSpec {
 
 pub fn transform_impl_trait(
     item_impl: &ItemImpl,
+    consumer_trait_path: &SimpleType,
     provider_trait_ident: &Ident,
     provider_type: &Type,
 ) -> syn::Result<ItemImpl> {
@@ -73,8 +125,7 @@ pub fn transform_impl_trait(
     let mut out_impl: ItemImpl = parse2(raw_out_impl)?;
     out_impl.self_ty = Box::new(provider_type.clone());
 
-    let source_trait_path = &item_impl.trait_.as_ref().unwrap().1;
-    let mut provider_trait_path: SimpleType = parse2(source_trait_path.to_token_stream())?;
+    let mut provider_trait_path: SimpleType = consumer_trait_path.clone();
     provider_trait_path.name = provider_trait_ident.clone();
 
     match &mut provider_trait_path.generics {
@@ -100,28 +151,6 @@ pub fn transform_impl_trait(
             #context_ident: Refl<Type = #context_type>
         })?);
     }
-
-    // let mut provider_trait_spec = item_impl.trait_.clone().unwrap();
-    // let provider_trait_path = &mut provider_trait_spec.1;
-    // let segment = provider_trait_path.segments.last_mut().unwrap();
-
-    // match &mut segment.arguments {
-    //     PathArguments::None => {
-    //         segment.arguments = PathArguments::AngleBracketed(parse2(quote! { < #context_ident > })?);
-    //     }
-    //     PathArguments::AngleBracketed(args) => {
-    //         args.args.insert(0, parse2(quote! { #context_ident })?);
-    //     }
-    //     _ => {
-    //         return Err(Error::new(segment.span(), "trait path must end with angle bracket generic arguments"))
-    //     }
-    // }
-
-    // let provider_trait_path = item_impl.trait_.unwrap().1.clone();
-    // out_impl.trait_ = Some((None, provider_trait_path, For(Span::call_site())));
-
-    // let context_param: GenericParam = parse2(context_type.to_token_stream())?;
-    // out_impl.generics.params.insert(0, context_param);
 
     for item in out_impl.items.iter_mut() {
         if let ImplItem::Fn(item_fn) = item {

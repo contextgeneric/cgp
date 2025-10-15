@@ -5,11 +5,24 @@ pub trait CanDoFoo {
     fn foo(&self, value: u32) -> String;
 }
 
-pub struct ValueToString;
+#[cgp_auto_getter]
+pub trait HasName {
+    fn name(&self) -> &str;
+}
 
-#[cgp_impl(ValueToString: FooProvider)]
+#[cgp_impl(new ValueToString: FooProvider)]
 impl<Context> CanDoFoo for Context {
     fn foo(&self, value: u32) -> String {
         value.to_string()
+    }
+}
+
+#[cgp_impl(new WithNamePrefix: FooProvider)]
+impl<Context> CanDoFoo for Context
+where
+    Context: HasName,
+{
+    fn foo(&self, value: u32) -> String {
+        format!("{}: {}", self.name(), value)
     }
 }
