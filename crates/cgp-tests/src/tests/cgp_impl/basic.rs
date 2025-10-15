@@ -1,5 +1,3 @@
-use core::fmt::Display;
-
 use cgp::prelude::*;
 
 #[cgp_component(FooProvider)]
@@ -12,33 +10,41 @@ pub trait HasName {
     fn name(&self) -> &str;
 }
 
-#[cgp_impl(new ValueToString: FooProvider)]
-impl<Context> CanDoFoo for Context {
+#[cgp_impl(new ValueToString)]
+impl<Context> FooProvider for Context {
     fn foo(&self, value: u32) -> String {
         value.to_string()
     }
 }
 
-#[cgp_impl(new WithNamePrefix: FooProvider)]
-impl<Context> CanDoFoo for Context
-where
-    Context: HasName,
-{
-    fn foo(&self, value: u32) -> String {
-        format!("{}: {}", self.name(), value)
+pub mod inner {
+    use core::fmt::Display;
+
+    use cgp::prelude::*;
+
+    use super::{FooProvider, FooProviderComponent, HasName};
+
+    #[cgp_impl(new WithNamePrefix)]
+    impl<Context> FooProvider for Context
+    where
+        Context: HasName,
+    {
+        fn foo(&self, value: u32) -> String {
+            format!("{}: {}", self.name(), value)
+        }
     }
-}
 
-pub struct Foo<Tag> {
-    pub tag: Tag,
-}
+    pub struct Foo<Tag> {
+        pub tag: Tag,
+    }
 
-#[cgp_impl(new WithFooTag: FooProvider)]
-impl<Tag> CanDoFoo for Foo<Tag>
-where
-    Tag: Display,
-{
-    fn foo(&self, value: u32) -> String {
-        format!("{}: {}", self.tag, value)
+    #[cgp_impl(new WithFooTag)]
+    impl<Tag> FooProvider for Foo<Tag>
+    where
+        Tag: Display,
+    {
+        fn foo(&self, value: u32) -> String {
+            format!("{}: {}", self.tag, value)
+        }
     }
 }

@@ -3,7 +3,7 @@ use quote::{ToTokens, format_ident, quote};
 use syn::parse::discouraged::Speculative;
 use syn::parse::{Parse, ParseStream};
 use syn::spanned::Spanned;
-use syn::token::{Colon, For};
+use syn::token::For;
 use syn::{Error, Ident, ImplItem, ItemImpl, Type, parse2};
 
 use crate::derive_component::{replace_self_receiver, replace_self_type, to_snake_case_ident};
@@ -24,12 +24,8 @@ pub fn cgp_impl(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStream
 
     let consumer_trait_path: SimpleType = parse2(consumer_trait_path.to_token_stream())?;
 
-    let provider_impl = transform_impl_trait(
-        &item_impl,
-        &consumer_trait_path,
-        &spec.provider_trait_ident,
-        &spec.provider_type,
-    )?;
+    let provider_impl =
+        transform_impl_trait(&item_impl, &consumer_trait_path, &spec.provider_type)?;
 
     let component_name = derive_component_name_from_provider_impl(&provider_impl)?;
 
@@ -41,12 +37,7 @@ pub fn cgp_impl(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStream
         None
     };
 
-    let consumer_trait_name = &consumer_trait_path.name;
-
     Ok(quote! {
-        #[allow(unused_imports)]
-        use #consumer_trait_name as _;
-
         #provider_struct
 
         #provider_impl
@@ -58,7 +49,6 @@ pub fn cgp_impl(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStream
 pub struct ImplProviderSpec {
     pub new_struct: bool,
     pub provider_type: Type,
-    pub provider_trait_ident: Ident,
 }
 
 impl Parse for ImplProviderSpec {
@@ -77,14 +67,9 @@ impl Parse for ImplProviderSpec {
 
         let provider_type = input.parse()?;
 
-        let _colon: Colon = input.parse()?;
-
-        let provider_trait_ident = input.parse()?;
-
         Ok(ImplProviderSpec {
             new_struct,
             provider_type,
-            provider_trait_ident,
         })
     }
 }
@@ -92,7 +77,6 @@ impl Parse for ImplProviderSpec {
 pub fn transform_impl_trait(
     item_impl: &ItemImpl,
     consumer_trait_path: &SimpleType,
-    provider_trait_ident: &Ident,
     provider_type: &Type,
 ) -> syn::Result<ItemImpl> {
     let context_type = item_impl.self_ty.as_ref();
@@ -125,7 +109,6 @@ pub fn transform_impl_trait(
     out_impl.self_ty = Box::new(provider_type.clone());
 
     let mut provider_trait_path: SimpleType = consumer_trait_path.clone();
-    provider_trait_path.name = provider_trait_ident.clone();
 
     match &mut provider_trait_path.generics {
         Some(generics) => {
