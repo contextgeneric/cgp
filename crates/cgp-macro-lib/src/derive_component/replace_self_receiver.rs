@@ -1,14 +1,14 @@
-use proc_macro2::Ident;
+use proc_macro2::{Ident, TokenStream};
 use syn::{FnArg, Signature, parse_quote};
 
-use crate::derive_component::snake_case::to_snake_case_ident;
-
-pub fn replace_self_receiver(sig: &mut Signature, replaced_type: &Ident) {
+pub fn replace_self_receiver(
+    sig: &mut Signature,
+    replaced_var: &Ident,
+    replaced_type: TokenStream,
+) {
     if let Some(arg) = sig.inputs.first_mut()
         && let FnArg::Receiver(receiver) = arg
     {
-        let replaced_var = to_snake_case_ident(replaced_type);
-
         match (&receiver.reference, &receiver.mutability) {
             (None, None) => {
                 *arg = parse_quote!(#replaced_var : #replaced_type);

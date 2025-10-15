@@ -27,13 +27,17 @@ pub fn parse_and_replace_self_type<T>(
 where
     T: ToTokens + Parse,
 {
-    let stream = replace_self_type(val.to_token_stream(), replaced_ident, local_assoc_types);
+    let stream = replace_self_type(
+        val.to_token_stream(),
+        replaced_ident.to_token_stream(),
+        local_assoc_types,
+    );
     syn::parse2(stream)
 }
 
 pub fn replace_self_type(
     stream: TokenStream,
-    replaced_ident: &Ident,
+    replaced_ident: TokenStream,
     local_assoc_types: &Vec<Ident>,
 ) -> TokenStream {
     let self_type = format_ident!("Self");
@@ -57,7 +61,7 @@ pub fn replace_self_type(
                                         Some(TokenTree::Ident(assoc_type))
                                             if local_assoc_types.contains(assoc_type) =>
                                         {
-                                            ident
+                                            ident.to_token_stream()
                                         }
                                         _ => replaced_ident,
                                     }
@@ -68,14 +72,14 @@ pub fn replace_self_type(
                         _ => replaced_ident,
                     };
 
-                    result_stream.push(TokenTree::Ident(replaced));
+                    result_stream.extend(replaced);
                 } else {
                     result_stream.push(TokenTree::Ident(ident));
                 }
             }
             TokenTree::Group(group) => {
                 let replaced_stream =
-                    replace_self_type(group.stream(), replaced_ident, local_assoc_types);
+                    replace_self_type(group.stream(), replaced_ident.clone(), local_assoc_types);
                 let replaced_group = Group::new(group.delimiter(), replaced_stream);
 
                 result_stream.push(TokenTree::Group(replaced_group));

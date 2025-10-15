@@ -97,12 +97,11 @@ pub fn transform_impl_trait(
 ) -> syn::Result<ItemImpl> {
     let context_type = item_impl.self_ty.as_ref();
 
-    let (context_ident, use_refl) =
-        if let Some(ident) = parse2::<Ident>(context_type.to_token_stream()).ok() {
-            (ident, false)
-        } else {
-            (Ident::new("__Context__", Span::call_site()), true)
-        };
+    let context_var = if let Some(ident) = parse2::<Ident>(context_type.to_token_stream()).ok() {
+        to_snake_case_ident(&ident)
+    } else {
+        Ident::new("__context__", Span::call_site())
+    };
 
     let local_assoc_types: Vec<Ident> = item_impl
         .items
@@ -118,7 +117,7 @@ pub fn transform_impl_trait(
 
     let raw_out_impl = replace_self_type(
         item_impl.to_token_stream(),
-        &context_ident,
+        context_type.to_token_stream(),
         &local_assoc_types,
     );
 
@@ -132,10 +131,10 @@ pub fn transform_impl_trait(
         Some(generics) => {
             generics
                 .args
-                .insert(0, parse2(context_ident.to_token_stream())?);
+                .insert(0, parse2(context_type.to_token_stream())?);
         }
         None => {
-            provider_trait_path.generics = Some(parse2(quote! { < #context_ident > })?);
+            provider_trait_path.generics = Some(parse2(quote! { < #context_type > })?);
         }
     }
 
@@ -145,17 +144,13 @@ pub fn transform_impl_trait(
         For(Span::call_site()),
     ));
 
-    if use_refl {
-        let where_clause = out_impl.generics.make_where_clause();
-        where_clause.predicates.push(parse2(quote! {
-            #context_ident: Refl<Type = #context_type>
-        })?);
-    }
-
     for item in out_impl.items.iter_mut() {
         if let ImplItem::Fn(item_fn) = item {
-            replace_self_receiver(&mut item_fn.sig, &context_ident);
-            let context_var = to_snake_case_ident(&context_ident);
+            replace_self_receiver(
+                &mut item_fn.sig,
+                &context_var,
+                context_type.to_token_stream(),
+            );
             let replaced_block = replace_self_var(item_fn.block.to_token_stream(), &context_var);
             item_fn.block = parse2(replaced_block)?;
         }

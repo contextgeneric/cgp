@@ -1,3 +1,5 @@
+use core::fmt::Display;
+
 use cgp::prelude::*;
 
 #[cgp_component(FooProvider)]
@@ -24,5 +26,19 @@ where
 {
     fn foo(&self, value: u32) -> String {
         format!("{}: {}", self.name(), value)
+    }
+}
+
+pub struct Foo<Tag> {
+    pub tag: Tag,
+}
+
+#[cgp_impl(new WithFooTag: FooProvider)]
+impl<Tag> CanDoFoo for Foo<Tag>
+where
+    Tag: Display,
+{
+    fn foo(&self, value: u32) -> String {
+        format!("{}: {}", self.tag, value)
     }
 }

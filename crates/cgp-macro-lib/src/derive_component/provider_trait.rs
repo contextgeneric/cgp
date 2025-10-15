@@ -1,6 +1,6 @@
 use alloc::vec::Vec;
 
-use quote::quote;
+use quote::{ToTokens, quote};
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
 use syn::{Ident, ItemTrait, TraitItem, TypeParamBound, parse2};
@@ -9,6 +9,7 @@ use crate::derive_component::replace_self_receiver::replace_self_receiver;
 use crate::derive_component::replace_self_type::{
     iter_parse_and_replace_self_type, parse_and_replace_self_type,
 };
+use crate::derive_component::to_snake_case_ident;
 use crate::parse::parse_is_provider_params;
 
 pub fn derive_provider_trait(
@@ -89,7 +90,11 @@ pub fn derive_provider_trait(
                 parse_and_replace_self_type(item, context_type, &local_assoc_types)?;
 
             if let TraitItem::Fn(func) = &mut replaced_item {
-                replace_self_receiver(&mut func.sig, context_type);
+                replace_self_receiver(
+                    &mut func.sig,
+                    &to_snake_case_ident(context_type),
+                    context_type.to_token_stream(),
+                );
             }
 
             *item = replaced_item;

@@ -174,7 +174,7 @@ fn parse_receiver(context_ident: &Ident, arg: &FnArg) -> syn::Result<(ReceiverMo
             Type::Reference(ty) => {
                 let receiver = parse2(replace_self_type(
                     ty.elem.to_token_stream(),
-                    context_ident,
+                    context_ident.to_token_stream(),
                     &Vec::new(),
                 ))?;
                 Ok((ReceiverMode::Type(receiver), ty.mutability))
@@ -191,7 +191,7 @@ fn parse_return_type(context_type: &Ident, return_type: &ReturnType) -> syn::Res
     match return_type {
         ReturnType::Type(_, ty) => parse2(replace_self_type(
             ty.to_token_stream(),
-            context_type,
+            context_type.to_token_stream(),
             &Vec::new(),
         )),
         _ => Err(Error::new(
