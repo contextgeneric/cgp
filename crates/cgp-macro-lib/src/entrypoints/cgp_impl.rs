@@ -93,7 +93,7 @@ pub fn transform_impl_trait(
 ) -> syn::Result<ItemImpl> {
     let context_type = item_impl.self_ty.as_ref();
 
-    let context_var = if let Some(ident) = parse2::<Ident>(context_type.to_token_stream()).ok() {
+    let context_var = if let Ok(ident) = parse2::<Ident>(context_type.to_token_stream()) {
         to_snake_case_ident(&ident)
     } else {
         Ident::new("__context__", Span::call_site())
@@ -140,17 +140,14 @@ pub fn transform_impl_trait(
     ));
 
     for item in out_impl.items.iter_mut() {
-        if let ImplItem::Fn(item_fn) = item {
-            if let Some(arg) = item_fn.sig.inputs.first_mut()
-                && let FnArg::Receiver(receiver) = arg
-            {
-                *arg =
-                    replace_self_receiver(receiver, &context_var, context_type.to_token_stream());
+        if let ImplItem::Fn(item_fn) = item
+            && let Some(arg) = item_fn.sig.inputs.first_mut()
+            && let FnArg::Receiver(receiver) = arg
+        {
+            *arg = replace_self_receiver(receiver, &context_var, context_type.to_token_stream());
 
-                let replaced_block =
-                    replace_self_var(item_fn.block.to_token_stream(), &context_var);
-                item_fn.block = parse2(replaced_block)?;
-            }
+            let replaced_block = replace_self_var(item_fn.block.to_token_stream(), &context_var);
+            item_fn.block = parse2(replaced_block)?;
         }
     }
 
@@ -162,9 +159,9 @@ fn replace_self_var(stream: TokenStream, replaced_ident: &Ident) -> TokenStream 
 
     let mut result_stream: Vec<TokenTree> = Vec::new();
 
-    let mut token_iter = stream.into_iter();
+    let token_iter = stream.into_iter();
 
-    while let Some(tree) = token_iter.next() {
+    for tree in token_iter {
         match tree {
             TokenTree::Ident(ident) => {
                 if ident == self_ident {
