@@ -3,8 +3,8 @@ use quote::{ToTokens, format_ident, quote};
 use syn::parse::discouraged::Speculative;
 use syn::parse::{Parse, ParseStream};
 use syn::spanned::Spanned;
-use syn::token::For;
-use syn::{parse2, Error, FnArg, Ident, ImplItem, ItemImpl, Type};
+use syn::token::{Colon, For};
+use syn::{Error, FnArg, Ident, ImplItem, ItemImpl, Type, parse2};
 
 use crate::derive_component::{replace_self_receiver, replace_self_type, to_snake_case_ident};
 use crate::derive_provider::{
@@ -27,9 +27,12 @@ pub fn cgp_impl(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStream
     let provider_impl =
         transform_impl_trait(&item_impl, &consumer_trait_path, &spec.provider_type)?;
 
-    let component_name = derive_component_name_from_provider_impl(&provider_impl)?;
+    let component_type = match &spec.component_type {
+        Some(component_type) => component_type.clone(),
+        None => derive_component_name_from_provider_impl(&provider_impl)?,
+    };
 
-    let is_provider_for_impl: ItemImpl = derive_is_provider_for(&component_name, &provider_impl)?;
+    let is_provider_for_impl: ItemImpl = derive_is_provider_for(&component_type, &provider_impl)?;
 
     let provider_struct = if spec.new_struct {
         Some(derive_provider_struct(&provider_impl)?)
@@ -49,6 +52,7 @@ pub fn cgp_impl(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStream
 pub struct ImplProviderSpec {
     pub new_struct: bool,
     pub provider_type: Type,
+    pub component_type: Option<Type>,
 }
 
 impl Parse for ImplProviderSpec {
@@ -67,9 +71,17 @@ impl Parse for ImplProviderSpec {
 
         let provider_type = input.parse()?;
 
+        let component_type = if let Some(_colon) = input.parse::<Option<Colon>>()? {
+            let component_type: Type = input.parse()?;
+            Some(component_type)
+        } else {
+            None
+        };
+
         Ok(ImplProviderSpec {
             new_struct,
             provider_type,
+            component_type,
         })
     }
 }
@@ -132,12 +144,11 @@ pub fn transform_impl_trait(
             if let Some(arg) = item_fn.sig.inputs.first_mut()
                 && let FnArg::Receiver(receiver) = arg
             {
-                *arg = replace_self_receiver(receiver,
-                    &context_var,
-                    context_type.to_token_stream(),
-                );
+                *arg =
+                    replace_self_receiver(receiver, &context_var, context_type.to_token_stream());
 
-                let replaced_block = replace_self_var(item_fn.block.to_token_stream(), &context_var);
+                let replaced_block =
+                    replace_self_var(item_fn.block.to_token_stream(), &context_var);
                 item_fn.block = parse2(replaced_block)?;
             }
         }

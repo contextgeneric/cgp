@@ -19,5 +19,8 @@ pub fn to_snake_case_str(val: &str) -> String {
 }
 
 pub fn to_snake_case_ident(val: &Ident) -> Ident {
-    Ident::new(&format!("__{}__", to_snake_case_str(&val.to_string())), Span::call_site())
+    Ident::new(
+        &format!("__{}__", to_snake_case_str(&val.to_string())),
+        Span::call_site(),
+    )
 }

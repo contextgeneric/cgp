@@ -1,5 +1,5 @@
 use proc_macro2::{Ident, TokenStream};
-use syn::{parse_quote, FnArg, Receiver, Signature};
+use syn::{FnArg, Receiver, Signature, parse_quote};
 
 pub fn replace_self_receiver_in_signature(
     sig: &mut Signature,
@@ -12,7 +12,6 @@ pub fn replace_self_receiver_in_signature(
         *arg = replace_self_receiver(receiver, replaced_var, replaced_type);
     }
 }
-
 
 pub fn replace_self_receiver(
     receiver: &mut Receiver,

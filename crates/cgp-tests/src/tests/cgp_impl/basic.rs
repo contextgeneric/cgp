@@ -38,7 +38,7 @@ pub mod inner {
         pub tag: Tag,
     }
 
-    #[cgp_impl(new WithFooTag)]
+    #[cgp_impl(new WithFooTag: FooProviderComponent)]
     impl<Tag> FooProvider for Foo<Tag>
     where
         Tag: Display,
