@@ -4,7 +4,7 @@ use syn::parse::discouraged::Speculative;
 use syn::parse::{Parse, ParseStream};
 use syn::spanned::Spanned;
 use syn::token::For;
-use syn::{Error, Ident, ImplItem, ItemImpl, Type, parse2};
+use syn::{parse2, Error, FnArg, Ident, ImplItem, ItemImpl, Type};
 
 use crate::derive_component::{replace_self_receiver, replace_self_type, to_snake_case_ident};
 use crate::derive_provider::{
@@ -129,13 +129,17 @@ pub fn transform_impl_trait(
 
     for item in out_impl.items.iter_mut() {
         if let ImplItem::Fn(item_fn) = item {
-            replace_self_receiver(
-                &mut item_fn.sig,
-                &context_var,
-                context_type.to_token_stream(),
-            );
-            let replaced_block = replace_self_var(item_fn.block.to_token_stream(), &context_var);
-            item_fn.block = parse2(replaced_block)?;
+            if let Some(arg) = item_fn.sig.inputs.first_mut()
+                && let FnArg::Receiver(receiver) = arg
+            {
+                *arg = replace_self_receiver(receiver,
+                    &context_var,
+                    context_type.to_token_stream(),
+                );
+
+                let replaced_block = replace_self_var(item_fn.block.to_token_stream(), &context_var);
+                item_fn.block = parse2(replaced_block)?;
+            }
         }
     }
 

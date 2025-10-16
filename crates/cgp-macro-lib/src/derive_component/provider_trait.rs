@@ -5,7 +5,7 @@ use syn::punctuated::Punctuated;
 use syn::token::Comma;
 use syn::{Ident, ItemTrait, TraitItem, TypeParamBound, parse2};
 
-use crate::derive_component::replace_self_receiver::replace_self_receiver;
+use crate::derive_component::replace_self_receiver::replace_self_receiver_in_signature;
 use crate::derive_component::replace_self_type::{
     iter_parse_and_replace_self_type, parse_and_replace_self_type,
 };
@@ -90,7 +90,7 @@ pub fn derive_provider_trait(
                 parse_and_replace_self_type(item, context_type, &local_assoc_types)?;
 
             if let TraitItem::Fn(func) = &mut replaced_item {
-                replace_self_receiver(
+                replace_self_receiver_in_signature(
                     &mut func.sig,
                     &to_snake_case_ident(context_type),
                     context_type.to_token_stream(),
