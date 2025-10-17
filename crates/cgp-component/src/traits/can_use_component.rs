@@ -1,4 +1,4 @@
-use crate::{HasCgpProvider, IsProviderFor};
+use crate::{DelegateComponent, IsProviderFor};
 
 /**
     This is a convenient type alias that is used in the same way as [`IsProviderFor`],
@@ -17,7 +17,7 @@ pub trait CanUseComponent<Component, Params: ?Sized = ()> {}
 
 impl<Context, Component, Params: ?Sized> CanUseComponent<Component, Params> for Context
 where
-    Context: HasCgpProvider,
-    Context::CgpProvider: IsProviderFor<Component, Context, Params>,
+    Context: DelegateComponent<Component>,
+    Context::Delegate: IsProviderFor<Component, Context, Params>,
 {
 }

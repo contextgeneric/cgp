@@ -1,4 +1,4 @@
-use cgp_component::{DelegateComponent, HasCgpProvider, IsProviderFor, UseContext, UseDelegate};
+use cgp_component::{DelegateComponent, IsProviderFor, UseContext, UseDelegate};
 use cgp_macro::cgp_component;
 
 #[cgp_component {

@@ -10,13 +10,17 @@ pub fn derive_has_components(
 ) -> syn::Result<ItemImpl> {
     let context_name = &context_struct.ident;
 
-    let (impl_generics, ty_generics, where_clause) = context_struct.generics.split_for_impl();
+    let mut generics = context_struct.generics.clone();
+    generics.params.insert(0, parse2(quote! { __Name__ })?);
+
+    let (impl_generics, _, _) = generics.split_for_impl();
+    let (_, ty_generics, where_clause) = context_struct.generics.split_for_impl();
 
     parse2(quote! {
-        impl #impl_generics HasCgpProvider for #context_name #ty_generics
+        impl #impl_generics DelegateComponent<__Name__> for #context_name #ty_generics
             #where_clause
         {
-            type CgpProvider = #provider_name #provider_generics;
+            type Delegate = #provider_name #provider_generics;
         }
     })
 }
