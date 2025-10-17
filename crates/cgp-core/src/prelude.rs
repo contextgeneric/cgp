@@ -19,7 +19,7 @@ pub use cgp_field::types::{
 pub use cgp_macro::{
     BuildField, CgpData, CgpRecord, CgpVariant, ExtractField, FromVariant, HasField, HasFields,
     Product, Sum, Symbol, cgp_auto_getter, cgp_component, cgp_context, cgp_getter, cgp_impl,
-    cgp_new_provider, cgp_preset, cgp_provider, cgp_type, check_components,
+    cgp_inherit, cgp_new_provider, cgp_preset, cgp_provider, cgp_type, check_components,
     delegate_and_check_components, delegate_components, product, re_export_imports, replace_with,
 };
 pub use cgp_type::{HasType, ProvideType, UseType};

@@ -49,13 +49,9 @@ pub fn cgp_context(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStr
     };
 
     match &context_spec.preset {
-        Some((preset_path, preset_generics)) => {
-            let (delegate_impl, is_provider_impl) = derive_delegate_preset(
-                provider_name,
-                provider_generics,
-                preset_path,
-                preset_generics,
-            )?;
+        Some(preset) => {
+            let (delegate_impl, is_provider_impl) =
+                derive_delegate_preset(provider_name, provider_generics, preset)?;
 
             Ok(quote! {
                 #base_derived

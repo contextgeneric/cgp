@@ -790,6 +790,13 @@ pub fn cgp_context(attr: TokenStream, item: TokenStream) -> TokenStream {
         .into()
 }
 
+#[proc_macro_attribute]
+pub fn cgp_inherit(attr: TokenStream, item: TokenStream) -> TokenStream {
+    cgp_macro_lib::cgp_inherit(attr.into(), item.into())
+        .unwrap_or_else(syn::Error::into_compile_error)
+        .into()
+}
+
 /**
    The `#[blanket_trait]` macro can be used to define trait aliases that contain
    empty body and trivial blanket implementations.

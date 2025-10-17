@@ -1,7 +1,7 @@
 use quote::quote;
-use syn::{AngleBracketedGenericArguments, Ident, ItemImpl, ItemStruct, parse_quote, parse2};
+use syn::{Ident, ItemImpl, ItemStruct, parse_quote, parse2};
 
-use crate::parse::TypeGenerics;
+use crate::parse::{SimpleType, TypeGenerics};
 
 pub fn derive_has_components(
     provider_name: &Ident,
@@ -28,9 +28,11 @@ pub fn derive_has_components(
 pub fn derive_delegate_preset(
     provider_name: &Ident,
     provider_generics: &Option<TypeGenerics>,
-    preset_name: &Ident,
-    preset_generics: &Option<AngleBracketedGenericArguments>,
+    preset: &SimpleType,
 ) -> syn::Result<(ItemImpl, ItemImpl)> {
+    let preset_name = &preset.name;
+    let preset_generics = &preset.generics;
+
     let provider_params = match provider_generics {
         Some(generics) => {
             let params = &generics.generics.params;
