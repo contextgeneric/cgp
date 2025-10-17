@@ -721,7 +721,7 @@ pub fn cgp_type(attrs: TokenStream, body: TokenStream) -> TokenStream {
     the context provider would be named in the format `{struct_name}Components`.
 
     The macro generates a struct definition for the context provider, and implements
-    `HasCgpProvider` for the context struct to point to the context provider.
+    `DelegateComponent` for the context struct to point to the context provider.
 
     ## Example
 
@@ -748,8 +748,8 @@ pub fn cgp_type(attrs: TokenStream, body: TokenStream) -> TokenStream {
     ```rust,ignore
     struct MyAppComponents;
 
-    impl HasCgpProvider for MyApp {
-        type CgpProvider = MyAppComponents;
+    impl<Name> DelegateComponent<Name> for MyApp {
+        type Delegate = MyAppComponents;
     }
     ```
 
