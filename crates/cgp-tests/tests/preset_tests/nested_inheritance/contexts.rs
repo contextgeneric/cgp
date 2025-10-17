@@ -1,21 +1,17 @@
 use cgp::prelude::*;
 
-use crate::tests::preset::basic::components::{
+use crate::preset_tests::basic::components::{
     BarGetterComponent, BarTypeProviderComponent, FooGetterComponent, FooTypeProviderComponent,
 };
-use crate::tests::preset::basic::preset::{CheckDelegatesForMyPreset, MyPreset};
+use crate::preset_tests::nested_inheritance::preset_d::{
+    CheckDelegatesForNestedPresetD, NestedPresetD,
+};
 
-#[cgp_context(MyContextComponents: MyPreset)]
+#[cgp_context(MyContextComponents: NestedPresetD)]
 #[derive(HasField)]
 pub struct MyContext {
-    pub foo: (),
+    pub fool: (),
     pub bar: (),
-}
-
-delegate_components! {
-    MyContextComponents {
-        BarGetterComponent: UseField<Symbol!("bar")>,
-    }
 }
 
 check_components! {
@@ -27,4 +23,4 @@ check_components! {
     }
 }
 
-impl CheckDelegatesForMyPreset for MyContextComponents {}
+impl CheckDelegatesForNestedPresetD for MyContextComponents {}

@@ -2,25 +2,28 @@
 mod preset {
     use cgp::prelude::*;
 
-    use crate::tests::preset::basic::components::{
-        BarTypeProviderComponent, FooTypeProviderComponent,
+    use crate::preset_tests::basic::components::{
+        BarTypeProviderComponent, FooGetterComponent, FooTypeProviderComponent,
     };
 
     cgp_preset! {
-        MyPresetA {
+        MyPreset {
             [
                 FooTypeProviderComponent,
                 BarTypeProviderComponent,
             ]:
                 UseType<()>,
+            FooGetterComponent:
+                UseField<Symbol!("foo")>,
         }
     }
 
-    pub trait CheckDelegatesForMyPresetA:
+    pub trait CheckDelegatesForMyPreset:
         DelegateComponent<FooTypeProviderComponent, Delegate = UseType<()>>
         + DelegateComponent<BarTypeProviderComponent, Delegate = UseType<()>>
+        + DelegateComponent<FooGetterComponent, Delegate = UseField<Symbol!("foo")>>
     {
     }
 
-    impl CheckDelegatesForMyPresetA for MyPresetA::Provider {}
+    impl CheckDelegatesForMyPreset for MyPreset::Provider {}
 }

@@ -4,7 +4,7 @@ mod preset {
 
     use cgp::prelude::*;
 
-    use crate::tests::preset::generics_inheritance::preset_a::MyGenericPresetA;
+    use crate::preset_tests::generics_inheritance::preset_a::MyGenericPresetA;
 
     cgp_preset! {
         MyGenericPresetB<T>: MyGenericPresetA<T> {

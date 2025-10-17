@@ -1,9 +1,9 @@
 use cgp::prelude::*;
 
-use crate::tests::preset::generics::components::{
+use crate::preset_tests::generics::components::{
     BarGetterComponent, BarTypeProviderComponent, FooGetterComponent, FooTypeProviderComponent,
 };
-use crate::tests::preset::generics::preset::MyGenericPreset;
+use crate::preset_tests::generics::preset::MyGenericPreset;
 
 #[cgp_context(MyContextComponents<T>: MyGenericPreset<T>)]
 #[derive(HasField)]

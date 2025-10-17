@@ -2,12 +2,12 @@
 mod preset {
     use cgp::prelude::*;
 
-    use crate::tests::preset::generics::components::{
+    use crate::preset_tests::generics_inheritance::components::{
         BarGetterComponent, BarTypeProviderComponent, FooGetterComponent, FooTypeProviderComponent,
     };
 
     cgp_preset! {
-        MyGenericPreset<T> {
+        MyGenericPresetA<T> {
             [
                 FooTypeProviderComponent,
                 BarTypeProviderComponent,
@@ -15,7 +15,7 @@ mod preset {
                 UseType<T>,
             <const I: usize> FooGetterComponent<Index<I>>:
                 UseField<Symbol!("foo")>,
-            BarGetterComponent:
+            <I> BarGetterComponent<I>:
                 UseField<Symbol!("bar")>,
         }
     }

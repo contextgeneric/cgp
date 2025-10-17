@@ -2,7 +2,7 @@
 mod preset {
     use cgp::prelude::*;
 
-    use crate::tests::preset::basic::components::{BarGetterComponent, BarTypeProviderComponent};
+    use crate::preset_tests::basic::components::{BarGetterComponent, BarTypeProviderComponent};
 
     cgp_preset! {
         NestedPresetC {

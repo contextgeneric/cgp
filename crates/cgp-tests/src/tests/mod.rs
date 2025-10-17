@@ -7,6 +7,5 @@ pub mod getter;
 pub mod has_field;
 pub mod has_fields;
 pub mod monad;
-pub mod preset;
 pub mod symbol;
 pub mod use_delegate;

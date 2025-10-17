@@ -2,8 +2,8 @@
 mod preset {
     use cgp::prelude::*;
 
-    use crate::tests::preset::basic::components::{BarGetterComponent, FooGetterComponent};
-    use crate::tests::preset::inheritance::preset_a::MyPresetA;
+    use crate::preset_tests::basic::components::{BarGetterComponent, FooGetterComponent};
+    use crate::preset_tests::inheritance::preset_a::MyPresetA;
 
     cgp_preset! {
         MyPresetB: MyPresetA {

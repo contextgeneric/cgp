@@ -3,7 +3,7 @@ use core::convert::Infallible;
 use cgp::core::error::{ErrorRaiserComponent, ErrorTypeProviderComponent};
 use cgp::prelude::*;
 
-use crate::tests::preset::wrapped::preset::{BoxError, ErrorHandlerPreset};
+use crate::preset_tests::wrapped::preset::{BoxError, ErrorHandlerPreset};
 
 #[cgp_context]
 pub struct MyContext;

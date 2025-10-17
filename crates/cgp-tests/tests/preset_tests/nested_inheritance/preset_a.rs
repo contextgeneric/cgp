@@ -2,7 +2,7 @@
 mod preset {
     use cgp::prelude::*;
 
-    use crate::tests::preset::basic::components::{FooGetterComponent, FooTypeProviderComponent};
+    use crate::preset_tests::basic::components::{FooGetterComponent, FooTypeProviderComponent};
 
     cgp_preset! {
         NestedPresetA {
