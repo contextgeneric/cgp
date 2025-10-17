@@ -22,7 +22,7 @@ delegate_components! {
     }
 }
 
-impl HasCount for App  {
+impl HasCount for App {
     fn count(&self) -> u32 {
         self.count
     }
