@@ -16,6 +16,7 @@ pub fn cgp_inherit(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStr
         derive_delegate_preset(&context_struct.ident, &Some(type_generics), &preset)?;
 
     Ok(quote! {
+        #context_struct
 
         #delegate_impl
 
