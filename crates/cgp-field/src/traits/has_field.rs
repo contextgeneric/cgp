@@ -69,7 +69,7 @@ where
     }
 }
 
-impl<'a, Context, Tag, Value> HasField<Tag> for &'a Context
+impl<Context, Tag, Value> HasField<Tag> for &Context
 where
     Context: HasField<Tag, Value = Value>,
 {
@@ -80,7 +80,7 @@ where
     }
 }
 
-impl<'a, Context, Tag, Value> HasField<Tag> for &'a mut Context
+impl<Context, Tag, Value> HasField<Tag> for &mut Context
 where
     Context: HasField<Tag, Value = Value>,
 {

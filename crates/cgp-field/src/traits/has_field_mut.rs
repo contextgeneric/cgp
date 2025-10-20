@@ -14,7 +14,7 @@ pub trait MutFieldGetter<Context, Tag>: FieldGetter<Context, Tag> {
     fn get_field_mut(context: &mut Context, tag: PhantomData<Tag>) -> &mut Self::Value;
 }
 
-impl<'a, Context, Tag, Value> HasFieldMut<Tag> for &'a mut Context
+impl<Context, Tag, Value> HasFieldMut<Tag> for &mut Context
 where
     Context: HasFieldMut<Tag, Value = Value>,
 {
