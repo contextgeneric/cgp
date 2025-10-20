@@ -1,5 +1,4 @@
 use core::marker::PhantomData;
-use core::ops::Deref;
 
 use cgp_component::UseContext;
 
@@ -59,19 +58,6 @@ pub trait FieldGetter<Context, Tag> {
     fn get_field(context: &Context, _tag: PhantomData<Tag>) -> &Self::Value;
 }
 
-#[diagnostic::do_not_recommend]
-impl<Context, Tag, Target, Value> HasField<Tag> for Context
-where
-    Context: DerefMap<Target = Target>,
-    Target: HasField<Tag, Value = Value>,
-{
-    type Value = Value;
-
-    fn get_field(&self, tag: PhantomData<Tag>) -> &Self::Value {
-        self.map_deref(|context| context.get_field(tag))
-    }
-}
-
 impl<Context, Tag, Field> FieldGetter<Context, Tag> for UseContext
 where
     Context: HasField<Tag, Value = Field>,
@@ -83,20 +69,24 @@ where
     }
 }
 
-/**
-   A helper trait to help organize the lifetime inference in Rust.
-   Without this, `Self::Target` would need to be `'static`, as Rust couldn't
-   infer the correct lifetime when calling `context.deref().get_field()`.
-*/
-trait DerefMap: Deref {
-    fn map_deref<T>(&self, mapper: impl for<'a> FnOnce(&'a Self::Target) -> &'a T) -> &T;
+impl<'a, Context, Tag, Value> HasField<Tag> for &'a Context
+where
+    Context: HasField<Tag, Value = Value>,
+{
+    type Value = Value;
+
+    fn get_field(&self, tag: PhantomData<Tag>) -> &Self::Value {
+        Context::get_field(self, tag)
+    }
 }
 
-impl<Context> DerefMap for Context
+impl<'a, Context, Tag, Value> HasField<Tag> for &'a mut Context
 where
-    Context: Deref,
+    Context: HasField<Tag, Value = Value>,
 {
-    fn map_deref<T>(&self, mapper: impl for<'a> FnOnce(&'a Self::Target) -> &'a T) -> &T {
-        mapper(self.deref())
+    type Value = Value;
+
+    fn get_field(&self, tag: PhantomData<Tag>) -> &Self::Value {
+        Context::get_field(self, tag)
     }
 }

@@ -1,5 +1,4 @@
 use core::marker::PhantomData;
-use core::ops::DerefMut;
 
 use crate::traits::{FieldGetter, HasField};
 
@@ -15,13 +14,11 @@ pub trait MutFieldGetter<Context, Tag>: FieldGetter<Context, Tag> {
     fn get_field_mut(context: &mut Context, tag: PhantomData<Tag>) -> &mut Self::Value;
 }
 
-#[diagnostic::do_not_recommend]
-impl<Context, Tag, Target, Value> HasFieldMut<Tag> for Context
+impl<'a, Context, Tag, Value> HasFieldMut<Tag> for &'a mut Context
 where
-    Context: DerefMut<Target = Target>,
-    Target: HasFieldMut<Tag, Value = Value> + 'static,
+    Context: HasFieldMut<Tag, Value = Value>,
 {
     fn get_field_mut(&mut self, tag: PhantomData<Tag>) -> &mut Self::Value {
-        self.deref_mut().get_field_mut(tag)
+        Context::get_field_mut(self, tag)
     }
 }
