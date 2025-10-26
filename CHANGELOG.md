@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.6.0 (2025-10-26)
+
+- Introduce `#[cgp_impl]` to simplify provider trait implementation - [#174](https://github.com/contextgeneric/cgp/pull/174)
+- Allow context types to delegate components directly - [#175](https://github.com/contextgeneric/cgp/pull/175)
+- Introduce `#[cgp_inherit]` for inheriting from presets - [#176](https://github.com/contextgeneric/cgp/pull/176)
+
 ## v0.5.0 (2025-10-11)
 
 - Monadic computation support
