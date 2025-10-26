@@ -73,7 +73,7 @@ pub fn cgp_component(attr: TokenStream, item: TokenStream) -> TokenStream {
 }
 
 /**
-    `#[cgp_provider]` is used when implementing a provider trait.
+    `#[cgp_provider]` is used for implementing a provider trait.
 
     It is applied on a provider trait `impl` block, and generates the accompanying
     `IsProviderFor` trait implementation that captures the same constraints as
@@ -135,6 +135,7 @@ pub fn cgp_component(attr: TokenStream, item: TokenStream) -> TokenStream {
     where
         Context: HasName,
     {}
+    ```
 */
 #[proc_macro_attribute]
 pub fn cgp_provider(attr: TokenStream, item: TokenStream) -> TokenStream {
@@ -143,6 +144,65 @@ pub fn cgp_provider(attr: TokenStream, item: TokenStream) -> TokenStream {
         .into()
 }
 
+/**
+    `#[cgp_impl]` provides a simplified ergonomic implementing a provider trait,
+    by making it look like we are writing blanket implementations on a generic context.
+
+    The macro accepts a provider type in its attribute argument, along with an optional `new`
+    keyword at the front. If `new` is specified, a provider struct is defined along with
+    the trait impl.
+
+    The macro can be applied with a trait `impl` body, where the provider trait is implemented
+    as if it has the same trait signature as the consumer trait. Behind the scene, it moves
+    the `Self` type in the trait impl to the first position of the generic parameter
+    in the trait path, and use the given provider type as the new `Self` type.
+
+    The macro also replaces all references to `Self` and `self` in the trait body to explicitly
+    refer to the original context type.
+
+    After the transformation of the trait `impl`, `#[cgp_impl]` works the same way as
+    [`#[cgp_provider]`](cgp_provider), and also generates the corresponding `IsProviderFor`
+    implementation for the provider.
+
+    ## Example
+
+    Given the following provider trait implementation:
+
+    ```rust,ignore
+    #[cgp_impl(GreetName)]
+    impl<Context> Greeter for Context
+    where
+        Context: HasName,
+    {
+        fn greet(context: &Context) {
+            println!("Hello, {}!", context.name());
+        }
+    }
+    ```
+
+    would be equivalent to the following provider implementation using `#[cgp_provider]`:
+
+    ```rust,ignore
+    #[cgp_provider]
+    impl<Context> Greeter<Context> for GreetName
+    where
+        Context: HasName,
+    {
+        fn greet(context: &Context) {
+            println!("Hello, {}!", context.name());
+        }
+    }
+    ```
+
+    Which would generate the following `IsProviderFor` trait implementation:
+
+    ```rust,ignore
+    impl<Context> IsProviderFor<GreeterComponent, Context> for GreetName
+    where
+        Context: HasName,
+    {}
+    ```
+*/
 #[proc_macro_attribute]
 pub fn cgp_impl(attr: TokenStream, item: TokenStream) -> TokenStream {
     cgp_macro_lib::cgp_impl(attr.into(), item.into())
