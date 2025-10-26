@@ -23,6 +23,7 @@ pub(crate) mod for_each_replace;
 pub(crate) mod parse;
 pub(crate) mod preset;
 pub(crate) mod product;
+pub(crate) mod replace_self;
 pub(crate) mod symbol;
 pub(crate) mod type_component;
 

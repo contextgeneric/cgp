@@ -5,12 +5,11 @@ use syn::punctuated::Punctuated;
 use syn::token::Comma;
 use syn::{Ident, ItemTrait, TraitItem, TypeParamBound, parse2};
 
-use crate::derive_component::replace_self_receiver::replace_self_receiver_in_signature;
-use crate::derive_component::replace_self_type::{
-    iter_parse_and_replace_self_type, parse_and_replace_self_type,
-};
-use crate::derive_component::to_snake_case_ident;
 use crate::parse::parse_is_provider_params;
+use crate::replace_self::{
+    iter_parse_and_replace_self_type, parse_and_replace_self_type,
+    replace_self_receiver_in_signature, to_snake_case_ident,
+};
 
 pub fn derive_provider_trait(
     component_name: &Ident,

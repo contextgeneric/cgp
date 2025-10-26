@@ -9,9 +9,9 @@ use syn::{
     Signature, TraitItem, TraitItemFn, Type, TypePath, parse_quote, parse2,
 };
 
-use crate::derive_component::replace_self_type;
 use crate::derive_getter::getter_field::GetterField;
 use crate::derive_getter::{FieldMode, ReceiverMode};
+use crate::replace_self::replace_self_type;
 
 pub fn parse_getter_fields(
     context_type: &Ident,

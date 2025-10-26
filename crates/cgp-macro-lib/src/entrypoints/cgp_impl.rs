@@ -1,16 +1,18 @@
-use proc_macro2::{Group, Span, TokenStream, TokenTree};
-use quote::{ToTokens, format_ident, quote};
+use proc_macro2::{Span, TokenStream};
+use quote::{ToTokens, quote};
 use syn::parse::discouraged::Speculative;
 use syn::parse::{Parse, ParseStream};
 use syn::spanned::Spanned;
 use syn::token::{Colon, For};
 use syn::{Error, FnArg, Ident, ImplItem, ItemImpl, Type, parse2};
 
-use crate::derive_component::{replace_self_receiver, replace_self_type, to_snake_case_ident};
 use crate::derive_provider::{
     derive_component_name_from_provider_impl, derive_is_provider_for, derive_provider_struct,
 };
 use crate::parse::SimpleType;
+use crate::replace_self::{
+    replace_self_receiver, replace_self_type, replace_self_var, to_snake_case_ident,
+};
 
 pub fn cgp_impl(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
     let spec: ImplProviderSpec = parse2(attr)?;
@@ -152,36 +154,4 @@ pub fn transform_impl_trait(
     }
 
     Ok(out_impl)
-}
-
-fn replace_self_var(stream: TokenStream, replaced_ident: &Ident) -> TokenStream {
-    let self_ident = format_ident!("self");
-
-    let mut result_stream: Vec<TokenTree> = Vec::new();
-
-    let token_iter = stream.into_iter();
-
-    for tree in token_iter {
-        match tree {
-            TokenTree::Ident(ident) => {
-                if ident == self_ident {
-                    result_stream.push(TokenTree::Ident(replaced_ident.clone()));
-                } else {
-                    result_stream.push(TokenTree::Ident(ident));
-                }
-            }
-            TokenTree::Group(group) => {
-                let replaced_stream = replace_self_var(group.stream(), replaced_ident);
-                let replaced_group = Group::new(group.delimiter(), replaced_stream);
-
-                result_stream.push(TokenTree::Group(replaced_group));
-            }
-            TokenTree::Punct(punct) => {
-                result_stream.push(TokenTree::Punct(punct));
-            }
-            TokenTree::Literal(lit) => result_stream.push(TokenTree::Literal(lit)),
-        }
-    }
-
-    result_stream.into_iter().collect()
 }

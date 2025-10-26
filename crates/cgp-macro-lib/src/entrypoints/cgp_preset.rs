@@ -7,9 +7,9 @@ use syn::token::{At, Comma};
 use syn::{GenericParam, Ident, ItemTrait, TypeParamBound, parse_quote, parse2};
 
 use crate::delegate_components::{define_struct, impl_delegate_components};
-use crate::derive_component::to_snake_case_str;
 use crate::parse::{DefinePreset, DelegateEntry, ImplGenerics, SimpleType};
 use crate::preset::{define_substitution_macro, impl_components_is_preset};
+use crate::replace_self::to_snake_case_str;
 
 pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
     let ast: DefinePreset = syn::parse2(body)?;
