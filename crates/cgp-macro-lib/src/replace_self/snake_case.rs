@@ -19,8 +19,11 @@ pub fn to_snake_case_str(val: &str) -> String {
 }
 
 pub fn to_snake_case_ident(val: &Ident) -> Ident {
-    Ident::new(
-        &format!("__{}__", to_snake_case_str(&val.to_string())),
-        Span::call_site(),
-    )
+    let str_val = val.to_string();
+    let mut snake_case_val = to_snake_case_str(&str_val);
+    if !str_val.starts_with('_') {
+        snake_case_val = format!("__{}__", snake_case_val);
+    }
+
+    Ident::new(&snake_case_val, Span::call_site())
 }
