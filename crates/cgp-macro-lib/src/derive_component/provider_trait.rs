@@ -46,7 +46,7 @@ pub fn derive_provider_trait(
     {
         let context_constraints = iter_parse_and_replace_self_type(
             provider_trait.supertraits.clone(),
-            context_type,
+            context_type.to_token_stream(),
             &local_assoc_types,
         )?;
 
@@ -63,7 +63,7 @@ pub fn derive_provider_trait(
                 Some(where_clause) => {
                     let mut predicates = iter_parse_and_replace_self_type(
                         where_clause.predicates.clone(),
-                        context_type,
+                        context_type.to_token_stream(),
                         &local_assoc_types,
                     )?;
 
@@ -87,15 +87,18 @@ pub fn derive_provider_trait(
         let context_var = to_snake_case_ident(context_type);
 
         for item in provider_trait.items.iter_mut() {
-            let mut replaced_item =
-                parse_and_replace_self_type(item, context_type, &local_assoc_types)?;
+            let mut replaced_item = parse_and_replace_self_type(
+                item,
+                context_type.to_token_stream(),
+                &local_assoc_types,
+            )?;
 
             if let TraitItem::Fn(func) = &mut replaced_item {
                 replace_self_receiver_in_signature(
                     &mut func.sig,
                     &context_var,
                     context_type.to_token_stream(),
-                );
+                )?;
 
                 if let Some(block) = &mut func.default {
                     let replaced = replace_self_var(block.to_token_stream(), &context_var);

@@ -7,7 +7,7 @@ use syn::parse::Parse;
 
 pub fn iter_parse_and_replace_self_type<I, T>(
     vals: I,
-    replaced_ident: &Ident,
+    replaced_ident: TokenStream,
     local_assoc_types: &Vec<Ident>,
 ) -> syn::Result<I>
 where
@@ -15,23 +15,19 @@ where
     T: ToTokens + Parse,
 {
     vals.into_iter()
-        .map(|val| parse_and_replace_self_type(&val, replaced_ident, local_assoc_types))
+        .map(|val| parse_and_replace_self_type(&val, replaced_ident.clone(), local_assoc_types))
         .collect()
 }
 
 pub fn parse_and_replace_self_type<T>(
     val: &T,
-    replaced_ident: &Ident,
+    replaced_ident: TokenStream,
     local_assoc_types: &Vec<Ident>,
 ) -> syn::Result<T>
 where
     T: ToTokens + Parse,
 {
-    let stream = replace_self_type(
-        val.to_token_stream(),
-        replaced_ident.to_token_stream(),
-        local_assoc_types,
-    );
+    let stream = replace_self_type(val.to_token_stream(), replaced_ident, local_assoc_types);
     syn::parse2(stream)
 }
 

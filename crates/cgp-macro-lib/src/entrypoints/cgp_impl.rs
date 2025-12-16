@@ -146,7 +146,7 @@ pub fn transform_impl_trait(
             && let Some(arg) = item_fn.sig.inputs.first_mut()
             && let FnArg::Receiver(receiver) = arg
         {
-            *arg = replace_self_receiver(receiver, &context_var, context_type.to_token_stream());
+            *arg = replace_self_receiver(receiver, &context_var, context_type.to_token_stream())?;
 
             let replaced_block = replace_self_var(item_fn.block.to_token_stream(), &context_var);
             item_fn.block = parse2(replaced_block)?;
