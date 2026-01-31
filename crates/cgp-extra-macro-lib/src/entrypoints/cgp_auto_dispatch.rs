@@ -100,13 +100,13 @@ fn derive_blanket_impl(item_trait: &ItemTrait) -> syn::Result<TokenStream> {
             if let FnArg::Typed(pat_type) = arg {
                 let arg_ident = Ident::new(&format!("arg_{}", i), pat_type.span());
                 arg_idents.push(arg_ident.clone());
-                pat_type.pat = Box::new(Pat::Ident(PatIdent {
+                *pat_type.pat = Pat::Ident(PatIdent {
                     ident: arg_ident,
                     attrs: Default::default(),
                     by_ref: Default::default(),
                     mutability: Default::default(),
                     subpat: Default::default(),
-                }));
+                });
 
                 let mut arg_type = pat_type.ty.as_ref().clone();
                 if let Type::Reference(arg_type) = &mut arg_type {
