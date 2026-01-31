@@ -56,17 +56,18 @@ impl Parse for CheckComponents {
             bracketed!(content in input);
 
             let command: Ident = content.parse()?;
-            if command.to_string() != "provider" {
+            if command.to_string() != "check_providers" {
                 return Err(syn::Error::new(
                     command.span(),
-                    "expected `provider` attribute",
+                    "expected `check_providers` attribute",
                 ));
             }
 
-            let provider;
-            parenthesized!(provider in content);
+            let raw_providers;
+            parenthesized!(raw_providers in content);
 
-            let provider_types: Punctuated<Type, Comma> = Punctuated::parse_terminated(&provider)?;
+            let provider_types: Punctuated<Type, Comma> =
+                Punctuated::parse_terminated(&raw_providers)?;
 
             Some(provider_types.into_iter().collect())
         } else {
