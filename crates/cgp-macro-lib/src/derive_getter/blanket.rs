@@ -14,18 +14,29 @@ pub fn derive_blanket_impl(
     context_type: &Ident,
     consumer_trait: &ItemTrait,
     fields: &[GetterField],
+    field_assoc_type: &Option<Ident>,
 ) -> syn::Result<ItemImpl> {
     let consumer_name = &consumer_trait.ident;
 
     let supertrait_constraints = consumer_trait.supertraits.clone();
 
-    let mut methods: TokenStream = TokenStream::new();
+    let mut items: TokenStream = TokenStream::new();
 
     let mut generics = consumer_trait.generics.clone();
 
     generics
         .params
         .insert(0, parse2(context_type.to_token_stream())?);
+
+    if let Some(field_assoc_type) = field_assoc_type {
+        generics
+            .params
+            .push(parse2(field_assoc_type.to_token_stream())?);
+
+        items.extend(quote! {
+            type #field_assoc_type = #field_assoc_type;
+        });
+    }
 
     let where_clause = generics.make_where_clause();
 
@@ -53,9 +64,10 @@ pub fn derive_blanket_impl(
             None,
         );
 
-        methods.extend(method);
+        items.extend(method);
 
-        let constraint = derive_getter_constraint(field, quote! { #field_symbol })?;
+        let constraint =
+            derive_getter_constraint(field, quote! { #field_symbol }, field_assoc_type)?;
 
         where_clause.predicates.push(parse2(quote! {
             #receiver_type: #constraint
@@ -69,7 +81,7 @@ pub fn derive_blanket_impl(
         impl #impl_generics #consumer_name #type_generics for #context_type
         #where_clause
         {
-            #methods
+            #items
         }
     })?;
 

@@ -28,7 +28,7 @@ pub fn derive_use_field_impl(
 
     let method = derive_getter_method(&ContextArg::Ident(receiver_type.clone()), field, None, None);
 
-    let constraint = derive_getter_constraint(field, quote! { #tag_type })?;
+    let constraint = derive_getter_constraint(field, quote! { #tag_type }, &None)?;
 
     field_constraints.push(constraint);
 

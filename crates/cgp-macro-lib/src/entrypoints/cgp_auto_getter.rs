@@ -16,9 +16,9 @@ pub fn cgp_auto_getter(attr: TokenStream, body: TokenStream) -> syn::Result<Toke
 
     let context_type = Ident::new("__Context__", Span::call_site());
 
-    let fields = parse_getter_fields(&context_type, &consumer_trait)?;
+    let (fields, field_type) = parse_getter_fields(&context_type, &consumer_trait)?;
 
-    let blanket_impl = derive_blanket_impl(&context_type, &consumer_trait, &fields)?;
+    let blanket_impl = derive_blanket_impl(&context_type, &consumer_trait, &fields, &field_type)?;
 
     Ok(quote! {
         #consumer_trait

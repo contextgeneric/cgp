@@ -42,7 +42,7 @@ pub fn derive_use_fields_impl(
 
         methods.extend(method);
 
-        let constraint = derive_getter_constraint(field, quote! { #field_symbol })?;
+        let constraint = derive_getter_constraint(field, quote! { #field_symbol }, &None)?;
 
         where_clause
             .predicates

@@ -39,7 +39,7 @@ pub fn cgp_getter(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStre
 
     let derived_component = derive_component_with_ast(&spec, consumer_trait.clone())?;
 
-    let fields = parse_getter_fields(&spec.context_type, &consumer_trait)?;
+    let (fields, _field_type) = parse_getter_fields(&spec.context_type, &consumer_trait)?;
 
     let use_fields_impl =
         derive_use_fields_impl(&spec, &derived_component.provider_trait, &fields)?;

@@ -16,8 +16,9 @@ use crate::replace_self::replace_self_type;
 pub fn parse_getter_fields(
     context_type: &Ident,
     consumer_trait: &ItemTrait,
-) -> syn::Result<Vec<GetterField>> {
+) -> syn::Result<(Vec<GetterField>, Option<Ident>)> {
     let mut fields = Vec::new();
+    let mut field_type = None;
 
     for item in consumer_trait.items.iter() {
         match item {
@@ -25,6 +26,23 @@ pub fn parse_getter_fields(
                 let getter_spec = parse_getter_method(context_type, method)?;
 
                 fields.push(getter_spec);
+            }
+            TraitItem::Type(item_type) => {
+                if field_type.is_some() {
+                    return Err(Error::new(
+                        item_type.span(),
+                        "at most one associated type is allowed in getter trait",
+                    ));
+                }
+
+                if item_type.generics.params.len() > 0 {
+                    return Err(Error::new(
+                        item_type.generics.params.span(),
+                        "associated type in getter trait must not contain generic params",
+                    ));
+                }
+
+                field_type = Some(item_type.ident.clone());
             }
             _ => {
                 return Err(Error::new(
@@ -35,7 +53,25 @@ pub fn parse_getter_fields(
         }
     }
 
-    Ok(fields)
+    match (&field_type, fields.first(), fields.len()) {
+        (None, _, _) => {}
+        (Some(field_type), Some(field), 1) => {
+            if field.field_type != parse_quote! { Self :: #field_type } {
+                return Err(Error::new(
+                    field.field_type.span(),
+                    "getter method return type must match the associated type",
+                ));
+            }
+        }
+        _ => {
+            return Err(Error::new(
+                consumer_trait.span(),
+                "if associated type is defined, exactly one getter method must be defined",
+            ));
+        }
+    }
+
+    Ok((fields, field_type))
 }
 
 fn parse_getter_method(context_type: &Ident, method: &TraitItemFn) -> syn::Result<GetterField> {
