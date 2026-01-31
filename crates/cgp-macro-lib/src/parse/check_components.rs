@@ -12,7 +12,7 @@ pub struct CheckComponentsSpecs {
 }
 
 pub struct CheckComponents {
-    pub check_provider: Option<Ident>,
+    pub check_provider: Option<Type>,
     pub impl_generics: ImplGenerics,
     pub trait_name: Ident,
     pub context_type: Type,
@@ -65,8 +65,9 @@ impl Parse for CheckComponents {
 
             let provider;
             parenthesized!(provider in content);
-            let provider_ident: Ident = provider.parse()?;
-            Some(provider_ident)
+
+            let provider_type: Type = provider.parse()?;
+            Some(provider_type)
         } else {
             None
         };

@@ -78,6 +78,29 @@ pub fn test_basic_check_components() {
                 (Index<7>, Index<8>),
             ]
         }
+
+        #[provider(UseField<Symbol!("dummy")>)]
+        CanUseDummyField for Context {
+            FooGetterAtComponent: [
+                Index<0>,
+                Index<1>,
+            ],
+            FooGetterAtComponent:
+                Index<3>,
+            BarGetterAtComponent: [
+                (Index<0>, Index<1>),
+                (Index<1>, Index<0>),
+            ],
+            BarGetterAtComponent:
+                (Index<3>, Index<4>),
+            [
+                FooGetterAtComponent,
+                BarGetterAtComponent,
+            ]: [
+                (Index<5>, Index<6>),
+                (Index<7>, Index<8>),
+            ]
+        }
     }
 }
 
