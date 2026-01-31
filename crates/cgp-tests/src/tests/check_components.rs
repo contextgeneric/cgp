@@ -61,6 +61,9 @@ pub fn test_basic_check_components() {
             ],
             FooGetterAtComponent:
                 Index<3>,
+        }
+
+        CanUseContext2 for Context {
             BarGetterAtComponent: [
                 (Index<0>, Index<1>),
                 (Index<1>, Index<0>),

@@ -2,8 +2,8 @@ use proc_macro2::Span;
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::spanned::Spanned;
-use syn::token::{Bracket, Colon, Comma, For, Lt, Where};
-use syn::{Ident, Type, WhereClause, braced, bracketed};
+use syn::token::{Bracket, Colon, Comma, For, Lt, Pound, Where};
+use syn::{Ident, Type, WhereClause, braced, bracketed, parenthesized};
 
 use crate::parse::ImplGenerics;
 
@@ -12,6 +12,7 @@ pub struct CheckComponentsSpecs {
 }
 
 pub struct CheckComponents {
+    pub check_provider: Option<Ident>,
     pub impl_generics: ImplGenerics,
     pub trait_name: Ident,
     pub context_type: Type,
@@ -48,6 +49,28 @@ impl Parse for CheckComponentsSpecs {
 
 impl Parse for CheckComponents {
     fn parse(input: ParseStream) -> syn::Result<Self> {
+        let check_provider = if input.peek(Pound) {
+            let _: Pound = input.parse()?;
+
+            let content;
+            bracketed!(content in input);
+
+            let command: Ident = content.parse()?;
+            if command.to_string() != "provider" {
+                return Err(syn::Error::new(
+                    command.span(),
+                    "expected `provider` attribute",
+                ));
+            }
+
+            let provider;
+            parenthesized!(provider in content);
+            let provider_ident: Ident = provider.parse()?;
+            Some(provider_ident)
+        } else {
+            None
+        };
+
         let impl_generics = if input.peek(Lt) {
             input.parse()?
         } else {
@@ -75,6 +98,7 @@ impl Parse for CheckComponents {
         let entries: CheckEntries = content.parse()?;
 
         Ok(Self {
+            check_provider,
             impl_generics,
             trait_name,
             context_type,

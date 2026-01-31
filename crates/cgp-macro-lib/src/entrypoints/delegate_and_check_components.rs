@@ -58,6 +58,7 @@ pub fn delegate_and_check_components(body: TokenStream) -> syn::Result<TokenStre
         impl_delegate_components(&spec.provider_type, &spec.impl_generics, &delegate_entries)?;
 
     let check_spec = CheckComponents {
+        check_provider: None,
         impl_generics: spec.impl_generics,
         trait_name: spec.trait_name,
         context_type: spec.context_type,
