@@ -56,7 +56,7 @@ impl Parse for CheckComponents {
             bracketed!(content in input);
 
             let command: Ident = content.parse()?;
-            if command.to_string() != "check_providers" {
+            if command != "check_providers" {
                 return Err(syn::Error::new(
                     command.span(),
                     "expected `check_providers` attribute",
