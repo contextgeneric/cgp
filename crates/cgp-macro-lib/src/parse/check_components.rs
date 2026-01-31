@@ -7,6 +7,10 @@ use syn::{Ident, Type, WhereClause, braced, bracketed};
 
 use crate::parse::ImplGenerics;
 
+pub struct CheckComponentsSpecs {
+    pub specs: Vec<CheckComponents>,
+}
+
 pub struct CheckComponents {
     pub impl_generics: ImplGenerics,
     pub trait_name: Ident,
@@ -27,6 +31,19 @@ pub struct CheckEntry {
 
 struct ParseCheckEntries {
     pub entries: Vec<CheckEntry>,
+}
+
+impl Parse for CheckComponentsSpecs {
+    fn parse(input: ParseStream) -> syn::Result<Self> {
+        let mut specs = Vec::new();
+
+        while !input.is_empty() {
+            let spec: CheckComponents = input.parse()?;
+            specs.push(spec);
+        }
+
+        Ok(Self { specs })
+    }
 }
 
 impl Parse for CheckComponents {
