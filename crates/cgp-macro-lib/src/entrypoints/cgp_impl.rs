@@ -2,9 +2,8 @@ use proc_macro2::{Span, TokenStream};
 use quote::{ToTokens, quote};
 use syn::parse::discouraged::Speculative;
 use syn::parse::{Parse, ParseStream};
-use syn::spanned::Spanned;
 use syn::token::{Colon, For};
-use syn::{Error, FnArg, Ident, ImplItem, ItemImpl, Type, parse2};
+use syn::{FnArg, Ident, ImplItem, ItemImpl, Type, parse_quote, parse2};
 
 use crate::derive_provider::{
     derive_component_name_from_provider_impl, derive_is_provider_for, derive_provider_struct,
@@ -18,16 +17,28 @@ pub fn cgp_impl(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStream
     let spec: ImplProviderSpec = parse2(attr)?;
     let item_impl: ItemImpl = parse2(body)?;
 
-    let consumer_trait_path = &item_impl
-        .trait_
-        .as_ref()
-        .ok_or_else(|| Error::new(item_impl.span(), "expect impl trait to contain path"))?
-        .1;
-
-    let consumer_trait_path: SimpleType = parse2(consumer_trait_path.to_token_stream())?;
-
-    let provider_impl =
-        transform_impl_trait(&item_impl, &consumer_trait_path, &spec.provider_type)?;
+    let provider_impl = match &item_impl.trait_ {
+        Some((_, path, _)) => {
+            let consumer_trait_path = parse2(path.to_token_stream())?;
+            let context_type = item_impl.self_ty.as_ref();
+            transform_impl_trait(
+                &item_impl,
+                &consumer_trait_path,
+                &spec.provider_type,
+                context_type,
+            )?
+        }
+        None => {
+            let consumer_trait_path = parse2(item_impl.self_ty.to_token_stream())?;
+            let context_type = parse_quote! { __Context__ };
+            transform_impl_trait(
+                &item_impl,
+                &consumer_trait_path,
+                &spec.provider_type,
+                &context_type,
+            )?
+        }
+    };
 
     let component_type = match &spec.component_type {
         Some(component_type) => component_type.clone(),
@@ -92,9 +103,8 @@ pub fn transform_impl_trait(
     item_impl: &ItemImpl,
     consumer_trait_path: &SimpleType,
     provider_type: &Type,
+    context_type: &Type,
 ) -> syn::Result<ItemImpl> {
-    let context_type = item_impl.self_ty.as_ref();
-
     let context_var = if let Ok(ident) = parse2::<Ident>(context_type.to_token_stream()) {
         to_snake_case_ident(&ident)
     } else {
