@@ -15,7 +15,7 @@ use crate::replace_self::{
 
 pub fn cgp_impl(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
     let spec: ImplProviderSpec = parse2(attr)?;
-    let item_impl: ItemImpl = parse2(body)?;
+    let mut item_impl: ItemImpl = parse2(body)?;
 
     let provider_impl = match &item_impl.trait_ {
         Some((_, path, _)) => {
@@ -31,6 +31,12 @@ pub fn cgp_impl(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStream
         None => {
             let consumer_trait_path = parse2(item_impl.self_ty.to_token_stream())?;
             let context_type = parse_quote! { __Context__ };
+
+            item_impl
+                .generics
+                .params
+                .insert(0, parse_quote! { __Context__ });
+
             transform_impl_trait(
                 &item_impl,
                 &consumer_trait_path,
