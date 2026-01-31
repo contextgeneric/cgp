@@ -1,4 +1,5 @@
 pub mod abstract_type;
+pub mod assoc_type;
 pub mod auto_generics;
 pub mod clone;
 pub mod mref;

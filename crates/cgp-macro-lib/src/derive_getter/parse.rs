@@ -18,17 +18,17 @@ pub fn parse_getter_fields(
     consumer_trait: &ItemTrait,
 ) -> syn::Result<(Vec<GetterField>, Option<Ident>)> {
     let mut fields = Vec::new();
-    let mut field_type = None;
+    let mut field_assoc_type = None;
 
     for item in consumer_trait.items.iter() {
         match item {
             TraitItem::Fn(method) => {
-                let getter_spec = parse_getter_method(context_type, method)?;
+                let getter_spec = parse_getter_method(context_type, method, &field_assoc_type)?;
 
                 fields.push(getter_spec);
             }
             TraitItem::Type(item_type) => {
-                if field_type.is_some() {
+                if field_assoc_type.is_some() {
                     return Err(Error::new(
                         item_type.span(),
                         "at most one associated type is allowed in getter trait",
@@ -42,7 +42,7 @@ pub fn parse_getter_fields(
                     ));
                 }
 
-                field_type = Some(item_type.ident.clone());
+                field_assoc_type = Some(item_type.ident.clone());
             }
             _ => {
                 return Err(Error::new(
@@ -53,13 +53,20 @@ pub fn parse_getter_fields(
         }
     }
 
-    match (&field_type, fields.first(), fields.len()) {
+    match (&field_assoc_type, fields.first(), fields.len()) {
         (None, _, _) => {}
-        (Some(field_type), Some(field), 1) => {
-            if field.field_type != parse_quote! { Self :: #field_type } {
+        (Some(field_assoc_type), Some(field), 1) => {
+            let field_type = &field.field_type;
+
+            if field_type != &parse_quote! { Self :: #field_assoc_type }
+                && field_type != &parse_quote! { #context_type :: #field_assoc_type }
+            {
                 return Err(Error::new(
                     field.field_type.span(),
-                    "getter method return type must match the associated type",
+                    format!(
+                        "getter method return type must match the associated type. {}",
+                        field_type.to_token_stream()
+                    ),
                 ));
             }
         }
@@ -71,10 +78,14 @@ pub fn parse_getter_fields(
         }
     }
 
-    Ok((fields, field_type))
+    Ok((fields, field_assoc_type))
 }
 
-fn parse_getter_method(context_type: &Ident, method: &TraitItemFn) -> syn::Result<GetterField> {
+fn parse_getter_method(
+    context_type: &Ident,
+    method: &TraitItemFn,
+    field_assoc_type: &Option<Ident>,
+) -> syn::Result<GetterField> {
     let signature = &method.sig;
 
     validate_getter_method_signature(signature)?;
@@ -85,7 +96,7 @@ fn parse_getter_method(context_type: &Ident, method: &TraitItemFn) -> syn::Resul
 
     let (receiver_mode, field_mut) = parse_receiver(context_type, arg)?;
 
-    let return_type = parse_return_type(context_type, &signature.output)?;
+    let return_type = parse_return_type(context_type, &signature.output, field_assoc_type)?;
 
     let (field_type, field_mode) = parse_field_type(&return_type, &field_mut)?;
 
@@ -223,12 +234,16 @@ fn parse_receiver(context_ident: &Ident, arg: &FnArg) -> syn::Result<(ReceiverMo
     }
 }
 
-fn parse_return_type(context_type: &Ident, return_type: &ReturnType) -> syn::Result<Type> {
+fn parse_return_type(
+    context_type: &Ident,
+    return_type: &ReturnType,
+    field_assoc_type: &Option<Ident>,
+) -> syn::Result<Type> {
     match return_type {
         ReturnType::Type(_, ty) => parse2(replace_self_type(
             ty.to_token_stream(),
             context_type.to_token_stream(),
-            &Vec::new(),
+            &field_assoc_type.iter().cloned().collect::<Vec<_>>(),
         )),
         _ => Err(Error::new(
             return_type.span(),
