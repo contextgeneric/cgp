@@ -5,8 +5,8 @@ use crate::check_components::override_span;
 use crate::parse::{CheckComponents, CheckEntry};
 
 pub fn derive_check_components(spec: &CheckComponents) -> syn::Result<(ItemTrait, Vec<ItemImpl>)> {
-    if let Some(provider) = &spec.check_provider {
-        return derive_check_provider(spec, provider);
+    if let Some(providers) = &spec.check_provider {
+        return derive_check_provider(spec, providers);
     }
 
     let mut item_impls = Vec::new();
@@ -49,7 +49,7 @@ pub fn derive_check_components(spec: &CheckComponents) -> syn::Result<(ItemTrait
 
 pub fn derive_check_provider(
     spec: &CheckComponents,
-    provider: &Type,
+    providers: &[Type],
 ) -> syn::Result<(ItemTrait, Vec<ItemImpl>)> {
     let mut item_impls = Vec::new();
     let unit: Type = parse2(quote!(()))?;
@@ -71,15 +71,17 @@ pub fn derive_check_provider(
     {
         let component_param = component_params.as_ref().unwrap_or(&unit);
 
-        let item_impl: ItemImpl = parse2(quote! {
-            impl #impl_generics
-                #trait_name < #component_type, #component_param >
-                for #provider
-            #where_clause
-            {}
-        })?;
+        for provider in providers {
+            let item_impl: ItemImpl = parse2(quote! {
+                impl #impl_generics
+                    #trait_name < #component_type, #component_param >
+                    for #provider
+                #where_clause
+                {}
+            })?;
 
-        item_impls.push(item_impl);
+            item_impls.push(item_impl);
+        }
     }
 
     Ok((item_trait, item_impls))

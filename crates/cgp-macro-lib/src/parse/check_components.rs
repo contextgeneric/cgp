@@ -12,7 +12,7 @@ pub struct CheckComponentsSpecs {
 }
 
 pub struct CheckComponents {
-    pub check_provider: Option<Type>,
+    pub check_provider: Option<Vec<Type>>,
     pub impl_generics: ImplGenerics,
     pub trait_name: Ident,
     pub context_type: Type,
@@ -66,8 +66,9 @@ impl Parse for CheckComponents {
             let provider;
             parenthesized!(provider in content);
 
-            let provider_type: Type = provider.parse()?;
-            Some(provider_type)
+            let provider_types: Punctuated<Type, Comma> = Punctuated::parse_terminated(&provider)?;
+
+            Some(provider_types.into_iter().collect())
         } else {
             None
         };
