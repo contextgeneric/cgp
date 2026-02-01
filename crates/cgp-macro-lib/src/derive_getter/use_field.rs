@@ -2,7 +2,7 @@ use proc_macro2::TokenStream;
 use quote::{ToTokens, quote};
 use syn::punctuated::Punctuated;
 use syn::token::Plus;
-use syn::{Generics, Ident, ItemImpl, ItemTrait, TypeParamBound, parse2};
+use syn::{Generics, ItemImpl, ItemTrait, TraitItemType, TypeParamBound, parse2};
 
 use crate::derive_getter::getter_field::GetterField;
 use crate::derive_getter::{
@@ -14,7 +14,7 @@ pub fn derive_use_field_impl(
     spec: &ComponentSpec,
     provider_trait: &ItemTrait,
     field: &GetterField,
-    field_assoc_type: &Option<Ident>,
+    field_assoc_type: &Option<TraitItemType>,
 ) -> syn::Result<ItemImpl> {
     let context_type = &spec.context_type;
     let provider_name = &provider_trait.ident;
@@ -33,12 +33,14 @@ pub fn derive_use_field_impl(
     let mut provider_generics = provider_trait.generics.clone();
 
     if let Some(field_assoc_type) = field_assoc_type {
+        let field_assoc_type_ident = &field_assoc_type.ident;
+
         provider_generics
             .params
-            .push(parse2(field_assoc_type.to_token_stream())?);
+            .push(parse2(field_assoc_type_ident.to_token_stream())?);
 
         items.extend(quote! {
-            type #field_assoc_type = #field_assoc_type;
+            type #field_assoc_type_ident = #field_assoc_type_ident;
         });
     }
 
@@ -49,7 +51,11 @@ pub fn derive_use_field_impl(
         None,
     ));
 
-    let constraint = derive_getter_constraint(field, quote! { #tag_type }, field_assoc_type)?;
+    let constraint = derive_getter_constraint(
+        field,
+        quote! { #tag_type },
+        &field_assoc_type.as_ref().map(|item| item.ident.clone()),
+    )?;
 
     field_constraints.push(constraint);
 

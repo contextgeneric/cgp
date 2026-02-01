@@ -1,6 +1,6 @@
 use proc_macro2::{Span, TokenStream};
 use quote::{ToTokens, quote};
-use syn::{Generics, Ident, ItemImpl, ItemTrait, parse_quote, parse2};
+use syn::{Generics, Ident, ItemImpl, ItemTrait, TraitItemType, parse_quote, parse2};
 
 use crate::derive_getter::getter_field::GetterField;
 use crate::derive_getter::{ContextArg, FieldMode, ReceiverMode, derive_getter_method};
@@ -10,7 +10,7 @@ pub fn derive_with_provider_impl(
     spec: &ComponentSpec,
     provider_trait: &ItemTrait,
     field: &GetterField,
-    field_assoc_type: &Option<Ident>,
+    field_assoc_type: &Option<TraitItemType>,
 ) -> syn::Result<ItemImpl> {
     let component_name = &spec.component_name;
     let component_params = &spec.component_params;
@@ -24,7 +24,10 @@ pub fn derive_with_provider_impl(
     };
 
     let field_type = match field_assoc_type {
-        Some(field_assoc_type) => parse_quote! { #field_assoc_type },
+        Some(field_assoc_type) => {
+            let field_assoc_type_ident = &field_assoc_type.ident;
+            parse_quote! { #field_assoc_type_ident }
+        }
         None => field.field_type.clone(),
     };
 
@@ -37,12 +40,14 @@ pub fn derive_with_provider_impl(
     let mut provider_generics = provider_trait.generics.clone();
 
     if let Some(field_assoc_type) = field_assoc_type {
+        let field_assoc_type_ident = &field_assoc_type.ident;
+
         provider_generics
             .params
-            .push(parse2(field_assoc_type.to_token_stream())?);
+            .push(parse2(field_assoc_type_ident.to_token_stream())?);
 
         items.extend(quote! {
-            type #field_assoc_type = #field_assoc_type;
+            type #field_assoc_type_ident = #field_assoc_type_ident;
         });
     }
 

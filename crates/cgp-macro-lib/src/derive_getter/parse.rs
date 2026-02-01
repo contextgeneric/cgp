@@ -6,7 +6,7 @@ use syn::spanned::Spanned;
 use syn::token::{Comma, Mut};
 use syn::{
     Error, FnArg, GenericArgument, Ident, ItemTrait, PathArguments, PathSegment, ReturnType,
-    Signature, TraitItem, TraitItemFn, Type, TypePath, parse_quote, parse2,
+    Signature, TraitItem, TraitItemFn, TraitItemType, Type, TypePath, parse_quote, parse2,
 };
 
 use crate::derive_getter::getter_field::GetterField;
@@ -16,14 +16,18 @@ use crate::replace_self::replace_self_type;
 pub fn parse_getter_fields(
     context_type: &Ident,
     consumer_trait: &ItemTrait,
-) -> syn::Result<(Vec<GetterField>, Option<Ident>)> {
+) -> syn::Result<(Vec<GetterField>, Option<TraitItemType>)> {
     let mut fields = Vec::new();
-    let mut field_assoc_type = None;
+    let mut field_assoc_type: Option<TraitItemType> = None;
 
     for item in consumer_trait.items.iter() {
         match item {
             TraitItem::Fn(method) => {
-                let getter_spec = parse_getter_method(context_type, method, &field_assoc_type)?;
+                let getter_spec = parse_getter_method(
+                    context_type,
+                    method,
+                    &field_assoc_type.as_ref().map(|item| item.ident.clone()),
+                )?;
 
                 fields.push(getter_spec);
             }
@@ -42,7 +46,7 @@ pub fn parse_getter_fields(
                     ));
                 }
 
-                field_assoc_type = Some(item_type.ident.clone());
+                field_assoc_type = Some(item_type.clone());
             }
             _ => {
                 return Err(Error::new(
@@ -56,10 +60,11 @@ pub fn parse_getter_fields(
     match (&field_assoc_type, fields.first(), fields.len()) {
         (None, _, _) => {}
         (Some(field_assoc_type), Some(field), 1) => {
+            let field_assoc_type_ident = &field_assoc_type.ident;
             let field_type = &field.field_type;
 
-            if field_type != &parse_quote! { Self :: #field_assoc_type }
-                && field_type != &parse_quote! { #context_type :: #field_assoc_type }
+            if field_type != &parse_quote! { Self :: #field_assoc_type_ident }
+                && field_type != &parse_quote! { #context_type :: #field_assoc_type_ident }
             {
                 return Err(Error::new(
                     field.field_type.span(),

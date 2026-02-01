@@ -2,7 +2,7 @@ use alloc::string::ToString;
 
 use proc_macro2::TokenStream;
 use quote::{ToTokens, quote};
-use syn::{Ident, ItemImpl, ItemTrait, parse2};
+use syn::{Ident, ItemImpl, ItemTrait, TraitItemType, parse2};
 
 use crate::derive_getter::getter_field::GetterField;
 use crate::derive_getter::{
@@ -14,7 +14,7 @@ pub fn derive_blanket_impl(
     context_type: &Ident,
     consumer_trait: &ItemTrait,
     fields: &[GetterField],
-    field_assoc_type: &Option<Ident>,
+    field_assoc_type: &Option<TraitItemType>,
 ) -> syn::Result<ItemImpl> {
     let consumer_name = &consumer_trait.ident;
 
@@ -29,12 +29,13 @@ pub fn derive_blanket_impl(
         .insert(0, parse2(context_type.to_token_stream())?);
 
     if let Some(field_assoc_type) = field_assoc_type {
+        let field_assoc_type_ident = &field_assoc_type.ident;
         generics
             .params
-            .push(parse2(field_assoc_type.to_token_stream())?);
+            .push(parse2(field_assoc_type_ident.to_token_stream())?);
 
         items.extend(quote! {
-            type #field_assoc_type = #field_assoc_type;
+            type #field_assoc_type_ident = #field_assoc_type_ident;
         });
     }
 
@@ -66,8 +67,11 @@ pub fn derive_blanket_impl(
 
         items.extend(method);
 
-        let constraint =
-            derive_getter_constraint(field, quote! { #field_symbol }, field_assoc_type)?;
+        let constraint = derive_getter_constraint(
+            field,
+            quote! { #field_symbol },
+            &field_assoc_type.as_ref().map(|item| item.ident.clone()),
+        )?;
 
         where_clause.predicates.push(parse2(quote! {
             #receiver_type: #constraint
