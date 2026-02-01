@@ -22,25 +22,22 @@ pub fn parse_getter_fields(
 
     // Extract optional associated type first
     for item in consumer_trait.items.iter() {
-        match item {
-            TraitItem::Type(item_type) => {
-                if field_assoc_type.is_some() {
-                    return Err(Error::new(
-                        item_type.span(),
-                        "at most one associated type is allowed in getter trait",
-                    ));
-                }
-
-                if item_type.generics.params.len() > 0 {
-                    return Err(Error::new(
-                        item_type.generics.params.span(),
-                        "associated type in getter trait must not contain generic params",
-                    ));
-                }
-
-                field_assoc_type = Some(item_type.clone());
+        if let TraitItem::Type(item_type) = item {
+            if field_assoc_type.is_some() {
+                return Err(Error::new(
+                    item_type.span(),
+                    "at most one associated type is allowed in getter trait",
+                ));
             }
-            _ => {}
+
+            if !item_type.generics.params.is_empty() {
+                return Err(Error::new(
+                    item_type.generics.params.span(),
+                    "associated type in getter trait must not contain generic params",
+                ));
+            }
+
+            field_assoc_type = Some(item_type.clone());
         }
     }
 
