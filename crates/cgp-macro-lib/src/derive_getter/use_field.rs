@@ -42,6 +42,15 @@ pub fn derive_use_field_impl(
         items.extend(quote! {
             type #field_assoc_type_ident = #field_assoc_type_ident;
         });
+
+        let field_constraints = &field_assoc_type.bounds;
+
+        provider_generics
+            .make_where_clause()
+            .predicates
+            .push(parse2(quote! {
+                #field_assoc_type_ident: #field_constraints
+            })?);
     }
 
     items.extend(derive_getter_method(

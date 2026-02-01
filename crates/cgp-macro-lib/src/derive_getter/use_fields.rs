@@ -24,7 +24,6 @@ pub fn derive_use_fields_impl(
     let mut items: TokenStream = TokenStream::new();
 
     let mut provider_generics = provider_trait.generics.clone();
-    let mut where_clause = provider_generics.make_where_clause().clone();
 
     if let Some(field_assoc_type) = field_assoc_type {
         let field_assoc_type_ident = &field_assoc_type.ident;
@@ -36,7 +35,18 @@ pub fn derive_use_fields_impl(
         items.extend(quote! {
             type #field_assoc_type_ident = #field_assoc_type_ident;
         });
+
+        let field_constraints = &field_assoc_type.bounds;
+
+        provider_generics
+            .make_where_clause()
+            .predicates
+            .push(parse2(quote! {
+                #field_assoc_type_ident: #field_constraints
+            })?);
     }
+
+    let where_clause = provider_generics.make_where_clause();
 
     for field in fields {
         let receiver_type = match &field.receiver_mode {
@@ -67,7 +77,7 @@ pub fn derive_use_fields_impl(
     }
 
     let (_, type_generics, _) = provider_trait.generics.split_for_impl();
-    let (impl_generics, _, _) = provider_generics.split_for_impl();
+    let (impl_generics, _, where_clause) = provider_generics.split_for_impl();
 
     let out = parse2(quote! {
         impl #impl_generics #provider_name #type_generics for UseFields

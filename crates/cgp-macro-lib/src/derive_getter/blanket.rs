@@ -30,6 +30,7 @@ pub fn derive_blanket_impl(
 
     if let Some(field_assoc_type) = field_assoc_type {
         let field_assoc_type_ident = &field_assoc_type.ident;
+
         generics
             .params
             .push(parse2(field_assoc_type_ident.to_token_stream())?);
@@ -37,6 +38,12 @@ pub fn derive_blanket_impl(
         items.extend(quote! {
             type #field_assoc_type_ident = #field_assoc_type_ident;
         });
+
+        let field_constraints = &field_assoc_type.bounds;
+
+        generics.make_where_clause().predicates.push(parse2(quote! {
+            #field_assoc_type_ident: #field_constraints
+        })?);
     }
 
     let where_clause = generics.make_where_clause();
