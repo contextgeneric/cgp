@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.6.1 (2026-02-01)
+
+- Support implicit `Context` type in `#[cgp_impl]` - [#189](https://github.com/contextgeneric/cgp/pull/189)
+- Support provider checks in `check_components!` - [#190](https://github.com/contextgeneric/cgp/pull/190)
+- Support associated type in getter trait - [#191](https://github.com/contextgeneric/cgp/pull/191)
+
 ## v0.6.0 (2025-10-26)
 
 - Introduce `#[cgp_impl]` to simplify provider trait implementation - [#174](https://github.com/contextgeneric/cgp/pull/174)
