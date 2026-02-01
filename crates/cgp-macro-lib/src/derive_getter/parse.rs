@@ -20,17 +20,9 @@ pub fn parse_getter_fields(
     let mut fields = Vec::new();
     let mut field_assoc_type: Option<TraitItemType> = None;
 
+    // Extract optional associated type first
     for item in consumer_trait.items.iter() {
         match item {
-            TraitItem::Fn(method) => {
-                let getter_spec = parse_getter_method(
-                    context_type,
-                    method,
-                    &field_assoc_type.as_ref().map(|item| item.ident.clone()),
-                )?;
-
-                fields.push(getter_spec);
-            }
             TraitItem::Type(item_type) => {
                 if field_assoc_type.is_some() {
                     return Err(Error::new(
@@ -47,6 +39,24 @@ pub fn parse_getter_fields(
                 }
 
                 field_assoc_type = Some(item_type.clone());
+            }
+            _ => {}
+        }
+    }
+
+    for item in consumer_trait.items.iter() {
+        match item {
+            TraitItem::Fn(method) => {
+                let getter_spec = parse_getter_method(
+                    context_type,
+                    method,
+                    &field_assoc_type.as_ref().map(|item| item.ident.clone()),
+                )?;
+
+                fields.push(getter_spec);
+            }
+            TraitItem::Type(_) => {
+                // Already processed in the previous loop
             }
             _ => {
                 return Err(Error::new(
