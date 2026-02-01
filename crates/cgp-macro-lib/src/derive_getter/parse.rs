@@ -75,10 +75,7 @@ pub fn parse_getter_fields(
             {
                 return Err(Error::new(
                     field.field_type.span(),
-                    format!(
-                        "getter method return type must match the associated type. {}",
-                        field_type.to_token_stream()
-                    ),
+                    "getter method return type must match the associated type",
                 ));
             }
         }

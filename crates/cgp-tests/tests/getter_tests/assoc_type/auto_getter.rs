@@ -8,3 +8,11 @@ pub trait HasName {
 
     fn name(&self) -> &Self::Name;
 }
+
+#[derive(HasField)]
+pub struct Person {
+    pub name: String,
+}
+
+pub trait CheckHasName: HasName<Name = String> {}
+impl CheckHasName for Person {}
