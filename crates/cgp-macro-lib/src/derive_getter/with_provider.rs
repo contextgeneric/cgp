@@ -1,4 +1,4 @@
-use proc_macro2::Span;
+use proc_macro2::{Span, TokenStream};
 use quote::{ToTokens, quote};
 use syn::{Generics, Ident, ItemImpl, ItemTrait, parse_quote, parse2};
 
@@ -32,6 +32,20 @@ pub fn derive_with_provider_impl(
 
     let component_type = quote! { #component_name < #component_params > };
 
+    let mut items = TokenStream::new();
+
+    let mut provider_generics = provider_trait.generics.clone();
+
+    if let Some(field_assoc_type) = field_assoc_type {
+        provider_generics
+            .params
+            .push(parse2(field_assoc_type.to_token_stream())?);
+
+        items.extend(quote! {
+            type #field_assoc_type = #field_assoc_type;
+        });
+    }
+
     let provider_constraint = if field.field_mut.is_none() {
         if let FieldMode::Slice = field.field_mode {
             quote! {
@@ -48,24 +62,12 @@ pub fn derive_with_provider_impl(
         }
     };
 
-    let mut items = derive_getter_method(
+    items.extend(derive_getter_method(
         &ContextArg::Ident(receiver_type),
         field,
         None,
         Some(provider_ident.clone()),
-    );
-
-    let mut provider_generics = provider_trait.generics.clone();
-
-    if let Some(field_assoc_type) = field_assoc_type {
-        provider_generics
-            .params
-            .push(parse2(field_assoc_type.to_token_stream())?);
-
-        items.extend(quote! {
-            type #field_assoc_type = #field_assoc_type;
-        });
-    }
+    ));
 
     let mut where_clause = provider_generics.make_where_clause().clone();
     where_clause

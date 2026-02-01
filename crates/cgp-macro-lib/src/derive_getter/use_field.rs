@@ -1,3 +1,4 @@
+use proc_macro2::TokenStream;
 use quote::{ToTokens, quote};
 use syn::punctuated::Punctuated;
 use syn::token::Plus;
@@ -27,12 +28,7 @@ pub fn derive_use_field_impl(
 
     let tag_type = quote! { __Tag__ };
 
-    let mut items =
-        derive_getter_method(&ContextArg::Ident(receiver_type.clone()), field, None, None);
-
-    let constraint = derive_getter_constraint(field, quote! { #tag_type }, field_assoc_type)?;
-
-    field_constraints.push(constraint);
+    let mut items = TokenStream::new();
 
     let mut provider_generics = provider_trait.generics.clone();
 
@@ -45,6 +41,17 @@ pub fn derive_use_field_impl(
             type #field_assoc_type = #field_assoc_type;
         });
     }
+
+    items.extend(derive_getter_method(
+        &ContextArg::Ident(receiver_type.clone()),
+        field,
+        None,
+        None,
+    ));
+
+    let constraint = derive_getter_constraint(field, quote! { #tag_type }, field_assoc_type)?;
+
+    field_constraints.push(constraint);
 
     let mut where_clause = provider_generics.make_where_clause().clone();
     where_clause
