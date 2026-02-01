@@ -39,10 +39,14 @@ pub fn cgp_getter(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStre
 
     let derived_component = derive_component_with_ast(&spec, consumer_trait.clone())?;
 
-    let (fields, _field_type) = parse_getter_fields(&spec.context_type, &consumer_trait)?;
+    let (fields, field_assoc_type) = parse_getter_fields(&spec.context_type, &consumer_trait)?;
 
-    let use_fields_impl =
-        derive_use_fields_impl(&spec, &derived_component.provider_trait, &fields)?;
+    let use_fields_impl = derive_use_fields_impl(
+        &spec,
+        &derived_component.provider_trait,
+        &fields,
+        &field_assoc_type,
+    )?;
 
     let component_name_type: Type = {
         let component_name = &spec.component_name;
@@ -64,13 +68,23 @@ pub fn cgp_getter(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStre
     };
 
     if let Some([field]) = m_field {
-        let use_field_impl =
-            derive_use_field_impl(&spec, &derived_component.provider_trait, &field)?;
+        let use_field_impl = derive_use_field_impl(
+            &spec,
+            &derived_component.provider_trait,
+            &field,
+            &field_assoc_type,
+        )?;
+
         let is_provider_use_field_impl =
             derive_is_provider_for(&component_name_type, &use_field_impl)?;
 
-        let use_provider_impl =
-            derive_with_provider_impl(&spec, &derived_component.provider_trait, &field)?;
+        let use_provider_impl = derive_with_provider_impl(
+            &spec,
+            &derived_component.provider_trait,
+            &field,
+            &field_assoc_type,
+        )?;
+
         let is_provider_use_provider_impl =
             derive_is_provider_for(&component_name_type, &use_provider_impl)?;
 

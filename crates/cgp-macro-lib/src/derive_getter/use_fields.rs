@@ -2,7 +2,7 @@ use alloc::string::ToString;
 
 use proc_macro2::TokenStream;
 use quote::{ToTokens, quote};
-use syn::{ItemImpl, ItemTrait, parse2};
+use syn::{Ident, ItemImpl, ItemTrait, parse2};
 
 use crate::derive_getter::getter_field::GetterField;
 use crate::derive_getter::{
@@ -15,15 +15,26 @@ pub fn derive_use_fields_impl(
     spec: &ComponentSpec,
     provider_trait: &ItemTrait,
     fields: &[GetterField],
+    field_assoc_type: &Option<Ident>,
 ) -> syn::Result<ItemImpl> {
     let context_type = &spec.context_type;
 
     let provider_name = &spec.provider_name;
 
-    let mut methods: TokenStream = TokenStream::new();
+    let mut items: TokenStream = TokenStream::new();
 
     let mut provider_generics = provider_trait.generics.clone();
     let mut where_clause = provider_generics.make_where_clause().clone();
+
+    if let Some(field_assoc_type) = field_assoc_type {
+        provider_generics
+            .params
+            .push(parse2(field_assoc_type.to_token_stream())?);
+
+        items.extend(quote! {
+            type #field_assoc_type = #field_assoc_type;
+        });
+    }
 
     for field in fields {
         let receiver_type = match &field.receiver_mode {
@@ -40,22 +51,24 @@ pub fn derive_use_fields_impl(
             None,
         );
 
-        methods.extend(method);
+        items.extend(method);
 
-        let constraint = derive_getter_constraint(field, quote! { #field_symbol }, &None)?;
+        let constraint =
+            derive_getter_constraint(field, quote! { #field_symbol }, field_assoc_type)?;
 
         where_clause
             .predicates
             .push(parse2(quote! { #receiver_type: #constraint })?);
     }
 
-    let (impl_generics, type_generics, _) = provider_generics.split_for_impl();
+    let (_, type_generics, _) = provider_trait.generics.split_for_impl();
+    let (impl_generics, _, _) = provider_generics.split_for_impl();
 
     let out = parse2(quote! {
         impl #impl_generics #provider_name #type_generics for UseFields
         #where_clause
         {
-            #methods
+            #items
         }
     })?;
 
