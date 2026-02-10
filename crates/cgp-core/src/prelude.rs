@@ -13,8 +13,6 @@ pub use cgp_field::traits::{
     HasFieldsRef, IntoBuilder, MapType, MapTypeRef, MutFieldGetter, PartialData, ToFields,
     ToFieldsRef, UpdateField,
 };
-#[doc(hidden)]
-pub use cgp_field::types::Chars;
 pub use cgp_field::types::{
     Cons, Either, Field, Index, Life, Nil, Symbol, Void, δ, ε, ζ, θ, π, σ, ψ, ω,
 };
