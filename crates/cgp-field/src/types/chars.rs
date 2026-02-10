@@ -50,6 +50,7 @@ use crate::traits::StaticFormat;
 #[derive(Eq, PartialEq, Clone, Copy, Default)]
 pub struct ζ<const CHAR: char, Tail>(pub PhantomData<Tail>);
 
+#[doc(hidden)]
 pub use ζ as Chars;
 
 impl<const CHAR: char, Tail> Display for Chars<CHAR, Tail>
