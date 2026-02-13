@@ -1,0 +1,63 @@
+use std::mem;
+
+use syn::punctuated::Punctuated;
+use syn::token::{Comma, Mut};
+use syn::{Attribute, FnArg, Ident, Meta, Pat, PatType, Type};
+
+use crate::derive_getter::{FieldMode, parse_field_type};
+
+pub fn extract_implicits_args(
+    args: &mut Punctuated<FnArg, Comma>,
+) -> syn::Result<Vec<ImplicitArgField>> {
+    let mut implicit_args = Vec::new();
+
+    for arg in args.iter_mut() {
+        if let FnArg::Typed(arg) = arg {
+            let attrs = mem::take(&mut arg.attrs);
+            for attr in attrs {
+                if is_implicit_attr(&attr) {
+                    let spec = parse_implicit_arg(arg)?;
+                    implicit_args.push(spec);
+                    break;
+                } else {
+                    arg.attrs.push(attr);
+                }
+            }
+        }
+    }
+
+    Ok(implicit_args)
+}
+
+pub fn parse_implicit_arg(arg: &PatType) -> syn::Result<ImplicitArgField> {
+    let Pat::Ident(pat_ident) = &*arg.pat else {
+        return Err(syn::Error::new_spanned(&arg.pat, "Expected an identifier"));
+    };
+
+    let field_mut = pat_ident.mutability;
+
+    let (field_type, field_mode) = parse_field_type(&arg.ty, &field_mut)?;
+
+    let spec = ImplicitArgField {
+        field_name: pat_ident.ident.clone(),
+        field_type,
+        field_mut,
+        field_mode,
+    };
+
+    Ok(spec)
+}
+
+pub struct ImplicitArgField {
+    pub field_name: Ident,
+    pub field_type: Type,
+    pub field_mut: Option<Mut>,
+    pub field_mode: FieldMode,
+}
+
+pub fn is_implicit_attr(attr: &Attribute) -> bool {
+    match &attr.meta {
+        Meta::Path(path) => path.is_ident("implicit"),
+        _ => false,
+    }
+}

@@ -90,7 +90,7 @@ pub fn parse_getter_fields(
     Ok((fields, field_assoc_type))
 }
 
-fn parse_getter_method(
+pub fn parse_getter_method(
     context_type: &Ident,
     method: &TraitItemFn,
     field_assoc_type: &Option<Ident>,
@@ -261,7 +261,10 @@ fn parse_return_type(
     }
 }
 
-fn parse_field_type(return_type: &Type, field_mut: &Option<Mut>) -> syn::Result<(Type, FieldMode)> {
+pub fn parse_field_type(
+    return_type: &Type,
+    field_mut: &Option<Mut>,
+) -> syn::Result<(Type, FieldMode)> {
     match &return_type {
         Type::Reference(type_ref) => {
             if type_ref.mutability.is_some() != field_mut.is_some() {
