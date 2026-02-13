@@ -1,10 +1,11 @@
 use std::mem;
 
 use syn::punctuated::Punctuated;
-use syn::token::{Comma, Mut};
-use syn::{Attribute, FnArg, Ident, Meta, Pat, PatType, Type};
+use syn::token::Comma;
+use syn::{Attribute, FnArg, Meta, Pat, PatType};
 
-use crate::derive_getter::{FieldMode, parse_field_type};
+use crate::cgp_fn::ImplicitArgField;
+use crate::derive_getter::parse_field_type;
 
 pub fn extract_implicits_args(
     args: &mut Punctuated<FnArg, Comma>,
@@ -46,13 +47,6 @@ pub fn parse_implicit_arg(arg: &PatType) -> syn::Result<ImplicitArgField> {
     };
 
     Ok(spec)
-}
-
-pub struct ImplicitArgField {
-    pub field_name: Ident,
-    pub field_type: Type,
-    pub field_mut: Option<Mut>,
-    pub field_mode: FieldMode,
 }
 
 pub fn is_implicit_attr(attr: &Attribute) -> bool {

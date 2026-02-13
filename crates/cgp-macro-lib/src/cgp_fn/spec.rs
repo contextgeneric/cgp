@@ -1,0 +1,11 @@
+use syn::token::Mut;
+use syn::{Ident, Type};
+
+use crate::derive_getter::FieldMode;
+
+pub struct ImplicitArgField {
+    pub field_name: Ident,
+    pub field_type: Type,
+    pub field_mut: Option<Mut>,
+    pub field_mode: FieldMode,
+}
