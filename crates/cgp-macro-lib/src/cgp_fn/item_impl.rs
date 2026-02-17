@@ -20,7 +20,10 @@ pub fn derive_item_impl(
     })?;
 
     item_impl.generics = generics.clone();
-    item_impl.generics.params.insert(0, parse2(quote! { __Context__ })?);
+    item_impl
+        .generics
+        .params
+        .insert(0, parse2(quote! { __Context__ })?);
 
     let where_clause = item_impl.generics.make_where_clause();
 

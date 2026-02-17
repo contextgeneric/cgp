@@ -3,7 +3,11 @@ use std::ops::Mul;
 use cgp::prelude::*;
 
 #[cgp_fn]
-pub fn rectangle_area<Scalar>(&self, #[implicit] width: Scalar, #[implicit] height: Scalar) -> Scalar
+pub fn rectangle_area<Scalar>(
+    &self,
+    #[implicit] width: Scalar,
+    #[implicit] height: Scalar,
+) -> Scalar
 where
     Scalar: Mul<Output = Scalar> + Clone,
 {

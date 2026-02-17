@@ -53,7 +53,7 @@ pub fn parse_implicit_arg(receiver: &Receiver, arg: &PatType) -> syn::Result<Imp
     let arg_type = arg.ty.as_ref();
     let field_mut = receiver.mutability;
 
-    let (field_type, field_mode) = parse_field_type(&arg_type, &field_mut)?;
+    let (field_type, field_mode) = parse_field_type(arg_type, &field_mut)?;
 
     let spec = ImplicitArgField {
         field_name: pat_ident.ident.clone(),
