@@ -12,22 +12,33 @@ pub fn extract_implicits_args(
 ) -> syn::Result<Vec<ImplicitArgField>> {
     let mut implicit_args = Vec::new();
 
-    for arg in args.iter_mut() {
-        if let FnArg::Typed(arg) = arg {
-            let attrs = mem::take(&mut arg.attrs);
-            for attr in attrs {
-                if is_implicit_attr(&attr) {
-                    let spec = parse_implicit_arg(arg)?;
-                    implicit_args.push(spec);
-                    break;
-                } else {
-                    arg.attrs.push(attr);
-                }
-            }
+    let process_args = mem::take(args);
+
+    for mut arg in process_args.into_iter() {
+        if let Some(implicit_arg) = try_parse_implicit_arg(&mut arg)? {
+            implicit_args.push(implicit_arg);
+        } else {
+            args.push(arg);
         }
     }
 
     Ok(implicit_args)
+}
+
+pub fn try_parse_implicit_arg(arg: &mut FnArg) -> syn::Result<Option<ImplicitArgField>> {
+    if let FnArg::Typed(arg) = arg {
+        let attrs = mem::take(&mut arg.attrs);
+        for attr in attrs {
+            if is_implicit_attr(&attr) {
+                let spec = parse_implicit_arg(arg)?;
+                return Ok(Some(spec));
+            } else {
+                arg.attrs.push(attr);
+            }
+        }
+    }
+
+    Ok(None)
 }
 
 pub fn parse_implicit_arg(arg: &PatType) -> syn::Result<ImplicitArgField> {

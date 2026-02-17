@@ -75,7 +75,9 @@ pub fn derive_blanket_impl(
         items.extend(method);
 
         let constraint = derive_getter_constraint(
-            field,
+            &field.field_type,
+            &field.field_mut,
+            &field.field_mode,
             quote! { #field_symbol },
             &field_assoc_type.as_ref().map(|item| item.ident.clone()),
         )?;

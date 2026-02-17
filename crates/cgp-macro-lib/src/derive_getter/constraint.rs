@@ -1,21 +1,24 @@
 use proc_macro2::TokenStream;
 use quote::quote;
-use syn::{Ident, TypeParamBound, parse_quote, parse2};
+use syn::token::Mut;
+use syn::{Ident, Type, TypeParamBound, parse_quote, parse2};
 
-use crate::derive_getter::{FieldMode, GetterField};
+use crate::derive_getter::FieldMode;
 
 pub fn derive_getter_constraint(
-    spec: &GetterField,
+    field_type: &Type,
+    field_mut: &Option<Mut>,
+    field_mode: &FieldMode,
     field_symbol: TokenStream,
     field_assoc_type: &Option<Ident>,
 ) -> syn::Result<TypeParamBound> {
     let field_type = match field_assoc_type {
         Some(field_assoc_type) => parse_quote! { #field_assoc_type },
-        None => spec.field_type.clone(),
+        None => field_type.clone(),
     };
 
-    let constraint = if spec.field_mut.is_none() {
-        if let FieldMode::Slice = spec.field_mode {
+    let constraint = if field_mut.is_none() {
+        if let FieldMode::Slice = field_mode {
             quote! {
                 HasField< #field_symbol, Value: AsRef< [ #field_type ] > + 'static >
             }

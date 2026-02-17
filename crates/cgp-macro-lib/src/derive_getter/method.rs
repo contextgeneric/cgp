@@ -1,6 +1,7 @@
 use proc_macro2::TokenStream;
 use quote::quote;
 use syn::Ident;
+use syn::token::Mut;
 
 use crate::derive_getter::{FieldMode, GetterField};
 
@@ -71,10 +72,26 @@ pub fn derive_getter_method(
         }
     };
 
-    let call_expr = match spec.field_mode {
+    let call_expr = extend_call_expr(call_expr, &spec.field_mode, &spec.field_mut);
+
+    let return_type = &spec.return_type;
+
+    quote! {
+        fn #field_name( #context_fn_arg #phantom_arg ) -> #return_type {
+            #call_expr
+        }
+    }
+}
+
+pub fn extend_call_expr(
+    call_expr: TokenStream,
+    field_mode: &FieldMode,
+    field_mut: &Option<Mut>,
+) -> TokenStream {
+    match field_mode {
         FieldMode::Reference => call_expr,
         FieldMode::OptionRef => {
-            if spec.field_mut.is_none() {
+            if field_mut.is_none() {
                 quote! {
                     #call_expr .as_ref()
                 }
@@ -90,7 +107,7 @@ pub fn derive_getter_method(
             }
         }
         FieldMode::Str => {
-            if spec.field_mut.is_none() {
+            if field_mut.is_none() {
                 quote! {
                     #call_expr .as_str()
                 }
@@ -109,14 +126,6 @@ pub fn derive_getter_method(
             quote! {
                 #call_expr .as_ref()
             }
-        }
-    };
-
-    let return_type = &spec.return_type;
-
-    quote! {
-        fn #field_name( #context_fn_arg #phantom_arg ) -> #return_type {
-            #call_expr
         }
     }
 }
