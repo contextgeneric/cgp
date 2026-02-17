@@ -4,7 +4,7 @@ use syn::punctuated::Punctuated;
 use syn::token::Comma;
 use syn::{Attribute, TypeParamBound};
 
-use crate::cgp_fn::FunctionAttributes;
+use crate::cgp_fn::{FunctionAttributes, UseTypeSpec};
 use crate::parse::SimpleType;
 
 pub fn parse_function_attributes(
@@ -24,6 +24,10 @@ pub fn parse_function_attributes(
                 let uses =
                     attribute.parse_args_with(Punctuated::<SimpleType, Comma>::parse_terminated)?;
                 parsed_attributes.uses.extend(uses);
+            } else if ident == "use_type" {
+                let use_type = attribute
+                    .parse_args_with(Punctuated::<UseTypeSpec, Comma>::parse_terminated)?;
+                parsed_attributes.use_type.extend(use_type);
             } else {
                 attributes.push(attribute);
             }

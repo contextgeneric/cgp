@@ -3,7 +3,7 @@ use syn::punctuated::Punctuated;
 use syn::token::Plus;
 use syn::{Generics, Ident, ItemFn, ItemImpl, TypeParamBound, parse2};
 
-use crate::cgp_fn::{FunctionAttributes, ImplicitArgField};
+use crate::cgp_fn::{FunctionAttributes, ImplicitArgField, substitute_abstract_type};
 use crate::derive_getter::derive_getter_constraint;
 use crate::symbol::symbol_from_string;
 
@@ -28,14 +28,30 @@ pub fn derive_item_impl(
         .params
         .insert(0, parse2(quote! { __Context__ })?);
 
-    let where_clause = item_impl.generics.make_where_clause();
-
     let mut bounds: Punctuated<TypeParamBound, Plus> = Punctuated::default();
     bounds.extend(attributes.extend.clone());
 
     for import in attributes.uses.iter() {
         bounds.push(parse2(quote! { #import })?);
     }
+
+    if !attributes.use_type.is_empty() {
+        let mut type_idents = Vec::new();
+
+        for use_type in attributes.use_type.iter() {
+            bounds.push(parse2(use_type.trait_path.to_token_stream())?);
+
+            type_idents.extend(use_type.type_idents.clone());
+        }
+
+        item_impl = parse2(substitute_abstract_type(
+            &quote! { Self },
+            &type_idents,
+            item_impl.to_token_stream(),
+        ))?;
+    }
+
+    let where_clause = item_impl.generics.make_where_clause();
 
     if !bounds.is_empty() {
         where_clause.predicates.push(parse2(quote! {
