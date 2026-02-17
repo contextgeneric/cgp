@@ -12,3 +12,17 @@ pub struct Person {
 
 pub trait CheckPerson: Greet {}
 impl CheckPerson for Person {}
+
+#[cgp_fn(CanCalculateArea)]
+pub fn area(&self, #[implicit] width: f64, #[implicit] height: f64) -> f64 {
+    width * height
+}
+
+#[derive(HasField)]
+pub struct Rectangle {
+    pub width: f64,
+    pub height: f64,
+}
+
+pub trait CheckRectangle: CanCalculateArea {}
+impl CheckRectangle for Rectangle {}
