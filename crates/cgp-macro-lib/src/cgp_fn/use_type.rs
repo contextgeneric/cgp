@@ -11,17 +11,18 @@ pub struct UseTypeSpec {
 
 impl Parse for UseTypeSpec {
     fn parse(input: ParseStream) -> syn::Result<Self> {
-        let turbofish = input.peek(Lt);
-
-        if turbofish {
+        let trait_path = if input.peek(Lt) {
             let _: Lt = input.parse()?;
-        }
-
-        let trait_path: SimpleType = input.parse()?;
-
-        if turbofish {
+            let trait_path: SimpleType = input.parse()?;
             let _: Gt = input.parse()?;
-        }
+            trait_path
+        } else {
+            let name: Ident = input.parse()?;
+            SimpleType {
+                name,
+                generics: None,
+            }
+        };
 
         let _: Colon = input.parse()?;
         let _: Colon = input.parse()?;
