@@ -1,4 +1,5 @@
 use proc_macro2::TokenStream;
+use quote::ToTokens;
 use syn::{Ident, ItemFn, parse2};
 
 use crate::cgp_fn::derive_cgp_fn;

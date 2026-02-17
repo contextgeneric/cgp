@@ -1,6 +1,6 @@
 use proc_macro2::TokenStream;
 use quote::{ToTokens, quote};
-use syn::{Ident, ItemFn, ItemTrait, TraitItemFn, parse2};
+use syn::{Ident, ItemFn, ItemImpl, ItemTrait, TraitItemFn, Visibility, parse2};
 
 use crate::cgp_fn::extract_implicits_args;
 use crate::cgp_fn::fn_body::inject_implicit_args;
@@ -10,6 +10,8 @@ use crate::symbol::symbol_from_string;
 pub fn derive_cgp_fn(trait_ident: &Ident, mut item_fn: ItemFn) -> syn::Result<TokenStream> {
     let implicit_args = extract_implicits_args(&mut item_fn.sig.inputs)?;
 
+    item_fn.vis = Visibility::Inherited;
+
     let trait_item_fn = TraitItemFn {
         attrs: item_fn.attrs.clone(),
         sig: item_fn.sig.clone(),
@@ -17,9 +19,7 @@ pub fn derive_cgp_fn(trait_ident: &Ident, mut item_fn: ItemFn) -> syn::Result<To
         semi_token: None,
     };
 
-    for arg in implicit_args.iter() {
-        inject_implicit_args(arg, &mut item_fn.block)?;
-    }
+    inject_implicit_args(&implicit_args, &mut item_fn.block)?;
 
     let item_trait: ItemTrait = parse2(quote! {
         pub trait #trait_ident {
@@ -27,7 +27,7 @@ pub fn derive_cgp_fn(trait_ident: &Ident, mut item_fn: ItemFn) -> syn::Result<To
         }
     })?;
 
-    let mut item_impl: ItemTrait = parse2(quote! {
+    let mut item_impl: ItemImpl = parse2(quote! {
         impl<__Context__> #trait_ident for __Context__ {
             #item_fn
         }
