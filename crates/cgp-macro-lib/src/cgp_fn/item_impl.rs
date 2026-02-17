@@ -56,19 +56,20 @@ pub fn derive_item_impl(
     }
 
     if !attributes.use_type.is_empty() {
-        let mut type_idents = Vec::new();
+        let mut item_impl_stream = item_impl.to_token_stream();
 
         for use_type in attributes.use_type.iter() {
-            bounds.push(parse2(use_type.trait_path.to_token_stream())?);
+            let trait_path = &use_type.trait_path;
+            bounds.push(parse2(trait_path.to_token_stream())?);
 
-            type_idents.extend(use_type.type_idents.clone());
+            item_impl_stream = substitute_abstract_type(
+                &quote! { < Self as #trait_path > },
+                &use_type.type_idents,
+                item_impl_stream,
+            );
         }
 
-        item_impl = parse2(substitute_abstract_type(
-            &quote! { Self },
-            &type_idents,
-            item_impl.to_token_stream(),
-        ))?;
+        item_impl = parse2(item_impl_stream)?;
     }
 
     if !bounds.is_empty() {
