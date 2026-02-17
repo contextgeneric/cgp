@@ -35,6 +35,26 @@ pub fn derive_item_impl(
         bounds.push(parse2(quote! { #import })?);
     }
 
+    {
+        let where_clause = item_impl.generics.make_where_clause();
+
+        for arg in implicit_args {
+            let field_symbol = symbol_from_string(&arg.field_name.to_string());
+
+            let constraint = derive_getter_constraint(
+                &arg.field_type,
+                &arg.field_mut,
+                &arg.field_mode,
+                field_symbol.to_token_stream(),
+                &None,
+            )?;
+
+            where_clause.predicates.push(parse2(quote! {
+                Self: #constraint
+            })?);
+        }
+    }
+
     if !attributes.use_type.is_empty() {
         let mut type_idents = Vec::new();
 
@@ -51,28 +71,14 @@ pub fn derive_item_impl(
         ))?;
     }
 
-    let where_clause = item_impl.generics.make_where_clause();
-
     if !bounds.is_empty() {
-        where_clause.predicates.push(parse2(quote! {
-            Self: #bounds
-        })?);
-    }
-
-    for arg in implicit_args {
-        let field_symbol = symbol_from_string(&arg.field_name.to_string());
-
-        let constraint = derive_getter_constraint(
-            &arg.field_type,
-            &arg.field_mut,
-            &arg.field_mode,
-            field_symbol.to_token_stream(),
-            &None,
-        )?;
-
-        where_clause.predicates.push(parse2(quote! {
-            Self: #constraint
-        })?);
+        item_impl
+            .generics
+            .make_where_clause()
+            .predicates
+            .push(parse2(quote! {
+                Self: #bounds
+            })?);
     }
 
     Ok(item_impl)
