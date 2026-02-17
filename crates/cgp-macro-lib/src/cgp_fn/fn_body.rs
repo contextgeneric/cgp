@@ -17,8 +17,14 @@ pub fn inject_implicit_arg(arg: &ImplicitArgField, body: &mut Block) -> syn::Res
 
     let field_symbol = symbol_from_string(&field_name.to_string());
 
-    let call_expr = quote! {
-        self.get_field(::core::marker::PhantomData::< #field_symbol >)
+    let call_expr = if arg.field_mut.is_none() {
+        quote! {
+            self.get_field(::core::marker::PhantomData::< #field_symbol >)
+        }
+    } else {
+        quote! {
+            self.get_field_mut(::core::marker::PhantomData::< #field_symbol >)
+        }
     };
 
     let call_expr = extend_call_expr(call_expr, &arg.field_mode, &arg.field_mut);

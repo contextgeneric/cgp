@@ -270,7 +270,10 @@ pub fn parse_field_type(
             if type_ref.mutability.is_some() != field_mut.is_some() {
                 return Err(Error::new(
                     type_ref.span(),
-                    "return type have the same mutability as the self reference",
+                    format!(
+                        "field type `{}` must have the same mutability as the self reference",
+                        type_ref.to_token_stream()
+                    ),
                 ));
             }
 

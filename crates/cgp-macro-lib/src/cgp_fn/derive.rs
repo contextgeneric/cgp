@@ -8,17 +8,17 @@ use crate::derive_getter::derive_getter_constraint;
 use crate::symbol::symbol_from_string;
 
 pub fn derive_cgp_fn(trait_ident: &Ident, mut item_fn: ItemFn) -> syn::Result<TokenStream> {
-    match item_fn.sig.inputs.first() {
-        Some(syn::FnArg::Receiver(_)) => {}
+    let receiver = match item_fn.sig.inputs.first() {
+        Some(syn::FnArg::Receiver(receiver)) => receiver.clone(),
         _ => {
             return Err(syn::Error::new_spanned(
                 &item_fn.sig.inputs,
                 "First argument must be self",
             ));
         }
-    }
+    };
 
-    let implicit_args = extract_implicits_args(&mut item_fn.sig.inputs)?;
+    let implicit_args = extract_implicits_args(&receiver, &mut item_fn.sig.inputs)?;
 
     item_fn.vis = Visibility::Inherited;
 
