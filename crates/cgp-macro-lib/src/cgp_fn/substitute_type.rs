@@ -29,10 +29,12 @@ pub fn substitute_abstract_type(
                 let mut replaced_ident = false;
 
                 for type_spec in type_specs {
-                    if type_spec.type_idents.contains(&ident) && !last_token_was_colon {
+                    if !last_token_was_colon
+                        && let Some(replacement_ident) = type_spec.replace_ident(&ident)
+                    {
                         let trait_path = &type_spec.trait_path;
                         out.extend(quote! {
-                            < #context_type as #trait_path > :: #ident
+                            < #context_type as #trait_path > :: #replacement_ident
                         });
                         replaced_ident = true;
                         break;
