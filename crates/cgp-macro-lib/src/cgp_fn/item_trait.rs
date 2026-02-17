@@ -33,16 +33,15 @@ pub fn derive_item_trait(
     }
 
     if !attributes.use_type.is_empty() {
-        let mut item_trait_stream = item_trait.to_token_stream();
-
         for use_type in attributes.use_type.iter() {
             bounds.push(parse2(use_type.trait_path.to_token_stream())?);
-
-            item_trait_stream =
-                substitute_abstract_type(&quote! { Self }, &use_type, item_trait_stream);
         }
 
-        item_trait = parse2(item_trait_stream)?;
+        item_trait = parse2(substitute_abstract_type(
+            &quote! { Self },
+            &attributes.use_type,
+            item_trait.to_token_stream(),
+        ))?;
     }
 
     item_trait.supertraits.extend(bounds);

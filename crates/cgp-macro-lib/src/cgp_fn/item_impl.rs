@@ -56,16 +56,15 @@ pub fn derive_item_impl(
     }
 
     if !attributes.use_type.is_empty() {
-        let mut item_impl_stream = item_impl.to_token_stream();
-
         for use_type in attributes.use_type.iter() {
             bounds.push(parse2(use_type.trait_path.to_token_stream())?);
-
-            item_impl_stream =
-                substitute_abstract_type(&quote! { Self }, &use_type, item_impl_stream);
         }
 
-        item_impl = parse2(item_impl_stream)?;
+        item_impl = parse2(substitute_abstract_type(
+            &quote! { Self },
+            &attributes.use_type,
+            item_impl.to_token_stream(),
+        ))?;
     }
 
     if !bounds.is_empty() {
