@@ -1,3 +1,5 @@
+use core::mem;
+
 use proc_macro2::TokenStream;
 use quote::quote;
 use syn::{Ident, ItemFn, Visibility};
@@ -24,9 +26,11 @@ pub fn derive_cgp_fn(trait_ident: &Ident, mut item_fn: ItemFn) -> syn::Result<To
 
     inject_implicit_args(&implicit_args, &mut item_fn.block)?;
 
-    let item_trait = derive_item_trait(trait_ident, &item_fn)?;
+    let generics = mem::take(&mut item_fn.sig.generics);
 
-    let item_impl = derive_item_impl(trait_ident, &item_fn, &implicit_args)?;
+    let item_trait = derive_item_trait(trait_ident, &item_fn, &generics)?;
+
+    let item_impl = derive_item_impl(trait_ident, &item_fn, &implicit_args, &generics)?;
 
     let output = quote! {
         #item_trait

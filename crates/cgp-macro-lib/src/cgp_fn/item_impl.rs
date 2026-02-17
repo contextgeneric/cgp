@@ -1,5 +1,5 @@
 use quote::{ToTokens, quote};
-use syn::{Ident, ItemFn, ItemImpl, parse2};
+use syn::{Generics, Ident, ItemFn, ItemImpl, parse2};
 
 use crate::cgp_fn::ImplicitArgField;
 use crate::derive_getter::derive_getter_constraint;
@@ -9,12 +9,18 @@ pub fn derive_item_impl(
     trait_ident: &Ident,
     item_fn: &ItemFn,
     implicit_args: &[ImplicitArgField],
+    generics: &Generics,
 ) -> syn::Result<ItemImpl> {
+    let type_generics = generics.split_for_impl().1;
+
     let mut item_impl: ItemImpl = parse2(quote! {
-        impl<__Context__> #trait_ident for __Context__ {
+        impl #trait_ident #type_generics for __Context__ {
             #item_fn
         }
     })?;
+
+    item_impl.generics = generics.clone();
+    item_impl.generics.params.insert(0, parse2(quote! { __Context__ })?);
 
     let where_clause = item_impl.generics.make_where_clause();
 
