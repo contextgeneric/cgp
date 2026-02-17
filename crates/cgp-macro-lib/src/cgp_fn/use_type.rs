@@ -58,8 +58,11 @@ impl Parse for UseTypeSpec {
                 .into_iter()
                 .collect()
         } else {
-            let ident: UseTypeIdent = input.parse()?;
-            vec![ident]
+            let ident: Ident = input.parse()?;
+            vec![UseTypeIdent {
+                type_ident: ident,
+                as_alias: None,
+            }]
         };
 
         Ok(Self {
