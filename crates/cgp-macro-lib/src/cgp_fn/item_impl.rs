@@ -59,14 +59,10 @@ pub fn derive_item_impl(
         let mut item_impl_stream = item_impl.to_token_stream();
 
         for use_type in attributes.use_type.iter() {
-            let trait_path = &use_type.trait_path;
-            bounds.push(parse2(trait_path.to_token_stream())?);
+            bounds.push(parse2(use_type.trait_path.to_token_stream())?);
 
-            item_impl_stream = substitute_abstract_type(
-                &quote! { < Self as #trait_path > },
-                &use_type.type_idents,
-                item_impl_stream,
-            );
+            item_impl_stream =
+                substitute_abstract_type(&quote! { Self }, &use_type, item_impl_stream);
         }
 
         item_impl = parse2(item_impl_stream)?;

@@ -1,5 +1,7 @@
 use quote::{ToTokens, quote};
-use syn::{Generics, Ident, ItemFn, ItemTrait, TraitItemFn, parse2};
+use syn::punctuated::Punctuated;
+use syn::token::Plus;
+use syn::{Generics, Ident, ItemFn, ItemTrait, TraitItemFn, TypeParamBound, parse2};
 
 use crate::cgp_fn::{FunctionAttributes, substitute_abstract_type};
 
@@ -24,27 +26,26 @@ pub fn derive_item_trait(
         }
     })?;
 
+    let mut bounds: Punctuated<TypeParamBound, Plus> = Punctuated::default();
+
     for extend in &attributes.extend {
-        item_trait.supertraits.push(extend.clone());
+        bounds.push(extend.clone());
     }
 
     if !attributes.use_type.is_empty() {
-        let mut type_idents = Vec::new();
+        let mut item_trait_stream = item_trait.to_token_stream();
 
         for use_type in attributes.use_type.iter() {
-            item_trait
-                .supertraits
-                .push(parse2(use_type.trait_path.to_token_stream())?);
+            bounds.push(parse2(use_type.trait_path.to_token_stream())?);
 
-            type_idents.extend(use_type.type_idents.clone());
+            item_trait_stream =
+                substitute_abstract_type(&quote! { Self }, &use_type, item_trait_stream);
         }
 
-        item_trait = parse2(substitute_abstract_type(
-            &quote! { Self },
-            &type_idents,
-            item_trait.to_token_stream(),
-        ))?;
+        item_trait = parse2(item_trait_stream)?;
     }
+
+    item_trait.supertraits.extend(bounds);
 
     Ok(item_trait)
 }

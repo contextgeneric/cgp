@@ -1,10 +1,11 @@
 use proc_macro2::{Group, TokenStream, TokenTree};
 use quote::quote;
-use syn::Ident;
+
+use crate::cgp_fn::UseTypeSpec;
 
 pub fn substitute_abstract_type(
     context_type: &TokenStream,
-    type_idents: &[Ident],
+    type_spec: &UseTypeSpec,
     body: TokenStream,
 ) -> TokenStream {
     let mut out = TokenStream::new();
@@ -21,14 +22,14 @@ pub fn substitute_abstract_type(
 
         match token_tree {
             TokenTree::Group(group) => {
-                let new_stream =
-                    substitute_abstract_type(context_type, type_idents, group.stream());
+                let new_stream = substitute_abstract_type(context_type, type_spec, group.stream());
                 out.extend([TokenTree::Group(Group::new(group.delimiter(), new_stream))]);
             }
             TokenTree::Ident(ident) => {
-                if type_idents.contains(&ident) && !last_token_was_colon {
+                if type_spec.type_idents.contains(&ident) && !last_token_was_colon {
+                    let trait_path = &type_spec.trait_path;
                     out.extend(quote! {
-                        #context_type :: #ident
+                        < #context_type as #trait_path > :: #ident
                     });
                 } else {
                     out.extend([TokenTree::Ident(ident)]);
