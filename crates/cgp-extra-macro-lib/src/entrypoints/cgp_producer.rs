@@ -1,9 +1,8 @@
+use cgp_macro_lib::utils::to_camel_case_str;
 use proc_macro2::TokenStream;
 use quote::quote;
 use syn::spanned::Spanned;
 use syn::{Ident, ItemFn, ItemImpl, ReturnType, parse2};
-
-use crate::utils::to_camel_case_str;
 
 pub fn cgp_producer(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
     let item_fn: ItemFn = parse2(body)?;

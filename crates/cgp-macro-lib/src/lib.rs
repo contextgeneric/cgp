@@ -18,7 +18,6 @@ pub(crate) mod derive_extractor;
 pub(crate) mod derive_getter;
 pub(crate) mod derive_has_fields;
 pub(crate) mod derive_provider;
-mod entrypoints;
 pub(crate) mod field;
 pub(crate) mod for_each_replace;
 pub(crate) mod parse;
@@ -27,6 +26,9 @@ pub(crate) mod product;
 pub(crate) mod replace_self;
 pub(crate) mod symbol;
 pub(crate) mod type_component;
+
+mod entrypoints;
+pub mod utils;
 
 pub use field::derive_has_field;
 pub use product::{make_product_expr, make_product_type, make_sum_type};

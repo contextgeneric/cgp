@@ -1,5 +1,6 @@
 use std::collections::BTreeSet;
 
+use cgp_macro_lib::utils::to_camel_case_str;
 use proc_macro2::{Span, TokenStream};
 use quote::quote;
 use syn::punctuated::Punctuated;
@@ -9,8 +10,6 @@ use syn::{
     FnArg, GenericParam, Ident, ImplItem, ImplItemFn, ItemTrait, Lifetime, Pat, PatIdent,
     ReturnType, TraitItemFn, Type, Visibility, parse2,
 };
-
-use crate::utils::to_camel_case_str;
 
 pub fn cgp_auto_dispatch(_attr: TokenStream, mut out: TokenStream) -> syn::Result<TokenStream> {
     let item_trait: ItemTrait = parse2(out.clone())?;

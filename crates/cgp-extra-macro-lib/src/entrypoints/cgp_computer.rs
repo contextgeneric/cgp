@@ -1,3 +1,4 @@
+use cgp_macro_lib::utils::to_camel_case_str;
 use proc_macro2::TokenStream;
 use quote::{ToTokens, quote};
 use syn::punctuated::Punctuated;
@@ -6,7 +7,6 @@ use syn::token::Comma;
 use syn::{FnArg, Ident, ItemFn, ItemImpl, ReturnType, Type, parse2};
 
 use crate::parse::MaybeResultType;
-use crate::utils::to_camel_case_str;
 
 pub fn cgp_computer(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
     let item_fn: ItemFn = parse2(body)?;

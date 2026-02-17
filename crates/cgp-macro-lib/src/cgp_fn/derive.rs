@@ -7,7 +7,7 @@ use crate::cgp_fn::fn_body::inject_implicit_args;
 use crate::derive_getter::derive_getter_constraint;
 use crate::symbol::symbol_from_string;
 
-pub fn derive_cgp_fn(trait_ident: &Ident, item_fn: &mut ItemFn) -> syn::Result<TokenStream> {
+pub fn derive_cgp_fn(trait_ident: &Ident, mut item_fn: ItemFn) -> syn::Result<TokenStream> {
     let implicit_args = extract_implicits_args(&mut item_fn.sig.inputs)?;
 
     let trait_item_fn = TraitItemFn {
