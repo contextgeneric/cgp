@@ -28,11 +28,23 @@ pub fn derive_item_impl(
         .params
         .insert(0, parse2(quote! { __Context__ })?);
 
-    let mut bounds: Punctuated<TypeParamBound, Plus> = Punctuated::default();
-    bounds.extend(attributes.extend.clone());
+    {
+        let mut bounds: Punctuated<TypeParamBound, Plus> = Punctuated::default();
+        bounds.extend(attributes.extend.clone());
 
-    for import in attributes.uses.iter() {
-        bounds.push(parse2(quote! { #import })?);
+        for import in attributes.uses.iter() {
+            bounds.push(parse2(quote! { #import })?);
+        }
+
+        if !bounds.is_empty() {
+            item_impl
+                .generics
+                .make_where_clause()
+                .predicates
+                .push(parse2(quote! {
+                    Self: #bounds
+                })?);
+        }
     }
 
     {
@@ -56,18 +68,18 @@ pub fn derive_item_impl(
     }
 
     if !attributes.use_type.is_empty() {
-        for use_type in attributes.use_type.iter() {
-            bounds.push(parse2(use_type.trait_path.to_token_stream())?);
-        }
-
         item_impl = parse2(substitute_abstract_type(
             &quote! { Self },
             &attributes.use_type,
             item_impl.to_token_stream(),
         ))?;
-    }
 
-    if !bounds.is_empty() {
+        let mut bounds: Punctuated<TypeParamBound, Plus> = Punctuated::default();
+
+        for use_type in attributes.use_type.iter() {
+            bounds.push(parse2(use_type.trait_path.to_token_stream())?);
+        }
+
         item_impl
             .generics
             .make_where_clause()

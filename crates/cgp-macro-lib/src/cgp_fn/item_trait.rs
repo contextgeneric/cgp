@@ -1,7 +1,5 @@
 use quote::{ToTokens, quote};
-use syn::punctuated::Punctuated;
-use syn::token::Plus;
-use syn::{Generics, Ident, ItemFn, ItemTrait, TraitItemFn, TypeParamBound, parse2};
+use syn::{Generics, Ident, ItemFn, ItemTrait, TraitItemFn, parse2};
 
 use crate::cgp_fn::{FunctionAttributes, substitute_abstract_type};
 
@@ -26,25 +24,21 @@ pub fn derive_item_trait(
         }
     })?;
 
-    let mut bounds: Punctuated<TypeParamBound, Plus> = Punctuated::default();
-
-    for extend in &attributes.extend {
-        bounds.push(extend.clone());
-    }
+    item_trait.supertraits.extend(attributes.extend.clone());
 
     if !attributes.use_type.is_empty() {
-        for use_type in attributes.use_type.iter() {
-            bounds.push(parse2(use_type.trait_path.to_token_stream())?);
-        }
-
         item_trait = parse2(substitute_abstract_type(
             &quote! { Self },
             &attributes.use_type,
             item_trait.to_token_stream(),
         ))?;
-    }
 
-    item_trait.supertraits.extend(bounds);
+        for use_type in attributes.use_type.iter() {
+            item_trait
+                .supertraits
+                .push(parse2(use_type.trait_path.to_token_stream())?);
+        }
+    }
 
     Ok(item_trait)
 }
