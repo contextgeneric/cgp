@@ -11,11 +11,11 @@ pub fn apply_use_type_attributes_to_item_impl(
 ) -> syn::Result<ItemImpl> {
     let mut item_impl: ItemImpl = parse2(substitute_abstract_type(
         &quote! { Self },
-        &use_type_specs,
+        use_type_specs,
         item_impl.to_token_stream(),
     ))?;
 
-    let bounds = derive_use_type_trait_bounds(&quote! { Self }, &use_type_specs)?;
+    let bounds = derive_use_type_trait_bounds(&quote! { Self }, use_type_specs)?;
     let bounds = Punctuated::<TypeParamBound, Plus>::from_iter(bounds);
 
     item_impl
