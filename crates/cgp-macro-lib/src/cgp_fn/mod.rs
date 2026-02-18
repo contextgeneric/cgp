@@ -1,4 +1,5 @@
 mod attributes;
+mod bounds;
 mod derive;
 mod fn_body;
 mod item_impl;
@@ -10,7 +11,9 @@ mod type_equality;
 mod use_type;
 
 pub use attributes::*;
+pub use bounds::*;
 pub use derive::*;
+pub use fn_body::*;
 pub use parse_implicits::*;
 pub use spec::*;
 pub use substitute_type::*;

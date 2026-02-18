@@ -4,10 +4,9 @@ use syn::token::Plus;
 use syn::{Generics, Ident, ItemFn, ItemImpl, TypeParamBound, parse2};
 
 use crate::cgp_fn::{
-    FunctionAttributes, ImplicitArgField, derive_use_type_trait_bounds, substitute_abstract_type,
+    FunctionAttributes, ImplicitArgField, build_implicit_args_bounds, derive_use_type_trait_bounds,
+    substitute_abstract_type,
 };
-use crate::derive_getter::derive_getter_constraint;
-use crate::symbol::symbol_from_string;
 
 pub fn derive_item_impl(
     trait_ident: &Ident,
@@ -51,22 +50,11 @@ pub fn derive_item_impl(
 
     {
         let where_clause = item_impl.generics.make_where_clause();
+        let bounds = build_implicit_args_bounds(implicit_args)?;
 
-        for arg in implicit_args {
-            let field_symbol = symbol_from_string(&arg.field_name.to_string());
-
-            let constraint = derive_getter_constraint(
-                &arg.field_type,
-                &arg.field_mut,
-                &arg.field_mode,
-                field_symbol.to_token_stream(),
-                &None,
-            )?;
-
-            where_clause.predicates.push(parse2(quote! {
-                Self: #constraint
-            })?);
-        }
+        where_clause.predicates.push(parse2(quote! {
+            Self: #bounds
+        })?);
     }
 
     if !attributes.use_type.is_empty() {

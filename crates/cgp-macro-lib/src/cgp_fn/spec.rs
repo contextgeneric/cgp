@@ -5,6 +5,7 @@ use crate::cgp_fn::UseTypeSpec;
 use crate::derive_getter::FieldMode;
 use crate::parse::SimpleType;
 
+#[derive(Clone, Eq, PartialEq)]
 pub struct ImplicitArgField {
     pub field_name: Ident,
     pub field_type: Type,

@@ -11,6 +11,7 @@ pub struct GetterField {
     pub receiver_mode: ReceiverMode,
 }
 
+#[derive(Clone, Eq, PartialEq)]
 pub enum FieldMode {
     Reference,
     OptionRef,

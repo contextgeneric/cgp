@@ -5,7 +5,6 @@ mod spec;
 mod transform;
 
 pub use derive::*;
-pub use implicit_args::*;
 pub use provider_impl::*;
 pub use spec::*;
 pub use transform::*;

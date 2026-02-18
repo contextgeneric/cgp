@@ -1,8 +1,9 @@
 use proc_macro2::TokenStream;
 use quote::quote;
-use syn::ItemImpl;
+use syn::{ItemImpl, parse2};
 
-use crate::cgp_impl::{ImplProviderSpec, derive_provider_impl};
+use crate::cgp_fn::build_implicit_args_bounds;
+use crate::cgp_impl::{ImplProviderSpec, derive_provider_impl, implicit_args};
 use crate::derive_provider::{
     derive_component_name_from_provider_impl, derive_is_provider_for, derive_provider_struct,
 };
@@ -11,6 +12,17 @@ pub fn derive_cgp_impl(
     spec: ImplProviderSpec,
     mut item_impl: ItemImpl,
 ) -> syn::Result<TokenStream> {
+    let implicit_args = implicit_args::extract_implicit_args_from_impl_items(&mut item_impl.items)?;
+
+    if !implicit_args.is_empty() {
+        let where_clause = item_impl.generics.make_where_clause();
+        let bounds = build_implicit_args_bounds(&implicit_args)?;
+
+        where_clause.predicates.push(parse2(quote! {
+            Self: #bounds
+        })?);
+    }
+
     let provider_impl = derive_provider_impl(&spec.provider_type, item_impl)?;
 
     let component_type = match &spec.component_type {
