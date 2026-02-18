@@ -7,7 +7,10 @@ use crate::derive_provider::{
     derive_component_name_from_provider_impl, derive_is_provider_for, derive_provider_struct,
 };
 
-pub fn derive_cgp_impl(spec: ImplProviderSpec, item_impl: ItemImpl) -> syn::Result<TokenStream> {
+pub fn derive_cgp_impl(
+    spec: ImplProviderSpec,
+    mut item_impl: ItemImpl,
+) -> syn::Result<TokenStream> {
     let provider_impl = derive_provider_impl(&spec.provider_type, item_impl)?;
 
     let component_type = match &spec.component_type {

@@ -8,11 +8,21 @@ use syn::{Attribute, FnArg, Meta, Pat, PatIdent, PatType, Receiver};
 use crate::cgp_fn::ImplicitArgField;
 use crate::derive_getter::parse_field_type;
 
-pub fn extract_implicits_args(
-    receiver: &Receiver,
+pub fn extract_and_parse_implicit_args(
     args: &mut Punctuated<FnArg, Comma>,
 ) -> syn::Result<Vec<ImplicitArgField>> {
     let implicit_fn_args = extract_implicit_args(args);
+
+    if implicit_fn_args.is_empty() {
+        return Ok(Vec::new());
+    }
+
+    let Some(FnArg::Receiver(receiver)) = args.first() else {
+        return Err(syn::Error::new_spanned(
+            &args,
+            "The first argument of a function with implicit arguments must be `self`",
+        ));
+    };
 
     if receiver.mutability.is_some() && implicit_fn_args.len() > 1 {
         return Err(syn::Error::new_spanned(
