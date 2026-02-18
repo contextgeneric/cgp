@@ -1,5 +1,4 @@
 mod attributes;
-mod constraint;
 mod derive;
 mod fn_body;
 mod item_impl;

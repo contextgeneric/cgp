@@ -2,6 +2,7 @@ pub mod basic;
 pub mod call;
 pub mod extend;
 pub mod generics;
+pub mod multi;
 pub mod mutable;
 pub mod use_type;
 pub mod use_type_alias;
