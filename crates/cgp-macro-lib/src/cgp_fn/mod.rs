@@ -6,6 +6,7 @@ mod item_trait;
 mod parse_implicits;
 mod spec;
 mod substitute_type;
+mod type_equality;
 mod use_type;
 
 pub use attributes::*;
@@ -13,4 +14,5 @@ pub use derive::*;
 pub use parse_implicits::*;
 pub use spec::*;
 pub use substitute_type::*;
+pub use type_equality::*;
 pub use use_type::*;
