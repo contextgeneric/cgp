@@ -1,3 +1,4 @@
+mod apply_type;
 mod attributes;
 mod bounds;
 mod derive;
@@ -10,6 +11,7 @@ mod substitute_type;
 mod type_equality;
 mod use_type;
 
+pub use apply_type::*;
 pub use attributes::*;
 pub use bounds::*;
 pub use derive::*;

@@ -1,11 +1,11 @@
-use quote::{ToTokens, quote};
+use quote::quote;
 use syn::punctuated::Punctuated;
 use syn::token::Plus;
 use syn::{Generics, Ident, ItemFn, ItemImpl, TypeParamBound, parse2};
 
 use crate::cgp_fn::{
-    FunctionAttributes, ImplicitArgField, build_implicit_args_bounds, derive_use_type_trait_bounds,
-    substitute_abstract_type,
+    FunctionAttributes, ImplicitArgField, apply_use_type_attributes_to_item_impl,
+    build_implicit_args_bounds,
 };
 
 pub fn derive_item_impl(
@@ -58,22 +58,7 @@ pub fn derive_item_impl(
     }
 
     if !attributes.use_type.is_empty() {
-        item_impl = parse2(substitute_abstract_type(
-            &quote! { Self },
-            &attributes.use_type,
-            item_impl.to_token_stream(),
-        ))?;
-
-        let bounds = derive_use_type_trait_bounds(&quote! { Self }, &attributes.use_type)?;
-        let bounds = Punctuated::<TypeParamBound, Plus>::from_iter(bounds);
-
-        item_impl
-            .generics
-            .make_where_clause()
-            .predicates
-            .push(parse2(quote! {
-                Self: #bounds
-            })?);
+        item_impl = apply_use_type_attributes_to_item_impl(&item_impl, &attributes.use_type)?;
     }
 
     Ok(item_impl)

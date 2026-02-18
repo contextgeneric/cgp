@@ -1,3 +1,4 @@
+mod attributes;
 mod derive;
 mod implicit_args;
 mod provider_impl;
