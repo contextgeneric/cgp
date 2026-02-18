@@ -1,6 +1,8 @@
 use proc_macro2::TokenStream;
 use quote::quote;
-use syn::{ItemImpl, parse2};
+use syn::punctuated::Punctuated;
+use syn::token::Plus;
+use syn::{ItemImpl, TypeParamBound, parse2};
 
 use crate::cgp_fn::{apply_use_type_attributes_to_item_impl, build_implicit_args_bounds};
 use crate::cgp_impl::attributes::parse_impl_attributes;
@@ -28,6 +30,22 @@ pub fn derive_cgp_impl(
 
     if !attributes.use_type.is_empty() {
         item_impl = apply_use_type_attributes_to_item_impl(&item_impl, &attributes.use_type)?;
+    }
+
+    if !attributes.uses.is_empty() {
+        let mut bounds: Punctuated<TypeParamBound, Plus> = Punctuated::default();
+
+        for import in attributes.uses.iter() {
+            bounds.push(parse2(quote! { #import })?);
+        }
+
+        item_impl
+            .generics
+            .make_where_clause()
+            .predicates
+            .push(parse2(quote! {
+                Self: #bounds
+            })?);
     }
 
     let provider_impl = derive_provider_impl(&spec.provider_type, item_impl)?;

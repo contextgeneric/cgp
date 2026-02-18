@@ -23,7 +23,6 @@ where
     }
 }
 
-
 #[derive(HasField)]
 pub struct Rectangle {
     pub width: f64,
