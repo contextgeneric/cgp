@@ -13,7 +13,7 @@ pub fn derive_use_type_trait_bounds(
     let mut bounds = Vec::new();
 
     for use_type in specs.iter() {
-        let type_equalities = find_type_equalities(use_type, context_type, &specs)?;
+        let type_equalities = find_type_equalities(use_type, context_type, specs)?;
 
         if type_equalities.is_empty() {
             bounds.push(parse2(use_type.trait_path.to_token_stream())?);

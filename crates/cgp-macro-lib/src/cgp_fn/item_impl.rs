@@ -77,7 +77,7 @@ pub fn derive_item_impl(
         ))?;
 
         let bounds = derive_use_type_trait_bounds(&quote! { Self }, &attributes.use_type)?;
-        let bounds = Punctuated::<TypeParamBound, Plus>::from_iter(bounds.into_iter());
+        let bounds = Punctuated::<TypeParamBound, Plus>::from_iter(bounds);
 
         item_impl
             .generics
