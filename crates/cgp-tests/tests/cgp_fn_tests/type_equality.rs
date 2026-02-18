@@ -20,9 +20,9 @@ pub fn do_bar(&self) -> Bar {
     todo!()
 }
 
-#[cgp_fn]
-#[use_type(HasFooType::{Foo as Foo}, HasBarType::{Bar as Foo})]
-#[uses(DoFoo, DoBar)]
-fn return_foo_or_bar(&self, flag: bool) -> Foo {
-    if flag { self.do_foo() } else { self.do_bar() }
-}
+// #[cgp_fn]
+// #[use_type(HasFooType::{Foo as Foo}, HasBarType::{Bar as Foo})]
+// #[uses(DoFoo, DoBar)]
+// fn return_foo_or_bar(&self, flag: bool) -> Foo {
+//     if flag { self.do_foo() } else { self.do_bar() }
+// }
