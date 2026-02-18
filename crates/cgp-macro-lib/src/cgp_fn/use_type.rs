@@ -18,7 +18,9 @@ impl UseTypeSpec {
     pub fn replace_ident(&self, ident: &Ident) -> Option<Ident> {
         for type_ident in &self.type_idents {
             if type_ident.replacement_ident() == ident {
-                return Some(type_ident.type_ident.clone());
+                let mut new_ident = type_ident.type_ident.clone();
+                new_ident.set_span(ident.span());
+                return Some(new_ident);
             }
         }
 

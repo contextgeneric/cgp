@@ -34,9 +34,12 @@ pub fn substitute_abstract_type(
                         && let Some(replacement_ident) = type_spec.replace_ident(&ident)
                     {
                         let trait_path = &type_spec.trait_path;
-                        out.extend(quote! {
+
+                        let replaced = quote! {
                             < #context_type as #trait_path > :: #replacement_ident
-                        });
+                        };
+
+                        out.extend(replaced);
                         replaced_ident = true;
                         break;
                     }
