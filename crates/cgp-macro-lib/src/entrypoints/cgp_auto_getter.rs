@@ -2,6 +2,7 @@ use proc_macro2::{Span, TokenStream};
 use quote::quote;
 use syn::{Error, Ident, ItemTrait};
 
+use crate::derive_component::preprocess_consumer_trait;
 use crate::derive_getter::{derive_blanket_impl, parse_getter_fields};
 
 pub fn cgp_auto_getter(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
@@ -12,7 +13,9 @@ pub fn cgp_auto_getter(attr: TokenStream, body: TokenStream) -> syn::Result<Toke
         ));
     }
 
-    let consumer_trait: ItemTrait = syn::parse2(body)?;
+    let mut consumer_trait: ItemTrait = syn::parse2(body)?;
+
+    preprocess_consumer_trait(&mut consumer_trait)?;
 
     let context_type = Ident::new("__Context__", Span::call_site());
 
