@@ -13,5 +13,6 @@ pub fn rectangle_area(&self, #[implicit] width: Scalar, #[implicit] height: Scal
 where
     Scalar: Mul<Output = Scalar> + Clone,
 {
-    width * height
+    let res: Scalar = width * height;
+    res
 }

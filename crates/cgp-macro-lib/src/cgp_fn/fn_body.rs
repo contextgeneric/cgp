@@ -14,6 +14,7 @@ pub fn inject_implicit_args(args: &[ImplicitArgField], body: &mut Block) -> syn:
 
 pub fn inject_implicit_arg(arg: &ImplicitArgField, body: &mut Block) -> syn::Result<()> {
     let field_name = &arg.field_name;
+    let arg_type = &arg.arg_type;
 
     let field_symbol = symbol_from_string(&field_name.to_string());
 
@@ -30,7 +31,7 @@ pub fn inject_implicit_arg(arg: &ImplicitArgField, body: &mut Block) -> syn::Res
     let call_expr = extend_call_expr(call_expr, &arg.field_mode, &arg.field_mut);
 
     let statement = parse2(quote! {
-        let #field_name = #call_expr;
+        let #field_name: #arg_type = #call_expr;
     })?;
 
     body.stmts.insert(0, statement);

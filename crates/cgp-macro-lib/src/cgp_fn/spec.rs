@@ -10,6 +10,7 @@ pub struct ImplicitArgField {
     pub field_type: Type,
     pub field_mut: Option<Mut>,
     pub field_mode: FieldMode,
+    pub arg_type: Type,
 }
 
 #[derive(Default)]

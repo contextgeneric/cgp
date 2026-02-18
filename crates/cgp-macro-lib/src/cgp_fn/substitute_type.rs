@@ -10,6 +10,7 @@ pub fn substitute_abstract_type(
 ) -> TokenStream {
     let mut out = TokenStream::new();
     let mut last_token_was_colon = false;
+    let mut last_two_tokens_was_colon = false;
 
     for token_tree in body.into_iter() {
         let token_is_colon = if let TokenTree::Punct(punct) = &token_tree
@@ -29,7 +30,7 @@ pub fn substitute_abstract_type(
                 let mut replaced_ident = false;
 
                 for type_spec in type_specs {
-                    if !last_token_was_colon
+                    if !last_two_tokens_was_colon
                         && let Some(replacement_ident) = type_spec.replace_ident(&ident)
                     {
                         let trait_path = &type_spec.trait_path;
@@ -53,7 +54,14 @@ pub fn substitute_abstract_type(
             }
         }
 
-        last_token_was_colon = token_is_colon;
+        if token_is_colon {
+            if last_token_was_colon {
+                last_token_was_colon = true;
+            } else {
+                last_token_was_colon = true;
+                last_two_tokens_was_colon = false;
+            }
+        }
     }
 
     out
