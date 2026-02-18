@@ -103,18 +103,18 @@ pub fn parse_getter_method(
 
     let (arg, phantom) = parse_method_args(&signature.inputs)?;
 
-    let (receiver_mode, field_mut) = parse_receiver(context_type, arg)?;
+    let (receiver_mode, receiver_mut) = parse_receiver(context_type, arg)?;
 
     let return_type = parse_return_type(context_type, &signature.output, field_assoc_type)?;
 
-    let (field_type, field_mode) = parse_field_type(&return_type, &field_mut)?;
+    let (field_type, field_mode) = parse_field_type(&return_type, &receiver_mut)?;
 
     Ok(GetterField {
         receiver_mode,
         field_name,
         field_type,
         return_type,
-        field_mut,
+        receiver_mut,
         phantom_arg_type: phantom,
         field_mode,
     })
@@ -263,15 +263,15 @@ fn parse_return_type(
 
 pub fn parse_field_type(
     return_type: &Type,
-    field_mut: &Option<Mut>,
+    receiver_mut: &Option<Mut>,
 ) -> syn::Result<(Type, FieldMode)> {
     match &return_type {
         Type::Reference(type_ref) => {
-            if type_ref.mutability.is_some() != field_mut.is_some() {
+            if type_ref.mutability.is_some() && receiver_mut.is_none() {
                 return Err(Error::new(
                     type_ref.span(),
                     format!(
-                        "field type `{}` must have the same mutability as the self reference",
+                        "&mut self is required for mutable field reference `{}`",
                         type_ref.to_token_stream()
                     ),
                 ));
@@ -283,7 +283,7 @@ pub fn parse_field_type(
                 let field_type: Type = parse_quote! { String };
 
                 Ok((field_type, FieldMode::Str))
-            } else if let (Type::Slice(slice), None) = (type_ref.elem.as_ref(), field_mut) {
+            } else if let (Type::Slice(slice), None) = (type_ref.elem.as_ref(), receiver_mut) {
                 let field_type = slice.elem.as_ref().clone();
 
                 Ok((field_type, FieldMode::Slice))
@@ -299,7 +299,7 @@ pub fn parse_field_type(
                     parse2(quote! { Option< #field_type > })?,
                     FieldMode::OptionRef,
                 ))
-            } else if let (Some(field_type), None) = (try_parse_mref(type_path), field_mut) {
+            } else if let (Some(field_type), None) = (try_parse_mref(type_path), receiver_mut) {
                 Ok((field_type.clone(), FieldMode::MRef))
             } else {
                 Ok((return_type.clone(), FieldMode::Clone))

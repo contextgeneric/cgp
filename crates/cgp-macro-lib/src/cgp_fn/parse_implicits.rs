@@ -11,38 +11,23 @@ pub fn extract_implicits_args(
     receiver: &Receiver,
     args: &mut Punctuated<FnArg, Comma>,
 ) -> syn::Result<Vec<ImplicitArgField>> {
+    let implicit_fn_args = extract_implicit_args(args);
+
+    if receiver.mutability.is_some() && implicit_fn_args.len() > 1 {
+        return Err(syn::Error::new_spanned(
+            &args,
+            "Only one mutable implicit argument is allowed when self is mutable",
+        ));
+    }
+
     let mut implicit_args = Vec::new();
 
-    let process_args = mem::take(args);
-
-    for mut arg in process_args.into_iter() {
-        if let Some(implicit_arg) = try_parse_implicit_arg(receiver, &mut arg)? {
-            implicit_args.push(implicit_arg);
-        } else {
-            args.push(arg);
-        }
+    for arg in implicit_fn_args {
+        let spec = parse_implicit_arg(receiver, &arg)?;
+        implicit_args.push(spec);
     }
 
     Ok(implicit_args)
-}
-
-pub fn try_parse_implicit_arg(
-    receiver: &Receiver,
-    arg: &mut FnArg,
-) -> syn::Result<Option<ImplicitArgField>> {
-    if let FnArg::Typed(arg) = arg {
-        let attrs = mem::take(&mut arg.attrs);
-        for attr in attrs {
-            if is_implicit_attr(&attr) {
-                let spec = parse_implicit_arg(receiver, arg)?;
-                return Ok(Some(spec));
-            } else {
-                arg.attrs.push(attr);
-            }
-        }
-    }
-
-    Ok(None)
 }
 
 pub fn parse_implicit_arg(receiver: &Receiver, arg: &PatType) -> syn::Result<ImplicitArgField> {
@@ -63,6 +48,42 @@ pub fn parse_implicit_arg(receiver: &Receiver, arg: &PatType) -> syn::Result<Imp
     };
 
     Ok(spec)
+}
+
+pub fn extract_implicit_args(args: &mut Punctuated<FnArg, Comma>) -> Vec<PatType> {
+    let mut implicit_args = Vec::new();
+
+    let process_args = mem::take(args);
+
+    for arg in process_args.into_iter() {
+        if let FnArg::Typed(mut arg) = arg {
+            if is_implicit_arg(&mut arg) {
+                implicit_args.push(arg);
+            } else {
+                args.push(FnArg::Typed(arg));
+            }
+        } else {
+            args.push(arg);
+        }
+    }
+
+    implicit_args
+}
+
+pub fn is_implicit_arg(arg: &mut PatType) -> bool {
+    let mut res = false;
+
+    let attrs = mem::take(&mut arg.attrs);
+
+    for attr in attrs {
+        if is_implicit_attr(&attr) {
+            res = true;
+        } else {
+            arg.attrs.push(attr);
+        }
+    }
+
+    res
 }
 
 pub fn is_implicit_attr(attr: &Attribute) -> bool {

@@ -20,17 +20,18 @@ pub fn derive_cgp_fn(trait_ident: &Ident, mut item_fn: ItemFn) -> syn::Result<To
         }
     };
 
+    let visibility = item_fn.vis.clone();
+    item_fn.vis = Visibility::Inherited;
+
     let implicit_args = extract_implicits_args(&receiver, &mut item_fn.sig.inputs)?;
 
     let attributes = parse_function_attributes(&mut item_fn.attrs)?;
-
-    item_fn.vis = Visibility::Inherited;
 
     inject_implicit_args(&implicit_args, &mut item_fn.block)?;
 
     let generics = mem::take(&mut item_fn.sig.generics);
 
-    let item_trait = derive_item_trait(trait_ident, &item_fn, &generics, &attributes)?;
+    let mut item_trait = derive_item_trait(trait_ident, &item_fn, &generics, &attributes)?;
 
     let item_impl = derive_item_impl(
         trait_ident,
@@ -39,6 +40,8 @@ pub fn derive_cgp_fn(trait_ident: &Ident, mut item_fn: ItemFn) -> syn::Result<To
         &generics,
         &attributes,
     )?;
+
+    item_trait.vis = visibility.clone();
 
     let output = quote! {
         #item_trait

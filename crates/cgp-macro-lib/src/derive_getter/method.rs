@@ -29,14 +29,14 @@ pub fn derive_getter_method(
 
     let context_fn_arg = match &context_arg {
         ContextArg::SelfArg => {
-            if spec.field_mut.is_none() {
+            if spec.receiver_mut.is_none() {
                 quote! { &self }
             } else {
                 quote! { &mut self }
             }
         }
         ContextArg::Ident(context_type) => {
-            if spec.field_mut.is_none() {
+            if spec.receiver_mut.is_none() {
                 quote! { context: & #context_type}
             } else {
                 quote! { context: &mut #context_type }
@@ -44,7 +44,7 @@ pub fn derive_getter_method(
         }
     };
 
-    let get_field_method = if spec.field_mut.is_none() {
+    let get_field_method = if spec.receiver_mut.is_none() {
         quote! { get_field }
     } else {
         quote! { get_field_mut }
@@ -72,7 +72,7 @@ pub fn derive_getter_method(
         }
     };
 
-    let call_expr = extend_call_expr(call_expr, &spec.field_mode, &spec.field_mut);
+    let call_expr = extend_call_expr(call_expr, &spec.field_mode, &spec.receiver_mut);
 
     let return_type = &spec.return_type;
 

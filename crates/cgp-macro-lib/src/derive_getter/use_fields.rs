@@ -67,7 +67,7 @@ pub fn derive_use_fields_impl(
 
         let constraint = derive_getter_constraint(
             &field.field_type,
-            &field.field_mut,
+            &field.receiver_mut,
             &field.field_mode,
             quote! { #field_symbol },
             &field_assoc_type.as_ref().map(|item| item.ident.clone()),

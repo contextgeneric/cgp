@@ -60,7 +60,7 @@ pub fn derive_with_provider_impl(
             })?);
     }
 
-    let provider_constraint = if field.field_mut.is_none() {
+    let provider_constraint = if field.receiver_mut.is_none() {
         if let FieldMode::Slice = field.field_mode {
             quote! {
                 FieldGetter< #receiver_type, #component_type, Value: AsRef< [ #field_type ] > + 'static >
