@@ -95,15 +95,15 @@ fn find_type_equality(
                 continue;
             }
 
-            for type_ident in spec.type_idents.iter() {
-                let match_type: Type = parse2(type_ident.alias_ident().to_token_stream())?;
+            for match_use_type in spec.type_idents.iter() {
+                let match_type: Type = parse2(match_use_type.alias_ident().to_token_stream())?;
                 if match_type == equal_target {
                     let trait_path = &spec.trait_path;
                     let current_type_ident = &current_ident.type_ident;
-                    let current_alias = current_ident.alias_ident();
+                    let match_type_ident = &match_use_type.type_ident;
 
                     let equal_target: Type = parse2(quote! {
-                        <#context_type as #trait_path>::#current_alias
+                        <#context_type as #trait_path>::#match_type_ident
                     })?;
 
                     return Ok(Some((current_type_ident.clone(), equal_target)));
