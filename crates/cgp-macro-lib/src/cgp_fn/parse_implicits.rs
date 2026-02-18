@@ -2,7 +2,8 @@ use std::mem;
 
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
-use syn::{Attribute, FnArg, Meta, Pat, PatType, Receiver};
+use syn::visit::{self, Visit};
+use syn::{Attribute, FnArg, Meta, Pat, PatIdent, PatType, Receiver};
 
 use crate::cgp_fn::ImplicitArgField;
 use crate::derive_getter::parse_field_type;
@@ -35,7 +36,15 @@ pub fn parse_implicit_arg(receiver: &Receiver, arg: &PatType) -> syn::Result<Imp
         return Err(syn::Error::new_spanned(&arg.pat, "Expected an identifier"));
     };
 
+    if has_mut_pattern(&arg.pat) {
+        return Err(syn::Error::new_spanned(
+            &arg.pat,
+            "Mutable variables are not allowed in implicit arguments. (Explicitly clone a `&` reference if you want a mutable local copy of the value)",
+        ));
+    }
+
     let arg_type = arg.ty.as_ref();
+
     let field_mut = receiver.mutability;
 
     let (field_type, field_mode) = parse_field_type(arg_type, &field_mut)?;
@@ -90,5 +99,25 @@ pub fn is_implicit_attr(attr: &Attribute) -> bool {
     match &attr.meta {
         Meta::Path(path) => path.is_ident("implicit"),
         _ => false,
+    }
+}
+
+pub fn has_mut_pattern(pat: &Pat) -> bool {
+    let mut checker = MutChecker { has_mut: false };
+    checker.visit_pat(pat);
+    checker.has_mut
+}
+
+struct MutChecker {
+    has_mut: bool,
+}
+
+impl<'ast> Visit<'ast> for MutChecker {
+    fn visit_pat_ident(&mut self, node: &'ast PatIdent) {
+        if node.mutability.is_some() {
+            self.has_mut = true;
+        }
+        // Continue walking through the rest of the pattern
+        visit::visit_pat_ident(self, node);
     }
 }
