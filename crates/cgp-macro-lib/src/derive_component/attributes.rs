@@ -27,7 +27,7 @@ pub fn parse_component_attributes(
                     for type_ident in use_type_spec.type_idents.iter() {
                         if let Some(equals) = &type_ident.equals {
                             return Err(syn::Error::new_spanned(
-                                &equals,
+                                equals,
                                 "Type equality constraints cannot be used in component trait definition",
                             ));
                         }
