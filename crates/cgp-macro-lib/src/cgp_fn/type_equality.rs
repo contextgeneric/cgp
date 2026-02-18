@@ -78,10 +78,10 @@ pub fn find_type_equality(
                 let type_ident = &current_ident.type_ident;
 
                 let equal_target: Type = parse2(quote! {
-                    <#context_type as #trait_path>::#type_ident
+                    <#context_type as #trait_path>::#current_alias
                 })?;
 
-                return Ok(Some((current_alias.clone(), equal_target)));
+                return Ok(Some((type_ident.clone(), equal_target)));
             }
         }
     }

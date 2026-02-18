@@ -3,7 +3,9 @@ use syn::punctuated::Punctuated;
 use syn::token::Plus;
 use syn::{Generics, Ident, ItemFn, ItemImpl, TypeParamBound, parse2};
 
-use crate::cgp_fn::{FunctionAttributes, ImplicitArgField, substitute_abstract_type};
+use crate::cgp_fn::{
+    FunctionAttributes, ImplicitArgField, derive_use_type_trait_bounds, substitute_abstract_type,
+};
 use crate::derive_getter::derive_getter_constraint;
 use crate::symbol::symbol_from_string;
 
@@ -74,11 +76,8 @@ pub fn derive_item_impl(
             item_impl.to_token_stream(),
         ))?;
 
-        let mut bounds: Punctuated<TypeParamBound, Plus> = Punctuated::default();
-
-        for use_type in attributes.use_type.iter() {
-            bounds.push(parse2(use_type.trait_path.to_token_stream())?);
-        }
+        let bounds = derive_use_type_trait_bounds(&quote! { Self }, &attributes.use_type)?;
+        let bounds = Punctuated::<TypeParamBound, Plus>::from_iter(bounds.into_iter());
 
         item_impl
             .generics

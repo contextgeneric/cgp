@@ -4,6 +4,7 @@ pub mod extend;
 pub mod generics;
 pub mod multi;
 pub mod mutable;
+pub mod type_equality;
 pub mod use_type;
 pub mod use_type_alias;
 pub mod uses;
