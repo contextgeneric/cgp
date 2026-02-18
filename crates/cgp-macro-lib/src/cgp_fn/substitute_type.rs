@@ -57,12 +57,11 @@ pub fn substitute_abstract_type(
         }
 
         if token_is_colon {
-            if last_token_was_colon {
-                last_token_was_colon = true;
-            } else {
-                last_token_was_colon = true;
-                last_two_tokens_was_colon = false;
-            }
+            last_two_tokens_was_colon = last_token_was_colon;
+            last_token_was_colon = true;
+        } else {
+            last_two_tokens_was_colon = false;
+            last_token_was_colon = false;
         }
     }
 
