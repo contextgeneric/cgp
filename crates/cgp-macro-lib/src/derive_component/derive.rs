@@ -4,6 +4,7 @@ use syn::{ItemImpl, ItemStruct, ItemTrait, parse2};
 
 use crate::derive_component::component_name::derive_component_name_struct;
 use crate::derive_component::consumer_impl::derive_consumer_impl;
+use crate::derive_component::preprocess_consumer_trait;
 use crate::derive_component::provider_impl::derive_provider_impl;
 use crate::derive_component::provider_trait::derive_provider_trait;
 use crate::derive_component::use_context_impl::derive_use_context_impl;
@@ -13,13 +14,15 @@ use crate::parse::ComponentSpec;
 
 pub fn derive_component_with_ast(
     spec: &ComponentSpec,
-    consumer_trait: ItemTrait,
+    mut consumer_trait: ItemTrait,
 ) -> syn::Result<DerivedComponent> {
     let provider_name = &spec.provider_name;
     let context_type = &spec.context_type;
 
     let component_name = &spec.component_name;
     let component_params = &spec.component_params;
+
+    preprocess_consumer_trait(&mut consumer_trait)?;
 
     let component_struct = derive_component_name_struct(component_name, component_params)?;
 

@@ -16,6 +16,7 @@ pub use attributes::*;
 pub use bounds::*;
 pub use derive::*;
 pub use fn_body::*;
+pub use item_trait::*;
 pub use parse_implicits::*;
 pub use spec::*;
 pub use substitute_type::*;
