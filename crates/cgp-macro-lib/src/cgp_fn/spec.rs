@@ -1,5 +1,5 @@
 use syn::token::Mut;
-use syn::{Ident, Type, TypeParamBound};
+use syn::{Ident, Type, TypeParamBound, WherePredicate};
 
 use crate::cgp_fn::UseTypeSpec;
 use crate::derive_getter::FieldMode;
@@ -17,6 +17,7 @@ pub struct ImplicitArgField {
 #[derive(Default)]
 pub struct FunctionAttributes {
     pub extend: Vec<TypeParamBound>,
+    pub extend_where: Vec<WherePredicate>,
     pub uses: Vec<SimpleType>,
     pub use_type: Vec<UseTypeSpec>,
 }

@@ -27,6 +27,14 @@ pub fn derive_item_trait(
 
     item_trait.supertraits.extend(attributes.extend.clone());
 
+    if !attributes.extend_where.is_empty() {
+        item_trait
+            .generics
+            .make_where_clause()
+            .predicates
+            .extend(attributes.extend_where.clone());
+    }
+
     if !attributes.use_type.is_empty() {
         item_trait = expand_use_type_attributes_on_trait(&item_trait, &attributes.use_type)?;
     }

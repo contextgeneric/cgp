@@ -2,7 +2,7 @@ use proc_macro2::TokenStream;
 use quote::{ToTokens, quote};
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
-use syn::{Ident, Type, WherePredicate, parse2};
+use syn::{Ident, Type, WherePredicate, parse_quote, parse2};
 
 use crate::cgp_fn::{UseTypeIdent, UseTypeSpec};
 
@@ -13,7 +13,13 @@ pub fn derive_use_type_predicates(specs: &[UseTypeSpec]) -> syn::Result<Vec<Wher
         let type_equalities = find_type_equalities(use_type, specs)?;
 
         let trait_path = &use_type.trait_path;
-        let context_type = &use_type.context_type;
+        let mut context_type = use_type.context_type.clone();
+
+        if context_type != parse_quote!(Self) {
+            if let Some(new_context_type) = find_type_alias(specs, &context_type)? {
+                context_type = new_context_type;
+            }
+        }
 
         if type_equalities.is_empty() {
             predicates.push(parse2(quote! {
@@ -35,6 +41,30 @@ pub fn derive_use_type_predicates(specs: &[UseTypeSpec]) -> syn::Result<Vec<Wher
     }
 
     Ok(predicates)
+}
+
+fn find_type_alias(specs: &[UseTypeSpec], context_type: &Type) -> syn::Result<Option<Type>> {
+    let Ok(context_ident) = parse2::<Ident>(context_type.to_token_stream()) else {
+        return Ok(None);
+    };
+
+    for spec in specs {
+        for ident in spec.type_idents.iter() {
+            if ident.alias_ident() == &context_ident {
+                let new_context_type = &spec.context_type;
+                let type_ident = &ident.type_ident;
+                let trait_path = &spec.trait_path;
+
+                let new_type = parse2(quote! {
+                    <#new_context_type as #trait_path>::#type_ident
+                })?;
+
+                return Ok(Some(new_type));
+            }
+        }
+    }
+
+    Ok(None)
 }
 
 pub fn find_type_equalities(

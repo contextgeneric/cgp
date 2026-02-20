@@ -9,11 +9,12 @@ pub trait HasScalarType {
 
 #[cgp_type]
 pub trait HasTypes {
-    type Types: HasScalarType;
+    type Types;
 }
 
 #[cgp_fn]
 #[use_type(HasTypes::Types, @Types::HasScalarType::Scalar)]
+#[extend_where(Types: HasScalarType)]
 pub fn rectangle_area(&self, #[implicit] width: Scalar, #[implicit] height: Scalar) -> Scalar
 where
     Scalar: Mul<Output = Scalar> + Clone,
@@ -22,9 +23,9 @@ where
     res
 }
 
-pub struct Types;
+pub struct MyTypes;
 
-impl HasScalarType for Types {
+impl HasScalarType for MyTypes {
     type Scalar = f64;
 }
 
@@ -35,8 +36,13 @@ pub struct Rectangle {
 }
 
 impl HasTypes for Rectangle {
-    type Types = Types;
+    type Types = MyTypes;
 }
 
-pub trait CheckRectangle: RectangleArea {}
+pub trait CheckRectangle: RectangleArea
+where
+    Self::Types: HasScalarType,
+{
+}
+
 impl CheckRectangle for Rectangle {}

@@ -5,7 +5,7 @@ use crate::cgp_fn::UseTypeSpec;
 
 pub fn substitute_abstract_types(type_specs: &[UseTypeSpec], body: TokenStream) -> TokenStream {
     let mut out = body;
-    for spec in type_specs {
+    for spec in type_specs.iter().rev() {
         out = substitute_abstract_type(spec, out);
     }
     out

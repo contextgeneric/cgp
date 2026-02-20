@@ -48,6 +48,14 @@ pub fn derive_item_impl(
         }
     }
 
+    if !attributes.extend_where.is_empty() {
+        item_impl
+            .generics
+            .make_where_clause()
+            .predicates
+            .extend(attributes.extend_where.clone());
+    }
+
     if !implicit_args.is_empty() {
         let where_clause = item_impl.generics.make_where_clause();
         let bounds = build_implicit_args_bounds(implicit_args)?;
