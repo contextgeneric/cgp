@@ -15,10 +15,10 @@ pub fn derive_use_type_predicates(specs: &[UseTypeSpec]) -> syn::Result<Vec<Wher
         let trait_path = &use_type.trait_path;
         let mut context_type = use_type.context_type.clone();
 
-        if context_type != parse_quote!(Self) {
-            if let Some(new_context_type) = find_type_alias(specs, &context_type)? {
-                context_type = new_context_type;
-            }
+        if context_type != parse_quote!(Self)
+            && let Some(new_context_type) = find_type_alias(specs, &context_type)?
+        {
+            context_type = new_context_type;
         }
 
         if type_equalities.is_empty() {
