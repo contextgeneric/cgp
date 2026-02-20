@@ -2,21 +2,23 @@ use proc_macro2::TokenStream;
 use quote::{ToTokens, quote};
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
-use syn::{Ident, Type, TypeParamBound, parse2};
+use syn::{Ident, Type, WherePredicate, parse2};
 
 use crate::cgp_fn::{UseTypeIdent, UseTypeSpec};
 
-pub fn derive_use_type_trait_bounds(
-    context_type: &TokenStream,
-    specs: &[UseTypeSpec],
-) -> syn::Result<Vec<TypeParamBound>> {
-    let mut bounds = Vec::new();
+pub fn derive_use_type_predicates(specs: &[UseTypeSpec]) -> syn::Result<Vec<WherePredicate>> {
+    let mut predicates = Vec::new();
 
     for use_type in specs.iter() {
-        let type_equalities = find_type_equalities(use_type, context_type, specs)?;
+        let type_equalities = find_type_equalities(use_type, specs)?;
+
+        let trait_path = &use_type.trait_path;
+        let context_type = &use_type.context_type;
 
         if type_equalities.is_empty() {
-            bounds.push(parse2(use_type.trait_path.to_token_stream())?);
+            predicates.push(parse2(quote! {
+                #context_type: #trait_path
+            })?);
         } else {
             let mut constraints: Punctuated<TokenStream, Comma> = Punctuated::new();
 
@@ -26,21 +28,17 @@ pub fn derive_use_type_trait_bounds(
                 });
             }
 
-            let trait_path = &use_type.trait_path;
-            let bound = quote! {
-                #trait_path < #constraints >
-            };
-
-            bounds.push(parse2(bound)?);
+            predicates.push(parse2(quote! {
+                #context_type: #trait_path < #constraints >
+            })?);
         }
     }
 
-    Ok(bounds)
+    Ok(predicates)
 }
 
 pub fn find_type_equalities(
     current_spec: &UseTypeSpec,
-    context_type: &TokenStream,
     specs: &[UseTypeSpec],
 ) -> syn::Result<Vec<(Ident, Type)>> {
     let mut equalities = Vec::new();
@@ -48,9 +46,7 @@ pub fn find_type_equalities(
     for current_type_ident in current_spec.type_idents.iter() {
         forbid_same_alias(current_type_ident, current_spec, specs)?;
 
-        if let Some(equality) =
-            find_type_equality(context_type, current_type_ident, current_spec, specs)?
-        {
+        if let Some(equality) = find_type_equality(current_type_ident, current_spec, specs)? {
             equalities.push(equality);
         }
     }
@@ -83,7 +79,6 @@ fn forbid_same_alias(
 }
 
 fn find_type_equality(
-    context_type: &TokenStream,
     current_ident: &UseTypeIdent,
     current_spec: &UseTypeSpec,
     specs: &[UseTypeSpec],
@@ -101,6 +96,7 @@ fn find_type_equality(
                     let trait_path = &spec.trait_path;
                     let current_type_ident = &current_ident.type_ident;
                     let match_type_ident = &match_use_type.type_ident;
+                    let context_type = &spec.context_type;
 
                     let equal_target: Type = parse2(quote! {
                         <#context_type as #trait_path>::#match_type_ident

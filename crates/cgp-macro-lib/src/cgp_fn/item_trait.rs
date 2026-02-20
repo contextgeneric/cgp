@@ -1,7 +1,7 @@
 use quote::{ToTokens, quote};
 use syn::{Generics, Ident, ItemFn, ItemTrait, TraitItemFn, parse2};
 
-use crate::cgp_fn::{FunctionAttributes, UseTypeSpec, substitute_abstract_type};
+use crate::cgp_fn::{FunctionAttributes, UseTypeSpec, substitute_abstract_types};
 
 pub fn derive_item_trait(
     trait_ident: &Ident,
@@ -37,8 +37,7 @@ pub fn expand_use_type_attributes_on_trait(
     item_trait: &ItemTrait,
     use_type_specs: &[UseTypeSpec],
 ) -> syn::Result<ItemTrait> {
-    let mut item_trait: ItemTrait = parse2(substitute_abstract_type(
-        &quote! { Self },
+    let mut item_trait: ItemTrait = parse2(substitute_abstract_types(
         use_type_specs,
         item_trait.to_token_stream(),
     ))?;

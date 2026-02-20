@@ -3,11 +3,15 @@ use quote::quote;
 
 use crate::cgp_fn::UseTypeSpec;
 
-pub fn substitute_abstract_type(
-    context_type: &TokenStream,
-    type_specs: &[UseTypeSpec],
-    body: TokenStream,
-) -> TokenStream {
+pub fn substitute_abstract_types(type_specs: &[UseTypeSpec], body: TokenStream) -> TokenStream {
+    let mut out = body;
+    for spec in type_specs {
+        out = substitute_abstract_type(spec, out);
+    }
+    out
+}
+
+pub fn substitute_abstract_type(type_specs: &UseTypeSpec, body: TokenStream) -> TokenStream {
     let mut out = TokenStream::new();
     let mut last_token_was_colon = false;
     let mut last_two_tokens_was_colon = false;
@@ -23,28 +27,20 @@ pub fn substitute_abstract_type(
 
         match token_tree {
             TokenTree::Group(group) => {
-                let new_stream = substitute_abstract_type(context_type, type_specs, group.stream());
+                let new_stream = substitute_abstract_type(type_specs, group.stream());
                 out.extend([TokenTree::Group(Group::new(group.delimiter(), new_stream))]);
             }
             TokenTree::Ident(ident) => {
-                let mut replaced_ident = false;
+                if !last_two_tokens_was_colon
+                    && let Some(replacement_ident) = type_specs.replace_ident(&ident)
+                {
+                    let trait_path = &type_specs.trait_path;
+                    let context_type = &type_specs.context_type;
 
-                for type_spec in type_specs {
-                    if !last_two_tokens_was_colon
-                        && let Some(replacement_ident) = type_spec.replace_ident(&ident)
-                    {
-                        let trait_path = &type_spec.trait_path;
-
-                        out.extend(quote! {
-                            < #context_type as #trait_path > :: #replacement_ident
-                        });
-
-                        replaced_ident = true;
-                        break;
-                    }
-                }
-
-                if !replaced_ident {
+                    out.extend(quote! {
+                        < #context_type as #trait_path > :: #replacement_ident
+                    });
+                } else {
                     out.extend([TokenTree::Ident(ident)]);
                 }
             }

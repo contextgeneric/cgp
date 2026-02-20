@@ -1,10 +1,11 @@
 use syn::parse::{Parse, ParseStream};
-use syn::token::{As, Brace, Colon, Comma, Eq, Gt, Lt};
-use syn::{Ident, Type, braced};
+use syn::token::{As, At, Brace, Colon, Comma, Eq, Gt, Lt};
+use syn::{Ident, Type, braced, parse_quote};
 
 use crate::parse::SimpleType;
 
 pub struct UseTypeSpec {
+    pub context_type: Type,
     pub trait_path: SimpleType,
     pub type_idents: Vec<UseTypeIdent>,
 }
@@ -37,6 +38,13 @@ impl UseTypeIdent {
 
 impl Parse for UseTypeSpec {
     fn parse(input: ParseStream) -> syn::Result<Self> {
+        let context_type: Type = if input.peek(At) {
+            let _: At = input.parse()?;
+            input.parse()?
+        } else {
+            parse_quote! { Self }
+        };
+
         let trait_path = if input.peek(Lt) {
             let _: Lt = input.parse()?;
             let trait_path: SimpleType = input.parse()?;
@@ -70,6 +78,7 @@ impl Parse for UseTypeSpec {
         };
 
         Ok(Self {
+            context_type,
             trait_path,
             type_idents,
         })
