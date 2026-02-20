@@ -1,6 +1,7 @@
 pub mod basic;
 pub mod call;
 pub mod extend;
+pub mod foreign_type;
 pub mod generics;
 pub mod multi;
 pub mod mutable;
