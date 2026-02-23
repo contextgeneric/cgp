@@ -2,11 +2,13 @@ use proc_macro2::TokenStream;
 use quote::quote;
 use syn::punctuated::Punctuated;
 use syn::token::Plus;
+use syn::visit_mut::visit_item_impl_mut;
 use syn::{ItemImpl, TypeParamBound, parse2};
 
 use crate::cgp_fn::{apply_use_type_attributes_to_item_impl, build_implicit_args_bounds};
 use crate::cgp_impl::attributes::parse_impl_attributes;
 use crate::cgp_impl::provider_bounds::derive_provider_bounds;
+use crate::cgp_impl::provider_call::TransformProviderCallVisitor;
 use crate::cgp_impl::{ImplProviderSpec, derive_provider_impl, implicit_args};
 use crate::derive_provider::{
     derive_component_name_from_provider_impl, derive_is_provider_for, derive_provider_struct,
@@ -47,6 +49,12 @@ pub fn derive_cgp_impl(
             .push(parse2(quote! {
                 Self: #bounds
             })?);
+    }
+
+    let mut visitor = TransformProviderCallVisitor::default();
+    visit_item_impl_mut(&mut visitor, &mut item_impl);
+    if let Some(err) = visitor.error {
+        return Err(err);
     }
 
     let (context_type, mut provider_impl) = derive_provider_impl(&spec.provider_type, item_impl)?;
