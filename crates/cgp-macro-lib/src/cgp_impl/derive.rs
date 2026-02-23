@@ -6,6 +6,7 @@ use syn::{ItemImpl, TypeParamBound, parse2};
 
 use crate::cgp_fn::{apply_use_type_attributes_to_item_impl, build_implicit_args_bounds};
 use crate::cgp_impl::attributes::parse_impl_attributes;
+use crate::cgp_impl::provider_bounds::derive_provider_bounds;
 use crate::cgp_impl::{ImplProviderSpec, derive_provider_impl, implicit_args};
 use crate::derive_provider::{
     derive_component_name_from_provider_impl, derive_is_provider_for, derive_provider_struct,
@@ -48,7 +49,7 @@ pub fn derive_cgp_impl(
             })?);
     }
 
-    let provider_impl = derive_provider_impl(&spec.provider_type, item_impl)?;
+    let (context_type, mut provider_impl) = derive_provider_impl(&spec.provider_type, item_impl)?;
 
     let component_type = match &spec.component_type {
         Some(component_type) => component_type.clone(),
@@ -56,6 +57,15 @@ pub fn derive_cgp_impl(
     };
 
     let is_provider_for_impl: ItemImpl = derive_is_provider_for(&component_type, &provider_impl)?;
+
+    if !attributes.use_provider.is_empty() {
+        let where_clause = provider_impl.generics.make_where_clause();
+
+        for spec in attributes.use_provider.iter() {
+            let provider_bounds = derive_provider_bounds(&context_type, spec)?;
+            where_clause.predicates.push(provider_bounds);
+        }
+    }
 
     let provider_struct = if spec.new_struct {
         Some(derive_provider_struct(&provider_impl)?)

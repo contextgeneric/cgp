@@ -5,6 +5,7 @@ use syn::punctuated::Punctuated;
 use syn::token::Comma;
 
 use crate::cgp_fn::UseTypeSpec;
+use crate::cgp_impl::use_provider::UseProviderSpec;
 use crate::parse::SimpleType;
 
 pub fn parse_impl_attributes(attributes: &mut Vec<Attribute>) -> syn::Result<ImplAttributes> {
@@ -22,6 +23,10 @@ pub fn parse_impl_attributes(attributes: &mut Vec<Attribute>) -> syn::Result<Imp
                 let use_type = attribute
                     .parse_args_with(Punctuated::<UseTypeSpec, Comma>::parse_terminated)?;
                 parsed_attributes.use_type.extend(use_type);
+            } else if ident == "use_provider" {
+                let use_provider = attribute
+                    .parse_args_with(Punctuated::<UseProviderSpec, Comma>::parse_terminated)?;
+                parsed_attributes.use_provider.extend(use_provider);
             } else {
                 attributes.push(attribute);
             }
@@ -37,4 +42,5 @@ pub fn parse_impl_attributes(attributes: &mut Vec<Attribute>) -> syn::Result<Imp
 pub struct ImplAttributes {
     pub uses: Vec<SimpleType>,
     pub use_type: Vec<UseTypeSpec>,
+    pub use_provider: Vec<UseProviderSpec>,
 }
