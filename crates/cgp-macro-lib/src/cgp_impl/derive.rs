@@ -1,8 +1,9 @@
 use proc_macro2::TokenStream;
 use quote::quote;
 use syn::punctuated::Punctuated;
+use syn::spanned::Spanned;
 use syn::token::Plus;
-use syn::{ItemImpl, TypeParamBound, parse_quote, parse2};
+use syn::{Error, ItemImpl, TypeParamBound, parse_quote, parse2};
 
 use crate::cgp_fn::{apply_use_type_attributes_to_item_impl, build_implicit_args_bounds};
 use crate::cgp_impl::attributes::parse_impl_attributes;
@@ -62,6 +63,13 @@ pub fn derive_cgp_impl(
     }
 
     if spec.provider_type == parse_quote! { Self } {
+        if item_impl.trait_.is_none() {
+            return Err(Error::new(
+                item_impl.span(),
+                "Expected context type to be specified",
+            ));
+        }
+
         Ok(quote! {
             #item_impl
         })
