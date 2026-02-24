@@ -2,13 +2,12 @@ use proc_macro2::TokenStream;
 use quote::quote;
 use syn::punctuated::Punctuated;
 use syn::token::Plus;
-use syn::visit_mut::visit_item_impl_mut;
-use syn::{ItemImpl, TypeParamBound, parse2};
+use syn::{ItemImpl, TypeParamBound, parse_quote, parse2};
 
 use crate::cgp_fn::{apply_use_type_attributes_to_item_impl, build_implicit_args_bounds};
 use crate::cgp_impl::attributes::parse_impl_attributes;
 use crate::cgp_impl::provider_bounds::derive_provider_bounds;
-use crate::cgp_impl::provider_call::TransformProviderCallVisitor;
+use crate::cgp_impl::provider_call::transform_provider_call;
 use crate::cgp_impl::{ImplProviderSpec, derive_provider_impl, implicit_args};
 use crate::derive_provider::{
     derive_component_name_from_provider_impl, derive_is_provider_for, derive_provider_struct,
@@ -51,41 +50,44 @@ pub fn derive_cgp_impl(
             })?);
     }
 
-    let mut visitor = TransformProviderCallVisitor::default();
-    visit_item_impl_mut(&mut visitor, &mut item_impl);
-    if let Some(err) = visitor.error {
-        return Err(err);
-    }
-
-    let (context_type, mut provider_impl) = derive_provider_impl(&spec.provider_type, item_impl)?;
-
-    let component_type = match &spec.component_type {
-        Some(component_type) => component_type.clone(),
-        None => derive_component_name_from_provider_impl(&provider_impl)?,
-    };
-
-    let is_provider_for_impl: ItemImpl = derive_is_provider_for(&component_type, &provider_impl)?;
-
     if !attributes.use_provider.is_empty() {
-        let where_clause = provider_impl.generics.make_where_clause();
+        let where_clause = item_impl.generics.make_where_clause();
 
         for spec in attributes.use_provider.iter() {
-            let provider_bounds = derive_provider_bounds(&context_type, spec)?;
+            let provider_bounds = derive_provider_bounds(&parse_quote! { Self }, spec)?;
             where_clause.predicates.push(provider_bounds);
         }
+
+        transform_provider_call(&mut item_impl)?;
     }
 
-    let provider_struct = if spec.new_struct {
-        Some(derive_provider_struct(&provider_impl)?)
+    if spec.provider_type == parse_quote! { Self } {
+        Ok(quote! {
+            #item_impl
+        })
     } else {
-        None
-    };
+        let (_context_type, provider_impl) = derive_provider_impl(&spec.provider_type, item_impl)?;
 
-    Ok(quote! {
-        #provider_struct
+        let component_type = match &spec.component_type {
+            Some(component_type) => component_type.clone(),
+            None => derive_component_name_from_provider_impl(&provider_impl)?,
+        };
 
-        #provider_impl
+        let is_provider_for_impl: ItemImpl =
+            derive_is_provider_for(&component_type, &provider_impl)?;
 
-        #is_provider_for_impl
-    })
+        let provider_struct = if spec.new_struct {
+            Some(derive_provider_struct(&provider_impl)?)
+        } else {
+            None
+        };
+
+        Ok(quote! {
+            #provider_struct
+
+            #provider_impl
+
+            #is_provider_for_impl
+        })
+    }
 }

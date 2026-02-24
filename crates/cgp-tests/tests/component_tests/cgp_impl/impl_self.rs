@@ -1,7 +1,7 @@
 use cgp::prelude::*;
 
 #[cgp_component(AreaCalculator)]
-pub trait HasArea {
+pub trait CanCalculateArea {
     fn area(&self) -> f64;
 }
 
@@ -18,9 +18,9 @@ pub struct Rectangle {
     pub height: f64,
 }
 
-#[cgp_impl(Rectangle)]
+#[cgp_impl(Self)]
 #[use_provider(RectangleArea: AreaCalculator)]
-impl AreaCalculator for Rectangle {
+impl CanCalculateArea for Rectangle {
     fn area(&self) -> f64 {
         #[use_provider(RectangleArea)]
         self.area()
