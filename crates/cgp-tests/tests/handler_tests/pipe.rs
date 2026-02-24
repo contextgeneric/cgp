@@ -35,7 +35,6 @@ pub fn test_pipe_computers() {
         }
     }
 
-    #[cgp_context]
     #[derive(HasField)]
     pub struct MyContext {
         pub foo: u64,
@@ -44,7 +43,7 @@ pub fn test_pipe_computers() {
     }
 
     delegate_components! {
-        MyContextComponents {
+        MyContext {
             ComputerComponent:
                 PipeHandlers<
                     Product! [
@@ -104,7 +103,6 @@ pub fn test_pipe_handlers() {
         }
     }
 
-    #[cgp_context]
     #[derive(HasField)]
     pub struct MyContext {
         pub foo: u64,
@@ -113,7 +111,7 @@ pub fn test_pipe_handlers() {
     }
 
     delegate_components! {
-        MyContextComponents {
+        MyContext {
             ErrorTypeProviderComponent: UseType<Infallible>,
             HandlerComponent:
                 PipeHandlers<

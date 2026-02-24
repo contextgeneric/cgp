@@ -13,17 +13,16 @@ pub fn test_component_with_const() {
         const CONSTANT: u64 = CONSTANT;
     }
 
-    #[cgp_context]
     pub struct MyContext;
 
     delegate_and_check_components! {
         CanUseMyContext for MyContext;
-        MyContextComponents {
+        MyContext {
             ConstantGetterComponent: UseConstant<42>,
         }
     }
 
-    assert_eq!(MyContext::CONSTANT, 42);
+    assert_eq!(<MyContext as HasConstant>::CONSTANT, 42);
 }
 
 pub fn test_component_with_generic_const() {
@@ -47,11 +46,10 @@ pub fn test_component_with_generic_const() {
         const CONSTANT: u64 = CONSTANT;
     }
 
-    #[cgp_context]
     pub struct MyContext;
 
     delegate_components! {
-        MyContextComponents {
+        MyContext {
             UnitTypeProviderComponent: UseType<u64>,
             ConstantGetterComponent: UseConstant<42>,
         }
@@ -63,5 +61,5 @@ pub fn test_component_with_generic_const() {
         }
     }
 
-    assert_eq!(MyContext::CONSTANT, 42);
+    assert_eq!(<MyContext as HasConstant>::CONSTANT, 42);
 }

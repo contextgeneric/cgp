@@ -98,7 +98,6 @@ fn test_deeply_nested_getter() {
         pub name: String,
     }
 
-    #[cgp_context]
     #[derive(HasField)]
     pub struct MyContext {
         pub a: A,
@@ -111,7 +110,7 @@ fn test_deeply_nested_getter() {
 
     delegate_and_check_components! {
         CanUseMyContext for MyContext;
-        MyContextComponents {
+        MyContext {
             NameGetterComponent: WithProvider<
                 ChainGetters<Product![
                     UseField<Symbol!("a")>,

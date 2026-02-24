@@ -34,13 +34,7 @@ pub fn derive_component_with_ast(
         context_type,
     )?;
 
-    let consumer_impl = derive_consumer_impl(
-        &consumer_trait,
-        provider_name,
-        context_type,
-        component_name,
-        component_params,
-    )?;
+    let consumer_impl = derive_consumer_impl(&consumer_trait, provider_name, context_type)?;
 
     let provider_impl = derive_provider_impl(
         context_type,

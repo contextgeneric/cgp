@@ -8,14 +8,13 @@ pub fn test_mref_getter() {
         fn foo(&self) -> MRef<'_, String>;
     }
 
-    #[cgp_context]
     #[derive(HasField)]
     pub struct App {
         pub bar: String,
     }
 
     delegate_components! {
-        AppComponents {
+        App {
             FooGetterComponent: UseField<Symbol!("bar")>,
         }
     }

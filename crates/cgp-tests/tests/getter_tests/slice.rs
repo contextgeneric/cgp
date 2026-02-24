@@ -7,14 +7,13 @@ pub fn test_slice_getter() {
         fn foo(&self) -> &[u8];
     }
 
-    #[cgp_context]
     #[derive(HasField)]
     pub struct App {
         pub bar: Vec<u8>,
     }
 
     delegate_components! {
-        AppComponents {
+        App {
             FooGetterComponent: UseField<Symbol!("bar")>,
         }
     }

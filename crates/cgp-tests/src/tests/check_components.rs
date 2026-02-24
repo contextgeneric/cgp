@@ -30,7 +30,6 @@ pub fn test_basic_check_components() {
         fn foo(&self, _tag: PhantomData<(I, J)>) -> &Self::Bar;
     }
 
-    #[cgp_context]
     #[derive(HasField)]
     pub struct Context {
         pub dummy: (),
@@ -38,7 +37,7 @@ pub fn test_basic_check_components() {
     }
 
     delegate_components! {
-        ContextComponents {
+        Context {
             [
                 FooTypeProviderComponent,
                 BarTypeProviderComponent,
@@ -135,14 +134,13 @@ pub fn test_generic_check_components() {
         fn foo(&self, _tag: PhantomData<(I, J)>) -> &Self::Bar;
     }
 
-    #[cgp_context]
     #[derive(HasField)]
     pub struct Context {
         pub dummy: (),
     }
 
     delegate_components! {
-        ContextComponents {
+        Context {
             [
                 FooTypeProviderComponent,
                 BarTypeProviderComponent,

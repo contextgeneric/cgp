@@ -12,14 +12,13 @@ pub fn test_clone_getter() {
         fn name(&self) -> Self::Name;
     }
 
-    #[cgp_context]
     #[derive(HasField)]
     pub struct App {
         pub name: String,
     }
 
     delegate_components! {
-        AppComponents {
+        App {
             NameTypeProviderComponent: UseType<String>,
             NameGetterComponent: UseField<Symbol!("name")>,
         }
@@ -44,14 +43,13 @@ pub fn test_clone_auto_getter() {
         fn name(&self) -> Self::Name;
     }
 
-    #[cgp_context]
     #[derive(HasField)]
     pub struct App {
         pub name: String,
     }
 
     delegate_components! {
-        AppComponents {
+        App {
             NameTypeProviderComponent: UseType<String>,
         }
     }

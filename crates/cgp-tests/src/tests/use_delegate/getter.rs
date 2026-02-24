@@ -28,7 +28,6 @@ pub trait HasFooAt<I, J>: HasFooTypeAt<I, J> {
 
 #[test]
 pub fn test_derive_delegate() {
-    #[cgp_context]
     #[derive(HasField)]
     pub struct MyContext {
         pub foo: u64,
@@ -36,7 +35,7 @@ pub fn test_derive_delegate() {
     }
 
     delegate_components! {
-        MyContextComponents {
+        MyContext {
             FooTypeProviderAtComponent: UseDelegate<
                 new FooTypes {
                     Index<1>: UseType<u64>,
@@ -72,7 +71,6 @@ pub fn test_derive_delegate() {
 
 #[test]
 pub fn test_derive_delegate2() {
-    #[cgp_context]
     #[derive(HasField)]
     pub struct MyContext {
         pub foo: u64,
@@ -80,7 +78,7 @@ pub fn test_derive_delegate2() {
     }
 
     delegate_components! {
-        MyContextComponents {
+        MyContext {
             FooTypeProviderAtComponent: UseDelegate2<
                 new FooTypes {
                     (Index<1>, Index<0>): UseType<u64>,

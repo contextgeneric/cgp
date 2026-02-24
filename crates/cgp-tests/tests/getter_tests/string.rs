@@ -7,14 +7,13 @@ pub fn test_string_getter() {
         fn foo(&self) -> &str;
     }
 
-    #[cgp_context]
     #[derive(HasField)]
     pub struct App {
         pub bar: String,
     }
 
     delegate_components! {
-        AppComponents {
+        App {
             FooGetterComponent: UseField<Symbol!("bar")>,
         }
     }
@@ -33,14 +32,13 @@ pub fn test_string_getter_with_custom_name() {
         fn foo(&self) -> &str;
     }
 
-    #[cgp_context]
     #[derive(HasField)]
     pub struct App {
         pub bar: String,
     }
 
     delegate_components! {
-        AppComponents {
+        App {
             GetStringComponent: UseField<Symbol!("bar")>,
         }
     }
@@ -62,14 +60,13 @@ pub fn test_string_getter_with_custom_spec() {
         fn foo(&self) -> &str;
     }
 
-    #[cgp_context]
     #[derive(HasField)]
     pub struct App {
         pub bar: String,
     }
 
     delegate_components! {
-        AppComponents {
+        App {
             GetStringComp: UseField<Symbol!("bar")>,
         }
     }

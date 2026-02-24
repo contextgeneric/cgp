@@ -80,11 +80,10 @@ pub fn build_baz() -> bool {
     true
 }
 
-#[cgp_context]
 pub struct App;
 
 delegate_components! {
-    AppComponents {
+    App {
         ErrorTypeProviderComponent: UseType<Infallible>,
     }
 }

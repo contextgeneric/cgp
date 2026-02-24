@@ -7,7 +7,7 @@ use crate::preset_tests::nested_inheritance::preset_d::{
     CheckDelegatesForNestedPresetD, NestedPresetD,
 };
 
-#[cgp_context(MyContextComponents: NestedPresetD)]
+#[cgp_inherit(NestedPresetD)]
 #[derive(HasField)]
 pub struct MyContext {
     pub fool: (),
@@ -23,4 +23,4 @@ check_components! {
     }
 }
 
-impl CheckDelegatesForNestedPresetD for MyContextComponents {}
+impl CheckDelegatesForNestedPresetD for MyContext {}

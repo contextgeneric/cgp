@@ -5,7 +5,7 @@ use crate::preset_tests::basic::components::{
 };
 use crate::preset_tests::inheritance::preset_b::{CheckDelegatesForMyPresetB, MyPresetB};
 
-#[cgp_context(MyContextComponents: MyPresetB)]
+#[cgp_inherit(MyPresetB)]
 #[derive(HasField)]
 pub struct MyContext {
     pub foo: (),
@@ -21,4 +21,4 @@ check_components! {
     }
 }
 
-impl CheckDelegatesForMyPresetB for MyContextComponents {}
+impl CheckDelegatesForMyPresetB for MyContext {}

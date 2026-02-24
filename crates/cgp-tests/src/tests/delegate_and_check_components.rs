@@ -13,7 +13,6 @@ pub fn test_basic_delegate_and_check_components() {
         fn name(&self) -> &Self::Name;
     }
 
-    #[cgp_context]
     #[derive(HasField)]
     pub struct MyContext {
         pub name: String,
@@ -21,7 +20,7 @@ pub fn test_basic_delegate_and_check_components() {
 
     delegate_and_check_components! {
         CanUseMyContext for MyContext;
-        MyContextComponents {
+        MyContext {
             NameTypeProviderComponent: UseType<String>,
             NameGetterComponent: UseField<Symbol!("name")>,
         }
@@ -39,7 +38,6 @@ pub fn test_generic_delegate_and_check_components() {
         fn name(&self) -> &Self::Name;
     }
 
-    #[cgp_context(MyContextComponents<T>)]
     #[derive(HasField)]
     pub struct MyContext<T> {
         pub name: T,
@@ -48,7 +46,7 @@ pub fn test_generic_delegate_and_check_components() {
     delegate_and_check_components! {
         <T>
         CanUseMyContext for MyContext<T>;
-        MyContextComponents<T> {
+        MyContext<T> {
             NameTypeProviderComponent: UseType<T>,
             NameGetterComponent: UseField<Symbol!("name")>,
         }

@@ -5,7 +5,7 @@ use crate::preset_tests::basic::components::{
 };
 use crate::preset_tests::basic::preset::{CheckDelegatesForMyPreset, MyPreset};
 
-#[cgp_context(MyContextComponents: MyPreset)]
+#[cgp_inherit(MyPreset)]
 #[derive(HasField)]
 pub struct MyContext {
     pub foo: (),
@@ -13,7 +13,7 @@ pub struct MyContext {
 }
 
 delegate_components! {
-    MyContextComponents {
+    MyContext {
         BarGetterComponent: UseField<Symbol!("bar")>,
     }
 }
@@ -27,4 +27,4 @@ check_components! {
     }
 }
 
-impl CheckDelegatesForMyPreset for MyContextComponents {}
+impl CheckDelegatesForMyPreset for MyContext {}

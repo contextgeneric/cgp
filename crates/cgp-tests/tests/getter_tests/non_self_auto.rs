@@ -15,7 +15,6 @@ pub trait HasFooBar: HasFooType + HasBarType {
     fn foo_bar(foo: &Self::Foo) -> &Self::Bar;
 }
 
-#[cgp_context]
 pub struct App;
 
 #[derive(HasField)]
@@ -24,7 +23,7 @@ pub struct Foo {
 }
 
 delegate_components! {
-    AppComponents {
+    App {
         FooTypeProviderComponent:
             UseType<Foo>,
         BarTypeProviderComponent:

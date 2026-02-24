@@ -5,7 +5,7 @@ use crate::preset_tests::generics::components::{
 };
 use crate::preset_tests::generics::preset::MyGenericPreset;
 
-#[cgp_context(MyContextComponents<T>: MyGenericPreset<T>)]
+#[cgp_inherit(MyGenericPreset<T>)]
 #[derive(HasField)]
 pub struct MyContext<T> {
     pub foo: T,

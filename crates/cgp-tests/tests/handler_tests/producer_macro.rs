@@ -7,11 +7,11 @@ use futures::executor::block_on;
 pub fn magic_number() -> u64 {
     42
 }
-#[cgp_context]
+
 pub struct App;
 
 delegate_components! {
-    AppComponents {
+    App {
         ErrorTypeProviderComponent:
             UseType<String>,
     }

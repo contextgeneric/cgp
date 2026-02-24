@@ -185,11 +185,10 @@ fn test_dispatch_contains() {
     >::compute(&(), PhantomData::<()>, (circle, (1.0, 2.0)));
 }
 
-#[cgp_context]
 pub struct App;
 
 delegate_components! {
-    AppComponents {
+    App {
         ComputerComponent: UseInputDelegate<new AreaComputers {
             [
                 Circle,

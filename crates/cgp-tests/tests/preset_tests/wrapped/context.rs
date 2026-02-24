@@ -5,11 +5,10 @@ use cgp::prelude::*;
 
 use crate::preset_tests::wrapped::preset::{BoxError, ErrorHandlerPreset};
 
-#[cgp_context]
 pub struct MyContext;
 
 delegate_components! {
-    MyContextComponents {
+    MyContext {
         ErrorTypeProviderComponent:
             UseType<BoxError>,
         ErrorRaiserComponent:

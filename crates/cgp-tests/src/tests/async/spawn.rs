@@ -127,7 +127,6 @@ where
 
 // An example App context that has Send-safe implementationsS
 
-#[cgp_context]
 #[derive(Clone)]
 pub struct App;
 
@@ -135,7 +134,7 @@ pub struct ActionA;
 pub struct ActionB;
 
 delegate_components! {
-    AppComponents {
+    App {
         ErrorTypeProviderComponent:
             UseType<Infallible>,
         [
@@ -162,7 +161,7 @@ delegate_components! {
 // With the concrete context known, the Send bound can be found in the concrete future.
 
 #[cgp_provider]
-impl SendRunner<App, ActionA> for AppComponents {
+impl SendRunner<App, ActionA> for App {
     async fn send_run(context: &App, code: PhantomData<ActionA>) -> Result<(), Infallible> {
         context.run(code).await
     }

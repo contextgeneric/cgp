@@ -3,9 +3,8 @@ use alloc::vec::Vec;
 
 use proc_macro2::Span;
 use quote::{ToTokens, quote};
-use syn::punctuated::Punctuated;
 use syn::spanned::Spanned;
-use syn::token::{Brace, Comma, Eq, For, Impl};
+use syn::token::{Brace, Eq, For, Impl};
 use syn::{
     Error, GenericParam, Generics, Ident, ImplItem, ImplItemConst, ItemImpl, ItemTrait, Path,
     TraitItem, TypeParamBound, Visibility, parse2,
@@ -18,8 +17,6 @@ pub fn derive_consumer_impl(
     consumer_trait: &ItemTrait,
     provider_name: &Ident,
     context_type: &Ident,
-    component_name: &Ident,
-    component_params: &Punctuated<Ident, Comma>,
 ) -> syn::Result<ItemImpl> {
     let consumer_name = &consumer_trait.ident;
 
@@ -63,32 +60,13 @@ pub fn derive_consumer_impl(
         }
 
         {
-            let has_component_constraint: TypeParamBound = parse2(quote! {
-                DelegateComponent< #component_name < #component_params > >
-            })?;
-
             let provider_constraint: TypeParamBound = parse2(quote! {
                 #provider_name < #provider_type_generics >
             })?;
 
-            match &mut generics.where_clause {
-                Some(where_clause) => {
-                    where_clause.predicates.push(parse2(quote! {
-                        #context_type : #has_component_constraint
-                    })?);
-
-                    where_clause.predicates.push(parse2(quote! {
-                        #context_type :: Delegate : #provider_constraint
-                    })?);
-                }
-                _ => {
-                    generics.where_clause = Some(parse2(quote! {
-                        where
-                            #context_type : #has_component_constraint,
-                            #context_type :: Delegate : #provider_constraint
-                    })?);
-                }
-            }
+            generics.make_where_clause().predicates.push(parse2(quote! {
+                #context_type : #provider_constraint
+            })?);
         }
 
         generics
@@ -99,10 +77,8 @@ pub fn derive_consumer_impl(
     for trait_item in consumer_trait.items.iter() {
         match trait_item {
             TraitItem::Fn(trait_fn) => {
-                let impl_fn = derive_delegated_fn_impl(
-                    &trait_fn.sig,
-                    &parse2(quote!(#context_type :: Delegate))?,
-                )?;
+                let impl_fn =
+                    derive_delegated_fn_impl(&trait_fn.sig, &parse2(quote!(#context_type))?)?;
 
                 impl_items.push(ImplItem::Fn(impl_fn));
             }
@@ -124,7 +100,7 @@ pub fn derive_consumer_impl(
                 let impl_type = derive_delegate_type_impl(
                     trait_type,
                     parse2(quote!(
-                        < #context_type :: Delegate as #provider_name < #provider_type_generics > > :: #type_name #type_generics
+                        < #context_type as #provider_name < #provider_type_generics > > :: #type_name #type_generics
                     ))?,
                 );
 
@@ -135,7 +111,7 @@ pub fn derive_consumer_impl(
                 let (_, type_generics, _) = trait_item_const.generics.split_for_impl();
 
                 let impl_expr = parse2(quote! {
-                    < #context_type :: Delegate as #provider_name < #provider_type_generics > > :: #const_ident #type_generics
+                    < #context_type as #provider_name < #provider_type_generics > > :: #const_ident #type_generics
                 })?;
 
                 let impl_item_const = ImplItemConst {

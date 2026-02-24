@@ -16,11 +16,10 @@ fn add_with_error(a: u64, b: u64) -> Result<u64, String> {
     a.checked_add(b).ok_or_else(|| "Overflow".to_string())
 }
 
-#[cgp_context]
 pub struct App;
 
 delegate_components! {
-    AppComponents {
+    App {
         ErrorTypeProviderComponent:
             UseType<String>,
         ErrorRaiserComponent:
