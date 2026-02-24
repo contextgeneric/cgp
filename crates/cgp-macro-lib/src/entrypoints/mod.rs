@@ -1,7 +1,6 @@
 mod blanket_trait;
 mod cgp_auto_getter;
 mod cgp_component;
-mod cgp_context;
 mod cgp_data;
 mod cgp_fn;
 mod cgp_getter;
@@ -26,7 +25,6 @@ mod replace_with;
 pub use blanket_trait::*;
 pub use cgp_auto_getter::*;
 pub use cgp_component::*;
-pub use cgp_context::*;
 pub use cgp_data::*;
 pub use cgp_fn::*;
 pub use cgp_getter::*;

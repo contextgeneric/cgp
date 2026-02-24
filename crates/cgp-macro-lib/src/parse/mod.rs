@@ -1,6 +1,5 @@
 mod check_components;
 mod component_spec;
-mod context_spec;
 mod define_preset;
 mod delegate_and_check_components;
 mod delegate_components;
@@ -13,7 +12,6 @@ mod type_spec;
 
 pub use check_components::*;
 pub use component_spec::*;
-pub use context_spec::*;
 pub use define_preset::*;
 pub use delegate_and_check_components::*;
 pub use delegate_components::*;
