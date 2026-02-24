@@ -32,7 +32,6 @@ pub fn test_option_auto_getter() {
         fn foo(&self) -> Option<&String>;
     }
 
-    #[cgp_context]
     #[derive(HasField)]
     pub struct App {
         pub foo: Option<String>,

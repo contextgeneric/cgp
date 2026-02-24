@@ -85,7 +85,6 @@ pub fn test_string_auto_getter() {
         fn foo(&self) -> &str;
     }
 
-    #[cgp_context]
     #[derive(HasField)]
     pub struct App {
         pub foo: String,

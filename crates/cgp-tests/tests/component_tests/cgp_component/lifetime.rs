@@ -15,15 +15,21 @@ where
     }
 }
 
-#[cgp_context]
 pub struct App<'a> {
     pub value: &'a str,
 }
 
-#[cgp_provider]
-impl<'a> ReferenceGetter<'a, App<'a>, str> for AppComponents {
-    fn get_reference(app: &App<'a>) -> &'a str {
-        app.value
+#[cgp_impl(new GetReference)]
+impl<'a> ReferenceGetter<'a, str> for App<'a> {
+    fn get_reference(&self) -> &'a str {
+        self.value
+    }
+}
+
+delegate_components! {
+    <'a> App<'a> {
+        ReferenceGetterComponent:
+            GetReference,
     }
 }
 

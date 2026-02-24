@@ -781,59 +781,17 @@ pub fn cgp_type(attrs: TokenStream, body: TokenStream) -> TokenStream {
 }
 
 /**
-    The `#[cgp_context]` macro is used when defining a CGP context.
-
-    The macro can be used with a struct definition. An optional identifier can be
-    provided to be used as the name of the provider for the context. If not provided,
-    the context provider would be named in the format `{struct_name}Components`.
-
-    The macro generates a struct definition for the context provider, and implements
-    `DelegateComponent` for the context struct to point to the context provider.
-
-    ## Example
-
-    Given the following context definition:
-
-    ```rust,ignore
-    #[cgp_context]
-    pub struct MyApp {
-        name: String,
-    }
-    ```
-
-    would be equivalent to the following fully explicit definition:
-
-    ```rust,ignore
-    #[cgp_context(MyAppComponents)]
-    pub struct MyApp {
-        name: String,
-    }
-    ```
-
-    which would generate the following constructs:
-
-    ```rust,ignore
-    struct MyAppComponents;
-
-    impl<Name> DelegateComponent<Name> for MyApp {
-        type Delegate = MyAppComponents;
-    }
-    ```
-
-    ## Preset Inheritance
-
     The macro also allows the context provider to inherit its component mappings
-    from a specified preset. The preset can be specified following a `:`, after
-    the context provider name is specified.
+    from a specified preset.
 
-    The context provider would implement `DelegateComponent` for all keys in the
+    The context would implement `DelegateComponent` for all keys in the
     preset, with the `Delegate` target pointing to `Preset::Provider`. This is
     done through the `IsPreset` trait generated from the [`cgp_preset!`] macro.
 
     For example, given the following definition:
 
     ```rust,ignore
-    #[cgp_context(MyAppComponents: MyPreset)]
+    #[cgp_inherit(MyPreset)]
     pub struct MyApp {
         name: String,
     }
@@ -842,7 +800,7 @@ pub fn cgp_type(attrs: TokenStream, body: TokenStream) -> TokenStream {
     The following blanket implementation would be generated:
 
     ```rust,ignore
-    impl<Name> DelegateComponent<Name> for MyAppComponents
+    impl<Name> DelegateComponent<Name> for MyApp
     where
         Self: MyPreset::IsPreset<Name>,
     {
@@ -850,13 +808,6 @@ pub fn cgp_type(attrs: TokenStream, body: TokenStream) -> TokenStream {
     }
     ```
 */
-#[proc_macro_attribute]
-pub fn cgp_context(attr: TokenStream, item: TokenStream) -> TokenStream {
-    cgp_macro_lib::cgp_context(attr.into(), item.into())
-        .unwrap_or_else(syn::Error::into_compile_error)
-        .into()
-}
-
 #[proc_macro_attribute]
 pub fn cgp_inherit(attr: TokenStream, item: TokenStream) -> TokenStream {
     cgp_macro_lib::cgp_inherit(attr.into(), item.into())

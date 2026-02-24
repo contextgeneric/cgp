@@ -125,11 +125,10 @@ fn test_downcast() {
     );
 }
 
-#[cgp_context]
 pub struct App;
 
 delegate_components! {
-    AppComponents {
+    App {
         ErrorTypeProviderComponent: UseType<Infallible>,
     }
 }
