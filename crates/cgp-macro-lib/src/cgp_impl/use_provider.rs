@@ -1,6 +1,6 @@
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
-use syn::token::{Colon, Comma};
+use syn::token::{Colon, Plus};
 use syn::{Type, parse_quote};
 
 use crate::parse::SimpleType;
@@ -8,7 +8,7 @@ use crate::parse::SimpleType;
 pub struct UseProviderSpec {
     pub context_type: Type,
     pub provider_type: Type,
-    pub provider_trait_bounds: Punctuated<SimpleType, Comma>,
+    pub provider_trait_bounds: Punctuated<SimpleType, Plus>,
 }
 
 impl Parse for UseProviderSpec {

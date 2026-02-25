@@ -22,3 +22,15 @@ impl<Inner> AreaCalculator {
         base_area * scale_factor * scale_factor
     }
 }
+
+#[derive(HasField)]
+pub struct Rectangle {
+    pub width: f64,
+    pub height: f64,
+}
+
+impl CanCalculateArea for Rectangle {
+    fn area(&self) -> f64 {
+        RectangleArea::area(self)
+    }
+}
