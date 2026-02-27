@@ -10,6 +10,7 @@ use crate::derive_getter::{
 };
 use crate::parse::ComponentSpec;
 use crate::symbol::symbol_from_string;
+use crate::type_component::get_bounds_and_replace_self_assoc_type;
 
 pub fn derive_use_fields_impl(
     spec: &ComponentSpec,
@@ -36,7 +37,7 @@ pub fn derive_use_fields_impl(
             type #field_assoc_type_ident = #field_assoc_type_ident;
         });
 
-        let field_constraints = &field_assoc_type.bounds;
+        let field_constraints = get_bounds_and_replace_self_assoc_type(&field_assoc_type);
 
         provider_generics
             .make_where_clause()
