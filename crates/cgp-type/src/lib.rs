@@ -4,4 +4,4 @@ mod impls;
 mod traits;
 
 pub use impls::{UseDelegatedType, UseType, WithDelegatedType, WithType};
-pub use traits::{HasType, ProvideType, TypeComponent, TypeOf};
+pub use traits::{HasType, TypeOf, TypeProvider, TypeProviderComponent};

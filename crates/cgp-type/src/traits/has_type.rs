@@ -2,8 +2,7 @@ use cgp_component::{DelegateComponent, IsProviderFor, UseContext, UseDelegate};
 use cgp_macro::cgp_component;
 
 #[cgp_component {
-    name: TypeComponent,
-    provider: ProvideType,
+    provider: TypeProvider,
     derive_delegate: UseDelegate<Tag>,
 }]
 pub trait HasType<Tag> {

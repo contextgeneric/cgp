@@ -22,4 +22,4 @@ pub use cgp_macro::{
     cgp_inherit, cgp_new_provider, cgp_preset, cgp_provider, cgp_type, check_components,
     delegate_and_check_components, delegate_components, product, re_export_imports, replace_with,
 };
-pub use cgp_type::{HasType, ProvideType, UseType};
+pub use cgp_type::{HasType, TypeProvider, UseType};

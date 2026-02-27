@@ -107,7 +107,7 @@ pub fn derive_type_providers(
             #provider_trait_name #type_generics
             for WithProvider< __Provider__ >
         where
-            __Provider__: ProvideType< #context_name, #component_name, Type = #type_name >,
+            __Provider__: TypeProvider< #context_name, #component_name, Type = #type_name >,
             #type_name: #type_bounds,
             #predicates
         {

@@ -3,8 +3,8 @@ use core::marker::PhantomData;
 use cgp_component::{IsProviderFor, WithProvider};
 use cgp_macro::cgp_provider;
 
-use crate::TypeComponent;
-use crate::traits::ProvideType;
+use crate::TypeProviderComponent;
+use crate::traits::TypeProvider;
 
 /**
     The `UseType` pattern is used to implement a CGP abstract type with the
@@ -38,7 +38,7 @@ pub struct UseType<Type>(pub PhantomData<Type>);
 
 pub type WithType<Type> = WithProvider<UseType<Type>>;
 
-#[cgp_provider(TypeComponent)]
-impl<Context, Tag, Type> ProvideType<Context, Tag> for UseType<Type> {
+#[cgp_provider(TypeProviderComponent)]
+impl<Context, Tag, Type> TypeProvider<Context, Tag> for UseType<Type> {
     type Type = Type;
 }

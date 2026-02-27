@@ -2,7 +2,7 @@ use core::fmt::Debug;
 
 use cgp_component::{DelegateComponent, IsProviderFor, UseContext, WithProvider};
 use cgp_macro::cgp_type;
-use cgp_type::{ProvideType, UseType};
+use cgp_type::{TypeProvider, UseType};
 
 /**
     The `HasErrorType` trait provides an abstract error type that can be used by
