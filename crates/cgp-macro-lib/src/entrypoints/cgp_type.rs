@@ -2,14 +2,12 @@ use alloc::format;
 use std::collections::BTreeMap;
 
 use proc_macro2::TokenStream;
-use quote::{ToTokens, TokenStreamExt, quote};
+use quote::{ToTokens, quote};
 use syn::{Ident, ItemTrait, parse_quote, parse2};
 
 use crate::derive_component::derive_component_with_ast;
 use crate::parse::{ComponentSpec, Entries};
-use crate::type_component::{
-    derive_type_alias, derive_type_providers, extract_item_type_from_trait,
-};
+use crate::type_component::{derive_type_providers, extract_item_type_from_trait};
 
 pub fn cgp_type(attrs: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
     let mut entries = if let Ok(provider_ident) = parse2::<Ident>(attrs.clone()) {
@@ -34,17 +32,13 @@ pub fn cgp_type(attrs: TokenStream, body: TokenStream) -> syn::Result<TokenStrea
 
     let component = derive_component_with_ast(&spec, consumer_trait)?;
 
-    let alias_type = derive_type_alias(&component.consumer_trait, &spec.context_type, &item_type)?;
-
     let type_provider_impls = derive_type_providers(&spec, &component.provider_trait, &item_type)?;
 
-    let mut out = quote! {
+    let out = quote! {
         #component
 
-        #alias_type
+        #(#type_provider_impls)*
     };
-
-    out.append_all(type_provider_impls);
 
     Ok(out)
 }

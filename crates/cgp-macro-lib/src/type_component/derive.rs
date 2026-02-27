@@ -1,11 +1,8 @@
-use alloc::format;
 use alloc::vec::Vec;
 
 use quote::{ToTokens, quote};
 use syn::spanned::Spanned;
-use syn::{
-    Error, Generics, Ident, ItemImpl, ItemTrait, ItemType, TraitItem, TraitItemType, Type, parse2,
-};
+use syn::{Error, Generics, ItemImpl, ItemTrait, TraitItem, TraitItemType, Type, parse2};
 
 use crate::derive_provider::derive_is_provider_for;
 use crate::parse::ComponentSpec;
@@ -35,30 +32,6 @@ pub fn extract_item_type_from_trait(consumer_trait: &ItemTrait) -> syn::Result<&
             "type trait should contain exactly one associated type item",
         )),
     }
-}
-
-pub fn derive_type_alias(
-    consumer_trait: &ItemTrait,
-    context_name: &Ident,
-    item_type: &TraitItemType,
-) -> syn::Result<ItemType> {
-    let consumer_trait_name = &consumer_trait.ident;
-
-    let (_, type_generics, _) = consumer_trait.generics.split_for_impl();
-
-    let type_generics: Generics = parse2(type_generics.to_token_stream())?;
-
-    let type_generics_params = &type_generics.params;
-
-    let type_name = &item_type.ident;
-    let alias_name = Ident::new(&format!("{type_name}Of"), type_name.span());
-
-    let alias_type: ItemType = parse2(quote! {
-        pub type #alias_name < #context_name, #type_generics_params > =
-            < #context_name as #consumer_trait_name #type_generics > :: #type_name ;
-    })?;
-
-    Ok(alias_type)
 }
 
 pub fn derive_type_providers(

@@ -27,3 +27,5 @@ use cgp_type::{TypeProvider, UseType};
 pub trait HasErrorType {
     type Error: Debug;
 }
+
+pub type ErrorOf<Context> = <Context as HasErrorType>::Error;

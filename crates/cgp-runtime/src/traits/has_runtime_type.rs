@@ -4,3 +4,5 @@ use cgp_core::prelude::*;
 pub trait HasRuntimeType {
     type Runtime;
 }
+
+pub type RuntimeOf<Context> = <Context as HasRuntimeType>::Runtime;
