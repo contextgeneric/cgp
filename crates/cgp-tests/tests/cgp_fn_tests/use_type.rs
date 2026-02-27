@@ -3,8 +3,7 @@ use std::ops::Mul;
 
 use cgp::prelude::*;
 
-// #[cgp_type]
-#[cgp_component(ScalarTypeProvider)]
+#[cgp_type]
 pub trait HasScalarType {
     type Scalar: Mul<Output = Self::Scalar> + Clone;
 }

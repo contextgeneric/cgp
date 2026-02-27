@@ -36,12 +36,7 @@ pub fn cgp_type(attrs: TokenStream, body: TokenStream) -> syn::Result<TokenStrea
 
     let alias_type = derive_type_alias(&component.consumer_trait, &spec.context_type, &item_type)?;
 
-    let type_provider_impls = derive_type_providers(
-        &spec,
-        &component.provider_trait,
-        &component.provider_impl,
-        &item_type,
-    )?;
+    let type_provider_impls = derive_type_providers(&spec, &component.provider_trait, &item_type)?;
 
     let mut out = quote! {
         #component

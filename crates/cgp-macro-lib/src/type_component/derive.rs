@@ -64,7 +64,6 @@ pub fn derive_type_alias(
 pub fn derive_type_providers(
     spec: &ComponentSpec,
     provider_trait: &ItemTrait,
-    provider_impl: &ItemImpl,
     item_type: &TraitItemType,
 ) -> syn::Result<Vec<ItemImpl>> {
     let context_name = &spec.context_type;
@@ -104,15 +103,15 @@ pub fn derive_type_providers(
     let use_type_is_provider_impl = derive_is_provider_for(&component_name, &use_type_impl)?;
 
     let with_provider_impl: ItemImpl = parse2(quote! {
-        impl< __Provider__, #impl_generics_params >
+        impl< __Provider__, #type_name, #impl_generics_params >
             #provider_trait_name #type_generics
             for WithProvider< __Provider__ >
         where
-            __Provider__: ProvideType< #context_name, #component_name >,
-            __Provider__::Type: #type_bounds,
+            __Provider__: ProvideType< #context_name, #component_name, Type = #type_name >,
+            #type_name: #type_bounds,
             #predicates
         {
-            type #type_name = __Provider__::Type;
+            type #type_name = #type_name;
         }
     })?;
 
