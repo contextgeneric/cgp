@@ -2,6 +2,7 @@ use syn::token::Mut;
 use syn::{Ident, Type, TypeParamBound, WherePredicate};
 
 use crate::cgp_fn::UseTypeSpec;
+use crate::cgp_impl::UseProviderSpec;
 use crate::derive_getter::FieldMode;
 use crate::parse::SimpleType;
 
@@ -20,4 +21,5 @@ pub struct FunctionAttributes {
     pub extend_where: Vec<WherePredicate>,
     pub uses: Vec<SimpleType>,
     pub use_type: Vec<UseTypeSpec>,
+    pub use_provider: Vec<UseProviderSpec>,
 }

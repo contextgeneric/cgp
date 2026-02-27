@@ -1,12 +1,13 @@
 use quote::quote;
 use syn::punctuated::Punctuated;
 use syn::token::Plus;
-use syn::{Generics, Ident, ItemFn, ItemImpl, TypeParamBound, parse2};
+use syn::{Generics, Ident, ItemFn, ItemImpl, TypeParamBound, parse_quote, parse2};
 
 use crate::cgp_fn::{
     FunctionAttributes, ImplicitArgField, apply_use_type_attributes_to_item_impl,
     build_implicit_args_bounds,
 };
+use crate::cgp_impl::derive_provider_bounds;
 
 pub fn derive_item_impl(
     trait_ident: &Ident,
@@ -67,6 +68,15 @@ pub fn derive_item_impl(
 
     if !attributes.use_type.is_empty() {
         item_impl = apply_use_type_attributes_to_item_impl(&item_impl, &attributes.use_type)?;
+    }
+
+    if !attributes.use_provider.is_empty() {
+        let where_clause = item_impl.generics.make_where_clause();
+
+        for spec in attributes.use_provider.iter() {
+            let provider_bounds = derive_provider_bounds(&parse_quote! { Self }, spec)?;
+            where_clause.predicates.push(provider_bounds);
+        }
     }
 
     Ok(item_impl)

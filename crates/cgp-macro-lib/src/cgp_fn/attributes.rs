@@ -5,6 +5,7 @@ use syn::token::Comma;
 use syn::{Attribute, TypeParamBound, WherePredicate};
 
 use crate::cgp_fn::{FunctionAttributes, UseTypeSpec};
+use crate::cgp_impl::UseProviderSpec;
 use crate::parse::SimpleType;
 
 pub fn parse_function_attributes(
@@ -32,6 +33,10 @@ pub fn parse_function_attributes(
                 let use_type = attribute
                     .parse_args_with(Punctuated::<UseTypeSpec, Comma>::parse_terminated)?;
                 parsed_attributes.use_type.extend(use_type);
+            } else if ident == "use_provider" {
+                let use_provider = attribute
+                    .parse_args_with(Punctuated::<UseProviderSpec, Comma>::parse_terminated)?;
+                parsed_attributes.use_provider.extend(use_provider);
             } else {
                 attributes.push(attribute);
             }
