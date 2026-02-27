@@ -9,8 +9,9 @@ use syn::{
 
 use crate::derive_provider::derive_is_provider_for;
 use crate::parse::ComponentSpec;
+use crate::type_component::replace::get_bounds_and_replace_self_assoc_type;
 
-pub fn extract_item_type(consumer_trait: &ItemTrait) -> syn::Result<&TraitItemType> {
+pub fn extract_item_type_from_trait(consumer_trait: &ItemTrait) -> syn::Result<&TraitItemType> {
     if consumer_trait.items.len() != 1 {
         return Err(Error::new(
             consumer_trait.span(),
@@ -63,15 +64,16 @@ pub fn derive_type_alias(
 pub fn derive_type_providers(
     spec: &ComponentSpec,
     provider_trait: &ItemTrait,
+    provider_impl: &ItemImpl,
     item_type: &TraitItemType,
 ) -> syn::Result<Vec<ItemImpl>> {
     let context_name = &spec.context_type;
 
-    let component_name = {
+    let component_name: Type = {
         let name = &spec.component_name;
         let params = &spec.component_params;
-        parse2::<Type>(quote! { #name < #params > })
-    }?;
+        parse2(quote! { #name < #params > })?
+    };
 
     let provider_trait_name = &provider_trait.ident;
 
@@ -85,7 +87,7 @@ pub fn derive_type_providers(
 
     let type_name = &item_type.ident;
 
-    let type_bounds = &item_type.bounds;
+    let type_bounds = get_bounds_and_replace_self_assoc_type(&item_type);
 
     let use_type_impl: ItemImpl = parse2(quote! {
         impl< #type_name, #impl_generics_params >

@@ -54,8 +54,8 @@ pub fn derive_component_with_ast(
     )?;
 
     let mut item_impls = vec![
+        provider_impl.clone(),
         consumer_impl,
-        provider_impl,
         use_context_impl,
         use_context_is_provider_impl,
     ];
@@ -80,6 +80,7 @@ pub fn derive_component_with_ast(
         component_struct,
         consumer_trait,
         provider_trait,
+        provider_impl,
         item_impls,
     };
 
@@ -90,6 +91,7 @@ pub struct DerivedComponent {
     pub component_struct: ItemStruct,
     pub consumer_trait: ItemTrait,
     pub provider_trait: ItemTrait,
+    pub provider_impl: ItemImpl,
     pub item_impls: Vec<ItemImpl>,
 }
 

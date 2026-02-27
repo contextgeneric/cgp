@@ -7,7 +7,9 @@ use syn::{Ident, ItemTrait, parse_quote, parse2};
 
 use crate::derive_component::derive_component_with_ast;
 use crate::parse::{ComponentSpec, Entries};
-use crate::type_component::{derive_type_alias, derive_type_providers, extract_item_type};
+use crate::type_component::{
+    derive_type_alias, derive_type_providers, extract_item_type_from_trait,
+};
 
 pub fn cgp_type(attrs: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
     let mut entries = if let Ok(provider_ident) = parse2::<Ident>(attrs.clone()) {
@@ -18,7 +20,7 @@ pub fn cgp_type(attrs: TokenStream, body: TokenStream) -> syn::Result<TokenStrea
 
     let consumer_trait: ItemTrait = syn::parse2(body)?;
 
-    let item_type = extract_item_type(&consumer_trait)?.clone();
+    let item_type = extract_item_type_from_trait(&consumer_trait)?.clone();
 
     entries.entry("provider".into()).or_insert_with(|| {
         let provider_name = Ident::new(
@@ -34,7 +36,12 @@ pub fn cgp_type(attrs: TokenStream, body: TokenStream) -> syn::Result<TokenStrea
 
     let alias_type = derive_type_alias(&component.consumer_trait, &spec.context_type, &item_type)?;
 
-    let type_provider_impls = derive_type_providers(&spec, &component.provider_trait, &item_type)?;
+    let type_provider_impls = derive_type_providers(
+        &spec,
+        &component.provider_trait,
+        &component.provider_impl,
+        &item_type,
+    )?;
 
     let mut out = quote! {
         #component
