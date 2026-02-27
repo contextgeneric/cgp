@@ -16,10 +16,7 @@ impl AreaCalculator {
 #[use_provider(Inner: AreaCalculator)]
 impl<Inner> AreaCalculator {
     fn area(&self, #[implicit] scale_factor: f64) -> f64 {
-        let base_area = #[use_provider(Inner)]
-        self.area();
-
-        base_area * scale_factor * scale_factor
+        Inner::area(self) * scale_factor * scale_factor
     }
 }
 

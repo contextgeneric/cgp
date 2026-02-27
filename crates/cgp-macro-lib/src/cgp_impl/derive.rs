@@ -8,7 +8,6 @@ use syn::{Error, ItemImpl, TypeParamBound, parse_quote, parse2};
 use crate::cgp_fn::{apply_use_type_attributes_to_item_impl, build_implicit_args_bounds};
 use crate::cgp_impl::attributes::parse_impl_attributes;
 use crate::cgp_impl::provider_bounds::derive_provider_bounds;
-use crate::cgp_impl::provider_call::transform_provider_call;
 use crate::cgp_impl::{ImplProviderSpec, derive_provider_impl, implicit_args};
 use crate::derive_provider::{
     derive_component_name_from_provider_impl, derive_is_provider_for, derive_provider_struct,
@@ -58,8 +57,6 @@ pub fn derive_cgp_impl(
             let provider_bounds = derive_provider_bounds(&parse_quote! { Self }, spec)?;
             where_clause.predicates.push(provider_bounds);
         }
-
-        transform_provider_call(&mut item_impl)?;
     }
 
     if spec.provider_type == parse_quote! { Self } {

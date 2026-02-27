@@ -22,7 +22,6 @@ pub struct Rectangle {
 #[use_provider(RectangleArea: AreaCalculator)]
 impl CanCalculateArea for Rectangle {
     fn area(&self) -> f64 {
-        #[use_provider(RectangleArea)]
-        self.area()
+        RectangleArea::area(self)
     }
 }

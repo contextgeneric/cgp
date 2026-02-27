@@ -8,7 +8,7 @@ pub mod multi;
 pub mod mutable;
 pub mod nested_foreign_type;
 pub mod type_equality;
+pub mod use_provider;
 pub mod use_type;
 pub mod use_type_alias;
 pub mod uses;
-pub mod use_provider;
