@@ -11,3 +11,4 @@ pub mod type_equality;
 pub mod use_type;
 pub mod use_type_alias;
 pub mod uses;
+pub mod use_provider;
