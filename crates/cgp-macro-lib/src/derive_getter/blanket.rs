@@ -40,7 +40,7 @@ pub fn derive_blanket_impl(
             type #field_assoc_type_ident = #field_assoc_type_ident;
         });
 
-        let field_constraints = get_bounds_and_replace_self_assoc_type(&field_assoc_type);
+        let field_constraints = get_bounds_and_replace_self_assoc_type(field_assoc_type);
 
         generics.make_where_clause().predicates.push(parse2(quote! {
             #field_assoc_type_ident: #field_constraints

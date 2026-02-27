@@ -86,7 +86,7 @@ pub fn derive_type_providers(
 
     let type_name = &item_type.ident;
 
-    let type_bounds = get_bounds_and_replace_self_assoc_type(&item_type);
+    let type_bounds = get_bounds_and_replace_self_assoc_type(item_type);
 
     let use_type_impl: ItemImpl = parse2(quote! {
         impl< #type_name, #impl_generics_params >

@@ -44,7 +44,7 @@ pub fn derive_use_field_impl(
             type #field_assoc_type_ident = #field_assoc_type_ident;
         });
 
-        let field_constraints = get_bounds_and_replace_self_assoc_type(&field_assoc_type);
+        let field_constraints = get_bounds_and_replace_self_assoc_type(field_assoc_type);
 
         provider_generics
             .make_where_clause()
