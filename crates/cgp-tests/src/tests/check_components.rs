@@ -43,6 +43,11 @@ pub fn test_basic_check_components() {
                 BarTypeProviderComponent,
             ]:
                 UseType<()>,
+
+            #[check_params(
+                (Index<5>, Index<6>),
+                (Index<7>, Index<8>),
+            )]
             [
                 #[check_params(
                     Index<0>,

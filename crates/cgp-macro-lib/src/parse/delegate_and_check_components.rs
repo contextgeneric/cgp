@@ -26,7 +26,7 @@ pub struct DelegateAndCheckEntry {
 #[derive(Clone)]
 pub struct DelegateAndCheckKey {
     pub component_type: Type,
-    pub check_generics: Option<Punctuated<Type, Comma>>,
+    pub check_params: Option<Punctuated<Type, Comma>>,
 }
 
 impl Parse for DelegateAndCheckSpec {
@@ -87,7 +87,9 @@ impl Parse for DelegateAndCheckSpec {
 
 impl Parse for DelegateAndCheckEntry {
     fn parse(input: ParseStream) -> syn::Result<Self> {
-        let keys = if input.peek(Bracket) {
+        let check_params = parse_check_params(&input)?;
+
+        let mut keys = if input.peek(Bracket) {
             let body;
             bracketed!(body in input);
             Punctuated::parse_terminated(&body)?
@@ -95,6 +97,14 @@ impl Parse for DelegateAndCheckEntry {
             let key: DelegateAndCheckKey = input.parse()?;
             Punctuated::from_iter(iter::once(key))
         };
+
+        if let Some(check_params) = check_params {
+            for key in &mut keys {
+                key.check_params
+                    .get_or_insert_default()
+                    .extend(check_params.clone());
+            }
+        }
 
         let mode = input.parse()?;
 
@@ -106,33 +116,37 @@ impl Parse for DelegateAndCheckEntry {
 
 impl Parse for DelegateAndCheckKey {
     fn parse(input: ParseStream) -> syn::Result<Self> {
-        let check_generics = if input.peek(Pound) {
-            let attributes = input.call(Attribute::parse_outer)?;
-
-            let [attribute]: [Attribute; 1] = attributes
-                .try_into()
-                .map_err(|_| input.error("Expected exactly one key attribute"))?;
-
-            let check_generics = if attribute.path().is_ident("check_params") {
-                attribute.parse_args_with(Punctuated::parse_terminated)?
-            } else if attribute.path().is_ident("skip_check") {
-                Punctuated::new()
-            } else {
-                return Err(syn::Error::new(
-                    attribute.span(),
-                    "Expected either `#[skip_check]` or `#[check_params]` attribute for specifying the check generics",
-                ));
-            };
-
-            Some(check_generics)
-        } else {
-            None
-        };
+        let check_params = parse_check_params(&input)?;
 
         let component_type: Type = input.parse()?;
         Ok(Self {
             component_type,
-            check_generics,
+            check_params,
         })
+    }
+}
+
+pub fn parse_check_params(input: &ParseStream) -> syn::Result<Option<Punctuated<Type, Comma>>> {
+    if input.peek(Pound) {
+        let attributes = input.call(Attribute::parse_outer)?;
+
+        let [attribute]: [Attribute; 1] = attributes
+            .try_into()
+            .map_err(|_| input.error("Expected exactly one key attribute"))?;
+
+        let check_params = if attribute.path().is_ident("check_params") {
+            attribute.parse_args_with(Punctuated::parse_terminated)?
+        } else if attribute.path().is_ident("skip_check") {
+            Punctuated::new()
+        } else {
+            return Err(syn::Error::new(
+                attribute.span(),
+                "Expected either `#[skip_check]` or `#[check_params]` attribute for specifying the check generics",
+            ));
+        };
+
+        Ok(Some(check_params))
+    } else {
+        Ok(None)
     }
 }

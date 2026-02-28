@@ -23,8 +23,8 @@ pub fn delegate_and_check_components(body: TokenStream) -> syn::Result<TokenStre
                 let component_type = &key.component_type;
                 let span = component_type.span();
 
-                match &key.check_generics {
-                    Some(generics) => generics
+                match &key.check_params {
+                    Some(check_params) => check_params
                         .iter()
                         .map(|generic| CheckEntry {
                             component_type: component_type.clone(),
