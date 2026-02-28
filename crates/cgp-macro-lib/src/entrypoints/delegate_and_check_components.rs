@@ -19,7 +19,8 @@ pub fn delegate_and_check_components(body: TokenStream) -> syn::Result<TokenStre
         .entries
         .iter()
         .flat_map(|entry| {
-            entry.keys.iter().map(|component_type| {
+            entry.keys.iter().map(|key| {
+                let component_type = &key.component_type;
                 let span = component_type.span();
 
                 CheckEntry {
@@ -38,8 +39,8 @@ pub fn delegate_and_check_components(body: TokenStream) -> syn::Result<TokenStre
             let keys = entry
                 .keys
                 .into_iter()
-                .map(|ty| DelegateKey {
-                    ty,
+                .map(|key| DelegateKey {
+                    ty: key.component_type,
                     generics: ImplGenerics::default(),
                 })
                 .collect();

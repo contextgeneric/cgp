@@ -18,9 +18,15 @@ pub struct DelegateAndCheckSpec {
 
 #[derive(Clone)]
 pub struct DelegateAndCheckEntry {
-    pub keys: Punctuated<Type, Comma>,
+    pub keys: Punctuated<DelegateAndCheckKey, Comma>,
     pub mode: DelegateMode,
     pub value: Type,
+}
+
+#[derive(Clone)]
+pub struct DelegateAndCheckKey {
+    pub component_type: Type,
+    pub check_generics: Option<Vec<Type>>,
 }
 
 impl Parse for DelegateAndCheckSpec {
@@ -86,7 +92,7 @@ impl Parse for DelegateAndCheckEntry {
             bracketed!(body in input);
             Punctuated::parse_terminated(&body)?
         } else {
-            let key: Type = input.parse()?;
+            let key: DelegateAndCheckKey = input.parse()?;
             Punctuated::from_iter(iter::once(key))
         };
 
@@ -95,5 +101,17 @@ impl Parse for DelegateAndCheckEntry {
         let value = input.parse()?;
 
         Ok(Self { keys, mode, value })
+    }
+}
+
+
+impl Parse for DelegateAndCheckKey {
+    fn parse(input: ParseStream) -> syn::Result<Self> {
+        let check_generics = None;
+        let component_type: Type = input.parse()?;
+        Ok(Self {
+            component_type,
+            check_generics,
+        })
     }
 }
