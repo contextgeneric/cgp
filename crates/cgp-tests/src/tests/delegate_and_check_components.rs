@@ -19,7 +19,6 @@ pub fn test_basic_delegate_and_check_components() {
     }
 
     delegate_and_check_components! {
-        CanUseMyContext for MyContext;
         MyContext {
             NameTypeProviderComponent: UseType<String>,
             NameGetterComponent: UseField<Symbol!("name")>,
@@ -45,7 +44,6 @@ pub fn test_generic_delegate_and_check_components() {
 
     delegate_and_check_components! {
         <T>
-        CanUseMyContext for MyContext<T>;
         MyContext<T> {
             NameTypeProviderComponent: UseType<T>,
             NameGetterComponent: UseField<Symbol!("name")>,

@@ -1,17 +1,18 @@
 use core::iter;
 
+use quote::ToTokens;
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
-use syn::token::{Bracket, Comma, For, Lt, Semi};
-use syn::{Ident, Type, braced, bracketed};
+use syn::spanned::Spanned;
+use syn::token::{Bracket, Comma, Lt, Pound};
+use syn::{Attribute, Ident, Type, braced, bracketed, parse2};
 
-use crate::parse::{DelegateMode, ImplGenerics};
+use crate::parse::{DelegateMode, ImplGenerics, SimpleType};
 
 pub struct DelegateAndCheckSpec {
     pub impl_generics: ImplGenerics,
     pub trait_name: Ident,
     pub context_type: Type,
-    pub provider_type: Type,
     pub entries: Punctuated<DelegateAndCheckEntry, Comma>,
 }
 
@@ -30,15 +31,29 @@ impl Parse for DelegateAndCheckSpec {
             Default::default()
         };
 
-        let trait_name = input.parse()?;
+        let m_trait_name = if input.peek(Pound) {
+            let _: Pound = input.parse()?;
+            let attributes = input.call(Attribute::parse_outer)?;
 
-        let _: For = input.parse()?;
+            let [attribute]: [Attribute; 1] = attributes.try_into().map_err(|_| {
+                input.error("Expected exactly one attribute for the check trait name")
+            })?;
 
-        let context_type = input.parse()?;
+            let ident: Ident = attribute.parse_args()?;
+            Some(ident)
+        } else {
+            None
+        };
 
-        let _: Semi = input.parse()?;
+        let context_type: Type = input.parse()?;
 
-        let provider_type = input.parse()?;
+        let trait_name = match m_trait_name {
+            Some(ident) => ident,
+            None => {
+                let context_type: SimpleType = parse2(context_type.to_token_stream())?;
+                Ident::new(&format!("CanUse{}", context_type.name), context_type.span())
+            }
+        };
 
         let entries = {
             let body;
@@ -50,7 +65,6 @@ impl Parse for DelegateAndCheckSpec {
             impl_generics,
             trait_name,
             context_type,
-            provider_type,
             entries,
         })
     }

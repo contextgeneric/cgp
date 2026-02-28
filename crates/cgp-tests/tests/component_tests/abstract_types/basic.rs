@@ -33,7 +33,6 @@ pub struct Rectangle {
 }
 
 delegate_and_check_components! {
-    CanUseRectangle for Rectangle;
     Rectangle {
         ErrorTypeProviderComponent:
             UseType<Infallible>,

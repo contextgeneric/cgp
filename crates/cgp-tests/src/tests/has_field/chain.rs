@@ -109,7 +109,6 @@ fn test_deeply_nested_getter() {
     }
 
     delegate_and_check_components! {
-        CanUseMyContext for MyContext;
         MyContext {
             NameGetterComponent: WithProvider<
                 ChainGetters<Product![

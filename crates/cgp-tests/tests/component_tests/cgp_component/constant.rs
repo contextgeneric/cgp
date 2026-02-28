@@ -16,7 +16,6 @@ pub fn test_component_with_const() {
     pub struct MyContext;
 
     delegate_and_check_components! {
-        CanUseMyContext for MyContext;
         MyContext {
             ConstantGetterComponent: UseConstant<42>,
         }

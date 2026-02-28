@@ -55,7 +55,7 @@ pub fn delegate_and_check_components(body: TokenStream) -> syn::Result<TokenStre
         .collect();
 
     let mut out =
-        impl_delegate_components(&spec.provider_type, &spec.impl_generics, &delegate_entries)?;
+        impl_delegate_components(&spec.context_type, &spec.impl_generics, &delegate_entries)?;
 
     let check_spec = CheckComponents {
         check_provider: None,
