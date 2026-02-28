@@ -1,12 +1,14 @@
 use quote::quote;
+use syn::punctuated::Punctuated;
+use syn::token::Comma;
 use syn::{ItemImpl, ItemTrait, Type, parse2};
 
 use crate::check_components::override_span;
 use crate::parse::{CheckComponents, CheckEntry};
 
 pub fn derive_check_components(spec: &CheckComponents) -> syn::Result<(ItemTrait, Vec<ItemImpl>)> {
-    if let Some(providers) = &spec.check_provider {
-        return derive_check_provider(spec, providers);
+    if let Some(check_providers) = &spec.check_providers {
+        return derive_check_provider(spec, check_providers);
     }
 
     let mut item_impls = Vec::new();
@@ -49,7 +51,7 @@ pub fn derive_check_components(spec: &CheckComponents) -> syn::Result<(ItemTrait
 
 pub fn derive_check_provider(
     spec: &CheckComponents,
-    providers: &[Type],
+    providers: &Punctuated<Type, Comma>,
 ) -> syn::Result<(ItemTrait, Vec<ItemImpl>)> {
     let mut item_impls = Vec::new();
     let unit: Type = parse2(quote!(()))?;

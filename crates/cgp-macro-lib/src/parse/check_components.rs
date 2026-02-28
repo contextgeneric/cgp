@@ -1,4 +1,5 @@
 use proc_macro2::Span;
+use quote::ToTokens;
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::spanned::Spanned;
@@ -12,7 +13,7 @@ pub struct CheckComponentsSpecs {
 }
 
 pub struct CheckComponents {
-    pub check_provider: Option<Vec<Type>>,
+    pub check_providers: Option<Punctuated<Type, Comma>>,
     pub impl_generics: ImplGenerics,
     pub trait_name: Ident,
     pub context_type: Type,
@@ -49,26 +50,26 @@ impl Parse for CheckComponentsSpecs {
 
 impl Parse for CheckComponents {
     fn parse(input: ParseStream) -> syn::Result<Self> {
-        let check_provider = if input.peek(Pound) {
+        let mut check_providers: Option<Punctuated<Type, Comma>> = None;
+
+        if input.peek(Pound) {
             let attributes = input.call(Attribute::parse_outer)?;
 
-            let [attribute]: [Attribute; 1] = attributes
-                .try_into()
-                .map_err(|_| input.error("Expected exactly one attribute "))?;
+            for attribute in attributes {
+                if attribute.path().is_ident("check_providers") {
+                    let provider_types: Punctuated<Type, Comma> =
+                        attribute.parse_args_with(Punctuated::parse_terminated)?;
 
-            if !attribute.path().is_ident("check_providers") {
-                return Err(syn::Error::new(
-                    attribute.span(),
-                    "Expected `#[check_providers]` attribute",
-                ));
+                    check_providers
+                        .get_or_insert_default()
+                        .extend(provider_types);
+                } else {
+                    return Err(syn::Error::new(
+                        attribute.span(),
+                        format!("Invalid attribute {}", attribute.to_token_stream()),
+                    ));
+                }
             }
-
-            let provider_types: Punctuated<Type, Comma> =
-                attribute.parse_args_with(Punctuated::parse_terminated)?;
-
-            Some(provider_types.into_iter().collect())
-        } else {
-            None
         };
 
         let impl_generics = if input.peek(Lt) {
@@ -77,11 +78,29 @@ impl Parse for CheckComponents {
             Default::default()
         };
 
-        let trait_name = input.parse()?;
-
+        let trait_name: Ident = input.parse()?;
         let _: For = input.parse()?;
 
         let context_type: Type = input.parse()?;
+
+        // let (trait_name, context_type) = {
+        //     let trait_name: Ident = input.parse()?;
+
+        //     if input.peek(For) {
+        //         let _: For = input.parse()?;
+
+        //         let context_type: Type = input.parse()?;
+        //         (trait_name, context_type)
+        //     } else {
+        //         let context_type = trait_name;
+        //         let trait_name = Ident::new(
+        //             &format!("__CanUse{}", context_type),
+        //             context_type.span(),
+        //         );
+
+        //         (trait_name, context_type)
+        //     }
+        // };
 
         let where_clause = if input.peek(Where) {
             input.parse()?
@@ -98,7 +117,7 @@ impl Parse for CheckComponents {
         let entries: CheckEntries = content.parse()?;
 
         Ok(Self {
-            check_provider,
+            check_providers,
             impl_generics,
             trait_name,
             context_type,
