@@ -109,14 +109,14 @@ impl Parse for DelegateAndCheckKey {
         let check_generics = if input.peek(Pound) {
             let attributes = input.call(Attribute::parse_outer)?;
 
-            let [attribute]: [Attribute; 1] = attributes.try_into().map_err(|_| {
-                input.error("Expected exactly one attribute for the check generics")
-            })?;
+            let [attribute]: [Attribute; 1] = attributes
+                .try_into()
+                .map_err(|_| input.error("Expected exactly one `#[check_params]` attribute"))?;
 
-            if !attribute.path().is_ident("check_generics") {
+            if !attribute.path().is_ident("check_params") {
                 return Err(syn::Error::new(
                     attribute.span(),
-                    "Expected `check_generics` attribute for specifying the check generics",
+                    "Expected `check_params` attribute for specifying the check generics",
                 ));
             }
 

@@ -44,13 +44,13 @@ pub fn test_basic_check_components() {
             ]:
                 UseType<()>,
             [
-                #[check_generics(
+                #[check_params(
                     Index<0>,
                     Index<1>,
                 )]
                 FooGetterAtComponent,
 
-                #[check_generics(
+                #[check_params(
                     (Index<0>, Index<1>),
                     (Index<1>, Index<0>),
                 )]
