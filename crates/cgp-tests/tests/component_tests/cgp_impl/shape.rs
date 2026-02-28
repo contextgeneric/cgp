@@ -100,7 +100,7 @@ pub struct PlainRectangle {
     pub height: f64,
 }
 
-delegate_components! {
+delegate_and_check_components! {
     PlainRectangle {
         AreaCalculatorComponent:
             RectangleAreaCalculator,
@@ -114,7 +114,7 @@ pub struct ScaledRectangle {
     pub height: f64,
 }
 
-delegate_components! {
+delegate_and_check_components! {
     ScaledRectangle {
         AreaCalculatorComponent:
             ScaledAreaCalculator<RectangleAreaCalculator>,
@@ -126,7 +126,7 @@ pub struct PlainCircle {
     pub radius: f64,
 }
 
-delegate_components! {
+delegate_and_check_components! {
     PlainCircle {
         AreaCalculatorComponent:
             CircleAreaCalculator,
@@ -139,10 +139,21 @@ pub struct ScaledCircle {
     pub radius: f64,
 }
 
-delegate_components! {
+delegate_and_check_components! {
     ScaledCircle {
         AreaCalculatorComponent:
             ScaledAreaCalculator<CircleAreaCalculator>,
+    }
+}
+
+check_components! {
+    #[check_trait(CheckScaledRectangleProviders)]
+    #[check_providers(
+        RectangleAreaCalculator,
+        ScaledAreaCalculator<RectangleAreaCalculator>,
+    )]
+    ScaledRectangle {
+        AreaCalculatorComponent,
     }
 }
 

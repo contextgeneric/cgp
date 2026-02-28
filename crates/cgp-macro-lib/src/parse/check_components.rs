@@ -98,7 +98,7 @@ impl Parse for CheckComponents {
             let context_type: SimpleType = parse2(context_type.to_token_stream())?;
 
             Ident::new(
-                &format!("__CanUse{}", context_type.name),
+                &format!("__Check{}", context_type.name),
                 context_type.span(),
             )
         };

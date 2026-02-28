@@ -23,15 +23,10 @@ pub struct Rectangle {
     pub height: f64,
 }
 
-delegate_components! {
+delegate_and_check_components! {
     Rectangle {
+        #[check_params(f64)]
         AreaCalculatorComponent:
             RectangleArea,
-    }
-}
-
-check_components! {
-    Rectangle {
-        AreaCalculatorComponent: f64,
     }
 }
