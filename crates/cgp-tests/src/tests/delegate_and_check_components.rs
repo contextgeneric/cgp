@@ -19,6 +19,7 @@ pub fn test_basic_delegate_and_check_components() {
     }
 
     delegate_and_check_components! {
+        #[check_trait(CheckMyContext)]
         MyContext {
             NameTypeProviderComponent: UseType<String>,
             NameGetterComponent: UseField<Symbol!("name")>,

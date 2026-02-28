@@ -32,12 +32,18 @@ impl Parse for DelegateAndCheckSpec {
         };
 
         let m_trait_name = if input.peek(Pound) {
-            let _: Pound = input.parse()?;
             let attributes = input.call(Attribute::parse_outer)?;
 
             let [attribute]: [Attribute; 1] = attributes.try_into().map_err(|_| {
                 input.error("Expected exactly one attribute for the check trait name")
             })?;
+
+            if !attribute.path().is_ident("check_trait") {
+                return Err(syn::Error::new(
+                    attribute.span(),
+                    "Expected `check_trait` attribute for specifying the check trait name",
+                ));
+            }
 
             let ident: Ident = attribute.parse_args()?;
             Some(ident)
@@ -51,7 +57,10 @@ impl Parse for DelegateAndCheckSpec {
             Some(ident) => ident,
             None => {
                 let context_type: SimpleType = parse2(context_type.to_token_stream())?;
-                Ident::new(&format!("CanUse{}", context_type.name), context_type.span())
+                Ident::new(
+                    &format!("__CanUse{}", context_type.name),
+                    context_type.span(),
+                )
             }
         };
 
