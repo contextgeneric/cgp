@@ -19,14 +19,24 @@ pub fn delegate_and_check_components(body: TokenStream) -> syn::Result<TokenStre
         .entries
         .iter()
         .flat_map(|entry| {
-            entry.keys.iter().map(|key| {
+            entry.keys.iter().flat_map(|key| {
                 let component_type = &key.component_type;
                 let span = component_type.span();
 
-                CheckEntry {
-                    component_type: component_type.clone(),
-                    component_params: None,
-                    span,
+                match &key.check_generics {
+                    Some(generics) => generics
+                        .iter()
+                        .map(|generic| CheckEntry {
+                            component_type: component_type.clone(),
+                            component_params: Some(generic.clone()),
+                            span,
+                        })
+                        .collect::<Vec<_>>(),
+                    None => vec![CheckEntry {
+                        component_type: component_type.clone(),
+                        component_params: None,
+                        span,
+                    }],
                 }
             })
         })

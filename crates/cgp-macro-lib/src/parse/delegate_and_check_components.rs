@@ -26,7 +26,7 @@ pub struct DelegateAndCheckEntry {
 #[derive(Clone)]
 pub struct DelegateAndCheckKey {
     pub component_type: Type,
-    pub check_generics: Option<Vec<Type>>,
+    pub check_generics: Option<Punctuated<Type, Comma>>,
 }
 
 impl Parse for DelegateAndCheckSpec {
@@ -104,10 +104,28 @@ impl Parse for DelegateAndCheckEntry {
     }
 }
 
-
 impl Parse for DelegateAndCheckKey {
     fn parse(input: ParseStream) -> syn::Result<Self> {
-        let check_generics = None;
+        let check_generics = if input.peek(Pound) {
+            let attributes = input.call(Attribute::parse_outer)?;
+
+            let [attribute]: [Attribute; 1] = attributes.try_into().map_err(|_| {
+                input.error("Expected exactly one attribute for the check generics")
+            })?;
+
+            if !attribute.path().is_ident("check_generics") {
+                return Err(syn::Error::new(
+                    attribute.span(),
+                    "Expected `check_generics` attribute for specifying the check generics",
+                ));
+            }
+
+            let check_generics = attribute.parse_args_with(Punctuated::parse_terminated)?;
+            Some(check_generics)
+        } else {
+            None
+        };
+
         let component_type: Type = input.parse()?;
         Ok(Self {
             component_type,
