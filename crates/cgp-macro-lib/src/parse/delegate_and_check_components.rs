@@ -7,7 +7,7 @@ use syn::spanned::Spanned;
 use syn::token::{Bracket, Comma, Lt, Pound};
 use syn::{Attribute, Ident, Type, braced, bracketed, parse2};
 
-use crate::parse::{DelegateMode, ImplGenerics, SimpleType};
+use crate::parse::{DelegateMode, DelegateValue, ImplGenerics, SimpleType};
 
 pub struct DelegateAndCheckSpec {
     pub impl_generics: ImplGenerics,
@@ -20,7 +20,7 @@ pub struct DelegateAndCheckSpec {
 pub struct DelegateAndCheckEntry {
     pub keys: Punctuated<DelegateAndCheckKey, Comma>,
     pub mode: DelegateMode,
-    pub value: Type,
+    pub value: DelegateValue,
 }
 
 #[derive(Clone)]

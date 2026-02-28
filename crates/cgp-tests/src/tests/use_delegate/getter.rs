@@ -34,14 +34,23 @@ pub fn test_derive_delegate() {
         pub bar: String,
     }
 
-    delegate_components! {
+    delegate_and_check_components! {
         MyContext {
+            #[check_params(
+                (Index<1>, Index<0>),
+                (Index<0>, Index<1>),
+            )]
             FooTypeProviderAtComponent: UseDelegate<
                 new FooTypes {
                     Index<1>: UseType<u64>,
                     Index<0>: UseType<String>,
                 }
             >,
+
+            #[check_params(
+                (Index<1>, Index<0>),
+                (Index<0>, Index<1>),
+            )]
             FooGetterAtComponent: UseDelegate<
                 new FooGetters {
                     Index<1>: UseField<Symbol!("foo")>,

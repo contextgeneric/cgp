@@ -9,7 +9,7 @@ use crate::check_components::derive_check_components;
 use crate::delegate_components::impl_delegate_components;
 use crate::parse::{
     CheckComponents, CheckEntries, CheckEntry, DelegateAndCheckSpec, DelegateEntry, DelegateKey,
-    DelegateValue, ImplGenerics,
+    ImplGenerics,
 };
 
 pub fn delegate_and_check_components(body: TokenStream) -> syn::Result<TokenStream> {
@@ -55,11 +55,9 @@ pub fn delegate_and_check_components(body: TokenStream) -> syn::Result<TokenStre
                 })
                 .collect();
 
-            let value = DelegateValue::Type(entry.value);
-
             DelegateEntry {
                 keys,
-                value,
+                value: entry.value,
                 mode: entry.mode,
             }
         })
