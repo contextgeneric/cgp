@@ -47,4 +47,5 @@ pub struct π<Head, Tail>(pub Head, pub Tail);
 #[allow(non_camel_case_types)]
 pub struct ε;
 
-pub use {ε as Nil, π as Cons};
+pub use ε as Nil;
+pub use π as Cons;
