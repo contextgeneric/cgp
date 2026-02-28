@@ -111,16 +111,19 @@ impl Parse for DelegateAndCheckKey {
 
             let [attribute]: [Attribute; 1] = attributes
                 .try_into()
-                .map_err(|_| input.error("Expected exactly one `#[check_params]` attribute"))?;
+                .map_err(|_| input.error("Expected exactly one key attribute"))?;
 
-            if !attribute.path().is_ident("check_params") {
+            let check_generics = if attribute.path().is_ident("check_params") {
+                attribute.parse_args_with(Punctuated::parse_terminated)?
+            } else if attribute.path().is_ident("skip_check") {
+                Punctuated::new()
+            } else {
                 return Err(syn::Error::new(
                     attribute.span(),
-                    "Expected `check_params` attribute for specifying the check generics",
+                    "Expected either `#[skip_check]` or `#[check_params]` attribute for specifying the check generics",
                 ));
-            }
+            };
 
-            let check_generics = attribute.parse_args_with(Punctuated::parse_terminated)?;
             Some(check_generics)
         } else {
             None
