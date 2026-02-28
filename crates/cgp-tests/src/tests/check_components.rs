@@ -36,7 +36,7 @@ pub fn test_basic_check_components() {
         pub extra_dummy: (),
     }
 
-    delegate_components! {
+    delegate_and_check_components! {
         Context {
             [
                 FooTypeProviderComponent,
@@ -44,7 +44,16 @@ pub fn test_basic_check_components() {
             ]:
                 UseType<()>,
             [
+                #[check_generics(
+                    Index<0>,
+                    Index<1>,
+                )]
                 FooGetterAtComponent,
+
+                #[check_generics(
+                    (Index<0>, Index<1>),
+                    (Index<1>, Index<0>),
+                )]
                 BarGetterAtComponent,
             ]:
                 UseField<Symbol!("dummy")>,
