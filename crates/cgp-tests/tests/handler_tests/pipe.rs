@@ -57,7 +57,7 @@ pub fn test_pipe_computers() {
 
     check_components! {
         <Tag>
-        CanUseMyContext for MyContext {
+        MyContext {
             ComputerComponent: (Tag, u64),
         }
     }
@@ -126,7 +126,7 @@ pub fn test_pipe_handlers() {
 
     check_components! {
         <Tag>
-        CanUseMyContext for MyContext {
+        MyContext {
             HandlerComponent: (Tag, u64),
         }
     }

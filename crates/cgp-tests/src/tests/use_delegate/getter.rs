@@ -61,7 +61,8 @@ pub fn test_derive_delegate() {
     }
 
     check_components! {
-        CanUseMyContext for MyContext {
+        #[check_trait(CanUseMyContext)]
+        MyContext {
             FooGetterAtComponent: [
                 (Index<1>, Index<0>),
                 (Index<0>, Index<1>),
@@ -104,7 +105,7 @@ pub fn test_derive_delegate2() {
     }
 
     check_components! {
-        CanUseMyContext for MyContext {
+        MyContext {
             FooGetterAtComponent: [
                 (Index<1>, Index<0>),
                 (Index<0>, Index<1>),

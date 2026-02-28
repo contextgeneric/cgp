@@ -205,7 +205,7 @@ delegate_components! {
 }
 
 check_components! {
-    CanUseApp for App {
+    App {
         ComputerComponent: [
             ((), Shape),
             ((), ShapePlus),

@@ -37,25 +37,7 @@ impl Parse for DelegateAndCheckSpec {
             Default::default()
         };
 
-        let m_trait_name = if input.peek(Pound) {
-            let attributes = input.call(Attribute::parse_outer)?;
-
-            let [attribute]: [Attribute; 1] = attributes.try_into().map_err(|_| {
-                input.error("Expected exactly one attribute for the check trait name")
-            })?;
-
-            if !attribute.path().is_ident("check_trait") {
-                return Err(syn::Error::new(
-                    attribute.span(),
-                    "Expected `#[check_trait]` attribute for specifying the check trait name",
-                ));
-            }
-
-            let ident: Ident = attribute.parse_args()?;
-            Some(ident)
-        } else {
-            None
-        };
+        let m_trait_name = parse_check_trait_name(input)?;
 
         let context_type: Type = input.parse()?;
 
@@ -126,7 +108,29 @@ impl Parse for DelegateAndCheckKey {
     }
 }
 
-pub fn parse_check_params(input: &ParseStream) -> syn::Result<Option<Punctuated<Type, Comma>>> {
+pub fn parse_check_trait_name(input: ParseStream) -> syn::Result<Option<Ident>> {
+    if input.peek(Pound) {
+        let attributes = input.call(Attribute::parse_outer)?;
+
+        let [attribute]: [Attribute; 1] = attributes
+            .try_into()
+            .map_err(|_| input.error("Expected exactly one attribute for the check trait name"))?;
+
+        if !attribute.path().is_ident("check_trait") {
+            return Err(syn::Error::new(
+                attribute.span(),
+                "Expected `#[check_trait]` attribute for specifying the check trait name",
+            ));
+        }
+
+        let ident: Ident = attribute.parse_args()?;
+        Ok(Some(ident))
+    } else {
+        Ok(None)
+    }
+}
+
+pub fn parse_check_params(input: ParseStream) -> syn::Result<Option<Punctuated<Type, Comma>>> {
     if input.peek(Pound) {
         let attributes = input.call(Attribute::parse_outer)?;
 

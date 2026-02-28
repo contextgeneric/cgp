@@ -13,7 +13,8 @@ pub struct MyContext<T> {
 }
 
 check_components! {
-    <T> CanUseMyContext for MyContext<T> {
+    #[check_trait(CanUseMyContext)]
+    <T> MyContext<T> {
         FooTypeProviderComponent,
         BarTypeProviderComponent,
         BarGetterComponent,
@@ -21,8 +22,8 @@ check_components! {
 }
 
 check_components! {
-    <const I: usize, T>
-    CanUseFooGetter for MyContext<T> {
+    #[check_trait(CanUseFooGetter)]
+    <const I: usize, T> MyContext<T> {
         FooGetterComponent<Index<I>>: Index<I>,
     }
 }

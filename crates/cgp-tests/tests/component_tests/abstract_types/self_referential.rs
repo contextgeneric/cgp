@@ -17,7 +17,7 @@ delegate_components! {
 }
 
 check_components! {
-    CanUseApp for App {
+    App {
         ScalarTypeProviderComponent,
     }
 }

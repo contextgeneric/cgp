@@ -17,7 +17,7 @@ delegate_components! {
 }
 
 check_components! {
-    CanUseMyContext for MyContext {
+    MyContext {
         ErrorRaiserComponent: [
             BoxError,
             Infallible,

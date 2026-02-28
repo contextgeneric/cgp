@@ -34,7 +34,7 @@ delegate_components! {
 }
 
 check_components! {
-    <'a> CanUseApp for App<'a> {
+    <'a> App<'a> {
         ReferenceGetterComponent:
             (Life<'a>, str),
     }

@@ -55,7 +55,7 @@ pub fn test_component_with_generic_const() {
     }
 
     check_components! {
-        CanUseMyContext for MyContext {
+        MyContext {
             ConstantGetterComponent,
         }
     }

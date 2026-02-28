@@ -19,7 +19,7 @@ delegate_components! {
 }
 
 check_components! {
-    CanUseMyContext for MyContext {
+    MyContext {
         FooTypeProviderComponent,
         BarTypeProviderComponent,
         FooGetterComponent,

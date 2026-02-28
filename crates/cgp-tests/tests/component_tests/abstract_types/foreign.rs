@@ -48,7 +48,7 @@ delegate_components! {
 }
 
 check_components! {
-    CanUseRectangle for Rectangle {
+    Rectangle {
         AreaCalculatorComponent: Types,
     }
 }

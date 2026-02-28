@@ -15,7 +15,7 @@ pub struct MyContext {
 }
 
 check_components! {
-    CanUseMyContext for MyContext {
+    MyContext {
         FooTypeProviderComponent,
         BarTypeProviderComponent,
         FooGetterComponent,
