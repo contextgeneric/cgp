@@ -47,7 +47,7 @@ impl Parse for DelegateAndCheckSpec {
             if !attribute.path().is_ident("check_trait") {
                 return Err(syn::Error::new(
                     attribute.span(),
-                    "Expected `check_trait` attribute for specifying the check trait name",
+                    "Expected `#[check_trait]` attribute for specifying the check trait name",
                 ));
             }
 

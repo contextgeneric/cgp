@@ -3,7 +3,7 @@ use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::spanned::Spanned;
 use syn::token::{Bracket, Colon, Comma, For, Lt, Pound, Where};
-use syn::{Ident, Type, WhereClause, braced, bracketed, parenthesized};
+use syn::{Attribute, Ident, Type, WhereClause, braced, bracketed};
 
 use crate::parse::ImplGenerics;
 
@@ -50,24 +50,21 @@ impl Parse for CheckComponentsSpecs {
 impl Parse for CheckComponents {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let check_provider = if input.peek(Pound) {
-            let _: Pound = input.parse()?;
+            let attributes = input.call(Attribute::parse_outer)?;
 
-            let content;
-            bracketed!(content in input);
+            let [attribute]: [Attribute; 1] = attributes
+                .try_into()
+                .map_err(|_| input.error("Expected exactly one attribute "))?;
 
-            let command: Ident = content.parse()?;
-            if command != "check_providers" {
+            if !attribute.path().is_ident("check_providers") {
                 return Err(syn::Error::new(
-                    command.span(),
-                    "expected `check_providers` attribute",
+                    attribute.span(),
+                    "Expected `#[check_providers]` attribute",
                 ));
             }
 
-            let raw_providers;
-            parenthesized!(raw_providers in content);
-
             let provider_types: Punctuated<Type, Comma> =
-                Punctuated::parse_terminated(&raw_providers)?;
+                attribute.parse_args_with(Punctuated::parse_terminated)?;
 
             Some(provider_types.into_iter().collect())
         } else {
