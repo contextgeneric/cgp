@@ -19,7 +19,7 @@ pub trait CanCalculateArea {
 #[use_type(HasScalarType::Scalar, HasErrorType::Error)]
 impl AreaCalculator
 where
-    Scalar: Mul<Output = Scalar> + Clone,
+    Scalar: Mul<Output = Scalar> + Copy,
 {
     fn area(&self, #[implicit] width: Scalar, #[implicit] height: Scalar) -> Result<Scalar, Error> {
         Ok(width * height)

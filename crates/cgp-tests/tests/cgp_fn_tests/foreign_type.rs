@@ -15,7 +15,7 @@ pub fn rectangle_area<Types: HasScalarType>(
     #[implicit] height: Scalar,
 ) -> Scalar
 where
-    Scalar: Mul<Output = Scalar> + Clone,
+    Scalar: Mul<Output = Scalar> + Copy,
 {
     let res: Scalar = width * height;
     res

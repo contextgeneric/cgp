@@ -302,7 +302,7 @@ pub fn parse_field_type(
             } else if let (Some(field_type), None) = (try_parse_mref(type_path), receiver_mut) {
                 Ok((field_type.clone(), FieldMode::MRef))
             } else {
-                Ok((return_type.clone(), FieldMode::Clone))
+                Ok((return_type.clone(), FieldMode::Copy))
             }
         }
         _ => Err(Error::new(

@@ -5,7 +5,7 @@ use cgp::prelude::*;
 
 #[cgp_type]
 pub trait HasScalarType {
-    type Scalar: Mul<Output = Self::Scalar> + Clone;
+    type Scalar: Mul<Output = Self::Scalar> + Copy;
 }
 
 #[cgp_fn]

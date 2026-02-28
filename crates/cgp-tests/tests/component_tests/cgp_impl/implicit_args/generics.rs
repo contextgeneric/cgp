@@ -3,17 +3,17 @@ use core::ops::Mul;
 use cgp::prelude::*;
 
 #[cgp_component(AreaCalculator)]
-pub trait CanCalculateArea {
-    fn area(&self) -> f64;
+pub trait CanCalculateArea<Scalar> {
+    fn area(&self) -> Scalar;
 }
 
 #[cgp_impl(new RectangleArea)]
-impl<Scalar> AreaCalculator
+impl<Scalar> AreaCalculator<Scalar>
 where
-    Scalar: Mul<Output = Scalar> + Clone + Into<f64>,
+    Scalar: Mul<Output = Scalar> + Copy,
 {
-    fn area(&self, #[implicit] width: Scalar, #[implicit] height: Scalar) -> f64 {
-        (width * height).into()
+    fn area(&self, #[implicit] width: Scalar, #[implicit] height: Scalar) -> Scalar {
+        width * height
     }
 }
 
@@ -23,10 +23,15 @@ pub struct Rectangle {
     pub height: f64,
 }
 
-delegate_and_check_components! {
-    CanUseRectangle for Rectangle;
+delegate_components! {
     Rectangle {
         AreaCalculatorComponent:
             RectangleArea,
+    }
+}
+
+check_components! {
+    CanUseRectangle for Rectangle {
+        AreaCalculatorComponent: f64,
     }
 }

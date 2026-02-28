@@ -17,7 +17,7 @@ pub enum FieldMode {
     OptionRef,
     MRef,
     Str,
-    Clone,
+    Copy,
     Slice,
 }
 

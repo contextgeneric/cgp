@@ -15,7 +15,7 @@ pub fn rectangle_area(
     #[implicit] height: Self::Scalar,
 ) -> Self::Scalar
 where
-    Self::Scalar: Mul<Output = Self::Scalar> + Clone,
+    Self::Scalar: Mul<Output = Self::Scalar> + Copy,
 {
     width * height
 }

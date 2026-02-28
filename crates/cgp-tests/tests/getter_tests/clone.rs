@@ -8,25 +8,23 @@ pub fn test_clone_getter() {
     }
 
     #[cgp_getter]
-    pub trait HasName: HasNameType<Name: Clone> {
+    pub trait HasName: HasNameType<Name: Copy> {
         fn name(&self) -> Self::Name;
     }
 
     #[derive(HasField)]
     pub struct App {
-        pub name: String,
+        pub name: &'static str,
     }
 
     delegate_components! {
         App {
-            NameTypeProviderComponent: UseType<String>,
+            NameTypeProviderComponent: UseType<&'static str>,
             NameGetterComponent: UseField<Symbol!("name")>,
         }
     }
 
-    let context = App {
-        name: "Alice".to_owned(),
-    };
+    let context = App { name: "Alice" };
 
     assert_eq!(context.name(), "Alice");
 }
@@ -39,24 +37,22 @@ pub fn test_clone_auto_getter() {
     }
 
     #[cgp_auto_getter]
-    pub trait HasName: HasNameType<Name: Clone> {
+    pub trait HasName: HasNameType<Name: Copy> {
         fn name(&self) -> Self::Name;
     }
 
     #[derive(HasField)]
     pub struct App {
-        pub name: String,
+        pub name: &'static str,
     }
 
     delegate_components! {
         App {
-            NameTypeProviderComponent: UseType<String>,
+            NameTypeProviderComponent: UseType<&'static str>,
         }
     }
 
-    let context = App {
-        name: "Alice".to_owned(),
-    };
+    let context = App { name: "Alice" };
 
     assert_eq!(context.name(), "Alice");
 }

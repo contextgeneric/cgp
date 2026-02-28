@@ -17,7 +17,7 @@ pub trait HasTypes {
 #[extend_where(Types: HasScalarType)]
 pub fn rectangle_area(&self, #[implicit] width: Scalar, #[implicit] height: Scalar) -> Scalar
 where
-    Scalar: Mul<Output = Scalar> + Clone,
+    Scalar: Mul<Output = Scalar> + Copy,
 {
     let res: Scalar = width * height;
     res

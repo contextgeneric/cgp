@@ -9,7 +9,7 @@ pub fn rectangle_area<Scalar>(
     #[implicit] height: Scalar,
 ) -> Scalar
 where
-    Scalar: Mul<Output = Scalar> + Clone,
+    Scalar: Mul<Output = Scalar> + Copy,
 {
     width * height
 }

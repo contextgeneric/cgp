@@ -117,9 +117,9 @@ pub fn extend_call_expr(
                 }
             }
         }
-        FieldMode::Clone => {
+        FieldMode::Copy => {
             quote! {
-                #call_expr .clone()
+                * #call_expr
             }
         }
         FieldMode::Slice => {

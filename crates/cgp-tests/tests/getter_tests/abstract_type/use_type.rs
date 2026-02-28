@@ -2,7 +2,7 @@ use cgp::prelude::*;
 
 #[cgp_type]
 pub trait HasScalarType {
-    type Scalar: Clone;
+    type Scalar: Copy;
 }
 
 #[cgp_auto_getter]

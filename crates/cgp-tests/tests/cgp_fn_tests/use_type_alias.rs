@@ -11,7 +11,7 @@ pub trait HasScalarType {
 #[use_type(HasScalarType::{Scalar as S})]
 pub fn rectangle_area(&self, #[implicit] width: S, #[implicit] height: S) -> S
 where
-    S: Mul<Output = S> + Clone,
+    S: Mul<Output = S> + Copy,
 {
     let res: S = width * height;
     res
