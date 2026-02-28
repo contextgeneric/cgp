@@ -1,5 +1,32 @@
 # Changelog
 
+## v0.6.2 (2026-03-01)
+
+Breaking changes:
+
+- Remove `#[cgp_context]` and simplify consumer trait implementation - [#205]
+- Rename `ProvideType` to `TypeProvider` - [#211]
+- Remove `{Type}Of` type alias from `#[cgp_type]` - [#212]
+- Use `Copy` instead of `Clone` for owned getter field values - [#213]
+- Update syntax for `check_components!` and `delegate_and_check_components!` - [#214]
+- Change the default check trait name in `check_components!` - [#215]
+
+New features:
+
+- Implement `#[cgp_fn]` - [#197]
+- Tests and Improvements for `#[cgp_fn]` - [#198]
+- Support abstract type equality in `#[use_type]` - [#200]
+- Support `#[implicit]`, `#[uses]`, and `#[use_type]` in `#[cgp_impl]` - [#201]
+- Support `#[use_type]` and `#[extend]` in `#[cgp_component]` - [#202]
+- Add basic support for foreign abstract types in `#[use_type]` - [#203]
+- Support `#[use_provider]` attribute inside `#[cgp_impl]` for higher order providers - [#204]
+- Support use of `#[cgp_impl]` on consumer trait with concrete context - [#206]
+- Support `#[use_provider]` inside `#[cgp_fn]` - [#210]
+
+Bug fixes:
+
+- Fix `#[cgp_type]` when associated types contain self-referential bounds - [#208]
+
 ## v0.6.1 (2026-02-01)
 
 - Support implicit `Context` type in `#[cgp_impl]` - [#189](https://github.com/contextgeneric/cgp/pull/189)
