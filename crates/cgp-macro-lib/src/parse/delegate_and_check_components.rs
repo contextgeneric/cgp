@@ -69,7 +69,7 @@ impl Parse for DelegateAndCheckSpec {
 
 impl Parse for DelegateAndCheckEntry {
     fn parse(input: ParseStream) -> syn::Result<Self> {
-        let check_params = parse_check_params(&input)?;
+        let check_params = parse_check_params(input)?;
 
         let mut keys = if input.peek(Bracket) {
             let body;
@@ -98,7 +98,7 @@ impl Parse for DelegateAndCheckEntry {
 
 impl Parse for DelegateAndCheckKey {
     fn parse(input: ParseStream) -> syn::Result<Self> {
-        let check_params = parse_check_params(&input)?;
+        let check_params = parse_check_params(input)?;
 
         let component_type: Type = input.parse()?;
         Ok(Self {
