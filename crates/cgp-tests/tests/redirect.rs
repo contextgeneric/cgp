@@ -1,13 +1,17 @@
 use cgp::prelude::*;
 
+pub trait HasNamespace<T> {}
+
+pub struct UseNamespace<Path, Components>(pub PhantomData<(Path, Components)>);
+
+pub struct RedirectLookup<Key, Components>(pub PhantomData<(Key, Components)>);
+
 #[cgp_component(FooProvider)]
 pub trait CanDoFoo {
     fn foo();
 }
 
-pub struct UseNamespace<Components>(pub PhantomData<Components>);
-
-pub struct RedirectLookup<Key, Components>(pub PhantomData<(Key, Components)>);
+impl<T> HasNamespace<T> for FooProviderComponent {}
 
 #[cgp_impl(RedirectLookup<Key, Components>)]
 #[use_provider(Components::Delegate: FooProvider)]
@@ -21,12 +25,20 @@ where
 }
 
 delegate_components! {
-    <Components> UseNamespace<Components> {
-        FooProviderComponent: RedirectLookup<BarComponent, Components>,
+    <Components> UseNamespace<(), Components> {
+        FooProviderComponent: RedirectLookup<(BarComponent, BazComponent), Components>,
+    }
+}
+
+delegate_components! {
+    <Components> UseNamespace<BarComponent, Components> {
+        FooProviderComponent: RedirectLookup<BazComponent, Components>,
     }
 }
 
 pub struct BarComponent;
+
+pub struct BazComponent;
 
 #[cgp_impl(new TestProvider)]
 impl FooProvider {
@@ -36,15 +48,19 @@ impl FooProvider {
 pub struct App;
 
 delegate_components! {
+    // #[use_namespace]
     App {
-        FooProviderComponent: UseNamespace<App>,
-        BarComponent: TestProvider,
-    }
-}
+        <Component: HasNamespace<App>> Component:
+            UseNamespace<(), App>,
 
-delegate_components! {
-    new InnerComponents {
-        BarComponent: TestProvider,
+        // open BarComponent;
+        // <Components>
+        //     (BarComponent, Components): UseNamespace<BarComponent, App>,
+
+        // BazComponent: TestProvider,
+
+        // @BarComponent::BazComponent: TestProvider,
+        (BarComponent, BazComponent): TestProvider,
     }
 }
 
