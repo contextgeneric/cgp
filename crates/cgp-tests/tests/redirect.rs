@@ -2,7 +2,7 @@ use cgp::prelude::*;
 
 pub trait HasNamespace<T> {}
 
-pub struct UseNamespace<Path, Components>(pub PhantomData<(Path, Components)>);
+pub struct UseNamespace<Components>(pub PhantomData<Components>);
 
 pub struct RedirectLookup<Key, Components>(pub PhantomData<(Key, Components)>);
 
@@ -25,7 +25,7 @@ where
 }
 
 delegate_components! {
-    <Components> UseNamespace<Nil, Components> {
+    <Components> UseNamespace<Components> {
         FooProviderComponent: RedirectLookup<Product![BarComponent, BazComponent, FooProviderComponent], Components>,
     }
 }
@@ -45,7 +45,7 @@ delegate_components! {
     // #[use_namespace]
     App {
         <Component: HasNamespace<App>> Component:
-            UseNamespace<Nil, App>,
+            UseNamespace<App>,
 
         // @BarComponent::* : TestProvider,
         // <Components> Cons<BarComponent, Components>: TestProvider,
