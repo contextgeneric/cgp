@@ -25,14 +25,8 @@ where
 }
 
 delegate_components! {
-    <Components> UseNamespace<(), Components> {
-        FooProviderComponent: RedirectLookup<(BarComponent, BazComponent), Components>,
-    }
-}
-
-delegate_components! {
-    <Components> UseNamespace<BarComponent, Components> {
-        FooProviderComponent: RedirectLookup<BazComponent, Components>,
+    <Components> UseNamespace<Nil, Components> {
+        FooProviderComponent: RedirectLookup<Product![BarComponent, BazComponent, FooProviderComponent], Components>,
     }
 }
 
@@ -51,16 +45,16 @@ delegate_components! {
     // #[use_namespace]
     App {
         <Component: HasNamespace<App>> Component:
-            UseNamespace<(), App>,
+            UseNamespace<Nil, App>,
 
-        // open BarComponent;
-        // <Components>
-        //     (BarComponent, Components): UseNamespace<BarComponent, App>,
+        // @BarComponent::* : TestProvider,
+        // <Components> Cons<BarComponent, Components>: TestProvider,
 
-        // BazComponent: TestProvider,
+        // @BarComponent::BazComponent::* : TestProvider,
+        <Components> Cons<BarComponent, Cons<BazComponent, Components>>: TestProvider,
 
-        // @BarComponent::BazComponent: TestProvider,
-        (BarComponent, BazComponent): TestProvider,
+        // @BarComponent::BazComponent::FooProviderComponent : TestProvider,
+        // Product![BarComponent, BazComponent, FooProviderComponent]: TestProvider,
     }
 }
 
