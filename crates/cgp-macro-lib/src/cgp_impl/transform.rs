@@ -41,7 +41,11 @@ pub fn transform_impl_trait(
     let mut out_impl: ItemImpl = parse2(raw_out_impl)?;
     out_impl.self_ty = Box::new(provider_type.clone());
 
-    let mut provider_trait_path: SimpleType = consumer_trait_path.clone();
+    let mut provider_trait_path: SimpleType = parse2(replace_self_type(
+        consumer_trait_path.to_token_stream(),
+        context_type.to_token_stream(),
+        &local_assoc_types,
+    ))?;
 
     match &mut provider_trait_path.generics {
         Some(generics) => {
