@@ -1,21 +1,20 @@
-use cgp::core::component::{CoreComponents, RedirectLookup};
-use cgp::core::error::{ErrorComponents, ErrorRaiserComponent, ErrorTypeProviderComponent};
-use cgp::core::field::traits::AppendProduct;
+use cgp::core::component::RedirectLookup;
+use cgp::core::error::{ErrorRaiserComponent, ErrorTypeProviderComponent};
 use cgp::extra::error::RaiseFrom;
 use cgp::extra::handler::CanTryCompute;
 use cgp::prelude::*;
-use cgp_tests::ExtendedNamespace;
+use cgp_tests::{ExtendedNamespace, MyErrorComponents};
 
 pub struct App;
 
 delegate_components! {
     App {
-        <Path, Component: ExtendedNamespace<App, Path: AppendProduct<Component, Output = Path>>>
+        <Component: ExtendedNamespace<App>>
             Component:
-                RedirectLookup<Path, App>,
-        Product![CoreComponents, ErrorComponents, ErrorTypeProviderComponent]:
+                RedirectLookup<Component::Path, App>,
+        Product![MyErrorComponents, ErrorTypeProviderComponent]:
             UseType<String>,
-        Product![CoreComponents, ErrorComponents, ErrorRaiserComponent]:
+        Product![MyErrorComponents, ErrorRaiserComponent]:
             RaiseFrom,
         TryComputerComponent:
             Foo,
