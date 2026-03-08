@@ -5,8 +5,10 @@
    CGP component implementation.
 */
 
+mod namespaces;
 mod traits;
 mod types;
 
+pub use namespaces::{CoreComponents, DefaultNamespace};
 pub use traits::{CanUseComponent, DelegateComponent, IsProviderFor};
-pub use types::{UseContext, UseDelegate, UseFields, WithContext, WithProvider};
+pub use types::{RedirectLookup, UseContext, UseDelegate, UseFields, WithContext, WithProvider};

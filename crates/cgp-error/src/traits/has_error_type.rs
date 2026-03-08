@@ -1,8 +1,14 @@
 use core::fmt::Debug;
 
-use cgp_component::{DelegateComponent, IsProviderFor, UseContext, WithProvider};
-use cgp_macro::cgp_type;
+use cgp_component::{
+    CoreComponents, DefaultNamespace, DelegateComponent, IsProviderFor, RedirectLookup, UseContext,
+    WithProvider,
+};
+use cgp_field::types::*;
+use cgp_macro::{Product, cgp_impl, cgp_type};
 use cgp_type::{TypeProvider, UseType};
+
+use crate::ErrorComponents;
 
 /**
     The `HasErrorType` trait provides an abstract error type that can be used by
@@ -29,3 +35,16 @@ pub trait HasErrorType {
 }
 
 pub type ErrorOf<Context> = <Context as HasErrorType>::Error;
+
+impl<T> DefaultNamespace<T> for ErrorTypeProviderComponent {
+    type Path = Product![CoreComponents, ErrorComponents];
+}
+
+#[cgp_impl(RedirectLookup<Key, Components>)]
+#[use_provider(Components::Delegate: ErrorTypeProvider)]
+impl<Key, Components> ErrorTypeProvider
+where
+    Components: DelegateComponent<Key>,
+{
+    type Error = <Components::Delegate as ErrorTypeProvider<Self>>::Error;
+}

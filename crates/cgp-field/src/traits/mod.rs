@@ -1,3 +1,4 @@
+mod append_product;
 mod build_field;
 mod extract_field;
 mod from_fields;
@@ -18,6 +19,7 @@ mod to_fields;
 mod transform_map;
 mod update_field;
 
+pub use append_product::*;
 pub use build_field::*;
 pub use extract_field::*;
 pub use from_fields::*;

@@ -55,6 +55,7 @@ name = "cgp-error"
 version = "0.7.0"
 dependencies = [
  "cgp-component",
+ "cgp-field",
  "cgp-macro",
  "cgp-type",
 ]
