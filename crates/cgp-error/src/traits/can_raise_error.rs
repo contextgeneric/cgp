@@ -21,18 +21,6 @@ pub trait CanRaiseError<SourceError>: HasErrorType {
 #[use_provider(Delegate: ErrorRaiser<E>)]
 impl<Path, Components, Delegate, E> ErrorRaiser<E>
 where
-    Components: DelegateComponent<Path, Delegate = Delegate>,
-{
-    fn raise_error(error: E) -> Error {
-        Delegate::raise_error(error)
-    }
-}
-
-#[cgp_impl(new LookupGenerics<Path, Components>)]
-#[use_type(HasErrorType::Error)]
-#[use_provider(Delegate: ErrorRaiser<E>)]
-impl<Path, Components, Delegate, E> ErrorRaiser<E>
-where
     Path: AppendProduct<E>,
     Components: DelegateComponent<Path::Output, Delegate = Delegate>,
 {
