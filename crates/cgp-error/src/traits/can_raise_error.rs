@@ -15,14 +15,14 @@ pub trait CanRaiseError<SourceError>: HasErrorType {
     fn raise_error(error: SourceError) -> Self::Error;
 }
 
-#[cgp_impl(RedirectLookup<Key, Components>)]
-#[use_type(HasErrorType::Error)]
-#[use_provider(Components::Delegate: ErrorRaiser<E>)]
-impl<Key, Components, E> ErrorRaiser<E>
-where
-    Components: DelegateComponent<Key>,
-{
-    fn raise_error(error: E) -> Error {
-        Components::Delegate::raise_error(error)
-    }
-}
+// #[cgp_impl(RedirectLookup<Key, Components>)]
+// #[use_type(HasErrorType::Error)]
+// #[use_provider(Components::Delegate: ErrorRaiser<E>)]
+// impl<Key, Components, E> ErrorRaiser<E>
+// where
+//     Components: DelegateComponent<Key>,
+// {
+//     fn raise_error(error: E) -> Error {
+//         Components::Delegate::raise_error(error)
+//     }
+// }

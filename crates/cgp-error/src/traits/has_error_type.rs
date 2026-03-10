@@ -5,7 +5,7 @@ use cgp_component::{
     WithProvider,
 };
 use cgp_field::types::*;
-use cgp_macro::{Product, cgp_impl, cgp_type};
+use cgp_macro::{Product, cgp_type, delegate_components};
 use cgp_type::{TypeProvider, UseType};
 
 use crate::ErrorComponents;
@@ -40,11 +40,19 @@ impl<T> DefaultNamespace<T> for ErrorTypeProviderComponent {
     type Path = Product![CoreComponents, ErrorComponents, ErrorTypeProviderComponent];
 }
 
-#[cgp_impl(RedirectLookup<Key, Components>)]
-#[use_provider(Components::Delegate: ErrorTypeProvider)]
-impl<Key, Components> ErrorTypeProvider
-where
-    Components: DelegateComponent<Key>,
-{
-    type Error = <Components::Delegate as ErrorTypeProvider<Self>>::Error;
-}
+// delegate_components! {
+//     <Path, Components: DelegateComponent<Path>>
+//     RedirectLookup<Path, Components> {
+//         ErrorTypeProviderComponent:
+//             Components::Delegate,
+//     }
+// }
+
+// #[cgp_impl(RedirectLookup<Key, Components>)]
+// #[use_provider(Components::Delegate: ErrorTypeProvider)]
+// impl<Key, Components> ErrorTypeProvider
+// where
+//     Components: DelegateComponent<Key>,
+// {
+//     type Error = <Components::Delegate as ErrorTypeProvider<Self>>::Error;
+// }

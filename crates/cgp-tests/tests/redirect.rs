@@ -47,16 +47,16 @@ delegate_components! {
         <Component: HasNamespace<App>> Component:
             UseNamespace<App>,
 
-        // @BarComponent::* : TestProvider,
+        // @BarComponent.* : TestProvider,
         // <Components> Cons<BarComponent, Components>: TestProvider,
 
-        // @BarComponent::BazComponent::* : TestProvider,
+        // @BarComponent.BazComponent.* : TestProvider,
         // <Components> Cons<BarComponent, Cons<BazComponent, Components>>: TestProvider,
 
-        // @BarComponent::BazComponent::FooProviderComponent : TestProvider,
+        // @BarComponent.BazComponent.FooProviderComponent : TestProvider,
         Product![BarComponent, BazComponent, FooProviderComponent]: TestProvider,
 
-        // @*::BazComponent::*: TestProvider,
+        // @*.BazComponent.*: TestProvider,
         // <ComponentsA, ComponentsB> Cons<ComponentsA, Cons<BazComponent, ComponentsB>>: TestProvider,
     }
 }
