@@ -1,5 +1,5 @@
 use cgp::core::component::RedirectLookup;
-use cgp::core::error::{ErrorRaiserComponent, ErrorTypeProviderComponent};
+use cgp::core::error::{ErrorRaiserComponent, ErrorTypeProviderComponent, LookupGenerics};
 use cgp::extra::error::RaiseFrom;
 use cgp::extra::handler::CanTryCompute;
 use cgp::prelude::*;
@@ -7,10 +7,10 @@ use cgp_tests::{ExtendedNamespace, MyErrorComponents};
 
 pub struct App;
 
-impl<Component, Path, Delegate> DelegateComponent<Component> for App
+impl<Component, Path> DelegateComponent<Component> for App
 where
     Component: ExtendedNamespace<App, Path = Path>,
-    App: DelegateComponent<Path, Delegate = Delegate>,
+    App: DelegateComponent<Path>,
 {
     // type Delegate = Delegate;
     type Delegate = RedirectLookup<Path, App>;
@@ -29,13 +29,15 @@ delegate_components! {
         // <Component: ExtendedNamespace<App>>
         //     Component:
         //         RedirectLookup<Component::Path, App>,
-        ErrorTypeProviderComponent:
-            UseType<String>,
+        // ErrorTypeProviderComponent:
+        //     UseType<String>,
         // ErrorRaiserComponent:
         //     RaiseFrom,
-        // Product![MyErrorComponents, ErrorTypeProviderComponent]:
-        //     UseType<String>,
+        Product![MyErrorComponents, ErrorTypeProviderComponent]:
+            UseType<String>,
         Product![MyErrorComponents, ErrorRaiserComponent]:
+            LookupGenerics<Product![MyErrorComponents, ErrorRaiserComponent], App>,
+        Product![MyErrorComponents, ErrorRaiserComponent, &'static str]:
             RaiseFrom,
         TryComputerComponent:
             Foo,

@@ -11,4 +11,6 @@ mod types;
 
 pub use namespaces::{CoreComponents, DefaultNamespace};
 pub use traits::{CanUseComponent, DelegateComponent, IsProviderFor};
-pub use types::{RedirectLookup, UseContext, UseDelegate, UseFields, WithContext, WithProvider};
+pub use types::{
+    HasDelegate, RedirectLookup, UseContext, UseDelegate, UseFields, WithContext, WithProvider,
+};
