@@ -1,7 +1,7 @@
 use alloc::boxed::Box;
 use alloc::vec::Vec;
 
-use proc_macro2::Span;
+use proc_macro2::{Span, TokenStream};
 use quote::quote;
 use syn::punctuated::Punctuated;
 use syn::spanned::Spanned;
@@ -34,9 +34,7 @@ pub fn derive_provider_impl(
         < #provider_type as #delegate_constraint > :: Delegate
     };
 
-    let provider_generic_args = TypeGenerics::try_from(&provider_trait.generics)?
-        .generics
-        .params;
+    let provider_type_generics = provider_trait.generics.split_for_impl().1;
 
     let impl_generics = {
         let mut impl_generics = provider_trait.generics.clone();
@@ -57,7 +55,7 @@ pub fn derive_provider_impl(
             ))?);
 
             let provider_constraint: TypeParamBound = parse2(quote! {
-                #provider_name < #provider_generic_args >
+                #provider_name #provider_type_generics
             })?;
 
             let where_clause = impl_generics.make_where_clause();
@@ -67,12 +65,38 @@ pub fn derive_provider_impl(
             })?);
 
             where_clause.predicates.push(parse2(quote! {
-                #provider_type :: Delegate : #provider_constraint
+                #delegate_type : #provider_constraint
             })?);
         }
 
         impl_generics
     };
+
+    let impl_items = derive_provider_item_impls(provider_trait, &delegate_type)?;
+
+    let trait_path: Path = parse2(quote!( #provider_name #provider_type_generics ))?;
+
+    let item = ItemImpl {
+        attrs: provider_trait.attrs.clone(),
+        defaultness: None,
+        unsafety: provider_trait.unsafety,
+        impl_token: Impl::default(),
+        generics: impl_generics,
+        trait_: Some((None, trait_path, For::default())),
+        self_ty: Box::new(parse2(quote!(#provider_type))?),
+        brace_token: Brace::default(),
+        items: impl_items,
+    };
+
+    Ok(item)
+}
+
+pub fn derive_provider_item_impls(
+    provider_trait: &ItemTrait,
+    delegate_type: &TokenStream,
+) -> syn::Result<Vec<ImplItem>> {
+    let provider_name = &provider_trait.ident;
+    let provider_type_generics = provider_trait.generics.split_for_impl().1;
 
     let mut impl_items: Vec<ImplItem> = Vec::new();
 
@@ -102,7 +126,7 @@ pub fn derive_provider_impl(
                 let impl_type = derive_delegate_type_impl(
                     trait_type,
                     parse2(quote!(
-                        < #delegate_type as #provider_name < #provider_generic_args > > :: #type_name #type_generics
+                        < #delegate_type as #provider_name #provider_type_generics > :: #type_name #type_generics
                     ))?,
                 );
 
@@ -113,7 +137,7 @@ pub fn derive_provider_impl(
                 let (_, type_generics, _) = trait_item_const.generics.split_for_impl();
 
                 let impl_expr = parse2(quote! {
-                    < #delegate_type as #provider_name < #provider_generic_args > > :: #const_ident #type_generics
+                    < #delegate_type as #provider_name #provider_type_generics > :: #const_ident #type_generics
                 })?;
 
                 let impl_item_const = ImplItemConst {
@@ -141,19 +165,5 @@ pub fn derive_provider_impl(
         }
     }
 
-    let trait_path: Path = parse2(quote!( #provider_name < #provider_generic_args > ))?;
-
-    let item = ItemImpl {
-        attrs: provider_trait.attrs.clone(),
-        defaultness: None,
-        unsafety: provider_trait.unsafety,
-        impl_token: Impl::default(),
-        generics: impl_generics,
-        trait_: Some((None, trait_path, For::default())),
-        self_ty: Box::new(parse2(quote!(#provider_type))?),
-        brace_token: Brace::default(),
-        items: impl_items,
-    };
-
-    Ok(item)
+    Ok(impl_items)
 }
