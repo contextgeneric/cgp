@@ -37,8 +37,9 @@ pub fn parse_component_attributes(
 
                 parsed_attributes.use_type.extend(use_type_specs);
             } else if ident == "use_namespace" {
-                let use_namespace_specs = attribute
-                    .parse_args_with(Punctuated::<UseNamespaceAttribute, Comma>::parse_terminated)?;
+                let use_namespace_specs = attribute.parse_args_with(
+                    Punctuated::<UseNamespaceAttribute, Comma>::parse_terminated,
+                )?;
                 parsed_attributes.use_namespace.extend(use_namespace_specs);
             } else {
                 attributes.push(attribute);

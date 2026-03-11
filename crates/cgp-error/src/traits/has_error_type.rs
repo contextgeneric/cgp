@@ -5,7 +5,7 @@ use cgp_component::{
     WithProvider,
 };
 use cgp_field::types::*;
-use cgp_macro::{Product, cgp_impl, cgp_type};
+use cgp_macro::{cgp_impl, cgp_type};
 use cgp_type::{TypeProvider, UseType};
 
 use crate::ErrorComponents;
@@ -30,18 +30,12 @@ use crate::ErrorComponents;
    <https://patterns.contextgeneric.dev/error-handling.html>
 */
 #[cgp_type]
+#[use_namespace(DefaultNamespace: CoreComponents.ErrorComponents)]
 pub trait HasErrorType {
     type Error: Debug;
 }
 
 pub type ErrorOf<Context> = <Context as HasErrorType>::Error;
-
-impl<Components> DefaultNamespace<Components> for ErrorTypeProviderComponent {
-    type Provider = RedirectLookup<
-        Product![CoreComponents, ErrorComponents, ErrorTypeProviderComponent],
-        Components,
-    >;
-}
 
 #[cgp_impl(RedirectLookup<Key, Components>)]
 #[use_provider(Components::Delegate: ErrorTypeProvider)]

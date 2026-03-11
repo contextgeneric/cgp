@@ -1,5 +1,5 @@
-use syn::{Ident, ItemImpl, Type, parse2};
 use quote::{ToTokens, quote};
+use syn::{Ident, ItemImpl, Type, parse2};
 
 use crate::attributes::UseNamespaceAttribute;
 
@@ -36,9 +36,7 @@ pub fn derive_namespace_impl(
     parse2(out)
 }
 
-pub fn path_to_product(
-    paths: &[Type],
-) -> syn::Result<Type> {
+pub fn path_to_product(paths: &[Type]) -> syn::Result<Type> {
     let mut out = quote! { ε };
 
     for path in paths.iter().rev() {
