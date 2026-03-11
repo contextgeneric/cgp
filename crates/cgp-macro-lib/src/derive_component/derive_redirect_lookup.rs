@@ -6,14 +6,13 @@ use syn::{GenericParam, Generics, Ident, ItemImpl, ItemTrait, Path, Type, parse2
 use crate::derive_component::provider_impl::derive_provider_item_impls;
 
 pub fn derive_redirect_lookup_impl(
-    context_type: &Ident,
     consumer_trait: &ItemTrait,
     provider_trait: &ItemTrait,
 ) -> syn::Result<ItemImpl> {
     let provider_name = &provider_trait.ident;
     let provider_type_generics = provider_trait.generics.split_for_impl().1;
 
-    let generic_params = extract_type_generics(&provider_trait.generics)?;
+    let generic_params = extract_type_generics(&consumer_trait.generics)?;
 
     let mut impl_generics = provider_trait.generics.clone();
 
@@ -27,11 +26,11 @@ pub fn derive_redirect_lookup_impl(
 
     let delegate_constraint = if let Some(generic_params) = &generic_params {
         where_clause.predicates.push(parse2(quote! {
-            __Path__: AppendProduct< ( #generic_params ) >
+            __Path__: AppendProduct< #generic_params >
         })?);
 
         quote! {
-            DelegateComponent<<__Path__ as AppendProduct< ( #generic_params ) >>::Output>
+            DelegateComponent<<__Path__ as AppendProduct< #generic_params >>::Output>
         }
     } else {
         quote! {
@@ -40,7 +39,7 @@ pub fn derive_redirect_lookup_impl(
     };
 
     where_clause.predicates.push(parse2(quote! {
-        __Components__: #delegate_constraint,
+        __Components__: #delegate_constraint
     })?);
 
     let delegate_type = quote! {

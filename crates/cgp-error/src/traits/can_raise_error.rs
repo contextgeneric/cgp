@@ -1,6 +1,7 @@
-use cgp_component::{DelegateComponent, IsProviderFor, RedirectLookup, UseContext, UseDelegate};
-use cgp_field::traits::AppendProduct;
-use cgp_macro::{cgp_component, cgp_impl};
+use cgp_component::{
+    AppendProduct, DelegateComponent, IsProviderFor, RedirectLookup, UseContext, UseDelegate,
+};
+use cgp_macro::cgp_component;
 
 use crate::traits::has_error_type::HasErrorType;
 
@@ -14,17 +15,4 @@ use crate::traits::has_error_type::HasErrorType;
 }]
 pub trait CanRaiseError<SourceError>: HasErrorType {
     fn raise_error(error: SourceError) -> Self::Error;
-}
-
-#[cgp_impl(RedirectLookup<Components, Path>)]
-#[use_type(HasErrorType::Error)]
-#[use_provider(Components::Delegate: ErrorRaiser<E>)]
-impl<Components, Path, E> ErrorRaiser<E>
-where
-    Path: AppendProduct<E>,
-    Components: DelegateComponent<Path::Output>,
-{
-    fn raise_error(error: E) -> Error {
-        Components::Delegate::raise_error(error)
-    }
 }

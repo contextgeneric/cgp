@@ -20,7 +20,6 @@ mod to_fields;
 mod transform_map;
 mod update_field;
 
-pub use append_product::*;
 pub use build_field::*;
 pub use concat_product::*;
 pub use extract_field::*;

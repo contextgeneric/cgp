@@ -1,4 +1,6 @@
-use cgp_component::{DelegateComponent, IsProviderFor, UseContext, UseDelegate};
+use cgp_component::{
+    AppendProduct, DelegateComponent, IsProviderFor, RedirectLookup, UseContext, UseDelegate,
+};
 use cgp_macro::cgp_component;
 
 #[cgp_component {

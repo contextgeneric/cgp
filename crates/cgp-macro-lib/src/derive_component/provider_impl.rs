@@ -13,7 +13,7 @@ use syn::{
 
 use crate::derive_component::delegate_fn::derive_delegated_fn_impl;
 use crate::derive_component::delegate_type::derive_delegate_type_impl;
-use crate::parse::{TypeGenerics, parse_is_provider_params};
+use crate::parse::parse_is_provider_params;
 
 pub fn derive_provider_impl(
     context_type: &Ident,

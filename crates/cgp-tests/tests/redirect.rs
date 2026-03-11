@@ -4,8 +4,6 @@ pub trait HasNamespace<T> {}
 
 pub struct UseNamespace<Components>(pub PhantomData<Components>);
 
-pub struct RedirectLookup<Key, Components>(pub PhantomData<(Key, Components)>);
-
 #[cgp_component(FooProvider)]
 pub trait CanDoFoo {
     fn foo();
@@ -13,20 +11,9 @@ pub trait CanDoFoo {
 
 impl<T> HasNamespace<T> for FooProviderComponent {}
 
-#[cgp_impl(RedirectLookup<Key, Components>)]
-#[use_provider(Components::Delegate: FooProvider)]
-impl<Key, Components> FooProvider
-where
-    Components: DelegateComponent<Key>,
-{
-    fn foo() {
-        Components::Delegate::foo();
-    }
-}
-
 delegate_components! {
     <Components> UseNamespace<Components> {
-        FooProviderComponent: RedirectLookup<Product![BarComponent, BazComponent, FooProviderComponent], Components>,
+        FooProviderComponent: RedirectLookup<Components, Product![BarComponent, BazComponent, FooProviderComponent]>,
     }
 }
 
