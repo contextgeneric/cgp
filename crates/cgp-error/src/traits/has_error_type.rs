@@ -37,11 +37,11 @@ pub trait HasErrorType {
 
 pub type ErrorOf<Context> = <Context as HasErrorType>::Error;
 
-#[cgp_impl(RedirectLookup<Key, Components>)]
+#[cgp_impl(RedirectLookup<Components, Path>)]
 #[use_provider(Components::Delegate: ErrorTypeProvider)]
-impl<Key, Components> ErrorTypeProvider
+impl<Components, Path> ErrorTypeProvider
 where
-    Components: DelegateComponent<Key>,
+    Components: DelegateComponent<Path>,
 {
     type Error = <Components::Delegate as ErrorTypeProvider<Self>>::Error;
 }

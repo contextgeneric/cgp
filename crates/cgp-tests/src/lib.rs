@@ -22,12 +22,12 @@ where
 }
 
 impl<Components> ExtendedNamespace<Components> for ErrorRaiserComponent {
-    type Provider = RedirectLookup<Product![MyErrorComponents, ErrorRaiserComponent], Components>;
+    type Provider = RedirectLookup<Components, Product![MyErrorComponents, ErrorRaiserComponent]>;
 }
 
 impl<Components> ExtendedNamespace<Components>
     for Product![CoreComponents, ErrorComponents, ErrorTypeProviderComponent]
 {
     type Provider =
-        RedirectLookup<Product![MyErrorComponents, ErrorTypeProviderComponent], Components>;
+        RedirectLookup<Components, Product![MyErrorComponents, ErrorTypeProviderComponent]>;
 }

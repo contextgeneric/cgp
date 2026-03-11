@@ -24,7 +24,15 @@ pub fn derive_provider_impl(
 ) -> syn::Result<ItemImpl> {
     let provider_name = &provider_trait.ident;
 
-    let component_type = Ident::new("__Component__", Span::call_site());
+    let provider_type = Ident::new("__Provider__", Span::call_site());
+
+    let delegate_constraint = quote! {
+        DelegateComponent< #component_name < #component_params > >
+    };
+
+    let delegate_type = quote! {
+        < #provider_type as #delegate_constraint > :: Delegate
+    };
 
     let provider_generic_args = TypeGenerics::try_from(&provider_trait.generics)?
         .generics
@@ -35,18 +43,16 @@ pub fn derive_provider_impl(
 
         impl_generics
             .params
-            .insert(0, parse2(quote!(#component_type))?);
+            .insert(0, parse2(quote!(#provider_type))?);
 
         {
             let is_provider_params = parse_is_provider_params(&consumer_trait.generics)?;
 
-            let mut delegate_constraint: Punctuated<TypeParamBound, Plus> = Punctuated::default();
+            let mut delegate_constraints: Punctuated<TypeParamBound, Plus> = Punctuated::default();
 
-            delegate_constraint.push(parse2(quote! {
-                DelegateComponent< #component_name < #component_params > >
-            })?);
+            delegate_constraints.push(parse2(delegate_constraint)?);
 
-            delegate_constraint.push(parse2(quote!(
+            delegate_constraints.push(parse2(quote!(
                 IsProviderFor< #component_name < #component_params >, #context_type, ( #is_provider_params ) >
             ))?);
 
@@ -57,11 +63,11 @@ pub fn derive_provider_impl(
             let where_clause = impl_generics.make_where_clause();
 
             where_clause.predicates.push(parse2(quote! {
-                #component_type : #delegate_constraint
+                #provider_type : #delegate_constraints
             })?);
 
             where_clause.predicates.push(parse2(quote! {
-                #component_type :: Delegate : #provider_constraint
+                #provider_type :: Delegate : #provider_constraint
             })?);
         }
 
@@ -73,8 +79,7 @@ pub fn derive_provider_impl(
     for trait_item in provider_trait.items.iter() {
         match &trait_item {
             TraitItem::Fn(trait_fn) => {
-                let impl_fn =
-                    derive_delegated_fn_impl(&trait_fn.sig, &quote!(#component_type :: Delegate))?;
+                let impl_fn = derive_delegated_fn_impl(&trait_fn.sig, &delegate_type)?;
 
                 impl_items.push(ImplItem::Fn(impl_fn))
             }
@@ -97,7 +102,7 @@ pub fn derive_provider_impl(
                 let impl_type = derive_delegate_type_impl(
                     trait_type,
                     parse2(quote!(
-                        < #component_type :: Delegate as #provider_name < #provider_generic_args > > :: #type_name #type_generics
+                        < #delegate_type as #provider_name < #provider_generic_args > > :: #type_name #type_generics
                     ))?,
                 );
 
@@ -108,7 +113,7 @@ pub fn derive_provider_impl(
                 let (_, type_generics, _) = trait_item_const.generics.split_for_impl();
 
                 let impl_expr = parse2(quote! {
-                    < #component_type :: Delegate as #provider_name < #provider_generic_args > > :: #const_ident #type_generics
+                    < #delegate_type as #provider_name < #provider_generic_args > > :: #const_ident #type_generics
                 })?;
 
                 let impl_item_const = ImplItemConst {
@@ -145,7 +150,7 @@ pub fn derive_provider_impl(
         impl_token: Impl::default(),
         generics: impl_generics,
         trait_: Some((None, trait_path, For::default())),
-        self_ty: Box::new(parse2(quote!(#component_type))?),
+        self_ty: Box::new(parse2(quote!(#provider_type))?),
         brace_token: Brace::default(),
         items: impl_items,
     };

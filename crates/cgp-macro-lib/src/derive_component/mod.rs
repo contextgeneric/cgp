@@ -5,6 +5,7 @@ mod delegate_fn;
 mod delegate_type;
 mod derive;
 mod derive_namespace;
+mod derive_redirect_lookup;
 mod preprocess;
 mod provider_impl;
 mod provider_trait;

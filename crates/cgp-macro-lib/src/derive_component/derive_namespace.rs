@@ -29,7 +29,7 @@ pub fn derive_namespace_impl(
     let out = quote! {
         impl<__Components__> #namespace < __Components__ > for #component_name
         {
-            type Provider = RedirectLookup< #path, __Components__ >;
+            type Provider = RedirectLookup< __Components__, #path >;
         }
     };
 

@@ -16,15 +16,15 @@ pub trait CanRaiseError<SourceError>: HasErrorType {
     fn raise_error(error: SourceError) -> Self::Error;
 }
 
-#[cgp_impl(RedirectLookup<Path, Components>)]
+#[cgp_impl(RedirectLookup<Components, Path>)]
 #[use_type(HasErrorType::Error)]
-#[use_provider(Delegate: ErrorRaiser<E>)]
-impl<Path, Components, Delegate, E> ErrorRaiser<E>
+#[use_provider(Components::Delegate: ErrorRaiser<E>)]
+impl<Components, Path, E> ErrorRaiser<E>
 where
     Path: AppendProduct<E>,
-    Components: DelegateComponent<Path::Output, Delegate = Delegate>,
+    Components: DelegateComponent<Path::Output>,
 {
     fn raise_error(error: E) -> Error {
-        Delegate::raise_error(error)
+        Components::Delegate::raise_error(error)
     }
 }
