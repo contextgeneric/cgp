@@ -1,4 +1,3 @@
-use cgp::core::component::RedirectLookup;
 use cgp::core::error::{ErrorRaiserComponent, ErrorTypeProviderComponent};
 use cgp::extra::error::RaiseFrom;
 use cgp::extra::handler::CanTryCompute;
@@ -10,8 +9,7 @@ pub struct App;
 delegate_components! {
     App {
         <Component: ExtendedNamespace<App>>
-            Component:
-                RedirectLookup<Component::Path, App>,
+            Component: Component::Provider,
         Product![MyErrorComponents, ErrorTypeProviderComponent]:
             UseType<String>,
         Product![MyErrorComponents, ErrorRaiserComponent, &'static str]:

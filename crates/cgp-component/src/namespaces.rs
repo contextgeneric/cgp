@@ -1,5 +1,5 @@
 pub trait DefaultNamespace<T> {
-    type Path;
+    type Provider;
 }
 
 pub struct CoreComponents;

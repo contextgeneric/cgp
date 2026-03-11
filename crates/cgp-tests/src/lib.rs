@@ -1,32 +1,33 @@
 #[cfg(test)]
 pub mod tests;
 
-use cgp::core::component::CoreComponents;
+use cgp::core::component::{CoreComponents, RedirectLookup};
 use cgp::core::error::{ErrorComponents, ErrorRaiserComponent, ErrorTypeProviderComponent};
 use cgp::prelude::*;
 
 pub trait ExtendedNamespace<T> {
-    type Path;
+    type Provider;
 }
 
 pub struct ExtendedNamespaceComponents;
 
 pub struct MyErrorComponents;
 
-impl<Component, T, Path> ExtendedNamespace<T> for Component
+impl<Component, Components, Provider> ExtendedNamespace<Components> for Component
 where
-    Component: DefaultNamespace<T, Path = Path>
-        + DefaultNamespace<ExtendedNamespaceComponents, Path = Path>,
+    Component: DefaultNamespace<Components, Provider = Provider>
+        + DefaultNamespace<ExtendedNamespaceComponents>,
 {
-    type Path = Path;
+    type Provider = Provider;
 }
 
-impl<T> ExtendedNamespace<T> for ErrorRaiserComponent {
-    type Path = Product![MyErrorComponents, ErrorRaiserComponent];
+impl<Components> ExtendedNamespace<Components> for ErrorRaiserComponent {
+    type Provider = RedirectLookup<Product![MyErrorComponents, ErrorRaiserComponent], Components>;
 }
 
-impl<T> ExtendedNamespace<T>
+impl<Components> ExtendedNamespace<Components>
     for Product![CoreComponents, ErrorComponents, ErrorTypeProviderComponent]
 {
-    type Path = Product![MyErrorComponents, ErrorTypeProviderComponent];
+    type Provider =
+        RedirectLookup<Product![MyErrorComponents, ErrorTypeProviderComponent], Components>;
 }

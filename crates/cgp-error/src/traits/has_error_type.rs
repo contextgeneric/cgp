@@ -36,8 +36,11 @@ pub trait HasErrorType {
 
 pub type ErrorOf<Context> = <Context as HasErrorType>::Error;
 
-impl<T> DefaultNamespace<T> for ErrorTypeProviderComponent {
-    type Path = Product![CoreComponents, ErrorComponents, ErrorTypeProviderComponent];
+impl<Components> DefaultNamespace<Components> for ErrorTypeProviderComponent {
+    type Provider = RedirectLookup<
+        Product![CoreComponents, ErrorComponents, ErrorTypeProviderComponent],
+        Components,
+    >;
 }
 
 #[cgp_impl(RedirectLookup<Key, Components>)]
