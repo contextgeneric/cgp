@@ -4,6 +4,7 @@ use syn::punctuated::Punctuated;
 use syn::token::Comma;
 use syn::{Attribute, TypeParamBound};
 
+use crate::attributes::UseNamespace;
 use crate::cgp_fn::UseTypeSpec;
 
 pub fn parse_component_attributes(
@@ -35,6 +36,10 @@ pub fn parse_component_attributes(
                 }
 
                 parsed_attributes.use_type.extend(use_type_specs);
+            } else if ident == "use_namespace" {
+                let use_namespace_specs = attribute
+                    .parse_args_with(Punctuated::<UseNamespace, Comma>::parse_terminated)?;
+                parsed_attributes.use_namespace.extend(use_namespace_specs);
             } else {
                 attributes.push(attribute);
             }
@@ -50,4 +55,5 @@ pub fn parse_component_attributes(
 pub struct ComponentAttributes {
     pub extend: Vec<TypeParamBound>,
     pub use_type: Vec<UseTypeSpec>,
+    pub use_namespace: Vec<UseNamespace>,
 }

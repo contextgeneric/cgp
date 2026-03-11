@@ -5,7 +5,9 @@ use proc_macro2::TokenStream;
 use quote::{ToTokens, quote};
 use syn::{Ident, ItemTrait, Type, parse_quote, parse2};
 
-use crate::derive_component::{derive_component_with_ast, preprocess_consumer_trait};
+use crate::derive_component::{
+    derive_component_with_ast, parse_component_attributes, preprocess_consumer_trait,
+};
 use crate::derive_getter::{
     GetterField, derive_use_field_impl, derive_use_fields_impl, derive_with_provider_impl,
     parse_getter_fields,
@@ -22,7 +24,9 @@ pub fn cgp_getter(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStre
 
     let mut consumer_trait: ItemTrait = syn::parse2(body)?;
 
-    preprocess_consumer_trait(&mut consumer_trait)?;
+    let attributes = parse_component_attributes(&mut consumer_trait.attrs)?;
+
+    preprocess_consumer_trait(&mut consumer_trait, &attributes)?;
 
     let provider_entry = entries.entry("provider".to_owned());
 

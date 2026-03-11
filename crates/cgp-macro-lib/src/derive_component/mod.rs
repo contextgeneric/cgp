@@ -11,5 +11,6 @@ mod signature_args;
 mod use_context_impl;
 mod use_delegate_impl;
 
+pub use attributes::*;
 pub use derive::*;
 pub use preprocess::*;

@@ -7,6 +7,7 @@
 
 extern crate alloc;
 
+pub(crate) mod attributes;
 pub(crate) mod blanket_trait;
 pub(crate) mod cgp_fn;
 pub(crate) mod cgp_impl;

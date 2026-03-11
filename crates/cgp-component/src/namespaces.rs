@@ -1,4 +1,4 @@
-pub trait DefaultNamespace<T> {
+pub trait DefaultNamespace<Components> {
     type Provider;
 }
 

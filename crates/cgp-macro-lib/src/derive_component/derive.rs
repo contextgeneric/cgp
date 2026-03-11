@@ -2,6 +2,7 @@ use proc_macro2::TokenStream;
 use quote::{ToTokens, TokenStreamExt, quote};
 use syn::{ItemImpl, ItemStruct, ItemTrait, parse2};
 
+use crate::derive_component::attributes::parse_component_attributes;
 use crate::derive_component::component_name::derive_component_name_struct;
 use crate::derive_component::consumer_impl::derive_consumer_impl;
 use crate::derive_component::preprocess_consumer_trait;
@@ -22,7 +23,9 @@ pub fn derive_component_with_ast(
     let component_name = &spec.component_name;
     let component_params = &spec.component_params;
 
-    preprocess_consumer_trait(&mut consumer_trait)?;
+    let attributes = parse_component_attributes(&mut consumer_trait.attrs)?;
+
+    preprocess_consumer_trait(&mut consumer_trait, &attributes)?;
 
     let component_struct = derive_component_name_struct(component_name, component_params)?;
 
