@@ -10,6 +10,7 @@ mod provider_trait;
 mod signature_args;
 mod use_context_impl;
 mod use_delegate_impl;
+mod derive_namespace;
 
 pub use attributes::*;
 pub use derive::*;

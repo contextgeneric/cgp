@@ -5,6 +5,7 @@ use syn::{ItemImpl, ItemStruct, ItemTrait, parse2};
 use crate::derive_component::attributes::parse_component_attributes;
 use crate::derive_component::component_name::derive_component_name_struct;
 use crate::derive_component::consumer_impl::derive_consumer_impl;
+use crate::derive_component::derive_namespace::derive_namespace_impls;
 use crate::derive_component::preprocess_consumer_trait;
 use crate::derive_component::provider_impl::derive_provider_impl;
 use crate::derive_component::provider_trait::derive_provider_trait;
@@ -78,6 +79,9 @@ pub fn derive_component_with_ast(
             item_impls.push(use_delegate_is_provider_impl);
         }
     }
+
+    let namespace_impls = derive_namespace_impls(&attributes.use_namespace, &component_name)?;
+    item_impls.extend(namespace_impls);
 
     let derived = DerivedComponent {
         component_struct,

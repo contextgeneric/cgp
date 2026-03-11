@@ -3,7 +3,7 @@ pub use core::marker::PhantomData;
 pub use cgp_async_macro::async_trait;
 pub use cgp_component::{
     CanUseComponent, DefaultNamespace, DelegateComponent, IsProviderFor, UseContext, UseDelegate,
-    UseFields, WithContext, WithProvider,
+    UseFields, WithContext, WithProvider, RedirectLookup,
 };
 pub use cgp_error::{CanRaiseError, CanWrapError, HasErrorType};
 pub use cgp_field::impls::{IsMut, IsNothing, IsPresent, IsRef, IsVoid, UseField};
