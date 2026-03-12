@@ -1,6 +1,8 @@
-use cgp_component::AppendProduct;
-
 use crate::types::{Cons, Nil};
+
+pub trait AppendProduct<Item: ?Sized> {
+    type Output;
+}
 
 impl<Item> AppendProduct<Item> for Nil {
     type Output = Cons<Item, Nil>;
