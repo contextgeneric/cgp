@@ -154,7 +154,7 @@ where
                 component_generics
                     .generics
                     .params
-                    .push(parse_quote!( __Wildcard__: ?Sized ));
+                    .push(parse_quote!(__Wildcard__));
             }
 
             let path_type = parse2(path.to_type())?;
