@@ -5,8 +5,9 @@ use quote::{ToTokens, TokenStreamExt, quote};
 use syn::parse::discouraged::Speculative;
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
-use syn::token::{Bracket, Colon, Comma, Gt, Lt, RArrow};
-use syn::{Error, Generics, Ident, Token, Type, braced, bracketed, parse_quote};
+use syn::spanned::Spanned;
+use syn::token::{At, Bracket, Colon, Comma, Dot, Gt, Lt, RArrow, Star};
+use syn::{Error, Generics, Ident, Token, Type, braced, bracketed, parse_quote, parse2};
 
 use crate::parse::{ImplGenerics, TypeGenerics};
 
@@ -138,18 +139,38 @@ where
     Type: Parse,
 {
     fn parse(input: ParseStream) -> syn::Result<Self> {
-        let component_generics = if input.peek(Lt) {
+        let mut component_generics: ImplGenerics = if input.peek(Lt) {
             input.parse()?
         } else {
             Default::default()
         };
 
-        let component_type: Type = input.parse()?;
+        if input.peek(At) {
+            let _: At = input.parse()?;
 
-        Ok(Self {
-            ty: component_type,
-            generics: component_generics,
-        })
+            let path: ComponentPath = input.parse()?;
+
+            if path.wildcard {
+                component_generics
+                    .generics
+                    .params
+                    .push(parse_quote!( __Wildcard__: ?Sized ));
+            }
+
+            let path_type = parse2(path.to_type())?;
+
+            Ok(Self {
+                ty: path_type,
+                generics: component_generics,
+            })
+        } else {
+            let component_type: Type = input.parse()?;
+
+            Ok(Self {
+                ty: component_type,
+                generics: component_generics,
+            })
+        }
     }
 }
 
@@ -167,13 +188,13 @@ impl Parse for DelegateValue {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let fork = input.fork();
 
-        match fork.parse::<DelegateNewValue>() {
-            Ok(value) => {
-                input.advance_to(&fork);
-                Ok(Self::New(value))
-            }
-            _ => Ok(Self::Type(input.parse()?)),
+        if let Ok(value) = fork.parse::<DelegateNewValue>() {
+            input.advance_to(&fork);
+            return Ok(Self::New(value));
         }
+
+        let ty: Type = input.parse()?;
+        Ok(Self::Type(ty))
     }
 }
 
@@ -281,5 +302,75 @@ impl ToTokens for DelegateNewValue {
                 }
             >
         });
+    }
+}
+
+pub struct ComponentPath {
+    pub elements: Vec<Type>,
+    pub wildcard: bool,
+}
+
+impl Parse for ComponentPath {
+    fn parse(input: ParseStream) -> syn::Result<Self> {
+        let raw_elements: Punctuated<PathElement, Dot> =
+            Punctuated::parse_separated_nonempty(input)?;
+
+        let mut elements = Vec::new();
+        let mut wildcard = false;
+
+        for element in raw_elements {
+            match element {
+                PathElement::Type(ty) => {
+                    if wildcard {
+                        return Err(Error::new(ty.span(), "unexpected component after wildcard"));
+                    }
+
+                    elements.push(ty);
+                }
+                PathElement::Wildcard => wildcard = true,
+            }
+        }
+
+        if elements.is_empty() {
+            return Err(Error::new(
+                input.span(),
+                "expect at least one component in component path",
+            ));
+        }
+
+        Ok(Self { elements, wildcard })
+    }
+}
+
+impl ComponentPath {
+    pub fn to_type(&self) -> TokenStream {
+        let mut out = if self.wildcard {
+            quote! { __Wildcard__ }
+        } else {
+            quote! { ε }
+        };
+
+        for element in self.elements.iter().rev() {
+            out = quote! { π< #element, #out> };
+        }
+
+        out
+    }
+}
+
+pub enum PathElement {
+    Type(Type),
+    Wildcard,
+}
+
+impl Parse for PathElement {
+    fn parse(input: ParseStream) -> syn::Result<Self> {
+        if input.peek(Star) {
+            let _: Star = input.parse()?;
+            Ok(Self::Wildcard)
+        } else {
+            let ty: Type = input.parse()?;
+            Ok(Self::Type(ty))
+        }
     }
 }
