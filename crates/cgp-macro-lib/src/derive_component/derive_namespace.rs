@@ -37,11 +37,11 @@ pub fn derive_namespace_impl(
 }
 
 pub fn path_to_product(paths: &[Type]) -> syn::Result<Type> {
-    let mut out = quote! { ε };
+    let mut out = quote! { PathNil };
 
     for path in paths.iter().rev() {
         out = quote! {
-            π< #path , #out >
+            PathCons< #path , #out >
         };
     }
 

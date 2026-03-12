@@ -1,7 +1,6 @@
 use quote::quote;
-use syn::punctuated::Punctuated;
-use syn::token::{Brace, Comma, For, Impl};
-use syn::{GenericParam, Generics, Ident, ItemImpl, ItemTrait, Path, Type, parse2};
+use syn::token::{Brace, For, Impl};
+use syn::{GenericParam, Generics, ItemImpl, ItemTrait, Path, Type, parse2};
 
 use crate::derive_component::provider_impl::derive_provider_item_impls;
 
@@ -26,11 +25,11 @@ pub fn derive_redirect_lookup_impl(
 
     let delegate_constraint = if let Some(generic_params) = &generic_params {
         where_clause.predicates.push(parse2(quote! {
-            __Path__: AppendProduct< #generic_params >
+            __Path__: ConcatPath< #generic_params >
         })?);
 
         quote! {
-            DelegateComponent<<__Path__ as AppendProduct< #generic_params >>::Output>
+            DelegateComponent<<__Path__ as ConcatPath< #generic_params >>::Output>
         }
     } else {
         quote! {
@@ -72,21 +71,29 @@ pub fn derive_redirect_lookup_impl(
 }
 
 pub fn extract_type_generics(generics: &Generics) -> syn::Result<Option<Type>> {
-    let mut params = Punctuated::<Ident, Comma>::new();
+    let type_params = generics
+        .params
+        .iter()
+        .filter_map(|param| {
+            if let GenericParam::Type(type_param) = param {
+                Some(type_param.ident.clone())
+            } else {
+                None
+            }
+        })
+        .collect::<Vec<_>>();
 
-    for param in generics.params.iter() {
-        if let GenericParam::Type(type_param) = param {
-            params.push(type_param.ident.clone());
-        }
-    }
-
-    if params.is_empty() {
+    if type_params.is_empty() {
         Ok(None)
     } else {
-        let params = parse2(quote! {
-            ( #params )
-        })?;
+        let mut out = quote! { PathNil };
 
-        Ok(Some(params))
+        for param in type_params.iter().rev() {
+            out = quote! {
+                PathCons< #param , #out >
+            };
+        }
+
+        Ok(Some(parse2(out)?))
     }
 }

@@ -13,7 +13,7 @@ impl<T> HasNamespace<T> for FooProviderComponent {}
 
 delegate_components! {
     <Components> UseNamespace<Components> {
-        FooProviderComponent: RedirectLookup<Components, Product![BarComponent, BazComponent, FooProviderComponent]>,
+        FooProviderComponent: RedirectLookup<Components, PathCons<BarComponent, PathCons<BazComponent, PathCons<FooProviderComponent, PathNil>>>>,
     }
 }
 

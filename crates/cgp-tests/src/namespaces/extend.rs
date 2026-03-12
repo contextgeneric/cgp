@@ -19,12 +19,17 @@ where
 }
 
 impl<Components> ExtendedNamespace<Components> for ErrorRaiserComponent {
-    type Provider = RedirectLookup<Components, Product![MyErrorComponents, ErrorRaiserComponent]>;
+    type Provider = RedirectLookup<
+        Components,
+        PathCons<MyErrorComponents, PathCons<ErrorRaiserComponent, PathNil>>,
+    >;
 }
 
 impl<Components> ExtendedNamespace<Components>
-    for Product![CgpCore, ErrorComponents, ErrorTypeProviderComponent]
+    for PathCons<CgpCore, PathCons<ErrorComponents, PathCons<ErrorTypeProviderComponent, PathNil>>>
 {
-    type Provider =
-        RedirectLookup<Components, Product![MyErrorComponents, ErrorTypeProviderComponent]>;
+    type Provider = RedirectLookup<
+        Components,
+        PathCons<MyErrorComponents, PathCons<ErrorTypeProviderComponent, PathNil>>,
+    >;
 }

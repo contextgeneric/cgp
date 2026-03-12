@@ -1,6 +1,4 @@
-use cgp_component::{
-    AppendProduct, DelegateComponent, IsProviderFor, RedirectLookup, UseContext, UseDelegate,
-};
+use cgp_component::*;
 use cgp_macro::cgp_component;
 
 use crate::traits::HasErrorType;

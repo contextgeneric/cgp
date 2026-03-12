@@ -1,3 +1,4 @@
+mod path;
 mod redirect_lookup;
 mod use_context;
 mod use_default;
@@ -5,6 +6,7 @@ mod use_delegate;
 mod use_fields;
 mod with_provider;
 
+pub use path::{ConcatPath, PathCons, PathNil};
 pub use redirect_lookup::RedirectLookup;
 pub use use_context::{UseContext, WithContext};
 pub use use_default::UseDefault;

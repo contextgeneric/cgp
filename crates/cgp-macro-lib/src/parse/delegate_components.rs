@@ -347,11 +347,11 @@ impl ComponentPath {
         let mut out = if self.wildcard {
             quote! { __Wildcard__ }
         } else {
-            quote! { ε }
+            quote! { PathNil }
         };
 
         for element in self.elements.iter().rev() {
-            out = quote! { π< #element, #out> };
+            out = quote! { PathCons< #element, #out> };
         }
 
         out

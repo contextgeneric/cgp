@@ -12,5 +12,6 @@ mod types;
 pub use namespaces::{CgpCore, CgpNamespace, DefaultComponentsNamespace};
 pub use traits::{AppendProduct, CanUseComponent, DelegateComponent, IsProviderFor};
 pub use types::{
-    RedirectLookup, UseContext, UseDefault, UseDelegate, UseFields, WithContext, WithProvider,
+    ConcatPath, PathCons, PathNil, RedirectLookup, UseContext, UseDefault, UseDelegate, UseFields,
+    WithContext, WithProvider,
 };
