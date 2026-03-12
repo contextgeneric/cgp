@@ -1,5 +1,9 @@
-pub trait DefaultNamespace<Components> {
+pub trait CgpNamespace<Components> {
     type Provider;
 }
 
-pub struct CoreComponents;
+pub trait DefaultComponentsNamespace<Components> {
+    type Provider;
+}
+
+pub struct CgpCore;

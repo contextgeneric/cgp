@@ -1,4 +1,4 @@
-use cgp::core::component::{CoreComponents, RedirectLookup};
+use cgp::core::component::{CgpCore, RedirectLookup};
 use cgp::core::error::{ErrorComponents, ErrorRaiserComponent, ErrorTypeProviderComponent};
 use cgp::prelude::*;
 
@@ -12,8 +12,8 @@ pub struct MyErrorComponents;
 
 impl<Component, Components, Provider> ExtendedNamespace<Components> for Component
 where
-    Component: DefaultNamespace<Components, Provider = Provider>
-        + DefaultNamespace<ExtendedNamespaceComponents>,
+    Component:
+        CgpNamespace<Components, Provider = Provider> + CgpNamespace<ExtendedNamespaceComponents>,
 {
     type Provider = Provider;
 }
@@ -23,7 +23,7 @@ impl<Components> ExtendedNamespace<Components> for ErrorRaiserComponent {
 }
 
 impl<Components> ExtendedNamespace<Components>
-    for Product![CoreComponents, ErrorComponents, ErrorTypeProviderComponent]
+    for Product![CgpCore, ErrorComponents, ErrorTypeProviderComponent]
 {
     type Provider =
         RedirectLookup<Components, Product![MyErrorComponents, ErrorTypeProviderComponent]>;

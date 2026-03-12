@@ -5,7 +5,7 @@ mod use_delegate;
 mod use_fields;
 mod with_provider;
 
-pub use redirect_lookup::{HasDelegate, RedirectLookup};
+pub use redirect_lookup::RedirectLookup;
 pub use use_context::{UseContext, WithContext};
 pub use use_default::UseDefault;
 pub use use_delegate::UseDelegate;

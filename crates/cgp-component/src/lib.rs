@@ -9,9 +9,8 @@ mod namespaces;
 mod traits;
 mod types;
 
-pub use namespaces::{CoreComponents, DefaultNamespace};
+pub use namespaces::{CgpCore, CgpNamespace, DefaultComponentsNamespace};
 pub use traits::{AppendProduct, CanUseComponent, DelegateComponent, IsProviderFor};
 pub use types::{
-    HasDelegate, RedirectLookup, UseContext, UseDefault, UseDelegate, UseFields, WithContext,
-    WithProvider,
+    RedirectLookup, UseContext, UseDefault, UseDelegate, UseFields, WithContext, WithProvider,
 };

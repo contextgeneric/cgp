@@ -1,7 +1,7 @@
 use core::fmt::Debug;
 
 use cgp_component::{
-    CoreComponents, DefaultNamespace, DelegateComponent, IsProviderFor, RedirectLookup, UseContext,
+    CgpCore, CgpNamespace, DelegateComponent, IsProviderFor, RedirectLookup, UseContext,
     WithProvider,
 };
 use cgp_field::types::*;
@@ -30,7 +30,7 @@ use crate::ErrorComponents;
    <https://patterns.contextgeneric.dev/error-handling.html>
 */
 #[cgp_type]
-#[use_namespace(DefaultNamespace: CoreComponents.ErrorComponents)]
+#[use_namespace(CgpNamespace: CgpCore.ErrorComponents)]
 pub trait HasErrorType {
     type Error: Debug;
 }
