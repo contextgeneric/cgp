@@ -10,9 +10,9 @@ delegate_components! {
     App {
         <Component: ExtendedNamespace<App>>
             Component: Component::Provider,
-        Product![MyErrorComponents, ErrorTypeProviderComponent]:
+        @MyErrorComponents.ErrorTypeProviderComponent:
             UseType<String>,
-        Product![MyErrorComponents, ErrorRaiserComponent, &'static str]:
+        @MyErrorComponents.ErrorRaiserComponent.&'static str:
             RaiseFrom,
         TryComputerComponent:
             Foo,
