@@ -30,7 +30,7 @@ use crate::ErrorComponents;
    <https://patterns.contextgeneric.dev/error-handling.html>
 */
 #[cgp_type]
-#[use_namespace(CgpNamespace: CgpCore.ErrorComponents)]
+#[use_namespace(CgpCore.ErrorComponents)]
 pub trait HasErrorType {
     type Error: Debug;
 }
