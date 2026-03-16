@@ -10,7 +10,7 @@ use syn::token::{At, Bracket, Colon, Comma, Dot, Gt, Lt, RArrow, Star};
 use syn::{Error, Generics, Ident, Token, Type, braced, bracketed, parse_quote, parse2};
 
 use crate::parse::{ImplGenerics, TypeGenerics};
-use crate::symbol::symbol_from_string;
+use crate::symbol::symbol_from_string_spanned;
 
 pub struct DelegateComponents {
     pub new_struct: bool,
@@ -379,7 +379,7 @@ impl Parse for PathElement {
                 let path_str = path_ident.to_string();
                 if let Some(path_char) = path_str.chars().next() {
                     if path_char.is_ascii_lowercase() {
-                        let path_symbol = symbol_from_string(&path_str)?;
+                        let path_symbol = symbol_from_string_spanned(path_ident.span(), &path_str)?;
                         return Ok(Self::Type(path_symbol));
                     }
                 }
