@@ -1,3 +1,3 @@
-pub trait CgpNamespace<Components> {
+pub trait DefaultNamespace<Components> {
     type Provider;
 }

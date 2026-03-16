@@ -9,7 +9,7 @@ mod namespaces;
 mod traits;
 mod types;
 
-pub use namespaces::CgpNamespace;
+pub use namespaces::DefaultNamespace;
 pub use traits::{CanUseComponent, DelegateComponent, IsProviderFor};
 pub use types::{
     ConcatPath, PathCons, PathNil, RedirectLookup, UseContext, UseDefault, UseDelegate, UseFields,

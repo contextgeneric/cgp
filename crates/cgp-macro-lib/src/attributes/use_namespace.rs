@@ -17,7 +17,7 @@ impl Parse for UseNamespaceAttribute {
             let _: Colon = input.parse()?;
             namespace
         } else {
-            Ident::new("CgpNamespace", input.span())
+            Ident::new("DefaultNamespace", input.span())
         };
 
         let path = Punctuated::parse_separated_nonempty(input)?;

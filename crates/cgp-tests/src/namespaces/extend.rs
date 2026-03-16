@@ -10,8 +10,8 @@ pub struct ExtendedNamespaceComponents;
 
 impl<Component, Components, Provider> ExtendedNamespace<Components> for Component
 where
-    Component:
-        CgpNamespace<Components, Provider = Provider> + CgpNamespace<ExtendedNamespaceComponents>,
+    Component: DefaultNamespace<Components, Provider = Provider>
+        + DefaultNamespace<ExtendedNamespaceComponents>,
 {
     type Provider = Provider;
 }

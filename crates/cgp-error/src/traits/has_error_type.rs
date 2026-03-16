@@ -1,8 +1,8 @@
 use core::fmt::Debug;
 
 use cgp_component::{
-    CgpNamespace, DelegateComponent, IsProviderFor, PathCons, PathNil, RedirectLookup, UseContext,
-    WithProvider,
+    DefaultNamespace, DelegateComponent, IsProviderFor, PathCons, PathNil, RedirectLookup,
+    UseContext, WithProvider,
 };
 use cgp_field::types::*;
 use cgp_macro::cgp_type;
