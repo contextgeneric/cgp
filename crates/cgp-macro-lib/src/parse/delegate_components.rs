@@ -370,22 +370,35 @@ impl Parse for PathElement {
             let _: Star = input.parse()?;
             Ok(Self::Wildcard)
         } else {
-            let path_type: Type = input.parse()?;
-
-            let path_tokens = path_type.to_token_stream().into_iter().collect::<Vec<_>>();
-            let path_token: Result<[TokenTree; 1], _> = path_tokens.try_into();
-
-            if let Ok([TokenTree::Ident(path_ident)]) = path_token {
-                let path_str = path_ident.to_string();
-                if let Some(path_char) = path_str.chars().next() {
-                    if path_char.is_ascii_lowercase() {
-                        let path_symbol = symbol_from_string_spanned(path_ident.span(), &path_str)?;
-                        return Ok(Self::Type(path_symbol));
-                    }
-                }
-            }
-
+            let PathType { path_type } = input.parse()?;
             Ok(Self::Type(path_type))
         }
+    }
+}
+
+pub struct PathType {
+    pub path_type: Type,
+}
+
+impl Parse for PathType {
+    fn parse(input: ParseStream) -> syn::Result<Self> {
+        let path_type: Type = input.parse()?;
+
+        let path_tokens = path_type.to_token_stream().into_iter().collect::<Vec<_>>();
+        let path_token: Result<[TokenTree; 1], _> = path_tokens.try_into();
+
+        if let Ok([TokenTree::Ident(path_ident)]) = path_token {
+            let path_str = path_ident.to_string();
+            if let Some(path_char) = path_str.chars().next() {
+                if path_char.is_ascii_lowercase() {
+                    let path_symbol = symbol_from_string_spanned(path_ident.span(), &path_str)?;
+                    return Ok(Self {
+                        path_type: path_symbol,
+                    });
+                }
+            }
+        }
+
+        Ok(Self { path_type })
     }
 }

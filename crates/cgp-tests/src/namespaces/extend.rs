@@ -1,5 +1,5 @@
-use cgp::core::component::{CgpCore, RedirectLookup};
-use cgp::core::error::{ErrorComponents, ErrorRaiserComponent, ErrorTypeProviderComponent};
+use cgp::core::component::RedirectLookup;
+use cgp::core::error::{ErrorRaiserComponent, ErrorTypeProviderComponent};
 use cgp::prelude::*;
 
 pub trait ExtendedNamespace<T> {
@@ -7,8 +7,6 @@ pub trait ExtendedNamespace<T> {
 }
 
 pub struct ExtendedNamespaceComponents;
-
-pub struct MyErrorComponents;
 
 impl<Component, Components, Provider> ExtendedNamespace<Components> for Component
 where
@@ -21,15 +19,21 @@ where
 impl<Components> ExtendedNamespace<Components> for ErrorRaiserComponent {
     type Provider = RedirectLookup<
         Components,
-        PathCons<MyErrorComponents, PathCons<ErrorRaiserComponent, PathNil>>,
+        PathCons<Symbol!("app"), PathCons<ErrorRaiserComponent, PathNil>>,
     >;
 }
 
 impl<Components> ExtendedNamespace<Components>
-    for PathCons<CgpCore, PathCons<ErrorComponents, PathCons<ErrorTypeProviderComponent, PathNil>>>
+    for PathCons<
+        Symbol!("cgp"),
+        PathCons<
+            Symbol!("core"),
+            PathCons<Symbol!("error"), PathCons<ErrorTypeProviderComponent, PathNil>>,
+        >,
+    >
 {
     type Provider = RedirectLookup<
         Components,
-        PathCons<MyErrorComponents, PathCons<ErrorTypeProviderComponent, PathNil>>,
+        PathCons<Symbol!("app"), PathCons<ErrorTypeProviderComponent, PathNil>>,
     >;
 }

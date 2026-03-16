@@ -1,13 +1,12 @@
 use core::fmt::Debug;
 
 use cgp_component::{
-    CgpCore, CgpNamespace, DelegateComponent, IsProviderFor, PathCons, PathNil, RedirectLookup,
-    UseContext, WithProvider,
+    CgpNamespace, DelegateComponent, IsProviderFor, PathCons, PathNil, RedirectLookup, UseContext,
+    WithProvider,
 };
+use cgp_field::types::*;
 use cgp_macro::cgp_type;
 use cgp_type::{TypeProvider, UseType};
-
-use crate::ErrorComponents;
 
 /**
     The `HasErrorType` trait provides an abstract error type that can be used by
@@ -29,7 +28,7 @@ use crate::ErrorComponents;
    <https://patterns.contextgeneric.dev/error-handling.html>
 */
 #[cgp_type]
-#[use_namespace(CgpCore.ErrorComponents)]
+#[use_namespace(cgp.core.error)]
 pub trait HasErrorType {
     type Error: Debug;
 }

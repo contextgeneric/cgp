@@ -2,7 +2,7 @@ use cgp::core::error::{ErrorRaiserComponent, ErrorTypeProviderComponent};
 use cgp::extra::error::RaiseFrom;
 use cgp::extra::handler::CanTryCompute;
 use cgp::prelude::*;
-use cgp_tests::namespaces::{ExtendedNamespace, MyErrorComponents};
+use cgp_tests::namespaces::ExtendedNamespace;
 
 pub struct App;
 
@@ -10,9 +10,9 @@ delegate_components! {
     App {
         <Component: ExtendedNamespace<App>>
             Component: Component::Provider,
-        @MyErrorComponents.ErrorTypeProviderComponent:
+        @app.ErrorTypeProviderComponent:
             UseType<String>,
-        @MyErrorComponents.ErrorRaiserComponent.&'static str:
+        @app.ErrorRaiserComponent.&'static str:
             RaiseFrom,
         TryComputerComponent:
             Foo,

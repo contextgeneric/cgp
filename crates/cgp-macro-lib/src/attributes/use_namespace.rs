@@ -1,11 +1,13 @@
+use syn::Ident;
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::token::{Colon, Dot};
-use syn::{Ident, Type};
+
+use crate::parse::PathType;
 
 pub struct UseNamespaceAttribute {
     pub namespace: Ident,
-    pub path: Punctuated<Type, Dot>,
+    pub path: Punctuated<PathType, Dot>,
 }
 
 impl Parse for UseNamespaceAttribute {
