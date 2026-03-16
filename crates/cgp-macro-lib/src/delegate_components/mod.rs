@@ -1,3 +1,4 @@
+mod attributes;
 mod define_struct;
 mod impl_delegate;
 mod merge_generics;

@@ -18,7 +18,7 @@ impl FooProvider {
 pub struct App;
 
 delegate_components! {
-    // #[use_namespace]
+    #[use_namespace]
     App {
         <Component: DefaultNamespace<App>> Component:
             Component::Provider,
