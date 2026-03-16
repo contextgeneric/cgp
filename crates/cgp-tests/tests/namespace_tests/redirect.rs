@@ -1,20 +1,9 @@
 use cgp::prelude::*;
 
-pub trait HasNamespace<T> {}
-
-pub struct UseNamespace<Components>(pub PhantomData<Components>);
-
 #[cgp_component(FooProvider)]
+#[use_namespace(bar.baz)]
 pub trait CanDoFoo {
     fn foo();
-}
-
-impl<T> HasNamespace<T> for FooProviderComponent {}
-
-delegate_components! {
-    <Components> UseNamespace<Components> {
-        FooProviderComponent: RedirectLookup<Components, PathCons<BarComponent, PathCons<BazComponent, PathCons<FooProviderComponent, PathNil>>>>,
-    }
 }
 
 pub struct BarComponent;
@@ -31,19 +20,14 @@ pub struct App;
 delegate_components! {
     // #[use_namespace]
     App {
-        <Component: HasNamespace<App>> Component:
-            UseNamespace<App>,
+        <Component: DefaultNamespace<App>> Component:
+            Component::Provider,
 
-        // @BarComponent.*: TestProvider,
+        // @bar.*: TestProvider,
 
-        @BarComponent.BazComponent.*: TestProvider,
+        @bar.baz.*: TestProvider,
 
-        @bar.BazComponent.*: TestProvider,
-
-        // @BarComponent.BazComponent.FooProviderComponent: TestProvider,
-
-        // @*.BazComponent.*: TestProvider,
-        // <ComponentsA, ComponentsB> Cons<ComponentsA, Cons<BazComponent, ComponentsB>>: TestProvider,
+        // @bar.baz.FooProviderComponent: TestProvider,
     }
 }
 
