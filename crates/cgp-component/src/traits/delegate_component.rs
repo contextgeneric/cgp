@@ -40,9 +40,13 @@
    ```
 */
 #[diagnostic::on_unimplemented(
-    message = "{Self} does not contain any DelegateComponent entry for {Name}",
-    note = "You might want to implement the provider trait for {Name} on {Self}"
+    message = "{Self} does not contain any DelegateComponent entry for {Component}",
+    note = "You might want to implement the provider trait for {Component} on {Self}"
 )]
-pub trait DelegateComponent<Name: ?Sized> {
+pub trait DelegateComponent<Component: ?Sized> {
+    type Delegate;
+}
+
+pub trait DelegateComponent1<Component: ?Sized, ParamA: ?Sized> {
     type Delegate;
 }

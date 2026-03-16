@@ -1,5 +1,7 @@
+use core::marker::PhantomData;
+
 use cgp_component::*;
-use cgp_macro::cgp_component;
+use cgp_macro::{cgp_component, delegate_components};
 
 use crate::traits::has_error_type::HasErrorType;
 
@@ -14,3 +16,23 @@ use crate::traits::has_error_type::HasErrorType;
 pub trait CanRaiseError<SourceError>: HasErrorType {
     fn raise_error(error: SourceError) -> Self::Error;
 }
+
+pub struct ErrorRaiserComponents<Provider>(pub PhantomData<Provider>);
+
+delegate_components! {
+    UseDefault {
+        ErrorRaiserComponent:
+            UseDelegate<ErrorRaiserComponents<UseDefault>>,
+    }
+}
+
+impl DelegateComponent1<ErrorRaiserComponent, &'static str> for UseDefault {
+    type Delegate = ();
+}
+
+// delegate_components! {
+//     ErrorRaiserComponents<UseDefault> {
+//         &'static str:
+//             RaiseFrom,
+//     }
+// }
