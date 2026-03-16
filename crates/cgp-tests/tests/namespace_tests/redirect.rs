@@ -20,9 +20,6 @@ pub struct App;
 delegate_components! {
     #[use_namespace]
     App {
-        <Component: DefaultNamespace<App>> Component:
-            Component::Provider,
-
         // @bar.*: TestProvider,
 
         @bar.baz.*: TestProvider,

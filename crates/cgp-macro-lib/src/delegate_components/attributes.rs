@@ -1,4 +1,4 @@
-use syn::{Attribute, Ident};
+use syn::{Attribute, Ident, Meta};
 
 pub fn parse_delegate_attributes(attributes: Vec<Attribute>) -> syn::Result<DelegateAttributes> {
     let mut parsed_attributes = DelegateAttributes::default();
@@ -13,8 +13,14 @@ pub fn parse_delegate_attributes(attributes: Vec<Attribute>) -> syn::Result<Dele
                     ));
                 }
 
-                let namespace = attribute.parse_args::<Option<Ident>>()?;
-                parsed_attributes.use_namespace = Some(DelegateNamespaceAttribute { namespace });
+                if let Meta::Path(_) = attribute.meta {
+                    parsed_attributes.use_namespace =
+                        Some(DelegateNamespaceAttribute { namespace: None });
+                } else {
+                    let namespace = attribute.parse_args::<Option<Ident>>()?;
+                    parsed_attributes.use_namespace =
+                        Some(DelegateNamespaceAttribute { namespace });
+                }
             } else {
                 return Err(syn::Error::new_spanned(
                     attribute,
