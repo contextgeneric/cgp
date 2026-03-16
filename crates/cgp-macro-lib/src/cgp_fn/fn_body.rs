@@ -16,7 +16,7 @@ pub fn inject_implicit_arg(arg: &ImplicitArgField, body: &mut Block) -> syn::Res
     let field_name = &arg.field_name;
     let arg_type = &arg.arg_type;
 
-    let field_symbol = symbol_from_string(&field_name.to_string());
+    let field_symbol = symbol_from_string(&field_name.to_string())?;
 
     let call_expr = if arg.field_mut.is_none() {
         quote! {

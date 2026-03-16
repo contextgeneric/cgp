@@ -893,7 +893,9 @@ pub fn replace_with(body: TokenStream) -> TokenStream {
 #[proc_macro]
 #[allow(non_snake_case)]
 pub fn Symbol(body: TokenStream) -> TokenStream {
-    cgp_macro_lib::make_symbol(body.into()).into()
+    cgp_macro_lib::make_symbol(body.into())
+        .unwrap_or_else(syn::Error::into_compile_error)
+        .into()
 }
 
 /**
@@ -972,7 +974,9 @@ pub fn product(body: TokenStream) -> TokenStream {
 
 #[proc_macro_derive(HasField)]
 pub fn derive_fields(item: TokenStream) -> TokenStream {
-    cgp_macro_lib::derive_has_field(item.into()).into()
+    cgp_macro_lib::derive_has_field(item.into())
+        .unwrap_or_else(syn::Error::into_compile_error)
+        .into()
 }
 
 #[proc_macro_derive(HasFields)]

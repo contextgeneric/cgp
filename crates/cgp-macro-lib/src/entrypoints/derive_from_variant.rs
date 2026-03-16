@@ -20,7 +20,7 @@ pub fn derive_from_variant_from_enum(item_enum: &ItemEnum) -> syn::Result<TokenS
 
     for variant in item_enum.variants.iter() {
         let variant_ident = &variant.ident;
-        let variant_tag = symbol_from_string(&variant_ident.to_string());
+        let variant_tag = symbol_from_string(&variant_ident.to_string())?;
         let variant_type = get_variant_type(variant)?;
 
         let item_impl: ItemImpl = parse2(quote! {

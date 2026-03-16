@@ -38,6 +38,8 @@ delegate_components! {
 
         @BarComponent.BazComponent.*: TestProvider,
 
+        @bar.BazComponent.*: TestProvider,
+
         // @BarComponent.BazComponent.FooProviderComponent: TestProvider,
 
         // @*.BazComponent.*: TestProvider,

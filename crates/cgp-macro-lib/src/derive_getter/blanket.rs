@@ -64,7 +64,7 @@ pub fn derive_blanket_impl(
             ),
         };
 
-        let field_symbol = symbol_from_string(&field.field_name.to_string());
+        let field_symbol = symbol_from_string(&field.field_name.to_string())?;
 
         let method = derive_getter_method(
             &context_arg,

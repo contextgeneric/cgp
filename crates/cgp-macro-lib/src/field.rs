@@ -8,7 +8,7 @@ use syn::{Fields, ItemImpl, ItemStruct, LitInt, parse_quote};
 
 use crate::symbol::symbol_from_string;
 
-pub fn derive_has_field_impls_from_struct(item_struct: &ItemStruct) -> Vec<ItemImpl> {
+pub fn derive_has_field_impls_from_struct(item_struct: &ItemStruct) -> syn::Result<Vec<ItemImpl>> {
     let struct_ident = &item_struct.ident;
 
     let (impl_generics, ty_generics, where_clause) = item_struct.generics.split_for_impl();
@@ -20,7 +20,7 @@ pub fn derive_has_field_impls_from_struct(item_struct: &ItemStruct) -> Vec<ItemI
             for field in fields.named.iter() {
                 let field_ident = field.ident.as_ref().unwrap();
 
-                let field_symbol = symbol_from_string(&field_ident.to_string());
+                let field_symbol = symbol_from_string(&field_ident.to_string())?;
 
                 let field_type = &field.ty;
 
@@ -106,15 +106,15 @@ pub fn derive_has_field_impls_from_struct(item_struct: &ItemStruct) -> Vec<ItemI
         _ => {}
     }
 
-    item_impls
+    Ok(item_impls)
 }
 
-pub fn derive_has_field(input: TokenStream) -> TokenStream {
-    let item_struct: ItemStruct = syn::parse2(input).unwrap();
+pub fn derive_has_field(input: TokenStream) -> syn::Result<TokenStream> {
+    let item_struct: ItemStruct = syn::parse2(input)?;
 
-    let item_impls = derive_has_field_impls_from_struct(&item_struct);
+    let item_impls = derive_has_field_impls_from_struct(&item_struct)?;
 
-    quote! {
+    Ok(quote! {
         #( #item_impls )*
-    }
+    })
 }

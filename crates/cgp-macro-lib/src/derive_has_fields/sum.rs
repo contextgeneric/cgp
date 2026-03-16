@@ -15,7 +15,7 @@ pub fn variants_to_sum_type(
 
     for variant in variants.iter().rev() {
         let variant_ident = &variant.ident;
-        let variant_symbol = symbol_from_string(&variant_ident.to_string());
+        let variant_symbol = symbol_from_string(&variant_ident.to_string())?;
 
         let variant_fields = item_fields_to_product_type(&variant.fields, reference)?;
 

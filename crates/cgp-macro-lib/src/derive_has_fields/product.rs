@@ -15,7 +15,7 @@ pub fn item_fields_to_product_type(fields: &Fields, reference: &TokenStream) -> 
                     Error::new_spanned(field, "expect struct field to contain name identifier")
                 })?;
 
-                let field_tag = symbol_from_string(&field_name.to_string());
+                let field_tag = symbol_from_string(&field_name.to_string())?;
                 let field_type = &field.ty;
 
                 fields_type = parse2(quote! {

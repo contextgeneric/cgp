@@ -55,7 +55,7 @@ pub fn derive_use_fields_impl(
             ReceiverMode::Type(ty) => ty.to_token_stream(),
         };
 
-        let field_symbol = symbol_from_string(&field.field_name.to_string());
+        let field_symbol = symbol_from_string(&field.field_name.to_string())?;
 
         let method = derive_getter_method(
             &ContextArg::Ident(receiver_type.clone()),

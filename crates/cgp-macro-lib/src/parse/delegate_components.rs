@@ -1,6 +1,6 @@
 use core::iter;
 
-use proc_macro2::TokenStream;
+use proc_macro2::{TokenStream, TokenTree};
 use quote::{ToTokens, TokenStreamExt, quote};
 use syn::parse::discouraged::Speculative;
 use syn::parse::{Parse, ParseStream};
@@ -10,6 +10,7 @@ use syn::token::{At, Bracket, Colon, Comma, Dot, Gt, Lt, RArrow, Star};
 use syn::{Error, Generics, Ident, Token, Type, braced, bracketed, parse_quote, parse2};
 
 use crate::parse::{ImplGenerics, TypeGenerics};
+use crate::symbol::symbol_from_string;
 
 pub struct DelegateComponents {
     pub new_struct: bool,
@@ -369,8 +370,22 @@ impl Parse for PathElement {
             let _: Star = input.parse()?;
             Ok(Self::Wildcard)
         } else {
-            let ty: Type = input.parse()?;
-            Ok(Self::Type(ty))
+            let path_type: Type = input.parse()?;
+
+            let path_tokens = path_type.to_token_stream().into_iter().collect::<Vec<_>>();
+            let path_token: Result<[TokenTree; 1], _> = path_tokens.try_into();
+
+            if let Ok([TokenTree::Ident(path_ident)]) = path_token {
+                let path_str = path_ident.to_string();
+                if let Some(path_char) = path_str.chars().next() {
+                    if path_char.is_ascii_lowercase() {
+                        let path_symbol = symbol_from_string(&path_str)?;
+                        return Ok(Self::Type(path_symbol));
+                    }
+                }
+            }
+
+            Ok(Self::Type(path_type))
         }
     }
 }

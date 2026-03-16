@@ -83,7 +83,7 @@ pub fn derive_extract_field_impls(
             }
         };
 
-        let tag_type = symbol_from_string(&current_variant.ident.to_string());
+        let tag_type = symbol_from_string(&current_variant.ident.to_string())?;
 
         let source_type: Type = parse2(quote! {
             #extractor_ident < #source_generic_args >

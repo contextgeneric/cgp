@@ -13,7 +13,7 @@ pub fn build_implicit_args_bounds(
     let mut constraints: Punctuated<TypeParamBound, Plus> = Punctuated::new();
 
     for arg in implicit_args {
-        let field_symbol = symbol_from_string(&arg.field_name.to_string());
+        let field_symbol = symbol_from_string(&arg.field_name.to_string())?;
 
         let constraint = derive_getter_constraint(
             &arg.field_type,
