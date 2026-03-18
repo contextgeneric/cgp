@@ -8,7 +8,7 @@ use syn::punctuated::Punctuated;
 use syn::token::{At, Bracket, Colon, Comma, Gt, Lt, Pound, RArrow};
 use syn::{Attribute, Error, Generics, Ident, Token, Type, braced, bracketed, parse_quote};
 
-use crate::parse::{ComponentPath, ImplGenerics, SimpleType, TypeGenerics};
+use crate::parse::{ComponentPaths, ImplGenerics, SimpleType, TypeGenerics};
 
 pub struct DelegateComponents {
     pub attributes: Vec<Attribute>,
@@ -124,20 +124,14 @@ impl Parse for DelegateEntry<Type> {
         } else if input.peek(At) {
             let _: At = input.parse()?;
 
-            let path: ComponentPath = input.parse()?;
+            let path: ComponentPaths = input.parse()?;
 
             let mut keys = Punctuated::new();
 
-            for (path_type, is_wildcard) in path.paths {
-                let mut generics = ImplGenerics::default();
-
-                if is_wildcard {
-                    generics.generics.params.push(parse_quote!(__Wildcard__));
-                }
-
+            for path in path.paths {
                 let key = DelegateKey {
-                    ty: path_type,
-                    generics,
+                    ty: path.path_type,
+                    generics: path.generics,
                 };
 
                 keys.push(key);

@@ -3,27 +3,36 @@ use quote::{ToTokens, quote};
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::token::{Brace, Comma, Dot, Star};
-use syn::{Ident, Type, braced, parse2};
+use syn::{Ident, Type, braced, parse_quote, parse2};
 
+use crate::parse::ImplGenerics;
 use crate::symbol::symbol_from_string_spanned;
 
-pub struct ComponentPath {
-    pub paths: Vec<(Type, bool)>,
+pub struct ComponentPaths {
+    pub paths: Vec<ComponentPath<Type>>,
 }
 
-impl Parse for ComponentPath {
+impl Parse for ComponentPaths {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let path_head = PathHead::parse(input)?;
 
         let mut paths = Vec::new();
 
-        for (path, has_wildcard) in path_head.to_types() {
-            let path_type: Type = syn::parse2(path)?;
-            paths.push((path_type, has_wildcard));
+        for path in path_head.to_paths() {
+            let path_type: Type = syn::parse2(path.path_type)?;
+            paths.push(ComponentPath {
+                path_type,
+                generics: path.generics,
+            });
         }
 
         Ok(Self { paths })
     }
+}
+
+pub struct ComponentPath<Path> {
+    pub path_type: Path,
+    pub generics: ImplGenerics,
 }
 
 pub enum PathHead {
@@ -35,15 +44,20 @@ pub enum PathHead {
 }
 
 impl PathHead {
-    pub fn to_types(&self) -> Vec<(TokenStream, bool)> {
+    pub fn to_paths(&self) -> Vec<ComponentPath<TokenStream>> {
         match self {
             Self::Type(path_type, rest) => {
-                let rest_types = rest.to_types();
+                let rest_types = rest.to_paths();
                 rest_types
                     .into_iter()
-                    .map(|(rest_type, has_wildcard)| {
-                        let new_path = quote! { PathCons< #path_type , #rest_type > };
-                        (new_path, has_wildcard)
+                    .map(|path| {
+                        let rest_tokens = path.path_type;
+
+                        let new_path = quote! { PathCons< #path_type , #rest_tokens > };
+                        ComponentPath {
+                            path_type: new_path,
+                            generics: path.generics,
+                        }
                     })
                     .collect()
             }
@@ -51,21 +65,31 @@ impl PathHead {
                 let ident_str = ident.to_string();
                 let path_type = symbol_from_string_spanned(ident.span(), &ident_str);
 
-                let rest_types = rest.to_types();
+                let rest_types = rest.to_paths();
                 rest_types
                     .into_iter()
-                    .map(|(rest_type, has_wildcard)| {
-                        let new_path = quote! { PathCons< #path_type , #rest_type > };
-                        (new_path, has_wildcard)
+                    .map(|path| {
+                        let rest_tokens = path.path_type;
+                        let new_path = quote! { PathCons< #path_type , #rest_tokens > };
+                        ComponentPath {
+                            path_type: new_path,
+                            generics: path.generics,
+                        }
                     })
                     .collect()
             }
-            Self::Group(paths) => paths.iter().flat_map(|path| path.to_types()).collect(),
+            Self::Group(paths) => paths.iter().flat_map(|path| path.to_paths()).collect(),
             Self::Wildcard => {
-                vec![(quote! { __Wildcard__ }, true)]
+                vec![ComponentPath {
+                    path_type: quote! { __Wildcard__ },
+                    generics: parse_quote! { <__Wildcard__> },
+                }]
             }
             Self::Nil => {
-                vec![(quote! { PathNil }, false)]
+                vec![ComponentPath {
+                    path_type: quote! { PathNil },
+                    generics: Default::default(),
+                }]
             }
         }
     }
