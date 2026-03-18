@@ -184,7 +184,7 @@ impl Parse for DelegateEntry<SimpleType> {
     }
 }
 
-impl Parse for DelegateKey<SimpleType> {
+impl<Type: Parse> Parse for DelegateKey<Type> {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let component_generics: ImplGenerics = if input.peek(Lt) {
             input.parse()?
@@ -192,48 +192,12 @@ impl Parse for DelegateKey<SimpleType> {
             Default::default()
         };
 
-        let component_type: SimpleType = input.parse()?;
+        let component_type: Type = input.parse()?;
 
         Ok(Self {
             ty: component_type,
             generics: component_generics,
         })
-    }
-}
-
-impl Parse for DelegateKey<Type> {
-    fn parse(input: ParseStream) -> syn::Result<Self> {
-        let mut component_generics: ImplGenerics = if input.peek(Lt) {
-            input.parse()?
-        } else {
-            Default::default()
-        };
-
-        if input.peek(At) {
-            let _: At = input.parse()?;
-
-            let path: ComponentPath = input.parse()?;
-            let (path_type, is_wildcard) = path.paths[0].clone();
-
-            if is_wildcard {
-                component_generics
-                    .generics
-                    .params
-                    .push(parse_quote!(__Wildcard__));
-            }
-
-            Ok(Self {
-                ty: path_type,
-                generics: component_generics,
-            })
-        } else {
-            let component_type: Type = input.parse()?;
-
-            Ok(Self {
-                ty: component_type,
-                generics: component_generics,
-            })
-        }
     }
 }
 
