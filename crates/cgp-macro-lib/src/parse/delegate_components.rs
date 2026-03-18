@@ -1,16 +1,14 @@
 use core::iter;
 
-use proc_macro2::{TokenStream, TokenTree};
+use proc_macro2::TokenStream;
 use quote::{ToTokens, TokenStreamExt, quote};
 use syn::parse::discouraged::Speculative;
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
-use syn::spanned::Spanned;
-use syn::token::{At, Bracket, Colon, Comma, Dot, Gt, Lt, Pound, RArrow, Star};
-use syn::{Attribute, Error, Generics, Ident, Token, Type, braced, bracketed, parse_quote, parse2};
+use syn::token::{At, Bracket, Colon, Comma, Gt, Lt, Pound, RArrow};
+use syn::{Attribute, Error, Generics, Ident, Token, Type, braced, bracketed, parse_quote};
 
-use crate::parse::{ImplGenerics, TypeGenerics};
-use crate::symbol::symbol_from_string_spanned;
+use crate::parse::{ComponentPath, ImplGenerics, SimpleType, TypeGenerics};
 
 pub struct DelegateComponents {
     pub attributes: Vec<Attribute>,
@@ -119,7 +117,7 @@ impl Parse for DelegateComponents {
 
 impl<Type> Parse for DelegateEntry<Type>
 where
-    Type: Parse,
+    DelegateKey<Type>: Parse,
 {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let components = if input.peek(Bracket) {
@@ -143,10 +141,24 @@ where
     }
 }
 
-impl<Type> Parse for DelegateKey<Type>
-where
-    Type: Parse,
-{
+impl Parse for DelegateKey<SimpleType> {
+    fn parse(input: ParseStream) -> syn::Result<Self> {
+        let component_generics: ImplGenerics = if input.peek(Lt) {
+            input.parse()?
+        } else {
+            Default::default()
+        };
+
+        let component_type: SimpleType = input.parse()?;
+
+        Ok(Self {
+            ty: component_type,
+            generics: component_generics,
+        })
+    }
+}
+
+impl Parse for DelegateKey<Type> {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let mut component_generics: ImplGenerics = if input.peek(Lt) {
             input.parse()?
@@ -158,15 +170,14 @@ where
             let _: At = input.parse()?;
 
             let path: ComponentPath = input.parse()?;
+            let (path_type, is_wildcard) = path.paths[0].clone();
 
-            if path.wildcard {
+            if is_wildcard {
                 component_generics
                     .generics
                     .params
                     .push(parse_quote!(__Wildcard__));
             }
-
-            let path_type = parse2(path.to_type())?;
 
             Ok(Self {
                 ty: path_type,
@@ -311,103 +322,5 @@ impl ToTokens for DelegateNewValue {
                 }
             >
         });
-    }
-}
-
-pub struct ComponentPath {
-    pub elements: Vec<Type>,
-    pub wildcard: bool,
-}
-
-impl Parse for ComponentPath {
-    fn parse(input: ParseStream) -> syn::Result<Self> {
-        let raw_elements: Punctuated<PathElement, Dot> =
-            Punctuated::parse_separated_nonempty(input)?;
-
-        let mut elements = Vec::new();
-        let mut wildcard = false;
-
-        for element in raw_elements {
-            match element {
-                PathElement::Type(ty) => {
-                    if wildcard {
-                        return Err(Error::new(ty.span(), "unexpected component after wildcard"));
-                    }
-
-                    elements.push(ty);
-                }
-                PathElement::Wildcard => wildcard = true,
-            }
-        }
-
-        if elements.is_empty() {
-            return Err(Error::new(
-                input.span(),
-                "expect at least one component in component path",
-            ));
-        }
-
-        Ok(Self { elements, wildcard })
-    }
-}
-
-impl ComponentPath {
-    pub fn to_type(&self) -> TokenStream {
-        let mut out = if self.wildcard {
-            quote! { __Wildcard__ }
-        } else {
-            quote! { PathNil }
-        };
-
-        for element in self.elements.iter().rev() {
-            out = quote! { PathCons< #element, #out> };
-        }
-
-        out
-    }
-}
-
-pub enum PathElement {
-    Type(Type),
-    Wildcard,
-}
-
-impl Parse for PathElement {
-    fn parse(input: ParseStream) -> syn::Result<Self> {
-        if input.peek(Star) {
-            let _: Star = input.parse()?;
-            Ok(Self::Wildcard)
-        } else {
-            let PathType { path_type } = input.parse()?;
-            Ok(Self::Type(path_type))
-        }
-    }
-}
-
-pub struct PathType {
-    pub path_type: Type,
-}
-
-impl Parse for PathType {
-    fn parse(input: ParseStream) -> syn::Result<Self> {
-        let path_type: Type = input.parse()?;
-
-        let path_tokens = path_type.to_token_stream().into_iter().collect::<Vec<_>>();
-        let path_token: Result<[TokenTree; 1], _> = path_tokens.try_into();
-
-        if let Ok([TokenTree::Ident(path_ident)]) = path_token {
-            let path_str = path_ident.to_string();
-            if let Some(path_char) = path_str.chars().next() {
-                if path_char.is_ascii_lowercase() {
-                    let path_symbol =
-                        parse2(symbol_from_string_spanned(path_ident.span(), &path_str))?;
-                    return Ok(Self {
-                        path_type: path_symbol,
-                    });
-                }
-            }
-        }
-
-        Ok(Self { path_type })
     }
 }

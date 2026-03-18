@@ -3,7 +3,7 @@ use quote::{ToTokens, quote};
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::token::{Brace, Comma, Dot, Star};
-use syn::{Ident, Type, braced};
+use syn::{Ident, Type, braced, parse2};
 
 use crate::symbol::symbol_from_string_spanned;
 
@@ -25,35 +25,6 @@ impl Parse for ComponentPath {
         Ok(Self { paths })
     }
 }
-
-// pub struct ComponentPath {
-//     elements: Punctuated<PathElement, Dot>,
-// }
-
-// impl Parse for ComponentPath {
-//     fn parse(input: ParseStream) -> syn::Result<Self> {
-//         let elements = Punctuated::parse_terminated(input)?;
-//         Ok(Self { elements })
-//     }
-// }
-
-// impl ComponentPath {
-//     pub fn to_types(&self) -> Vec<TokenStream> {
-
-//         todo!()
-//     }
-// }
-
-// pub fn path_elements_to_types(mut elements: impl Iterator<Item = PathElement>) -> Vec<TokenStream> {
-//     if let Some(element) = elements.next() {
-//         let types = element.to_types();
-//         let mut rest_types = path_elements_to_types(elements);
-//         todo!()
-//     } else {
-//         vec![ quote! { PathNil } ]
-//     }
-
-// }
 
 pub enum PathHead {
     Type(Type, Box<PathHead>),
@@ -147,4 +118,26 @@ pub fn path_type_as_ident(path_type: &Type) -> Option<Ident> {
     }
 
     None
+}
+
+pub struct PathType {
+    pub path_type: Type,
+}
+
+impl Parse for PathType {
+    fn parse(input: ParseStream) -> syn::Result<Self> {
+        let path_type: Type = input.parse()?;
+
+        if let Some(path_ident) = path_type_as_ident(&path_type) {
+            let path_symbol = parse2(symbol_from_string_spanned(
+                path_ident.span(),
+                &path_ident.to_string(),
+            ))?;
+            Ok(Self {
+                path_type: path_symbol,
+            })
+        } else {
+            Ok(Self { path_type })
+        }
+    }
 }
