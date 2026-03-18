@@ -8,7 +8,7 @@ use syn::{Ident, Type, braced};
 use crate::symbol::symbol_from_string_spanned;
 
 pub struct ComponentPath {
-    pub paths: Vec<Type>,
+    pub paths: Vec<(Type, bool)>,
 }
 
 impl Parse for ComponentPath {
@@ -17,9 +17,9 @@ impl Parse for ComponentPath {
 
         let mut paths = Vec::new();
 
-        for path in path_head.to_types() {
+        for (path, has_wildcard) in path_head.to_types() {
             let path_type: Type = syn::parse2(path)?;
-            paths.push(path_type);
+            paths.push((path_type, has_wildcard));
         }
 
         Ok(Self { paths })
@@ -64,14 +64,15 @@ pub enum PathHead {
 }
 
 impl PathHead {
-    pub fn to_types(&self) -> Vec<TokenStream> {
+    pub fn to_types(&self) -> Vec<(TokenStream, bool)> {
         match self {
             Self::Type(path_type, rest) => {
                 let rest_types = rest.to_types();
                 rest_types
                     .into_iter()
-                    .map(|rest_type| {
-                        quote! { PathCons< #path_type , #rest_type > }
+                    .map(|(rest_type, has_wildcard)| {
+                        let new_path = quote! { PathCons< #path_type , #rest_type > };
+                        (new_path, has_wildcard)
                     })
                     .collect()
             }
@@ -82,17 +83,18 @@ impl PathHead {
                 let rest_types = rest.to_types();
                 rest_types
                     .into_iter()
-                    .map(|rest_type| {
-                        quote! { PathCons< #path_type , #rest_type > }
+                    .map(|(rest_type, has_wildcard)| {
+                        let new_path = quote! { PathCons< #path_type , #rest_type > };
+                        (new_path, has_wildcard)
                     })
                     .collect()
             }
             Self::Group(paths) => paths.iter().flat_map(|path| path.to_types()).collect(),
             Self::Wildcard => {
-                vec![quote! { __Wildcard__ }]
+                vec![(quote! { __Wildcard__ }, true)]
             }
             Self::Nil => {
-                vec![quote! { PathNil }]
+                vec![(quote! { PathNil }, false)]
             }
         }
     }

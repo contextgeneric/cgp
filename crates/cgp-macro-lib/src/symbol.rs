@@ -1,5 +1,5 @@
 use proc_macro2::{Literal, Span, TokenStream};
-use quote::{ToTokens, quote_spanned};
+use quote::quote_spanned;
 use syn::{LitStr, Type, parse2};
 
 pub fn symbol_from_string(value: &str) -> syn::Result<Type> {
