@@ -115,17 +115,60 @@ impl Parse for DelegateComponents {
     }
 }
 
-impl<Type> Parse for DelegateEntry<Type>
-where
-    DelegateKey<Type>: Parse,
-{
+impl Parse for DelegateEntry<Type> {
+    fn parse(input: ParseStream) -> syn::Result<Self> {
+        let components = if input.peek(Bracket) {
+            let components_body;
+            bracketed!(components_body in input);
+            components_body.parse_terminated(DelegateKey::parse, Token![,])?
+        } else if input.peek(At) {
+            let _: At = input.parse()?;
+
+            let path: ComponentPath = input.parse()?;
+
+            let mut keys = Punctuated::new();
+
+            for (path_type, is_wildcard) in path.paths {
+                let mut generics = ImplGenerics::default();
+
+                if is_wildcard {
+                    generics.generics.params.push(parse_quote!(__Wildcard__));
+                }
+
+                let key = DelegateKey {
+                    ty: path_type,
+                    generics,
+                };
+
+                keys.push(key);
+            }
+
+            keys
+        } else {
+            let component: DelegateKey<Type> = input.parse()?;
+            Punctuated::from_iter(iter::once(component))
+        };
+
+        let mode = input.parse()?;
+
+        let source = input.parse()?;
+
+        Ok(Self {
+            keys: components,
+            mode,
+            value: source,
+        })
+    }
+}
+
+impl Parse for DelegateEntry<SimpleType> {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let components = if input.peek(Bracket) {
             let components_body;
             bracketed!(components_body in input);
             components_body.parse_terminated(DelegateKey::parse, Token![,])?
         } else {
-            let component: DelegateKey<Type> = input.parse()?;
+            let component: DelegateKey<SimpleType> = input.parse()?;
             Punctuated::from_iter(iter::once(component))
         };
 

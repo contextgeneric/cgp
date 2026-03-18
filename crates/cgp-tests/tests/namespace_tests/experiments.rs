@@ -1,4 +1,4 @@
-use cgp::core::error::{ErrorRaiserComponent, ErrorTypeProviderComponent};
+use cgp::core::error::{ErrorRaiserComponent, ErrorTypeProviderComponent, ErrorWrapperComponent};
 use cgp::extra::error::RaiseFrom;
 use cgp::extra::handler::CanTryCompute;
 use cgp::prelude::*;
@@ -11,7 +11,10 @@ delegate_components! {
     App {
         @app.ErrorTypeProviderComponent:
             UseType<String>,
-        @app.ErrorRaiserComponent.&'static str:
+        @app.{
+            ErrorRaiserComponent.{&'static str, String},
+            ErrorWrapperComponent,
+        }:
             RaiseFrom,
         TryComputerComponent:
             Foo,
