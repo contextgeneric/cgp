@@ -55,50 +55,15 @@ impl PathHead {
         match self {
             Self::Type(generics, path_type, rest) => {
                 let rest_types = rest.to_paths();
-                rest_types
-                    .into_iter()
-                    .map(|mut path| {
-                        let rest_tokens = path.path_type;
 
-                        if let Some(generics) = generics {
-                            path.generics
-                                .generics
-                                .params
-                                .extend(generics.generics.params.clone());
-                        }
-
-                        let new_path = quote! { PathCons< #path_type , #rest_tokens > };
-                        ComponentPath {
-                            path_type: new_path,
-                            generics: path.generics,
-                        }
-                    })
-                    .collect()
+                prepend_path(path_type.to_token_stream(), generics.clone(), rest_types)
             }
             Self::Symbol(generics, ident, rest) => {
                 let ident_str = ident.to_string();
                 let path_type = symbol_from_string_spanned(ident.span(), &ident_str);
 
                 let rest_types = rest.to_paths();
-                rest_types
-                    .into_iter()
-                    .map(|mut path| {
-                        let rest_tokens = path.path_type;
-
-                        if let Some(generics) = generics {
-                            path.generics
-                                .generics
-                                .params
-                                .extend(generics.generics.params.clone());
-                        }
-
-                        let new_path = quote! { PathCons< #path_type , #rest_tokens > };
-                        ComponentPath {
-                            path_type: new_path,
-                            generics: path.generics,
-                        }
-                    })
-                    .collect()
+                prepend_path(path_type, generics.clone(), rest_types)
             }
             Self::Group(paths) => paths.iter().flat_map(|path| path.to_paths()).collect(),
             Self::Wildcard => {
@@ -115,6 +80,32 @@ impl PathHead {
             }
         }
     }
+}
+
+pub fn prepend_path(
+    path_type: TokenStream,
+    generics: Option<ImplGenerics>,
+    rest_types: Vec<ComponentPath<TokenStream>>,
+) -> Vec<ComponentPath<TokenStream>> {
+    rest_types
+        .into_iter()
+        .map(|mut path| {
+            let rest_tokens = path.path_type;
+
+            if let Some(generics) = &generics {
+                path.generics
+                    .generics
+                    .params
+                    .extend(generics.generics.params.clone());
+            }
+
+            let new_path = quote! { PathCons< #path_type , #rest_tokens > };
+            ComponentPath {
+                path_type: new_path,
+                generics: path.generics,
+            }
+        })
+        .collect()
 }
 
 impl Parse for PathHead {
