@@ -16,6 +16,13 @@ impl Parse for ComponentPaths {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let path_head = PathHead::parse(input)?;
 
+        if let PathHead::Nil = path_head {
+            return Err(syn::Error::new(
+                input.span(),
+                "Expected at least one path element",
+            ));
+        }
+
         let mut paths = Vec::new();
 
         for path in path_head.to_paths() {
