@@ -2,7 +2,7 @@ use proc_macro2::{TokenStream, TokenTree};
 use quote::{ToTokens, quote};
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
-use syn::token::{Brace, Comma, Dot, Star};
+use syn::token::{Brace, Comma, Dot, Lt, Star};
 use syn::{Ident, Type, braced, parse_quote, parse2};
 
 use crate::parse::ImplGenerics;
@@ -43,8 +43,8 @@ pub struct ComponentPath<Path> {
 }
 
 pub enum PathHead {
-    Type(Type, Box<PathHead>),
-    Symbol(Ident, Box<PathHead>),
+    Type(Option<ImplGenerics>, Type, Box<PathHead>),
+    Symbol(Option<ImplGenerics>, Ident, Box<PathHead>),
     Group(Punctuated<PathHead, Comma>),
     Wildcard,
     Nil,
@@ -53,12 +53,19 @@ pub enum PathHead {
 impl PathHead {
     pub fn to_paths(&self) -> Vec<ComponentPath<TokenStream>> {
         match self {
-            Self::Type(path_type, rest) => {
+            Self::Type(generics, path_type, rest) => {
                 let rest_types = rest.to_paths();
                 rest_types
                     .into_iter()
-                    .map(|path| {
+                    .map(|mut path| {
                         let rest_tokens = path.path_type;
+
+                        if let Some(generics) = generics {
+                            path.generics
+                                .generics
+                                .params
+                                .extend(generics.generics.params.clone());
+                        }
 
                         let new_path = quote! { PathCons< #path_type , #rest_tokens > };
                         ComponentPath {
@@ -68,15 +75,23 @@ impl PathHead {
                     })
                     .collect()
             }
-            Self::Symbol(ident, rest) => {
+            Self::Symbol(generics, ident, rest) => {
                 let ident_str = ident.to_string();
                 let path_type = symbol_from_string_spanned(ident.span(), &ident_str);
 
                 let rest_types = rest.to_paths();
                 rest_types
                     .into_iter()
-                    .map(|path| {
+                    .map(|mut path| {
                         let rest_tokens = path.path_type;
+
+                        if let Some(generics) = generics {
+                            path.generics
+                                .generics
+                                .params
+                                .extend(generics.generics.params.clone());
+                        }
+
                         let new_path = quote! { PathCons< #path_type , #rest_tokens > };
                         ComponentPath {
                             path_type: new_path,
@@ -117,6 +132,12 @@ impl Parse for PathHead {
 
             Ok(Self::Group(group))
         } else {
+            let generics = if input.peek(Lt) {
+                Some(input.parse()?)
+            } else {
+                None
+            };
+
             let path_type: Type = input.parse()?;
 
             let rest_path = if input.peek(Dot) {
@@ -127,9 +148,9 @@ impl Parse for PathHead {
             };
 
             if let Some(path_ident) = path_type_as_ident(&path_type) {
-                Ok(Self::Symbol(path_ident, rest_path))
+                Ok(Self::Symbol(generics, path_ident, rest_path))
             } else {
-                Ok(Self::Type(path_type, rest_path))
+                Ok(Self::Type(generics, path_type, rest_path))
             }
         }
     }
