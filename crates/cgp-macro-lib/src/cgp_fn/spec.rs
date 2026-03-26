@@ -1,5 +1,5 @@
 use syn::token::Mut;
-use syn::{Ident, Type, TypeParamBound, WherePredicate};
+use syn::{GenericParam, Ident, Type, TypeParamBound, WherePredicate};
 
 use crate::cgp_fn::UseTypeSpec;
 use crate::cgp_impl::UseProviderSpec;
@@ -22,4 +22,5 @@ pub struct FunctionAttributes {
     pub uses: Vec<SimpleType>,
     pub use_type: Vec<UseTypeSpec>,
     pub use_provider: Vec<UseProviderSpec>,
+    pub impl_generics: Vec<GenericParam>,
 }

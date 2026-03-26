@@ -5,6 +5,7 @@ pub mod extend;
 pub mod foreign_type;
 pub mod foreign_type_equality;
 pub mod generics;
+pub mod impl_generics;
 pub mod multi;
 pub mod mutable;
 pub mod nested_foreign_type;

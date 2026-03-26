@@ -30,6 +30,11 @@ pub fn derive_item_impl(
         .params
         .insert(0, parse2(quote! { __Context__ })?);
 
+    item_impl
+        .generics
+        .params
+        .extend(attributes.impl_generics.clone());
+
     {
         let mut bounds: Punctuated<TypeParamBound, Plus> = Punctuated::default();
         bounds.extend(attributes.extend.clone());
