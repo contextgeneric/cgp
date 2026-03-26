@@ -1,3 +1,4 @@
+pub mod r#async;
 pub mod basic;
 pub mod call;
 pub mod extend;
