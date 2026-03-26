@@ -153,10 +153,10 @@ pub fn path_type_as_ident(path_type: &Type) -> Option<Ident> {
 
     if let TokenTree::Ident(path_ident) = path_token {
         let path_str = path_ident.to_string();
-        if let Some(path_char) = path_str.chars().next() {
-            if path_char.is_ascii_lowercase() {
-                return Some(path_ident);
-            }
+        if let Some(path_char) = path_str.chars().next()
+            && path_char.is_ascii_lowercase()
+        {
+            return Some(path_ident);
         }
     }
 

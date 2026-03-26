@@ -35,7 +35,7 @@ pub fn delegate_components(body: TokenStream) -> syn::Result<TokenStream> {
         output.extend(namespace_impl);
     }
 
-    let impl_items = impl_delegate_components(&target_type, &target_generics, &spec.entries)?;
+    let impl_items = impl_delegate_components(target_type, target_generics, &spec.entries)?;
 
     output.extend(impl_items);
 

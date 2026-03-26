@@ -103,7 +103,7 @@ pub fn derive_provider_item_impls(
     for trait_item in provider_trait.items.iter() {
         match &trait_item {
             TraitItem::Fn(trait_fn) => {
-                let impl_fn = derive_delegated_fn_impl(&trait_fn.sig, &delegate_type)?;
+                let impl_fn = derive_delegated_fn_impl(&trait_fn.sig, delegate_type)?;
 
                 impl_items.push(ImplItem::Fn(impl_fn))
             }
