@@ -1,5 +1,3 @@
-use core::mem;
-
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
 use syn::{Attribute, TypeParamBound, WherePredicate};
@@ -9,13 +7,12 @@ use crate::cgp_impl::UseProviderSpec;
 use crate::parse::SimpleType;
 
 pub fn parse_function_attributes(
-    attributes: &mut Vec<Attribute>,
-) -> syn::Result<FunctionAttributes> {
+    attributes: Vec<Attribute>,
+) -> syn::Result<(FunctionAttributes, Vec<Attribute>)> {
     let mut parsed_attributes = FunctionAttributes::default();
+    let mut rest_attributes = Vec::new();
 
-    let in_attributes = mem::take(attributes);
-
-    for attribute in in_attributes.into_iter() {
+    for attribute in attributes.into_iter() {
         if let Some(ident) = attribute.path().get_ident() {
             if ident == "extend" {
                 let extend_bound = attribute
@@ -38,12 +35,12 @@ pub fn parse_function_attributes(
                     .parse_args_with(Punctuated::<UseProviderSpec, Comma>::parse_terminated)?;
                 parsed_attributes.use_provider.extend(use_provider);
             } else {
-                attributes.push(attribute);
+                rest_attributes.push(attribute);
             }
         } else {
-            attributes.push(attribute);
+            rest_attributes.push(attribute);
         }
     }
 
-    Ok(parsed_attributes)
+    Ok((parsed_attributes, rest_attributes))
 }

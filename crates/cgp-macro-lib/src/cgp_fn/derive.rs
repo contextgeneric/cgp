@@ -15,21 +15,25 @@ pub fn derive_cgp_fn(trait_ident: &Ident, mut item_fn: ItemFn) -> syn::Result<To
 
     let implicit_args = extract_and_parse_implicit_args(&mut item_fn.sig.inputs)?;
 
-    let attributes = parse_function_attributes(&mut item_fn.attrs)?;
+    let (attributes, trait_attributes) =
+        parse_function_attributes(core::mem::take(&mut item_fn.attrs))?;
 
     inject_implicit_args(&implicit_args, &mut item_fn.block)?;
 
     let generics = mem::take(&mut item_fn.sig.generics);
 
     let mut item_trait = derive_item_trait(trait_ident, &item_fn, &generics, &attributes)?;
+    item_trait.attrs.extend(trait_attributes.clone());
 
-    let item_impl = derive_item_impl(
+    let mut item_impl = derive_item_impl(
         trait_ident,
         &item_fn,
         &implicit_args,
         &generics,
         &attributes,
     )?;
+
+    item_impl.attrs.extend(trait_attributes);
 
     item_trait.vis = visibility.clone();
 

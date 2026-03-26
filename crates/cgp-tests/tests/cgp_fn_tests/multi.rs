@@ -12,10 +12,11 @@ pub trait HasBarType {
     type Baz;
 }
 
-#[allow(unused)]
 #[cgp_fn]
+#[allow(unused)]
+#[async_trait]
 #[use_type(<HasFooType<X>>::{Foo as FooX}, <HasFooType<Y>>::{Foo as FooY}, HasBarType::{Bar, Baz})]
-pub fn do_foo_bar<X, Y>(
+pub async fn do_foo_bar<X, Y>(
     &self,
     x: X,
     #[implicit] foo_x: &FooX,
