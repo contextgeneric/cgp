@@ -1,4 +1,5 @@
 use cgp_component::*;
+use cgp_field::types::*;
 use cgp_macro::cgp_component;
 
 use crate::traits::has_error_type::HasErrorType;
@@ -11,6 +12,7 @@ use crate::traits::has_error_type::HasErrorType;
     provider: ErrorRaiser,
     derive_delegate: UseDelegate<SourceError>,
 }]
+#[use_namespace(cgp.core.error)]
 pub trait CanRaiseError<SourceError>: HasErrorType {
     fn raise_error(error: SourceError) -> Self::Error;
 }

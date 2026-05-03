@@ -16,7 +16,15 @@ where
     type Provider = Provider;
 }
 
-impl<Components> ExtendedNamespace<Components> for ErrorRaiserComponent {
+impl<Components, Error> ExtendedNamespace<Components>
+    for PathCons<
+        Symbol!("cgp"),
+        PathCons<
+            Symbol!("core"),
+            PathCons<Symbol!("error"), PathCons<ErrorRaiserComponent, PathCons<Error, PathNil>>>,
+        >,
+    >
+{
     type Provider = RedirectLookup<
         Components,
         PathCons<Symbol!("app"), PathCons<ErrorRaiserComponent, PathNil>>,
