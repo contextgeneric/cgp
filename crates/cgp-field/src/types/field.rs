@@ -84,11 +84,4 @@ where
     }
 }
 
-impl<Tag, Value> Eq for Field<Tag, Value>
-where
-    Value: Eq,
-{
-    fn assert_receiver_is_total_eq(&self) {
-        self.value.assert_receiver_is_total_eq()
-    }
-}
+impl<Tag, Value> Eq for Field<Tag, Value> where Value: Eq {}
