@@ -6,10 +6,10 @@ pub struct App;
 
 delegate_components! {
     App {
+        open ErrorRaiserComponent;
+
         ErrorTypeProviderComponent:
             UseType<String>,
-        ErrorRaiserComponent:
-            RedirectLookup<App, PathCons<ErrorRaiserComponent, PathNil>>,
         @ErrorRaiserComponent.String:
             ReturnError,
     }

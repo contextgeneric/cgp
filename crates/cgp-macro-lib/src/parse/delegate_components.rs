@@ -1,12 +1,12 @@
 use core::iter;
 
-use proc_macro2::TokenStream;
+use proc_macro2::{Span, TokenStream};
 use quote::{ToTokens, TokenStreamExt, quote};
 use syn::parse::discouraged::Speculative;
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
-use syn::token::{At, Bracket, Colon, Comma, Gt, Lt, Pound, RArrow};
-use syn::{Attribute, Error, Generics, Ident, Token, Type, braced, bracketed, parse_quote};
+use syn::token::{At, Bracket, Colon, Comma, Gt, Lt, Pound, RArrow, Semi};
+use syn::{Attribute, Error, Generics, Ident, Token, Type, braced, bracketed, parse_quote, parse2};
 
 use crate::parse::{ComponentPaths, ImplGenerics, SimpleType, TypeGenerics};
 
@@ -99,20 +99,69 @@ impl Parse for DelegateComponents {
 
         let target_type: Type = input.parse()?;
 
-        let delegate_entries = {
-            let content;
-            braced!(content in input);
-            Punctuated::parse_terminated(&content)?
-        };
+        let content;
+        braced!(content in input);
+
+        let meta_entries = parse_meta_delegate_entries(&content, &target_type)?;
+
+        let delegate_entries: Punctuated<DelegateEntry<Type>, Comma> =
+            Punctuated::parse_terminated(&content)?;
+
+        let entries = meta_entries
+            .into_iter()
+            .chain(delegate_entries.into_iter())
+            .collect();
 
         Ok(Self {
             attributes,
             new_struct,
             target_type,
             target_generics,
-            entries: delegate_entries,
+            entries,
         })
     }
+}
+
+pub fn parse_meta_delegate_entries(
+    input: ParseStream,
+    target_type: &Type,
+) -> syn::Result<Vec<DelegateEntry<Type>>> {
+    let mut entries = Vec::new();
+
+    while input.peek(Ident) {
+        let fork = input.fork();
+        let keyword: Ident = fork.parse()?;
+
+        if keyword == "open" {
+            input.advance_to(&fork);
+
+            let components: Punctuated<Type, Comma> = Punctuated::parse_separated_nonempty(input)?;
+            let _: Semi = input.parse()?;
+
+            for component in components {
+                let value = DelegateValue::Type(parse2(
+                    quote!(RedirectLookup<#target_type, PathCons<#component, PathNil>>),
+                )?);
+
+                let key = DelegateKey {
+                    ty: component,
+                    generics: Default::default(),
+                };
+
+                let entry = DelegateEntry {
+                    keys: Punctuated::from_iter([key]),
+                    mode: DelegateMode::Provider(Colon(Span::call_site())),
+                    value,
+                };
+
+                entries.push(entry)
+            }
+        } else {
+            break;
+        }
+    }
+
+    Ok(entries)
 }
 
 impl Parse for DelegateEntry<Type> {
