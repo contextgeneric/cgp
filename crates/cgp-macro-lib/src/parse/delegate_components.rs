@@ -107,10 +107,7 @@ impl Parse for DelegateComponents {
         let delegate_entries: Punctuated<DelegateEntry<Type>, Comma> =
             Punctuated::parse_terminated(&content)?;
 
-        let entries = meta_entries
-            .into_iter()
-            .chain(delegate_entries.into_iter())
-            .collect();
+        let entries = meta_entries.into_iter().chain(delegate_entries).collect();
 
         Ok(Self {
             attributes,
