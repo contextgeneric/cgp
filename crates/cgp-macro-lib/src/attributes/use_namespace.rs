@@ -21,20 +21,16 @@ impl Parse for UseNamespaceAttribute {
             Ident::new("DefaultNamespace", input.span())
         };
 
-        let path: Type = if input.peek(At) {
-            let _: At = input.parse()?;
+        let _: At = input.parse()?;
 
-            let paths: Punctuated<PathType, Dot> = Punctuated::parse_separated_nonempty(input)?;
+        let paths: Punctuated<PathType, Dot> = Punctuated::parse_separated_nonempty(input)?;
 
-            let raw_path_type = paths.into_iter().rev().fold(
-                quote!(PathNil),
-                |tail, PathType { path_type }| quote!(PathCons<#path_type, #tail>),
-            );
+        let raw_path_type = paths.into_iter().rev().fold(
+            quote!(PathNil),
+            |tail, PathType { path_type }| quote!(PathCons<#path_type, #tail>),
+        );
 
-            parse2(raw_path_type)?
-        } else {
-            input.parse()?
-        };
+        let path: Type = parse2(raw_path_type)?;
 
         Ok(UseNamespaceAttribute { namespace, path })
     }

@@ -67,21 +67,16 @@ impl Parse for NamespaceEntry {
 
         let _: Colon = input.parse()?;
 
-        let value: Type = if input.peek(At) {
-            let _: At = input.parse()?;
+        let _: At = input.parse()?;
 
-            let value_path: Punctuated<PathType, Dot> =
-                Punctuated::parse_separated_nonempty(input)?;
+        let value_path: Punctuated<PathType, Dot> = Punctuated::parse_separated_nonempty(input)?;
 
-            let value = value_path.into_iter().rev().fold(
-                quote!(PathNil),
-                |tail, PathType { path_type }| quote!( PathCons< #path_type, #tail > ),
-            );
+        let value = value_path.into_iter().rev().fold(
+            quote!(PathNil),
+            |tail, PathType { path_type }| quote!( PathCons< #path_type, #tail > ),
+        );
 
-            parse2(value)?
-        } else {
-            input.parse()?
-        };
+        let value: Type = parse2(value)?;
 
         Ok(Self { keys, value })
     }

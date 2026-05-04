@@ -8,12 +8,12 @@ pub trait Foo {
 cgp_namespace! {
     MyNamespace {
         FooProviderComponent:
-            MyFooComponent,
+            @MyFooComponent,
     }
 }
 
 #[cgp_component(BarProvider)]
-#[use_namespace(MyNamespace: MyBarComponent)]
+#[use_namespace(MyNamespace: @MyBarComponent)]
 pub trait Bar {
     fn bar(&self);
 }
@@ -36,9 +36,9 @@ pub struct App;
 delegate_components! {
     #[use_namespace(MyNamespace)]
     App {
-        MyFooComponent:
+        @MyFooComponent:
             DummyFoo,
-        MyBarComponent:
+        @MyBarComponent:
             DummyBar,
     }
 }
