@@ -2,7 +2,7 @@ use proc_macro2::{TokenStream, TokenTree};
 use quote::{ToTokens, quote};
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
-use syn::token::{Brace, Comma, Dot, Lt, Star};
+use syn::token::{Brace, Comma, Dot, Lt};
 use syn::{Ident, Type, braced, parse_quote, parse2};
 
 use crate::parse::ImplGenerics;
@@ -43,8 +43,7 @@ pub struct ComponentPath<Path> {
 }
 
 pub enum PathHead {
-    Type(Option<ImplGenerics>, Type, Box<PathHead>),
-    Symbol(Option<ImplGenerics>, Ident, Box<PathHead>),
+    Type(Option<ImplGenerics>, PathType, Box<PathHead>),
     Group(Punctuated<PathHead, Comma>),
     Wildcard,
 }
@@ -55,14 +54,11 @@ impl PathHead {
             Self::Type(generics, path_type, rest) => {
                 let rest_types = rest.to_paths();
 
-                prepend_path(path_type.to_token_stream(), generics.clone(), rest_types)
-            }
-            Self::Symbol(generics, ident, rest) => {
-                let ident_str = ident.to_string();
-                let path_type = symbol_from_string_spanned(ident.span(), &ident_str);
-
-                let rest_types = rest.to_paths();
-                prepend_path(path_type, generics.clone(), rest_types)
+                prepend_path(
+                    path_type.path_type.to_token_stream(),
+                    generics.clone(),
+                    rest_types,
+                )
             }
             Self::Group(paths) => paths.iter().flat_map(|path| path.to_paths()).collect(),
             Self::Wildcard => {
@@ -119,7 +115,7 @@ impl Parse for PathHead {
                 None
             };
 
-            let path_type: Type = input.parse()?;
+            let path_type: PathType = input.parse()?;
 
             let rest_path = if input.peek(Dot) {
                 let _: Dot = input.parse()?;
@@ -128,11 +124,7 @@ impl Parse for PathHead {
                 Box::new(Self::Wildcard)
             };
 
-            if let Some(path_ident) = path_type_as_ident(&path_type) {
-                Ok(Self::Symbol(generics, path_ident, rest_path))
-            } else {
-                Ok(Self::Type(generics, path_type, rest_path))
-            }
+            Ok(Self::Type(generics, path_type, rest_path))
         }
     }
 }
