@@ -37,8 +37,9 @@ impl BarProvider {
 pub struct App;
 
 delegate_components! {
-    #[use_namespace(MyNamespace)]
     App {
+        namespace MyNamespace;
+
         @MyApp.MyFooComponent:
             DummyFoo,
         @MyApp.MyBarComponent:

@@ -7,8 +7,9 @@ use cgp_tests::namespaces::ExtendedNamespace;
 pub struct App;
 
 delegate_components! {
-    #[use_namespace(ExtendedNamespace)]
     App {
+        namespace ExtendedNamespace;
+
         @app.ErrorTypeProviderComponent:
             UseType<String>,
         @app.{

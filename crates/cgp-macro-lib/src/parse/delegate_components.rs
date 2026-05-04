@@ -156,8 +156,14 @@ pub fn parse_meta_delegate_entries(
         } else if keyword == "namespace" {
             input.advance_to(&fork);
 
-            let namespace_ident: Ident = input.parse()?;
+            let ident: Ident = input.parse()?;
             let _: Semi = input.parse()?;
+
+            let namespace_ident = if ident == "default" {
+                Ident::new("DefaultNamespace", ident.span())
+            } else {
+                ident
+            };
 
             let delegate_key: Type = parse2(quote! {
                 __Component__
