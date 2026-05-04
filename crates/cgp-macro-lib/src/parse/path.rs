@@ -137,6 +137,7 @@ pub fn path_type_as_ident(path_type: &Type) -> Option<Ident> {
         let path_str = path_ident.to_string();
         if let Some(path_char) = path_str.chars().next()
             && path_char.is_ascii_lowercase()
+            && !is_primitive_type(&path_str)
         {
             return Some(path_ident);
         }
@@ -165,4 +166,18 @@ impl Parse for PathType {
             Ok(Self { path_type })
         }
     }
+}
+
+pub fn is_primitive_type(
+    ident: &str,
+) -> bool {
+    if ident.starts_with("i") || ident.starts_with("u") || ident.starts_with("f") {
+        if (&ident[1..]).chars().all(|c| c.is_numeric()) {
+            return true
+        }
+    } else if ident == "char" || ident == "bool" {
+        return true
+    }
+
+    false
 }

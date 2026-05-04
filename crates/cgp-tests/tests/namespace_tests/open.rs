@@ -28,7 +28,7 @@ delegate_components! {
 
         @FooProviderComponent.String:
             DummyFoo,
-        @BarProviderComponent.u32:
+        @BarProviderComponent.{u32, u64}:
             DummyBar,
     }
 }
@@ -37,7 +37,9 @@ check_components! {
     App {
         FooProviderComponent:
             String,
-        // BarProviderComponent:
-        //     u32,
+        BarProviderComponent: [
+            u32,
+            u64,
+        ],
     }
 }
