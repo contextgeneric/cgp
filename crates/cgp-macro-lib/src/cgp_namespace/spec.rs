@@ -1,18 +1,20 @@
+use quote::quote;
 use syn::parse::{Parse, ParseStream};
-use syn::token::{At, Colon};
-use syn::{Ident, Type, braced};
+use syn::punctuated::Punctuated;
+use syn::token::{At, Colon, Comma, Dot, Lt};
+use syn::{Ident, Type, braced, parse2};
 
-use crate::parse::ComponentPaths;
+use crate::parse::{ComponentPath, ComponentPaths, ImplGenerics, PathType};
 
 pub struct NamespaceSpec {
     pub namespace_ident: Ident,
     pub parent_namespace_ident: Option<Ident>,
-    pub entries: Vec<NamespaceEntry>,
+    pub entries: Punctuated<NamespaceEntry, Comma>,
 }
 
 pub struct NamespaceEntry {
-    pub source: Type,
-    pub target: Type,
+    pub keys: ComponentPaths,
+    pub value: Type,
 }
 
 impl Parse for NamespaceSpec {
@@ -30,7 +32,7 @@ impl Parse for NamespaceSpec {
         let content;
         braced!(content in input);
 
-        let entries = parse_namespace_entries(&content)?;
+        let entries = Punctuated::parse_terminated(&content)?;
 
         Ok(NamespaceSpec {
             namespace_ident,
@@ -40,21 +42,45 @@ impl Parse for NamespaceSpec {
     }
 }
 
-fn parse_namespace_entries(input: ParseStream) -> syn::Result<Vec<NamespaceEntry>> {
-    let mut entries = Vec::new();
-
-    while !input.is_empty() {
-        if input.peek(At) {
+impl Parse for NamespaceEntry {
+    fn parse(input: ParseStream) -> syn::Result<Self> {
+        let keys: ComponentPaths = if input.peek(At) {
             let _: At = input.parse()?;
 
-            let paths: ComponentPaths = input.parse()?;
-
-            let _: Colon = input.parse()?;
-
-            if input.peek(At) {}
+            input.parse()?
         } else {
-        }
-    }
+            let generics: ImplGenerics = if input.peek(Lt) {
+                input.parse()?
+            } else {
+                Default::default()
+            };
 
-    Ok(entries)
+            let path_type: Type = input.parse()?;
+
+            let path = ComponentPath {
+                generics,
+                path_type,
+            };
+
+            ComponentPaths { paths: vec![] }
+        };
+
+        let _: Colon = input.parse()?;
+
+        let value: Type = if input.peek(At) {
+            let value_path: Punctuated<PathType, Dot> =
+                Punctuated::parse_separated_nonempty(input)?;
+
+            let value = value_path.into_iter().rev().fold(
+                quote!(PathNil),
+                |tail, PathType { path_type }| quote!( PathCons< #path_type #tail > ),
+            );
+
+            parse2(value)?
+        } else {
+            input.parse()?
+        };
+
+        Ok(Self { keys, value })
+    }
 }
