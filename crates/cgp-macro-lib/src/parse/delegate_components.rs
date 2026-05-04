@@ -153,6 +153,34 @@ pub fn parse_meta_delegate_entries(
 
                 entries.push(entry)
             }
+        } else if keyword == "namespace" {
+            input.advance_to(&fork);
+
+            let namespace_ident: Ident = input.parse()?;
+            let _: Semi = input.parse()?;
+
+            let delegate_key: Type = parse2(quote! {
+                __Component__
+            })?;
+
+            let generics: ImplGenerics = parse2(quote! {
+                <__Component__: #namespace_ident< #target_type >>
+            })?;
+
+            let delegate_value: Type = parse2(quote! {
+                < __Component__ as #namespace_ident< #target_type >>::Provider
+            })?;
+
+            let entry = DelegateEntry {
+                keys: Punctuated::from_iter([DelegateKey {
+                    ty: delegate_key,
+                    generics,
+                }]),
+                mode: DelegateMode::Provider(Colon(Span::call_site())),
+                value: DelegateValue::Type(delegate_value),
+            };
+
+            entries.push(entry)
         } else {
             break;
         }

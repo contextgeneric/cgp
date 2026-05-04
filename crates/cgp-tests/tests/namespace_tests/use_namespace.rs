@@ -13,8 +13,9 @@ pub trait Foo {
 pub struct App;
 
 delegate_components! {
-    #[use_namespace]
     App {
+        namespace DefaultNamespace;
+
         @cgp.core.error.ErrorTypeProviderComponent:
             UseType<String>,
         @cgp.core.error.ErrorRaiserComponent.String:
