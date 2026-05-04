@@ -13,7 +13,7 @@ delegate_components! {
             UseType<String>,
         @app.{
             ErrorRaiserComponent.{&'static str, String},
-            ErrorWrapperComponent.*,
+            ErrorWrapperComponent,
         }:
             RaiseFrom,
         TryComputerComponent:

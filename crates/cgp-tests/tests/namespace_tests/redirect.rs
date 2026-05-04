@@ -20,9 +20,9 @@ pub struct App;
 delegate_components! {
     #[use_namespace]
     App {
-        // @bar.*: TestProvider,
+        // @bar: TestProvider,
 
-        @bar.baz.*: TestProvider,
+        @bar.baz: TestProvider,
 
         // @bar.baz.FooProviderComponent: TestProvider,
     }

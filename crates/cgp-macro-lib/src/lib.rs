@@ -11,6 +11,7 @@ pub(crate) mod attributes;
 pub(crate) mod blanket_trait;
 pub(crate) mod cgp_fn;
 pub(crate) mod cgp_impl;
+pub(crate) mod cgp_namespace;
 pub(crate) mod check_components;
 pub(crate) mod delegate_components;
 pub(crate) mod derive_builder;

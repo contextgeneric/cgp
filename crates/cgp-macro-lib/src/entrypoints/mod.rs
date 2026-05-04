@@ -6,6 +6,7 @@ mod cgp_fn;
 mod cgp_getter;
 mod cgp_impl;
 mod cgp_inherit;
+mod cgp_namespace;
 mod cgp_new_provider;
 mod cgp_preset;
 mod cgp_provider;

@@ -16,7 +16,7 @@ impl Parse for ComponentPaths {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let path_head = PathHead::parse(input)?;
 
-        if let PathHead::Nil = path_head {
+        if let PathHead::Wildcard = path_head {
             return Err(syn::Error::new(
                 input.span(),
                 "Expected at least one path element",
@@ -47,7 +47,6 @@ pub enum PathHead {
     Symbol(Option<ImplGenerics>, Ident, Box<PathHead>),
     Group(Punctuated<PathHead, Comma>),
     Wildcard,
-    Nil,
 }
 
 impl PathHead {
@@ -70,12 +69,6 @@ impl PathHead {
                 vec![ComponentPath {
                     path_type: quote! { __Wildcard__ },
                     generics: parse_quote! { <__Wildcard__> },
-                }]
-            }
-            Self::Nil => {
-                vec![ComponentPath {
-                    path_type: quote! { PathNil },
-                    generics: Default::default(),
                 }]
             }
         }
@@ -111,9 +104,6 @@ pub fn prepend_path(
 impl Parse for PathHead {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         if input.is_empty() {
-            Ok(Self::Nil)
-        } else if input.peek(Star) {
-            let _: Star = input.parse()?;
             Ok(Self::Wildcard)
         } else if input.peek(Brace) {
             let body;
@@ -135,7 +125,7 @@ impl Parse for PathHead {
                 let _: Dot = input.parse()?;
                 Box::new(Self::parse(input)?)
             } else {
-                Box::new(Self::Nil)
+                Box::new(Self::Wildcard)
             };
 
             if let Some(path_ident) = path_type_as_ident(&path_type) {
