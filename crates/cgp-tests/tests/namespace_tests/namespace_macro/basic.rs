@@ -38,7 +38,7 @@ delegate_components! {
     App {
         MyFooComponent:
             DummyFoo,
-        @MyBarComponent.BarProviderComponent:
+        @MyBarComponent:
             DummyBar,
     }
 }

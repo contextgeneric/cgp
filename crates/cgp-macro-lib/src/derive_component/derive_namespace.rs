@@ -1,4 +1,4 @@
-use quote::{ToTokens, quote};
+use quote::quote;
 use syn::{Ident, ItemImpl, Type, parse2};
 
 use crate::attributes::UseNamespaceAttribute;
@@ -21,8 +21,7 @@ pub fn derive_namespace_impl(
     component_name: &Ident,
 ) -> syn::Result<ItemImpl> {
     let namespace = &attribute.namespace;
-    let mut paths = Vec::from_iter(attribute.path.iter().map(|path| path.path_type.clone()));
-    paths.push(parse2(component_name.to_token_stream())?);
+    let paths = Vec::from_iter(attribute.path.iter().map(|path| path.path_type.clone()));
 
     let path = path_to_product(&paths)?;
 
