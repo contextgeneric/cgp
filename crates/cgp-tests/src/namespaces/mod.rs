@@ -1,3 +1,3 @@
-mod extend;
+mod extended;
 
-pub use extend::*;
+pub use extended::*;
