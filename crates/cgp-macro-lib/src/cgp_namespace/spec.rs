@@ -62,7 +62,7 @@ impl Parse for NamespaceEntry {
                 path_type,
             };
 
-            ComponentPaths { paths: vec![] }
+            ComponentPaths { paths: vec![path] }
         };
 
         let _: Colon = input.parse()?;

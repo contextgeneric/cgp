@@ -31,6 +31,7 @@ pub use cgp_fn::*;
 pub use cgp_getter::*;
 pub use cgp_impl::*;
 pub use cgp_inherit::*;
+pub use cgp_namespace::*;
 pub use cgp_new_provider::*;
 pub use cgp_preset::*;
 pub use cgp_provider::*;

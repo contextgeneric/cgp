@@ -1,5 +1,5 @@
 use proc_macro2::TokenStream;
-use quote::{ToTokens, quote};
+use quote::quote;
 use syn::{Ident, ItemImpl, ItemStruct, ItemTrait, parse2};
 
 use crate::cgp_namespace::spec::NamespaceSpec;
@@ -71,6 +71,10 @@ pub fn cgp_namespace(body: TokenStream) -> syn::Result<TokenStream> {
                     >;
                 }
             })?;
+
+            out.extend(quote! {
+                #item_impl
+            })
         }
     }
 

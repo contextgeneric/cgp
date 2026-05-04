@@ -541,6 +541,13 @@ pub fn delegate_components(body: TokenStream) -> TokenStream {
         .into()
 }
 
+#[proc_macro]
+pub fn cgp_namespace(body: TokenStream) -> TokenStream {
+    cgp_macro_lib::cgp_namespace(body.into())
+        .unwrap_or_else(syn::Error::into_compile_error)
+        .into()
+}
+
 /**
    The `check_components!` macro allows users to write compile-time tests to check
    for the correctness of component wiring for a CGP context.
