@@ -1,2 +1,4 @@
 pub mod basic;
 pub mod extended_namespace;
+pub mod symbol_path;
+pub mod type_path;

@@ -1,5 +1,5 @@
 use quote::quote;
-use syn::{Ident, ItemImpl, Type, parse2};
+use syn::{Ident, ItemImpl, parse2};
 
 use crate::attributes::UseNamespaceAttribute;
 
@@ -21,9 +21,7 @@ pub fn derive_namespace_impl(
     component_name: &Ident,
 ) -> syn::Result<ItemImpl> {
     let namespace = &attribute.namespace;
-    let paths = Vec::from_iter(attribute.path.iter().map(|path| path.path_type.clone()));
-
-    let path = path_to_product(&paths)?;
+    let path = &attribute.path;
 
     let out = quote! {
         impl<__Components__> #namespace < __Components__ > for #component_name
@@ -31,18 +29,6 @@ pub fn derive_namespace_impl(
             type Provider = RedirectLookup< __Components__, #path >;
         }
     };
-
-    parse2(out)
-}
-
-pub fn path_to_product(paths: &[Type]) -> syn::Result<Type> {
-    let mut out = quote! { PathNil };
-
-    for path in paths.iter().rev() {
-        out = quote! {
-            PathCons< #path , #out >
-        };
-    }
 
     parse2(out)
 }

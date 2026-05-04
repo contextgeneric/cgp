@@ -1,5 +1,7 @@
 use cgp::prelude::*;
 
+pub struct MyApp;
+
 #[cgp_component(FooProvider)]
 pub trait Foo {
     fn foo(&self);
@@ -8,17 +10,18 @@ pub trait Foo {
 cgp_namespace! {
     MyNamespace {
         FooProviderComponent:
-            MyFooComponent,
+            @MyApp.MyFooComponent,
     }
 }
 
 #[cgp_component(BarProvider)]
-#[use_namespace(MyNamespace: MyBarComponent)]
+#[use_namespace(MyNamespace: @MyApp.MyBarComponent)]
 pub trait Bar {
     fn bar(&self);
 }
 
 pub struct MyFooComponent;
+
 pub struct MyBarComponent;
 
 #[cgp_impl(new DummyFoo)]
@@ -36,9 +39,9 @@ pub struct App;
 delegate_components! {
     #[use_namespace(MyNamespace)]
     App {
-        MyFooComponent:
+        @MyApp.MyFooComponent:
             DummyFoo,
-        MyBarComponent:
+        @MyApp.MyBarComponent:
             DummyBar,
     }
 }
