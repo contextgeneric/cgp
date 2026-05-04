@@ -18,8 +18,9 @@ impl FooProvider {
 pub struct App;
 
 delegate_components! {
-    #[use_namespace]
     App {
+        namespace default;
+
         // @bar: TestProvider,
 
         @bar.baz: TestProvider,

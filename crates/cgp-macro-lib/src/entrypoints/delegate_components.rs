@@ -2,10 +2,7 @@ use proc_macro2::TokenStream;
 use quote::ToTokens;
 use syn::parse2;
 
-use crate::delegate_components::{
-    DelegateNamespaceAttribute, define_struct, derive_namespace_delegate, impl_delegate_components,
-    parse_delegate_attributes,
-};
+use crate::delegate_components::{define_struct, impl_delegate_components};
 use crate::parse::{DelegateComponents, SimpleType, TypeGenerics};
 
 pub fn delegate_components(body: TokenStream) -> syn::Result<TokenStream> {
@@ -24,15 +21,6 @@ pub fn delegate_components(body: TokenStream) -> syn::Result<TokenStream> {
         let component_struct = define_struct(&target_type.name, &type_generics)?;
 
         output.extend(component_struct.to_token_stream());
-    }
-
-    let attributes = parse_delegate_attributes(spec.attributes)?;
-
-    if let Some(DelegateNamespaceAttribute { namespace }) = attributes.use_namespace {
-        let namespace_impl =
-            derive_namespace_delegate(namespace, target_type, &target_generics.generics)?;
-
-        output.extend(namespace_impl);
     }
 
     let impl_items = impl_delegate_components(target_type, target_generics, &spec.entries)?;

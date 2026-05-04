@@ -168,15 +168,13 @@ impl Parse for PathType {
     }
 }
 
-pub fn is_primitive_type(
-    ident: &str,
-) -> bool {
+pub fn is_primitive_type(ident: &str) -> bool {
     if ident.starts_with("i") || ident.starts_with("u") || ident.starts_with("f") {
         if (&ident[1..]).chars().all(|c| c.is_numeric()) {
-            return true
+            return true;
         }
     } else if ident == "char" || ident == "bool" {
-        return true
+        return true;
     }
 
     false
