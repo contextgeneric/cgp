@@ -28,7 +28,7 @@ delegate_components! {
 
         @FooProviderComponent.String:
             DummyFoo,
-        @BarProviderComponent.{u32, u64}:
+        @BarProviderComponent.{u32, u64, bool, usize, isize}:
             DummyBar,
     }
 }
@@ -40,6 +40,9 @@ check_components! {
         BarProviderComponent: [
             u32,
             u64,
+            bool,
+            usize,
+            isize,
         ],
     }
 }

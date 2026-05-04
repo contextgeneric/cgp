@@ -173,7 +173,9 @@ pub fn is_primitive_type(ident: &str) -> bool {
         if (&ident[1..]).chars().all(|c| c.is_numeric()) {
             return true;
         }
-    } else if ident == "char" || ident == "bool" {
+    }
+
+    if ["char", "bool", "usize", "isize", "str"].contains(&ident) {
         return true;
     }
 
