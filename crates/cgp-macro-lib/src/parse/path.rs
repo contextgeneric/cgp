@@ -43,7 +43,7 @@ pub struct ComponentPath<Path> {
 }
 
 pub enum PathHead {
-    Type(Option<ImplGenerics>, PathType, Box<PathHead>),
+    Type(Option<ImplGenerics>, Box<PathType>, Box<PathHead>),
     Group(Punctuated<PathHead, Comma>),
     Wildcard,
 }
@@ -124,7 +124,7 @@ impl Parse for PathHead {
                 Box::new(Self::Wildcard)
             };
 
-            Ok(Self::Type(generics, path_type, rest_path))
+            Ok(Self::Type(generics, Box::new(path_type), rest_path))
         }
     }
 }
