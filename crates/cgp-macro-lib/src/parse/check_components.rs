@@ -29,6 +29,7 @@ pub struct CheckEntry {
     pub component_type: Type,
     pub component_params: Option<Type>,
     pub span: Span,
+    pub generics: ImplGenerics,
 }
 
 struct ParseCheckEntries {
@@ -155,14 +156,15 @@ impl Parse for ParseCheckEntries {
             vec![component_type]
         };
 
-        let component_params: Vec<Type> = if input.peek(Colon) {
+        let component_params: Vec<TypeWithGenerics> = if input.peek(Colon) {
             let _: Colon = input.parse()?;
 
             if input.peek(Bracket) {
                 let content;
                 bracketed!(content in input);
 
-                let types: Punctuated<Type, Comma> = Punctuated::parse_terminated(&content)?;
+                let types: Punctuated<TypeWithGenerics, Comma> =
+                    Punctuated::parse_terminated(&content)?;
                 types.into_iter().collect()
             } else {
                 vec![input.parse()?]
@@ -181,26 +183,50 @@ impl Parse for ParseCheckEntries {
                     component_type: component_type.clone(),
                     component_params: None,
                     span: component_type.span(),
+                    generics: ImplGenerics::default(),
                 })
             } else {
                 let component_params_count = component_params.len();
 
                 for component_param in component_params.iter() {
+                    let component_param_type = &component_param.ty;
+                    let component_param_generics = &component_param.generics;
+
                     let span = if component_types_count >= component_params_count {
                         component_type.span()
                     } else {
-                        component_param.span()
+                        component_param_type.span()
                     };
 
                     entries.push(CheckEntry {
                         component_type: component_type.clone(),
-                        component_params: Some(component_param.clone()),
+                        component_params: Some(component_param_type.clone()),
                         span,
+                        generics: component_param_generics.clone(),
                     })
                 }
             }
         }
 
         Ok(Self { entries })
+    }
+}
+
+pub struct TypeWithGenerics {
+    pub ty: Type,
+    pub generics: ImplGenerics,
+}
+
+impl Parse for TypeWithGenerics {
+    fn parse(input: ParseStream) -> syn::Result<Self> {
+        let generics = if input.peek(Lt) {
+            input.parse()?
+        } else {
+            ImplGenerics::default()
+        };
+
+        let ty = input.parse()?;
+
+        Ok(Self { ty, generics })
     }
 }

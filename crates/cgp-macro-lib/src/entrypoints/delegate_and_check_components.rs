@@ -30,12 +30,14 @@ pub fn delegate_and_check_components(body: TokenStream) -> syn::Result<TokenStre
                             component_type: component_type.clone(),
                             component_params: Some(generic.clone()),
                             span,
+                            generics: ImplGenerics::default(),
                         })
                         .collect::<Vec<_>>(),
                     None => vec![CheckEntry {
                         component_type: component_type.clone(),
                         component_params: None,
                         span,
+                        generics: ImplGenerics::default(),
                     }],
                 }
             })

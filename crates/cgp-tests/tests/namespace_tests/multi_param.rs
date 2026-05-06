@@ -25,11 +25,13 @@ delegate_components! {
 }
 
 check_components! {
-    <'a> AppA {
+    AppA {
         FooProviderComponent: [
-            (Life<'a>, String, u32),
-            (Life<'a>, bool, String),
+            <'a> (Life<'a>, String, u32),
+            <'a> (Life<'a>, bool, String),
         ],
+        FooProviderComponent:
+            <'a> (Life<'a>, bool, bool),
     }
 }
 

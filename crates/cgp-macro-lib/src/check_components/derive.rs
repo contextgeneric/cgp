@@ -4,6 +4,7 @@ use syn::token::Comma;
 use syn::{ItemImpl, ItemTrait, Type, parse2};
 
 use crate::check_components::override_span;
+use crate::delegate_components::merge_generics;
 use crate::parse::{CheckComponents, CheckEntry};
 
 pub fn derive_check_components(spec: &CheckComponents) -> syn::Result<(ItemTrait, Vec<ItemImpl>)> {
@@ -27,6 +28,7 @@ pub fn derive_check_components(spec: &CheckComponents) -> syn::Result<(ItemTrait
         component_type,
         component_params,
         span,
+        generics: check_generics,
     } in spec.check_entries.entries.iter()
     {
         // Override the span of the context type so that any unsatisfied constraint
@@ -35,8 +37,10 @@ pub fn derive_check_components(spec: &CheckComponents) -> syn::Result<(ItemTrait
 
         let component_param = component_params.as_ref().unwrap_or(&unit);
 
+        let generics = merge_generics(&check_generics.generics, &impl_generics.generics);
+
         let item_impl: ItemImpl = parse2(quote! {
-            impl #impl_generics
+            impl #generics
                 #trait_name < #component_type, #component_param >
                 for #context_type
             #where_clause
