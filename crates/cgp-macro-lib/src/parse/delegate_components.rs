@@ -8,6 +8,7 @@ use syn::punctuated::Punctuated;
 use syn::token::{At, Bracket, Colon, Comma, Gt, Lt, RArrow, Semi};
 use syn::{Error, Generics, Ident, Token, Type, braced, bracketed, parse_quote, parse2};
 
+use crate::delegate_components::merge_generics;
 use crate::parse::{ComponentPaths, ImplGenerics, SimpleType, TypeGenerics};
 
 pub struct DelegateComponents {
@@ -193,26 +194,50 @@ impl Parse for DelegateEntry<Type> {
             let components_body;
             bracketed!(components_body in input);
             components_body.parse_terminated(DelegateKey::parse, Token![,])?
-        } else if input.peek(At) {
-            let _: At = input.parse()?;
-
-            let path: ComponentPaths = input.parse()?;
-
-            let mut keys = Punctuated::new();
-
-            for path in path.paths {
-                let key = DelegateKey {
-                    ty: path.path_type,
-                    generics: path.generics,
-                };
-
-                keys.push(key);
-            }
-
-            keys
         } else {
-            let component: DelegateKey<Type> = input.parse()?;
-            Punctuated::from_iter(iter::once(component))
+            let impl_generics: Option<ImplGenerics> = if input.peek(Lt) {
+                Some(input.parse()?)
+            } else {
+                None
+            };
+
+            if input.peek(At) {
+                let _: At = input.parse()?;
+
+                let path: ComponentPaths = input.parse()?;
+
+                let mut keys = Punctuated::new();
+
+                for path in path.paths {
+                    let generics = if let Some(impl_generics) = &impl_generics {
+                        ImplGenerics {
+                            generics: merge_generics(
+                                &impl_generics.generics,
+                                &path.generics.generics,
+                            ),
+                        }
+                    } else {
+                        path.generics
+                    };
+
+                    let key = DelegateKey {
+                        ty: path.path_type,
+                        generics,
+                    };
+
+                    keys.push(key);
+                }
+
+                keys
+            } else {
+                let mut key: DelegateKey<Type> = input.parse()?;
+
+                if let Some(impl_generics) = impl_generics {
+                    key.generics = impl_generics;
+                }
+
+                Punctuated::from_iter(iter::once(key))
+            }
         };
 
         let mode = input.parse()?;
