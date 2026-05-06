@@ -19,6 +19,8 @@ delegate_components! {
 
         @FooProviderComponent.String.u32:
             DummyFoo,
+        <T> @FooProviderComponent.bool.T:
+            DummyFoo,
     }
 }
 
@@ -26,6 +28,7 @@ check_components! {
     <'a> AppA {
         FooProviderComponent: [
             (Life<'a>, String, u32),
+            (Life<'a>, bool, String),
         ],
     }
 }
@@ -38,6 +41,8 @@ delegate_components! {
 
         @app.FooProviderComponent.String.u64:
             DummyFoo,
+        @app.FooProviderComponent.bool.<T> T:
+            DummyFoo,
     }
 }
 
@@ -45,6 +50,7 @@ check_components! {
     <'a> AppB {
         FooProviderComponent: [
             (Life<'a>, String, u64),
+            (Life<'a>, bool, String),
         ],
     }
 }
