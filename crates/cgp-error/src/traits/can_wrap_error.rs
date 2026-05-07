@@ -8,7 +8,7 @@ use crate::traits::HasErrorType;
     provider: ErrorWrapper,
     derive_delegate: UseDelegate<Detail>,
 }]
-#[use_namespace(@cgp.core.error.ErrorWrapperComponent)]
+#[namespace(@cgp.core.error.ErrorWrapperComponent)]
 pub trait CanWrapError<Detail>: HasErrorType {
     fn wrap_error(error: Self::Error, detail: Detail) -> Self::Error;
 }

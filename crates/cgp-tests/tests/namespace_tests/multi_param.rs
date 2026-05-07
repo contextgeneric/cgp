@@ -1,7 +1,7 @@
 use cgp::prelude::*;
 
 #[cgp_component(FooProvider)]
-#[use_namespace(@app.FooProviderComponent)]
+#[namespace(@app.FooProviderComponent)]
 pub trait Foo<'a, T, U> {
     fn foo(&self, first: &'a T, second: U);
 }

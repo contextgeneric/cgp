@@ -1,3 +1,3 @@
-mod use_namespace;
+mod namespace;
 
-pub use use_namespace::*;
+pub use namespace::*;

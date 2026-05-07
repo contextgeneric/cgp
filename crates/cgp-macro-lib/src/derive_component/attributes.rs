@@ -36,11 +36,11 @@ pub fn parse_component_attributes(
                 }
 
                 parsed_attributes.use_type.extend(use_type_specs);
-            } else if ident == "use_namespace" {
-                let use_namespace_specs = attribute.parse_args_with(
+            } else if ident == "namespace" {
+                let namespace_specs = attribute.parse_args_with(
                     Punctuated::<UseNamespaceAttribute, Comma>::parse_terminated,
                 )?;
-                parsed_attributes.use_namespace.extend(use_namespace_specs);
+                parsed_attributes.namespace.extend(namespace_specs);
             } else {
                 attributes.push(attribute);
             }
@@ -56,5 +56,5 @@ pub fn parse_component_attributes(
 pub struct ComponentAttributes {
     pub extend: Vec<TypeParamBound>,
     pub use_type: Vec<UseTypeSpec>,
-    pub use_namespace: Vec<UseNamespaceAttribute>,
+    pub namespace: Vec<UseNamespaceAttribute>,
 }
