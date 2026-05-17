@@ -1,10 +1,8 @@
-use cgp_macro_core::types::{ImplGenerics, PathElement};
+use cgp_macro_core::types::{ImplGenerics, PathHead};
 use proc_macro2::TokenStream;
 use quote::{ToTokens, quote};
 use syn::parse::{Parse, ParseStream};
-use syn::punctuated::Punctuated;
-use syn::token::{Brace, Comma, Dot, Lt};
-use syn::{Type, braced, parse_quote};
+use syn::{Type, parse_quote};
 
 pub struct ComponentPaths {
     pub paths: Vec<ComponentPath<Type>>,
@@ -38,12 +36,6 @@ impl Parse for ComponentPaths {
 pub struct ComponentPath<Path> {
     pub path_type: Path,
     pub generics: ImplGenerics,
-}
-
-pub enum PathHead {
-    Type(Option<ImplGenerics>, Box<PathElement>, Box<PathHead>),
-    Group(Punctuated<PathHead, Comma>),
-    Wildcard,
 }
 
 pub fn path_head_to_prefix(path_head: &PathHead) -> Vec<ComponentPath<TokenStream>> {
@@ -90,36 +82,4 @@ pub fn prepend_path(
             }
         })
         .collect()
-}
-
-impl Parse for PathHead {
-    fn parse(input: ParseStream) -> syn::Result<Self> {
-        if input.is_empty() {
-            Ok(Self::Wildcard)
-        } else if input.peek(Brace) {
-            let body;
-            braced!(body in input);
-
-            let group = Punctuated::parse_terminated(&body)?;
-
-            Ok(Self::Group(group))
-        } else {
-            let generics = if input.peek(Lt) {
-                Some(input.parse()?)
-            } else {
-                None
-            };
-
-            let path_type: PathElement = input.parse()?;
-
-            let rest_path = if input.peek(Dot) {
-                let _: Dot = input.parse()?;
-                Box::new(Self::parse(input)?)
-            } else {
-                Box::new(Self::Wildcard)
-            };
-
-            Ok(Self::Type(generics, Box::new(path_type), rest_path))
-        }
-    }
 }
