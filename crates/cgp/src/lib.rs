@@ -5,3 +5,5 @@
 pub use {cgp_core as core, cgp_core::re_export_imports, cgp_extra as extra};
 
 pub mod prelude;
+
+pub use prelude as macro_prelude;

@@ -166,6 +166,7 @@ dependencies = [
 name = "cgp-macro-lib"
 version = "0.7.0"
 dependencies = [
+ "cgp-macro-core",
  "itertools",
  "prettyplease",
  "proc-macro2",

@@ -15,6 +15,8 @@ description  = """
 default = []
 
 [dependencies]
+cgp-macro-core = { workspace = true }
+
 syn             = { version = "2.0.95", features = [ "full", "extra-traits", "visit", "visit-mut" ] }
 quote           = "1.0.38"
 proc-macro2     = "1.0.92"

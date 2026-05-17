@@ -44,6 +44,7 @@ cgp-extra                   = { version = "0.7.0", path = "./crates/cgp-extra" }
 cgp-async-macro             = { version = "0.7.0", path = "./crates/cgp-async-macro" }
 cgp-component               = { version = "0.7.0", path = "./crates/cgp-component" }
 cgp-macro                   = { version = "0.7.0", path = "./crates/cgp-macro" }
+cgp-macro-core              = { version = "0.7.0", path = "./crates/cgp-macro-core" }
 cgp-macro-lib               = { version = "0.7.0", path = "./crates/cgp-macro-lib" }
 cgp-type                    = { version = "0.7.0", path = "./crates/cgp-type" }
 cgp-field                   = { version = "0.7.0", path = "./crates/cgp-field" }
@@ -51,7 +52,6 @@ cgp-field-extra             = { version = "0.7.0", path = "./crates/cgp-field-ex
 cgp-error                   = { version = "0.7.0", path = "./crates/cgp-error" }
 cgp-error-extra             = { version = "0.7.0", path = "./crates/cgp-error-extra" }
 cgp-extra-macro             = { version = "0.7.0", path = "./crates/cgp-extra-macro" }
-cgp-extra-macro-core        = { version = "0.7.0", path = "./crates/cgp-extra-macro-lib" }
 cgp-extra-macro-lib         = { version = "0.7.0", path = "./crates/cgp-extra-macro-lib" }
 cgp-handler                 = { version = "0.7.0", path = "./crates/cgp-handler" }
 cgp-monad                   = { version = "0.7.0", path = "./crates/cgp-monad" }
