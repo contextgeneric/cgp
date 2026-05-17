@@ -1,10 +1,11 @@
 use alloc::vec::Vec;
 
+use cgp_macro_core::types::ImplGenerics;
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
 use syn::{Ident, ItemImpl, Type, parse_quote};
 
-use crate::parse::{DelegateEntry, DelegateKey, ImplGenerics, SimpleType};
+use crate::parse::{DelegateEntry, DelegateKey, SimpleType};
 
 pub fn impl_components_is_preset(
     trait_name: &Ident,

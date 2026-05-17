@@ -1,10 +1,10 @@
-use cgp_macro_core::types::path::UniPath;
+use cgp_macro_core::types::{ImplGenerics, UniPath};
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::token::{At, Colon, Comma, Lt};
 use syn::{Ident, Type, braced};
 
-use crate::parse::{ComponentPath, ComponentPaths, ImplGenerics};
+use crate::parse::{ComponentPath, ComponentPaths};
 
 pub struct NamespaceSpec {
     pub namespace_ident: Ident,

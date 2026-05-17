@@ -1,9 +1,8 @@
+use cgp_macro_core::types::ImplGenerics;
 use quote::ToTokens;
 use syn::Ident;
 use syn::parse::{Parse, ParseStream};
 use syn::token::Lt;
-
-use crate::parse::ImplGenerics;
 
 pub struct TypeSpec {
     pub name: Ident,

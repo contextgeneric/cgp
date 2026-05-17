@@ -1,3 +1,4 @@
+use cgp_macro_core::types::ImplGenerics;
 use proc_macro2::{Span, TokenStream};
 use quote::{ToTokens, TokenStreamExt};
 use syn::punctuated::Punctuated;
@@ -9,7 +10,6 @@ use crate::check_components::derive_check_components;
 use crate::delegate_components::impl_delegate_components;
 use crate::parse::{
     CheckComponents, CheckEntries, CheckEntry, DelegateAndCheckSpec, DelegateEntry, DelegateKey,
-    ImplGenerics,
 };
 
 pub fn delegate_and_check_components(body: TokenStream) -> syn::Result<TokenStream> {

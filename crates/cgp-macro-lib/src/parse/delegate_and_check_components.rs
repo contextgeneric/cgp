@@ -1,5 +1,6 @@
 use core::iter;
 
+use cgp_macro_core::types::ImplGenerics;
 use quote::ToTokens;
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
@@ -7,7 +8,7 @@ use syn::spanned::Spanned;
 use syn::token::{Bracket, Comma, Lt, Pound};
 use syn::{Attribute, Ident, Type, braced, bracketed, parse2};
 
-use crate::parse::{DelegateMode, DelegateValue, ImplGenerics, SimpleType};
+use crate::parse::{DelegateMode, DelegateValue, SimpleType};
 
 pub struct DelegateAndCheckSpec {
     pub impl_generics: ImplGenerics,

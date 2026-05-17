@@ -2,6 +2,7 @@ use alloc::boxed::Box;
 use alloc::vec;
 use alloc::vec::Vec;
 
+use cgp_macro_core::types::ImplGenerics;
 use proc_macro2::TokenStream;
 use quote::{ToTokens, quote};
 use syn::punctuated::Punctuated;
@@ -10,7 +11,7 @@ use syn::{ImplItem, ImplItemType, ItemImpl, Path, Type, parse2};
 
 use crate::delegate_components::define_struct;
 use crate::delegate_components::merge_generics::merge_generics;
-use crate::parse::{DelegateEntry, DelegateKey, DelegateMode, DelegateValue, ImplGenerics};
+use crate::parse::{DelegateEntry, DelegateKey, DelegateMode, DelegateValue};
 
 pub fn impl_delegate_components<T>(
     target_type: &Type,

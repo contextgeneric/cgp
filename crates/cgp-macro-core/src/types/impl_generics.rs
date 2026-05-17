@@ -1,17 +1,20 @@
+use core::ops::Deref;
+
 use proc_macro2::TokenStream;
 use quote::ToTokens;
 use syn::parse::{Parse, ParseStream};
-use syn::{Error, Generics, TypeGenerics, parse2};
+use syn::{Error, Generics, parse2};
 
 #[derive(Clone, Default)]
 pub struct ImplGenerics {
     pub generics: Generics,
 }
 
-impl ImplGenerics {
-    pub fn as_type_generics(&self) -> TypeGenerics<'_> {
-        let (_, type_generics, _) = self.generics.split_for_impl();
-        type_generics
+impl Deref for ImplGenerics {
+    type Target = Generics;
+
+    fn deref(&self) -> &Generics {
+        &self.generics
     }
 }
 

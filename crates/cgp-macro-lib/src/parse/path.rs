@@ -1,3 +1,4 @@
+use cgp_macro_core::types::ImplGenerics;
 use proc_macro2::{TokenStream, TokenTree};
 use quote::{ToTokens, quote};
 use syn::parse::{Parse, ParseStream};
@@ -5,7 +6,6 @@ use syn::punctuated::Punctuated;
 use syn::token::{Brace, Comma, Dot, Lt};
 use syn::{Ident, Type, braced, parse_quote, parse2};
 
-use crate::parse::ImplGenerics;
 use crate::symbol::symbol_from_string_spanned;
 
 pub struct ComponentPaths {

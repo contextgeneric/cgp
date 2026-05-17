@@ -1,3 +1,4 @@
+use cgp_macro_core::types::ImplGenerics;
 use proc_macro2::Span;
 use quote::ToTokens;
 use syn::parse::{Parse, ParseStream};
@@ -6,7 +7,7 @@ use syn::spanned::Spanned;
 use syn::token::{Bracket, Colon, Comma, Lt, Pound, Where};
 use syn::{Attribute, Ident, Type, WhereClause, braced, bracketed, parse2};
 
-use crate::parse::{ImplGenerics, SimpleType};
+use crate::parse::SimpleType;
 
 pub struct CheckComponentsSpecs {
     pub specs: Vec<CheckComponents>,

@@ -1,5 +1,6 @@
 use std::collections::HashSet;
 
+use cgp_macro_core::types::ImplGenerics;
 use proc_macro2::{Span, TokenStream};
 use quote::{ToTokens, TokenStreamExt, quote};
 use syn::punctuated::Punctuated;
@@ -7,7 +8,7 @@ use syn::token::{At, Comma};
 use syn::{GenericParam, Ident, ItemTrait, TypeParamBound, parse_quote, parse2};
 
 use crate::delegate_components::{define_struct, impl_delegate_components};
-use crate::parse::{DefinePreset, DelegateEntry, ImplGenerics, SimpleType};
+use crate::parse::{DefinePreset, DelegateEntry, SimpleType};
 use crate::preset::{define_substitution_macro, impl_components_is_preset};
 use crate::replace_self::to_snake_case_str;
 
@@ -100,7 +101,7 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
     let preset_generics: ImplGenerics = syn::parse2(quote!( #preset_generic_args ))?;
 
     let provider_type = {
-        let type_generics = preset_generics.as_type_generics();
+        let type_generics = preset_generics.split_for_impl().1;
         parse2(quote! { #provider_struct_name #type_generics })?
     };
 
