@@ -154,6 +154,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "cgp-macro-core"
+version = "0.7.0"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
 name = "cgp-macro-lib"
 version = "0.7.0"
 dependencies = [
