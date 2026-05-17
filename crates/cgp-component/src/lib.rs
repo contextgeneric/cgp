@@ -5,6 +5,8 @@
    CGP component implementation.
 */
 
+pub mod macro_prelude;
+
 mod namespaces;
 mod traits;
 mod types;

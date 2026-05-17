@@ -17,6 +17,7 @@ impl Parse for PathElement {
 
         let parsed = if let Ok(path_ident) = parse2::<Ident>(ty.to_token_stream()) {
             let path_str = path_ident.to_string();
+
             if let Some(path_char) = path_str.chars().next()
                 && path_char.is_ascii_lowercase()
                 && !is_primitive_type(&path_str)
@@ -51,7 +52,7 @@ impl ToTokens for PathElement {
     }
 }
 
-pub fn is_primitive_type(ident: &str) -> bool {
+fn is_primitive_type(ident: &str) -> bool {
     if (ident.starts_with("i") || ident.starts_with("u") || ident.starts_with("f"))
         && ident[1..].chars().all(|c| c.is_numeric())
     {

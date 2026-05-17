@@ -12,7 +12,7 @@ description  = """
 """
 
 [dependencies]
-cgp-component       = { workspace = true }
+cgp       = { version = "0.7.0", path = "../cgp-base", package = "cgp-base" }
 cgp-macro           = { workspace = true }
 cgp-type            = { workspace = true }
 cgp-field           = { workspace = true }

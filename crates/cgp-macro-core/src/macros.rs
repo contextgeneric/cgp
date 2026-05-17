@@ -5,7 +5,7 @@ macro_rules! export_construct {
 
         impl ::quote::ToTokens for $from {
             fn to_tokens(&self, tokens: &mut ::proc_macro2::TokenStream) {
-                tokens.extend(::quote::quote! { $to })
+                tokens.extend(::quote::quote! { ::cgp::macro_prelude::$to })
             }
         }
     };

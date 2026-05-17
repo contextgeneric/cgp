@@ -4,6 +4,8 @@ resolver = "3"
 
 members = [
     "crates/cgp",
+    "crates/cgp-base",
+    "crates/cgp-base-types",
     "crates/cgp-core",
     "crates/cgp-extra",
     "crates/cgp-async-macro",
@@ -39,6 +41,8 @@ keywords        = ["cgp"]
 
 [workspace.dependencies]
 cgp                         = { version = "0.7.0", path = "./crates/cgp" }
+cgp-base                    = { version = "0.7.0", path = "./crates/cgp-base" }
+cgp-base-types              = { version = "0.7.0", path = "./crates/cgp-base-types" }
 cgp-core                    = { version = "0.7.0", path = "./crates/cgp-core" }
 cgp-extra                   = { version = "0.7.0", path = "./crates/cgp-extra" }
 cgp-async-macro             = { version = "0.7.0", path = "./crates/cgp-async-macro" }

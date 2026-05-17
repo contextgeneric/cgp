@@ -1,5 +1,4 @@
-use cgp_component::*;
-use cgp_field::types::*;
+use cgp::macro_prelude::*;
 use cgp_macro::cgp_component;
 
 use crate::traits::HasErrorType;
