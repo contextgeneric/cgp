@@ -1,4 +1,4 @@
-use cgp_component::*;
+use cgp_base::macro_prelude::*;
 use cgp_macro::cgp_component;
 
 #[cgp_component {

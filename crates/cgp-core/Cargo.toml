@@ -12,6 +12,7 @@ description  = """
 """
 
 [dependencies]
+cgp-base            = { workspace = true }
 cgp-async-macro     = { workspace = true }
 cgp-component       = { workspace = true }
 cgp-macro           = { workspace = true }

@@ -14,3 +14,4 @@ description  = """
 [dependencies]
 cgp-component       = { workspace = true }
 cgp-macro           = { workspace = true }
+cgp-base            = { workspace = true }

@@ -14,6 +14,5 @@ mod types;
 pub use namespaces::DefaultNamespace;
 pub use traits::{CanUseComponent, DelegateComponent, IsProviderFor};
 pub use types::{
-    ConcatPath, PathCons, PathNil, RedirectLookup, UseContext, UseDefault, UseDelegate, UseFields,
-    WithContext, WithProvider,
+    RedirectLookup, UseContext, UseDefault, UseDelegate, UseFields, WithContext, WithProvider,
 };

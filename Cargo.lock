@@ -47,6 +47,7 @@ name = "cgp-core"
 version = "0.7.0"
 dependencies = [
  "cgp-async-macro",
+ "cgp-base",
  "cgp-component",
  "cgp-error",
  "cgp-field",
@@ -223,6 +224,7 @@ dependencies = [
 name = "cgp-type"
 version = "0.7.0"
 dependencies = [
+ "cgp-base",
  "cgp-component",
  "cgp-macro",
 ]
