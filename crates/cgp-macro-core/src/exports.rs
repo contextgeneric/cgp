@@ -5,4 +5,6 @@ export_constructs! {
     Cons => π,
     Chars => ζ,
     Symbol => ψ,
+    PathCons,
+    PathNil,
 }

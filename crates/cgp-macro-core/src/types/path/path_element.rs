@@ -1,7 +1,9 @@
+use proc_macro2::TokenStream;
 use quote::ToTokens;
 use syn::parse::{Parse, ParseStream};
 use syn::{Ident, Type, parse2};
 
+use crate::traits::ToType;
 use crate::types::symbol::Symbol;
 
 pub enum PathElement {
@@ -20,5 +22,23 @@ impl Parse for PathElement {
         };
 
         Ok(parsed)
+    }
+}
+
+impl ToType for PathElement {
+    fn to_type(&self) -> Type {
+        match self {
+            Self::Type(ty) => ty.clone(),
+            Self::Symbol(symbol) => symbol.to_type(),
+        }
+    }
+}
+
+impl ToTokens for PathElement {
+    fn to_tokens(&self, tokens: &mut TokenStream) {
+        match self {
+            Self::Type(ty) => ty.to_tokens(tokens),
+            Self::Symbol(symbol) => symbol.to_tokens(tokens),
+        }
     }
 }
