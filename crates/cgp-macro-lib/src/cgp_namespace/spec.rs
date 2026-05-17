@@ -1,10 +1,8 @@
-use cgp_macro_core::types::{ImplGenerics, UniPath};
+use cgp_macro_core::types::{PathHeadOrType, UniPath};
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
-use syn::token::{At, Colon, Comma, Lt};
-use syn::{Ident, Type, braced};
-
-use crate::parse::{ComponentPath, ComponentPaths};
+use syn::token::{Colon, Comma};
+use syn::{Ident, braced};
 
 pub struct NamespaceSpec {
     pub namespace_ident: Ident,
@@ -13,7 +11,7 @@ pub struct NamespaceSpec {
 }
 
 pub struct NamespaceEntry {
-    pub keys: ComponentPaths,
+    pub keys: PathHeadOrType,
     pub value: UniPath,
 }
 
@@ -44,26 +42,7 @@ impl Parse for NamespaceSpec {
 
 impl Parse for NamespaceEntry {
     fn parse(input: ParseStream) -> syn::Result<Self> {
-        let keys: ComponentPaths = if input.peek(At) {
-            let _: At = input.parse()?;
-
-            input.parse()?
-        } else {
-            let generics: ImplGenerics = if input.peek(Lt) {
-                input.parse()?
-            } else {
-                Default::default()
-            };
-
-            let path_type: Type = input.parse()?;
-
-            let path = ComponentPath {
-                generics,
-                path_type,
-            };
-
-            ComponentPaths { paths: vec![path] }
-        };
+        let keys = input.parse()?;
 
         let _: Colon = input.parse()?;
 

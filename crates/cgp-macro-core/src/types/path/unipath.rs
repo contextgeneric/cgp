@@ -6,6 +6,7 @@ use syn::punctuated::Punctuated;
 use syn::token::{At, Dot};
 
 use crate::exports::{Nil, PathCons};
+use crate::types::PrefixPath;
 use crate::types::path::PathElement;
 
 #[derive(Debug, Clone, Default)]
@@ -20,8 +21,11 @@ impl UniPath {
         }
     }
 
-    pub fn append_type(&mut self, ty: Type) {
-        self.elements.push(PathElement::Type(ty));
+    pub fn to_prefix(self, suffix: Type) -> PrefixPath {
+        PrefixPath {
+            elements: self.elements,
+            suffix,
+        }
     }
 }
 

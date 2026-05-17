@@ -1,3 +1,4 @@
+use cgp_macro_core::types::PathHeadOrType;
 use proc_macro2::TokenStream;
 use quote::quote;
 use syn::{Ident, ItemImpl, ItemStruct, ItemTrait, parse_quote, parse2};
@@ -50,32 +51,82 @@ pub fn derive_namespace(spec: NamespaceSpec) -> syn::Result<TokenStream> {
 
     for entry in spec.entries.into_iter() {
         let value = entry.value;
+
+        match entry.keys {
+            PathHeadOrType::PathHead(path_head) => {
+                for (mut generics, path) in path_head.into_paths() {
+                    generics.params.push(parse_quote!(__Components__));
+                    generics.params.push(parse_quote!(__Wildcard__));
+
+                    let prefix = path.to_prefix(parse_quote!(__Wildcard__));
+
+                    let impl_generics = generics.split_for_impl().0;
+
+                    let item_impl: ItemImpl = parse2(quote! {
+                        impl #impl_generics
+                            #namespace_ident< __Components__ >
+                            for #prefix
+                        {
+                            type Provider = RedirectLookup<
+                                __Components__,
+                                #value,
+                            >;
+                        }
+                    })?;
+
+                    out.extend(quote! {
+                        #item_impl
+                    })
+                }
+            }
+            PathHeadOrType::Type(mut generics, ty) => {
+                generics.params.push(parse_quote!(__Components__));
+                let impl_generics = generics.split_for_impl().0;
+
+                let item_impl: ItemImpl = parse2(quote! {
+                    impl #impl_generics
+                        #namespace_ident< __Components__ >
+                        for #ty
+                    {
+                        type Provider = RedirectLookup<
+                            __Components__,
+                            #value,
+                        >;
+                    }
+                })?;
+
+                out.extend(quote! {
+                    #item_impl
+                })
+            }
+        }
+
         // value.append_type(parse_quote!(__Wildcard__));
 
-        for path in entry.keys.paths.into_iter() {
-            let path_type = path.path_type;
+        // for path in entry.keys.paths.into_iter() {
+        //     let path_type = path.path_type;
 
-            let mut generics = path.generics.generics;
-            generics.params.push(parse_quote!(__Components__));
+        //     let mut generics = path.generics.generics;
+        //     generics.params.push(parse_quote!(__Components__));
 
-            let impl_generics = generics.split_for_impl().0;
+        //     let impl_generics = generics.split_for_impl().0;
 
-            let item_impl: ItemImpl = parse2(quote! {
-                impl #impl_generics
-                    #namespace_ident< __Components__ >
-                    for #path_type
-                {
-                    type Provider = RedirectLookup<
-                        __Components__,
-                        #value,
-                    >;
-                }
-            })?;
+        //     let item_impl: ItemImpl = parse2(quote! {
+        //         impl #impl_generics
+        //             #namespace_ident< __Components__ >
+        //             for #path_type
+        //         {
+        //             type Provider = RedirectLookup<
+        //                 __Components__,
+        //                 #value,
+        //             >;
+        //         }
+        //     })?;
 
-            out.extend(quote! {
-                #item_impl
-            })
-        }
+        //     out.extend(quote! {
+        //         #item_impl
+        //     })
+        // }
     }
 
     Ok(out)

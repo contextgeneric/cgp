@@ -1,5 +1,6 @@
+use syn::Type;
 use syn::parse::{Parse, ParseStream};
-use syn::token::{At, Type};
+use syn::token::At;
 
 use crate::types::{ImplGenerics, PathHead};
 
