@@ -21,6 +21,10 @@ impl UniPath {
         }
     }
 
+    pub fn append_type(&mut self, ty: Type) {
+        self.elements.push(PathElement::Type(ty));
+    }
+
     pub fn to_prefix(self, suffix: Type) -> PrefixPath {
         PrefixPath {
             elements: self.elements,

@@ -1,5 +1,5 @@
 use quote::quote;
-use syn::{Ident, ItemImpl, parse2};
+use syn::{Ident, ItemImpl, parse_quote, parse2};
 
 use crate::attributes::UseNamespaceAttribute;
 
@@ -21,7 +21,8 @@ pub fn derive_namespace_impl(
     component_name: &Ident,
 ) -> syn::Result<ItemImpl> {
     let namespace = &attribute.namespace;
-    let path = &attribute.path;
+    let mut path = attribute.path.clone();
+    path.append_type(parse_quote!(#component_name));
 
     let out = quote! {
         impl<__Components__> #namespace < __Components__ > for #component_name
