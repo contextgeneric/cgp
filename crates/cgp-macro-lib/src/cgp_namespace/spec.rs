@@ -1,10 +1,10 @@
-use quote::quote;
+use cgp_macro_core::types::path::UniPath;
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
-use syn::token::{At, Colon, Comma, Dot, Lt};
-use syn::{Ident, Type, braced, parse2};
+use syn::token::{At, Colon, Comma, Lt};
+use syn::{Ident, Type, braced};
 
-use crate::parse::{ComponentPath, ComponentPaths, ImplGenerics, PathType};
+use crate::parse::{ComponentPath, ComponentPaths, ImplGenerics};
 
 pub struct NamespaceSpec {
     pub namespace_ident: Ident,
@@ -14,7 +14,7 @@ pub struct NamespaceSpec {
 
 pub struct NamespaceEntry {
     pub keys: ComponentPaths,
-    pub value: Type,
+    pub value: UniPath,
 }
 
 impl Parse for NamespaceSpec {
@@ -67,16 +67,7 @@ impl Parse for NamespaceEntry {
 
         let _: Colon = input.parse()?;
 
-        let _: At = input.parse()?;
-
-        let value_path: Punctuated<PathType, Dot> = Punctuated::parse_separated_nonempty(input)?;
-
-        let value = value_path.into_iter().rev().fold(
-            quote!(Nil),
-            |tail, PathType { path_type }| quote!( PathCons< #path_type, #tail > ),
-        );
-
-        let value: Type = parse2(value)?;
+        let value = input.parse()?;
 
         Ok(Self { keys, value })
     }

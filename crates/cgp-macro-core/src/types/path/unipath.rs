@@ -22,7 +22,7 @@ impl Parse for UniPath {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let _: At = input.parse()?;
 
-        let elements = Punctuated::parse_terminated(input)?;
+        let elements = Punctuated::parse_separated_nonempty(input)?;
 
         Ok(Self { elements })
     }
