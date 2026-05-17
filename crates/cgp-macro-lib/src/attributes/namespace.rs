@@ -1,7 +1,7 @@
 use cgp_macro_core::types::UniPath;
 use syn::Ident;
 use syn::parse::{Parse, ParseStream};
-use syn::token::Colon;
+use syn::token::In;
 
 pub struct UseNamespaceAttribute {
     pub namespace: Ident,
@@ -10,15 +10,14 @@ pub struct UseNamespaceAttribute {
 
 impl Parse for UseNamespaceAttribute {
     fn parse(input: ParseStream) -> syn::Result<Self> {
-        let namespace = if input.peek2(Colon) {
-            let namespace = input.parse()?;
-            let _: Colon = input.parse()?;
-            namespace
+        let path = input.parse()?;
+
+        let namespace = if input.peek(In) {
+            let _: In = input.parse()?;
+            input.parse()?
         } else {
             Ident::new("DefaultNamespace", input.span())
         };
-
-        let path = input.parse()?;
 
         Ok(UseNamespaceAttribute { namespace, path })
     }

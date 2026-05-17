@@ -1,5 +1,6 @@
 use core::mem;
 
+use syn::parse::Parse;
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
 use syn::{Attribute, TypeParamBound};
@@ -37,10 +38,8 @@ pub fn parse_component_attributes(
 
                 parsed_attributes.use_type.extend(use_type_specs);
             } else if ident == "namespace" {
-                let namespace_specs = attribute.parse_args_with(
-                    Punctuated::<UseNamespaceAttribute, Comma>::parse_terminated,
-                )?;
-                parsed_attributes.namespace.extend(namespace_specs);
+                let namespace_specs = attribute.parse_args_with(UseNamespaceAttribute::parse)?;
+                parsed_attributes.namespace.push(namespace_specs);
             } else {
                 attributes.push(attribute);
             }

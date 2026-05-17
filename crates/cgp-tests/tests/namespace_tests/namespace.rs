@@ -5,7 +5,7 @@ use cgp::prelude::*;
 pub struct MyComponents;
 
 #[cgp_component(FooProvider)]
-#[namespace(DefaultNamespace: @app.MyComponents.FooProviderComponent)]
+#[namespace(@app.MyComponents.FooProviderComponent in DefaultNamespace)]
 pub trait Foo {
     fn foo(&self);
 }
