@@ -61,6 +61,7 @@ pub fn derive_namespace(spec: NamespaceSpec) -> syn::Result<TokenStream> {
                     let prefix = path.to_prefix(parse_quote!(__Wildcard__));
 
                     let impl_generics = generics.split_for_impl().0;
+                    let redirect_target = value.clone().to_prefix(parse_quote!(__Wildcard__));
 
                     let item_impl: ItemImpl = parse2(quote! {
                         impl #impl_generics
@@ -69,7 +70,7 @@ pub fn derive_namespace(spec: NamespaceSpec) -> syn::Result<TokenStream> {
                         {
                             type Provider = RedirectLookup<
                                 __Components__,
-                                #value,
+                                #redirect_target,
                             >;
                         }
                     })?;
