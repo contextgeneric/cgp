@@ -86,7 +86,7 @@ pub fn extract_type_generics(generics: &Generics) -> syn::Result<Option<Type>> {
     if type_params.is_empty() {
         Ok(None)
     } else {
-        let mut out = quote! { PathNil };
+        let mut out = quote! { Nil };
 
         for param in type_params.iter().rev() {
             out = quote! {

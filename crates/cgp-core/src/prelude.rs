@@ -1,7 +1,7 @@
 pub use core::marker::PhantomData;
 
 pub use cgp_async_macro::async_trait;
-pub use cgp_base::macro_prelude::{ConcatPath, PathCons, PathNil};
+pub use cgp_base::macro_prelude::{ConcatPath, PathCons};
 pub use cgp_component::{
     CanUseComponent, DefaultNamespace, DelegateComponent, IsProviderFor, RedirectLookup,
     UseContext, UseDelegate, UseFields, WithContext, WithProvider,

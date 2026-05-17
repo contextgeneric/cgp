@@ -72,7 +72,7 @@ impl Parse for NamespaceEntry {
         let value_path: Punctuated<PathType, Dot> = Punctuated::parse_separated_nonempty(input)?;
 
         let value = value_path.into_iter().rev().fold(
-            quote!(PathNil),
+            quote!(Nil),
             |tail, PathType { path_type }| quote!( PathCons< #path_type, #tail > ),
         );
 

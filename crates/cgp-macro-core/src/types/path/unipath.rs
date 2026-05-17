@@ -5,7 +5,7 @@ use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::token::{At, Dot};
 
-use crate::exports::{PathCons, PathNil};
+use crate::exports::{Nil, PathCons};
 use crate::types::path::PathElement;
 
 pub struct UniPath {
@@ -31,7 +31,7 @@ impl Parse for UniPath {
 impl ToTokens for UniPath {
     fn to_tokens(&self, tokens: &mut TokenStream) {
         let out = self.elements.iter().rev().fold(
-            quote!(#PathNil),
+            quote!(#Nil),
             |acc, current| quote!( #PathCons < #current, #acc > ),
         );
 

@@ -130,7 +130,7 @@ pub fn parse_meta_delegate_entries(
 
             for component in components {
                 let value = DelegateValue::Type(parse2(
-                    quote!(RedirectLookup<#target_type, PathCons<#component, PathNil>>),
+                    quote!(RedirectLookup<#target_type, PathCons<#component, ε>>),
                 )?);
 
                 let key = DelegateKey {
