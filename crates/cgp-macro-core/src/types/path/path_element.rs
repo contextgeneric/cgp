@@ -6,6 +6,7 @@ use syn::{Ident, Type, parse2};
 use crate::traits::ToType;
 use crate::types::symbol::Symbol;
 
+#[derive(Debug, Clone)]
 pub enum PathElement {
     Type(Type),
     Symbol(Symbol),

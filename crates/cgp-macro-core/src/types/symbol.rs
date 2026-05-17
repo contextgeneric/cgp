@@ -4,6 +4,7 @@ use syn::{Ident, Type, parse_quote};
 
 use crate::traits::ToType;
 
+#[derive(Debug, Clone)]
 pub struct Symbol {
     pub ident: Ident,
 }

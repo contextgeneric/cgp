@@ -3,12 +3,39 @@ use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::token::{Brace, Comma, Dot};
 
-use crate::types::{ImplGenerics, PathElement};
+use crate::types::{ImplGenerics, PathElement, UniPath};
 
 pub enum PathHead {
     Type(ImplGenerics, Box<PathElement>, Box<PathHead>),
     Group(Punctuated<PathHead, Comma>),
     End,
+}
+
+impl PathHead {
+    pub fn into_paths(&self, suffix_path: &UniPath) -> Vec<(ImplGenerics, UniPath)> {
+        match self {
+            Self::Type(generics, path_element, tail) => {
+                let tail_paths = tail.into_paths(suffix_path);
+                let mut out_paths = Vec::new();
+
+                for (tail_generics, mut tail_path) in tail_paths {
+                    let mut generics = generics.clone();
+                    generics.params.extend(tail_generics.params.iter().cloned());
+                    tail_path.elements.insert(0, path_element.as_ref().clone());
+                    out_paths.push((generics, tail_path))
+                }
+
+                out_paths
+            }
+            Self::Group(path_heads) => path_heads
+                .iter()
+                .flat_map(|path| path.into_paths(suffix_path))
+                .collect(),
+            Self::End => {
+                vec![(ImplGenerics::default(), suffix_path.clone())]
+            }
+        }
+    }
 }
 
 impl Parse for PathHead {

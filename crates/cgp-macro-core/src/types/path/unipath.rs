@@ -8,11 +8,18 @@ use syn::token::{At, Dot};
 use crate::exports::{Nil, PathCons};
 use crate::types::path::PathElement;
 
+#[derive(Debug, Clone)]
 pub struct UniPath {
     pub elements: Punctuated<PathElement, Dot>,
 }
 
 impl UniPath {
+    pub fn from_iter(elements: impl IntoIterator<Item = PathElement>) -> Self {
+        Self {
+            elements: Punctuated::from_iter(elements),
+        }
+    }
+
     pub fn append_type(&mut self, ty: Type) {
         self.elements.push(PathElement::Type(ty));
     }
