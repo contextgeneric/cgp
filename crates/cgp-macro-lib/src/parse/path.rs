@@ -12,7 +12,7 @@ impl Parse for ComponentPaths {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let path_head = PathHead::parse(input)?;
 
-        if let PathHead::Wildcard = path_head {
+        if let PathHead::End = path_head {
             return Err(syn::Error::new(
                 input.span(),
                 "Expected at least one path element",
@@ -49,7 +49,7 @@ pub fn path_head_to_prefix(path_head: &PathHead) -> Vec<ComponentPath<TokenStrea
             .iter()
             .flat_map(|path| path_head_to_prefix(path))
             .collect(),
-        PathHead::Wildcard => {
+        PathHead::End => {
             vec![ComponentPath {
                 path_type: quote! { __Wildcard__ },
                 generics: parse_quote! { <__Wildcard__> },
@@ -60,7 +60,7 @@ pub fn path_head_to_prefix(path_head: &PathHead) -> Vec<ComponentPath<TokenStrea
 
 pub fn prepend_path(
     path_type: TokenStream,
-    generics: Option<ImplGenerics>,
+    generics: ImplGenerics,
     rest_types: Vec<ComponentPath<TokenStream>>,
 ) -> Vec<ComponentPath<TokenStream>> {
     rest_types
@@ -68,12 +68,10 @@ pub fn prepend_path(
         .map(|mut path| {
             let rest_tokens = path.path_type;
 
-            if let Some(generics) = &generics {
-                path.generics
-                    .generics
-                    .params
-                    .extend(generics.generics.params.clone());
-            }
+            path.generics
+                .generics
+                .params
+                .extend(generics.generics.params.clone());
 
             let new_path = quote! { PathCons< #path_type , #rest_tokens > };
             ComponentPath {
