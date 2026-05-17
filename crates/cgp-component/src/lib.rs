@@ -8,11 +8,11 @@
 pub mod macro_prelude;
 
 mod namespaces;
+mod providers;
 mod traits;
-mod types;
 
 pub use namespaces::DefaultNamespace;
-pub use traits::{CanUseComponent, DelegateComponent, IsProviderFor};
-pub use types::{
+pub use providers::{
     RedirectLookup, UseContext, UseDefault, UseDelegate, UseFields, WithContext, WithProvider,
 };
+pub use traits::{CanUseComponent, DelegateComponent, IsProviderFor};
