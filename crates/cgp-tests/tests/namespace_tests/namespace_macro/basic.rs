@@ -13,7 +13,7 @@ cgp_namespace! {
 }
 
 #[cgp_component(BarProvider)]
-#[namespace(@MyBarComponent in MyNamespace)]
+#[prefix(@MyBarComponent in MyNamespace)]
 pub trait Bar {
     fn bar(&self);
 }

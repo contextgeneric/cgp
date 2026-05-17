@@ -1,7 +1,7 @@
 use cgp::prelude::*;
 
 #[cgp_component(FooProvider)]
-#[namespace(@bar.baz.FooProviderComponent)]
+#[prefix(@bar.baz)]
 pub trait CanDoFoo {
     fn foo();
 }

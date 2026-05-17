@@ -37,7 +37,7 @@ pub fn parse_component_attributes(
                 }
 
                 parsed_attributes.use_type.extend(use_type_specs);
-            } else if ident == "namespace" {
+            } else if ident == "prefix" {
                 let namespace_specs = attribute.parse_args_with(UseNamespaceAttribute::parse)?;
                 parsed_attributes.namespace.push(namespace_specs);
             } else {
