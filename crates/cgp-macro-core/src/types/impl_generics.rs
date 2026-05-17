@@ -5,7 +5,7 @@ use quote::ToTokens;
 use syn::parse::{Parse, ParseStream};
 use syn::{Error, Generics, parse2};
 
-#[derive(Clone, Default)]
+#[derive(Debug, Clone, Default)]
 pub struct ImplGenerics {
     pub generics: Generics,
 }

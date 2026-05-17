@@ -5,6 +5,7 @@ use syn::token::{Brace, Comma, Dot};
 
 use crate::types::{ImplGenerics, PathElement, UniPath};
 
+#[derive(Debug, Clone)]
 pub enum PathHead {
     Type(ImplGenerics, Box<PathElement>, Box<PathHead>),
     Group(Punctuated<PathHead, Comma>),
@@ -12,10 +13,10 @@ pub enum PathHead {
 }
 
 impl PathHead {
-    pub fn into_paths(&self, suffix_path: &UniPath) -> Vec<(ImplGenerics, UniPath)> {
+    pub fn into_paths(&self) -> Vec<(ImplGenerics, UniPath)> {
         match self {
             Self::Type(generics, path_element, tail) => {
-                let tail_paths = tail.into_paths(suffix_path);
+                let tail_paths = tail.into_paths();
                 let mut out_paths = Vec::new();
 
                 for (tail_generics, mut tail_path) in tail_paths {
@@ -29,10 +30,10 @@ impl PathHead {
             }
             Self::Group(path_heads) => path_heads
                 .iter()
-                .flat_map(|path| path.into_paths(suffix_path))
+                .flat_map(|path| path.into_paths())
                 .collect(),
             Self::End => {
-                vec![(ImplGenerics::default(), suffix_path.clone())]
+                vec![(ImplGenerics::default(), UniPath::default())]
             }
         }
     }
