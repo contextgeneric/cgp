@@ -1,8 +1,9 @@
+use cgp_macro_core::types::TypeGenerics;
 use proc_macro2::TokenStream;
 use quote::quote;
 use syn::{Ident, ItemImpl, ItemStruct, parse_quote, parse2};
 
-use crate::parse::{SimpleType, TypeGenerics};
+use crate::parse::SimpleType;
 
 pub fn cgp_inherit(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
     let context_struct: ItemStruct = parse2(body)?;

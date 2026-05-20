@@ -1,9 +1,10 @@
+use cgp_macro_core::types::TypeGenerics;
 use proc_macro2::TokenStream;
 use quote::ToTokens;
 use syn::parse2;
 
 use crate::delegate_components::{define_struct, impl_delegate_components};
-use crate::parse::{DelegateComponents, SimpleType, TypeGenerics};
+use crate::parse::{DelegateComponents, SimpleType};
 
 pub fn delegate_components(body: TokenStream) -> syn::Result<TokenStream> {
     let spec: DelegateComponents = parse2(body)?;

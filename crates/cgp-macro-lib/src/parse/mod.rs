@@ -7,7 +7,6 @@ mod entry;
 mod is_provider_params;
 mod path;
 mod simple_type;
-mod type_generics;
 mod type_spec;
 
 pub use check_components::*;
@@ -19,5 +18,4 @@ pub use entry::*;
 pub use is_provider_params::*;
 pub use path::*;
 pub use simple_type::*;
-pub use type_generics::*;
 pub use type_spec::*;

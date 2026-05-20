@@ -7,12 +7,9 @@ repository   = { workspace = true }
 authors      = { workspace = true }
 rust-version = { workspace = true }
 keywords     = { workspace = true }
-description  = """
-    Context-generic programming error components
-"""
 
 [dependencies]
-cgp       = { version = "0.7.0", path = "../cgp-base", package = "cgp-base" }
+cgp                 = { version = "0.7.0", path = "../cgp-base", package = "cgp-base" }
 cgp-macro           = { workspace = true }
 cgp-type            = { workspace = true }
 cgp-field           = { workspace = true }

@@ -1,6 +1,6 @@
 use core::iter;
 
-use cgp_macro_core::types::ImplGenerics;
+use cgp_macro_core::types::{ImplGenerics, TypeGenerics};
 use proc_macro2::{Span, TokenStream};
 use quote::{ToTokens, TokenStreamExt, quote};
 use syn::parse::discouraged::Speculative;
@@ -10,7 +10,7 @@ use syn::token::{At, Bracket, Colon, Comma, Gt, Lt, RArrow, Semi};
 use syn::{Error, Generics, Ident, Token, Type, braced, bracketed, parse_quote, parse2};
 
 use crate::delegate_components::merge_generics;
-use crate::parse::{ComponentPaths, SimpleType, TypeGenerics};
+use crate::parse::{ComponentPaths, SimpleType};
 
 pub struct DelegateComponents {
     pub new_struct: bool,

@@ -1,3 +1,4 @@
+use cgp_macro_core::types::TypeGenerics;
 use proc_macro2::Span;
 use quote::quote;
 use syn::spanned::Spanned;
@@ -8,7 +9,6 @@ use syn::{
 
 use crate::derive_component::delegate_fn::derive_delegated_fn_impl;
 use crate::derive_component::delegate_type::derive_delegate_type_impl;
-use crate::parse::TypeGenerics;
 
 pub fn derive_use_context_impl(
     context_type: &Ident,

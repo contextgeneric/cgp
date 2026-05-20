@@ -1,7 +1,7 @@
-mod impl_generics;
+mod generics;
 mod path;
 mod symbol;
 
-pub use impl_generics::*;
+pub use generics::*;
 pub use path::*;
 pub use symbol::*;
