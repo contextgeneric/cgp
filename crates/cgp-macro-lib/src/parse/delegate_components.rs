@@ -1,6 +1,6 @@
 use core::iter;
 
-use cgp_macro_core::types::{ImplGenerics, TypeGenerics};
+use cgp_macro_core::types::generics::{ImplGenerics, TypeGenerics};
 use proc_macro2::{Span, TokenStream};
 use quote::{ToTokens, TokenStreamExt, quote};
 use syn::parse::discouraged::Speculative;

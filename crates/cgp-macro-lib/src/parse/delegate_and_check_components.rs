@@ -1,6 +1,6 @@
 use core::iter;
 
-use cgp_macro_core::types::ImplGenerics;
+use cgp_macro_core::types::generics::ImplGenerics;
 use quote::ToTokens;
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;

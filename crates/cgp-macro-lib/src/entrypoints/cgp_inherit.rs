@@ -1,4 +1,4 @@
-use cgp_macro_core::types::TypeGenerics;
+use cgp_macro_core::types::generics::TypeGenerics;
 use proc_macro2::TokenStream;
 use quote::quote;
 use syn::{Ident, ItemImpl, ItemStruct, parse_quote, parse2};

@@ -1,4 +1,4 @@
-use cgp_macro_core::types::TypeGenerics;
+use cgp_macro_core::types::generics::TypeGenerics;
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
 use syn::{GenericParam, Generics, Type, parse_quote};

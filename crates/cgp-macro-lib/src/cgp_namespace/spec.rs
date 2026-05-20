@@ -1,4 +1,4 @@
-use cgp_macro_core::types::{PathHeadOrType, UniPath};
+use cgp_macro_core::types::path::{PathHeadOrType, UniPath};
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::token::{Colon, Comma};

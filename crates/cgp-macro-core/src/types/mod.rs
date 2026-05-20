@@ -1,9 +1,7 @@
-mod generics;
-mod namespace;
-mod path;
-mod symbol;
+pub mod delegate_component;
+pub mod generics;
+pub mod namespace;
+pub mod path;
+pub mod symbol;
 
-pub use generics::*;
-pub use namespace::*;
-pub use path::*;
 pub use symbol::*;

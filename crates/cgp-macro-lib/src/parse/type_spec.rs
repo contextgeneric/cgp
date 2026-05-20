@@ -1,4 +1,4 @@
-use cgp_macro_core::types::ImplGenerics;
+use cgp_macro_core::types::generics::ImplGenerics;
 use quote::ToTokens;
 use syn::Ident;
 use syn::parse::{Parse, ParseStream};

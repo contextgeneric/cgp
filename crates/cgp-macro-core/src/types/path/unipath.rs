@@ -6,8 +6,7 @@ use syn::punctuated::Punctuated;
 use syn::token::{At, Dot};
 
 use crate::exports::{Nil, PathCons};
-use crate::types::PrefixPath;
-use crate::types::path::PathElement;
+use crate::types::path::{PathElement, PrefixPath};
 
 #[derive(Debug, Clone, Default)]
 pub struct UniPath {

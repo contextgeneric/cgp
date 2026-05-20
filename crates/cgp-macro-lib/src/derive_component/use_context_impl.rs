@@ -1,4 +1,4 @@
-use cgp_macro_core::types::TypeGenerics;
+use cgp_macro_core::types::generics::TypeGenerics;
 use proc_macro2::Span;
 use quote::quote;
 use syn::spanned::Spanned;

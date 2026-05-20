@@ -1,7 +1,7 @@
 use syn::Ident;
 use syn::parse::{Parse, ParseStream};
 
-use crate::types::TypeGenerics;
+use crate::types::generics::TypeGenerics;
 
 pub struct NamespaceIdent {
     pub ident: Ident,

@@ -1,4 +1,5 @@
-use cgp_macro_core::types::{ImplGenerics, PathHead};
+use cgp_macro_core::types::generics::ImplGenerics;
+use cgp_macro_core::types::path::PathHead;
 use proc_macro2::TokenStream;
 use quote::{ToTokens, quote};
 use syn::parse::{Parse, ParseStream};

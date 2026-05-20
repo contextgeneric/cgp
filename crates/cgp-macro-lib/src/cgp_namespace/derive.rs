@@ -1,4 +1,4 @@
-use cgp_macro_core::types::PathHeadOrType;
+use cgp_macro_core::types::path::PathHeadOrType;
 use proc_macro2::TokenStream;
 use quote::quote;
 use syn::{Ident, ItemImpl, ItemStruct, ItemTrait, parse_quote, parse2};

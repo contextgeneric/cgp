@@ -17,6 +17,22 @@ impl<T: Display> ShowImpl<T> {
     }
 }
 
+// cgp_namespace! {
+//     DefaultShow {
+//         <T: Display> T:
+//             @ShowWithDisplay,
+//     }
+// }
+
+/*
+    cgp_namespace! {
+        DefaultNamespace1<ShowImplComponent> {
+            String:
+                ShowWithDisplay,
+        }
+    }
+*/
+
 impl<Components> DefaultNamespace1<ShowImplComponent, Components> for String {
     type Provider = ShowWithDisplay;
 }

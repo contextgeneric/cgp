@@ -3,7 +3,8 @@ use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::token::{Brace, Comma, Dot};
 
-use crate::types::{ImplGenerics, PathElement, UniPath};
+use crate::types::generics::ImplGenerics;
+use crate::types::path::{PathElement, UniPath};
 
 #[derive(Debug, Clone)]
 pub enum PathHead {

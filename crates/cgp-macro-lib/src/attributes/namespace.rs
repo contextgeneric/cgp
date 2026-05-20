@@ -1,4 +1,4 @@
-use cgp_macro_core::types::UniPath;
+use cgp_macro_core::types::path::UniPath;
 use syn::Ident;
 use syn::parse::{Parse, ParseStream};
 use syn::token::In;

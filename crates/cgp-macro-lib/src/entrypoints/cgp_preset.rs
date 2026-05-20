@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-use cgp_macro_core::types::ImplGenerics;
+use cgp_macro_core::types::generics::ImplGenerics;
 use proc_macro2::{Span, TokenStream};
 use quote::{ToTokens, TokenStreamExt, quote};
 use syn::punctuated::Punctuated;

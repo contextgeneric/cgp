@@ -2,7 +2,8 @@ use syn::Type;
 use syn::parse::{Parse, ParseStream};
 use syn::token::At;
 
-use crate::types::{ImplGenerics, PathHead};
+use crate::types::generics::ImplGenerics;
+use crate::types::path::PathHead;
 
 #[derive(Debug, Clone)]
 pub enum PathHeadOrType {

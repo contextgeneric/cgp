@@ -2,7 +2,7 @@ use alloc::boxed::Box;
 use alloc::vec;
 use alloc::vec::Vec;
 
-use cgp_macro_core::types::ImplGenerics;
+use cgp_macro_core::types::generics::ImplGenerics;
 use proc_macro2::TokenStream;
 use quote::{ToTokens, quote};
 use syn::punctuated::Punctuated;
