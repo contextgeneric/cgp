@@ -2,7 +2,7 @@ use cgp::core::error::{ErrorRaiserComponent, ErrorTypeProviderComponent, ErrorWr
 use cgp::extra::error::RaiseFrom;
 use cgp::extra::handler::CanTryCompute;
 use cgp::prelude::*;
-use cgp_tests::namespaces::ExtendedNamespace;
+use cgp_tests::namespaces::extended::ExtendedNamespace;
 
 pub struct App;
 

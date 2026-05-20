@@ -1,3 +1,2 @@
-mod extended;
-
-pub use extended::*;
+pub mod extended;
+pub mod generics;

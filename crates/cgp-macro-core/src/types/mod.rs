@@ -1,9 +1,9 @@
 mod generics;
+mod namespace;
 mod path;
 mod symbol;
-mod namespace;
 
-pub use namespace::*;
 pub use generics::*;
+pub use namespace::*;
 pub use path::*;
 pub use symbol::*;
