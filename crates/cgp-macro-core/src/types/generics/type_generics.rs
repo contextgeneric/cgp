@@ -1,3 +1,5 @@
+use core::ops::Deref;
+
 use proc_macro2::TokenStream;
 use quote::ToTokens;
 use syn::parse::{Parse, ParseStream};
@@ -6,6 +8,14 @@ use syn::{Error, Generics, parse2};
 #[derive(Clone, Default)]
 pub struct TypeGenerics {
     pub generics: Generics,
+}
+
+impl Deref for TypeGenerics {
+    type Target = Generics;
+
+    fn deref(&self) -> &Generics {
+        &self.generics
+    }
 }
 
 impl Parse for TypeGenerics {
