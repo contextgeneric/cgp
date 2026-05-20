@@ -1,13 +1,16 @@
 use syn::bracketed;
+use syn::parse::discouraged::Speculative;
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
-use syn::token::{Bracket, Comma, Type};
+use syn::token::{At, Bracket, Comma, Type};
 
 use crate::types::generics::ImplGenerics;
+use crate::types::path::PathHead;
 
 pub enum DelegateKey {
     Single(SingleDelegateKey),
     Multi(MultiDelegateKey),
+    Path(PathDelegateKey),
 }
 
 pub struct SingleDelegateKey {
@@ -19,15 +22,33 @@ pub struct MultiDelegateKey {
     pub keys: Punctuated<SingleDelegateKey, Comma>,
 }
 
+pub struct PathDelegateKey {
+    pub generics: ImplGenerics,
+    pub at: At,
+    pub path: PathHead,
+}
+
 impl Parse for DelegateKey {
     fn parse(input: ParseStream) -> syn::Result<Self> {
-        if input.peek(Bracket) {
+        let fork = input.fork();
+        let generics: ImplGenerics = fork.parse()?;
+
+        let key = if fork.peek(At) {
+            input.advance_to(&fork);
+
+            let at = input.parse()?;
+            let path = input.parse()?;
+
+            Self::Path(PathDelegateKey { generics, at, path })
+        } else if input.peek(Bracket) {
             let keys = input.parse()?;
-            Ok(Self::Multi(keys))
+            Self::Multi(keys)
         } else {
             let key = input.parse()?;
-            Ok(Self::Single(key))
-        }
+            Self::Single(key)
+        };
+
+        Ok(key)
     }
 }
 
