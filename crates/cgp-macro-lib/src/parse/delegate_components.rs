@@ -38,7 +38,6 @@ pub enum DelegateValue {
     New(DelegateNewValue),
 }
 
-#[allow(dead_code)]
 #[derive(Clone)]
 pub enum DelegateMode {
     Provider(Colon),
