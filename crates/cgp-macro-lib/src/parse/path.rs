@@ -46,10 +46,7 @@ pub fn path_head_to_prefix(path_head: &PathHead) -> Vec<ComponentPath<TokenStrea
 
             prepend_path(path_type.to_token_stream(), generics.clone(), rest_types)
         }
-        PathHead::Group(paths) => paths
-            .iter()
-            .flat_map(|path| path_head_to_prefix(path))
-            .collect(),
+        PathHead::Group(paths) => paths.iter().flat_map(path_head_to_prefix).collect(),
         PathHead::End => {
             vec![ComponentPath {
                 path_type: quote! { __Wildcard__ },

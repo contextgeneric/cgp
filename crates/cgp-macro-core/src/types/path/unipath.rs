@@ -13,13 +13,15 @@ pub struct UniPath {
     pub elements: Punctuated<PathElement, Dot>,
 }
 
-impl UniPath {
-    pub fn from_iter(elements: impl IntoIterator<Item = PathElement>) -> Self {
+impl FromIterator<PathElement> for UniPath {
+    fn from_iter<T: IntoIterator<Item = PathElement>>(elements: T) -> Self {
         Self {
             elements: Punctuated::from_iter(elements),
         }
     }
+}
 
+impl UniPath {
     pub fn append_type(&mut self, ty: Type) {
         self.elements.push(PathElement::Type(ty));
     }

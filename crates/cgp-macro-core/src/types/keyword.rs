@@ -19,7 +19,10 @@ where
         let ident: Ident = input.parse()?;
 
         if ident != K::IDENT {
-            return Err(Error::new_spanned(ident, &format!("expect keyword: `{}`", K::IDENT)));
+            return Err(Error::new_spanned(
+                ident,
+                format!("expect keyword: `{}`", K::IDENT),
+            ));
         }
 
         Ok(Self {

@@ -5,6 +5,7 @@ use syn::token::At;
 use crate::types::generics::ImplGenerics;
 use crate::types::path::PathHead;
 
+#[allow(clippy::large_enum_variant)]
 #[derive(Debug, Clone)]
 pub enum PathHeadOrType {
     PathHead(PathHead),

@@ -31,6 +31,5 @@ macro_rules! define_keyword {
         }
 
         pub type $struct_ident = $crate::types::keyword::Keyword<$impl_ident>;
-
-    }
+    };
 }
