@@ -1,7 +1,9 @@
 use syn::parse::{Parse, ParseStream};
 use syn::token::{At, Bracket};
 
-use crate::types::delegate_component::{MultiDelegateKey, PathDelegateKey, SingleDelegateKey};
+use crate::types::delegate_component::{
+    EvalDelegateKey, EvaluatedDelegateKey, MultiDelegateKey, PathDelegateKey, SingleDelegateKey,
+};
 use crate::types::generics::ImplGenerics;
 
 pub enum DelegateKey {
@@ -27,5 +29,15 @@ impl Parse for DelegateKey {
         };
 
         Ok(key)
+    }
+}
+
+impl EvalDelegateKey for DelegateKey {
+    fn eval(&self) -> syn::Result<Vec<EvaluatedDelegateKey>> {
+        match self {
+            Self::Single(key) => key.eval(),
+            Self::Multi(key) => key.eval(),
+            Self::Path(key) => key.eval(),
+        }
     }
 }

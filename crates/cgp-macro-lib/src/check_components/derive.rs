@@ -1,10 +1,10 @@
+use cgp_macro_core::functions::merge_generics;
 use quote::quote;
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
 use syn::{ItemImpl, ItemTrait, Type, parse2};
 
 use crate::check_components::override_span;
-use crate::delegate_components::merge_generics;
 use crate::parse::{CheckComponents, CheckEntry};
 
 pub fn derive_check_components(spec: &CheckComponents) -> syn::Result<(ItemTrait, Vec<ItemImpl>)> {
