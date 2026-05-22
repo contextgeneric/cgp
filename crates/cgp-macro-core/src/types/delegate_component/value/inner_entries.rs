@@ -1,36 +1,16 @@
-use syn::parse::discouraged::Speculative;
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::token::{Comma, Gt, Lt};
-use syn::{Error, Generics, Ident, Type, braced};
+use syn::{Error, Ident, braced};
 
 use crate::types::delegate_component::DelegateEntry;
 use crate::types::generics::TypeGenerics;
 
-pub enum DelegateValue {
-    Type(Type),
-    WithInner(DelegateValueWithInnerEntries),
-}
-
 pub struct DelegateValueWithInnerEntries {
     pub wrapper_ident: Ident,
     pub struct_ident: Ident,
-    pub struct_generics: Generics,
+    pub struct_generics: TypeGenerics,
     pub entries: Punctuated<DelegateEntry, Comma>,
-}
-
-impl Parse for DelegateValue {
-    fn parse(input: ParseStream) -> syn::Result<Self> {
-        let fork = input.fork();
-
-        if let Ok(value) = fork.parse::<DelegateValueWithInnerEntries>() {
-            input.advance_to(&fork);
-            return Ok(Self::WithInner(value));
-        }
-
-        let ty: Type = input.parse()?;
-        Ok(Self::Type(ty))
-    }
 }
 
 impl Parse for DelegateValueWithInnerEntries {
@@ -61,7 +41,7 @@ impl Parse for DelegateValueWithInnerEntries {
         Ok(Self {
             wrapper_ident,
             struct_ident,
-            struct_generics: struct_generics.generics,
+            struct_generics,
             entries,
         })
     }
