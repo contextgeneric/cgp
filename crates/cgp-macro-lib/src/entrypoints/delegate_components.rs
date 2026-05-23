@@ -1,3 +1,4 @@
+use cgp_macro_core::types::delegate_component::DelegateTable;
 use cgp_macro_core::types::generics::TypeGenerics;
 use cgp_macro_core::types::provider_struct::ProviderStruct;
 use proc_macro2::TokenStream;
@@ -8,6 +9,8 @@ use crate::delegate_components::impl_delegate_components;
 use crate::parse::{DelegateComponents, SimpleType};
 
 pub fn delegate_components(body: TokenStream) -> syn::Result<TokenStream> {
+    let table: DelegateTable = parse2(body.clone())?;
+
     let spec: DelegateComponents = parse2(body)?;
 
     let target_type = &spec.target_type;
