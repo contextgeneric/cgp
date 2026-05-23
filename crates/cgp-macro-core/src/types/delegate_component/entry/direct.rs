@@ -7,6 +7,7 @@ use crate::types::delegate_component::{
     EvaluatedDelegateEntry,
 };
 
+#[derive(Debug, Clone)]
 pub struct DirectDelegateEntry {
     pub key: DelegateKey,
     pub arrow: RArrow,

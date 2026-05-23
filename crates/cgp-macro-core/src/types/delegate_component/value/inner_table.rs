@@ -1,14 +1,14 @@
 use syn::parse::{Parse, ParseStream};
-use syn::punctuated::Punctuated;
-use syn::token::{Comma, Gt, Lt};
-use syn::{Ident, Type, braced, parse_quote};
+use syn::token::{Gt, Lt};
+use syn::{Ident, Type, parse_quote};
 
-use crate::types::delegate_component::{DelegateEntry, EvalDelegateValue};
-use crate::types::generics::TypeGenerics;
+use crate::types::delegate_component::{
+    EvalDelegateValue, ExtractInnerDelegateTables, InnerDelegateTable,
+};
 use crate::types::keyword::Keyword;
 use crate::types::keywords::New;
-use crate::types::provider_struct::ProviderStruct;
 
+#[derive(Debug, Clone)]
 pub struct DelegateValueWithInnerTable {
     pub new: Keyword<New>,
     pub wrapper_ident: Ident,
@@ -46,38 +46,8 @@ impl EvalDelegateValue for DelegateValueWithInnerTable {
     }
 }
 
-pub struct InnerDelegateTable {
-    pub table_ident: Ident,
-    pub table_generics: TypeGenerics,
-    pub entries: Punctuated<DelegateEntry, Comma>,
-}
-
-impl Parse for InnerDelegateTable {
-    fn parse(input: ParseStream) -> syn::Result<Self> {
-        let table_ident = input.parse()?;
-
-        let table_generics: TypeGenerics = input.parse()?;
-
-        let entries = {
-            let content;
-            braced!(content in input);
-
-            Punctuated::parse_terminated(&content)?
-        };
-
-        Ok(Self {
-            table_ident,
-            table_generics,
-            entries,
-        })
-    }
-}
-
-impl InnerDelegateTable {
-    pub fn to_provider_struct(&self) -> ProviderStruct {
-        let ident = self.table_ident.clone();
-        let generics = self.table_generics.generics.clone();
-
-        ProviderStruct { ident, generics }
+impl ExtractInnerDelegateTables for DelegateValueWithInnerTable {
+    fn inner_tables(&self) -> Vec<InnerDelegateTable> {
+        vec![self.inner_table.clone()]
     }
 }

@@ -6,6 +6,7 @@ use crate::types::delegate_component::{EvalDelegateEntry, EvaluatedDelegateEntry
 use crate::types::keyword::Keyword;
 use crate::types::keywords::Namespace;
 
+#[derive(Debug, Clone)]
 pub struct NamespaceDelegateEntry {
     pub namespace: Keyword<Namespace>,
     pub ident: Ident,

@@ -8,6 +8,7 @@ use crate::types::delegate_component::{
 };
 use crate::types::keywords::{Namespace, Open};
 
+#[derive(Debug, Clone)]
 pub enum DelegateEntry {
     Normal(NormalDelegateEntry),
     Direct(DirectDelegateEntry),

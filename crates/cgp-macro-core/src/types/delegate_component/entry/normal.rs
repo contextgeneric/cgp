@@ -6,6 +6,7 @@ use crate::types::delegate_component::{
     EvaluatedDelegateEntry,
 };
 
+#[derive(Debug, Clone)]
 pub struct NormalDelegateEntry {
     pub key: DelegateKey,
     pub colon: Colon,

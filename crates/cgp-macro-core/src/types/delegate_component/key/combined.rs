@@ -6,6 +6,7 @@ use crate::types::delegate_component::{
 };
 use crate::types::generics::ImplGenerics;
 
+#[derive(Debug, Clone)]
 pub enum DelegateKey {
     Single(SingleDelegateKey),
     Multi(MultiDelegateKey),

@@ -4,6 +4,7 @@ use syn::parse::{Parse, ParseStream};
 
 use crate::types::delegate_component::{DelegateValueWithInnerTable, EvalDelegateValue};
 
+#[derive(Debug, Clone)]
 pub enum DelegateValue {
     Type(Type),
     WithTable(DelegateValueWithInnerTable),

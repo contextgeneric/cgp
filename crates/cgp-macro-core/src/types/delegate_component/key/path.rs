@@ -7,6 +7,7 @@ use crate::types::delegate_component::{EvalDelegateKey, EvaluatedDelegateKey};
 use crate::types::generics::ImplGenerics;
 use crate::types::path::PathHead;
 
+#[derive(Debug, Clone)]
 pub struct PathDelegateKey {
     pub generics: ImplGenerics,
     pub at: At,

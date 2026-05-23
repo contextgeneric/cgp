@@ -5,6 +5,7 @@ use syn::token::Comma;
 
 use crate::types::delegate_component::{EvalDelegateKey, EvaluatedDelegateKey, SingleDelegateKey};
 
+#[derive(Debug, Clone)]
 pub struct MultiDelegateKey {
     pub keys: Punctuated<SingleDelegateKey, Comma>,
 }

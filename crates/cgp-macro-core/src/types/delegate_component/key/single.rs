@@ -4,6 +4,7 @@ use syn::parse::{Parse, ParseStream};
 use crate::types::delegate_component::{EvalDelegateKey, EvaluatedDelegateKey};
 use crate::types::generics::ImplGenerics;
 
+#[derive(Debug, Clone)]
 pub struct SingleDelegateKey {
     pub generics: ImplGenerics,
     pub ty: Type,

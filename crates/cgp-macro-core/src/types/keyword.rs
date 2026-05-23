@@ -1,3 +1,4 @@
+use core::fmt::Debug;
 use core::marker::PhantomData;
 
 use proc_macro2::Span;
@@ -9,6 +10,21 @@ use crate::traits::IsKeyword;
 pub struct Keyword<K: IsKeyword> {
     pub span: Span,
     pub phantom: PhantomData<K>,
+}
+
+impl<K: IsKeyword> Debug for Keyword<K> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("keyword").field("ident", &K::IDENT).finish()
+    }
+}
+
+impl<K: IsKeyword> Clone for Keyword<K> {
+    fn clone(&self) -> Self {
+        Self {
+            span: self.span.clone(),
+            phantom: PhantomData,
+        }
+    }
 }
 
 impl<K> Parse for Keyword<K>

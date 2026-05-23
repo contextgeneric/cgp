@@ -8,6 +8,7 @@ use crate::types::delegate_component::{EvalDelegateEntry, EvaluatedDelegateEntry
 use crate::types::keyword::Keyword;
 use crate::types::keywords::Open;
 
+#[derive(Debug, Clone)]
 pub struct OpenDelegateEntry {
     pub open: Keyword<Open>,
     pub components: Punctuated<Type, Comma>,
