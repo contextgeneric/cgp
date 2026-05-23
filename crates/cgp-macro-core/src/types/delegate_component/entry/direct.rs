@@ -4,7 +4,7 @@ use syn::{Type, parse_quote};
 use crate::exports::DelegateComponent;
 use crate::types::delegate_component::{
     DelegateKey, DelegateValue, EvalDelegateEntry, EvalDelegateKey, EvalDelegateValue,
-    EvaluatedDelegateEntry,
+    EvaluatedDelegateEntry, ExtractInnerDelegateTables, InnerDelegateTable,
 };
 
 #[derive(Debug, Clone)]
@@ -48,5 +48,11 @@ impl EvalDelegateEntry for DirectDelegateEntry {
             .collect();
 
         Ok(entries)
+    }
+}
+
+impl ExtractInnerDelegateTables for DirectDelegateEntry {
+    fn extract_inner_tables(&self) -> Vec<InnerDelegateTable> {
+        self.value.extract_inner_tables()
     }
 }

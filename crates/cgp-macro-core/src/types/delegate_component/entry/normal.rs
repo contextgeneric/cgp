@@ -3,7 +3,7 @@ use syn::token::Colon;
 
 use crate::types::delegate_component::{
     DelegateKey, DelegateValue, EvalDelegateEntry, EvalDelegateKey, EvalDelegateValue,
-    EvaluatedDelegateEntry,
+    EvaluatedDelegateEntry, ExtractInnerDelegateTables, InnerDelegateTable,
 };
 
 #[derive(Debug, Clone)]
@@ -29,5 +29,11 @@ impl EvalDelegateEntry for NormalDelegateEntry {
             .collect();
 
         Ok(entries)
+    }
+}
+
+impl ExtractInnerDelegateTables for NormalDelegateEntry {
+    fn extract_inner_tables(&self) -> Vec<InnerDelegateTable> {
+        self.value.extract_inner_tables()
     }
 }

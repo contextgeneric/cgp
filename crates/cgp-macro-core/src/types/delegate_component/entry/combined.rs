@@ -4,7 +4,8 @@ use syn::parse::{Parse, ParseStream};
 use crate::traits::PeekKeyword;
 use crate::types::delegate_component::{
     DelegateMode, DirectDelegateEntry, EvalDelegateEntry, EvaluatedDelegateEntry,
-    NamespaceDelegateEntry, NormalDelegateEntry, OpenDelegateEntry,
+    ExtractInnerDelegateTables, InnerDelegateTable, NamespaceDelegateEntry, NormalDelegateEntry,
+    OpenDelegateEntry,
 };
 use crate::types::keywords::{Namespace, Open};
 
@@ -50,6 +51,17 @@ impl EvalDelegateEntry for DelegateEntry {
             Self::Direct(entry) => entry.eval(table_type),
             Self::Namespace(entry) => entry.eval(table_type),
             Self::Open(entry) => entry.eval(table_type),
+        }
+    }
+}
+
+impl ExtractInnerDelegateTables for DelegateEntry {
+    fn extract_inner_tables(&self) -> Vec<InnerDelegateTable> {
+        match self {
+            Self::Normal(entry) => entry.extract_inner_tables(),
+            Self::Direct(entry) => entry.extract_inner_tables(),
+            Self::Namespace(_) => Vec::new(),
+            Self::Open(_) => Vec::new(),
         }
     }
 }

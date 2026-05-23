@@ -8,7 +8,7 @@ use crate::types::generics::TypeGenerics;
 use crate::types::provider_struct::ProviderStruct;
 
 pub trait ExtractInnerDelegateTables {
-    fn inner_tables(&self) -> Vec<InnerDelegateTable>;
+    fn extract_inner_tables(&self) -> Vec<InnerDelegateTable>;
 }
 
 #[derive(Debug, Clone)]
@@ -45,5 +45,14 @@ impl InnerDelegateTable {
         let generics = self.table_generics.generics.clone();
 
         ProviderStruct { ident, generics }
+    }
+}
+
+impl ExtractInnerDelegateTables for InnerDelegateTable {
+    fn extract_inner_tables(&self) -> Vec<InnerDelegateTable> {
+        self.entries
+            .iter()
+            .flat_map(|entry| entry.extract_inner_tables())
+            .collect()
     }
 }

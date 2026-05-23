@@ -47,7 +47,10 @@ impl EvalDelegateValue for DelegateValueWithInnerTable {
 }
 
 impl ExtractInnerDelegateTables for DelegateValueWithInnerTable {
-    fn inner_tables(&self) -> Vec<InnerDelegateTable> {
-        vec![self.inner_table.clone()]
+    fn extract_inner_tables(&self) -> Vec<InnerDelegateTable> {
+        let mut inner_tables = self.inner_table.extract_inner_tables();
+        inner_tables.push(self.inner_table.clone());
+
+        inner_tables
     }
 }

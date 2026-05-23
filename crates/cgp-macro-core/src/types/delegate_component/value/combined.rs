@@ -2,7 +2,9 @@ use syn::Type;
 use syn::parse::discouraged::Speculative;
 use syn::parse::{Parse, ParseStream};
 
-use crate::types::delegate_component::{DelegateValueWithInnerTable, EvalDelegateValue};
+use crate::types::delegate_component::{
+    DelegateValueWithInnerTable, EvalDelegateValue, ExtractInnerDelegateTables, InnerDelegateTable,
+};
 
 #[derive(Debug, Clone)]
 pub enum DelegateValue {
@@ -29,6 +31,15 @@ impl EvalDelegateValue for DelegateValue {
         match self {
             Self::Type(ty) => Ok(ty.clone()),
             Self::WithTable(value) => value.eval(),
+        }
+    }
+}
+
+impl ExtractInnerDelegateTables for DelegateValue {
+    fn extract_inner_tables(&self) -> Vec<InnerDelegateTable> {
+        match self {
+            Self::Type(_) => Vec::new(),
+            Self::WithTable(value) => value.extract_inner_tables(),
         }
     }
 }
