@@ -1,7 +1,7 @@
 use core::marker::PhantomData;
 
-use cgp_core::component::UseDelegate;
-use cgp_core::prelude::*;
+use cgp::component::UseDelegate;
+use cgp::prelude::*;
 
 use crate::UseInputDelegate;
 

@@ -1,5 +1,5 @@
-use cgp_core::field::impls::CanBuildFrom;
-use cgp_core::prelude::*;
+use cgp::field::impls::CanBuildFrom;
+use cgp::prelude::*;
 use cgp_handler::{
     Computer, ComputerComponent, Handler, HandlerComponent, TryComputer, TryComputerComponent,
 };

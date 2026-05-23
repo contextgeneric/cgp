@@ -1,7 +1,7 @@
 use core::marker::PhantomData;
 
-use cgp_core::field::traits::FinalizeExtractResult;
-use cgp_core::prelude::*;
+use cgp::field::traits::FinalizeExtractResult;
+use cgp::prelude::*;
 use cgp_handler::{AsyncComputer, AsyncComputerComponent, Computer, ComputerComponent};
 
 use crate::DispatchMatchers;

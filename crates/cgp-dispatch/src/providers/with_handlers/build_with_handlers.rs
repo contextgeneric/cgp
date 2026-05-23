@@ -1,4 +1,4 @@
-use cgp_core::prelude::*;
+use cgp::prelude::*;
 use cgp_handler::{
     Computer, ComputerComponent, Handler, HandlerComponent, PipeHandlers, TryComputer,
     TryComputerComponent,

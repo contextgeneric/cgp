@@ -1,5 +1,5 @@
-use cgp_core::field::impls::CanDowncastFields;
-use cgp_core::prelude::*;
+use cgp::field::impls::CanDowncastFields;
+use cgp::prelude::*;
 use cgp_handler::{AsyncComputer, AsyncComputerComponent, Computer, ComputerComponent};
 
 pub struct DowncastAndHandle<Input, Provider = UseContext>(pub PhantomData<(Input, Provider)>);

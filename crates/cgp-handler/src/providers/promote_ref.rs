@@ -1,6 +1,6 @@
 use core::ops::Deref;
 
-use cgp_core::prelude::*;
+use cgp::prelude::*;
 
 use crate::{
     AsyncComputer, AsyncComputerComponent, AsyncComputerRef, AsyncComputerRefComponent, Computer,

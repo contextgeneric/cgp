@@ -1,4 +1,4 @@
-use cgp_core::prelude::*;
+use cgp::prelude::*;
 use cgp_handler::UseInputDelegate;
 
 use crate::providers::matchers::to_field_handlers::{

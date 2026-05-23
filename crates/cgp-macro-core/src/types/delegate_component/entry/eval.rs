@@ -52,7 +52,7 @@ impl EvaluatedDelegateEntry {
         generics.params.push(parse_quote!(__Params__));
 
         generics.make_where_clause().predicates.push(parse_quote! {
-            #value: #IsProviderFor<#key, __Context__, __Params__>,
+            #value: #IsProviderFor<#key, __Context__, __Params__>
         });
 
         let (impl_generics, _, where_clause) = generics.split_for_impl();

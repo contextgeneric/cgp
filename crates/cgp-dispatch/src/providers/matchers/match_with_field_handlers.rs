@@ -1,4 +1,4 @@
-use cgp_core::prelude::*;
+use cgp::prelude::*;
 use cgp_handler::{
     AsyncComputerComponent, AsyncComputerRefComponent, ComputerComponent, ComputerRefComponent,
     HandlerComponent, HandlerRefComponent, PromoteRef, TryComputerComponent,
