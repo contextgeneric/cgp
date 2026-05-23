@@ -2,6 +2,7 @@ use quote::quote;
 use syn::{Generics, ItemImpl, Type, parse_quote, parse2};
 
 use crate::exports::{DelegateComponent, IsProviderFor};
+use crate::functions::merge_generics;
 
 pub struct EvaluatedDelegateEntry {
     pub table_type: Type,
@@ -15,9 +16,14 @@ pub trait EvalDelegateEntry {
 }
 
 impl EvaluatedDelegateEntry {
-    pub fn to_delegate_component_impl(&self) -> syn::Result<ItemImpl> {
+    pub fn build_delegate_component_impl(
+        &self,
+        outer_generics: &Generics,
+    ) -> syn::Result<ItemImpl> {
         let table_type = &self.table_type;
-        let generics = &self.generics;
+
+        let generics = merge_generics(outer_generics, &self.generics);
+
         let key = &self.key;
         let value = &self.value;
 
@@ -34,9 +40,11 @@ impl EvaluatedDelegateEntry {
         })
     }
 
-    pub fn to_is_provider_for_impl(&self) -> syn::Result<ItemImpl> {
+    pub fn build_is_provider_for_impl(&self, outer_generics: &Generics) -> syn::Result<ItemImpl> {
         let table_type = &self.table_type;
-        let mut generics = self.generics.clone();
+
+        let mut generics = merge_generics(outer_generics, &self.generics);
+
         let key = &self.key;
         let value = &self.value;
 

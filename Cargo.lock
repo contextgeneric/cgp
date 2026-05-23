@@ -172,6 +172,7 @@ dependencies = [
 name = "cgp-macro-core"
 version = "0.7.0"
 dependencies = [
+ "itertools",
  "proc-macro2",
  "quote",
  "syn",

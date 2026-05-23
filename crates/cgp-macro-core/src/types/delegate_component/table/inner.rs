@@ -1,9 +1,8 @@
+use quote::quote;
 use syn::parse::{Parse, ParseStream};
-use syn::punctuated::Punctuated;
-use syn::token::Comma;
-use syn::{Ident, braced};
+use syn::{Ident, ItemImpl, Type, braced, parse2};
 
-use crate::types::delegate_component::DelegateEntry;
+use crate::types::delegate_component::DelegateEntries;
 use crate::types::generics::TypeGenerics;
 use crate::types::provider_struct::ProviderStruct;
 
@@ -15,7 +14,7 @@ pub trait ExtractInnerDelegateTables {
 pub struct InnerDelegateTable {
     pub table_ident: Ident,
     pub table_generics: TypeGenerics,
-    pub entries: Punctuated<DelegateEntry, Comma>,
+    pub entries: DelegateEntries,
 }
 
 impl Parse for InnerDelegateTable {
@@ -25,10 +24,10 @@ impl Parse for InnerDelegateTable {
         let table_generics: TypeGenerics = input.parse()?;
 
         let entries = {
-            let content;
-            braced!(content in input);
+            let body;
+            braced!(body in input);
 
-            Punctuated::parse_terminated(&content)?
+            body.parse()?
         };
 
         Ok(Self {
@@ -40,19 +39,28 @@ impl Parse for InnerDelegateTable {
 }
 
 impl InnerDelegateTable {
-    pub fn to_provider_struct(&self) -> ProviderStruct {
+    pub fn build_table_type(&self) -> syn::Result<Type> {
+        let ident = &self.table_ident;
+        let type_generics = self.table_generics.split_for_impl().1;
+
+        parse2(quote!( #ident #type_generics ))
+    }
+
+    pub fn build_provider_struct(&self) -> ProviderStruct {
         let ident = self.table_ident.clone();
         let generics = self.table_generics.generics.clone();
 
         ProviderStruct { ident, generics }
     }
+
+    pub fn build_impls(&self) -> syn::Result<Vec<ItemImpl>> {
+        let table_type = self.build_table_type()?;
+        self.entries.build_impls(&table_type, &self.table_generics)
+    }
 }
 
 impl ExtractInnerDelegateTables for InnerDelegateTable {
     fn extract_inner_tables(&self) -> Vec<InnerDelegateTable> {
-        self.entries
-            .iter()
-            .flat_map(|entry| entry.extract_inner_tables())
-            .collect()
+        self.entries.extract_inner_tables()
     }
 }
