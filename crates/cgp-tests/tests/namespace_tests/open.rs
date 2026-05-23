@@ -24,7 +24,7 @@ impl<T> BarProvider<T> {
 
 delegate_components! {
     App {
-        open FooProviderComponent, BarProviderComponent;
+        open {FooProviderComponent, BarProviderComponent},
 
         @FooProviderComponent.String:
             DummyFoo,

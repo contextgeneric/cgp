@@ -6,7 +6,7 @@ pub struct App;
 
 delegate_components! {
     App {
-        namespace default;
+        namespace default,
 
         @test.ShowImplComponent.u64:
             ShowWithDisplay,

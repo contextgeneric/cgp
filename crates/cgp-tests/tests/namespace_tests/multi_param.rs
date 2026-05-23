@@ -15,7 +15,7 @@ pub struct AppA;
 
 delegate_components! {
     AppA {
-        open FooProviderComponent;
+        open {FooProviderComponent},
 
         @FooProviderComponent.String.u32:
             DummyFoo,
@@ -39,7 +39,7 @@ pub struct AppB;
 
 delegate_components! {
     AppB {
-        namespace default;
+        namespace default,
 
         @app.FooProviderComponent.String.u64:
             DummyFoo,
