@@ -1,9 +1,10 @@
 use cgp_macro_core::types::generics::TypeGenerics;
+use cgp_macro_core::types::provider_struct::ProviderStruct;
 use proc_macro2::TokenStream;
 use quote::ToTokens;
 use syn::parse2;
 
-use crate::delegate_components::{define_struct, impl_delegate_components};
+use crate::delegate_components::impl_delegate_components;
 use crate::parse::{DelegateComponents, SimpleType};
 
 pub fn delegate_components(body: TokenStream) -> syn::Result<TokenStream> {
@@ -19,7 +20,11 @@ pub fn delegate_components(body: TokenStream) -> syn::Result<TokenStream> {
 
         let type_generics = target_type.generics.unwrap_or_default().generics;
 
-        let component_struct = define_struct(&target_type.name, &type_generics)?;
+        let component_struct = ProviderStruct {
+            ident: target_type.name,
+            generics: type_generics,
+        }
+        .to_item_struct()?;
 
         output.extend(component_struct.to_token_stream());
     }

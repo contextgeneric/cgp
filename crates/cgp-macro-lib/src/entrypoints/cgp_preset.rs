@@ -1,13 +1,14 @@
 use std::collections::HashSet;
 
 use cgp_macro_core::types::generics::ImplGenerics;
+use cgp_macro_core::types::provider_struct::ProviderStruct;
 use proc_macro2::{Span, TokenStream};
 use quote::{ToTokens, TokenStreamExt, quote};
 use syn::punctuated::Punctuated;
 use syn::token::{At, Comma};
 use syn::{GenericParam, Ident, ItemTrait, TypeParamBound, parse_quote, parse2};
 
-use crate::delegate_components::{define_struct, impl_delegate_components};
+use crate::delegate_components::impl_delegate_components;
 use crate::parse::{DefinePreset, DelegateEntry, SimpleType};
 use crate::preset::{define_substitution_macro, impl_components_is_preset};
 use crate::replace_self::to_snake_case_str;
@@ -133,7 +134,11 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
         &delegate_entries,
     );
 
-    let provider_struct = define_struct(&provider_struct_name, &preset_generics.generics)?;
+    let provider_struct = ProviderStruct {
+        ident: provider_struct_name.clone(),
+        generics: preset_generics.generics.clone(),
+    }
+    .to_item_struct()?;
 
     let export_provider = match ast.provider_wrapper {
         Some(wrapper) => {
