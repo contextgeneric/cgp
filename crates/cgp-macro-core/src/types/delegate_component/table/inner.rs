@@ -46,7 +46,7 @@ impl InnerDelegateTable {
         parse2(quote!( #ident #type_generics ))
     }
 
-    pub fn build_provider_struct(&self) -> ProviderStruct {
+    pub fn build_table_struct(&self) -> ProviderStruct {
         let ident = self.table_ident.clone();
         let generics = self.table_generics.generics.clone();
 

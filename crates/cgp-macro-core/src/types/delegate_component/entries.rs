@@ -29,9 +29,11 @@ impl DelegateEntries {
 
         for entry in &self.entries {
             let evaluated_entries = entry.eval(&table_type)?;
+
             for evaluated_entry in evaluated_entries {
                 let delegate_component_impl =
                     evaluated_entry.build_delegate_component_impl(outer_generics)?;
+
                 let is_provider_impl =
                     evaluated_entry.build_is_provider_for_impl(outer_generics)?;
 
