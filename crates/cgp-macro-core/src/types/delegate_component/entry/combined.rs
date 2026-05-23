@@ -3,9 +3,10 @@ use syn::parse::{Parse, ParseStream};
 
 use crate::traits::PeekKeyword;
 use crate::types::delegate_component::{
-    DelegateMode, DirectDelegateEntry, EvalDelegateEntry, EvaluatedDelegateEntry, Namespace,
-    NamespaceDelegateEntry, NormalDelegateEntry, Open, OpenDelegateEntry,
+    DelegateMode, DirectDelegateEntry, EvalDelegateEntry, EvaluatedDelegateEntry,
+    NamespaceDelegateEntry, NormalDelegateEntry, OpenDelegateEntry,
 };
+use crate::types::keywords::{Namespace, Open};
 
 pub enum DelegateEntry {
     Normal(NormalDelegateEntry),

@@ -2,11 +2,9 @@ use syn::parse::{Parse, ParseStream};
 use syn::token::Semi;
 use syn::{Ident, Type, parse_quote};
 
-use crate::define_keyword;
 use crate::types::delegate_component::{EvalDelegateEntry, EvaluatedDelegateEntry};
 use crate::types::keyword::Keyword;
-
-define_keyword!(Namespace, "namespace");
+use crate::types::keywords::Namespace;
 
 pub struct NamespaceDelegateEntry {
     pub namespace: Keyword<Namespace>,

@@ -3,12 +3,10 @@ use syn::punctuated::Punctuated;
 use syn::token::{Comma, Semi};
 use syn::{Type, parse_quote};
 
-use crate::define_keyword;
 use crate::exports::{Nil, PathCons, RedirectLookup};
 use crate::types::delegate_component::{EvalDelegateEntry, EvaluatedDelegateEntry};
 use crate::types::keyword::Keyword;
-
-define_keyword!(Open, "open");
+use crate::types::keywords::Open;
 
 pub struct OpenDelegateEntry {
     pub open: Keyword<Open>,

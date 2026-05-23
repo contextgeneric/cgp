@@ -1,10 +1,13 @@
 use syn::parse::{Parse, ParseStream};
 use syn::token::{Gt, Lt};
-use syn::{Error, Ident, Type, parse_quote};
+use syn::{Ident, Type, parse_quote};
 
 use crate::types::delegate_component::{DelegateTable, EvalDelegateValue};
+use crate::types::keyword::Keyword;
+use crate::types::keywords::New;
 
 pub struct DelegateValueWithInnerTable {
+    pub new: Keyword<New>,
     pub wrapper_ident: Ident,
     pub inner_table: DelegateTable,
 }
@@ -15,17 +18,14 @@ impl Parse for DelegateValueWithInnerTable {
 
         let _: Lt = input.parse()?;
 
-        let new_ident: Ident = input.parse()?;
-
-        if new_ident != "new" {
-            return Err(Error::new(new_ident.span(), "expect `new` keyword"));
-        }
+        let new = input.parse()?;
 
         let inner_table = input.parse()?;
 
         let _: Gt = input.parse()?;
 
         Ok(Self {
+            new,
             wrapper_ident,
             inner_table,
         })
