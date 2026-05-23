@@ -1,6 +1,6 @@
 use syn::parse::{Parse, ParseStream};
+use syn::parse_quote;
 use syn::token::At;
-use syn::{Type, parse_quote};
 
 use crate::functions::merge_generics;
 use crate::types::delegate_component::{EvalDelegateKey, EvaluatedDelegateKey};
@@ -31,12 +31,15 @@ impl EvalDelegateKey for PathDelegateKey {
         let mut keys = Vec::new();
 
         for (inner_generics, path) in paths {
-            let generics = merge_generics(outer_generics, &inner_generics);
-            let path_type: Type = parse_quote!(#path);
+            let mut generics = merge_generics(outer_generics, &inner_generics);
+            generics.params.push(parse_quote!(__Wildcard__));
+
+            let prefix = path.to_prefix(parse_quote!(__Wildcard__));
+            let key_type = parse_quote!(#prefix);
 
             let key = EvaluatedDelegateKey {
                 generics,
-                key: path_type,
+                key: key_type,
             };
 
             keys.push(key)

@@ -66,7 +66,7 @@ pub struct OtherApp;
 
 delegate_components! {
     OtherApp {
-        namespace OtherNamespace;
+        namespace OtherNamespace,
 
         @my_app.MyFooComponent:
             DummyFoo,
