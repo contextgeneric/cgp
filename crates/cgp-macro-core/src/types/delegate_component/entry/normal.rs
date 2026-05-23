@@ -2,7 +2,8 @@ use syn::Type;
 use syn::token::Colon;
 
 use crate::types::delegate_component::{
-    DelegateKey, DelegateValue, EvalDelegateEntry, EvalDelegateKey, EvaluatedDelegateEntry,
+    DelegateKey, DelegateValue, EvalDelegateEntry, EvalDelegateKey, EvalDelegateValue,
+    EvaluatedDelegateEntry,
 };
 
 pub struct NormalDelegateEntry {
@@ -14,11 +15,16 @@ pub struct NormalDelegateEntry {
 impl EvalDelegateEntry for NormalDelegateEntry {
     fn eval(&self, _context_type: &Type) -> syn::Result<Vec<EvaluatedDelegateEntry>> {
         let keys = self.key.eval()?;
-        let entries = Vec::new();
+        let value_type = self.value.eval()?;
 
-        for _key in keys {
-            todo!()
-        }
+        let entries = keys
+            .into_iter()
+            .map(|key| EvaluatedDelegateEntry {
+                generics: key.generics,
+                key: key.key,
+                value: value_type.clone(),
+            })
+            .collect();
 
         Ok(entries)
     }
