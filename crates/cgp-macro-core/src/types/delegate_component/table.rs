@@ -3,20 +3,30 @@ use syn::punctuated::Punctuated;
 use syn::token::Comma;
 use syn::{Ident, braced};
 
+use crate::traits::PeekKeyword;
 use crate::types::delegate_component::DelegateEntry;
-use crate::types::generics::TypeGenerics;
+use crate::types::generics::ImplGenerics;
+use crate::types::keyword::Keyword;
+use crate::types::keywords::New;
 
 pub struct DelegateTable {
-    pub table_ident: Ident,
-    pub table_generics: TypeGenerics,
+    pub impl_generics: ImplGenerics,
+    pub new: Option<Keyword<New>>,
+    pub table_type: Ident,
     pub entries: Punctuated<DelegateEntry, Comma>,
 }
 
 impl Parse for DelegateTable {
     fn parse(input: ParseStream) -> syn::Result<Self> {
-        let table_ident = input.parse()?;
+        let impl_generics = input.parse()?;
 
-        let table_generics: TypeGenerics = input.parse()?;
+        let new = if input.peek_keyword::<New>() {
+            Some(input.parse()?)
+        } else {
+            None
+        };
+
+        let table_type = input.parse()?;
 
         let entries = {
             let content;
@@ -26,8 +36,9 @@ impl Parse for DelegateTable {
         };
 
         Ok(Self {
-            table_ident,
-            table_generics,
+            impl_generics,
+            new,
+            table_type,
             entries,
         })
     }
