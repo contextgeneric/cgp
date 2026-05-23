@@ -4,13 +4,14 @@ use syn::parse::{Parse, ParseStream};
 use crate::traits::PeekKeyword;
 use crate::types::delegate_component::{
     DelegateMode, DirectDelegateEntry, EvalDelegateEntry, EvaluatedDelegateEntry, Namespace,
-    NamespaceDelegateEntry, NormalDelegateEntry,
+    NamespaceDelegateEntry, NormalDelegateEntry, Open, OpenDelegateEntry,
 };
 
 pub enum DelegateEntry {
     Normal(NormalDelegateEntry),
     Direct(DirectDelegateEntry),
     Namespace(NamespaceDelegateEntry),
+    Open(OpenDelegateEntry),
 }
 
 impl Parse for DelegateEntry {
@@ -18,6 +19,9 @@ impl Parse for DelegateEntry {
         if input.peek_keyword::<Namespace>() {
             let namespace_entry = input.parse()?;
             Ok(Self::Namespace(namespace_entry))
+        } else if input.peek_keyword::<Open>() {
+            let open_entry = input.parse()?;
+            Ok(Self::Open(open_entry))
         } else {
             let key = input.parse()?;
             let mode: DelegateMode = input.parse()?;
@@ -43,6 +47,7 @@ impl EvalDelegateEntry for DelegateEntry {
             Self::Normal(entry) => entry.eval(context_type),
             Self::Direct(entry) => entry.eval(context_type),
             Self::Namespace(entry) => entry.eval(context_type),
+            Self::Open(entry) => entry.eval(context_type),
         }
     }
 }
