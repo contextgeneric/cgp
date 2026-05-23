@@ -8,4 +8,5 @@ export_constructs! {
     PathCons,
     RedirectLookup,
     DelegateComponent,
+    IsProviderFor,
 }

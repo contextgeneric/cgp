@@ -46,6 +46,7 @@ impl EvalDelegateEntry for OpenDelegateEntry {
             let key = component.clone();
 
             entries.push(EvaluatedDelegateEntry {
+                table_type: context_type.clone(),
                 generics: Default::default(),
                 key,
                 value,

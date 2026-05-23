@@ -14,7 +14,7 @@ pub struct DirectDelegateEntry {
 }
 
 impl EvalDelegateEntry for DirectDelegateEntry {
-    fn eval(&self, _context_type: &Type) -> syn::Result<Vec<EvaluatedDelegateEntry>> {
+    fn eval(&self, context_type: &Type) -> syn::Result<Vec<EvaluatedDelegateEntry>> {
         let keys = self.key.eval()?;
         let value_type = self.value.eval()?;
 
@@ -38,6 +38,7 @@ impl EvalDelegateEntry for DirectDelegateEntry {
                 };
 
                 EvaluatedDelegateEntry {
+                    table_type: context_type.clone(),
                     generics,
                     key: key_type,
                     value: direct_value_type,

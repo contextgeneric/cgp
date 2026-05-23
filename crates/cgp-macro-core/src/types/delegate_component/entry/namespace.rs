@@ -46,6 +46,7 @@ impl EvalDelegateEntry for NamespaceDelegateEntry {
         };
 
         let entry = EvaluatedDelegateEntry {
+            table_type: context_type.clone(),
             generics,
             key,
             value,

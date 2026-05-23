@@ -13,13 +13,14 @@ pub struct NormalDelegateEntry {
 }
 
 impl EvalDelegateEntry for NormalDelegateEntry {
-    fn eval(&self, _context_type: &Type) -> syn::Result<Vec<EvaluatedDelegateEntry>> {
+    fn eval(&self, context_type: &Type) -> syn::Result<Vec<EvaluatedDelegateEntry>> {
         let keys = self.key.eval()?;
         let value_type = self.value.eval()?;
 
         let entries = keys
             .into_iter()
             .map(|key| EvaluatedDelegateEntry {
+                table_type: context_type.clone(),
                 generics: key.generics,
                 key: key.key,
                 value: value_type.clone(),
