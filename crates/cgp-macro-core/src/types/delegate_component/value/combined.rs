@@ -2,20 +2,20 @@ use syn::Type;
 use syn::parse::discouraged::Speculative;
 use syn::parse::{Parse, ParseStream};
 
-use crate::types::delegate_component::{DelegateValueWithInnerEntries, EvalDelegateValue};
+use crate::types::delegate_component::{DelegateValueWithInnerTable, EvalDelegateValue};
 
 pub enum DelegateValue {
     Type(Type),
-    WithInner(DelegateValueWithInnerEntries),
+    WithTable(DelegateValueWithInnerTable),
 }
 
 impl Parse for DelegateValue {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let fork = input.fork();
 
-        if let Ok(value) = fork.parse::<DelegateValueWithInnerEntries>() {
+        if let Ok(value) = fork.parse::<DelegateValueWithInnerTable>() {
             input.advance_to(&fork);
-            return Ok(Self::WithInner(value));
+            return Ok(Self::WithTable(value));
         }
 
         let ty: Type = input.parse()?;
@@ -27,7 +27,7 @@ impl EvalDelegateValue for DelegateValue {
     fn eval(&self) -> syn::Result<Type> {
         match self {
             Self::Type(ty) => Ok(ty.clone()),
-            Self::WithInner(value) => value.eval(),
+            Self::WithTable(value) => value.eval(),
         }
     }
 }

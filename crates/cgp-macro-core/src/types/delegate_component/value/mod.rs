@@ -1,7 +1,7 @@
 mod combined;
 mod eval;
-mod inner_entries;
+mod inner_table;
 
 pub use combined::*;
 pub use eval::*;
-pub use inner_entries::*;
+pub use inner_table::*;
