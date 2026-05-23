@@ -23,13 +23,11 @@ macro_rules! export_constructs {
 
 #[macro_export]
 macro_rules! define_keyword {
-    ( $struct_ident:ident, $impl_ident:ident, $value:literal ) => {
-        pub struct $impl_ident;
+    ( $struct_ident:ident, $value:literal ) => {
+        pub struct $struct_ident;
 
-        impl $crate::traits::IsKeyword for $impl_ident {
+        impl $crate::traits::IsKeyword for $struct_ident {
             const IDENT: &'static str = "open";
         }
-
-        pub type $struct_ident = $crate::types::keyword::Keyword<$impl_ident>;
     };
 }

@@ -6,11 +6,12 @@ use syn::{Type, parse_quote};
 use crate::define_keyword;
 use crate::exports::{Nil, PathCons, RedirectLookup};
 use crate::types::delegate_component::{EvalDelegateEntry, EvaluatedDelegateEntry};
+use crate::types::keyword::Keyword;
 
-define_keyword!(Open, OpenKeyword, "open");
+define_keyword!(Open, "open");
 
 pub struct OpenDelegateEntry {
-    pub open: Open,
+    pub open: Keyword<Open>,
     pub components: Punctuated<Type, Comma>,
     pub semi: Semi,
 }

@@ -7,4 +7,5 @@ export_constructs! {
     Symbol,
     PathCons,
     RedirectLookup,
+    DelegateComponent,
 }

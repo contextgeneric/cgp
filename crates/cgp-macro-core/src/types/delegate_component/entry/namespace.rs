@@ -4,11 +4,12 @@ use syn::{Ident, Type, parse_quote};
 
 use crate::define_keyword;
 use crate::types::delegate_component::{EvalDelegateEntry, EvaluatedDelegateEntry};
+use crate::types::keyword::Keyword;
 
-define_keyword!(Namespace, NamespaceKeyword, "namespace");
+define_keyword!(Namespace, "namespace");
 
 pub struct NamespaceDelegateEntry {
-    pub namespace: Namespace,
+    pub namespace: Keyword<Namespace>,
     pub ident: Ident,
     pub semi: Semi,
 }

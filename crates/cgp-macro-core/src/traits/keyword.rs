@@ -1,18 +1,16 @@
 use syn::Ident;
 use syn::parse::ParseBuffer;
 
-use crate::types::keyword::Keyword;
-
 pub trait IsKeyword {
     const IDENT: &'static str;
 }
 
-pub trait PeekKeyword<K> {
-    fn peek(&self, keyword: K) -> bool;
+pub trait PeekKeyword {
+    fn peek_keyword<K: IsKeyword>(&self) -> bool;
 }
 
-impl<'a, K: IsKeyword> PeekKeyword<Keyword<K>> for ParseBuffer<'a> {
-    fn peek(&self, _keyword: Keyword<K>) -> bool {
+impl<'a> PeekKeyword for ParseBuffer<'a> {
+    fn peek_keyword<K: IsKeyword>(&self) -> bool {
         if let Ok(ident) = self.fork().parse::<Ident>()
             && ident == K::IDENT
         {

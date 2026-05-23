@@ -1,6 +1,7 @@
 use syn::token::RArrow;
 use syn::{Type, parse_quote};
 
+use crate::exports::DelegateComponent;
 use crate::types::delegate_component::{
     DelegateKey, DelegateValue, EvalDelegateEntry, EvalDelegateKey, EvalDelegateValue,
     EvaluatedDelegateEntry,
@@ -24,7 +25,7 @@ impl EvalDelegateEntry for DirectDelegateEntry {
                 let mut generics = key.generics;
 
                 let where_predicate = parse_quote! {
-                    #value_type: DelegateComponent< #key_type >
+                    #value_type: #DelegateComponent< #key_type >
                 };
 
                 generics
@@ -33,7 +34,7 @@ impl EvalDelegateEntry for DirectDelegateEntry {
                     .push(where_predicate);
 
                 let direct_value_type = parse_quote! {
-                    < #value_type as DelegateComponent< #key_type > >::Delegate
+                    < #value_type as #DelegateComponent< #key_type > >::Delegate
                 };
 
                 EvaluatedDelegateEntry {
