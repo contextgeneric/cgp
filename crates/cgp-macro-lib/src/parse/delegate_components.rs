@@ -2,22 +2,15 @@ use core::iter;
 
 use cgp_macro_core::functions::merge_generics;
 use cgp_macro_core::types::generics::{ImplGenerics, TypeGenerics};
-use proc_macro2::{Span, TokenStream};
+use proc_macro2::TokenStream;
 use quote::{ToTokens, TokenStreamExt, quote};
 use syn::parse::discouraged::Speculative;
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
-use syn::token::{At, Bracket, Colon, Comma, Gt, Lt, RArrow, Semi};
-use syn::{Error, Generics, Ident, Token, Type, braced, bracketed, parse_quote, parse2};
+use syn::token::{At, Bracket, Colon, Comma, Gt, Lt, RArrow};
+use syn::{Error, Generics, Ident, Token, Type, braced, bracketed, parse_quote};
 
 use crate::parse::{ComponentPaths, SimpleType};
-
-pub struct DelegateComponents {
-    pub new_struct: bool,
-    pub target_type: Type,
-    pub target_generics: ImplGenerics,
-    pub entries: Punctuated<DelegateEntry<Type>, Comma>,
-}
 
 #[derive(Clone)]
 pub struct DelegateEntry<T> {
@@ -69,123 +62,6 @@ impl DelegateValue {
             }
         }
     }
-}
-
-impl Parse for DelegateComponents {
-    fn parse(input: ParseStream) -> syn::Result<Self> {
-        let target_generics = if input.peek(Lt) {
-            input.parse()?
-        } else {
-            Default::default()
-        };
-
-        let new_struct = {
-            let fork = input.fork();
-            let new_ident: Option<Ident> = fork.parse().ok();
-            match new_ident {
-                Some(new_ident) if new_ident == "new" => {
-                    input.advance_to(&fork);
-                    true
-                }
-                _ => false,
-            }
-        };
-
-        let target_type: Type = input.parse()?;
-
-        let content;
-        braced!(content in input);
-
-        let meta_entries = parse_meta_delegate_entries(&content, &target_type)?;
-
-        let delegate_entries: Punctuated<DelegateEntry<Type>, Comma> =
-            Punctuated::parse_terminated(&content)?;
-
-        let entries = meta_entries.into_iter().chain(delegate_entries).collect();
-
-        Ok(Self {
-            new_struct,
-            target_type,
-            target_generics,
-            entries,
-        })
-    }
-}
-
-pub fn parse_meta_delegate_entries(
-    input: ParseStream,
-    target_type: &Type,
-) -> syn::Result<Vec<DelegateEntry<Type>>> {
-    let mut entries = Vec::new();
-
-    while input.peek(Ident) {
-        let fork = input.fork();
-        let keyword: Ident = fork.parse()?;
-
-        if keyword == "open" {
-            input.advance_to(&fork);
-
-            let components: Punctuated<Type, Comma> = Punctuated::parse_separated_nonempty(input)?;
-            let _: Semi = input.parse()?;
-
-            for component in components {
-                let value = DelegateValue::Type(parse2(
-                    quote!(RedirectLookup<#target_type, PathCons<#component, ε>>),
-                )?);
-
-                let key = DelegateKey {
-                    ty: component,
-                    generics: Default::default(),
-                };
-
-                let entry = DelegateEntry {
-                    keys: Punctuated::from_iter([key]),
-                    mode: DelegateMode::Provider(Colon(Span::call_site())),
-                    value,
-                };
-
-                entries.push(entry)
-            }
-        } else if keyword == "namespace" {
-            input.advance_to(&fork);
-
-            let ident: Ident = input.parse()?;
-            let _: Semi = input.parse()?;
-
-            let namespace_ident = if ident == "default" {
-                Ident::new("DefaultNamespace", ident.span())
-            } else {
-                ident
-            };
-
-            let delegate_key: Type = parse2(quote! {
-                __Component__
-            })?;
-
-            let generics: ImplGenerics = parse2(quote! {
-                <__Component__: #namespace_ident< #target_type >>
-            })?;
-
-            let delegate_value: Type = parse2(quote! {
-                < __Component__ as #namespace_ident< #target_type >>::Provider
-            })?;
-
-            let entry = DelegateEntry {
-                keys: Punctuated::from_iter([DelegateKey {
-                    ty: delegate_key,
-                    generics,
-                }]),
-                mode: DelegateMode::Provider(Colon(Span::call_site())),
-                value: DelegateValue::Type(delegate_value),
-            };
-
-            entries.push(entry)
-        } else {
-            break;
-        }
-    }
-
-    Ok(entries)
 }
 
 impl Parse for DelegateEntry<Type> {
