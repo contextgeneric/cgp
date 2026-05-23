@@ -11,7 +11,7 @@ pub struct EvaluatedDelegateEntry {
 }
 
 pub trait EvalDelegateEntry {
-    fn eval(&self, context_type: &Type) -> syn::Result<Vec<EvaluatedDelegateEntry>>;
+    fn eval(&self, table_type: &Type) -> syn::Result<Vec<EvaluatedDelegateEntry>>;
 }
 
 impl EvaluatedDelegateEntry {

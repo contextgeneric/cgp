@@ -42,12 +42,12 @@ impl Parse for DelegateEntry {
 }
 
 impl EvalDelegateEntry for DelegateEntry {
-    fn eval(&self, context_type: &Type) -> syn::Result<Vec<EvaluatedDelegateEntry>> {
+    fn eval(&self, table_type: &Type) -> syn::Result<Vec<EvaluatedDelegateEntry>> {
         match self {
-            Self::Normal(entry) => entry.eval(context_type),
-            Self::Direct(entry) => entry.eval(context_type),
-            Self::Namespace(entry) => entry.eval(context_type),
-            Self::Open(entry) => entry.eval(context_type),
+            Self::Normal(entry) => entry.eval(table_type),
+            Self::Direct(entry) => entry.eval(table_type),
+            Self::Namespace(entry) => entry.eval(table_type),
+            Self::Open(entry) => entry.eval(table_type),
         }
     }
 }

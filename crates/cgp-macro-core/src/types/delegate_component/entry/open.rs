@@ -32,13 +32,13 @@ impl Parse for OpenDelegateEntry {
 }
 
 impl EvalDelegateEntry for OpenDelegateEntry {
-    fn eval(&self, context_type: &Type) -> syn::Result<Vec<EvaluatedDelegateEntry>> {
+    fn eval(&self, table_type: &Type) -> syn::Result<Vec<EvaluatedDelegateEntry>> {
         let mut entries = Vec::new();
 
         for component in &self.components {
             let value: Type = parse_quote! {
                 #RedirectLookup<
-                    #context_type,
+                    #table_type,
                     #PathCons<#component, #Nil>,
                 >
             };
@@ -46,7 +46,7 @@ impl EvalDelegateEntry for OpenDelegateEntry {
             let key = component.clone();
 
             entries.push(EvaluatedDelegateEntry {
-                table_type: context_type.clone(),
+                table_type: table_type.clone(),
                 generics: Default::default(),
                 key,
                 value,

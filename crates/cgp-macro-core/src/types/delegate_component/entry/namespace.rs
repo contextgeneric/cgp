@@ -1,4 +1,4 @@
-use syn::parse::Parse;
+use syn::parse::{Parse, ParseStream};
 use syn::token::Semi;
 use syn::{Ident, Type, parse_quote};
 
@@ -15,7 +15,7 @@ pub struct NamespaceDelegateEntry {
 }
 
 impl Parse for NamespaceDelegateEntry {
-    fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
+    fn parse(input: ParseStream) -> syn::Result<Self> {
         let namespace = input.parse()?;
         let ident = input.parse()?;
         let semi = input.parse()?;
@@ -29,7 +29,7 @@ impl Parse for NamespaceDelegateEntry {
 }
 
 impl EvalDelegateEntry for NamespaceDelegateEntry {
-    fn eval(&self, context_type: &Type) -> syn::Result<Vec<EvaluatedDelegateEntry>> {
+    fn eval(&self, table_type: &Type) -> syn::Result<Vec<EvaluatedDelegateEntry>> {
         let namespace_ident = if &self.ident == "default" {
             Ident::new("DefaultNamespace", self.ident.span())
         } else {
@@ -38,15 +38,15 @@ impl EvalDelegateEntry for NamespaceDelegateEntry {
 
         let key = parse_quote!(__Component__);
         let generics = parse_quote! {
-            <__Component__: #namespace_ident< #context_type >>
+            <__Component__: #namespace_ident< #table_type >>
         };
 
         let value = parse_quote! {
-            < __Component__ as #namespace_ident< #context_type >>::Provider
+            < __Component__ as #namespace_ident< #table_type >>::Provider
         };
 
         let entry = EvaluatedDelegateEntry {
-            table_type: context_type.clone(),
+            table_type: table_type.clone(),
             generics,
             key,
             value,
