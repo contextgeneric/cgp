@@ -1,9 +1,9 @@
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::token::{Comma, Gt, Lt};
-use syn::{Error, Ident, braced};
+use syn::{Error, Ident, Type, braced, parse_quote};
 
-use crate::types::delegate_component::DelegateEntry;
+use crate::types::delegate_component::{DelegateEntry, EvalDelegateValue};
 use crate::types::generics::TypeGenerics;
 
 pub struct DelegateValueWithInnerEntries {
@@ -44,5 +44,16 @@ impl Parse for DelegateValueWithInnerEntries {
             struct_generics,
             entries,
         })
+    }
+}
+
+impl EvalDelegateValue for DelegateValueWithInnerEntries {
+    fn eval(&self) -> syn::Result<Type> {
+        let wrapper_ident = &self.wrapper_ident;
+        let struct_ident = &self.struct_ident;
+        let struct_generics = &self.struct_generics;
+
+        let ty = parse_quote!( #wrapper_ident < #struct_ident #struct_generics > );
+        Ok(ty)
     }
 }
