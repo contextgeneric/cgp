@@ -1,67 +1,46 @@
 use syn::Type;
 use syn::parse::{Parse, ParseStream};
 
-use crate::traits::PeekKeyword;
 use crate::types::delegate_component::{
     DelegateMode, DirectDelegateEntry, EvalDelegateEntry, EvaluatedDelegateEntry,
-    ExtractInnerDelegateTables, InnerDelegateTable, NamespaceDelegateEntry, NormalDelegateEntry,
-    OpenDelegateEntry,
+    ExtractInnerDelegateTables, InnerDelegateTable, NormalDelegateEntry,
 };
-use crate::types::keywords::{Namespace, Open};
 
 #[derive(Debug, Clone)]
-pub enum DelegateEntry {
+pub enum DelegateMapping {
     Normal(NormalDelegateEntry),
     Direct(DirectDelegateEntry),
-    Namespace(NamespaceDelegateEntry),
-    Open(OpenDelegateEntry),
 }
 
-impl Parse for DelegateEntry {
+impl Parse for DelegateMapping {
     fn parse(input: ParseStream) -> syn::Result<Self> {
-        if input.peek_keyword::<Namespace>() {
-            let namespace_entry = input.parse()?;
-            Ok(Self::Namespace(namespace_entry))
-        } else if input.peek_keyword::<Open>() {
-            let open_entry = input.parse()?;
-            Ok(Self::Open(open_entry))
-        } else {
-            let key = input.parse()?;
-            let mode: DelegateMode = input.parse()?;
-            let value = input.parse()?;
+        let key = input.parse()?;
+        let mode: DelegateMode = input.parse()?;
+        let value = input.parse()?;
 
-            let entry = match mode {
-                DelegateMode::Normal(colon) => {
-                    Self::Normal(NormalDelegateEntry { key, colon, value })
-                }
-                DelegateMode::Direct(arrow) => {
-                    Self::Direct(DirectDelegateEntry { key, arrow, value })
-                }
-            };
+        let entry = match mode {
+            DelegateMode::Normal(colon) => Self::Normal(NormalDelegateEntry { key, colon, value }),
+            DelegateMode::Direct(arrow) => Self::Direct(DirectDelegateEntry { key, arrow, value }),
+        };
 
-            Ok(entry)
-        }
+        Ok(entry)
     }
 }
 
-impl EvalDelegateEntry for DelegateEntry {
+impl EvalDelegateEntry for DelegateMapping {
     fn eval(&self, table_type: &Type) -> syn::Result<Vec<EvaluatedDelegateEntry>> {
         match self {
             Self::Normal(entry) => entry.eval(table_type),
             Self::Direct(entry) => entry.eval(table_type),
-            Self::Namespace(entry) => entry.eval(table_type),
-            Self::Open(entry) => entry.eval(table_type),
         }
     }
 }
 
-impl ExtractInnerDelegateTables for DelegateEntry {
+impl ExtractInnerDelegateTables for DelegateMapping {
     fn extract_inner_tables(&self) -> Vec<InnerDelegateTable> {
         match self {
             Self::Normal(entry) => entry.extract_inner_tables(),
             Self::Direct(entry) => entry.extract_inner_tables(),
-            Self::Namespace(_) => Vec::new(),
-            Self::Open(_) => Vec::new(),
         }
     }
 }

@@ -5,14 +5,14 @@ use syn::token::Comma;
 use syn::{Generics, ItemImpl, Type};
 
 use crate::types::delegate_component::{
-    DelegateEntry, DelegateStatement, EvalDelegateEntry, ExtractInnerDelegateTables,
+    DelegateMapping, DelegateStatement, EvalDelegateEntry, ExtractInnerDelegateTables,
     InnerDelegateTable,
 };
 
 #[derive(Debug, Clone)]
 pub struct DelegateEntries {
     pub statements: Vec<DelegateStatement>,
-    pub entries: Punctuated<DelegateEntry, Comma>,
+    pub entries: Punctuated<DelegateMapping, Comma>,
 }
 
 impl Parse for DelegateEntries {
