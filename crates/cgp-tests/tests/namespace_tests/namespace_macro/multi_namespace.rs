@@ -46,7 +46,7 @@ pub struct App;
 
 delegate_components! {
     App {
-        namespace MyNamespace,
+        namespace MyNamespace;
 
         @MyApp.MyFooComponent:
             DummyFoo,
@@ -66,7 +66,7 @@ pub struct OtherApp;
 
 delegate_components! {
     OtherApp {
-        namespace OtherNamespace,
+        namespace OtherNamespace;
 
         @my_app.MyFooComponent:
             DummyFoo,

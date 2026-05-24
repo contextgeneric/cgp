@@ -1,6 +1,6 @@
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
-use syn::token::Comma;
+use syn::token::{Comma, Semi};
 use syn::{Type, braced, parse_quote};
 
 use crate::exports::{Nil, PathCons, RedirectLookup};
@@ -12,6 +12,7 @@ use crate::types::keywords::Open;
 pub struct OpenDelegateEntry {
     pub open: Keyword<Open>,
     pub components: Punctuated<Type, Comma>,
+    pub semi: Semi,
 }
 
 impl Parse for OpenDelegateEntry {
@@ -25,7 +26,13 @@ impl Parse for OpenDelegateEntry {
             Punctuated::parse_terminated(&body)?
         };
 
-        Ok(Self { open, components })
+        let semi = input.parse()?;
+
+        Ok(Self {
+            open,
+            components,
+            semi,
+        })
     }
 }
 

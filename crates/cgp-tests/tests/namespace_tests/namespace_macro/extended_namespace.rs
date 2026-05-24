@@ -8,7 +8,7 @@ pub struct App;
 
 delegate_components! {
     App {
-        namespace ExtendedNamespace,
+        namespace ExtendedNamespace;
 
         @app.ErrorTypeProviderComponent:
             UseType<String>,

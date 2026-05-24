@@ -19,7 +19,7 @@ pub struct App;
 
 delegate_components! {
     App {
-        namespace default,
+        namespace default;
 
         // @bar: TestProvider,
 

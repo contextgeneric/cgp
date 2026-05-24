@@ -1,4 +1,5 @@
 use syn::parse::{Parse, ParseStream};
+use syn::token::Semi;
 use syn::{Ident, Type, parse_quote};
 
 use crate::types::delegate_component::{EvalDelegateEntry, EvaluatedDelegateEntry};
@@ -9,14 +10,20 @@ use crate::types::keywords::Namespace;
 pub struct NamespaceDelegateEntry {
     pub namespace: Keyword<Namespace>,
     pub ident: Ident,
+    pub semi: Semi,
 }
 
 impl Parse for NamespaceDelegateEntry {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let namespace = input.parse()?;
         let ident = input.parse()?;
+        let semi = input.parse()?;
 
-        Ok(Self { namespace, ident })
+        Ok(Self {
+            namespace,
+            ident,
+            semi,
+        })
     }
 }
 
