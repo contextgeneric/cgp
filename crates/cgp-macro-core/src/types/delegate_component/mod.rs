@@ -1,13 +1,13 @@
 mod entries;
-mod entry;
 mod key;
+mod mapping;
 mod statement;
 mod table;
 mod value;
 
 pub use entries::*;
-pub use entry::*;
 pub use key::*;
+pub use mapping::*;
 pub use statement::*;
 pub use table::*;
 pub use value::*;
