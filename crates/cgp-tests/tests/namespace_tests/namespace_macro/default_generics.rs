@@ -6,11 +6,18 @@ pub struct App;
 
 delegate_components! {
     App {
+        // use DefaultNamespace;
+        // for <Component, Provider> in DefaultNamespace {
+        //      Component: Provider,
+        // }
         namespace default;
 
         @test.ShowImplComponent.u64:
             ShowWithDisplay,
 
+        // for <T, Provider> in DefaultNamespace1<ShowImplComponent> {
+        //     @test.ShowImplComponent.T: Provider,
+        // }
         // namespace DefaultNamespace1<ShowImplComponent> => @test.ShowImplComponent;
     }
 }
