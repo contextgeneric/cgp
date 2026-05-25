@@ -2,14 +2,14 @@ use syn::Type;
 use syn::parse::{Parse, ParseStream};
 
 use crate::types::delegate_component::{
-    DelegateMode, DirectDelegateEntry, EvalDelegateEntry, EvaluatedDelegateEntry,
-    ExtractInnerDelegateTables, InnerDelegateTable, NormalDelegateEntry,
+    DelegateMode, DirectDelegateMapping, EvalDelegateEntry, EvaluatedDelegateEntry,
+    ExtractInnerDelegateTables, InnerDelegateTable, NormalDelegateMapping,
 };
 
 #[derive(Debug, Clone)]
 pub enum DelegateMapping {
-    Normal(NormalDelegateEntry),
-    Direct(DirectDelegateEntry),
+    Normal(NormalDelegateMapping),
+    Direct(DirectDelegateMapping),
 }
 
 impl Parse for DelegateMapping {
@@ -19,8 +19,12 @@ impl Parse for DelegateMapping {
         let value = input.parse()?;
 
         let entry = match mode {
-            DelegateMode::Normal(colon) => Self::Normal(NormalDelegateEntry { key, colon, value }),
-            DelegateMode::Direct(arrow) => Self::Direct(DirectDelegateEntry { key, arrow, value }),
+            DelegateMode::Normal(colon) => {
+                Self::Normal(NormalDelegateMapping { key, colon, value })
+            }
+            DelegateMode::Direct(arrow) => {
+                Self::Direct(DirectDelegateMapping { key, arrow, value })
+            }
         };
 
         Ok(entry)

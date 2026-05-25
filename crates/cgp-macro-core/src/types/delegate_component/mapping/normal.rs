@@ -7,13 +7,13 @@ use crate::types::delegate_component::{
 };
 
 #[derive(Debug, Clone)]
-pub struct NormalDelegateEntry {
+pub struct NormalDelegateMapping {
     pub key: DelegateKey,
     pub colon: Colon,
     pub value: DelegateValue,
 }
 
-impl EvalDelegateEntry for NormalDelegateEntry {
+impl EvalDelegateEntry for NormalDelegateMapping {
     fn eval(&self, table_type: &Type) -> syn::Result<Vec<EvaluatedDelegateEntry>> {
         let keys = self.key.eval()?;
         let value_type = self.value.eval()?;
@@ -32,7 +32,7 @@ impl EvalDelegateEntry for NormalDelegateEntry {
     }
 }
 
-impl ExtractInnerDelegateTables for NormalDelegateEntry {
+impl ExtractInnerDelegateTables for NormalDelegateMapping {
     fn extract_inner_tables(&self) -> Vec<InnerDelegateTable> {
         self.value.extract_inner_tables()
     }

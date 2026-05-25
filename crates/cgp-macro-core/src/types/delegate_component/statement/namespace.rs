@@ -7,13 +7,13 @@ use crate::types::keyword::Keyword;
 use crate::types::keywords::Namespace;
 
 #[derive(Debug, Clone)]
-pub struct NamespaceDelegateEntry {
+pub struct NamespaceDelegateStatement {
     pub namespace: Keyword<Namespace>,
     pub ident: Ident,
     pub semi: Semi,
 }
 
-impl Parse for NamespaceDelegateEntry {
+impl Parse for NamespaceDelegateStatement {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let namespace = input.parse()?;
         let ident = input.parse()?;
@@ -27,7 +27,7 @@ impl Parse for NamespaceDelegateEntry {
     }
 }
 
-impl EvalDelegateEntry for NamespaceDelegateEntry {
+impl EvalDelegateEntry for NamespaceDelegateStatement {
     fn eval(&self, table_type: &Type) -> syn::Result<Vec<EvaluatedDelegateEntry>> {
         let namespace_ident = if &self.ident == "default" {
             Ident::new("DefaultNamespace", self.ident.span())

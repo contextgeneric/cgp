@@ -9,13 +9,13 @@ use crate::types::keyword::Keyword;
 use crate::types::keywords::Open;
 
 #[derive(Debug, Clone)]
-pub struct OpenDelegateEntry {
+pub struct OpenDelegateStatement {
     pub open: Keyword<Open>,
     pub components: Punctuated<Type, Comma>,
     pub semi: Semi,
 }
 
-impl Parse for OpenDelegateEntry {
+impl Parse for OpenDelegateStatement {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let open = input.parse()?;
 
@@ -36,7 +36,7 @@ impl Parse for OpenDelegateEntry {
     }
 }
 
-impl EvalDelegateEntry for OpenDelegateEntry {
+impl EvalDelegateEntry for OpenDelegateStatement {
     fn eval(&self, table_type: &Type) -> syn::Result<Vec<EvaluatedDelegateEntry>> {
         let mut entries = Vec::new();
 

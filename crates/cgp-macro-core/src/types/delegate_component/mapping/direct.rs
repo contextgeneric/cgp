@@ -8,13 +8,13 @@ use crate::types::delegate_component::{
 };
 
 #[derive(Debug, Clone)]
-pub struct DirectDelegateEntry {
+pub struct DirectDelegateMapping {
     pub key: DelegateKey,
     pub arrow: RArrow,
     pub value: DelegateValue,
 }
 
-impl EvalDelegateEntry for DirectDelegateEntry {
+impl EvalDelegateEntry for DirectDelegateMapping {
     fn eval(&self, table_type: &Type) -> syn::Result<Vec<EvaluatedDelegateEntry>> {
         let keys = self.key.eval()?;
         let value_type = self.value.eval()?;
@@ -51,7 +51,7 @@ impl EvalDelegateEntry for DirectDelegateEntry {
     }
 }
 
-impl ExtractInnerDelegateTables for DirectDelegateEntry {
+impl ExtractInnerDelegateTables for DirectDelegateMapping {
     fn extract_inner_tables(&self) -> Vec<InnerDelegateTable> {
         self.value.extract_inner_tables()
     }

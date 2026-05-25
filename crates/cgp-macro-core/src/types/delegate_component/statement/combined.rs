@@ -3,14 +3,14 @@ use syn::{Error, Type};
 
 use crate::traits::PeekKeyword;
 use crate::types::delegate_component::{
-    EvalDelegateEntry, EvaluatedDelegateEntry, NamespaceDelegateEntry, OpenDelegateEntry,
+    EvalDelegateEntry, EvaluatedDelegateEntry, NamespaceDelegateStatement, OpenDelegateStatement,
 };
 use crate::types::keywords::{Namespace, Open};
 
 #[derive(Debug, Clone)]
 pub enum DelegateStatement {
-    Namespace(NamespaceDelegateEntry),
-    Open(OpenDelegateEntry),
+    Namespace(NamespaceDelegateStatement),
+    Open(OpenDelegateStatement),
 }
 
 impl Parse for DelegateStatement {
