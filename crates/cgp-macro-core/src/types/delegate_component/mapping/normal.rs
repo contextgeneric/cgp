@@ -3,7 +3,7 @@ use syn::parse::{Parse, ParseStream};
 use syn::token::Colon;
 
 use crate::types::delegate_component::{
-    DelegateKey, DelegateValue, EvalDelegateEntry, EvalDelegateKey, EvalDelegateValue,
+    DelegateKey, DelegateValue, EvalDelegateEntries, EvalDelegateKey, EvalDelegateValue,
     EvaluatedDelegateEntry, ExtractInnerDelegateTables, InnerDelegateTable,
 };
 
@@ -24,8 +24,8 @@ impl Parse for NormalDelegateMapping {
     }
 }
 
-impl EvalDelegateEntry for NormalDelegateMapping {
-    fn eval(&self, table_type: &Type) -> syn::Result<Vec<EvaluatedDelegateEntry>> {
+impl EvalDelegateEntries for NormalDelegateMapping {
+    fn eval_entries(&self, table_type: &Type) -> syn::Result<Vec<EvaluatedDelegateEntry>> {
         let keys = self.key.eval()?;
         let value_type = self.value.eval()?;
 

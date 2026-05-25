@@ -3,7 +3,7 @@ use syn::{Type, parse_quote};
 
 use crate::exports::RedirectLookup;
 use crate::types::delegate_component::{
-    DelegateKey, EvalDelegateEntry, EvalDelegateKey, EvaluatedDelegateEntry,
+    DelegateKey, EvalDelegateEntries, EvalDelegateKey, EvaluatedDelegateEntry,
 };
 use crate::types::path::UniPath;
 
@@ -14,8 +14,8 @@ pub struct RedirectDelegateMapping {
     pub value: UniPath,
 }
 
-impl EvalDelegateEntry for RedirectDelegateMapping {
-    fn eval(&self, table_type: &Type) -> syn::Result<Vec<EvaluatedDelegateEntry>> {
+impl EvalDelegateEntries for RedirectDelegateMapping {
+    fn eval_entries(&self, table_type: &Type) -> syn::Result<Vec<EvaluatedDelegateEntry>> {
         let value_type: Type = match &self.key {
             DelegateKey::Path(_) => {
                 let prefix = self.value.clone().to_prefix(parse_quote!(__Wildcard__));

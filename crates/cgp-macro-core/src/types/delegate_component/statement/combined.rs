@@ -4,7 +4,7 @@ use syn::{Error, Type};
 
 use crate::traits::PeekKeyword;
 use crate::types::delegate_component::{
-    EvalDelegateEntry, EvaluatedDelegateEntry, ForDelegateStatement, NamespaceDelegateStatement,
+    EvalDelegateEntries, EvaluatedDelegateEntry, ForDelegateStatement, NamespaceDelegateStatement,
     OpenDelegateStatement,
 };
 use crate::types::keywords::{Namespace, Open};
@@ -39,12 +39,12 @@ impl Parse for DelegateStatement {
     }
 }
 
-impl EvalDelegateEntry for DelegateStatement {
-    fn eval(&self, table_type: &Type) -> syn::Result<Vec<EvaluatedDelegateEntry>> {
+impl EvalDelegateEntries for DelegateStatement {
+    fn eval_entries(&self, table_type: &Type) -> syn::Result<Vec<EvaluatedDelegateEntry>> {
         match self {
-            Self::Namespace(entry) => entry.eval(table_type),
-            Self::Open(entry) => entry.eval(table_type),
-            Self::For(entry) => entry.eval(table_type),
+            Self::Namespace(entry) => entry.eval_entries(table_type),
+            Self::Open(entry) => entry.eval_entries(table_type),
+            Self::For(entry) => entry.eval_entries(table_type),
         }
     }
 }

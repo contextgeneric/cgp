@@ -1,17 +1,23 @@
+use proc_macro2::TokenStream;
+use quote::ToTokens;
 use syn::parse::{Parse, ParseStream};
-use syn::{Ident, ItemImpl, ItemTrait, Type, braced, parse_quote};
+use syn::token::Colon;
+use syn::{Ident, ItemImpl, ItemStruct, ItemTrait, Type, braced, parse_quote};
 
 use crate::traits::PeekKeyword;
-use crate::types::delegate_component::{DelegateEntries, EvalDelegateEntry};
+use crate::types::delegate_component::{
+    DelegateEntries, EvalDelegateEntries, EvalDelegateEntry, EvaluatedForEntry,
+};
 use crate::types::generics::{ImplGenerics, TypeGenerics};
+use crate::types::ident_type::IdentType;
 use crate::types::keyword::Keyword;
 use crate::types::keywords::New;
 
 pub struct NamespaceTable {
     pub impl_generics: ImplGenerics,
     pub new: Option<Keyword<New>>,
-    pub namespace_ident: Ident,
-    pub namespace_generics: TypeGenerics,
+    pub namespace_type: IdentType,
+    pub parent_namespace: Option<(Colon, IdentType)>,
     pub entries: DelegateEntries,
 }
 
@@ -30,8 +36,14 @@ impl Parse for NamespaceTable {
             None
         };
 
-        let namespace_ident = input.parse()?;
-        let namespace_generics = input.parse()?;
+        let namespace_type = input.parse()?;
+        let parent_namespace = if input.peek(Colon) {
+            let colon: Colon = input.parse()?;
+            let parent_namespace_type = input.parse()?;
+            Some((colon, parent_namespace_type))
+        } else {
+            None
+        };
 
         let entries = {
             let body;
@@ -43,18 +55,18 @@ impl Parse for NamespaceTable {
         Ok(Self {
             impl_generics,
             new,
-            namespace_ident,
-            namespace_generics,
+            namespace_type,
+            parent_namespace,
             entries,
         })
     }
 }
 
 impl NamespaceTable {
-    pub fn eval(&self) -> syn::Result<EvaluatedNamespaceTable> {
-        let namespace_ident = &self.namespace_ident;
+    pub fn build_item_trait(&self) -> syn::Result<Option<ItemTrait>> {
+        let namespace_ident = &self.namespace_type.ident;
 
-        let mut namespace_generics = self.namespace_generics.clone();
+        let mut namespace_generics = self.namespace_type.generics.clone();
         namespace_generics.params.push(parse_quote!(__Components__));
 
         let item_trait: Option<ItemTrait> = if self.new.is_some() {
@@ -69,13 +81,32 @@ impl NamespaceTable {
             None
         };
 
+        Ok(item_trait)
+    }
+
+    pub fn build_namespace_generics(&self) -> syn::Result<TypeGenerics> {
+        let mut namespace_generics = self.namespace_type.generics.clone();
+        namespace_generics.params.push(parse_quote!(__Components__));
+
+        Ok(namespace_generics)
+    }
+
+    pub fn build_namespace_trait(&self) -> syn::Result<Type> {
+        let namespace_ident = &self.namespace_type.ident;
+        let namespace_generics = self.build_namespace_generics()?;
+
+        let namespace_trait: Type = parse_quote!( #namespace_ident #namespace_generics );
+        Ok(namespace_trait)
+    }
+
+    pub fn build_item_impls(&self) -> syn::Result<Vec<ItemImpl>> {
         let mut impl_generics = self.impl_generics.clone();
         impl_generics.params.push(parse_quote!(__Components__));
 
-        let namespace_trait: Type = parse_quote!( #namespace_ident #namespace_generics );
+        let namespace_trait = self.build_namespace_trait()?;
         let table_type: Type = parse_quote!(__Components__);
 
-        let evaluated_entries = self.entries.eval(&table_type)?;
+        let evaluated_entries = self.entries.eval_entries(&table_type)?;
 
         let mut item_impls: Vec<ItemImpl> = Vec::new();
 
@@ -85,9 +116,78 @@ impl NamespaceTable {
             item_impls.push(item_impl);
         }
 
+        Ok(item_impls)
+    }
+
+    pub fn build_parent_namespace_impl(&self) -> syn::Result<Option<(ItemStruct, ItemImpl)>> {
+        if let Some((_, parent_namespace)) = &self.parent_namespace {
+            let namespace_ident = self.namespace_type.ident.clone();
+            let namespace_generics = self.build_namespace_generics()?;
+
+            let namespace_struct_ident = Ident::new(
+                &format!("__{}Components", namespace_ident),
+                namespace_ident.span(),
+            );
+
+            let namespace_struct: ItemStruct = parse_quote! {
+                pub struct #namespace_struct_ident;
+            };
+
+            let table_type: Type = parse_quote!(__Components__);
+
+            let parent_namespace_ident = &parent_namespace.ident;
+
+            let mut parent_namespace_generics = parent_namespace.generics.clone();
+            parent_namespace_generics
+                .params
+                .push(parse_quote!(#namespace_struct_ident));
+
+            let mut generics = self.impl_generics.generics.clone();
+            generics.make_where_clause().predicates.push(parse_quote! {
+                __Component__: #parent_namespace_ident #parent_namespace_generics
+            });
+
+            let for_entry = EvaluatedForEntry {
+                generics: generics.clone(),
+                table_type: table_type.clone(),
+                for_key: parse_quote!(__Component__),
+                for_value: parse_quote!(__Provider__),
+                mapping_key: parse_quote!(__Component__),
+                mapping_value: parse_quote!(__Provider__),
+                namespace_ident,
+                namespace_generics,
+            };
+
+            let evaluated_entry = for_entry.eval_entry(&table_type)?;
+
+            let namespace_trait = self.build_namespace_trait()?;
+            let item_impl = evaluated_entry.build_namespace_impl(&namespace_trait, &generics)?;
+
+            Ok(Some((namespace_struct, item_impl)))
+        } else {
+            Ok(None)
+        }
+    }
+
+    pub fn eval(&self) -> syn::Result<EvaluatedNamespaceTable> {
+        let item_trait = self.build_item_trait()?;
+        let item_impls = self.build_item_impls()?;
+
         Ok(EvaluatedNamespaceTable {
             item_impls,
             item_trait,
         })
+    }
+}
+
+impl ToTokens for EvaluatedNamespaceTable {
+    fn to_tokens(&self, tokens: &mut TokenStream) {
+        if let Some(item_trait) = &self.item_trait {
+            item_trait.to_tokens(tokens);
+        }
+
+        for item_impl in &self.item_impls {
+            item_impl.to_tokens(tokens);
+        }
     }
 }

@@ -3,7 +3,7 @@ use syn::token::Semi;
 use syn::{Generics, Ident, Type, parse_quote};
 
 use crate::types::delegate_component::{
-    EvalDelegateEntry, EvalForEntry, EvaluatedDelegateEntry, EvaluatedForEntry,
+    EvalDelegateEntries, EvalForEntry, EvaluatedDelegateEntry, EvaluatedForEntry,
     eval_delegate_entries_via_for,
 };
 use crate::types::generics::TypeGenerics;
@@ -14,6 +14,7 @@ use crate::types::keywords::Namespace;
 pub struct NamespaceDelegateStatement {
     pub namespace: Keyword<Namespace>,
     pub ident: Ident,
+
     pub semi: Semi,
 }
 
@@ -54,8 +55,8 @@ impl EvalForEntry for NamespaceDelegateStatement {
     }
 }
 
-impl EvalDelegateEntry for NamespaceDelegateStatement {
-    fn eval(&self, table_type: &Type) -> syn::Result<Vec<EvaluatedDelegateEntry>> {
+impl EvalDelegateEntries for NamespaceDelegateStatement {
+    fn eval_entries(&self, table_type: &Type) -> syn::Result<Vec<EvaluatedDelegateEntry>> {
         eval_delegate_entries_via_for(self, table_type)
     }
 }

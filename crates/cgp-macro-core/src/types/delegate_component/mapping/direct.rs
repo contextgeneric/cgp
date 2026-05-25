@@ -3,7 +3,7 @@ use syn::{Type, parse_quote};
 
 use crate::exports::DelegateComponent;
 use crate::types::delegate_component::{
-    DelegateKey, DelegateValue, EvalDelegateEntry, EvalDelegateKey, EvalDelegateValue,
+    DelegateKey, DelegateValue, EvalDelegateEntries, EvalDelegateKey, EvalDelegateValue,
     EvaluatedDelegateEntry, ExtractInnerDelegateTables, InnerDelegateTable,
 };
 
@@ -14,8 +14,8 @@ pub struct DirectDelegateMapping {
     pub value: DelegateValue,
 }
 
-impl EvalDelegateEntry for DirectDelegateMapping {
-    fn eval(&self, table_type: &Type) -> syn::Result<Vec<EvaluatedDelegateEntry>> {
+impl EvalDelegateEntries for DirectDelegateMapping {
+    fn eval_entries(&self, table_type: &Type) -> syn::Result<Vec<EvaluatedDelegateEntry>> {
         let keys = self.key.eval()?;
         let value_type = self.value.eval()?;
 

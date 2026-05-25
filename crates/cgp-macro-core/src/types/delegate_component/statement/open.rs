@@ -4,7 +4,7 @@ use syn::token::{Comma, Semi};
 use syn::{Type, braced, parse_quote};
 
 use crate::exports::{Nil, PathCons, RedirectLookup};
-use crate::types::delegate_component::{EvalDelegateEntry, EvaluatedDelegateEntry};
+use crate::types::delegate_component::{EvalDelegateEntries, EvaluatedDelegateEntry};
 use crate::types::keyword::Keyword;
 use crate::types::keywords::Open;
 
@@ -36,8 +36,8 @@ impl Parse for OpenDelegateStatement {
     }
 }
 
-impl EvalDelegateEntry for OpenDelegateStatement {
-    fn eval(&self, table_type: &Type) -> syn::Result<Vec<EvaluatedDelegateEntry>> {
+impl EvalDelegateEntries for OpenDelegateStatement {
+    fn eval_entries(&self, table_type: &Type) -> syn::Result<Vec<EvaluatedDelegateEntry>> {
         let mut entries = Vec::new();
 
         for component in &self.components {

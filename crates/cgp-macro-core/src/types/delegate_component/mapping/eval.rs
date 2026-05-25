@@ -12,7 +12,11 @@ pub struct EvaluatedDelegateEntry {
 }
 
 pub trait EvalDelegateEntry {
-    fn eval(&self, table_type: &Type) -> syn::Result<Vec<EvaluatedDelegateEntry>>;
+    fn eval_entry(&self, table_type: &Type) -> syn::Result<EvaluatedDelegateEntry>;
+}
+
+pub trait EvalDelegateEntries {
+    fn eval_entries(&self, table_type: &Type) -> syn::Result<Vec<EvaluatedDelegateEntry>>;
 }
 
 impl EvaluatedDelegateEntry {
@@ -84,7 +88,7 @@ impl EvaluatedDelegateEntry {
                 for #key
             #where_clause
             {
-                type Delegate = #value;
+                type Provider = #value;
             }
         })
     }

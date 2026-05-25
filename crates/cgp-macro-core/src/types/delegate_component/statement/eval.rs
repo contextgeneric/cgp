@@ -1,6 +1,8 @@
 use syn::{Generics, Ident, Type, parse_quote};
 
-use crate::types::delegate_component::{EvalDelegateEntry, EvaluatedDelegateEntry};
+use crate::types::delegate_component::{
+    EvalDelegateEntry, EvaluatedDelegateEntry,
+};
 use crate::types::generics::TypeGenerics;
 
 pub trait EvalForEntry {
@@ -29,14 +31,14 @@ where
 
     let for_entries = entry.eval_for(table_type)?;
     for for_entry in for_entries {
-        entries.extend(for_entry.eval(table_type)?);
+        entries.push(for_entry.eval_entry(table_type)?);
     }
 
     Ok(entries)
 }
 
 impl EvalDelegateEntry for EvaluatedForEntry {
-    fn eval(&self, _table_type: &Type) -> syn::Result<Vec<EvaluatedDelegateEntry>> {
+    fn eval_entry(&self, _table_type: &Type) -> syn::Result<EvaluatedDelegateEntry> {
         let for_key = &self.for_key;
         let for_value = &self.for_value;
         let mapping_value = &self.mapping_value;
@@ -74,6 +76,6 @@ impl EvalDelegateEntry for EvaluatedForEntry {
             value: self.mapping_value.clone(),
         };
 
-        Ok(vec![entry])
+        Ok(entry)
     }
 }

@@ -2,7 +2,7 @@ use syn::Type;
 use syn::parse::{Parse, ParseStream};
 
 use crate::types::delegate_component::{
-    DelegateMode, DirectDelegateMapping, EvalDelegateEntry, EvaluatedDelegateEntry,
+    DelegateMode, DirectDelegateMapping, EvalDelegateEntries, EvaluatedDelegateEntry,
     ExtractInnerDelegateTables, InnerDelegateTable, NormalDelegateMapping, RedirectDelegateMapping,
 };
 
@@ -37,12 +37,12 @@ impl Parse for DelegateMapping {
     }
 }
 
-impl EvalDelegateEntry for DelegateMapping {
-    fn eval(&self, table_type: &Type) -> syn::Result<Vec<EvaluatedDelegateEntry>> {
+impl EvalDelegateEntries for DelegateMapping {
+    fn eval_entries(&self, table_type: &Type) -> syn::Result<Vec<EvaluatedDelegateEntry>> {
         match self {
-            Self::Normal(entry) => entry.eval(table_type),
-            Self::Direct(entry) => entry.eval(table_type),
-            Self::Redirect(entry) => entry.eval(table_type),
+            Self::Normal(entry) => entry.eval_entries(table_type),
+            Self::Direct(entry) => entry.eval_entries(table_type),
+            Self::Redirect(entry) => entry.eval_entries(table_type),
         }
     }
 }

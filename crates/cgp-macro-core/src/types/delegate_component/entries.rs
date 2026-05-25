@@ -4,7 +4,7 @@ use syn::token::Comma;
 use syn::{Generics, ItemImpl, Type};
 
 use crate::types::delegate_component::{
-    DelegateMapping, DelegateStatement, EvalDelegateEntry, ExtractInnerDelegateTables,
+    DelegateMapping, DelegateStatement, EvalDelegateEntries, ExtractInnerDelegateTables,
     InnerDelegateTable,
 };
 
@@ -32,19 +32,19 @@ impl Parse for DelegateEntries {
     }
 }
 
-impl EvalDelegateEntry for DelegateEntries {
-    fn eval(
+impl EvalDelegateEntries for DelegateEntries {
+    fn eval_entries(
         &self,
         table_type: &Type,
     ) -> syn::Result<Vec<crate::types::delegate_component::EvaluatedDelegateEntry>> {
         let mut evaluated_entries = Vec::new();
 
         for statement in &self.statements {
-            evaluated_entries.extend(statement.eval(table_type)?);
+            evaluated_entries.extend(statement.eval_entries(table_type)?);
         }
 
         for entry in &self.entries {
-            evaluated_entries.extend(entry.eval(table_type)?);
+            evaluated_entries.extend(entry.eval_entries(table_type)?);
         }
 
         Ok(evaluated_entries)
@@ -59,7 +59,7 @@ impl DelegateEntries {
     ) -> syn::Result<Vec<ItemImpl>> {
         let mut item_impls = Vec::new();
 
-        let evaluated_entries = self.eval(table_type)?;
+        let evaluated_entries = self.eval_entries(table_type)?;
 
         for evaluated_entry in evaluated_entries {
             let delegate_component_impl =

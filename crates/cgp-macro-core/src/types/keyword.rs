@@ -12,6 +12,15 @@ pub struct Keyword<K: IsKeyword> {
     pub phantom: PhantomData<K>,
 }
 
+impl<K: IsKeyword> Default for Keyword<K> {
+    fn default() -> Self {
+        Self {
+            span: Span::call_site(),
+            phantom: PhantomData,
+        }
+    }
+}
+
 impl<K: IsKeyword> Debug for Keyword<K> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("keyword").field("ident", &K::IDENT).finish()
