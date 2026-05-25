@@ -1,4 +1,4 @@
-use cgp_macro_core::types::delegate_component::NamespaceTable;
+use cgp_macro_core::types::namespace::NamespaceTable;
 use proc_macro2::TokenStream;
 use quote::ToTokens;
 use syn::parse2;
