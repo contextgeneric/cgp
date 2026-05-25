@@ -18,6 +18,23 @@ pub struct EvaluatedForEntry {
     pub mapping_value: Type,
 }
 
+pub fn eval_delegate_entries_via_for<Entry>(
+    entry: &Entry,
+    table_type: &Type,
+) -> syn::Result<Vec<EvaluatedDelegateEntry>>
+where
+    Entry: EvalForEntry,
+{
+    let mut entries = Vec::new();
+
+    let for_entries = entry.eval_for(table_type)?;
+    for for_entry in for_entries {
+        entries.extend(for_entry.eval(table_type)?);
+    }
+
+    Ok(entries)
+}
+
 impl EvalDelegateEntry for EvaluatedForEntry {
     fn eval(&self, _table_type: &Type) -> syn::Result<Vec<EvaluatedDelegateEntry>> {
         let for_key = &self.for_key;

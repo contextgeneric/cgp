@@ -5,7 +5,7 @@ use syn::{Ident, Type, WhereClause, braced};
 
 use crate::types::delegate_component::{
     EvalDelegateEntry, EvalDelegateKey, EvalDelegateValue, EvalForEntry, EvaluatedDelegateEntry,
-    EvaluatedForEntry, NormalDelegateMapping,
+    EvaluatedForEntry, NormalDelegateMapping, eval_delegate_entries_via_for,
 };
 use crate::types::ident_type::IdentType;
 
@@ -86,13 +86,6 @@ impl EvalForEntry for ForDelegateStatement {
 
 impl EvalDelegateEntry for ForDelegateStatement {
     fn eval(&self, table_type: &Type) -> syn::Result<Vec<EvaluatedDelegateEntry>> {
-        let mut entries = Vec::new();
-
-        let for_entries = self.eval_for(table_type)?;
-        for for_entry in for_entries {
-            entries.extend(for_entry.eval(table_type)?);
-        }
-
-        Ok(entries)
+        eval_delegate_entries_via_for(self, table_type)
     }
 }
