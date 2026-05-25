@@ -1,11 +1,11 @@
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::token::{Comma, For, Gt, In, Lt};
-use syn::{Ident, Type, WhereClause, braced, parse_quote};
+use syn::{Ident, Type, WhereClause, braced};
 
 use crate::types::delegate_component::{
-    EvalDelegateEntry, EvalDelegateKey, EvalDelegateValue, EvaluatedDelegateEntry,
-    NormalDelegateMapping,
+    EvalDelegateEntry, EvalDelegateKey, EvalDelegateValue, EvalForEntry, EvaluatedDelegateEntry,
+    EvaluatedForEntry, NormalDelegateMapping,
 };
 use crate::types::ident_type::IdentType;
 
@@ -56,19 +56,8 @@ impl Parse for ForDelegateStatement {
     }
 }
 
-impl EvalDelegateEntry for ForDelegateStatement {
-    fn eval(&self, table_type: &Type) -> syn::Result<Vec<EvaluatedDelegateEntry>> {
-        let for_key = &self.key;
-        let for_value = &self.value;
-        let for_where = &self.where_clause;
-
-        let namespace_ident = &self.namespace.ident;
-        let mut namespace_generics = self.namespace.generics.clone();
-        namespace_generics
-            .generics
-            .params
-            .push(parse_quote!(#table_type));
-
+impl EvalForEntry for ForDelegateStatement {
+    fn eval_for(&self, table_type: &Type) -> syn::Result<Vec<EvaluatedForEntry>> {
         let mut entries = Vec::new();
 
         for mapping in &self.mappings {
@@ -76,40 +65,32 @@ impl EvalDelegateEntry for ForDelegateStatement {
             let value_type = mapping.value.eval()?;
 
             for key in keys {
-                let key_type = key.key;
-                let value_type = value_type.clone();
-
-                let namespace_trait: Type = {
-                    let mut namespace_generics = namespace_generics.clone();
-                    namespace_generics.generics.params.push(parse_quote! {
-                        Provider = #value_type
-                    });
-
-                    parse_quote!( #namespace_ident #namespace_generics )
-                };
-
-                let mut generics = key.generics;
-                generics.params.push(parse_quote!(#for_key));
-                generics.params.push(parse_quote!(#for_value));
-
-                let where_clause = generics.make_where_clause();
-                where_clause.predicates.push(parse_quote! {
-                    #for_key: #namespace_trait
-                });
-
-                if let Some(for_where) = for_where {
-                    where_clause.predicates.extend(for_where.predicates.clone());
-                }
-
-                let entry = EvaluatedDelegateEntry {
+                let entry = EvaluatedForEntry {
+                    generics: key.generics,
                     table_type: table_type.clone(),
-                    generics,
-                    key: key_type,
-                    value: value_type,
+                    for_key: self.key.clone(),
+                    for_value: self.value.clone(),
+                    namespace_ident: self.namespace.ident.clone(),
+                    namespace_generics: self.namespace.generics.clone(),
+                    mapping_key: key.key,
+                    mapping_value: value_type.clone(),
                 };
 
                 entries.push(entry);
             }
+        }
+
+        Ok(entries)
+    }
+}
+
+impl EvalDelegateEntry for ForDelegateStatement {
+    fn eval(&self, table_type: &Type) -> syn::Result<Vec<EvaluatedDelegateEntry>> {
+        let mut entries = Vec::new();
+
+        let for_entries = self.eval_for(table_type)?;
+        for for_entry in for_entries {
+            entries.extend(for_entry.eval(table_type)?);
         }
 
         Ok(entries)
