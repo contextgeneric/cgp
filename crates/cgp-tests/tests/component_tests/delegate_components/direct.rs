@@ -9,8 +9,10 @@ delegate_components! {
 
 delegate_components! {
     new BarComponents {
-        Index<0>: FooComponents,
-        Index<1> -> FooComponents,
+        Index<0>:
+            FooComponents,
+        Index<1> ->
+            FooComponents,
     }
 }
 

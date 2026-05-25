@@ -29,15 +29,16 @@ impl EvalDelegateEntry for NormalDelegateMapping {
         let keys = self.key.eval()?;
         let value_type = self.value.eval()?;
 
-        let entries = keys
-            .into_iter()
-            .map(|key| EvaluatedDelegateEntry {
+        let mut entries = Vec::new();
+
+        for key in keys {
+            entries.push(EvaluatedDelegateEntry {
                 table_type: table_type.clone(),
                 generics: key.generics,
                 key: key.key,
                 value: value_type.clone(),
             })
-            .collect();
+        }
 
         Ok(entries)
     }

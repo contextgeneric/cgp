@@ -24,7 +24,8 @@ impl<T> BarProvider<T> {
 
 delegate_components! {
     App {
-        // FooProviderComponent => @FooProviderComponent,
+        // FooProviderComponent =>
+        //     @FooProviderComponent,
         open {FooProviderComponent, BarProviderComponent};
 
         @FooProviderComponent.String:
