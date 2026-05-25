@@ -1,4 +1,5 @@
 use syn::Type;
+use syn::parse::{Parse, ParseStream};
 use syn::token::Colon;
 
 use crate::types::delegate_component::{
@@ -11,6 +12,16 @@ pub struct NormalDelegateMapping {
     pub key: DelegateKey,
     pub colon: Colon,
     pub value: DelegateValue,
+}
+
+impl Parse for NormalDelegateMapping {
+    fn parse(input: ParseStream) -> syn::Result<Self> {
+        let key = input.parse()?;
+        let colon = input.parse()?;
+        let value = input.parse()?;
+
+        Ok(Self { key, colon, value })
+    }
 }
 
 impl EvalDelegateEntry for NormalDelegateMapping {

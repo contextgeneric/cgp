@@ -23,14 +23,14 @@ delegate_components! {
     }
 }
 
-impl<T, Wildcard>
-    DelegateComponent<PathCons<Symbol!("test"), PathCons<ShowImplComponent, PathCons<T, Wildcard>>>>
-    for App
-where
-    T: DefaultNamespace1<ShowImplComponent, App>,
-{
-    type Delegate = T::Provider;
-}
+// impl<T, Wildcard>
+//     DelegateComponent<PathCons<Symbol!("test"), PathCons<ShowImplComponent, PathCons<T, Wildcard>>>>
+//     for App
+// where
+//     T: DefaultNamespace1<ShowImplComponent, App>,
+// {
+//     type Delegate = T::Provider;
+// }
 
 check_components! {
     App {

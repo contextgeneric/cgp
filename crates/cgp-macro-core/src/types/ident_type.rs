@@ -3,6 +3,7 @@ use syn::parse::{Parse, ParseStream};
 
 use crate::types::generics::TypeGenerics;
 
+#[derive(Debug, Clone)]
 pub struct IdentType {
     pub ident: Ident,
     pub generics: TypeGenerics,
