@@ -2,7 +2,7 @@ use proc_macro2::TokenStream;
 use quote::ToTokens;
 use syn::parse::{Parse, ParseStream};
 use syn::token::Colon;
-use syn::{Generics, Ident, ItemImpl, ItemStruct, ItemTrait, Type, braced, parse_quote};
+use syn::{Error, Generics, Ident, ItemImpl, ItemStruct, ItemTrait, Type, braced, parse_quote};
 
 use crate::traits::PeekKeyword;
 use crate::types::delegate_component::{
@@ -122,6 +122,13 @@ impl NamespaceTable {
 
     pub fn build_parent_namespace_impl(&self) -> syn::Result<Option<(ItemStruct, ItemImpl)>> {
         if let Some((_, parent_namespace)) = &self.parent_namespace {
+            if self.new.is_none() {
+                return Err(Error::new(
+                    parent_namespace.ident.span(),
+                    "parent namespace can only be specified with `new` namespaces",
+                ));
+            }
+
             let namespace_ident = self.namespace_type.ident.clone();
 
             let table_type: Type = parse_quote!(__Table__);
