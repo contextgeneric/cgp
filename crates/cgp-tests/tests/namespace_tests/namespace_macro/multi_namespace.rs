@@ -8,15 +8,15 @@ pub trait Foo {
 }
 
 cgp_namespace! {
-    MyNamespace {
-        FooProviderComponent:
+    new MyNamespace {
+        FooProviderComponent =>
             @MyApp.MyFooComponent,
     }
 }
 
 cgp_namespace! {
-    OtherNamespace {
-        FooProviderComponent:
+    new OtherNamespace {
+        FooProviderComponent =>
             @my_app.MyFooComponent,
     }
 }

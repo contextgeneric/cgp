@@ -1,20 +1,19 @@
 use cgp::core::component::RedirectLookup;
 use cgp::prelude::*;
 
-// cgp_namespace! {
-//     new ExtendedNamespace {
-//         namespace default;
-
-//         // @cgp.core.error >> @app,
-//         @cgp.core.error =>
-//             @app,
-//     }
-// }
-
 cgp_namespace! {
-    ExtendedNamespace: DefaultNamespace {
+    new ExtendedNamespace: DefaultNamespace {
+
         // @cgp.core.error >> @app,
-        @cgp.core.error:
+        @cgp.core.error =>
             @app,
     }
 }
+
+// cgp_namespace! {
+//     ExtendedNamespace: DefaultNamespace {
+//         // @cgp.core.error >> @app,
+//         @cgp.core.error:
+//             @app,
+//     }
+// }

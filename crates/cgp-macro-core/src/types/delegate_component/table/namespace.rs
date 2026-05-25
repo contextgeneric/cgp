@@ -2,7 +2,7 @@ use proc_macro2::TokenStream;
 use quote::ToTokens;
 use syn::parse::{Parse, ParseStream};
 use syn::token::Colon;
-use syn::{Ident, ItemImpl, ItemStruct, ItemTrait, Type, braced, parse_quote};
+use syn::{Generics, Ident, ItemImpl, ItemStruct, ItemTrait, Type, braced, parse_quote};
 
 use crate::traits::PeekKeyword;
 use crate::types::delegate_component::{
@@ -24,6 +24,7 @@ pub struct NamespaceTable {
 pub struct EvaluatedNamespaceTable {
     pub item_impls: Vec<ItemImpl>,
     pub item_trait: Option<ItemTrait>,
+    pub item_struct: Option<ItemStruct>,
 }
 
 impl Parse for NamespaceTable {
@@ -67,7 +68,7 @@ impl NamespaceTable {
         let namespace_ident = &self.namespace_type.ident;
 
         let mut namespace_generics = self.namespace_type.generics.clone();
-        namespace_generics.params.push(parse_quote!(__Components__));
+        namespace_generics.params.push(parse_quote!(__Table__));
 
         let item_trait: Option<ItemTrait> = if self.new.is_some() {
             let item_trait = parse_quote! {
@@ -86,7 +87,7 @@ impl NamespaceTable {
 
     pub fn build_namespace_generics(&self) -> syn::Result<TypeGenerics> {
         let mut namespace_generics = self.namespace_type.generics.clone();
-        namespace_generics.params.push(parse_quote!(__Components__));
+        namespace_generics.params.push(parse_quote!(__Table__));
 
         Ok(namespace_generics)
     }
@@ -101,10 +102,10 @@ impl NamespaceTable {
 
     pub fn build_item_impls(&self) -> syn::Result<Vec<ItemImpl>> {
         let mut impl_generics = self.impl_generics.clone();
-        impl_generics.params.push(parse_quote!(__Components__));
+        impl_generics.params.push(parse_quote!(__Table__));
 
         let namespace_trait = self.build_namespace_trait()?;
-        let table_type: Type = parse_quote!(__Components__);
+        let table_type: Type = parse_quote!(__Table__);
 
         let evaluated_entries = self.entries.eval_entries(&table_type)?;
 
@@ -122,7 +123,9 @@ impl NamespaceTable {
     pub fn build_parent_namespace_impl(&self) -> syn::Result<Option<(ItemStruct, ItemImpl)>> {
         if let Some((_, parent_namespace)) = &self.parent_namespace {
             let namespace_ident = self.namespace_type.ident.clone();
-            let namespace_generics = self.build_namespace_generics()?;
+            let namespace_generics = self.namespace_type.generics.clone();
+
+            let table_type: Type = parse_quote!(__Table__);
 
             let namespace_struct_ident = Ident::new(
                 &format!("__{}Components", namespace_ident),
@@ -133,8 +136,6 @@ impl NamespaceTable {
                 pub struct #namespace_struct_ident;
             };
 
-            let table_type: Type = parse_quote!(__Components__);
-
             let parent_namespace_ident = &parent_namespace.ident;
 
             let mut parent_namespace_generics = parent_namespace.generics.clone();
@@ -143,12 +144,15 @@ impl NamespaceTable {
                 .push(parse_quote!(#namespace_struct_ident));
 
             let mut generics = self.impl_generics.generics.clone();
+
+            generics.params.push(parse_quote!(__Table__));
+
             generics.make_where_clause().predicates.push(parse_quote! {
                 __Component__: #parent_namespace_ident #parent_namespace_generics
             });
 
             let for_entry = EvaluatedForEntry {
-                generics: generics.clone(),
+                generics: Generics::default(),
                 table_type: table_type.clone(),
                 for_key: parse_quote!(__Component__),
                 for_value: parse_quote!(__Provider__),
@@ -170,18 +174,29 @@ impl NamespaceTable {
     }
 
     pub fn eval(&self) -> syn::Result<EvaluatedNamespaceTable> {
+        let mut item_struct = None;
         let item_trait = self.build_item_trait()?;
-        let item_impls = self.build_item_impls()?;
+        let mut item_impls = self.build_item_impls()?;
+
+        if let Some((namespace_struct, item_impl)) = self.build_parent_namespace_impl()? {
+            item_impls.insert(0, item_impl);
+            item_struct = Some(namespace_struct);
+        }
 
         Ok(EvaluatedNamespaceTable {
             item_impls,
             item_trait,
+            item_struct,
         })
     }
 }
 
 impl ToTokens for EvaluatedNamespaceTable {
     fn to_tokens(&self, tokens: &mut TokenStream) {
+        if let Some(item_struct) = &self.item_struct {
+            item_struct.to_tokens(tokens);
+        }
+
         if let Some(item_trait) = &self.item_trait {
             item_trait.to_tokens(tokens);
         }

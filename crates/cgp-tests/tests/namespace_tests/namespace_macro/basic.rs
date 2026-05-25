@@ -6,8 +6,8 @@ pub trait Foo {
 }
 
 cgp_namespace! {
-    MyNamespace {
-        FooProviderComponent:
+    new MyNamespace {
+        FooProviderComponent =>
             @MyFooComponent,
     }
 }

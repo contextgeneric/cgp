@@ -1,8 +1,6 @@
 use syn::{Generics, Ident, Type, parse_quote};
 
-use crate::types::delegate_component::{
-    EvalDelegateEntry, EvaluatedDelegateEntry,
-};
+use crate::types::delegate_component::{EvalDelegateEntry, EvaluatedDelegateEntry};
 use crate::types::generics::TypeGenerics;
 
 pub trait EvalForEntry {
