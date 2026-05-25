@@ -1,4 +1,3 @@
-use syn::parse::discouraged::Speculative;
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
@@ -19,10 +18,8 @@ impl Parse for DelegateEntries {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let mut statements = Vec::new();
 
-        let fork = input.fork();
-
-        while let Ok(statement) = fork.parse() {
-            input.advance_to(&fork);
+        while DelegateStatement::peek_statement(input) {
+            let statement = input.parse()?;
             statements.push(statement);
         }
 

@@ -12,12 +12,13 @@ delegate_components! {
         // }
         namespace default;
 
+        for <T, Provider> in DefaultNamespace1<ShowImplComponent> {
+            @test.ShowImplComponent.T: Provider,
+        }
+
         @test.ShowImplComponent.u64:
             ShowWithDisplay,
 
-        // for <T, Provider> in DefaultNamespace1<ShowImplComponent> {
-        //     @test.ShowImplComponent.T: Provider,
-        // }
         // namespace DefaultNamespace1<ShowImplComponent> => @test.ShowImplComponent;
     }
 }
