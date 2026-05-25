@@ -1,11 +1,13 @@
 use syn::token::FatArrow;
 use syn::{Type, parse_quote};
 
+use crate::exports::RedirectLookup;
 use crate::types::delegate_component::{
     DelegateKey, EvalDelegateEntry, EvalDelegateKey, EvaluatedDelegateEntry,
 };
 use crate::types::path::UniPath;
 
+#[derive(Debug, Clone)]
 pub struct RedirectDelegateMapping {
     pub key: DelegateKey,
     pub arrow: FatArrow,
@@ -18,12 +20,12 @@ impl EvalDelegateEntry for RedirectDelegateMapping {
             DelegateKey::Path(_) => {
                 let prefix = self.value.clone().to_prefix(parse_quote!(__Wildcard__));
                 parse_quote! {
-                    RedirectLookup<#prefix>
+                    #RedirectLookup<#table_type, #prefix>
                 }
             }
             _ => {
                 let path = &self.value;
-                parse_quote!(RedirectLookup<#path>)
+                parse_quote!(#RedirectLookup<#table_type, #path>)
             }
         };
 
