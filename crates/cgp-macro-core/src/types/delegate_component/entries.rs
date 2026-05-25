@@ -32,6 +32,25 @@ impl Parse for DelegateEntries {
     }
 }
 
+impl EvalDelegateEntry for DelegateEntries {
+    fn eval(
+        &self,
+        table_type: &Type,
+    ) -> syn::Result<Vec<crate::types::delegate_component::EvaluatedDelegateEntry>> {
+        let mut evaluated_entries = Vec::new();
+
+        for statement in &self.statements {
+            evaluated_entries.extend(statement.eval(table_type)?);
+        }
+
+        for entry in &self.entries {
+            evaluated_entries.extend(entry.eval(table_type)?);
+        }
+
+        Ok(evaluated_entries)
+    }
+}
+
 impl DelegateEntries {
     pub fn build_impls(
         &self,
@@ -40,15 +59,7 @@ impl DelegateEntries {
     ) -> syn::Result<Vec<ItemImpl>> {
         let mut item_impls = Vec::new();
 
-        let mut evaluated_entries = Vec::new();
-
-        for statement in &self.statements {
-            evaluated_entries.extend(statement.eval(&table_type)?);
-        }
-
-        for entry in &self.entries {
-            evaluated_entries.extend(entry.eval(&table_type)?);
-        }
+        let evaluated_entries = self.eval(table_type)?;
 
         for evaluated_entry in evaluated_entries {
             let delegate_component_impl =

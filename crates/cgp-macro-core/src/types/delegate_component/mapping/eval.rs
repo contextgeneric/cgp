@@ -65,4 +65,27 @@ impl EvaluatedDelegateEntry {
             {}
         })
     }
+
+    pub fn build_namespace_impl(
+        &self,
+        namespace_trait: &Type,
+        outer_generics: &Generics,
+    ) -> syn::Result<ItemImpl> {
+        let generics = merge_generics(outer_generics, &self.generics);
+
+        let key = &self.key;
+        let value = &self.value;
+
+        let (impl_generics, _, where_clause) = generics.split_for_impl();
+
+        parse2(quote! {
+            impl #impl_generics
+                #namespace_trait
+                for #key
+            #where_clause
+            {
+                type Delegate = #value;
+            }
+        })
+    }
 }

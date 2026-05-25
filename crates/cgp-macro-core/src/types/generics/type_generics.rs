@@ -1,4 +1,4 @@
-use core::ops::Deref;
+use core::ops::{Deref, DerefMut};
 
 use proc_macro2::TokenStream;
 use quote::ToTokens;
@@ -15,6 +15,12 @@ impl Deref for TypeGenerics {
 
     fn deref(&self) -> &Generics {
         &self.generics
+    }
+}
+
+impl DerefMut for TypeGenerics {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.generics
     }
 }
 
