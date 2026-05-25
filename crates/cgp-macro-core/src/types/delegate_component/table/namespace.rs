@@ -123,7 +123,6 @@ impl NamespaceTable {
     pub fn build_parent_namespace_impl(&self) -> syn::Result<Option<(ItemStruct, ItemImpl)>> {
         if let Some((_, parent_namespace)) = &self.parent_namespace {
             let namespace_ident = self.namespace_type.ident.clone();
-            let namespace_generics = self.namespace_type.generics.clone();
 
             let table_type: Type = parse_quote!(__Table__);
 
@@ -158,8 +157,8 @@ impl NamespaceTable {
                 for_value: parse_quote!(__Provider__),
                 mapping_key: parse_quote!(__Component__),
                 mapping_value: parse_quote!(__Provider__),
-                namespace_ident,
-                namespace_generics,
+                namespace_ident: parent_namespace.ident.clone(),
+                namespace_generics: parent_namespace.generics.clone(),
             };
 
             let evaluated_entry = for_entry.eval_entry(&table_type)?;
