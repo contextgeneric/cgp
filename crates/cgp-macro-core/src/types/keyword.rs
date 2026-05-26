@@ -30,7 +30,7 @@ impl<K: IsKeyword> Debug for Keyword<K> {
 impl<K: IsKeyword> Clone for Keyword<K> {
     fn clone(&self) -> Self {
         Self {
-            span: self.span.clone(),
+            span: self.span,
             phantom: PhantomData,
         }
     }
