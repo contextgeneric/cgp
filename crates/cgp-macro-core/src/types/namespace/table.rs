@@ -2,16 +2,17 @@ use proc_macro2::TokenStream;
 use quote::ToTokens;
 use syn::parse::{Parse, ParseStream};
 use syn::token::Colon;
-use syn::{Error, Generics, Ident, ItemImpl, ItemStruct, ItemTrait, Type, braced, parse_quote};
+use syn::{Error, Ident, ItemImpl, ItemStruct, ItemTrait, Type, braced, parse_quote};
 
 use crate::traits::PeekKeyword;
 use crate::types::delegate_component::{
-    DelegateEntries, EvalDelegateEntries, EvalDelegateEntry, EvaluatedForEntry,
+    DelegateEntries, EvalDelegateEntries, EvalDelegateEntry, EvalForEntry,
 };
 use crate::types::generics::{ImplGenerics, TypeGenerics};
 use crate::types::ident_type::IdentType;
 use crate::types::keyword::Keyword;
 use crate::types::keywords::New;
+use crate::types::namespace::InheritNamespaceStatement;
 
 pub struct NamespaceTable {
     pub impl_generics: ImplGenerics,
@@ -143,35 +144,20 @@ impl NamespaceTable {
                 pub struct #namespace_struct_ident;
             };
 
-            let parent_namespace_ident = &parent_namespace.ident;
-
-            let mut parent_namespace_generics = parent_namespace.generics.clone();
-            parent_namespace_generics
-                .params
-                .push(parse_quote!(#namespace_struct_ident));
-
-            let mut generics = self.impl_generics.generics.clone();
-
-            generics.params.push(parse_quote!(__Table__));
-
-            generics.make_where_clause().predicates.push(parse_quote! {
-                __Key__: #parent_namespace_ident #parent_namespace_generics
-            });
-
-            let for_entry = EvaluatedForEntry {
-                generics: Generics::default(),
-                table_type: table_type.clone(),
-                for_key: parse_quote!(__Key__),
-                for_value: parse_quote!(__Value__),
-                mapping_key: parse_quote!(__Key__),
-                mapping_value: parse_quote!(__Value__),
-                namespace_ident: parent_namespace.ident.clone(),
-                namespace_generics: parent_namespace.generics.clone(),
-            };
+            let for_entry = InheritNamespaceStatement {
+                ident: parent_namespace.ident.clone(),
+                type_generics: parent_namespace.generics.clone(),
+                local_table_ident: namespace_struct_ident,
+            }
+            .eval_for_entry(&table_type)?;
 
             let evaluated_entry = for_entry.eval_entry(&table_type)?;
 
             let namespace_trait = self.build_namespace_trait()?;
+
+            let mut generics = self.impl_generics.generics.clone();
+            generics.params.push(parse_quote!(__Table__));
+
             let item_impl = evaluated_entry.build_namespace_impl(&namespace_trait, &generics)?;
 
             Ok(Some((namespace_struct, item_impl)))
