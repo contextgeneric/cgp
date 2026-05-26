@@ -13,7 +13,7 @@ use crate::types::keywords::{Namespace, Open};
 pub enum DelegateStatement {
     Namespace(NamespaceDelegateStatement),
     Open(OpenDelegateStatement),
-    For(ForDelegateStatement),
+    For(Box<ForDelegateStatement>),
 }
 
 impl DelegateStatement {
