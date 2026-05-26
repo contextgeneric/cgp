@@ -2,35 +2,32 @@ use std::collections::BTreeMap;
 
 use syn::punctuated::Punctuated;
 use syn::token::{Comma, Plus};
+use syn::visit_mut::{VisitMut, visit_generics_mut};
 use syn::{
-    GenericArgument, GenericParam, Generics, Ident, PathArguments, Type, TypeParamBound,
-    WherePredicate, parse_quote,
+    GenericArgument, Generics, Ident, PathArguments, PredicateType, Type, TypeParam,
+    TypeParamBound, parse_quote,
 };
 
 pub fn replace_provider_in_generics(provider_map: &BTreeMap<Ident, Type>, generics: &mut Generics) {
-    for param in &mut generics.params {
-        if let GenericParam::Type(type_param) = param {
-            replace_provider_in_type_params(provider_map, &mut type_param.bounds);
-        }
+    let mut visitor = ReplaceProviderVisitor { provider_map };
+    visit_generics_mut(&mut visitor, generics);
+}
+
+struct ReplaceProviderVisitor<'a> {
+    provider_map: &'a BTreeMap<Ident, Type>,
+}
+
+impl<'a> VisitMut for ReplaceProviderVisitor<'a> {
+    fn visit_type_param_mut(&mut self, type_param: &mut TypeParam) {
+        replace_provider_in_type_params(self.provider_map, &mut type_param.bounds);
     }
 
-    if let Some(where_clause) = &mut generics.where_clause {
-        replace_provider_in_where_predicate(provider_map, &mut where_clause.predicates);
+    fn visit_predicate_type_mut(&mut self, type_predicate: &mut PredicateType) {
+        replace_provider_in_type_params(self.provider_map, &mut type_predicate.bounds);
     }
 }
 
-pub fn replace_provider_in_where_predicate(
-    provider_map: &BTreeMap<Ident, Type>,
-    predicates: &mut Punctuated<WherePredicate, Comma>,
-) {
-    for predicate in predicates.iter_mut() {
-        if let WherePredicate::Type(type_predicate) = predicate {
-            replace_provider_in_type_params(provider_map, &mut type_predicate.bounds);
-        }
-    }
-}
-
-pub fn replace_provider_in_type_params(
+fn replace_provider_in_type_params(
     provider_map: &BTreeMap<Ident, Type>,
     type_params: &mut Punctuated<TypeParamBound, Plus>,
 ) {

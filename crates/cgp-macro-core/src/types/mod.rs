@@ -1,4 +1,5 @@
 pub mod cgp_impl;
+pub mod cgp_provider;
 pub mod delegate_component;
 pub mod generics;
 pub mod ident_type;
