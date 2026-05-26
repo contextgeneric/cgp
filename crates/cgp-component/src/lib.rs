@@ -11,7 +11,7 @@ mod namespaces;
 mod providers;
 mod traits;
 
-pub use namespaces::{DefaultNamespace, DefaultNamespace1};
+pub use namespaces::{DefaultImpls1, DefaultImpls2, DefaultNamespace};
 pub use providers::{
     RedirectLookup, UseContext, UseDefault, UseDelegate, UseFields, WithContext, WithProvider,
 };

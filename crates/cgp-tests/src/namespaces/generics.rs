@@ -1,6 +1,6 @@
 use core::fmt::Display;
 
-use cgp::core::component::DefaultNamespace1;
+use cgp::core::component::DefaultImpls1;
 use cgp::prelude::*;
 
 #[cgp_component(ShowImpl)]
@@ -33,6 +33,6 @@ impl<T: Display> ShowImpl<T> {
     }
 */
 
-impl<Components> DefaultNamespace1<ShowImplComponent, Components> for String {
+impl<Components> DefaultImpls1<ShowImplComponent, Components> for String {
     type Delegate = ShowWithDisplay;
 }

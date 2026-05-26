@@ -1,4 +1,4 @@
-use cgp::core::component::DefaultNamespace1;
+use cgp::core::component::DefaultImpls1;
 use cgp::prelude::*;
 use cgp_tests::namespaces::generics::{ShowImplComponent, ShowWithDisplay};
 
@@ -10,9 +10,9 @@ delegate_components! {
         // for <Component, Provider> in DefaultNamespace {
         //      Component: Provider,
         // }
-        namespace default;
+        namespace DefaultNamespace;
 
-        for <T, Provider> in DefaultNamespace1<ShowImplComponent> {
+        for <T, Provider> in DefaultImpls1<ShowImplComponent> {
             @test.ShowImplComponent.T: Provider,
         }
 

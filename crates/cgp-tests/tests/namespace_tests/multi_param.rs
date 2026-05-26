@@ -39,7 +39,7 @@ pub struct AppB;
 
 delegate_components! {
     AppB {
-        namespace default;
+        namespace DefaultNamespace;
 
         @app.FooProviderComponent.String.u64:
             DummyFoo,

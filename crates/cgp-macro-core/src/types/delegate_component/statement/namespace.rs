@@ -33,12 +33,6 @@ impl Parse for NamespaceDelegateStatement {
 
 impl EvalForEntry for NamespaceDelegateStatement {
     fn eval_for(&self, table_type: &Type) -> syn::Result<Vec<EvaluatedForEntry>> {
-        let namespace_ident = if &self.ident == "default" {
-            Ident::new("DefaultNamespace", self.ident.span())
-        } else {
-            self.ident.clone()
-        };
-
         let entry = EvaluatedForEntry {
             generics: Generics::default(),
             table_type: table_type.clone(),
@@ -46,7 +40,7 @@ impl EvalForEntry for NamespaceDelegateStatement {
             for_value: parse_quote!(__Value__),
             mapping_key: parse_quote!(__Key__),
             mapping_value: parse_quote!(__Value__),
-            namespace_ident,
+            namespace_ident: self.ident.clone(),
             namespace_generics: TypeGenerics::default(),
         };
 

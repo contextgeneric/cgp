@@ -14,7 +14,7 @@ pub struct App;
 
 delegate_components! {
     App {
-        namespace default;
+        namespace DefaultNamespace;
 
         @cgp.core.error.ErrorTypeProviderComponent:
             UseType<String>,
