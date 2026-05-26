@@ -34,5 +34,5 @@ impl<T: Display> ShowImpl<T> {
 */
 
 impl<Components> DefaultNamespace1<ShowImplComponent, Components> for String {
-    type Provider = ShowWithDisplay;
+    type Delegate = ShowWithDisplay;
 }

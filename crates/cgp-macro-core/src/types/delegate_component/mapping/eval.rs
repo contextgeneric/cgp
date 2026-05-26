@@ -88,7 +88,7 @@ impl EvaluatedDelegateEntry {
                 for #key
             #where_clause
             {
-                type Provider = #value;
+                type Delegate = #value;
             }
         })
     }

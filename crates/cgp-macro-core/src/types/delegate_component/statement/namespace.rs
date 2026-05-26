@@ -14,7 +14,6 @@ use crate::types::keywords::Namespace;
 pub struct NamespaceDelegateStatement {
     pub namespace: Keyword<Namespace>,
     pub ident: Ident,
-
     pub semi: Semi,
 }
 
@@ -43,10 +42,10 @@ impl EvalForEntry for NamespaceDelegateStatement {
         let entry = EvaluatedForEntry {
             generics: Generics::default(),
             table_type: table_type.clone(),
-            for_key: parse_quote!(__Component__),
-            for_value: parse_quote!(__Provider__),
-            mapping_key: parse_quote!(__Component__),
-            mapping_value: parse_quote!(__Provider__),
+            for_key: parse_quote!(__Key__),
+            for_value: parse_quote!(__Value__),
+            mapping_key: parse_quote!(__Key__),
+            mapping_value: parse_quote!(__Value__),
             namespace_ident,
             namespace_generics: TypeGenerics::default(),
         };

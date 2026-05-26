@@ -73,7 +73,7 @@ impl NamespaceTable {
         let item_trait: Option<ItemTrait> = if self.new.is_some() {
             let item_trait = parse_quote! {
                 pub trait #namespace_ident #namespace_generics {
-                    type Provider;
+                    type Delegate;
                 }
             };
 
@@ -114,6 +114,7 @@ impl NamespaceTable {
         for evaluated_entry in evaluated_entries {
             let item_impl =
                 evaluated_entry.build_namespace_impl(&namespace_trait, &impl_generics)?;
+
             item_impls.push(item_impl);
         }
 
@@ -154,16 +155,16 @@ impl NamespaceTable {
             generics.params.push(parse_quote!(__Table__));
 
             generics.make_where_clause().predicates.push(parse_quote! {
-                __Component__: #parent_namespace_ident #parent_namespace_generics
+                __Key__: #parent_namespace_ident #parent_namespace_generics
             });
 
             let for_entry = EvaluatedForEntry {
                 generics: Generics::default(),
                 table_type: table_type.clone(),
-                for_key: parse_quote!(__Component__),
-                for_value: parse_quote!(__Provider__),
-                mapping_key: parse_quote!(__Component__),
-                mapping_value: parse_quote!(__Provider__),
+                for_key: parse_quote!(__Key__),
+                for_value: parse_quote!(__Value__),
+                mapping_key: parse_quote!(__Key__),
+                mapping_value: parse_quote!(__Value__),
                 namespace_ident: parent_namespace.ident.clone(),
                 namespace_generics: parent_namespace.generics.clone(),
             };

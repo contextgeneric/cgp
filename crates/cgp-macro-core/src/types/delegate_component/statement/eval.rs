@@ -52,7 +52,7 @@ impl EvalDelegateEntry for EvaluatedForEntry {
                 .push(parse_quote!(#table_type));
 
             namespace_generics.generics.params.push(parse_quote! {
-                Provider = #mapping_value
+                Delegate = #mapping_value
             });
 
             parse_quote!( #namespace_ident #namespace_generics )

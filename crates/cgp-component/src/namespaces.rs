@@ -1,7 +1,7 @@
 pub trait DefaultNamespace<Components> {
-    type Provider;
+    type Delegate;
 }
 
 pub trait DefaultNamespace1<T, Components> {
-    type Provider;
+    type Delegate;
 }
