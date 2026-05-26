@@ -3,7 +3,7 @@ use quote::ToTokens;
 use syn::parse::{Parse, ParseStream};
 use syn::{ItemImpl, ItemStruct, Type, braced, parse2};
 
-use crate::traits::PeekKeyword;
+use crate::traits::ParseOptionalKeyword;
 use crate::types::delegate_component::{DelegateEntries, ExtractInnerDelegateTables};
 use crate::types::generics::ImplGenerics;
 use crate::types::ident_type::IdentType;
@@ -27,11 +27,7 @@ impl Parse for DelegateTable {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let impl_generics = input.parse()?;
 
-        let new = if input.peek_keyword::<New>() {
-            Some(input.parse()?)
-        } else {
-            None
-        };
+        let new = input.parse_optional_keyword()?;
 
         let table_type = input.parse()?;
 

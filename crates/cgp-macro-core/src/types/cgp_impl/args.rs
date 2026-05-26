@@ -1,27 +1,20 @@
-use syn::parse::discouraged::Speculative;
+use syn::Type;
 use syn::parse::{Parse, ParseStream};
 use syn::token::Colon;
-use syn::{Ident, Type};
+
+use crate::traits::ParseOptionalKeyword;
+use crate::types::keyword::Keyword;
+use crate::types::keywords::New;
 
 pub struct ImplArgs {
-    pub new_struct: bool,
+    pub new: Option<Keyword<New>>,
     pub provider_type: Type,
     pub component_type: Option<Type>,
 }
 
 impl Parse for ImplArgs {
     fn parse(input: ParseStream) -> syn::Result<Self> {
-        let new_struct = {
-            let fork = input.fork();
-            let new_ident: Option<Ident> = fork.parse().ok();
-            match new_ident {
-                Some(new_ident) if new_ident == "new" => {
-                    input.advance_to(&fork);
-                    true
-                }
-                _ => false,
-            }
-        };
+        let new = input.parse_optional_keyword()?;
 
         let provider_type = input.parse()?;
 
@@ -33,7 +26,7 @@ impl Parse for ImplArgs {
         };
 
         Ok(ImplArgs {
-            new_struct,
+            new,
             provider_type,
             component_type,
         })

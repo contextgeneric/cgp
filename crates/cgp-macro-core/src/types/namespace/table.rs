@@ -2,7 +2,7 @@ use syn::parse::{Parse, ParseStream};
 use syn::token::Colon;
 use syn::{Error, Ident, ItemImpl, ItemStruct, ItemTrait, Type, braced, parse_quote};
 
-use crate::traits::PeekKeyword;
+use crate::traits::ParseOptionalKeyword;
 use crate::types::delegate_component::{
     DelegateEntries, EvalDelegateEntries, EvalDelegateEntry, EvalForEntry,
 };
@@ -24,11 +24,7 @@ impl Parse for NamespaceTable {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let impl_generics = input.parse()?;
 
-        let new = if input.peek_keyword::<New>() {
-            Some(input.parse()?)
-        } else {
-            None
-        };
+        let new = input.parse_optional_keyword()?;
 
         let namespace_type = input.parse()?;
         let parent_namespace = if input.peek(Colon) {

@@ -79,7 +79,7 @@ pub fn derive_cgp_impl(spec: ImplArgs, mut item_impl: ItemImpl) -> syn::Result<T
         let is_provider_for_impl: ItemImpl =
             derive_is_provider_for(&component_type, &provider_impl)?;
 
-        let provider_struct = if spec.new_struct {
+        let provider_struct = if spec.new.is_some() {
             Some(derive_provider_struct(&provider_impl)?)
         } else {
             None
