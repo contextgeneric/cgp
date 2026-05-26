@@ -3,13 +3,13 @@ use syn::parse::{Parse, ParseStream};
 use syn::token::Colon;
 use syn::{Ident, Type};
 
-pub struct ImplProviderSpec {
+pub struct ImplArgs {
     pub new_struct: bool,
     pub provider_type: Type,
     pub component_type: Option<Type>,
 }
 
-impl Parse for ImplProviderSpec {
+impl Parse for ImplArgs {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let new_struct = {
             let fork = input.fork();
@@ -32,7 +32,7 @@ impl Parse for ImplProviderSpec {
             None
         };
 
-        Ok(ImplProviderSpec {
+        Ok(ImplArgs {
             new_struct,
             provider_type,
             component_type,

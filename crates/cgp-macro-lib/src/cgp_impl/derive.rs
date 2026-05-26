@@ -1,3 +1,4 @@
+use cgp_macro_core::types::cgp_impl::ImplArgs;
 use proc_macro2::TokenStream;
 use quote::quote;
 use syn::punctuated::Punctuated;
@@ -8,15 +9,12 @@ use syn::{Error, ItemImpl, TypeParamBound, parse_quote, parse2};
 use crate::cgp_fn::{apply_use_type_attributes_to_item_impl, build_implicit_args_bounds};
 use crate::cgp_impl::attributes::parse_impl_attributes;
 use crate::cgp_impl::provider_bounds::derive_provider_bounds;
-use crate::cgp_impl::{ImplProviderSpec, derive_provider_impl, implicit_args};
+use crate::cgp_impl::{derive_provider_impl, implicit_args};
 use crate::derive_provider::{
     derive_component_name_from_provider_impl, derive_is_provider_for, derive_provider_struct,
 };
 
-pub fn derive_cgp_impl(
-    spec: ImplProviderSpec,
-    mut item_impl: ItemImpl,
-) -> syn::Result<TokenStream> {
+pub fn derive_cgp_impl(spec: ImplArgs, mut item_impl: ItemImpl) -> syn::Result<TokenStream> {
     let attributes = parse_impl_attributes(&mut item_impl.attrs)?;
 
     let implicit_args = implicit_args::extract_implicit_args_from_impl_items(&mut item_impl.items)?;
