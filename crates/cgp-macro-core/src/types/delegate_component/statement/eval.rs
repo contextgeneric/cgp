@@ -3,8 +3,12 @@ use syn::{Generics, Ident, Type, parse_quote};
 use crate::types::delegate_component::{EvalDelegateEntry, EvaluatedDelegateEntry};
 use crate::types::generics::TypeGenerics;
 
+pub trait EvalForEntries {
+    fn eval_for_entries(&self, table_type: &Type) -> syn::Result<Vec<EvaluatedForEntry>>;
+}
+
 pub trait EvalForEntry {
-    fn eval_for(&self, table_type: &Type) -> syn::Result<Vec<EvaluatedForEntry>>;
+    fn eval_for_entry(&self, table_type: &Type) -> syn::Result<EvaluatedForEntry>;
 }
 
 pub struct EvaluatedForEntry {
@@ -23,11 +27,11 @@ pub fn eval_delegate_entries_via_for<Entry>(
     table_type: &Type,
 ) -> syn::Result<Vec<EvaluatedDelegateEntry>>
 where
-    Entry: EvalForEntry,
+    Entry: EvalForEntries,
 {
     let mut entries = Vec::new();
 
-    let for_entries = entry.eval_for(table_type)?;
+    let for_entries = entry.eval_for_entries(table_type)?;
     for for_entry in for_entries {
         entries.push(for_entry.eval_entry(table_type)?);
     }

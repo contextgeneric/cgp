@@ -4,8 +4,9 @@ use syn::token::{Comma, For, Gt, In, Lt};
 use syn::{Ident, Type, WhereClause, braced};
 
 use crate::types::delegate_component::{
-    EvalDelegateEntries, EvalDelegateKey, EvalDelegateValue, EvalForEntry, EvaluatedDelegateEntry,
-    EvaluatedForEntry, NormalDelegateMapping, eval_delegate_entries_via_for,
+    EvalDelegateEntries, EvalDelegateKey, EvalDelegateValue, EvalForEntries,
+    EvaluatedDelegateEntry, EvaluatedForEntry, NormalDelegateMapping,
+    eval_delegate_entries_via_for,
 };
 use crate::types::ident_type::IdentType;
 
@@ -56,8 +57,8 @@ impl Parse for ForDelegateStatement {
     }
 }
 
-impl EvalForEntry for ForDelegateStatement {
-    fn eval_for(&self, table_type: &Type) -> syn::Result<Vec<EvaluatedForEntry>> {
+impl EvalForEntries for ForDelegateStatement {
+    fn eval_for_entries(&self, table_type: &Type) -> syn::Result<Vec<EvaluatedForEntry>> {
         let mut entries = Vec::new();
 
         for mapping in &self.mappings {

@@ -3,7 +3,7 @@ use syn::token::Semi;
 use syn::{Generics, Ident, Type, parse_quote};
 
 use crate::types::delegate_component::{
-    EvalDelegateEntries, EvalForEntry, EvaluatedDelegateEntry, EvaluatedForEntry,
+    EvalDelegateEntries, EvalForEntries, EvalForEntry, EvaluatedDelegateEntry, EvaluatedForEntry,
     eval_delegate_entries_via_for,
 };
 use crate::types::generics::TypeGenerics;
@@ -32,7 +32,7 @@ impl Parse for NamespaceDelegateStatement {
 }
 
 impl EvalForEntry for NamespaceDelegateStatement {
-    fn eval_for(&self, table_type: &Type) -> syn::Result<Vec<EvaluatedForEntry>> {
+    fn eval_for_entry(&self, table_type: &Type) -> syn::Result<EvaluatedForEntry> {
         let entry = EvaluatedForEntry {
             generics: Generics::default(),
             table_type: table_type.clone(),
@@ -44,6 +44,13 @@ impl EvalForEntry for NamespaceDelegateStatement {
             namespace_generics: TypeGenerics::default(),
         };
 
+        Ok(entry)
+    }
+}
+
+impl EvalForEntries for NamespaceDelegateStatement {
+    fn eval_for_entries(&self, table_type: &Type) -> syn::Result<Vec<EvaluatedForEntry>> {
+        let entry = self.eval_for_entry(table_type)?;
         Ok(vec![entry])
     }
 }
