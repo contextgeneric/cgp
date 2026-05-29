@@ -1,5 +1,6 @@
 use std::collections::HashSet;
 
+use cgp_macro_core::functions::to_snake_case_str;
 use cgp_macro_core::types::generics::ImplGenerics;
 use cgp_macro_core::types::provider_struct::ProviderStruct;
 use proc_macro2::{Span, TokenStream};
@@ -11,7 +12,6 @@ use syn::{GenericParam, Ident, ItemTrait, TypeParamBound, parse_quote, parse2};
 use crate::delegate_components::impl_delegate_components;
 use crate::parse::{DefinePreset, DelegateEntry, SimpleType};
 use crate::preset::{define_substitution_macro, impl_components_is_preset};
-use crate::replace_self::to_snake_case_str;
 
 pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
     let ast: DefinePreset = syn::parse2(body)?;

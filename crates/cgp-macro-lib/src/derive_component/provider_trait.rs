@@ -1,5 +1,9 @@
 use alloc::vec::Vec;
 
+use cgp_macro_core::functions::to_snake_case_ident;
+use cgp_macro_core::visitors::{
+    ReplaceSelfReceiverVisitor, ReplaceSelfTypeVisitor, ReplaceSelfValueVisitor,
+};
 use quote::quote;
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
@@ -7,10 +11,6 @@ use syn::visit_mut::VisitMut;
 use syn::{Ident, ItemTrait, TraitItem, Type, TypeParamBound, parse_quote, parse2};
 
 use crate::parse::parse_is_provider_params;
-use crate::replace_self::{
-    ReplaceSelfReceiverVisitor, ReplaceSelfTypeVisitor, ReplaceSelfValueVisitor,
-    to_snake_case_ident,
-};
 
 pub fn derive_provider_trait(
     component_name: &Ident,

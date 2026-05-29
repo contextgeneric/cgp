@@ -1,3 +1,7 @@
+use cgp_macro_core::functions::to_snake_case_ident;
+use cgp_macro_core::visitors::{
+    ReplaceSelfReceiverVisitor, ReplaceSelfTypeVisitor, ReplaceSelfValueVisitor,
+};
 use proc_macro2::Span;
 use quote::{ToTokens, quote};
 use syn::token::For;
@@ -5,10 +9,6 @@ use syn::visit_mut::VisitMut;
 use syn::{Ident, ImplItem, ItemImpl, Type, parse2};
 
 use crate::parse::SimpleType;
-use crate::replace_self::{
-    ReplaceSelfReceiverVisitor, ReplaceSelfTypeVisitor, ReplaceSelfValueVisitor,
-    to_snake_case_ident,
-};
 
 pub fn transform_impl_trait(
     item_impl: &ItemImpl,

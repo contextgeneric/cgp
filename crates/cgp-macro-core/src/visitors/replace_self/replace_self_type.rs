@@ -1,5 +1,3 @@
-use alloc::vec::Vec;
-
 use itertools::Itertools;
 use proc_macro2::{Group, Ident, TokenStream, TokenTree};
 use quote::{ToTokens, format_ident};
