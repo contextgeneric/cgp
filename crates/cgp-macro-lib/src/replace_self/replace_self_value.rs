@@ -1,17 +1,13 @@
 use proc_macro2::{Group, TokenStream, TokenTree};
 use quote::format_ident;
 use syn::visit_mut::{self, VisitMut};
-use syn::{Block, Expr, Ident, ItemFn, Macro, Path};
+use syn::{Expr, Ident, ItemFn, Macro, Path};
 
-pub fn replace_self_value_in_block(block: &mut Block, replaced_ident: &Ident) {
-    ReplaceSelfVisitor { replaced_ident }.visit_block_mut(block);
+pub struct ReplaceSelfValueVisitor<'a> {
+    pub replaced_ident: &'a Ident,
 }
 
-struct ReplaceSelfVisitor<'a> {
-    replaced_ident: &'a Ident,
-}
-
-impl VisitMut for ReplaceSelfVisitor<'_> {
+impl VisitMut for ReplaceSelfValueVisitor<'_> {
     fn visit_expr_mut(&mut self, expr: &mut Expr) {
         match expr {
             Expr::Path(expr_path)

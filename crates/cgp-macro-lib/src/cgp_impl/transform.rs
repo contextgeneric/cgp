@@ -2,11 +2,12 @@ use proc_macro2::Span;
 use quote::{ToTokens, quote};
 use syn::token::For;
 use syn::visit_mut::VisitMut;
-use syn::{FnArg, Ident, ImplItem, ItemImpl, Type, parse2};
+use syn::{Ident, ImplItem, ItemImpl, Type, parse2};
 
 use crate::parse::SimpleType;
 use crate::replace_self::{
-    ReplaceSelfTypeVisitor, replace_self_receiver, replace_self_value_in_block, to_snake_case_ident,
+    ReplaceSelfReceiverVisitor, ReplaceSelfTypeVisitor, ReplaceSelfValueVisitor,
+    to_snake_case_ident,
 };
 
 pub fn transform_impl_trait(
@@ -42,6 +43,17 @@ pub fn transform_impl_trait(
 
     replace_self_type_visitor.visit_item_impl_mut(&mut out_impl);
 
+    ReplaceSelfReceiverVisitor {
+        replaced_ident: &context_ident,
+        replaced_type: &context_type,
+    }
+    .visit_item_impl_mut(&mut out_impl);
+
+    ReplaceSelfValueVisitor {
+        replaced_ident: &context_ident,
+    }
+    .visit_item_impl_mut(&mut out_impl);
+
     out_impl.self_ty = Box::new(provider_type.clone());
 
     let mut provider_trait_path = consumer_trait_path.clone();
@@ -65,17 +77,6 @@ pub fn transform_impl_trait(
         parse2(provider_trait_path.to_token_stream())?,
         For(Span::call_site()),
     ));
-
-    for item in out_impl.items.iter_mut() {
-        if let ImplItem::Fn(item_fn) = item
-            && let Some(arg) = item_fn.sig.inputs.first_mut()
-            && let FnArg::Receiver(receiver) = arg
-        {
-            *arg = replace_self_receiver(receiver, &context_ident, context_type.to_token_stream());
-
-            replace_self_value_in_block(&mut item_fn.block, &context_ident);
-        }
-    }
 
     Ok(out_impl)
 }
