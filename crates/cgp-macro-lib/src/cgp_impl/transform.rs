@@ -1,12 +1,12 @@
 use proc_macro2::Span;
 use quote::{ToTokens, quote};
 use syn::token::For;
+use syn::visit_mut::VisitMut;
 use syn::{FnArg, Ident, ImplItem, ItemImpl, Type, parse2};
 
 use crate::parse::SimpleType;
 use crate::replace_self::{
-    replace_self_receiver, replace_self_type_in_generic_args, replace_self_type_in_item_impl,
-    replace_self_value_in_block, to_snake_case_ident,
+    ReplaceSelfTypeVisitor, replace_self_receiver, replace_self_value_in_block, to_snake_case_ident,
 };
 
 pub fn transform_impl_trait(
@@ -33,15 +33,20 @@ pub fn transform_impl_trait(
         })
         .collect();
 
+    let mut replace_self_type_visitor = ReplaceSelfTypeVisitor {
+        replaced_type: &context_type,
+        skip_assoc_types: &local_assoc_types,
+    };
+
     let mut out_impl = item_impl.clone();
 
-    replace_self_type_in_item_impl(&mut out_impl, context_type, &local_assoc_types);
+    replace_self_type_visitor.visit_item_impl_mut(&mut out_impl);
 
     out_impl.self_ty = Box::new(provider_type.clone());
 
     let mut provider_trait_path = consumer_trait_path.clone();
     if let Some(generics) = &mut provider_trait_path.generics {
-        replace_self_type_in_generic_args(generics, &context_type, &local_assoc_types);
+        replace_self_type_visitor.visit_angle_bracketed_generic_arguments_mut(generics);
     }
 
     match &mut provider_trait_path.generics {

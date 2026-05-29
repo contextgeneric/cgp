@@ -3,12 +3,13 @@ use alloc::vec::Vec;
 use quote::{ToTokens, quote};
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
-use syn::{Ident, ItemTrait, TraitItem, TypeParamBound, parse2};
+use syn::visit_mut::VisitMut;
+use syn::{Ident, ItemTrait, TraitItem, TypeParamBound, parse_quote, parse2};
 
 use crate::parse::parse_is_provider_params;
 use crate::replace_self::{
-    iter_parse_and_replace_self_type, parse_and_replace_self_type,
-    replace_self_receiver_in_signature, replace_self_value_in_block, to_snake_case_ident,
+    ReplaceSelfTypeVisitor, replace_self_receiver_in_signature, replace_self_value_in_block,
+    to_snake_case_ident,
 };
 
 pub fn derive_provider_trait(
@@ -42,13 +43,18 @@ pub fn derive_provider_trait(
         })
         .collect();
 
+    let mut replace_self_type_visitor = ReplaceSelfTypeVisitor {
+        replaced_type: &parse_quote!(#context_type),
+        skip_assoc_types: &local_assoc_types,
+    };
+
     // Turn the supertrait constraints into `Context` constraints in the `where` clause
     {
-        let context_constraints = iter_parse_and_replace_self_type(
-            provider_trait.supertraits.clone(),
-            context_type,
-            &local_assoc_types,
-        )?;
+        let mut context_constraints = provider_trait.supertraits.clone();
+
+        for constraint in &mut context_constraints {
+            replace_self_type_visitor.visit_type_param_bound_mut(constraint);
+        }
 
         let is_provider_params = parse_is_provider_params(&consumer_trait.generics)?;
 
@@ -61,17 +67,7 @@ pub fn derive_provider_trait(
         if !context_constraints.is_empty() {
             match &mut provider_trait.generics.where_clause {
                 Some(where_clause) => {
-                    let mut predicates = iter_parse_and_replace_self_type(
-                        where_clause.predicates.clone(),
-                        context_type,
-                        &local_assoc_types,
-                    )?;
-
-                    predicates.push(parse2(quote! {
-                        #context_type : #context_constraints
-                    })?);
-
-                    where_clause.predicates = predicates;
+                    replace_self_type_visitor.visit_where_clause_mut(where_clause);
                 }
                 _ => {
                     provider_trait.generics.where_clause = Some(parse2(quote! {
@@ -86,11 +82,10 @@ pub fn derive_provider_trait(
     {
         let context_ident = to_snake_case_ident(context_type);
 
-        for item in provider_trait.items.iter_mut() {
-            let mut replaced_item =
-                parse_and_replace_self_type(item, context_type, &local_assoc_types)?;
+        for trait_item in provider_trait.items.iter_mut() {
+            replace_self_type_visitor.visit_trait_item_mut(trait_item);
 
-            if let TraitItem::Fn(func) = &mut replaced_item {
+            if let TraitItem::Fn(func) = trait_item {
                 replace_self_receiver_in_signature(
                     &mut func.sig,
                     &context_ident,
@@ -101,8 +96,6 @@ pub fn derive_provider_trait(
                     replace_self_value_in_block(block, &context_ident);
                 }
             }
-
-            *item = replaced_item;
         }
     }
 

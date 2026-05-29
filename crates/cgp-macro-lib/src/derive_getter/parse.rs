@@ -4,6 +4,7 @@ use quote::{ToTokens, quote};
 use syn::punctuated::Punctuated;
 use syn::spanned::Spanned;
 use syn::token::{Comma, Mut};
+use syn::visit_mut::VisitMut;
 use syn::{
     Error, FnArg, GenericArgument, Ident, ItemTrait, PathArguments, PathSegment, ReturnType,
     Signature, TraitItem, TraitItemFn, TraitItemType, Type, TypePath, parse_quote, parse2,
@@ -11,7 +12,7 @@ use syn::{
 
 use crate::derive_getter::getter_field::GetterField;
 use crate::derive_getter::{FieldMode, ReceiverMode};
-use crate::replace_self::replace_self_type;
+use crate::replace_self::ReplaceSelfTypeVisitor;
 
 pub fn parse_getter_fields(
     context_type: &Ident,
@@ -228,11 +229,14 @@ fn parse_receiver(context_ident: &Ident, arg: &FnArg) -> syn::Result<(ReceiverMo
         }
         FnArg::Typed(arg) => match arg.ty.as_ref() {
             Type::Reference(ty) => {
-                let receiver = parse2(replace_self_type(
-                    ty.elem.to_token_stream(),
-                    context_ident.to_token_stream(),
-                    &Vec::new(),
-                ))?;
+                let mut receiver = ty.elem.clone();
+
+                ReplaceSelfTypeVisitor {
+                    replaced_type: &parse_quote!(#context_ident),
+                    skip_assoc_types: &Vec::new(),
+                }
+                .visit_type_mut(&mut receiver);
+
                 Ok((ReceiverMode::Type(receiver), ty.mutability))
             }
             _ => Err(Error::new(
@@ -249,11 +253,17 @@ fn parse_return_type(
     field_assoc_type: &Option<Ident>,
 ) -> syn::Result<Type> {
     match return_type {
-        ReturnType::Type(_, ty) => parse2(replace_self_type(
-            ty.to_token_stream(),
-            context_type.to_token_stream(),
-            &field_assoc_type.iter().cloned().collect::<Vec<_>>(),
-        )),
+        ReturnType::Type(_, ty) => {
+            let mut replaced_type = ty.as_ref().clone();
+
+            ReplaceSelfTypeVisitor {
+                replaced_type: &parse_quote!(#context_type),
+                skip_assoc_types: &Vec::from_iter(field_assoc_type.clone()),
+            }
+            .visit_type_mut(&mut replaced_type);
+
+            Ok(replaced_type)
+        }
         _ => Err(Error::new(
             return_type.span(),
             "return type must be specified",

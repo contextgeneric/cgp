@@ -3,139 +3,12 @@ use alloc::vec::Vec;
 use itertools::Itertools;
 use proc_macro2::{Group, Ident, TokenStream, TokenTree};
 use quote::{ToTokens, format_ident};
-use syn::parse::Parse;
 use syn::visit_mut::{self, VisitMut};
-use syn::{AngleBracketedGenericArguments, ItemImpl, Macro, Path, Type};
+use syn::{Macro, Path, Type};
 
-pub fn iter_parse_and_replace_self_type<I, T>(
-    vals: I,
-    replaced_ident: &Ident,
-    local_assoc_types: &Vec<Ident>,
-) -> syn::Result<I>
-where
-    I: IntoIterator<Item = T> + FromIterator<T>,
-    T: ToTokens + Parse,
-{
-    vals.into_iter()
-        .map(|val| parse_and_replace_self_type(&val, replaced_ident, local_assoc_types))
-        .collect()
-}
-
-pub fn parse_and_replace_self_type<T>(
-    val: &T,
-    replaced_type: &Ident,
-    // Skip the replacement of `Self` if it is an associated type expression, e.g. `Self::Foo`.
-    skip_assoc_types: &Vec<Ident>,
-) -> syn::Result<T>
-where
-    T: ToTokens + Parse,
-{
-    let stream = replace_self_type(
-        val.to_token_stream(),
-        replaced_type.to_token_stream(),
-        skip_assoc_types,
-    );
-    syn::parse2(stream)
-}
-
-pub fn replace_self_type(
-    stream: TokenStream,
-    replaced_ident: TokenStream,
-    local_assoc_types: &Vec<Ident>,
-) -> TokenStream {
-    let self_type = format_ident!("Self");
-
-    let mut result_stream: Vec<TokenTree> = Vec::new();
-
-    let mut token_iter = stream.into_iter().multipeek();
-
-    while let Some(tree) = token_iter.next() {
-        match tree {
-            TokenTree::Ident(ident) => {
-                if ident == self_type {
-                    let replaced_ident = replaced_ident.clone();
-
-                    // Do not replace self if it is an associated type expression that refers to local associated type
-                    let replaced = match token_iter.peek() {
-                        Some(TokenTree::Punct(p)) if p.as_char() == ':' => {
-                            match token_iter.peek() {
-                                Some(TokenTree::Punct(p)) if p.as_char() == ':' => {
-                                    match token_iter.peek() {
-                                        Some(TokenTree::Ident(assoc_type))
-                                            if local_assoc_types.contains(assoc_type) =>
-                                        {
-                                            ident.to_token_stream()
-                                        }
-                                        _ => replaced_ident,
-                                    }
-                                }
-                                _ => replaced_ident,
-                            }
-                        }
-                        _ => replaced_ident,
-                    };
-
-                    result_stream.extend(replaced);
-                } else {
-                    result_stream.push(TokenTree::Ident(ident));
-                }
-            }
-            TokenTree::Group(group) => {
-                let replaced_stream =
-                    replace_self_type(group.stream(), replaced_ident.clone(), local_assoc_types);
-                let replaced_group = Group::new(group.delimiter(), replaced_stream);
-
-                result_stream.push(TokenTree::Group(replaced_group));
-            }
-            TokenTree::Punct(punct) => {
-                result_stream.push(TokenTree::Punct(punct));
-            }
-            TokenTree::Literal(lit) => result_stream.push(TokenTree::Literal(lit)),
-        }
-    }
-
-    result_stream.into_iter().collect()
-}
-
-pub fn replace_self_type_in_item_impl(
-    item_impl: &mut ItemImpl,
-    replaced_type: &Type,
-    skip_assoc_types: &Vec<Ident>,
-) {
-    ReplaceSelfTypeVisitor {
-        replaced_type,
-        skip_assoc_types,
-    }
-    .visit_item_impl_mut(item_impl);
-}
-
-// pub fn replace_self_type_in_generics(
-//     generics: &mut Generics,
-//     replaced_type: &Type,
-//     skip_assoc_types: &Vec<Ident>,
-// ) {
-//     ReplaceSelfTypeVisitor {
-//         replaced_type,
-//         skip_assoc_types,
-//     }
-//     .visit_generics_mut(generics);
-// }
-
-pub fn replace_self_type_in_generic_args(
-    generics: &mut AngleBracketedGenericArguments,
-    replaced_type: &Type,
-    skip_assoc_types: &Vec<Ident>,
-) {
-    ReplaceSelfTypeVisitor {
-        replaced_type,
-        skip_assoc_types,
-    }
-    .visit_angle_bracketed_generic_arguments_mut(generics);
-}
-
-struct ReplaceSelfTypeVisitor<'a> {
-    replaced_type: &'a Type,
-    skip_assoc_types: &'a Vec<Ident>,
+pub struct ReplaceSelfTypeVisitor<'a> {
+    pub replaced_type: &'a Type,
+    pub skip_assoc_types: &'a Vec<Ident>,
 }
 
 impl<'a> ReplaceSelfTypeVisitor<'a> {
@@ -184,10 +57,72 @@ impl VisitMut for ReplaceSelfTypeVisitor<'_> {
     }
 
     fn visit_macro_mut(&mut self, mac: &mut Macro) {
-        mac.tokens = replace_self_type(
-            mac.tokens.clone(),
+        mac.tokens = replace_self_type_in_token_stream(
+            core::mem::take(&mut mac.tokens),
             self.replaced_type.to_token_stream(),
             self.skip_assoc_types,
         );
     }
+}
+
+pub fn replace_self_type_in_token_stream(
+    stream: TokenStream,
+    replaced_ident: TokenStream,
+    local_assoc_types: &Vec<Ident>,
+) -> TokenStream {
+    let self_type = format_ident!("Self");
+
+    let mut result_stream: Vec<TokenTree> = Vec::new();
+
+    let mut token_iter = stream.into_iter().multipeek();
+
+    while let Some(tree) = token_iter.next() {
+        match tree {
+            TokenTree::Ident(ident) => {
+                if ident == self_type {
+                    let replaced_ident = replaced_ident.clone();
+
+                    // Do not replace self if it is an associated type expression that refers to local associated type
+                    let replaced = match token_iter.peek() {
+                        Some(TokenTree::Punct(p)) if p.as_char() == ':' => {
+                            match token_iter.peek() {
+                                Some(TokenTree::Punct(p)) if p.as_char() == ':' => {
+                                    match token_iter.peek() {
+                                        Some(TokenTree::Ident(assoc_type))
+                                            if local_assoc_types.contains(assoc_type) =>
+                                        {
+                                            ident.to_token_stream()
+                                        }
+                                        _ => replaced_ident,
+                                    }
+                                }
+                                _ => replaced_ident,
+                            }
+                        }
+                        _ => replaced_ident,
+                    };
+
+                    result_stream.extend(replaced);
+                } else {
+                    result_stream.push(TokenTree::Ident(ident));
+                }
+            }
+            TokenTree::Group(group) => {
+                let replaced_stream = replace_self_type_in_token_stream(
+                    group.stream(),
+                    replaced_ident.clone(),
+                    local_assoc_types,
+                );
+                let replaced_group = Group::new(group.delimiter(), replaced_stream);
+
+                result_stream.push(TokenTree::Group(replaced_group));
+            }
+            TokenTree::Punct(punct) => {
+                result_stream.push(TokenTree::Punct(punct));
+            }
+            TokenTree::Literal(lit) => result_stream.push(TokenTree::Literal(lit)),
+        }
+    }
+
+    result_stream.into_iter().collect()
 }
