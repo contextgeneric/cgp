@@ -34,32 +34,11 @@ pub fn transform_impl_trait(
         })
         .collect();
 
-    let mut replace_self_type_visitor = ReplaceSelfTypeVisitor {
-        replaced_type: &context_type,
-        skip_assoc_types: &local_assoc_types,
-    };
-
     let mut out_impl = item_impl.clone();
-
-    replace_self_type_visitor.visit_item_impl_mut(&mut out_impl);
-
-    ReplaceSelfReceiverVisitor {
-        replaced_ident: &context_ident,
-        replaced_type: &context_type,
-    }
-    .visit_item_impl_mut(&mut out_impl);
-
-    ReplaceSelfValueVisitor {
-        replaced_ident: &context_ident,
-    }
-    .visit_item_impl_mut(&mut out_impl);
 
     out_impl.self_ty = Box::new(provider_type.clone());
 
     let mut provider_trait_path = consumer_trait_path.clone();
-    if let Some(generics) = &mut provider_trait_path.generics {
-        replace_self_type_visitor.visit_angle_bracketed_generic_arguments_mut(generics);
-    }
 
     match &mut provider_trait_path.generics {
         Some(generics) => {
@@ -77,6 +56,23 @@ pub fn transform_impl_trait(
         parse2(provider_trait_path.to_token_stream())?,
         For(Span::call_site()),
     ));
+
+    ReplaceSelfTypeVisitor {
+        replaced_type: &context_type,
+        skip_assoc_types: &local_assoc_types,
+    }
+    .visit_item_impl_mut(&mut out_impl);
+
+    ReplaceSelfReceiverVisitor {
+        replaced_ident: &context_ident,
+        replaced_type: &context_type,
+    }
+    .visit_item_impl_mut(&mut out_impl);
+
+    ReplaceSelfValueVisitor {
+        replaced_ident: &context_ident,
+    }
+    .visit_item_impl_mut(&mut out_impl);
 
     Ok(out_impl)
 }

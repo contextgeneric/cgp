@@ -45,44 +45,34 @@ pub fn derive_provider_trait(
         })
         .collect();
 
-    let mut replace_self_type_visitor = ReplaceSelfTypeVisitor {
-        replaced_type: &context_type,
-        skip_assoc_types: &local_assoc_types,
-    };
-
     // Turn the supertrait constraints into `Context` constraints in the `where` clause
-    {
-        let mut context_constraints = provider_trait.supertraits.clone();
+    if !provider_trait.supertraits.is_empty() {
+        let supertraits = &provider_trait.supertraits;
 
-        for constraint in &mut context_constraints {
-            replace_self_type_visitor.visit_type_param_bound_mut(constraint);
-        }
-
-        let is_provider_params = parse_is_provider_params(&consumer_trait.generics)?;
-
-        let provider_supertrait: TypeParamBound = parse2(quote!(
-            IsProviderFor< #component_name < #component_params >, #context_type_ident, ( #is_provider_params ) >
-        ))?;
-
-        provider_trait.supertraits = Punctuated::from_iter([provider_supertrait]);
-
-        if !context_constraints.is_empty() {
-            match &mut provider_trait.generics.where_clause {
-                Some(where_clause) => {
-                    replace_self_type_visitor.visit_where_clause_mut(where_clause);
-                }
-                _ => {
-                    provider_trait.generics.where_clause = Some(parse2(quote! {
-                        where #context_type_ident : #context_constraints
-                    })?);
-                }
-            }
-        }
+        provider_trait
+            .generics
+            .make_where_clause()
+            .predicates
+            .push(parse_quote! {
+                #context_type_ident : #supertraits
+            });
     }
+
+    let is_provider_params = parse_is_provider_params(&consumer_trait.generics)?;
+
+    let provider_supertrait: TypeParamBound = parse2(quote!(
+        IsProviderFor< #component_name < #component_params >, #context_type_ident, ( #is_provider_params ) >
+    ))?;
+
+    provider_trait.supertraits = Punctuated::from_iter([provider_supertrait]);
 
     let context_value_ident = to_snake_case_ident(context_type_ident);
 
-    replace_self_type_visitor.visit_item_trait_mut(&mut provider_trait);
+    ReplaceSelfTypeVisitor {
+        replaced_type: &context_type,
+        skip_assoc_types: &local_assoc_types,
+    }
+    .visit_item_trait_mut(&mut provider_trait);
 
     ReplaceSelfReceiverVisitor {
         replaced_ident: &context_value_ident,
