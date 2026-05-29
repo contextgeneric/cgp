@@ -4,6 +4,8 @@ use itertools::Itertools;
 use proc_macro2::{Group, Ident, TokenStream, TokenTree};
 use quote::{ToTokens, format_ident};
 use syn::parse::Parse;
+use syn::visit_mut::{self, VisitMut};
+use syn::{AngleBracketedGenericArguments, ItemImpl, Macro, Path, Type};
 
 pub fn iter_parse_and_replace_self_type<I, T>(
     vals: I,
@@ -21,16 +23,17 @@ where
 
 pub fn parse_and_replace_self_type<T>(
     val: &T,
-    replaced_ident: &Ident,
-    local_assoc_types: &Vec<Ident>,
+    replaced_type: &Ident,
+    // Skip the replacement of `Self` if it is an associated type expression, e.g. `Self::Foo`.
+    skip_assoc_types: &Vec<Ident>,
 ) -> syn::Result<T>
 where
     T: ToTokens + Parse,
 {
     let stream = replace_self_type(
         val.to_token_stream(),
-        replaced_ident.to_token_stream(),
-        local_assoc_types,
+        replaced_type.to_token_stream(),
+        skip_assoc_types,
     );
     syn::parse2(stream)
 }
@@ -92,4 +95,99 @@ pub fn replace_self_type(
     }
 
     result_stream.into_iter().collect()
+}
+
+pub fn replace_self_type_in_item_impl(
+    item_impl: &mut ItemImpl,
+    replaced_type: &Type,
+    skip_assoc_types: &Vec<Ident>,
+) {
+    ReplaceSelfTypeVisitor {
+        replaced_type,
+        skip_assoc_types,
+    }
+    .visit_item_impl_mut(item_impl);
+}
+
+// pub fn replace_self_type_in_generics(
+//     generics: &mut Generics,
+//     replaced_type: &Type,
+//     skip_assoc_types: &Vec<Ident>,
+// ) {
+//     ReplaceSelfTypeVisitor {
+//         replaced_type,
+//         skip_assoc_types,
+//     }
+//     .visit_generics_mut(generics);
+// }
+
+pub fn replace_self_type_in_generic_args(
+    generics: &mut AngleBracketedGenericArguments,
+    replaced_type: &Type,
+    skip_assoc_types: &Vec<Ident>,
+) {
+    ReplaceSelfTypeVisitor {
+        replaced_type,
+        skip_assoc_types,
+    }
+    .visit_angle_bracketed_generic_arguments_mut(generics);
+}
+
+struct ReplaceSelfTypeVisitor<'a> {
+    replaced_type: &'a Type,
+    skip_assoc_types: &'a Vec<Ident>,
+}
+
+impl<'a> ReplaceSelfTypeVisitor<'a> {
+    fn replace_self_in_path(&self, path: &mut Path) {
+        let Some(first) = path.segments.first() else {
+            return;
+        };
+        if first.ident != "Self" {
+            return;
+        }
+        if path.segments.len() >= 2 && self.skip_assoc_types.contains(&path.segments[1].ident) {
+            return;
+        }
+        if let Type::Path(replaced) = self.replaced_type {
+            if replaced.qself.is_none() {
+                let rest: Vec<_> = path.segments.iter().skip(1).cloned().collect();
+                let mut new_path = replaced.path.clone();
+                new_path.segments.extend(rest);
+                *path = new_path;
+            }
+        }
+    }
+}
+
+impl VisitMut for ReplaceSelfTypeVisitor<'_> {
+    fn visit_type_mut(&mut self, ty: &mut Type) {
+        // Handle standalone `Self` type — replaced_type may not be a path (e.g. a reference),
+        // so we must replace the whole Type node here rather than going through visit_path_mut.
+        if let Type::Path(type_path) = ty {
+            if type_path.qself.is_none()
+                && type_path.path.segments.len() == 1
+                && type_path.path.segments[0].ident == "Self"
+            {
+                *ty = self.replaced_type.clone();
+                return;
+            }
+        }
+        visit_mut::visit_type_mut(self, ty);
+    }
+
+    fn visit_path_mut(&mut self, path: &mut Path) {
+        // Handles Self::Foo in type paths (multi-segment) and Self in expression/struct paths.
+        // Single-segment Self in type position is already handled by visit_type_mut above.
+        self.replace_self_in_path(path);
+        visit_mut::visit_path_mut(self, path);
+    }
+
+    fn visit_macro_mut(&mut self, mac: &mut Macro) {
+        mac.tokens = replace_self_type(
+            mac.tokens.clone(),
+            self.replaced_type.to_token_stream(),
+            self.skip_assoc_types,
+        );
+    }
 }

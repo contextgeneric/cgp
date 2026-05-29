@@ -14,8 +14,6 @@ struct ReplaceSelfVisitor<'a> {
 impl VisitMut for ReplaceSelfVisitor<'_> {
     fn visit_expr_mut(&mut self, expr: &mut Expr) {
         match expr {
-            // Replace bare `self` expression (also covers `self.field`, `self.method()`,
-            // `&self`, `*self`, `self[i]`, `..self`, closure captures, etc. via recursion).
             Expr::Path(expr_path)
                 if expr_path.qself.is_none() && expr_path.path.is_ident("self") =>
             {
