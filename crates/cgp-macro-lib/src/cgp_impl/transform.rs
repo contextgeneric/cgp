@@ -5,7 +5,7 @@ use syn::{FnArg, Ident, ImplItem, ItemImpl, Type, parse2};
 
 use crate::parse::SimpleType;
 use crate::replace_self::{
-    replace_self_receiver, replace_self_type, replace_self_value, to_snake_case_ident,
+    replace_self_receiver, replace_self_type, replace_self_value_in_block, to_snake_case_ident,
 };
 
 pub fn transform_impl_trait(
@@ -14,7 +14,7 @@ pub fn transform_impl_trait(
     provider_type: &Type,
     context_type: &Type,
 ) -> syn::Result<ItemImpl> {
-    let context_value = if let Ok(ident) = parse2::<Ident>(context_type.to_token_stream()) {
+    let context_ident = if let Ok(ident) = parse2::<Ident>(context_type.to_token_stream()) {
         to_snake_case_ident(&ident)
     } else {
         Ident::new("__context__", Span::call_site())
@@ -69,11 +69,9 @@ pub fn transform_impl_trait(
             && let Some(arg) = item_fn.sig.inputs.first_mut()
             && let FnArg::Receiver(receiver) = arg
         {
-            *arg = replace_self_receiver(receiver, &context_value, context_type.to_token_stream());
+            *arg = replace_self_receiver(receiver, &context_ident, context_type.to_token_stream());
 
-            let replaced_block =
-                replace_self_value(item_fn.block.to_token_stream(), &context_value);
-            item_fn.block = parse2(replaced_block)?;
+            replace_self_value_in_block(&mut item_fn.block, &context_ident);
         }
     }
 

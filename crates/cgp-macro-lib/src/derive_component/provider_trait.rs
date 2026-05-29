@@ -8,7 +8,7 @@ use syn::{Ident, ItemTrait, TraitItem, TypeParamBound, parse2};
 use crate::parse::parse_is_provider_params;
 use crate::replace_self::{
     iter_parse_and_replace_self_type, parse_and_replace_self_type,
-    replace_self_receiver_in_signature, replace_self_value, to_snake_case_ident,
+    replace_self_receiver_in_signature, replace_self_value_in_block, to_snake_case_ident,
 };
 
 pub fn derive_provider_trait(
@@ -84,7 +84,7 @@ pub fn derive_provider_trait(
 
     // Replace self type and argument into context type argument
     {
-        let context_value = to_snake_case_ident(context_type);
+        let context_ident = to_snake_case_ident(context_type);
 
         for item in provider_trait.items.iter_mut() {
             let mut replaced_item =
@@ -93,13 +93,12 @@ pub fn derive_provider_trait(
             if let TraitItem::Fn(func) = &mut replaced_item {
                 replace_self_receiver_in_signature(
                     &mut func.sig,
-                    &context_value,
+                    &context_ident,
                     context_type.to_token_stream(),
                 );
 
                 if let Some(block) = &mut func.default {
-                    let replaced = replace_self_value(block.to_token_stream(), &context_value);
-                    *block = parse2(replaced)?;
+                    replace_self_value_in_block(block, &context_ident);
                 }
             }
 
