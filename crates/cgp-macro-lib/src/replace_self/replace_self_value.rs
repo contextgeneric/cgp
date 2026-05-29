@@ -2,7 +2,7 @@ use proc_macro2::{Group, TokenStream, TokenTree};
 use quote::format_ident;
 use syn::Ident;
 
-pub fn replace_self_var(stream: TokenStream, replaced_ident: &Ident) -> TokenStream {
+pub fn replace_self_value(stream: TokenStream, replaced_ident: &Ident) -> TokenStream {
     let self_ident = format_ident!("self");
 
     let mut result_stream: Vec<TokenTree> = Vec::new();
@@ -19,7 +19,7 @@ pub fn replace_self_var(stream: TokenStream, replaced_ident: &Ident) -> TokenStr
                 }
             }
             TokenTree::Group(group) => {
-                let replaced_stream = replace_self_var(group.stream(), replaced_ident);
+                let replaced_stream = replace_self_value(group.stream(), replaced_ident);
                 let replaced_group = Group::new(group.delimiter(), replaced_stream);
 
                 result_stream.push(TokenTree::Group(replaced_group));
