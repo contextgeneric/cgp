@@ -1,13 +1,11 @@
-use quote::ToTokens;
+use cgp_macro_core::types::ident::IdentWithTypeArgs;
 use syn::parse::{Parse, ParseStream};
 use syn::token::{As, At, Brace, Colon, Comma, Eq, Gt, Lt};
-use syn::{Ident, Type, braced, parse_quote, parse2};
-
-use crate::parse::SimpleType;
+use syn::{Ident, Type, braced, parse_quote};
 
 pub struct UseTypeSpec {
     pub context_type: Type,
-    pub trait_path: SimpleType,
+    pub trait_path: IdentWithTypeArgs,
     pub type_idents: Vec<UseTypeIdent>,
 }
 
@@ -44,8 +42,7 @@ impl Parse for UseTypeSpec {
         let (context_type, body) = if input.peek(At) {
             let _: At = input.parse()?;
 
-            let context_type: SimpleType = input.parse()?;
-            let context_type = parse2(context_type.into_token_stream())?;
+            let context_type: Type = input.parse::<IdentWithTypeArgs>()?.into();
 
             let _: Colon = input.parse()?;
             let _: Colon = input.parse()?;
@@ -62,15 +59,12 @@ impl Parse for UseTypeSpec {
 
         let trait_path = if body.peek(Lt) {
             let _: Lt = body.parse()?;
-            let trait_path: SimpleType = body.parse()?;
+            let trait_path: IdentWithTypeArgs = body.parse()?;
             let _: Gt = body.parse()?;
             trait_path
         } else {
             let name: Ident = body.parse()?;
-            SimpleType {
-                name,
-                generics: None,
-            }
+            name.into()
         };
 
         let _: Colon = body.parse()?;

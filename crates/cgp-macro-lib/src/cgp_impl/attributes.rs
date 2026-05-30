@@ -1,12 +1,12 @@
 use core::mem;
 
+use cgp_macro_core::types::ident::IdentWithTypeArgs;
 use syn::Attribute;
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
 
 use crate::cgp_fn::UseTypeSpec;
 use crate::cgp_impl::use_provider::UseProviderSpec;
-use crate::parse::SimpleType;
 
 pub fn parse_impl_attributes(attributes: &mut Vec<Attribute>) -> syn::Result<ImplAttributes> {
     let mut parsed_attributes = ImplAttributes::default();
@@ -16,8 +16,8 @@ pub fn parse_impl_attributes(attributes: &mut Vec<Attribute>) -> syn::Result<Imp
     for attribute in in_attributes.into_iter() {
         if let Some(ident) = attribute.path().get_ident() {
             if ident == "uses" {
-                let uses =
-                    attribute.parse_args_with(Punctuated::<SimpleType, Comma>::parse_terminated)?;
+                let uses = attribute
+                    .parse_args_with(Punctuated::<IdentWithTypeArgs, Comma>::parse_terminated)?;
                 parsed_attributes.uses.extend(uses);
             } else if ident == "use_type" {
                 let use_type = attribute
@@ -40,7 +40,7 @@ pub fn parse_impl_attributes(attributes: &mut Vec<Attribute>) -> syn::Result<Imp
 
 #[derive(Default)]
 pub struct ImplAttributes {
-    pub uses: Vec<SimpleType>,
+    pub uses: Vec<IdentWithTypeArgs>,
     pub use_type: Vec<UseTypeSpec>,
     pub use_provider: Vec<UseProviderSpec>,
 }

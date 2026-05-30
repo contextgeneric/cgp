@@ -1,7 +1,7 @@
 use proc_macro2::TokenStream;
 use quote::ToTokens;
-use syn::Ident;
 use syn::parse::{Parse, ParseStream};
+use syn::{Ident, Type, parse_quote};
 
 use crate::types::generics::GenericArguments;
 
@@ -33,5 +33,11 @@ impl From<Ident> for IdentWithTypeArgs {
             ident,
             type_args: GenericArguments::default(),
         }
+    }
+}
+
+impl From<IdentWithTypeArgs> for Type {
+    fn from(value: IdentWithTypeArgs) -> Self {
+        parse_quote!(#value)
     }
 }

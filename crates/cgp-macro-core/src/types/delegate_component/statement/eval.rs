@@ -48,7 +48,7 @@ impl EvalDelegateEntry for EvaluatedForEntry {
         let namespace_trait: Type = {
             let namespace_ident = &self.namespace.ident;
             let mut namespace_generics = self.namespace.type_args.clone();
-            let namespace_generic_args = &mut namespace_generics.make_args().args;
+            let namespace_generic_args = &mut namespace_generics.make_args();
 
             namespace_generic_args.push(parse_quote!(#table_type));
 

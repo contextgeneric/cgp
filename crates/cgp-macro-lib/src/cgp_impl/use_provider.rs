@@ -1,14 +1,13 @@
+use cgp_macro_core::types::ident::IdentWithTypeArgs;
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::token::{Colon, Plus};
 use syn::{Type, parse_quote};
 
-use crate::parse::SimpleType;
-
 pub struct UseProviderSpec {
     pub context_type: Type,
     pub provider_type: Type,
-    pub provider_trait_bounds: Punctuated<SimpleType, Plus>,
+    pub provider_trait_bounds: Punctuated<IdentWithTypeArgs, Plus>,
 }
 
 impl Parse for UseProviderSpec {

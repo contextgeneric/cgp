@@ -1,8 +1,9 @@
 use proc_macro2::TokenStream;
 use quote::ToTokens;
 use syn::parse::{Parse, ParseStream};
-use syn::token::Lt;
-use syn::{AngleBracketedGenericArguments, parse_quote};
+use syn::punctuated::Punctuated;
+use syn::token::{Comma, Lt};
+use syn::{AngleBracketedGenericArguments, GenericArgument, parse_quote};
 
 use crate::types::generics::TypeGenerics;
 
@@ -12,8 +13,8 @@ pub struct GenericArguments {
 }
 
 impl GenericArguments {
-    pub fn make_args(&mut self) -> &mut AngleBracketedGenericArguments {
-        self.args.get_or_insert_with(|| parse_quote!(<>))
+    pub fn make_args(&mut self) -> &mut Punctuated<GenericArgument, Comma> {
+        &mut self.args.get_or_insert_with(|| parse_quote!(<>)).args
     }
 }
 

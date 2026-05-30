@@ -1,4 +1,4 @@
-use quote::{ToTokens, quote};
+use quote::quote;
 use syn::punctuated::Punctuated;
 use syn::token::Plus;
 use syn::{Type, TypeParamBound, WherePredicate, parse_quote, parse2};
@@ -19,18 +19,13 @@ pub fn derive_provider_bounds(
     let mut bounds = Punctuated::<TypeParamBound, Plus>::new();
 
     for bound in &spec.provider_trait_bounds {
-        let trait_ident = &bound.name;
-        let mut m_generics = bound.generics.clone();
+        let mut bound = bound.clone();
+        bound
+            .type_args
+            .make_args()
+            .insert(0, parse_quote!(#context_type));
 
-        let generics = m_generics.get_or_insert_with(|| parse_quote!(<>));
-        generics
-            .args
-            .insert(0, parse2(context_type.to_token_stream())?);
-
-        let trait_bound = parse2(quote! {
-            #trait_ident #generics
-        })?;
-        bounds.push(trait_bound);
+        bounds.push(parse_quote!(#bound));
     }
 
     let predicate = parse2(quote! {

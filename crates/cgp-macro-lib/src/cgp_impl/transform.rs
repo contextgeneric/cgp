@@ -1,18 +1,17 @@
 use cgp_macro_core::functions::to_snake_case_ident;
+use cgp_macro_core::types::ident::IdentWithTypeArgs;
 use cgp_macro_core::visitors::{
     ReplaceSelfReceiverVisitor, ReplaceSelfTypeVisitor, ReplaceSelfValueVisitor,
 };
 use proc_macro2::Span;
-use quote::{ToTokens, quote};
+use quote::ToTokens;
 use syn::token::For;
 use syn::visit_mut::VisitMut;
-use syn::{Ident, ImplItem, ItemImpl, Type, parse2};
-
-use crate::parse::SimpleType;
+use syn::{Ident, ImplItem, ItemImpl, Type, parse_quote, parse2};
 
 pub fn transform_impl_trait(
     item_impl: &ItemImpl,
-    consumer_trait_path: &SimpleType,
+    consumer_trait_path: &IdentWithTypeArgs,
     provider_type: &Type,
     context_type: &Type,
 ) -> syn::Result<ItemImpl> {
@@ -40,16 +39,10 @@ pub fn transform_impl_trait(
 
     let mut provider_trait_path = consumer_trait_path.clone();
 
-    match &mut provider_trait_path.generics {
-        Some(generics) => {
-            generics
-                .args
-                .insert(0, parse2(context_type.to_token_stream())?);
-        }
-        None => {
-            provider_trait_path.generics = Some(parse2(quote! { < #context_type > })?);
-        }
-    }
+    provider_trait_path
+        .type_args
+        .make_args()
+        .insert(0, parse_quote!(#context_type));
 
     out_impl.trait_ = Some((
         None,

@@ -17,7 +17,6 @@ impl EvalForEntry for InheritNamespaceStatement {
         namespace_constraint
             .type_args
             .make_args()
-            .args
             .push(parse_quote!(#local_table_ident));
 
         let mut generics = Generics::default();

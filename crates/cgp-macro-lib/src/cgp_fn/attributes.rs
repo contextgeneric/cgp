@@ -1,10 +1,10 @@
+use cgp_macro_core::types::ident::IdentWithTypeArgs;
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
 use syn::{Attribute, GenericParam, TypeParamBound, WherePredicate};
 
 use crate::cgp_fn::{FunctionAttributes, UseTypeSpec};
 use crate::cgp_impl::UseProviderSpec;
-use crate::parse::SimpleType;
 
 pub fn parse_function_attributes(
     attributes: Vec<Attribute>,
@@ -25,8 +25,8 @@ pub fn parse_function_attributes(
 
                 parsed_attributes.extend_where.extend(where_predicates);
             } else if ident == "uses" {
-                let uses =
-                    attribute.parse_args_with(Punctuated::<SimpleType, Comma>::parse_terminated)?;
+                let uses = attribute
+                    .parse_args_with(Punctuated::<IdentWithTypeArgs, Comma>::parse_terminated)?;
 
                 parsed_attributes.uses.extend(uses);
             } else if ident == "use_type" {

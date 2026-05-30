@@ -1,5 +1,6 @@
 use alloc::vec::Vec;
 
+use cgp_macro_core::types::ident::IdentWithTypeArgs;
 use proc_macro2::{Group, TokenStream, TokenTree};
 use quote::ToTokens;
 use syn::__private::parse_brackets;
@@ -9,7 +10,7 @@ use syn::punctuated::Punctuated;
 use syn::token::{Comma, Or};
 use syn::{Ident, braced};
 
-use crate::parse::{DelegateKey, SimpleType};
+use crate::parse::DelegateKey;
 
 pub struct ReplaceSpecs {
     pub target_ident: Ident,
@@ -19,9 +20,10 @@ pub struct ReplaceSpecs {
 
 impl Parse for ReplaceSpecs {
     fn parse(input: ParseStream) -> syn::Result<Self> {
-        let raw_replacements: Vec<DelegateKey<SimpleType>> = {
+        let raw_replacements: Vec<DelegateKey<IdentWithTypeArgs>> = {
             let content = parse_brackets(input)?.content;
-            let types = <Punctuated<DelegateKey<SimpleType>, Comma>>::parse_terminated(&content)?;
+            let types =
+                <Punctuated<DelegateKey<IdentWithTypeArgs>, Comma>>::parse_terminated(&content)?;
             types.into_iter().collect()
         };
 
@@ -58,7 +60,7 @@ impl Parse for ReplaceSpecs {
         let replacements = raw_replacements
             .into_iter()
             .filter(|replacement| {
-                let target_ident = &replacement.ty.name;
+                let target_ident = &replacement.ty.ident;
 
                 exclude.iter().all(|exclude| exclude != target_ident)
             })
