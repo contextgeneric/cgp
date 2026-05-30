@@ -8,7 +8,7 @@ use crate::types::delegate_component::{
     EvaluatedDelegateEntry, EvaluatedForEntry, NormalDelegateMapping,
     eval_delegate_entries_via_for,
 };
-use crate::types::ident::IdentWithTypeGenerics;
+use crate::types::ident::IdentWithTypeArgs;
 
 #[derive(Debug, Clone)]
 pub struct ForDelegateStatement {
@@ -19,7 +19,7 @@ pub struct ForDelegateStatement {
     pub value: Ident,
     pub gt: Gt,
     pub in_token: In,
-    pub namespace: IdentWithTypeGenerics,
+    pub namespace: IdentWithTypeArgs,
     pub where_clause: Option<WhereClause>,
     pub mappings: Punctuated<NormalDelegateMapping, Comma>,
 }
@@ -71,8 +71,7 @@ impl EvalForEntries for ForDelegateStatement {
                     table_type: table_type.clone(),
                     for_key: self.key.clone(),
                     for_value: self.value.clone(),
-                    namespace_ident: self.namespace.ident.clone(),
-                    namespace_generics: self.namespace.type_generics.clone(),
+                    namespace: self.namespace.clone(),
                     mapping_key: key.key,
                     mapping_value: value_type.clone(),
                 };

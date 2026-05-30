@@ -6,7 +6,6 @@ use crate::types::delegate_component::{
     EvalDelegateEntries, EvalForEntries, EvalForEntry, EvaluatedDelegateEntry, EvaluatedForEntry,
     eval_delegate_entries_via_for,
 };
-use crate::types::generics::TypeGenerics;
 use crate::types::keyword::Keyword;
 use crate::types::keywords::Namespace;
 
@@ -40,8 +39,7 @@ impl EvalForEntry for NamespaceDelegateStatement {
             for_value: parse_quote!(__Value__),
             mapping_key: parse_quote!(__Key__),
             mapping_value: parse_quote!(__Value__),
-            namespace_ident: self.ident.clone(),
-            namespace_generics: TypeGenerics::default(),
+            namespace: self.ident.clone().into(),
         };
 
         Ok(entry)

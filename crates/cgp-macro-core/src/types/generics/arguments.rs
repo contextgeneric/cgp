@@ -1,11 +1,20 @@
 use proc_macro2::TokenStream;
 use quote::ToTokens;
-use syn::AngleBracketedGenericArguments;
 use syn::parse::{Parse, ParseStream};
 use syn::token::Lt;
+use syn::{AngleBracketedGenericArguments, parse_quote};
 
+use crate::types::generics::TypeGenerics;
+
+#[derive(Debug, Clone, Default)]
 pub struct GenericArguments {
     pub args: Option<AngleBracketedGenericArguments>,
+}
+
+impl GenericArguments {
+    pub fn make_args(&mut self) -> &mut AngleBracketedGenericArguments {
+        self.args.get_or_insert_with(|| parse_quote!(<>))
+    }
 }
 
 impl Parse for GenericArguments {
@@ -23,6 +32,17 @@ impl ToTokens for GenericArguments {
     fn to_tokens(&self, tokens: &mut TokenStream) {
         if let Some(args) = &self.args {
             args.to_tokens(tokens);
+        }
+    }
+}
+
+impl From<TypeGenerics> for GenericArguments {
+    fn from(generics: TypeGenerics) -> Self {
+        if generics.params.is_empty() {
+            Self { args: None }
+        } else {
+            let args = parse_quote!(#generics);
+            Self { args: Some(args) }
         }
     }
 }

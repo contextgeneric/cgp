@@ -1,7 +1,7 @@
 use syn::{Generics, Ident, Type, parse_quote};
 
 use crate::types::delegate_component::{EvalDelegateEntry, EvaluatedDelegateEntry};
-use crate::types::generics::TypeGenerics;
+use crate::types::ident::IdentWithTypeArgs;
 
 pub trait EvalForEntries {
     fn eval_for_entries(&self, table_type: &Type) -> syn::Result<Vec<EvaluatedForEntry>>;
@@ -16,8 +16,7 @@ pub struct EvaluatedForEntry {
     pub table_type: Type,
     pub for_key: Ident,
     pub for_value: Ident,
-    pub namespace_ident: Ident,
-    pub namespace_generics: TypeGenerics,
+    pub namespace: IdentWithTypeArgs,
     pub mapping_key: Type,
     pub mapping_value: Type,
 }
@@ -47,15 +46,13 @@ impl EvalDelegateEntry for EvaluatedForEntry {
         let table_type = &self.table_type;
 
         let namespace_trait: Type = {
-            let namespace_ident = &self.namespace_ident;
-            let mut namespace_generics = self.namespace_generics.clone();
+            let namespace_ident = &self.namespace.ident;
+            let mut namespace_generics = self.namespace.type_args.clone();
+            let namespace_generic_args = &mut namespace_generics.make_args().args;
 
-            namespace_generics
-                .generics
-                .params
-                .push(parse_quote!(#table_type));
+            namespace_generic_args.push(parse_quote!(#table_type));
 
-            namespace_generics.generics.params.push(parse_quote! {
+            namespace_generic_args.push(parse_quote! {
                 Delegate = #mapping_value
             });
 

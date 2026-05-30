@@ -5,6 +5,7 @@ use syn::parse::{Parse, ParseStream};
 
 use crate::types::generics::GenericArguments;
 
+#[derive(Debug, Clone)]
 pub struct IdentWithTypeArgs {
     pub ident: Ident,
     pub type_args: GenericArguments,
@@ -23,5 +24,14 @@ impl ToTokens for IdentWithTypeArgs {
     fn to_tokens(&self, tokens: &mut TokenStream) {
         self.ident.to_tokens(tokens);
         self.type_args.to_tokens(tokens);
+    }
+}
+
+impl From<Ident> for IdentWithTypeArgs {
+    fn from(ident: Ident) -> Self {
+        Self {
+            ident,
+            type_args: GenericArguments::default(),
+        }
     }
 }
