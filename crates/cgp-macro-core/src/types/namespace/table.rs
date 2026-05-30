@@ -7,7 +7,7 @@ use crate::types::delegate_component::{
     DelegateEntries, EvalDelegateEntries, EvalDelegateEntry, EvalForEntry,
 };
 use crate::types::generics::ImplGenerics;
-use crate::types::ident_type::IdentType;
+use crate::types::ident::IdentWithTypeGenerics;
 use crate::types::keyword::Keyword;
 use crate::types::keywords::New;
 use crate::types::namespace::{EvaluatedNamespaceTable, InheritNamespaceStatement};
@@ -15,8 +15,8 @@ use crate::types::namespace::{EvaluatedNamespaceTable, InheritNamespaceStatement
 pub struct NamespaceTable {
     pub impl_generics: ImplGenerics,
     pub new: Option<Keyword<New>>,
-    pub namespace_type: IdentType,
-    pub parent_namespace: Option<(Colon, IdentType)>,
+    pub namespace_type: IdentWithTypeGenerics,
+    pub parent_namespace: Option<(Colon, IdentWithTypeGenerics)>,
     pub entries: DelegateEntries,
 }
 
@@ -55,7 +55,7 @@ impl Parse for NamespaceTable {
 impl NamespaceTable {
     pub fn build_namespace_trait(&self) -> syn::Result<Type> {
         let namespace_ident = &self.namespace_type.ident;
-        let mut namespace_generics = self.namespace_type.generics.clone();
+        let mut namespace_generics = self.namespace_type.type_generics.clone();
         namespace_generics.params.push(parse_quote!(__Table__));
 
         let namespace_trait: Type = parse_quote!( #namespace_ident #namespace_generics );
@@ -128,7 +128,7 @@ impl NamespaceTable {
 
         let for_entry = InheritNamespaceStatement {
             ident: parent_namespace.ident.clone(),
-            type_generics: parent_namespace.generics.clone(),
+            type_generics: parent_namespace.type_generics.clone(),
             local_table_ident: namespace_struct_ident,
         }
         .eval_for_entry(&table_type)?;
