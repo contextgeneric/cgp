@@ -1,6 +1,7 @@
 use core::iter;
 
 use cgp_macro_core::types::generics::ImplGenerics;
+use cgp_macro_core::types::ident::IdentWithTypeArgs;
 use quote::ToTokens;
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
@@ -8,7 +9,7 @@ use syn::spanned::Spanned;
 use syn::token::{Bracket, Comma, Lt, Pound};
 use syn::{Attribute, Ident, Type, braced, bracketed, parse2};
 
-use crate::parse::{DelegateMode, DelegateValue, SimpleType};
+use crate::parse::{DelegateMode, DelegateValue};
 
 pub struct DelegateAndCheckSpec {
     pub impl_generics: ImplGenerics,
@@ -45,9 +46,9 @@ impl Parse for DelegateAndCheckSpec {
         let trait_name = match m_trait_name {
             Some(ident) => ident,
             None => {
-                let context_type: SimpleType = parse2(context_type.to_token_stream())?;
+                let context_type: IdentWithTypeArgs = parse2(context_type.to_token_stream())?;
                 Ident::new(
-                    &format!("__CanUse{}", context_type.name),
+                    &format!("__CanUse{}", context_type.ident),
                     context_type.span(),
                 )
             }

@@ -1,3 +1,4 @@
+use cgp_macro_core::types::ident::IdentWithTypeArgs;
 use proc_macro2::TokenStream;
 use quote::ToTokens;
 use syn::parse::{Parse, ParseStream};
@@ -5,7 +6,7 @@ use syn::punctuated::Punctuated;
 use syn::token::{At, Colon, Comma, Override, Plus, Pound};
 use syn::{Error, Ident, braced, bracketed, parenthesized};
 
-use crate::parse::{DelegateEntry, SimpleType, TypeSpec};
+use crate::parse::{DelegateEntry, TypeSpec};
 
 pub struct DefinePreset {
     pub provider_wrapper: Option<Ident>,
@@ -16,7 +17,7 @@ pub struct DefinePreset {
 
 pub struct DelegatePresetEntry {
     pub is_override: Option<Override>,
-    pub entry: DelegateEntry<SimpleType>,
+    pub entry: DelegateEntry<IdentWithTypeArgs>,
 }
 
 impl Parse for DefinePreset {
@@ -81,7 +82,7 @@ impl Parse for DelegatePresetEntry {
 #[derive(Clone)]
 pub struct PresetParent {
     pub has_expanded: Option<At>,
-    pub parent_type: SimpleType,
+    pub parent_type: IdentWithTypeArgs,
 }
 
 impl Parse for PresetParent {

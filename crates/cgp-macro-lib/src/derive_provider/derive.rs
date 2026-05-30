@@ -1,6 +1,7 @@
 use std::collections::BTreeMap;
 
-use proc_macro2::{Span, TokenStream};
+use cgp_macro_core::types::ident::IdentWithTypeGenerics;
+use proc_macro2::Span;
 use quote::quote;
 use syn::punctuated::Punctuated;
 use syn::spanned::Spanned;
@@ -11,29 +12,26 @@ use syn::{
 };
 
 use crate::derive_provider::replace_provider_in_generics;
-use crate::parse::SimpleType;
 
 pub fn derive_provider_struct(provider_impl: &ItemImpl) -> syn::Result<ItemStruct> {
     let impl_self_type = &provider_impl.self_ty;
 
-    let provider_type: SimpleType = syn::parse2(quote!( #impl_self_type ))?;
+    let provider_type: IdentWithTypeGenerics = syn::parse2(quote!( #impl_self_type ))?;
 
-    let provider_name = &provider_type.name;
+    let provider_name = &provider_type.ident;
+    let type_generics_params = &provider_type.type_generics.params;
 
-    let provider_field = match &provider_type.generics {
-        Some(generics) => {
-            let args = &generics.args;
-            quote! {
-                #generics
-                ( pub ::core::marker::PhantomData<( #args )>  )
-            }
+    let provider_struct = if type_generics_params.is_empty() {
+        parse_quote! {
+            pub struct #provider_name;
         }
-        None => TokenStream::new(),
+    } else {
+        parse_quote! {
+            pub struct #provider_name<#type_generics_params>(
+                pub ::core::marker::PhantomData<(#type_generics_params)>
+            );
+        }
     };
-
-    let provider_struct = syn::parse2(quote! {
-        pub struct #provider_name #provider_field;
-    })?;
 
     Ok(provider_struct)
 }

@@ -1,14 +1,13 @@
 use cgp_macro_core::types::generics::TypeGenerics;
+use cgp_macro_core::types::ident::IdentWithTypeArgs;
 use proc_macro2::TokenStream;
 use quote::quote;
 use syn::{Ident, ItemImpl, ItemStruct, parse_quote, parse2};
 
-use crate::parse::SimpleType;
-
 pub fn cgp_inherit(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
     let context_struct: ItemStruct = parse2(body)?;
 
-    let preset: SimpleType = parse2(attr)?;
+    let preset: IdentWithTypeArgs = parse2(attr)?;
 
     let type_generics = TypeGenerics::try_from(&context_struct.generics)?;
 
@@ -27,10 +26,10 @@ pub fn cgp_inherit(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStr
 pub fn derive_delegate_preset(
     provider_name: &Ident,
     provider_generics: &Option<TypeGenerics>,
-    preset: &SimpleType,
+    preset: &IdentWithTypeArgs,
 ) -> syn::Result<(ItemImpl, ItemImpl)> {
-    let preset_name = &preset.name;
-    let preset_generics = &preset.generics;
+    let preset_name = &preset.ident;
+    let preset_generics = &preset.type_args;
 
     let provider_params = match provider_generics {
         Some(generics) => {

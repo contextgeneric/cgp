@@ -1,8 +1,7 @@
+use cgp_macro_core::types::ident::IdentWithTypeArgs;
 use quote::ToTokens;
 use syn::spanned::Spanned;
 use syn::{Error, Ident, ItemImpl, Type, parse2};
-
-use crate::parse::SimpleType;
 
 pub fn derive_component_name_from_provider_impl(provider_impl: &ItemImpl) -> syn::Result<Type> {
     let provider_trait = provider_impl.trait_.as_ref().ok_or_else(|| {
@@ -12,10 +11,10 @@ pub fn derive_component_name_from_provider_impl(provider_impl: &ItemImpl) -> syn
         )
     })?;
 
-    let provider_trait: SimpleType = parse2(provider_trait.1.to_token_stream())?;
+    let provider_trait: IdentWithTypeArgs = parse2(provider_trait.1.to_token_stream())?;
 
     let component_ident = Ident::new(
-        &format!("{}Component", provider_trait.name),
+        &format!("{}Component", provider_trait.ident),
         provider_trait.span(),
     );
 

@@ -1,4 +1,5 @@
 use cgp_macro_core::types::generics::ImplGenerics;
+use cgp_macro_core::types::ident::IdentWithTypeArgs;
 use proc_macro2::Span;
 use quote::ToTokens;
 use syn::parse::{Parse, ParseStream};
@@ -6,8 +7,6 @@ use syn::punctuated::Punctuated;
 use syn::spanned::Spanned;
 use syn::token::{Bracket, Colon, Comma, Lt, Pound, Where};
 use syn::{Attribute, Ident, Type, WhereClause, braced, bracketed, parse2};
-
-use crate::parse::SimpleType;
 
 pub struct CheckComponentsSpecs {
     pub specs: Vec<CheckComponents>,
@@ -97,10 +96,10 @@ impl Parse for CheckComponents {
         let trait_name = if let Some(check_trait_name) = m_check_trait_name {
             check_trait_name
         } else {
-            let context_type: SimpleType = parse2(context_type.to_token_stream())?;
+            let context_type: IdentWithTypeArgs = parse2(context_type.to_token_stream())?;
 
             Ident::new(
-                &format!("__Check{}", context_type.name),
+                &format!("__Check{}", context_type.ident),
                 context_type.span(),
             )
         };

@@ -2,6 +2,7 @@ use std::collections::HashSet;
 
 use cgp_macro_core::functions::to_snake_case_str;
 use cgp_macro_core::types::generics::ImplGenerics;
+use cgp_macro_core::types::ident::IdentWithTypeArgs;
 use cgp_macro_core::types::provider_struct::ProviderStruct;
 use proc_macro2::{Span, TokenStream};
 use quote::{ToTokens, TokenStreamExt, quote};
@@ -10,13 +11,13 @@ use syn::token::{At, Comma};
 use syn::{GenericParam, Ident, ItemTrait, TypeParamBound, parse_quote, parse2};
 
 use crate::delegate_components::impl_delegate_components;
-use crate::parse::{DefinePreset, DelegateEntry, SimpleType};
+use crate::parse::{DefinePreset, DelegateEntry};
 use crate::preset::{define_substitution_macro, impl_components_is_preset};
 
 pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
     let ast: DefinePreset = syn::parse2(body)?;
 
-    let delegate_entries: Punctuated<DelegateEntry<SimpleType>, Comma> = ast
+    let delegate_entries: Punctuated<DelegateEntry<IdentWithTypeArgs>, Comma> = ast
         .delegate_entries
         .iter()
         .map(|entry| entry.entry.clone())
@@ -36,8 +37,8 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
     };
 
     if let Some(parent) = m_parent {
-        let parent_ident = &parent.name;
-        let parent_generics = &parent.generics;
+        let parent_ident = &parent.ident;
+        let parent_generics = &parent.type_args;
 
         let parent_components_ident = Ident::new(
             &format!("__{parent_ident}Components__"),
@@ -58,7 +59,7 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
         for entry in ast.delegate_entries.iter() {
             if entry.is_override.is_some() {
                 for component in entry.entry.keys.iter() {
-                    overrides.push(&component.ty.name);
+                    overrides.push(&component.ty.ident);
                 }
             }
         }
@@ -194,7 +195,7 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
         let mut parent_exports = TokenStream::new();
 
         for parent in parent_presets.iter() {
-            let parent_ident = &parent.parent_type.name;
+            let parent_ident = &parent.parent_type.ident;
             parent_exports.append_all(quote! {
                 #[doc(hidden)]
                 #[doc(no_inline)]
@@ -224,7 +225,7 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
 
         for entry in delegate_entries.iter() {
             for component in entry.keys.iter() {
-                let component_name = &component.ty.name;
+                let component_name = &component.ty.ident;
                 components.insert(component_name.clone());
 
                 for param in component.generics.generics.params.iter() {
