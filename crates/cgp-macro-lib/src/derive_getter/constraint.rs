@@ -1,5 +1,4 @@
 use cgp_macro_core::types::getter::FieldMode;
-use proc_macro2::TokenStream;
 use quote::quote;
 use syn::token::Mut;
 use syn::{Ident, Type, TypeParamBound, parse_quote, parse2};
@@ -8,7 +7,7 @@ pub fn derive_getter_constraint(
     field_type: &Type,
     field_mut: &Option<Mut>,
     field_mode: &FieldMode,
-    field_symbol: TokenStream,
+    tag_type: &Type,
     field_assoc_type: &Option<Ident>,
 ) -> syn::Result<TypeParamBound> {
     let field_type = match field_assoc_type {
@@ -19,16 +18,16 @@ pub fn derive_getter_constraint(
     let constraint = if field_mut.is_none() {
         if let FieldMode::Slice = field_mode {
             quote! {
-                HasField< #field_symbol, Value: AsRef< [ #field_type ] > + 'static >
+                HasField< #tag_type, Value: AsRef< [ #field_type ] > + 'static >
             }
         } else {
             quote! {
-                HasField< #field_symbol, Value = #field_type >
+                HasField< #tag_type, Value = #field_type >
             }
         }
     } else {
         quote! {
-            HasFieldMut< #field_symbol, Value = #field_type >
+            HasFieldMut< #tag_type, Value = #field_type >
         }
     };
 

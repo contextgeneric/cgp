@@ -7,9 +7,6 @@ repository   = { workspace = true }
 authors      = { workspace = true }
 rust-version = { workspace = true }
 keywords     = { workspace = true }
-description  = """
-    Context-generic programming core component traits
-"""
 
 [dependencies]
-cgp-core    = { workspace = true }
+cgp   = { version = "0.7.0", path = "../cgp-core", package = "cgp-core" }

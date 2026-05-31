@@ -1,4 +1,4 @@
-use cgp_core::prelude::*;
+use cgp::prelude::*;
 
 #[cgp_type]
 pub trait HasRuntimeType {

@@ -1,14 +1,12 @@
-use alloc::string::ToString;
-
+use cgp_macro_core::types::field::FieldName;
 use proc_macro2::TokenStream;
 use quote::{ToTokens, quote};
-use syn::{Ident, ItemImpl, ItemTrait, TraitItemType, parse2};
+use syn::{Ident, ItemImpl, ItemTrait, TraitItemType, parse_quote, parse2};
 
 use crate::derive_getter::getter_field::GetterField;
 use crate::derive_getter::{
     ContextArg, ReceiverMode, derive_getter_constraint, derive_getter_method,
 };
-use crate::symbol::symbol_from_string;
 use crate::type_component::get_bounds_and_replace_self_assoc_type;
 
 pub fn derive_blanket_impl(
@@ -64,12 +62,13 @@ pub fn derive_blanket_impl(
             ),
         };
 
-        let field_symbol = symbol_from_string(&field.field_name.to_string())?;
+        let field_name = FieldName::from(field.field_name.clone());
+        let tag_type = parse_quote!(#field_name);
 
         let method = derive_getter_method(
             &context_arg,
             field,
-            Some(quote! { ::< #field_symbol > }),
+            Some(quote! { ::< #field_name > }),
             None,
         );
 
@@ -79,7 +78,7 @@ pub fn derive_blanket_impl(
             &field.field_type,
             &field.receiver_mut,
             &field.field_mode,
-            quote! { #field_symbol },
+            &tag_type,
             &field_assoc_type.as_ref().map(|item| item.ident.clone()),
         )?;
 

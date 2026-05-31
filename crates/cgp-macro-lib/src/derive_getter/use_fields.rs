@@ -1,15 +1,13 @@
-use alloc::string::ToString;
-
+use cgp_macro_core::types::field::Symbol;
 use proc_macro2::TokenStream;
 use quote::{ToTokens, quote};
-use syn::{ItemImpl, ItemTrait, TraitItemType, parse2};
+use syn::{ItemImpl, ItemTrait, TraitItemType, parse_quote, parse2};
 
 use crate::derive_getter::getter_field::GetterField;
 use crate::derive_getter::{
     ContextArg, ReceiverMode, derive_getter_constraint, derive_getter_method,
 };
 use crate::parse::ComponentSpec;
-use crate::symbol::symbol_from_string;
 use crate::type_component::get_bounds_and_replace_self_assoc_type;
 
 pub fn derive_use_fields_impl(
@@ -55,12 +53,13 @@ pub fn derive_use_fields_impl(
             ReceiverMode::Type(ty) => ty.to_token_stream(),
         };
 
-        let field_symbol = symbol_from_string(&field.field_name.to_string())?;
+        let field_name = Symbol::new(field.field_name.clone());
+        let tag_type = parse_quote!(#field_name);
 
         let method = derive_getter_method(
             &ContextArg::Ident(receiver_type.clone()),
             field,
-            Some(quote! { ::< #field_symbol > }),
+            Some(quote! { ::< #field_name > }),
             None,
         );
 
@@ -70,7 +69,7 @@ pub fn derive_use_fields_impl(
             &field.field_type,
             &field.receiver_mut,
             &field.field_mode,
-            quote! { #field_symbol },
+            &tag_type,
             &field_assoc_type.as_ref().map(|item| item.ident.clone()),
         )?;
 

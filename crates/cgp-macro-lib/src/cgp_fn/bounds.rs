@@ -1,11 +1,10 @@
+use cgp_macro_core::types::field::FieldName;
 use cgp_macro_core::types::implicits::ImplicitArgField;
-use quote::ToTokens;
-use syn::TypeParamBound;
 use syn::punctuated::Punctuated;
 use syn::token::Plus;
+use syn::{TypeParamBound, parse_quote};
 
 use crate::derive_getter::derive_getter_constraint;
-use crate::symbol::symbol_from_string;
 
 pub fn build_implicit_args_bounds(
     implicit_args: &[ImplicitArgField],
@@ -13,13 +12,14 @@ pub fn build_implicit_args_bounds(
     let mut constraints: Punctuated<TypeParamBound, Plus> = Punctuated::new();
 
     for arg in implicit_args {
-        let field_symbol = symbol_from_string(&arg.field_name.to_string())?;
+        let field_name = FieldName::from(arg.field_name.clone());
+        let tag_type = parse_quote!(#field_name);
 
         let constraint = derive_getter_constraint(
             &arg.field_type,
             &arg.field_mut,
             &arg.field_mode,
-            field_symbol.to_token_stream(),
+            &tag_type,
             &None,
         )?;
 
