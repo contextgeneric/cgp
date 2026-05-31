@@ -1,5 +1,6 @@
 use alloc::vec::Vec;
 
+use cgp_macro_core::types::getter::FieldMode;
 use cgp_macro_core::visitors::ReplaceSelfTypeVisitor;
 use quote::{ToTokens, quote};
 use syn::punctuated::Punctuated;
@@ -11,8 +12,8 @@ use syn::{
     Signature, TraitItem, TraitItemFn, TraitItemType, Type, TypePath, parse_quote, parse2,
 };
 
+use crate::derive_getter::ReceiverMode;
 use crate::derive_getter::getter_field::GetterField;
-use crate::derive_getter::{FieldMode, ReceiverMode};
 
 pub fn parse_getter_fields(
     context_type: &Ident,

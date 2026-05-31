@@ -1,9 +1,10 @@
+use cgp_macro_core::types::getter::FieldMode;
 use proc_macro2::{Span, TokenStream};
 use quote::{ToTokens, quote};
 use syn::{Generics, Ident, ItemImpl, ItemTrait, TraitItemType, parse_quote, parse2};
 
 use crate::derive_getter::getter_field::GetterField;
-use crate::derive_getter::{ContextArg, FieldMode, ReceiverMode, derive_getter_method};
+use crate::derive_getter::{ContextArg, ReceiverMode, derive_getter_method};
 use crate::parse::ComponentSpec;
 use crate::type_component::get_bounds_and_replace_self_assoc_type;
 

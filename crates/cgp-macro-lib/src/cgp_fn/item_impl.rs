@@ -1,11 +1,11 @@
+use cgp_macro_core::types::implicits::ImplicitArgField;
 use quote::quote;
 use syn::punctuated::Punctuated;
 use syn::token::Plus;
 use syn::{Generics, Ident, ItemFn, ItemImpl, TypeParamBound, parse_quote, parse2};
 
 use crate::cgp_fn::{
-    FunctionAttributes, ImplicitArgField, apply_use_type_attributes_to_item_impl,
-    build_implicit_args_bounds,
+    FunctionAttributes, apply_use_type_attributes_to_item_impl, build_implicit_args_bounds,
 };
 use crate::cgp_impl::derive_provider_bounds;
 

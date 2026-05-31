@@ -5,6 +5,7 @@ export_constructs! {
     Cons,
     Chars,
     Symbol,
+    Index,
     PathCons,
     RedirectLookup,
     DelegateComponent,

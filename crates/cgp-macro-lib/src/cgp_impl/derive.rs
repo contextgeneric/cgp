@@ -8,17 +8,18 @@ use syn::token::Plus;
 use syn::{Error, ItemImpl, TypeParamBound, parse_quote, parse2};
 
 use crate::cgp_fn::{apply_use_type_attributes_to_item_impl, build_implicit_args_bounds};
+use crate::cgp_impl::derive_provider_impl;
+use crate::cgp_impl::implicit_args::extract_implicit_args_from_impl_items;
 use crate::cgp_impl::provider_bounds::derive_provider_bounds;
-use crate::cgp_impl::{derive_provider_impl, implicit_args};
 use crate::derive_provider::{
     derive_component_name_from_provider_impl, derive_is_provider_for, derive_provider_struct,
 };
 
 pub fn derive_cgp_impl(spec: ImplArgs, mut item_impl: ItemImpl) -> syn::Result<TokenStream> {
-    let attributes = ImplAttributes::parse(&mut item_impl.attrs)?;
+    let attributes = ImplAttributes::parse(&item_impl.attrs)?;
     item_impl.attrs = attributes.raw_attributes;
 
-    let implicit_args = implicit_args::extract_implicit_args_from_impl_items(&mut item_impl.items)?;
+    let implicit_args = extract_implicit_args_from_impl_items(&mut item_impl.items)?;
 
     if !implicit_args.is_empty() {
         let where_clause = item_impl.generics.make_where_clause();

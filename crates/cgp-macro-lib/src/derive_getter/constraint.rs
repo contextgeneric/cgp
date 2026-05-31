@@ -1,9 +1,8 @@
+use cgp_macro_core::types::getter::FieldMode;
 use proc_macro2::TokenStream;
 use quote::quote;
 use syn::token::Mut;
 use syn::{Ident, Type, TypeParamBound, parse_quote, parse2};
-
-use crate::derive_getter::FieldMode;
 
 pub fn derive_getter_constraint(
     field_type: &Type,

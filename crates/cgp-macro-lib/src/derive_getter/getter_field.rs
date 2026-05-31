@@ -1,3 +1,4 @@
+use cgp_macro_core::types::getter::FieldMode;
 use syn::token::Mut;
 use syn::{Ident, Type};
 
@@ -9,16 +10,6 @@ pub struct GetterField {
     pub phantom_arg_type: Option<Type>,
     pub field_mode: FieldMode,
     pub receiver_mode: ReceiverMode,
-}
-
-#[derive(Clone, Eq, PartialEq)]
-pub enum FieldMode {
-    Reference,
-    OptionRef,
-    MRef,
-    Str,
-    Copy,
-    Slice,
 }
 
 pub enum ReceiverMode {

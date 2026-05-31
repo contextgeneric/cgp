@@ -1,6 +1,7 @@
+use cgp_macro_core::types::implicits::ImplicitArgField;
 use syn::ImplItem;
 
-use crate::cgp_fn::{ImplicitArgField, extract_and_parse_implicit_args, inject_implicit_args};
+use crate::cgp_fn::{extract_and_parse_implicit_args, inject_implicit_args};
 
 pub fn extract_implicit_args_from_impl_items(
     impl_items: &mut [ImplItem],

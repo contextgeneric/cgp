@@ -1,14 +1,15 @@
+use cgp_macro_core::types::field::Symbol;
+use cgp_macro_core::types::implicits::ImplicitArgField;
 use quote::quote;
 use syn::{Block, parse2};
 
-use crate::cgp_fn::ImplicitArgField;
 use crate::derive_getter::extend_call_expr;
-use crate::symbol::symbol_from_string;
 
 pub fn inject_implicit_args(args: &[ImplicitArgField], body: &mut Block) -> syn::Result<()> {
     for arg in args.iter().rev() {
         inject_implicit_arg(arg, body)?;
     }
+
     Ok(())
 }
 
@@ -16,7 +17,7 @@ pub fn inject_implicit_arg(arg: &ImplicitArgField, body: &mut Block) -> syn::Res
     let field_name = &arg.field_name;
     let arg_type = &arg.arg_type;
 
-    let field_symbol = symbol_from_string(&field_name.to_string())?;
+    let field_symbol = Symbol::new(field_name.clone());
 
     let call_expr = if arg.field_mut.is_none() {
         quote! {

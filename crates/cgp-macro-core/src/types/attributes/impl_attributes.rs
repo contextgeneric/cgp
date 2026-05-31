@@ -19,23 +19,32 @@ impl ImplAttributes {
 
         for attribute in attributes {
             if let Some(ident) = attribute.path().get_ident() {
-                if ident == "uses" {
-                    let uses = attribute.parse_args_with(
-                        Punctuated::<IdentWithTypeArgs, Comma>::parse_terminated,
-                    )?;
-                    parsed_attributes.uses.extend(uses);
-                } else if ident == "use_type" {
-                    let use_type = attribute
-                        .parse_args_with(Punctuated::<UseTypeAttribute, Comma>::parse_terminated)?;
-                    parsed_attributes.use_type.extend(use_type);
-                } else if ident == "use_provider" {
-                    let use_provider = attribute.parse_args_with(
-                        Punctuated::<UseProviderAttribute, Comma>::parse_terminated,
-                    )?;
-                    parsed_attributes.use_provider.extend(use_provider);
-                } else {
-                    parsed_attributes.raw_attributes.push(attribute.clone());
-                }
+                match ident.to_string().as_ref() {
+                    "uses" => {
+                        let uses = attribute.parse_args_with(
+                            Punctuated::<IdentWithTypeArgs, Comma>::parse_terminated,
+                        )?;
+
+                        parsed_attributes.uses.extend(uses);
+                    }
+                    "use_type" => {
+                        let use_type = attribute.parse_args_with(
+                            Punctuated::<UseTypeAttribute, Comma>::parse_terminated,
+                        )?;
+
+                        parsed_attributes.use_type.extend(use_type);
+                    }
+                    "use_provider" => {
+                        let use_provider = attribute.parse_args_with(
+                            Punctuated::<UseProviderAttribute, Comma>::parse_terminated,
+                        )?;
+
+                        parsed_attributes.use_provider.extend(use_provider);
+                    }
+                    _ => {
+                        parsed_attributes.raw_attributes.push(attribute.clone());
+                    }
+                };
             } else {
                 parsed_attributes.raw_attributes.push(attribute.clone());
             }

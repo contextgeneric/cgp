@@ -1,9 +1,9 @@
+use cgp_macro_core::types::implicits::ImplicitArgField;
 use quote::ToTokens;
 use syn::TypeParamBound;
 use syn::punctuated::Punctuated;
 use syn::token::Plus;
 
-use crate::cgp_fn::ImplicitArgField;
 use crate::derive_getter::derive_getter_constraint;
 use crate::symbol::symbol_from_string;
 
