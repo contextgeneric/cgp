@@ -61,12 +61,18 @@ pub fn derive_use_field_impl(
         None,
     ));
 
+    let field_type = if let Some(trait_item) = &field_assoc_type {
+        let trait_item_ident = &trait_item.ident;
+        parse_quote!(#trait_item_ident)
+    } else {
+        field.field_type.clone()
+    };
+
     let constraint = derive_getter_constraint(
-        &field.field_type,
+        &field_type,
         &field.receiver_mut,
         &field.field_mode,
         &tag_type,
-        &field_assoc_type.as_ref().map(|item| item.ident.clone()),
     )?;
 
     field_constraints.push(constraint);

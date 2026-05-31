@@ -15,13 +15,8 @@ pub fn build_implicit_args_bounds(
         let field_name = FieldName::from(arg.field_name.clone());
         let tag_type = parse_quote!(#field_name);
 
-        let constraint = derive_getter_constraint(
-            &arg.field_type,
-            &arg.field_mut,
-            &arg.field_mode,
-            &tag_type,
-            &None,
-        )?;
+        let constraint =
+            derive_getter_constraint(&arg.field_type, &arg.field_mut, &arg.field_mode, &tag_type)?;
 
         constraints.push(constraint);
     }
