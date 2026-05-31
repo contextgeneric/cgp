@@ -1,12 +1,11 @@
+use cgp_macro_core::types::attributes::{UseTypeAttribute, UseTypeIdent};
 use proc_macro2::TokenStream;
 use quote::{ToTokens, quote};
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
 use syn::{Ident, Type, WherePredicate, parse_quote, parse2};
 
-use crate::cgp_fn::{UseTypeIdent, UseTypeSpec};
-
-pub fn derive_use_type_predicates(specs: &[UseTypeSpec]) -> syn::Result<Vec<WherePredicate>> {
+pub fn derive_use_type_predicates(specs: &[UseTypeAttribute]) -> syn::Result<Vec<WherePredicate>> {
     let mut predicates = Vec::new();
 
     for use_type in specs.iter() {
@@ -43,7 +42,7 @@ pub fn derive_use_type_predicates(specs: &[UseTypeSpec]) -> syn::Result<Vec<Wher
     Ok(predicates)
 }
 
-fn find_type_alias(specs: &[UseTypeSpec], context_type: &Type) -> syn::Result<Option<Type>> {
+fn find_type_alias(specs: &[UseTypeAttribute], context_type: &Type) -> syn::Result<Option<Type>> {
     let Ok(context_ident) = parse2::<Ident>(context_type.to_token_stream()) else {
         return Ok(None);
     };
@@ -68,8 +67,8 @@ fn find_type_alias(specs: &[UseTypeSpec], context_type: &Type) -> syn::Result<Op
 }
 
 pub fn find_type_equalities(
-    current_spec: &UseTypeSpec,
-    specs: &[UseTypeSpec],
+    current_spec: &UseTypeAttribute,
+    specs: &[UseTypeAttribute],
 ) -> syn::Result<Vec<(Ident, Type)>> {
     let mut equalities = Vec::new();
 
@@ -86,8 +85,8 @@ pub fn find_type_equalities(
 
 fn forbid_same_alias(
     current_ident: &UseTypeIdent,
-    current_spec: &UseTypeSpec,
-    specs: &[UseTypeSpec],
+    current_spec: &UseTypeAttribute,
+    specs: &[UseTypeAttribute],
 ) -> syn::Result<()> {
     for spec in specs.iter() {
         if core::ptr::eq(spec, current_spec) {
@@ -110,8 +109,8 @@ fn forbid_same_alias(
 
 fn find_type_equality(
     current_ident: &UseTypeIdent,
-    current_spec: &UseTypeSpec,
-    specs: &[UseTypeSpec],
+    current_spec: &UseTypeAttribute,
+    specs: &[UseTypeAttribute],
 ) -> syn::Result<Option<(Ident, Type)>> {
     if let Some(equal_target) = current_ident.equals.clone() {
         for spec in specs.iter() {

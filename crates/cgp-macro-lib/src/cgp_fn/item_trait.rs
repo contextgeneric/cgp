@@ -1,7 +1,8 @@
+use cgp_macro_core::types::attributes::UseTypeAttribute;
 use quote::{ToTokens, quote};
 use syn::{Generics, Ident, ItemFn, ItemTrait, TraitItemFn, parse_quote, parse2};
 
-use crate::cgp_fn::{FunctionAttributes, UseTypeSpec, substitute_abstract_types};
+use crate::cgp_fn::{FunctionAttributes, substitute_abstract_types};
 
 pub fn derive_item_trait(
     trait_ident: &Ident,
@@ -44,7 +45,7 @@ pub fn derive_item_trait(
 
 pub fn expand_use_type_attributes_on_trait(
     item_trait: &ItemTrait,
-    use_type_specs: &[UseTypeSpec],
+    use_type_specs: &[UseTypeAttribute],
 ) -> syn::Result<ItemTrait> {
     let mut item_trait: ItemTrait = parse2(substitute_abstract_types(
         use_type_specs,

@@ -9,7 +9,6 @@ mod parse_implicits;
 mod spec;
 mod substitute_type;
 mod type_predicates;
-mod use_type;
 
 pub use apply_type::*;
 pub use attributes::*;
@@ -21,4 +20,3 @@ pub use parse_implicits::*;
 pub use spec::*;
 pub use substitute_type::*;
 pub use type_predicates::*;
-pub use use_type::*;

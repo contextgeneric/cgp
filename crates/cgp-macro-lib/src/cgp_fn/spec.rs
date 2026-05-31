@@ -1,9 +1,8 @@
+use cgp_macro_core::types::attributes::{UseProviderAttribute, UseTypeAttribute};
 use cgp_macro_core::types::ident::IdentWithTypeArgs;
 use syn::token::Mut;
 use syn::{GenericParam, Ident, Type, TypeParamBound, WherePredicate};
 
-use crate::cgp_fn::UseTypeSpec;
-use crate::cgp_impl::UseProviderSpec;
 use crate::derive_getter::FieldMode;
 
 #[derive(Clone, Eq, PartialEq)]
@@ -20,7 +19,7 @@ pub struct FunctionAttributes {
     pub extend: Vec<TypeParamBound>,
     pub extend_where: Vec<WherePredicate>,
     pub uses: Vec<IdentWithTypeArgs>,
-    pub use_type: Vec<UseTypeSpec>,
-    pub use_provider: Vec<UseProviderSpec>,
+    pub use_type: Vec<UseTypeAttribute>,
+    pub use_provider: Vec<UseProviderAttribute>,
     pub impl_generics: Vec<GenericParam>,
 }

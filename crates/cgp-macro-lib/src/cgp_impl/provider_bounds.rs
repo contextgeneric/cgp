@@ -1,13 +1,12 @@
+use cgp_macro_core::types::attributes::UseProviderAttribute;
 use quote::quote;
 use syn::punctuated::Punctuated;
 use syn::token::Plus;
 use syn::{Type, TypeParamBound, WherePredicate, parse_quote, parse2};
 
-use crate::cgp_impl::use_provider::UseProviderSpec;
-
 pub fn derive_provider_bounds(
     context_type: &Type,
-    spec: &UseProviderSpec,
+    spec: &UseProviderAttribute,
 ) -> syn::Result<WherePredicate> {
     let context_type = if spec.context_type == parse_quote! { Self } {
         context_type

@@ -1,9 +1,10 @@
-use cgp_macro_core::types::ident::IdentWithTypeArgs;
 use syn::parse::{Parse, ParseStream};
 use syn::token::{As, At, Brace, Colon, Comma, Eq, Gt, Lt};
 use syn::{Ident, Type, braced, parse_quote};
 
-pub struct UseTypeSpec {
+use crate::types::ident::IdentWithTypeArgs;
+
+pub struct UseTypeAttribute {
     pub context_type: Type,
     pub trait_path: IdentWithTypeArgs,
     pub type_idents: Vec<UseTypeIdent>,
@@ -15,7 +16,7 @@ pub struct UseTypeIdent {
     pub equals: Option<Type>,
 }
 
-impl UseTypeSpec {
+impl UseTypeAttribute {
     pub fn replace_ident(&self, ident: &Ident) -> Option<Ident> {
         for type_ident in &self.type_idents {
             if type_ident.alias_ident() == ident {
@@ -35,7 +36,7 @@ impl UseTypeIdent {
     }
 }
 
-impl Parse for UseTypeSpec {
+impl Parse for UseTypeAttribute {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let body;
 

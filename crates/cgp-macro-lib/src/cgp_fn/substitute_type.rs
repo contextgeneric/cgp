@@ -1,9 +1,11 @@
+use cgp_macro_core::types::attributes::UseTypeAttribute;
 use proc_macro2::{Group, TokenStream, TokenTree};
 use quote::quote;
 
-use crate::cgp_fn::UseTypeSpec;
-
-pub fn substitute_abstract_types(type_specs: &[UseTypeSpec], body: TokenStream) -> TokenStream {
+pub fn substitute_abstract_types(
+    type_specs: &[UseTypeAttribute],
+    body: TokenStream,
+) -> TokenStream {
     let mut out = body;
     for spec in type_specs.iter().rev() {
         out = substitute_abstract_type(spec, out);
@@ -11,7 +13,7 @@ pub fn substitute_abstract_types(type_specs: &[UseTypeSpec], body: TokenStream) 
     out
 }
 
-pub fn substitute_abstract_type(type_specs: &UseTypeSpec, body: TokenStream) -> TokenStream {
+pub fn substitute_abstract_type(type_specs: &UseTypeAttribute, body: TokenStream) -> TokenStream {
     let mut out = TokenStream::new();
     let mut last_token_was_colon = false;
     let mut last_two_tokens_was_colon = false;

@@ -1,12 +1,12 @@
 use core::mem;
 
+use cgp_macro_core::types::attributes::UseTypeAttribute;
 use syn::parse::Parse;
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
 use syn::{Attribute, TypeParamBound};
 
 use crate::attributes::UseNamespaceAttribute;
-use crate::cgp_fn::UseTypeSpec;
 
 pub fn parse_component_attributes(
     attributes: &mut Vec<Attribute>,
@@ -23,7 +23,7 @@ pub fn parse_component_attributes(
                 parsed_attributes.extend.extend(extend_bound);
             } else if ident == "use_type" {
                 let use_type_specs = attribute
-                    .parse_args_with(Punctuated::<UseTypeSpec, Comma>::parse_terminated)?;
+                    .parse_args_with(Punctuated::<UseTypeAttribute, Comma>::parse_terminated)?;
 
                 for use_type_spec in use_type_specs.iter() {
                     for type_ident in use_type_spec.type_idents.iter() {
@@ -54,6 +54,6 @@ pub fn parse_component_attributes(
 #[derive(Default)]
 pub struct ComponentAttributes {
     pub extend: Vec<TypeParamBound>,
-    pub use_type: Vec<UseTypeSpec>,
+    pub use_type: Vec<UseTypeAttribute>,
     pub namespace: Vec<UseNamespaceAttribute>,
 }
