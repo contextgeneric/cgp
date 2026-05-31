@@ -1,11 +1,18 @@
 use proc_macro2::TokenStream;
 use quote::ToTokens;
+use syn::Ident;
 
 use crate::types::field::{Index, Symbol};
 
 pub enum FieldName {
     Ident(Symbol),
     Index(Index),
+}
+
+impl From<Ident> for FieldName {
+    fn from(value: Ident) -> Self {
+        Self::Ident(Symbol::new(value))
+    }
 }
 
 impl From<Symbol> for FieldName {

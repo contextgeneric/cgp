@@ -1,7 +1,7 @@
 use cgp_macro_core::types::implicits::ImplicitArgField;
 use syn::ImplItem;
 
-use crate::cgp_fn::{extract_and_parse_implicit_args, inject_implicit_args};
+use crate::cgp_fn::extract_and_parse_implicit_args;
 
 pub fn extract_implicit_args_from_impl_items(
     impl_items: &mut [ImplItem],
@@ -11,9 +11,9 @@ pub fn extract_implicit_args_from_impl_items(
     for item in impl_items {
         if let ImplItem::Fn(method) = item {
             let implicit_args = extract_and_parse_implicit_args(&mut method.sig.inputs)?;
-            inject_implicit_args(&implicit_args, &mut method.block)?;
+            implicit_args.prepend_to_block(&mut method.block)?;
 
-            for implicit_arg in implicit_args {
+            for implicit_arg in implicit_args.fields {
                 if !all_implicit_args.contains(&implicit_arg) {
                     all_implicit_args.push(implicit_arg);
                 }

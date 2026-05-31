@@ -1,6 +1,6 @@
 use std::mem;
 
-use cgp_macro_core::types::implicits::ImplicitArgField;
+use cgp_macro_core::types::implicits::{ImplicitArgField, ImplicitArgFields};
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
 use syn::visit::{self, Visit};
@@ -10,11 +10,11 @@ use crate::derive_getter::parse_field_type;
 
 pub fn extract_and_parse_implicit_args(
     args: &mut Punctuated<FnArg, Comma>,
-) -> syn::Result<Vec<ImplicitArgField>> {
+) -> syn::Result<ImplicitArgFields> {
     let implicit_fn_args = extract_implicit_args(args);
 
     if implicit_fn_args.is_empty() {
-        return Ok(Vec::new());
+        return Ok(ImplicitArgFields::default());
     }
 
     let Some(FnArg::Receiver(receiver)) = args.first() else {
@@ -38,7 +38,7 @@ pub fn extract_and_parse_implicit_args(
         implicit_args.push(spec);
     }
 
-    Ok(implicit_args)
+    Ok(ImplicitArgFields::new(implicit_args))
 }
 
 pub fn parse_implicit_arg(receiver: &Receiver, arg: &PatType) -> syn::Result<ImplicitArgField> {

@@ -4,7 +4,6 @@ use proc_macro2::TokenStream;
 use quote::quote;
 use syn::{Ident, ItemFn, Visibility};
 
-use crate::cgp_fn::fn_body::inject_implicit_args;
 use crate::cgp_fn::item_impl::derive_item_impl;
 use crate::cgp_fn::item_trait::derive_item_trait;
 use crate::cgp_fn::{extract_and_parse_implicit_args, parse_function_attributes};
@@ -18,7 +17,7 @@ pub fn derive_cgp_fn(trait_ident: &Ident, mut item_fn: ItemFn) -> syn::Result<To
     let (attributes, trait_attributes) =
         parse_function_attributes(core::mem::take(&mut item_fn.attrs))?;
 
-    inject_implicit_args(&implicit_args, &mut item_fn.block)?;
+    implicit_args.prepend_to_block(&mut item_fn.block)?;
 
     let generics = mem::take(&mut item_fn.sig.generics);
 
@@ -28,7 +27,7 @@ pub fn derive_cgp_fn(trait_ident: &Ident, mut item_fn: ItemFn) -> syn::Result<To
     let mut item_impl = derive_item_impl(
         trait_ident,
         &item_fn,
-        &implicit_args,
+        &implicit_args.fields,
         &generics,
         &attributes,
     )?;
