@@ -1,5 +1,7 @@
-mod merge_generics;
+mod field;
+mod generics;
 mod snake_case;
 
-pub use merge_generics::*;
+pub use field::*;
+pub use generics::*;
 pub use snake_case::*;

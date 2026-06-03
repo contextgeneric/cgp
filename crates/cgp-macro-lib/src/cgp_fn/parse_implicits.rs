@@ -1,12 +1,11 @@
 use std::mem;
 
+use cgp_macro_core::functions::parse_field_type;
 use cgp_macro_core::types::implicits::{ImplicitArgField, ImplicitArgFields};
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
 use syn::visit::{self, Visit};
 use syn::{Attribute, FnArg, Meta, Pat, PatIdent, PatType, Receiver};
-
-use crate::derive_getter::parse_field_type;
 
 pub fn extract_and_parse_implicit_args(
     args: &mut Punctuated<FnArg, Comma>,
