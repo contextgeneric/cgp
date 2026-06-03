@@ -33,7 +33,7 @@ pub fn parse_function_attributes(
                 let use_type = attribute
                     .parse_args_with(Punctuated::<UseTypeAttribute, Comma>::parse_terminated)?;
 
-                parsed_attributes.use_type.extend(use_type);
+                parsed_attributes.use_type.attributes.extend(use_type);
             } else if ident == "use_provider" {
                 let use_provider = attribute
                     .parse_args_with(Punctuated::<UseProviderAttribute, Comma>::parse_terminated)?;

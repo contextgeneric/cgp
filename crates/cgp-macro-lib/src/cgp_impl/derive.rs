@@ -30,8 +30,8 @@ pub fn derive_cgp_impl(spec: ImplArgs, mut item_impl: ItemImpl) -> syn::Result<T
         })?);
     }
 
-    if !attributes.use_type.is_empty() {
-        item_impl = apply_use_type_attributes_to_item_impl(&item_impl, &attributes.use_type)?;
+    if !attributes.use_type.attributes.is_empty() {
+        apply_use_type_attributes_to_item_impl(&mut item_impl, &attributes.use_type)?;
     }
 
     if !attributes.uses.is_empty() {

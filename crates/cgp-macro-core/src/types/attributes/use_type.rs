@@ -1,8 +1,15 @@
 use syn::parse::{Parse, ParseStream};
 use syn::token::{As, At, Brace, Colon, Comma, Eq, Gt, Lt};
-use syn::{Ident, Type, braced, parse_quote};
+use syn::visit_mut::VisitMut;
+use syn::{Ident, ItemImpl, ItemTrait, Type, braced, parse_quote};
 
 use crate::types::ident::IdentWithTypeArgs;
+use crate::visitors::SubstituteAbstractType;
+
+#[derive(Default)]
+pub struct UseTypeAttributes {
+    pub attributes: Vec<UseTypeAttribute>,
+}
 
 pub struct UseTypeAttribute {
     pub context_type: Type,
@@ -14,6 +21,20 @@ pub struct UseTypeIdent {
     pub type_ident: Ident,
     pub as_alias: Option<Ident>,
     pub equals: Option<Type>,
+}
+
+impl UseTypeAttributes {
+    pub fn substitute_abstract_types_in_item_trait(&self, item_trait: &mut ItemTrait) {
+        for type_spec in self.attributes.iter().rev() {
+            SubstituteAbstractType { type_spec }.visit_item_trait_mut(item_trait);
+        }
+    }
+
+    pub fn substitute_abstract_types_in_item_impl(&self, item_impl: &mut ItemImpl) {
+        for type_spec in self.attributes.iter().rev() {
+            SubstituteAbstractType { type_spec }.visit_item_impl_mut(item_impl);
+        }
+    }
 }
 
 impl UseTypeAttribute {

@@ -1,6 +1,6 @@
 use core::mem;
 
-use cgp_macro_core::types::attributes::UseTypeAttribute;
+use cgp_macro_core::types::attributes::{UseTypeAttribute, UseTypeAttributes};
 use syn::parse::Parse;
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
@@ -36,7 +36,7 @@ pub fn parse_component_attributes(
                     }
                 }
 
-                parsed_attributes.use_type.extend(use_type_specs);
+                parsed_attributes.use_type.attributes.extend(use_type_specs);
             } else if ident == "prefix" {
                 let namespace_specs = attribute.parse_args_with(UseNamespaceAttribute::parse)?;
                 parsed_attributes.namespace.push(namespace_specs);
@@ -54,6 +54,6 @@ pub fn parse_component_attributes(
 #[derive(Default)]
 pub struct ComponentAttributes {
     pub extend: Vec<TypeParamBound>,
-    pub use_type: Vec<UseTypeAttribute>,
+    pub use_type: UseTypeAttributes,
     pub namespace: Vec<UseNamespaceAttribute>,
 }

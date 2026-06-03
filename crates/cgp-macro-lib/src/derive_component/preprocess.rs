@@ -9,9 +9,8 @@ pub fn preprocess_consumer_trait(
 ) -> syn::Result<()> {
     consumer_trait.supertraits.extend(attributes.extend.clone());
 
-    if !attributes.use_type.is_empty() {
-        *consumer_trait =
-            expand_use_type_attributes_on_trait(consumer_trait, &attributes.use_type)?;
+    if !attributes.use_type.attributes.is_empty() {
+        expand_use_type_attributes_on_trait(consumer_trait, &attributes.use_type)?;
     }
 
     Ok(())
