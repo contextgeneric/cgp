@@ -1,40 +1,14 @@
 use syn::parse::{Parse, ParseStream};
-use syn::token::{As, At, Brace, Colon, Comma, Eq, Gt, Lt};
-use syn::visit_mut::VisitMut;
-use syn::{Ident, ItemImpl, ItemTrait, Type, braced, parse_quote};
+use syn::token::{At, Brace, Colon, Comma, Gt, Lt};
+use syn::{Ident, Type, braced, parse_quote};
 
+use crate::types::attributes::UseTypeIdent;
 use crate::types::ident::IdentWithTypeArgs;
-use crate::visitors::SubstituteAbstractType;
-
-#[derive(Default)]
-pub struct UseTypeAttributes {
-    pub attributes: Vec<UseTypeAttribute>,
-}
 
 pub struct UseTypeAttribute {
     pub context_type: Type,
     pub trait_path: IdentWithTypeArgs,
     pub type_idents: Vec<UseTypeIdent>,
-}
-
-pub struct UseTypeIdent {
-    pub type_ident: Ident,
-    pub as_alias: Option<Ident>,
-    pub equals: Option<Type>,
-}
-
-impl UseTypeAttributes {
-    pub fn substitute_abstract_types_in_item_trait(&self, item_trait: &mut ItemTrait) {
-        for type_spec in self.attributes.iter().rev() {
-            SubstituteAbstractType { type_spec }.visit_item_trait_mut(item_trait);
-        }
-    }
-
-    pub fn substitute_abstract_types_in_item_impl(&self, item_impl: &mut ItemImpl) {
-        for type_spec in self.attributes.iter().rev() {
-            SubstituteAbstractType { type_spec }.visit_item_impl_mut(item_impl);
-        }
-    }
 }
 
 impl UseTypeAttribute {
@@ -48,12 +22,6 @@ impl UseTypeAttribute {
         }
 
         None
-    }
-}
-
-impl UseTypeIdent {
-    pub fn alias_ident(&self) -> &Ident {
-        self.as_alias.as_ref().unwrap_or(&self.type_ident)
     }
 }
 
@@ -112,32 +80,6 @@ impl Parse for UseTypeAttribute {
             context_type,
             trait_path,
             type_idents,
-        })
-    }
-}
-
-impl Parse for UseTypeIdent {
-    fn parse(input: ParseStream) -> syn::Result<Self> {
-        let type_ident: Ident = input.parse()?;
-
-        let as_alias = if input.peek(As) {
-            let _: As = input.parse()?;
-            Some(input.parse()?)
-        } else {
-            None
-        };
-
-        let equals = if input.peek(Eq) {
-            let _: Eq = input.parse()?;
-            Some(input.parse()?)
-        } else {
-            None
-        };
-
-        Ok(Self {
-            type_ident,
-            as_alias,
-            equals,
         })
     }
 }

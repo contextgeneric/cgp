@@ -66,7 +66,7 @@ fn find_type_alias(specs: &[UseTypeAttribute], context_type: &Type) -> syn::Resu
     Ok(None)
 }
 
-pub fn find_type_equalities(
+fn find_type_equalities(
     current_spec: &UseTypeAttribute,
     specs: &[UseTypeAttribute],
 ) -> syn::Result<Vec<(Ident, Type)>> {
