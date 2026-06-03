@@ -3,6 +3,7 @@ use quote::{ToTokens, quote};
 use syn::Type;
 use syn::token::Mut;
 
+use crate::exports::{HasField, HasFieldMut};
 use crate::types::getter::FieldMode;
 
 pub struct HasFieldBound {
@@ -24,16 +25,16 @@ impl ToTokens for HasFieldBound {
         let output = if field_mut.is_none() {
             if let FieldMode::Slice = field_mode {
                 quote! {
-                    HasField< #tag_type, Value: AsRef< [ #field_type ] > + 'static >
+                    #HasField< #tag_type, Value: AsRef< [ #field_type ] > + 'static >
                 }
             } else {
                 quote! {
-                    HasField< #tag_type, Value = #field_type >
+                    #HasField< #tag_type, Value = #field_type >
                 }
             }
         } else {
             quote! {
-                HasFieldMut< #tag_type, Value = #field_type >
+                #HasFieldMut< #tag_type, Value = #field_type >
             }
         };
 

@@ -10,4 +10,6 @@ export_constructs! {
     RedirectLookup,
     DelegateComponent,
     IsProviderFor,
+    HasField,
+    HasFieldMut,
 }
