@@ -1,5 +1,4 @@
 mod derive;
-mod implicit_args;
 mod provider_bounds;
 mod provider_impl;
 mod transform;

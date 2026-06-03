@@ -1,3 +1,4 @@
+use cgp_macro_core::functions::extract_implicit_args_from_impl_items;
 use cgp_macro_core::types::attributes::ImplAttributes;
 use cgp_macro_core::types::cgp_impl::ImplArgs;
 use proc_macro2::TokenStream;
@@ -9,7 +10,6 @@ use syn::{Error, ItemImpl, TypeParamBound, parse_quote, parse2};
 
 use crate::cgp_fn::apply_use_type_attributes_to_item_impl;
 use crate::cgp_impl::derive_provider_impl;
-use crate::cgp_impl::implicit_args::extract_implicit_args_from_impl_items;
 use crate::cgp_impl::provider_bounds::derive_provider_bounds;
 use crate::derive_provider::{
     derive_component_name_from_provider_impl, derive_is_provider_for, derive_provider_struct,

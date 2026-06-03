@@ -1,12 +1,13 @@
 use core::mem;
 
+use cgp_macro_core::functions::extract_and_parse_implicit_args;
 use proc_macro2::TokenStream;
 use quote::quote;
 use syn::{Ident, ItemFn, Visibility};
 
 use crate::cgp_fn::item_impl::derive_item_impl;
 use crate::cgp_fn::item_trait::derive_item_trait;
-use crate::cgp_fn::{extract_and_parse_implicit_args, parse_function_attributes};
+use crate::cgp_fn::parse_function_attributes;
 
 pub fn derive_cgp_fn(trait_ident: &Ident, mut item_fn: ItemFn) -> syn::Result<TokenStream> {
     let visibility = item_fn.vis.clone();
