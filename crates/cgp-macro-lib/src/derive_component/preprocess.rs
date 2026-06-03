@@ -1,6 +1,5 @@
 use syn::ItemTrait;
 
-use crate::cgp_fn::expand_use_type_attributes_on_trait;
 use crate::derive_component::attributes::ComponentAttributes;
 
 pub fn preprocess_consumer_trait(
@@ -9,9 +8,7 @@ pub fn preprocess_consumer_trait(
 ) -> syn::Result<()> {
     consumer_trait.supertraits.extend(attributes.extend.clone());
 
-    if !attributes.use_type.attributes.is_empty() {
-        expand_use_type_attributes_on_trait(consumer_trait, &attributes.use_type)?;
-    }
+    attributes.use_type.transform_item_trait(consumer_trait)?;
 
     Ok(())
 }

@@ -4,7 +4,7 @@ use syn::punctuated::Punctuated;
 use syn::token::Plus;
 use syn::{Generics, Ident, ItemFn, ItemImpl, TypeParamBound, parse_quote, parse2};
 
-use crate::cgp_fn::{FunctionAttributes, apply_use_type_attributes_to_item_impl};
+use crate::cgp_fn::FunctionAttributes;
 use crate::cgp_impl::derive_provider_bounds;
 
 pub fn derive_item_impl(
@@ -69,9 +69,7 @@ pub fn derive_item_impl(
         })?);
     }
 
-    if !attributes.use_type.attributes.is_empty() {
-        apply_use_type_attributes_to_item_impl(&mut item_impl, &attributes.use_type)?;
-    }
+    attributes.use_type.transform_item_impl(&mut item_impl)?;
 
     if !attributes.use_provider.is_empty() {
         let where_clause = item_impl.generics.make_where_clause();

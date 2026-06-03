@@ -1,9 +1,10 @@
-use cgp_macro_core::types::attributes::{UseTypeAttribute, UseTypeIdent};
 use proc_macro2::TokenStream;
 use quote::{ToTokens, quote};
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
 use syn::{Ident, Type, WherePredicate, parse_quote, parse2};
+
+use crate::types::attributes::{UseTypeAttribute, UseTypeIdent};
 
 pub fn derive_use_type_predicates(specs: &[UseTypeAttribute]) -> syn::Result<Vec<WherePredicate>> {
     let mut predicates = Vec::new();
