@@ -1,12 +1,10 @@
-use cgp_macro_core::types::field::FieldName;
+use cgp_macro_core::types::field::{FieldName, HasFieldBound};
 use proc_macro2::TokenStream;
 use quote::{ToTokens, quote};
 use syn::{Ident, ItemImpl, ItemTrait, TraitItemType, parse_quote, parse2};
 
 use crate::derive_getter::getter_field::GetterField;
-use crate::derive_getter::{
-    ContextArg, ReceiverMode, derive_getter_constraint, derive_getter_method,
-};
+use crate::derive_getter::{ContextArg, ReceiverMode, derive_getter_method};
 use crate::type_component::get_bounds_and_replace_self_assoc_type;
 
 pub fn derive_blanket_impl(
@@ -81,12 +79,12 @@ pub fn derive_blanket_impl(
             field.field_type.clone()
         };
 
-        let constraint = derive_getter_constraint(
-            &field_type,
-            &field.receiver_mut,
-            &field.field_mode,
-            &tag_type,
-        )?;
+        let constraint = HasFieldBound {
+            field_type,
+            field_mut: field.receiver_mut.clone(),
+            field_mode: field.field_mode.clone(),
+            tag_type,
+        };
 
         where_clause.predicates.push(parse2(quote! {
             #receiver_type: #constraint

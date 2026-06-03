@@ -1,13 +1,14 @@
+use cgp_macro_core::types::field::HasFieldBound;
 use proc_macro2::TokenStream;
 use quote::{ToTokens, quote};
 use syn::punctuated::Punctuated;
 use syn::token::Plus;
-use syn::{Generics, ItemImpl, ItemTrait, TraitItemType, TypeParamBound, parse_quote, parse2};
+use syn::{
+    Generics, ItemImpl, ItemTrait, TraitItemType, Type, TypeParamBound, parse_quote, parse2,
+};
 
 use crate::derive_getter::getter_field::GetterField;
-use crate::derive_getter::{
-    ContextArg, ReceiverMode, derive_getter_constraint, derive_getter_method,
-};
+use crate::derive_getter::{ContextArg, ReceiverMode, derive_getter_method};
 use crate::parse::ComponentSpec;
 use crate::type_component::get_bounds_and_replace_self_assoc_type;
 
@@ -27,7 +28,7 @@ pub fn derive_use_field_impl(
 
     let mut field_constraints: Punctuated<TypeParamBound, Plus> = Punctuated::default();
 
-    let tag_type = parse_quote! { __Tag__ };
+    let tag_type: Type = parse_quote! { __Tag__ };
 
     let mut items = TokenStream::new();
 
@@ -68,14 +69,14 @@ pub fn derive_use_field_impl(
         field.field_type.clone()
     };
 
-    let constraint = derive_getter_constraint(
-        &field_type,
-        &field.receiver_mut,
-        &field.field_mode,
-        &tag_type,
-    )?;
+    let constraint = HasFieldBound {
+        field_type,
+        field_mut: field.receiver_mut.clone(),
+        field_mode: field.field_mode.clone(),
+        tag_type: tag_type.clone(),
+    };
 
-    field_constraints.push(constraint);
+    field_constraints.push(parse_quote!(#constraint));
 
     let mut where_clause = provider_generics.make_where_clause().clone();
     where_clause
