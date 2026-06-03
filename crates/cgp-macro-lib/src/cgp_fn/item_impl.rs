@@ -1,18 +1,16 @@
-use cgp_macro_core::types::implicits::ImplicitArgField;
+use cgp_macro_core::types::implicits::ImplicitArgFields;
 use quote::quote;
 use syn::punctuated::Punctuated;
 use syn::token::Plus;
 use syn::{Generics, Ident, ItemFn, ItemImpl, TypeParamBound, parse_quote, parse2};
 
-use crate::cgp_fn::{
-    FunctionAttributes, apply_use_type_attributes_to_item_impl, build_implicit_args_bounds,
-};
+use crate::cgp_fn::{FunctionAttributes, apply_use_type_attributes_to_item_impl};
 use crate::cgp_impl::derive_provider_bounds;
 
 pub fn derive_item_impl(
     trait_ident: &Ident,
     item_fn: &ItemFn,
-    implicit_args: &[ImplicitArgField],
+    implicit_args: &ImplicitArgFields,
     generics: &Generics,
     attributes: &FunctionAttributes,
 ) -> syn::Result<ItemImpl> {
@@ -62,9 +60,9 @@ pub fn derive_item_impl(
             .extend(attributes.extend_where.clone());
     }
 
-    if !implicit_args.is_empty() {
+    if !implicit_args.fields.is_empty() {
         let where_clause = item_impl.generics.make_where_clause();
-        let bounds = build_implicit_args_bounds(implicit_args)?;
+        let bounds = implicit_args.to_type_param_bounds()?;
 
         where_clause.predicates.push(parse2(quote! {
             Self: #bounds

@@ -7,7 +7,7 @@ use syn::spanned::Spanned;
 use syn::token::Plus;
 use syn::{Error, ItemImpl, TypeParamBound, parse_quote, parse2};
 
-use crate::cgp_fn::{apply_use_type_attributes_to_item_impl, build_implicit_args_bounds};
+use crate::cgp_fn::apply_use_type_attributes_to_item_impl;
 use crate::cgp_impl::derive_provider_impl;
 use crate::cgp_impl::implicit_args::extract_implicit_args_from_impl_items;
 use crate::cgp_impl::provider_bounds::derive_provider_bounds;
@@ -21,9 +21,9 @@ pub fn derive_cgp_impl(spec: ImplArgs, mut item_impl: ItemImpl) -> syn::Result<T
 
     let implicit_args = extract_implicit_args_from_impl_items(&mut item_impl.items)?;
 
-    if !implicit_args.is_empty() {
+    if !implicit_args.fields.is_empty() {
         let where_clause = item_impl.generics.make_where_clause();
-        let bounds = build_implicit_args_bounds(&implicit_args)?;
+        let bounds = implicit_args.to_type_param_bounds()?;
 
         where_clause.predicates.push(parse2(quote! {
             Self: #bounds

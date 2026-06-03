@@ -27,7 +27,7 @@ pub fn derive_cgp_fn(trait_ident: &Ident, mut item_fn: ItemFn) -> syn::Result<To
     let mut item_impl = derive_item_impl(
         trait_ident,
         &item_fn,
-        &implicit_args.fields,
+        &implicit_args,
         &generics,
         &attributes,
     )?;

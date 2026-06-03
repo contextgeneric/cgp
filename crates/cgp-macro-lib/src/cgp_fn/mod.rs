@@ -1,6 +1,5 @@
 mod apply_type;
 mod attributes;
-mod bounds;
 mod derive;
 mod item_impl;
 mod item_trait;
@@ -11,7 +10,6 @@ mod type_predicates;
 
 pub use apply_type::*;
 pub use attributes::*;
-pub use bounds::*;
 pub use derive::*;
 pub use item_trait::*;
 pub use parse_implicits::*;

@@ -1,12 +1,12 @@
-use cgp_macro_core::types::implicits::ImplicitArgField;
+use cgp_macro_core::types::implicits::ImplicitArgFields;
 use syn::ImplItem;
 
 use crate::cgp_fn::extract_and_parse_implicit_args;
 
 pub fn extract_implicit_args_from_impl_items(
     impl_items: &mut [ImplItem],
-) -> syn::Result<Vec<ImplicitArgField>> {
-    let mut all_implicit_args = Vec::new();
+) -> syn::Result<ImplicitArgFields> {
+    let mut all_fields = Vec::new();
 
     for item in impl_items {
         if let ImplItem::Fn(method) = item {
@@ -14,12 +14,12 @@ pub fn extract_implicit_args_from_impl_items(
             implicit_args.prepend_to_block(&mut method.block)?;
 
             for implicit_arg in implicit_args.fields {
-                if !all_implicit_args.contains(&implicit_arg) {
-                    all_implicit_args.push(implicit_arg);
+                if !all_fields.contains(&implicit_arg) {
+                    all_fields.push(implicit_arg);
                 }
             }
         }
     }
 
-    Ok(all_implicit_args)
+    Ok(ImplicitArgFields { fields: all_fields })
 }
