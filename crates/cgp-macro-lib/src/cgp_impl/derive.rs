@@ -25,15 +25,9 @@ pub fn derive_cgp_impl(spec: ImplArgs, mut item_impl: ItemImpl) -> syn::Result<T
         .add_type_param_bounds(&self_type, &mut item_impl.generics)?;
 
     attributes.use_type.transform_item_impl(&mut item_impl)?;
-
-    if !attributes.use_provider.is_empty() {
-        let where_clause = item_impl.generics.make_where_clause();
-
-        for use_provider in attributes.use_provider.iter() {
-            let predicate = use_provider.to_provider_bounds(&self_type)?;
-            where_clause.predicates.push(predicate);
-        }
-    }
+    attributes
+        .use_provider
+        .add_type_param_bounds(&self_type, &mut item_impl.generics)?;
 
     if spec.provider_type == self_type {
         if item_impl.trait_.is_none() {

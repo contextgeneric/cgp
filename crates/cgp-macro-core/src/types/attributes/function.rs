@@ -2,7 +2,9 @@ use syn::punctuated::Punctuated;
 use syn::token::Comma;
 use syn::{Attribute, GenericParam, TypeParamBound, WherePredicate};
 
-use crate::types::attributes::{UseProviderAttribute, UseTypeAttribute, UseTypeAttributes};
+use crate::types::attributes::{
+    UseProviderAttribute, UseProviderAttributes, UseTypeAttribute, UseTypeAttributes,
+};
 use crate::types::ident::IdentWithTypeArgs;
 
 #[derive(Default)]
@@ -11,7 +13,7 @@ pub struct FunctionAttributes {
     pub extend_where: Vec<WherePredicate>,
     pub uses: Vec<IdentWithTypeArgs>,
     pub use_type: UseTypeAttributes,
-    pub use_provider: Vec<UseProviderAttribute>,
+    pub use_provider: UseProviderAttributes,
     pub impl_generics: Vec<GenericParam>,
     pub raw_attributes: Vec<Attribute>,
 }
@@ -48,7 +50,10 @@ impl FunctionAttributes {
                         Punctuated::<UseProviderAttribute, Comma>::parse_terminated,
                     )?;
 
-                    parsed_attributes.use_provider.extend(use_provider);
+                    parsed_attributes
+                        .use_provider
+                        .attributes
+                        .extend(use_provider);
                 } else if ident == "impl_generics" {
                     let impl_generics = attribute
                         .parse_args_with(Punctuated::<GenericParam, Comma>::parse_terminated)?;

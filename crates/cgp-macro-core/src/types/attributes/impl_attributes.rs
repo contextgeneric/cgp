@@ -3,7 +3,8 @@ use syn::punctuated::Punctuated;
 use syn::token::Comma;
 
 use crate::types::attributes::{
-    UseProviderAttribute, UseTypeAttribute, UseTypeAttributes, UsesAttributes,
+    UseProviderAttribute, UseProviderAttributes, UseTypeAttribute, UseTypeAttributes,
+    UsesAttributes,
 };
 use crate::types::ident::IdentWithTypeArgs;
 
@@ -11,7 +12,7 @@ use crate::types::ident::IdentWithTypeArgs;
 pub struct ImplAttributes {
     pub uses: UsesAttributes,
     pub use_type: UseTypeAttributes,
-    pub use_provider: Vec<UseProviderAttribute>,
+    pub use_provider: UseProviderAttributes,
     pub raw_attributes: Vec<Attribute>,
 }
 
@@ -41,7 +42,10 @@ impl ImplAttributes {
                             Punctuated::<UseProviderAttribute, Comma>::parse_terminated,
                         )?;
 
-                        parsed_attributes.use_provider.extend(use_provider);
+                        parsed_attributes
+                            .use_provider
+                            .attributes
+                            .extend(use_provider);
                     }
                     _ => {
                         parsed_attributes.raw_attributes.push(attribute.clone());

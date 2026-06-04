@@ -13,14 +13,10 @@ pub struct UseProviderAttribute {
 }
 
 impl UseProviderAttribute {
-    pub fn to_provider_bounds(&self, context_type: &Type) -> syn::Result<WherePredicate> {
-        let context_type = if self.context_type == parse_quote! { Self } {
-            context_type
-        } else {
-            &self.context_type
-        };
-
-        let provider_type = &self.provider_type;
+    pub fn to_type_param_bounds(
+        &self,
+        context_type: &Type,
+    ) -> syn::Result<Punctuated<TypeParamBound, Plus>> {
         let mut bounds = Punctuated::<TypeParamBound, Plus>::new();
 
         for bound in &self.provider_trait_bounds {
@@ -32,6 +28,13 @@ impl UseProviderAttribute {
 
             bounds.push(parse_quote!(#bound));
         }
+
+        Ok(bounds)
+    }
+
+    pub fn to_provider_bounds(&self, context_type: &Type) -> syn::Result<WherePredicate> {
+        let provider_type = &self.provider_type;
+        let bounds = self.to_type_param_bounds(context_type)?;
 
         let predicate = parse_quote! {
             #provider_type: #bounds
