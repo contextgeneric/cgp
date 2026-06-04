@@ -1,7 +1,6 @@
+use cgp_macro_core::types::attributes::FunctionAttributes;
 use quote::quote;
 use syn::{Generics, Ident, ItemFn, ItemTrait, TraitItemFn, parse2};
-
-use crate::cgp_fn::FunctionAttributes;
 
 pub fn derive_item_trait(
     trait_ident: &Ident,
