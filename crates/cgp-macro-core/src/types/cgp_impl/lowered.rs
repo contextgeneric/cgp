@@ -1,11 +1,82 @@
-use syn::{ItemImpl, Type};
+use proc_macro2::Span;
+use quote::ToTokens;
+use syn::token::For;
+use syn::visit_mut::VisitMut;
+use syn::{Ident, ImplItem, ItemImpl, Type, parse_quote, parse2};
 
+use crate::functions::to_snake_case_ident;
 use crate::types::cgp_impl::ImplArgs;
 use crate::types::ident::IdentWithTypeArgs;
+use crate::visitors::{
+    ReplaceSelfReceiverVisitor, ReplaceSelfTypeVisitor, ReplaceSelfValueVisitor,
+};
 
 pub struct LoweredCgpImpl {
     pub args: ImplArgs,
     pub item_impl: ItemImpl,
     pub context_type: Type,
     pub consumer_trait_path: IdentWithTypeArgs,
+}
+
+impl LoweredCgpImpl {
+    pub fn to_raw_item_impl(&self) -> syn::Result<ItemImpl> {
+        let item_impl = &self.item_impl;
+        let context_type = &self.context_type;
+        let consumer_trait_path = &self.consumer_trait_path;
+        let provider_type = &self.args.provider_type;
+
+        let context_ident = if let Ok(ident) = parse2::<Ident>(context_type.to_token_stream()) {
+            to_snake_case_ident(&ident)
+        } else {
+            Ident::new("__context__", Span::call_site())
+        };
+
+        let local_assoc_types: Vec<Ident> = item_impl
+            .items
+            .iter()
+            .filter_map(|item| {
+                if let ImplItem::Type(assoc_type) = item {
+                    Some(assoc_type.ident.clone())
+                } else {
+                    None
+                }
+            })
+            .collect();
+
+        let mut out_impl = item_impl.clone();
+
+        out_impl.self_ty = Box::new(provider_type.clone());
+
+        let mut provider_trait_path = consumer_trait_path.clone();
+
+        provider_trait_path
+            .type_args
+            .make_args()
+            .insert(0, parse_quote!(#context_type));
+
+        out_impl.trait_ = Some((
+            None,
+            parse2(provider_trait_path.to_token_stream())?,
+            For(Span::call_site()),
+        ));
+
+        ReplaceSelfTypeVisitor {
+            replaced_type: &context_type,
+            skip_assoc_types: &local_assoc_types,
+        }
+        .visit_item_impl_mut(&mut out_impl);
+
+        ReplaceSelfReceiverVisitor {
+            replaced_ident: &context_ident,
+            replaced_type: &context_type,
+        }
+        .visit_item_impl_mut(&mut out_impl);
+
+        ReplaceSelfValueVisitor {
+            replaced_ident: &context_ident,
+        }
+        .visit_item_impl_mut(&mut out_impl);
+
+        Ok(out_impl)
+    }
 }

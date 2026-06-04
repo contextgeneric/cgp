@@ -4,7 +4,6 @@ use quote::{ToTokens, quote};
 use syn::spanned::Spanned;
 use syn::{Error, ItemImpl, parse_quote};
 
-use crate::cgp_impl::transform_impl_trait;
 use crate::derive_provider::{
     derive_component_name_from_provider_impl, derive_is_provider_for, derive_provider_struct,
 };
@@ -24,12 +23,7 @@ pub fn derive_cgp_impl(args: ImplArgs, item_impl: ItemImpl) -> syn::Result<Token
 
         Ok(lowered.item_impl.to_token_stream())
     } else {
-        let provider_impl = transform_impl_trait(
-            &lowered.item_impl,
-            &lowered.consumer_trait_path,
-            &lowered.args.provider_type,
-            &lowered.context_type,
-        )?;
+        let provider_impl = lowered.to_raw_item_impl()?;
 
         let component_type = match &lowered.args.component_type {
             Some(component_type) => component_type.clone(),
