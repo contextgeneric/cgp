@@ -1,7 +1,9 @@
-use syn::ItemImpl;
+use syn::{ItemImpl, Type, parse_quote};
 
+use crate::traits::AddTypeParamBounds;
 use crate::types::attributes::ImplAttributes;
-use crate::types::cgp_impl::{CgpImplWithParsedAttributes, ImplArgs};
+use crate::types::cgp_impl::{ImplArgs, LoweredCgpImpl};
+use crate::types::implicits::ImplicitArgFields;
 
 pub struct ItemCgpImpl {
     pub args: ImplArgs,
@@ -9,12 +11,28 @@ pub struct ItemCgpImpl {
 }
 
 impl ItemCgpImpl {
-    pub fn lower(&self) -> syn::Result<CgpImplWithParsedAttributes> {
+    pub fn lower(&self) -> syn::Result<LoweredCgpImpl> {
         let mut item_impl = self.item_impl.clone();
 
         let attributes = ImplAttributes::parse(&item_impl.attrs)?;
         item_impl.attrs = attributes.raw_attributes;
 
-        todo!()
+        let self_type: Type = parse_quote!(Self);
+
+        let implicit_args = ImplicitArgFields::extract_from_impl_items(&mut item_impl.items)?;
+        implicit_args.add_type_param_bounds(&self_type, &mut item_impl.generics)?;
+        attributes
+            .uses
+            .add_type_param_bounds(&self_type, &mut item_impl.generics)?;
+
+        attributes.use_type.transform_item_impl(&mut item_impl)?;
+        attributes
+            .use_provider
+            .add_type_param_bounds(&self_type, &mut item_impl.generics)?;
+
+        Ok(LoweredCgpImpl {
+            args: self.args.clone(),
+            item_impl,
+        })
     }
 }

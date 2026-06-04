@@ -6,6 +6,7 @@ use crate::traits::ParseOptionalKeyword;
 use crate::types::keyword::Keyword;
 use crate::types::keywords::New;
 
+#[derive(Clone)]
 pub struct ImplArgs {
     pub new: Option<Keyword<New>>,
     pub provider_type: Type,
