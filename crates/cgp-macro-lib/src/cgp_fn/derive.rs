@@ -14,10 +14,9 @@ pub fn derive_cgp_fn(trait_ident: &Ident, mut item_fn: ItemFn) -> syn::Result<To
     item_fn.vis = Visibility::Inherited;
 
     let implicit_args = extract_and_parse_implicit_args(&mut item_fn.sig.inputs)?;
+    implicit_args.prepend_to_block(&mut item_fn.block)?;
 
     let attributes = FunctionAttributes::parse(core::mem::take(&mut item_fn.attrs))?;
-
-    implicit_args.prepend_to_block(&mut item_fn.block)?;
 
     let generics = mem::take(&mut item_fn.sig.generics);
 

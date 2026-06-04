@@ -1,6 +1,6 @@
-use cgp_macro_core::functions::extract_implicit_args_from_impl_items;
 use cgp_macro_core::types::attributes::ImplAttributes;
 use cgp_macro_core::types::cgp_impl::ImplArgs;
+use cgp_macro_core::types::implicits::ImplicitArgFields;
 use proc_macro2::TokenStream;
 use quote::quote;
 use syn::punctuated::Punctuated;
@@ -18,7 +18,7 @@ pub fn derive_cgp_impl(spec: ImplArgs, mut item_impl: ItemImpl) -> syn::Result<T
     let attributes = ImplAttributes::parse(&item_impl.attrs)?;
     item_impl.attrs = attributes.raw_attributes;
 
-    let implicit_args = extract_implicit_args_from_impl_items(&mut item_impl.items)?;
+    let implicit_args = ImplicitArgFields::extract_from_impl_items(&mut item_impl.items)?;
 
     if !implicit_args.fields.is_empty() {
         let where_clause = item_impl.generics.make_where_clause();
