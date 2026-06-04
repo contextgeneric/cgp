@@ -15,7 +15,7 @@ impl Parse for ProviderArgs {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let new = input.parse_optional_keyword()?;
 
-        let component_type = if input.is_empty() {
+        let component_type = if !input.is_empty() {
             let component_type: Type = input.parse()?;
             Some(component_type)
         } else {
