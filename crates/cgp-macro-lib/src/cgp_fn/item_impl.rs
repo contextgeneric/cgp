@@ -4,9 +4,7 @@ use cgp_macro_core::types::implicits::ImplicitArgFields;
 use quote::quote;
 use syn::punctuated::Punctuated;
 use syn::token::Plus;
-use syn::{Generics, Ident, ItemFn, ItemImpl, TypeParamBound, parse_quote, parse2};
-
-use crate::cgp_impl::derive_provider_bounds;
+use syn::{Generics, Ident, ItemFn, ItemImpl, Type, TypeParamBound, parse_quote, parse2};
 
 pub fn derive_item_impl(
     trait_ident: &Ident,
@@ -16,6 +14,8 @@ pub fn derive_item_impl(
     attributes: &FunctionAttributes,
 ) -> syn::Result<ItemImpl> {
     let type_generics = generics.split_for_impl().1;
+
+    let self_type: Type = parse_quote!(Self);
 
     let mut item_impl: ItemImpl = parse2(quote! {
         impl #trait_ident #type_generics for __Context__ {
@@ -61,16 +61,16 @@ pub fn derive_item_impl(
             .extend(attributes.extend_where.clone());
     }
 
-    implicit_args.add_type_param_bounds(&parse_quote!(Self), &mut item_impl.generics)?;
+    implicit_args.add_type_param_bounds(&self_type, &mut item_impl.generics)?;
 
     attributes.use_type.transform_item_impl(&mut item_impl)?;
 
     if !attributes.use_provider.is_empty() {
         let where_clause = item_impl.generics.make_where_clause();
 
-        for spec in attributes.use_provider.iter() {
-            let provider_bounds = derive_provider_bounds(&parse_quote! { Self }, spec)?;
-            where_clause.predicates.push(provider_bounds);
+        for use_provider in attributes.use_provider.iter() {
+            let predicate = use_provider.to_provider_bounds(&self_type)?;
+            where_clause.predicates.push(predicate);
         }
     }
 

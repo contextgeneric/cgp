@@ -5,10 +5,9 @@ use cgp_macro_core::types::implicits::ImplicitArgFields;
 use proc_macro2::TokenStream;
 use quote::quote;
 use syn::spanned::Spanned;
-use syn::{Error, ItemImpl, parse_quote};
+use syn::{Error, ItemImpl, Type, parse_quote};
 
 use crate::cgp_impl::derive_provider_impl;
-use crate::cgp_impl::provider_bounds::derive_provider_bounds;
 use crate::derive_provider::{
     derive_component_name_from_provider_impl, derive_is_provider_for, derive_provider_struct,
 };
@@ -17,24 +16,26 @@ pub fn derive_cgp_impl(spec: ImplArgs, mut item_impl: ItemImpl) -> syn::Result<T
     let attributes = ImplAttributes::parse(&item_impl.attrs)?;
     item_impl.attrs = attributes.raw_attributes;
 
+    let self_type: Type = parse_quote!(Self);
+
     let implicit_args = ImplicitArgFields::extract_from_impl_items(&mut item_impl.items)?;
-    implicit_args.add_type_param_bounds(&parse_quote!(Self), &mut item_impl.generics)?;
+    implicit_args.add_type_param_bounds(&self_type, &mut item_impl.generics)?;
     attributes
         .uses
-        .add_type_param_bounds(&parse_quote!(Self), &mut item_impl.generics)?;
+        .add_type_param_bounds(&self_type, &mut item_impl.generics)?;
 
     attributes.use_type.transform_item_impl(&mut item_impl)?;
 
     if !attributes.use_provider.is_empty() {
         let where_clause = item_impl.generics.make_where_clause();
 
-        for spec in attributes.use_provider.iter() {
-            let provider_bounds = derive_provider_bounds(&parse_quote! { Self }, spec)?;
-            where_clause.predicates.push(provider_bounds);
+        for use_provider in attributes.use_provider.iter() {
+            let predicate = use_provider.to_provider_bounds(&self_type)?;
+            where_clause.predicates.push(predicate);
         }
     }
 
-    if spec.provider_type == parse_quote! { Self } {
+    if spec.provider_type == self_type {
         if item_impl.trait_.is_none() {
             return Err(Error::new(
                 item_impl.span(),
