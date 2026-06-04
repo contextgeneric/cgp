@@ -1,3 +1,4 @@
+use cgp_macro_core::traits::AddTypeParamBounds;
 use cgp_macro_core::types::attributes::FunctionAttributes;
 use cgp_macro_core::types::implicits::ImplicitArgFields;
 use quote::quote;

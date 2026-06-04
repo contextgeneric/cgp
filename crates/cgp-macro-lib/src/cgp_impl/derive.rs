@@ -1,12 +1,11 @@
+use cgp_macro_core::traits::AddTypeParamBounds;
 use cgp_macro_core::types::attributes::ImplAttributes;
 use cgp_macro_core::types::cgp_impl::ImplArgs;
 use cgp_macro_core::types::implicits::ImplicitArgFields;
 use proc_macro2::TokenStream;
 use quote::quote;
-use syn::punctuated::Punctuated;
 use syn::spanned::Spanned;
-use syn::token::Plus;
-use syn::{Error, ItemImpl, TypeParamBound, parse_quote, parse2};
+use syn::{Error, ItemImpl, parse_quote};
 
 use crate::cgp_impl::derive_provider_impl;
 use crate::cgp_impl::provider_bounds::derive_provider_bounds;
@@ -20,24 +19,11 @@ pub fn derive_cgp_impl(spec: ImplArgs, mut item_impl: ItemImpl) -> syn::Result<T
 
     let implicit_args = ImplicitArgFields::extract_from_impl_items(&mut item_impl.items)?;
     implicit_args.add_type_param_bounds(&parse_quote!(Self), &mut item_impl.generics)?;
+    attributes
+        .uses
+        .add_type_param_bounds(&parse_quote!(Self), &mut item_impl.generics)?;
 
     attributes.use_type.transform_item_impl(&mut item_impl)?;
-
-    if !attributes.uses.is_empty() {
-        let mut bounds: Punctuated<TypeParamBound, Plus> = Punctuated::default();
-
-        for import in attributes.uses.iter() {
-            bounds.push(parse2(quote! { #import })?);
-        }
-
-        item_impl
-            .generics
-            .make_where_clause()
-            .predicates
-            .push(parse2(quote! {
-                Self: #bounds
-            })?);
-    }
 
     if !attributes.use_provider.is_empty() {
         let where_clause = item_impl.generics.make_where_clause();

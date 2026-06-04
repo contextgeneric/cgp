@@ -2,12 +2,14 @@ use syn::Attribute;
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
 
-use crate::types::attributes::{UseProviderAttribute, UseTypeAttribute, UseTypeAttributes};
+use crate::types::attributes::{
+    UseProviderAttribute, UseTypeAttribute, UseTypeAttributes, UsesAttributes,
+};
 use crate::types::ident::IdentWithTypeArgs;
 
 #[derive(Default)]
 pub struct ImplAttributes {
-    pub uses: Vec<IdentWithTypeArgs>,
+    pub uses: UsesAttributes,
     pub use_type: UseTypeAttributes,
     pub use_provider: Vec<UseProviderAttribute>,
     pub raw_attributes: Vec<Attribute>,
@@ -25,7 +27,7 @@ impl ImplAttributes {
                             Punctuated::<IdentWithTypeArgs, Comma>::parse_terminated,
                         )?;
 
-                        parsed_attributes.uses.extend(uses);
+                        parsed_attributes.uses.imports.extend(uses);
                     }
                     "use_type" => {
                         let use_type = attribute.parse_args_with(

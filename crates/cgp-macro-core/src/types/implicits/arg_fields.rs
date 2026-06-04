@@ -1,8 +1,9 @@
 use syn::punctuated::Punctuated;
 use syn::token::Plus;
-use syn::{Block, Generics, ImplItem, Type, TypeParamBound, parse_quote};
+use syn::{Block, ImplItem, TypeParamBound, parse_quote};
 
 use crate::functions::extract_and_parse_implicit_args;
+use crate::traits::ToTypeParamBounds;
 use crate::types::implicits::ImplicitArgField;
 
 #[derive(Default)]
@@ -16,27 +17,8 @@ impl ImplicitArgFields {
     }
 }
 
-impl ImplicitArgFields {
-    pub fn add_type_param_bounds(
-        &self,
-        self_type: &Type,
-        generics: &mut Generics,
-    ) -> syn::Result<()> {
-        if self.fields.is_empty() {
-            return Ok(());
-        }
-
-        let where_clause = generics.make_where_clause();
-        let bounds = self.to_type_param_bounds()?;
-
-        where_clause.predicates.push(parse_quote! {
-            #self_type: #bounds
-        });
-
-        Ok(())
-    }
-
-    pub fn to_type_param_bounds(&self) -> syn::Result<Punctuated<TypeParamBound, Plus>> {
+impl ToTypeParamBounds for ImplicitArgFields {
+    fn to_type_param_bounds(&self) -> syn::Result<Punctuated<TypeParamBound, Plus>> {
         let mut constraints: Punctuated<TypeParamBound, Plus> = Punctuated::new();
 
         for field in &self.fields {
@@ -46,7 +28,9 @@ impl ImplicitArgFields {
 
         Ok(constraints)
     }
+}
 
+impl ImplicitArgFields {
     pub fn prepend_to_block(&self, block: &mut Block) -> syn::Result<()> {
         let block_statements = core::mem::take(&mut block.stmts);
 
