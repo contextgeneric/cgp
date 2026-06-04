@@ -1,37 +1,37 @@
 use cgp_macro_core::types::cgp_impl::{ImplArgs, ItemCgpImpl};
 use proc_macro2::TokenStream;
-use quote::quote;
+use quote::{ToTokens, quote};
 use syn::spanned::Spanned;
 use syn::{Error, ItemImpl, parse_quote};
 
-use crate::cgp_impl::derive_provider_impl;
+use crate::cgp_impl::transform_impl_trait;
 use crate::derive_provider::{
     derive_component_name_from_provider_impl, derive_is_provider_for, derive_provider_struct,
 };
 
 pub fn derive_cgp_impl(args: ImplArgs, item_impl: ItemImpl) -> syn::Result<TokenStream> {
-    let item = ItemCgpImpl {
-        args: args.clone(),
-        item_impl,
-    };
+    let item = ItemCgpImpl { args, item_impl };
 
-    let item_impl = item.lower()?.item_impl;
+    let lowered = item.lower()?;
 
-    if args.provider_type == parse_quote!(Self) {
-        if item_impl.trait_.is_none() {
+    if lowered.args.provider_type == parse_quote!(Self) {
+        if lowered.item_impl.trait_.is_none() {
             return Err(Error::new(
-                item_impl.span(),
+                lowered.item_impl.span(),
                 "Expected context type to be specified",
             ));
         }
 
-        Ok(quote! {
-            #item_impl
-        })
+        Ok(lowered.item_impl.to_token_stream())
     } else {
-        let (_context_type, provider_impl) = derive_provider_impl(&args.provider_type, item_impl)?;
+        let provider_impl = transform_impl_trait(
+            &lowered.item_impl,
+            &lowered.consumer_trait_path,
+            &lowered.args.provider_type,
+            &lowered.context_type,
+        )?;
 
-        let component_type = match &args.component_type {
+        let component_type = match &lowered.args.component_type {
             Some(component_type) => component_type.clone(),
             None => derive_component_name_from_provider_impl(&provider_impl)?,
         };
@@ -39,7 +39,7 @@ pub fn derive_cgp_impl(args: ImplArgs, item_impl: ItemImpl) -> syn::Result<Token
         let is_provider_for_impl: ItemImpl =
             derive_is_provider_for(&component_type, &provider_impl)?;
 
-        let provider_struct = if args.new.is_some() {
+        let provider_struct = if lowered.args.new.is_some() {
             Some(derive_provider_struct(&provider_impl)?)
         } else {
             None
