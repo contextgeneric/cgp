@@ -19,15 +19,7 @@ pub fn derive_cgp_impl(spec: ImplArgs, mut item_impl: ItemImpl) -> syn::Result<T
     item_impl.attrs = attributes.raw_attributes;
 
     let implicit_args = ImplicitArgFields::extract_from_impl_items(&mut item_impl.items)?;
-
-    if !implicit_args.fields.is_empty() {
-        let where_clause = item_impl.generics.make_where_clause();
-        let bounds = implicit_args.to_type_param_bounds()?;
-
-        where_clause.predicates.push(parse2(quote! {
-            Self: #bounds
-        })?);
-    }
+    implicit_args.add_type_param_bounds(&parse_quote!(Self), &mut item_impl.generics)?;
 
     attributes.use_type.transform_item_impl(&mut item_impl)?;
 

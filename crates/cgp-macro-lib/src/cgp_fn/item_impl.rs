@@ -60,14 +60,7 @@ pub fn derive_item_impl(
             .extend(attributes.extend_where.clone());
     }
 
-    if !implicit_args.fields.is_empty() {
-        let where_clause = item_impl.generics.make_where_clause();
-        let bounds = implicit_args.to_type_param_bounds()?;
-
-        where_clause.predicates.push(parse2(quote! {
-            Self: #bounds
-        })?);
-    }
+    implicit_args.add_type_param_bounds(&parse_quote!(Self), &mut item_impl.generics)?;
 
     attributes.use_type.transform_item_impl(&mut item_impl)?;
 
