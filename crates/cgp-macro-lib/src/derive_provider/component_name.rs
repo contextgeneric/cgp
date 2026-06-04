@@ -4,14 +4,14 @@ use syn::spanned::Spanned;
 use syn::{Error, Ident, ItemImpl, Type, parse2};
 
 pub fn derive_component_name_from_provider_impl(provider_impl: &ItemImpl) -> syn::Result<Type> {
-    let provider_trait = provider_impl.trait_.as_ref().ok_or_else(|| {
+    let (_, provider_trait_path, _) = provider_impl.trait_.as_ref().ok_or_else(|| {
         Error::new(
             provider_impl.span(),
             "expect provider trait name to be present",
         )
     })?;
 
-    let provider_trait: IdentWithTypeArgs = parse2(provider_trait.1.to_token_stream())?;
+    let provider_trait: IdentWithTypeArgs = parse2(provider_trait_path.to_token_stream())?;
 
     let component_ident = Ident::new(
         &format!("{}Component", provider_trait.ident),

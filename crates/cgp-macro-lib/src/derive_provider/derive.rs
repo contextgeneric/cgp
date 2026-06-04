@@ -1,6 +1,7 @@
 use std::collections::BTreeMap;
 
 use cgp_macro_core::types::ident::IdentWithTypeGenerics;
+use cgp_macro_core::visitors::replace_provider_in_generics;
 use proc_macro2::Span;
 use quote::quote;
 use syn::punctuated::Punctuated;
@@ -10,8 +11,6 @@ use syn::{
     AngleBracketedGenericArguments, Error, GenericArgument, ItemImpl, ItemStruct, Path,
     PathArguments, Type, parse_quote,
 };
-
-use crate::derive_provider::replace_provider_in_generics;
 
 pub fn derive_provider_struct(provider_impl: &ItemImpl) -> syn::Result<ItemStruct> {
     let impl_self_type = &provider_impl.self_ty;
