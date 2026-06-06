@@ -9,14 +9,10 @@ pub fn cgp_provider(attr: TokenStream, body: TokenStream) -> syn::Result<TokenSt
 
     let item = ItemCgpProvider { args, item_impl };
 
-    let is_provider_for_impl = item.to_is_provider_for_impl()?;
-    let item_struct = item.to_provider_struct()?;
-    let item_impl = item.item_impl;
+    let lowered = item.lower()?;
 
     let result = quote! {
-        #item_struct
-        #item_impl
-        #is_provider_for_impl
+        #lowered
     };
 
     Ok(result)

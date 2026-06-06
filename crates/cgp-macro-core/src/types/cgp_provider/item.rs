@@ -6,7 +6,7 @@ use syn::spanned::Spanned;
 use syn::token::For;
 use syn::{Error, Ident, ItemImpl, ItemStruct, Path, Type, parse_quote, parse2};
 
-use crate::types::cgp_provider::{ProviderArgs, ProviderImplArgs};
+use crate::types::cgp_provider::{LoweredCgpProvider, ProviderArgs, ProviderImplArgs};
 use crate::types::ident::{IdentWithTypeArgs, IdentWithTypeGenerics};
 use crate::visitors::replace_provider_in_generics;
 
@@ -16,6 +16,17 @@ pub struct ItemCgpProvider {
 }
 
 impl ItemCgpProvider {
+    pub fn lower(&self) -> syn::Result<LoweredCgpProvider> {
+        let is_provider_for_impl = self.to_is_provider_for_impl()?;
+        let provider_struct = self.to_provider_struct()?;
+
+        Ok(LoweredCgpProvider {
+            item_impl: self.item_impl.clone(),
+            is_provider_for_impl,
+            provider_struct,
+        })
+    }
+
     pub fn component_type(&self) -> syn::Result<Type> {
         let item_impl = &self.item_impl;
 
