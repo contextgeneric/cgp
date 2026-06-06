@@ -14,19 +14,19 @@ pub fn derive_is_provider_for(
     component_type: &Type,
     item_impl: &ItemImpl,
 ) -> syn::Result<ItemImpl> {
-    IsProviderFor {
+    ItemIsProviderFor {
         component_type: component_type.clone(),
         item_impl: item_impl.clone(),
     }
     .lower()
 }
 
-pub struct IsProviderFor {
+pub struct ItemIsProviderFor {
     pub component_type: Type,
     pub item_impl: ItemImpl,
 }
 
-impl IsProviderFor {
+impl ItemIsProviderFor {
     pub fn lower(&self) -> syn::Result<ItemImpl> {
         let component_type = &self.component_type;
         let item_impl = &self.item_impl;
