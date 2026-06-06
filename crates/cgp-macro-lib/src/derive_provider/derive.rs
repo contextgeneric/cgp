@@ -1,39 +1,14 @@
 use std::collections::BTreeMap;
 
-use cgp_macro_core::types::ident::IdentWithTypeGenerics;
 use cgp_macro_core::visitors::replace_provider_in_generics;
 use proc_macro2::Span;
-use quote::quote;
 use syn::punctuated::Punctuated;
 use syn::spanned::Spanned;
 use syn::token::{Comma, For};
 use syn::{
-    AngleBracketedGenericArguments, Error, GenericArgument, ItemImpl, ItemStruct, Path,
-    PathArguments, Type, parse_quote,
+    AngleBracketedGenericArguments, Error, GenericArgument, ItemImpl, Path, PathArguments, Type,
+    parse_quote,
 };
-
-pub fn derive_provider_struct(provider_impl: &ItemImpl) -> syn::Result<ItemStruct> {
-    let impl_self_type = &provider_impl.self_ty;
-
-    let provider_type: IdentWithTypeGenerics = syn::parse2(quote!( #impl_self_type ))?;
-
-    let provider_name = &provider_type.ident;
-    let type_generics_params = &provider_type.type_generics.params;
-
-    let provider_struct = if type_generics_params.is_empty() {
-        parse_quote! {
-            pub struct #provider_name;
-        }
-    } else {
-        parse_quote! {
-            pub struct #provider_name<#type_generics_params>(
-                pub ::core::marker::PhantomData<(#type_generics_params)>
-            );
-        }
-    };
-
-    Ok(provider_struct)
-}
 
 pub fn derive_is_provider_for(
     component_name: &Type,

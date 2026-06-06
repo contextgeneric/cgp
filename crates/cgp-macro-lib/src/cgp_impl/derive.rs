@@ -1,17 +1,19 @@
 use cgp_macro_core::types::cgp_impl::{ImplArgs, ItemCgpImpl};
+use cgp_macro_core::types::cgp_provider::{ItemCgpProvider, ProviderArgs};
 use proc_macro2::TokenStream;
 use quote::{ToTokens, quote};
 use syn::spanned::Spanned;
 use syn::{Error, ItemImpl, parse_quote};
 
-use crate::derive_provider::{
-    derive_component_name_from_provider_impl, derive_is_provider_for, derive_provider_struct,
-};
+use crate::derive_provider::derive_component_name_from_provider_impl;
 
 pub fn derive_cgp_impl(args: ImplArgs, item_impl: ItemImpl) -> syn::Result<TokenStream> {
-    let item = ItemCgpImpl { args, item_impl };
+    let item_cgp_impl = ItemCgpImpl {
+        args: args.clone(),
+        item_impl,
+    };
 
-    let lowered = item.lower()?;
+    let lowered = item_cgp_impl.lower()?;
 
     if lowered.args.provider_type == parse_quote!(Self) {
         if lowered.item_impl.trait_.is_none() {
@@ -30,21 +32,18 @@ pub fn derive_cgp_impl(args: ImplArgs, item_impl: ItemImpl) -> syn::Result<Token
             None => derive_component_name_from_provider_impl(&provider_impl)?,
         };
 
-        let is_provider_for_impl: ItemImpl =
-            derive_is_provider_for(&component_type, &provider_impl)?;
-
-        let provider_struct = if lowered.args.new.is_some() {
-            Some(derive_provider_struct(&provider_impl)?)
-        } else {
-            None
+        let item_cgp_provider = ItemCgpProvider {
+            args: ProviderArgs {
+                new: args.new,
+                component_type: Some(component_type),
+            },
+            item_impl: provider_impl,
         };
 
+        let lowered = item_cgp_provider.lower()?;
+
         Ok(quote! {
-            #provider_struct
-
-            #provider_impl
-
-            #is_provider_for_impl
+            #lowered
         })
     }
 }
