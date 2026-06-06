@@ -1,14 +1,10 @@
-use std::collections::BTreeMap;
-
-use proc_macro2::Span;
 use quote::ToTokens;
 use syn::spanned::Spanned;
-use syn::token::For;
-use syn::{Error, Ident, ItemImpl, ItemStruct, Path, Type, parse_quote, parse2};
+use syn::{Error, Ident, ItemImpl, ItemStruct, Type, parse_quote, parse2};
 
-use crate::types::cgp_provider::{LoweredCgpProvider, ProviderArgs, ProviderImplArgs};
+use crate::types::cgp_provider::{LoweredCgpProvider, ProviderArgs};
 use crate::types::ident::{IdentWithTypeArgs, IdentWithTypeGenerics};
-use crate::visitors::replace_provider_in_generics;
+use crate::types::is_provider_for::IsProviderFor;
 
 pub struct ItemCgpProvider {
     pub args: ProviderArgs,
@@ -17,8 +13,13 @@ pub struct ItemCgpProvider {
 
 impl ItemCgpProvider {
     pub fn lower(&self) -> syn::Result<LoweredCgpProvider> {
-        let is_provider_for_impl = self.to_is_provider_for_impl()?;
         let provider_struct = self.to_provider_struct()?;
+
+        let is_provider_for_impl = IsProviderFor {
+            component_type: self.component_type()?,
+            item_impl: self.item_impl.clone(),
+        }
+        .lower()?;
 
         Ok(LoweredCgpProvider {
             item_impl: self.item_impl.clone(),
@@ -42,44 +43,6 @@ impl ItemCgpProvider {
         );
 
         parse2(component_ident.to_token_stream())
-    }
-
-    pub fn to_is_provider_for_impl(&self) -> syn::Result<ItemImpl> {
-        let component_name = self.component_type()?;
-
-        let provider_impl = &self.item_impl;
-
-        let (_, provider_path, _) = provider_impl.trait_.as_ref().ok_or_else(|| {
-            Error::new(
-                provider_impl.span(),
-                "provider impl should contain trait path",
-            )
-        })?;
-
-        let IdentWithTypeArgs {
-            ident: provider_ident,
-            type_args: provider_generics,
-        } = parse2(provider_path.to_token_stream())?;
-
-        let impl_args = ProviderImplArgs::from_generic_args(&provider_generics)?;
-        let context_type = &impl_args.context_type;
-
-        let is_provider_path: Path =
-            parse_quote!( IsProviderFor < #component_name, #context_type, ( #impl_args ) > );
-
-        let mut is_provider_impl = provider_impl.clone();
-
-        is_provider_impl.attrs.clear();
-        is_provider_impl.items.clear();
-        is_provider_impl.defaultness = None;
-        is_provider_impl.unsafety = None;
-
-        is_provider_impl.trait_ = Some((None, is_provider_path, For(Span::call_site())));
-
-        let provider_map = BTreeMap::from([(provider_ident.clone(), component_name.clone())]);
-        replace_provider_in_generics(&provider_map, &mut is_provider_impl.generics);
-
-        Ok(is_provider_impl)
     }
 
     pub fn to_provider_struct(&self) -> syn::Result<Option<ItemStruct>> {

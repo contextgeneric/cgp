@@ -7,6 +7,7 @@ pub mod generics;
 pub mod getter;
 pub mod ident;
 pub mod implicits;
+pub mod is_provider_for;
 pub mod keyword;
 pub mod keywords;
 pub mod namespace;
