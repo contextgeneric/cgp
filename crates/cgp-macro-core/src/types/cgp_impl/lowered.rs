@@ -1,11 +1,13 @@
 use proc_macro2::Span;
 use quote::ToTokens;
+use syn::spanned::Spanned;
 use syn::token::For;
 use syn::visit_mut::VisitMut;
-use syn::{Ident, ImplItem, ItemImpl, Type, parse_quote, parse2};
+use syn::{Error, Ident, ImplItem, ItemImpl, Type, parse_quote, parse2};
 
 use crate::functions::to_snake_case_ident;
-use crate::types::cgp_impl::ImplArgs;
+use crate::types::cgp_impl::{CgpProviderOrBareImpl, ImplArgs};
+use crate::types::cgp_provider::{ItemCgpProvider, ProviderArgs};
 use crate::types::ident::IdentWithTypeArgs;
 use crate::visitors::{
     ReplaceSelfReceiverVisitor, ReplaceSelfTypeVisitor, ReplaceSelfValueVisitor,
@@ -19,6 +21,33 @@ pub struct LoweredCgpImpl {
 }
 
 impl LoweredCgpImpl {
+    pub fn lower(&self) -> syn::Result<CgpProviderOrBareImpl> {
+        if self.args.provider_type == parse_quote!(Self) {
+            if self.item_impl.trait_.is_none() {
+                return Err(Error::new(
+                    self.item_impl.span(),
+                    "Expected context type to be specified",
+                ));
+            }
+
+            Ok(CgpProviderOrBareImpl::Bare(self.item_impl.clone()))
+        } else {
+            let provider_impl = self.to_raw_item_impl()?;
+
+            let item_cgp_provider = ItemCgpProvider {
+                args: ProviderArgs {
+                    new: self.args.new.clone(),
+                    component_type: self.args.component_type.clone(),
+                },
+                item_impl: provider_impl,
+            };
+
+            let lowered = item_cgp_provider.lower()?;
+
+            Ok(CgpProviderOrBareImpl::Provider(lowered))
+        }
+    }
+
     pub fn to_raw_item_impl(&self) -> syn::Result<ItemImpl> {
         let item_impl = &self.item_impl;
         let context_type = &self.context_type;
