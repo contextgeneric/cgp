@@ -20,13 +20,13 @@ impl<'a> ReplaceSelfTypeVisitor<'a> {
         if path.segments.len() >= 2 && self.skip_assoc_types.contains(&path.segments[1].ident) {
             return;
         }
-        if let Type::Path(replaced) = self.replaced_type {
-            if replaced.qself.is_none() {
-                let rest: Vec<_> = path.segments.iter().skip(1).cloned().collect();
-                let mut new_path = replaced.path.clone();
-                new_path.segments.extend(rest);
-                *path = new_path;
-            }
+        if let Type::Path(replaced) = self.replaced_type
+            && replaced.qself.is_none()
+        {
+            let rest: Vec<_> = path.segments.iter().skip(1).cloned().collect();
+            let mut new_path = replaced.path.clone();
+            new_path.segments.extend(rest);
+            *path = new_path;
         }
     }
 }
@@ -35,14 +35,13 @@ impl VisitMut for ReplaceSelfTypeVisitor<'_> {
     fn visit_type_mut(&mut self, ty: &mut Type) {
         // Handle standalone `Self` type — replaced_type may not be a path (e.g. a reference),
         // so we must replace the whole Type node here rather than going through visit_path_mut.
-        if let Type::Path(type_path) = ty {
-            if type_path.qself.is_none()
-                && type_path.path.segments.len() == 1
-                && type_path.path.segments[0].ident == "Self"
-            {
-                *ty = self.replaced_type.clone();
-                return;
-            }
+        if let Type::Path(type_path) = ty
+            && type_path.qself.is_none()
+            && type_path.path.segments.len() == 1
+            && type_path.path.segments[0].ident == "Self"
+        {
+            *ty = self.replaced_type.clone();
+            return;
         }
         visit_mut::visit_type_mut(self, ty);
     }

@@ -90,14 +90,14 @@ impl LoweredCgpImpl {
         ));
 
         ReplaceSelfTypeVisitor {
-            replaced_type: &context_type,
+            replaced_type: context_type,
             skip_assoc_types: &local_assoc_types,
         }
         .visit_item_impl_mut(&mut out_impl);
 
         ReplaceSelfReceiverVisitor {
             replaced_ident: &context_ident,
-            replaced_type: &context_type,
+            replaced_type: context_type,
         }
         .visit_item_impl_mut(&mut out_impl);
 

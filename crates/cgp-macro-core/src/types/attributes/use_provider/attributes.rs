@@ -17,7 +17,7 @@ impl AddTypeParamBounds for UseProviderAttributes {
         let where_clause = generics.make_where_clause();
 
         for use_provider in &self.attributes {
-            let predicate = use_provider.to_provider_bounds(&self_type)?;
+            let predicate = use_provider.to_provider_bounds(self_type)?;
             where_clause.predicates.push(predicate);
         }
 

@@ -20,7 +20,7 @@ impl ImplicitArgField {
 
         Ok(HasFieldBound {
             field_type: self.field_type.clone(),
-            field_mut: self.field_mut.clone(),
+            field_mut: self.field_mut,
             field_mode: self.field_mode.clone(),
             tag_type,
         })

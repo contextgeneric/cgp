@@ -72,7 +72,7 @@ pub fn derive_use_fields_impl(
 
         let constraint = HasFieldBound {
             field_type,
-            field_mut: field.receiver_mut.clone(),
+            field_mut: field.receiver_mut,
             field_mode: field.field_mode.clone(),
             tag_type: tag_type.clone(),
         };
