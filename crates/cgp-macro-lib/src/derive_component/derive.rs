@@ -1,3 +1,4 @@
+use cgp_macro_core::types::is_provider_for::derive_is_provider_for;
 use proc_macro2::TokenStream;
 use quote::{ToTokens, TokenStreamExt, quote};
 use syn::{ItemImpl, ItemStruct, ItemTrait, parse2};
@@ -12,7 +13,6 @@ use crate::derive_component::provider_impl::derive_provider_impl;
 use crate::derive_component::provider_trait::derive_provider_trait;
 use crate::derive_component::use_context_impl::derive_use_context_impl;
 use crate::derive_component::use_delegate_impl::derive_delegate_impl;
-use crate::derive_provider::derive_is_provider_for;
 use crate::parse::ComponentSpec;
 
 pub fn derive_component_with_ast(

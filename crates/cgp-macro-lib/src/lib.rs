@@ -17,7 +17,6 @@ pub(crate) mod derive_component;
 pub(crate) mod derive_extractor;
 pub(crate) mod derive_getter;
 pub(crate) mod derive_has_fields;
-pub(crate) mod derive_provider;
 pub(crate) mod field;
 pub(crate) mod for_each_replace;
 pub(crate) mod parse;

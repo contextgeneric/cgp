@@ -1,10 +1,10 @@
 use alloc::vec::Vec;
 
+use cgp_macro_core::types::is_provider_for::derive_is_provider_for;
 use quote::{ToTokens, quote};
 use syn::spanned::Spanned;
 use syn::{Error, Generics, ItemImpl, ItemTrait, TraitItem, TraitItemType, Type, parse2};
 
-use crate::derive_provider::derive_is_provider_for;
 use crate::parse::ComponentSpec;
 use crate::type_component::replace::get_bounds_and_replace_self_assoc_type;
 

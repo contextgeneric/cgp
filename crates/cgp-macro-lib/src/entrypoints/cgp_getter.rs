@@ -1,6 +1,7 @@
 use std::collections::BTreeMap;
 use std::collections::btree_map::Entry;
 
+use cgp_macro_core::types::is_provider_for::derive_is_provider_for;
 use proc_macro2::TokenStream;
 use quote::{ToTokens, quote};
 use syn::{Ident, ItemTrait, Type, parse_quote, parse2};
@@ -12,7 +13,6 @@ use crate::derive_getter::{
     GetterField, derive_use_field_impl, derive_use_fields_impl, derive_with_provider_impl,
     parse_getter_fields,
 };
-use crate::derive_provider::derive_is_provider_for;
 use crate::parse::{ComponentSpec, Entries};
 
 pub fn cgp_getter(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {

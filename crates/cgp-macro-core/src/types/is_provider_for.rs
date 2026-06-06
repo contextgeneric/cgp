@@ -10,6 +10,17 @@ use crate::types::cgp_provider::ProviderImplArgs;
 use crate::types::ident::IdentWithTypeArgs;
 use crate::visitors::replace_provider_in_generics;
 
+pub fn derive_is_provider_for(
+    component_type: &Type,
+    item_impl: &ItemImpl,
+) -> syn::Result<ItemImpl> {
+    IsProviderFor {
+        component_type: component_type.clone(),
+        item_impl: item_impl.clone(),
+    }
+    .lower()
+}
+
 pub struct IsProviderFor {
     pub component_type: Type,
     pub item_impl: ItemImpl,
