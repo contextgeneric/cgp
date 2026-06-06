@@ -5,8 +5,8 @@ use syn::ItemImpl;
 use crate::types::cgp_provider::LoweredCgpProvider;
 
 pub enum CgpProviderOrBareImpl {
-    Bare(ItemImpl),
-    Provider(LoweredCgpProvider),
+    Bare(Box<ItemImpl>),
+    Provider(Box<LoweredCgpProvider>),
 }
 
 impl ToTokens for CgpProviderOrBareImpl {

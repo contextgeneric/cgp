@@ -30,7 +30,9 @@ impl LoweredCgpImpl {
                 ));
             }
 
-            Ok(CgpProviderOrBareImpl::Bare(self.item_impl.clone()))
+            Ok(CgpProviderOrBareImpl::Bare(Box::new(
+                self.item_impl.clone(),
+            )))
         } else {
             let provider_impl = self.to_raw_item_impl()?;
 
@@ -44,7 +46,7 @@ impl LoweredCgpImpl {
 
             let lowered = item_cgp_provider.lower()?;
 
-            Ok(CgpProviderOrBareImpl::Provider(lowered))
+            Ok(CgpProviderOrBareImpl::Provider(Box::new(lowered)))
         }
     }
 
