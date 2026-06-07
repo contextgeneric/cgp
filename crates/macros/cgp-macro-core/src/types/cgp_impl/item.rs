@@ -54,7 +54,7 @@ impl ItemCgpImpl {
             args: self.args.clone(),
             item_impl,
             context_type,
-            consumer_trait_path,
+            provider_trait_path: consumer_trait_path,
         })
     }
 }

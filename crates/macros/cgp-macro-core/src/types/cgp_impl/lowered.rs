@@ -17,7 +17,7 @@ pub struct LoweredCgpImpl {
     pub args: ImplArgs,
     pub item_impl: ItemImpl,
     pub context_type: Type,
-    pub consumer_trait_path: IdentWithTypeArgs,
+    pub provider_trait_path: IdentWithTypeArgs,
 }
 
 impl LoweredCgpImpl {
@@ -53,7 +53,7 @@ impl LoweredCgpImpl {
     pub fn to_raw_item_impl(&self) -> syn::Result<ItemImpl> {
         let item_impl = &self.item_impl;
         let context_type = &self.context_type;
-        let consumer_trait_path = &self.consumer_trait_path;
+        let consumer_trait_path = &self.provider_trait_path;
         let provider_type = &self.args.provider_type;
 
         let context_ident = if let Ok(ident) = parse2::<Ident>(context_type.to_token_stream()) {

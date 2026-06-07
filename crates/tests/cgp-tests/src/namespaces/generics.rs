@@ -10,7 +10,7 @@ pub trait Show<T> {
 }
 
 #[cgp_impl(new ShowWithDisplay)]
-// #[default_impl(DefaultNamespace1)]
+// #[default_impl(DefaultNamespace1<ShowImplComponent>)]
 impl<T: Display> ShowImpl<T> {
     fn show(&self, value: &T) -> String {
         value.to_string()
