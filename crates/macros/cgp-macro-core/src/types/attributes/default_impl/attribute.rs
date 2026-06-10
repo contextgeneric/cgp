@@ -3,9 +3,10 @@ use syn::token::In;
 use syn::{Generics, ItemImpl, Type, parse_quote};
 
 use crate::types::ident::IdentWithTypeArgs;
+use crate::types::path::UniPathOrType;
 
 pub struct DefaultImplAttribute {
-    pub key_type: Type,
+    pub key_type: UniPathOrType,
     pub in_token: In,
     pub namespace: IdentWithTypeArgs,
 }
