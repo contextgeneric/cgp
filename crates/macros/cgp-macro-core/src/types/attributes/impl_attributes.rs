@@ -1,10 +1,11 @@
 use syn::Attribute;
+use syn::parse::Parse;
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
 
 use crate::types::attributes::{
-    UseProviderAttribute, UseProviderAttributes, UseTypeAttribute, UseTypeAttributes,
-    UsesAttributes,
+    DefaultImplAttribute, DefaultImplAttributes, UseProviderAttribute, UseProviderAttributes,
+    UseTypeAttribute, UseTypeAttributes, UsesAttributes,
 };
 use crate::types::ident::IdentWithTypeArgs;
 
@@ -13,6 +14,7 @@ pub struct ImplAttributes {
     pub uses: UsesAttributes,
     pub use_type: UseTypeAttributes,
     pub use_provider: UseProviderAttributes,
+    pub default_impls: DefaultImplAttributes,
     pub raw_attributes: Vec<Attribute>,
 }
 
@@ -46,6 +48,15 @@ impl ImplAttributes {
                             .use_provider
                             .attributes
                             .extend(use_provider);
+                    }
+                    "default_impl" => {
+                        let default_impl =
+                            attribute.parse_args_with(DefaultImplAttribute::parse)?;
+
+                        parsed_attributes
+                            .default_impls
+                            .attributes
+                            .push(default_impl);
                     }
                     _ => {
                         parsed_attributes.raw_attributes.push(attribute.clone());

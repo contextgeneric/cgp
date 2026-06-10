@@ -10,10 +10,18 @@ pub trait Show<T> {
 }
 
 #[cgp_impl(new ShowWithDisplay)]
-// #[default_impl(DefaultNamespace1<ShowImplComponent>)]
+// #[default_impl(String in DefaultNamespace1<ShowImplComponent>)]
 impl<T: Display> ShowImpl<T> {
     fn show(&self, value: &T) -> String {
         value.to_string()
+    }
+}
+
+#[cgp_impl(new ShowWithString)]
+#[default_impl(String in DefaultNamespace1<ShowImplComponent>)]
+impl ShowImpl<String> {
+    fn show(&self, value: &String) -> String {
+        value.clone()
     }
 }
 
@@ -34,5 +42,5 @@ impl<T: Display> ShowImpl<T> {
 */
 
 impl<Components> DefaultImpls1<ShowImplComponent, Components> for String {
-    type Delegate = ShowWithDisplay;
+    type Delegate = ShowWithString;
 }
