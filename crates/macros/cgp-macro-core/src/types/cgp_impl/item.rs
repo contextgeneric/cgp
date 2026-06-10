@@ -33,7 +33,7 @@ impl ItemCgpImpl {
 
         let default_impls = attributes
             .default_impls
-            .to_item_impls(&mut item_impl.generics, &self.args.provider_type)?;
+            .to_item_impls(&item_impl.generics, &self.args.provider_type)?;
 
         let (provider_trait_path, context_type) = match &item_impl.trait_ {
             Some((_, path, _)) => {
