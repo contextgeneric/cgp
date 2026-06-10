@@ -1,15 +1,13 @@
 use cgp::core::component::DefaultImpls1;
 use cgp::prelude::*;
-use cgp_tests::namespaces::generics::{ShowImplComponent, ShowWithDisplay};
+use cgp_tests::namespaces::default_impl_a::{
+    DefaultShowComponents, ShowImplComponent, ShowWithDisplay,
+};
 
-pub struct App;
+pub struct AppA;
 
 delegate_components! {
-    App {
-        // use DefaultNamespace;
-        // for <Component, Provider> in DefaultNamespace {
-        //      Component: Provider,
-        // }
+    AppA {
         namespace DefaultNamespace;
 
         for <T, Provider> in DefaultImpls1<ShowImplComponent> {
@@ -18,13 +16,32 @@ delegate_components! {
 
         @test.ShowImplComponent.u64:
             ShowWithDisplay,
-
-        // namespace DefaultNamespace1<ShowImplComponent> => @test.ShowImplComponent;
     }
 }
 
 check_components! {
-    App {
+    AppA {
+        ShowImplComponent: [
+            String,
+            u64,
+        ]
+    }
+}
+
+pub struct AppB;
+
+delegate_components! {
+    AppB {
+        namespace DefaultNamespace;
+
+        for <T, Provider> in DefaultShowComponents {
+            @test.ShowImplComponent.T: Provider,
+        }
+    }
+}
+
+check_components! {
+    AppB {
         ShowImplComponent: [
             String,
             u64,
