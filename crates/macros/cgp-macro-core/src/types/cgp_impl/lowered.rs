@@ -17,7 +17,8 @@ pub struct LoweredCgpImpl {
     pub args: ImplArgs,
     pub item_impl: ItemImpl,
     pub context_type: Type,
-    pub consumer_trait_path: IdentWithTypeArgs,
+    pub provider_trait_path: IdentWithTypeArgs,
+    pub default_impls: Vec<ItemImpl>,
 }
 
 impl LoweredCgpImpl {
@@ -53,7 +54,7 @@ impl LoweredCgpImpl {
     pub fn to_raw_item_impl(&self) -> syn::Result<ItemImpl> {
         let item_impl = &self.item_impl;
         let context_type = &self.context_type;
-        let consumer_trait_path = &self.consumer_trait_path;
+        let mut provider_trait_path = self.provider_trait_path.clone();
         let provider_type = &self.args.provider_type;
 
         let context_ident = if let Ok(ident) = parse2::<Ident>(context_type.to_token_stream()) {
@@ -77,8 +78,6 @@ impl LoweredCgpImpl {
         let mut out_impl = item_impl.clone();
 
         out_impl.self_ty = Box::new(provider_type.clone());
-
-        let mut provider_trait_path = consumer_trait_path.clone();
 
         provider_trait_path
             .type_args
