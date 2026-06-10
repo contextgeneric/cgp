@@ -9,7 +9,7 @@ pub trait Show<T> {
     fn show(&self, value: &T) -> String;
 }
 
-#[cgp_impl(new ShowWithString)]
+#[cgp_impl(new ShowString)]
 #[default_impl(String in DefaultImpls1<ShowImplComponent>)]
 impl ShowImpl<String> {
     fn show(&self, value: &String) -> String {
@@ -31,5 +31,18 @@ cgp_namespace! {
             u64,
         ]:
             ShowWithDisplay,
+    }
+}
+
+cgp_namespace! {
+    new ExtendedNamespace: DefaultNamespace {
+    }
+}
+
+#[cgp_impl(new ShowU32)]
+#[default_impl(@test.ShowImplComponent.u32 in ExtendedNamespace)]
+impl ShowImpl<u32> {
+    fn show(&self, value: &u32) -> String {
+        value.to_string()
     }
 }
