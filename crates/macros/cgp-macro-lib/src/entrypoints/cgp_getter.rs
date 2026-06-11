@@ -1,9 +1,7 @@
-use std::collections::BTreeMap;
-use std::collections::btree_map::Entry;
-
+use cgp_macro_core::types::cgp_component::CgpComponentRawArgs;
 use cgp_macro_core::types::is_provider_for::derive_is_provider_for;
 use proc_macro2::TokenStream;
-use quote::{ToTokens, quote};
+use quote::quote;
 use syn::{Ident, ItemTrait, Type, parse_quote, parse2};
 
 use crate::derive_component::{
@@ -13,14 +11,9 @@ use crate::derive_getter::{
     GetterField, derive_use_field_impl, derive_use_fields_impl, derive_with_provider_impl,
     parse_getter_fields,
 };
-use crate::parse::{ComponentSpec, Entries};
 
 pub fn cgp_getter(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
-    let mut entries = if let Ok(provider_ident) = parse2::<Ident>(attr.clone()) {
-        BTreeMap::from([("provider".to_owned(), provider_ident.to_token_stream())])
-    } else {
-        parse2::<Entries>(attr)?.entries
-    };
+    let mut raw_args: CgpComponentRawArgs = parse2(attr.clone())?;
 
     let mut consumer_trait: ItemTrait = syn::parse2(body)?;
 
@@ -28,34 +21,31 @@ pub fn cgp_getter(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStre
 
     preprocess_consumer_trait(&mut consumer_trait, &attributes)?;
 
-    let provider_entry = entries.entry("provider".to_owned());
-
-    if let Entry::Vacant(entry) = provider_entry {
-        let consumer_name = consumer_trait.ident.to_string();
-        if let Some(field_name) = consumer_name.strip_prefix("Has")
-            && !field_name.is_empty()
-        {
-            let provider_name =
-                Ident::new(&format!("{field_name}Getter"), consumer_trait.ident.span());
-            entry.insert(parse2(provider_name.to_token_stream())?);
-        }
+    if raw_args.provider_ident.is_none()
+        && let Some(field_name) = consumer_trait.ident.to_string().strip_prefix("Has")
+        && !field_name.is_empty()
+    {
+        raw_args.provider_ident = Some(Ident::new(
+            &format!("{field_name}Getter"),
+            consumer_trait.ident.span(),
+        ));
     }
 
-    let spec = ComponentSpec::from_entries(&entries)?;
+    let args = raw_args.try_into()?;
 
-    let derived_component = derive_component_with_ast(&spec, consumer_trait.clone())?;
+    let derived_component = derive_component_with_ast(&args, consumer_trait.clone())?;
 
-    let (fields, field_assoc_type) = parse_getter_fields(&spec.context_type, &consumer_trait)?;
+    let (fields, field_assoc_type) = parse_getter_fields(&args.context_ident, &consumer_trait)?;
 
     let use_fields_impl = derive_use_fields_impl(
-        &spec,
+        &args,
         &derived_component.provider_trait,
         &fields,
         &field_assoc_type,
     )?;
 
     let component_name_type: Type = {
-        let component_name = &spec.component_name;
+        let component_name = &args.component_name;
         parse_quote!( #component_name )
     };
 
@@ -74,7 +64,7 @@ pub fn cgp_getter(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStre
 
     if let Some([field]) = m_field {
         let use_field_impl = derive_use_field_impl(
-            &spec,
+            &args,
             &derived_component.provider_trait,
             &field,
             &field_assoc_type,
@@ -84,7 +74,7 @@ pub fn cgp_getter(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStre
             derive_is_provider_for(&component_name_type, &use_field_impl)?;
 
         let use_provider_impl = derive_with_provider_impl(
-            &spec,
+            &args,
             &derived_component.provider_trait,
             &field,
             &field_assoc_type,

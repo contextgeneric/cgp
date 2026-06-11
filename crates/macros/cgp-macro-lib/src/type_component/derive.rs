@@ -1,11 +1,11 @@
 use alloc::vec::Vec;
 
+use cgp_macro_core::types::cgp_component::CgpComponentArgs;
 use cgp_macro_core::types::is_provider_for::derive_is_provider_for;
 use quote::{ToTokens, quote};
 use syn::spanned::Spanned;
 use syn::{Error, Generics, ItemImpl, ItemTrait, TraitItem, TraitItemType, Type, parse2};
 
-use crate::parse::ComponentSpec;
 use crate::type_component::replace::get_bounds_and_replace_self_assoc_type;
 
 pub fn extract_item_type_from_trait(consumer_trait: &ItemTrait) -> syn::Result<&TraitItemType> {
@@ -35,11 +35,11 @@ pub fn extract_item_type_from_trait(consumer_trait: &ItemTrait) -> syn::Result<&
 }
 
 pub fn derive_type_providers(
-    spec: &ComponentSpec,
+    spec: &CgpComponentArgs,
     provider_trait: &ItemTrait,
     item_type: &TraitItemType,
 ) -> syn::Result<Vec<ItemImpl>> {
-    let context_name = &spec.context_type;
+    let context_name = &spec.context_ident;
 
     let component_name: Type = { parse2(spec.component_name.to_token_stream())? };
 

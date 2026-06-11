@@ -1,3 +1,4 @@
+use cgp_macro_core::types::cgp_component::CgpComponentArgs;
 use cgp_macro_core::types::is_provider_for::derive_is_provider_for;
 use cgp_macro_core::types::provider_struct::ProviderStruct;
 use proc_macro2::TokenStream;
@@ -13,14 +14,13 @@ use crate::derive_component::provider_impl::derive_provider_impl;
 use crate::derive_component::provider_trait::derive_provider_trait;
 use crate::derive_component::use_context_impl::derive_use_context_impl;
 use crate::derive_component::use_delegate_impl::derive_delegate_impl;
-use crate::parse::ComponentSpec;
 
 pub fn derive_component_with_ast(
-    spec: &ComponentSpec,
+    spec: &CgpComponentArgs,
     mut consumer_trait: ItemTrait,
 ) -> syn::Result<DerivedComponent> {
-    let provider_name = &spec.provider_name;
-    let context_type = &spec.context_type;
+    let provider_name = &spec.provider_ident;
+    let context_type = &spec.context_ident;
 
     let component_name = &spec.component_name;
 

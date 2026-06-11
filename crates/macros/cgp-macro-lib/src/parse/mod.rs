@@ -1,19 +1,15 @@
 mod check_components;
-mod component_spec;
 mod define_preset;
 mod delegate_and_check_components;
 mod delegate_components;
-mod entry;
 mod is_provider_params;
 mod path;
 mod type_spec;
 
 pub use check_components::*;
-pub use component_spec::*;
 pub use define_preset::*;
 pub use delegate_and_check_components::*;
 pub use delegate_components::*;
-pub use entry::*;
 pub use is_provider_params::*;
 pub use path::*;
 pub use type_spec::*;

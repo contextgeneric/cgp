@@ -1,5 +1,5 @@
 use proc_macro2::Span;
-use syn::parse::{End, Parse};
+use syn::parse::Parse;
 use syn::{Error, Ident};
 
 use crate::types::cgp_component::{CgpComponentRawArgs, DeriveDelegateAttributes};
@@ -14,16 +14,7 @@ pub struct CgpComponentArgs {
 
 impl Parse for CgpComponentArgs {
     fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
-        let raw_args = if input.peek2(End) {
-            let provider_ident = input.parse()?;
-
-            CgpComponentRawArgs {
-                provider_ident,
-                ..Default::default()
-            }
-        } else {
-            input.parse()?
-        };
+        let raw_args: CgpComponentRawArgs = input.parse()?;
 
         raw_args.try_into()
     }

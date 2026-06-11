@@ -9,16 +9,16 @@ use syn::{Error, Ident, parse2};
 
 use crate::parse::Entries;
 
-pub struct ComponentSpec {
-    pub provider_name: Ident,
-    pub context_type: Ident,
+pub struct CgpComponentArgs {
+    pub provider_ident: Ident,
+    pub context_ident: Ident,
     pub component_name: IdentWithTypeGenerics,
     pub derive_delegate_attributes: DeriveDelegateAttributes,
 }
 
 static VALID_KEYS: [&str; 4] = ["context", "provider", "name", "derive_delegate"];
 
-impl Parse for ComponentSpec {
+impl Parse for CgpComponentArgs {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         if input.peek2(End) {
             let provider_name: Ident = input.parse()?;
@@ -29,8 +29,8 @@ impl Parse for ComponentSpec {
                 Ident::new(&format!("{provider_name}Component"), provider_name.span());
 
             Ok(Self {
-                provider_name,
-                context_type,
+                provider_ident: provider_name,
+                context_ident: context_type,
                 component_name: component_name.into(),
                 derive_delegate_attributes: Default::default(),
             })
@@ -41,7 +41,7 @@ impl Parse for ComponentSpec {
     }
 }
 
-impl ComponentSpec {
+impl CgpComponentArgs {
     pub fn validate_entries(entries: &BTreeMap<String, TokenStream>) -> syn::Result<()> {
         for key in entries.keys() {
             if !VALID_KEYS.iter().any(|valid| valid == key) {
@@ -96,10 +96,10 @@ impl ComponentSpec {
             None => Default::default(),
         };
 
-        Ok(ComponentSpec {
+        Ok(CgpComponentArgs {
             component_name,
-            provider_name,
-            context_type,
+            provider_ident: provider_name,
+            context_ident: context_type,
             derive_delegate_attributes,
         })
     }

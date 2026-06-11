@@ -1,3 +1,4 @@
+use cgp_macro_core::types::cgp_component::CgpComponentArgs;
 use cgp_macro_core::types::getter::FieldMode;
 use proc_macro2::{Span, TokenStream};
 use quote::{ToTokens, quote};
@@ -5,19 +6,18 @@ use syn::{Generics, Ident, ItemImpl, ItemTrait, TraitItemType, parse_quote, pars
 
 use crate::derive_getter::getter_field::GetterField;
 use crate::derive_getter::{ContextArg, ReceiverMode, derive_getter_method};
-use crate::parse::ComponentSpec;
 use crate::type_component::get_bounds_and_replace_self_assoc_type;
 
 pub fn derive_with_provider_impl(
-    spec: &ComponentSpec,
+    spec: &CgpComponentArgs,
     provider_trait: &ItemTrait,
     field: &GetterField,
     field_assoc_type: &Option<TraitItemType>,
 ) -> syn::Result<ItemImpl> {
     let component_name = &spec.component_name;
 
-    let context_type = &spec.context_type;
-    let provider_name = &spec.provider_name;
+    let context_type = &spec.context_ident;
+    let provider_name = &spec.provider_ident;
 
     let receiver_type = match &field.receiver_mode {
         ReceiverMode::SelfReceiver => context_type.to_token_stream(),
