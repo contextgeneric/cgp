@@ -1,12 +1,11 @@
 use alloc::format;
 use std::collections::BTreeMap;
 
+use cgp_macro_core::types::cgp_component::DeriveDelegateAttributes;
 use cgp_macro_core::types::ident::IdentWithTypeGenerics;
 use proc_macro2::{Span, TokenStream};
 use syn::parse::{End, Parse, ParseStream};
-use syn::punctuated::Punctuated;
-use syn::token::{Bracket, Comma, Gt, Lt, Paren};
-use syn::{Error, Ident, bracketed, parenthesized, parse2};
+use syn::{Error, Ident, parse2};
 
 use crate::parse::Entries;
 
@@ -14,7 +13,7 @@ pub struct ComponentSpec {
     pub provider_name: Ident,
     pub context_type: Ident,
     pub component_name: IdentWithTypeGenerics,
-    pub use_delegate_spec: Vec<DeriveDelegateSpec>,
+    pub derive_delegate_attributes: DeriveDelegateAttributes,
 }
 
 static VALID_KEYS: [&str; 4] = ["context", "provider", "name", "derive_delegate"];
@@ -33,7 +32,7 @@ impl Parse for ComponentSpec {
                 provider_name,
                 context_type,
                 component_name: component_name.into(),
-                use_delegate_spec: Vec::new(),
+                derive_delegate_attributes: Default::default(),
             })
         } else {
             let Entries { entries } = input.parse()?;
@@ -93,75 +92,15 @@ impl ComponentSpec {
         };
 
         let use_delegate_spec = match entries.get("derive_delegate") {
-            Some(entry) => {
-                let DeriveDelegateSpecs { specs } = parse2(entry.clone())?;
-                specs
-            }
-            None => Vec::new(),
+            Some(entry) => parse2(entry.clone())?,
+            None => Default::default(),
         };
 
         Ok(ComponentSpec {
             component_name,
             provider_name,
             context_type,
-            use_delegate_spec,
+            derive_delegate_attributes: use_delegate_spec,
         })
-    }
-}
-
-pub struct DeriveDelegateSpec {
-    pub wrapper: Ident,
-    pub params: Punctuated<Ident, Comma>,
-}
-
-impl Parse for DeriveDelegateSpec {
-    fn parse(input: ParseStream) -> syn::Result<Self> {
-        let wrapper: Ident = input.parse()?;
-
-        let _: Lt = input.parse()?;
-
-        let idents = if input.peek(Paren) {
-            let body;
-            parenthesized!(body in input);
-            let idents = Punctuated::parse_terminated(&body)?;
-            if idents.is_empty() {
-                return Err(Error::new(
-                    body.span(),
-                    "expect non-empty tuple list of identifiers in use_delegate_spec",
-                ));
-            }
-
-            idents
-        } else {
-            let ident: Ident = input.parse()?;
-            Punctuated::from_iter([ident])
-        };
-
-        let _: Gt = input.parse()?;
-        Ok(Self {
-            wrapper,
-            params: idents,
-        })
-    }
-}
-
-pub struct DeriveDelegateSpecs {
-    pub specs: Vec<DeriveDelegateSpec>,
-}
-
-impl Parse for DeriveDelegateSpecs {
-    fn parse(input: ParseStream) -> syn::Result<Self> {
-        if input.peek(Bracket) {
-            let body;
-            bracketed!(body in input);
-
-            let specs = <Punctuated<DeriveDelegateSpec, Comma>>::parse_terminated(&body)?;
-            Ok(Self {
-                specs: Vec::from_iter(specs),
-            })
-        } else {
-            let spec = input.parse()?;
-            Ok(Self { specs: vec![spec] })
-        }
     }
 }

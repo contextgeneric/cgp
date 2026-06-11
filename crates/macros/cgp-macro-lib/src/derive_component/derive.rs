@@ -72,8 +72,8 @@ pub fn derive_component_with_ast(
         redirect_lookup_is_provider_impl,
     ];
 
-    if !spec.use_delegate_spec.is_empty() {
-        for spec in spec.use_delegate_spec.iter() {
+    if !spec.derive_delegate_attributes.attributes.is_empty() {
+        for spec in spec.derive_delegate_attributes.attributes.iter() {
             let use_delegate_impl = derive_delegate_impl(&provider_trait, spec)?;
 
             let use_delegate_is_provider_impl = derive_is_provider_for(
