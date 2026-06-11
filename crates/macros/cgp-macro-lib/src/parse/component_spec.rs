@@ -91,7 +91,7 @@ impl ComponentSpec {
             }
         };
 
-        let use_delegate_spec = match entries.get("derive_delegate") {
+        let derive_delegate_attributes = match entries.get("derive_delegate") {
             Some(entry) => parse2(entry.clone())?,
             None => Default::default(),
         };
@@ -100,7 +100,7 @@ impl ComponentSpec {
             component_name,
             provider_name,
             context_type,
-            derive_delegate_attributes: use_delegate_spec,
+            derive_delegate_attributes,
         })
     }
 }
