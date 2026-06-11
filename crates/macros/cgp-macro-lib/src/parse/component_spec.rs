@@ -1,6 +1,7 @@
 use alloc::format;
 use std::collections::BTreeMap;
 
+use cgp_macro_core::types::ident::IdentWithTypeGenerics;
 use proc_macro2::{Span, TokenStream};
 use syn::parse::{End, Parse, ParseStream};
 use syn::punctuated::Punctuated;
@@ -12,14 +13,8 @@ use crate::parse::Entries;
 pub struct ComponentSpec {
     pub provider_name: Ident,
     pub context_type: Ident,
-    pub component_name: Ident,
-    pub component_params: Punctuated<Ident, Comma>,
+    pub component_name: IdentWithTypeGenerics,
     pub use_delegate_spec: Vec<DeriveDelegateSpec>,
-}
-
-pub struct ComponentNameSpec {
-    pub component_name: Ident,
-    pub component_params: Punctuated<Ident, Comma>,
 }
 
 static VALID_KEYS: [&str; 4] = ["context", "provider", "name", "derive_delegate"];
@@ -34,13 +29,10 @@ impl Parse for ComponentSpec {
             let component_name =
                 Ident::new(&format!("{provider_name}Component"), provider_name.span());
 
-            let component_params = Punctuated::new();
-
             Ok(Self {
                 provider_name,
                 context_type,
-                component_name,
-                component_params,
+                component_name: component_name.into(),
                 use_delegate_spec: Vec::new(),
             })
         } else {
@@ -87,20 +79,16 @@ impl ComponentSpec {
             syn::parse2(raw_provider_name.clone())?
         };
 
-        let (component_name, component_params) = {
+        let component_name = {
             let raw_component_name = entries.get("name");
 
             if let Some(raw_component_name) = raw_component_name {
-                let ComponentNameSpec {
-                    component_name,
-                    component_params,
-                } = syn::parse2(raw_component_name.clone())?;
-                (component_name, component_params)
+                parse2(raw_component_name.clone())?
             } else {
-                (
-                    Ident::new(&format!("{provider_name}Component"), provider_name.span()),
-                    Punctuated::default(),
-                )
+                IdentWithTypeGenerics::from(Ident::new(
+                    &format!("{provider_name}Component"),
+                    provider_name.span(),
+                ))
             }
         };
 
@@ -116,32 +104,7 @@ impl ComponentSpec {
             component_name,
             provider_name,
             context_type,
-            component_params,
             use_delegate_spec,
-        })
-    }
-}
-
-impl Parse for ComponentNameSpec {
-    fn parse(input: ParseStream) -> syn::Result<Self> {
-        let component_name: Ident = input.parse()?;
-
-        let component_params = if input.peek(Lt) {
-            let _: Lt = input.parse()?;
-
-            let component_params: Punctuated<Ident, Comma> =
-                Punctuated::parse_separated_nonempty(input)?;
-
-            let _: Gt = input.parse()?;
-
-            component_params
-        } else {
-            Punctuated::default()
-        };
-
-        Ok(Self {
-            component_name,
-            component_params,
         })
     }
 }

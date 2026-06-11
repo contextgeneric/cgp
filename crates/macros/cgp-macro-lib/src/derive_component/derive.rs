@@ -1,10 +1,10 @@
 use cgp_macro_core::types::is_provider_for::derive_is_provider_for;
+use cgp_macro_core::types::provider_struct::ProviderStruct;
 use proc_macro2::TokenStream;
 use quote::{ToTokens, TokenStreamExt, quote};
 use syn::{ItemImpl, ItemStruct, ItemTrait, parse2};
 
 use crate::derive_component::attributes::parse_component_attributes;
-use crate::derive_component::component_name::derive_component_name_struct;
 use crate::derive_component::consumer_impl::derive_consumer_impl;
 use crate::derive_component::derive_namespace::derive_namespace_impls;
 use crate::derive_component::derive_redirect_lookup::derive_redirect_lookup_impl;
@@ -23,21 +23,19 @@ pub fn derive_component_with_ast(
     let context_type = &spec.context_type;
 
     let component_name = &spec.component_name;
-    let component_params = &spec.component_params;
 
     let attributes = parse_component_attributes(&mut consumer_trait.attrs)?;
 
     preprocess_consumer_trait(&mut consumer_trait, &attributes)?;
 
-    let component_struct = derive_component_name_struct(component_name, component_params)?;
+    let component_struct = ProviderStruct {
+        ident: component_name.ident.clone(),
+        generics: component_name.type_generics.generics.clone(),
+    }
+    .to_item_struct()?;
 
-    let provider_trait = derive_provider_trait(
-        component_name,
-        component_params,
-        &consumer_trait,
-        provider_name,
-        context_type,
-    )?;
+    let provider_trait =
+        derive_provider_trait(component_name, &consumer_trait, provider_name, context_type)?;
 
     let consumer_impl = derive_consumer_impl(&consumer_trait, provider_name, context_type)?;
 
@@ -46,14 +44,13 @@ pub fn derive_component_with_ast(
         &consumer_trait,
         &provider_trait,
         component_name,
-        component_params,
     )?;
 
     let use_context_impl = derive_use_context_impl(context_type, &consumer_trait, &provider_trait)?;
 
     let use_context_is_provider_impl = derive_is_provider_for(
         &parse2(quote! {
-            #component_name < #component_params >
+            #component_name
         })?,
         &use_context_impl,
     )?;
@@ -61,7 +58,7 @@ pub fn derive_component_with_ast(
     let redirect_lookup_impl = derive_redirect_lookup_impl(&consumer_trait, &provider_trait)?;
     let redirect_lookup_is_provider_impl = derive_is_provider_for(
         &parse2(quote! {
-            #component_name < #component_params >
+            #component_name
         })?,
         &redirect_lookup_impl,
     )?;
@@ -81,7 +78,7 @@ pub fn derive_component_with_ast(
 
             let use_delegate_is_provider_impl = derive_is_provider_for(
                 &parse2(quote! {
-                    #component_name < #component_params >
+                    #component_name
                 })?,
                 &use_delegate_impl,
             )?;
@@ -91,7 +88,7 @@ pub fn derive_component_with_ast(
         }
     }
 
-    let namespace_impls = derive_namespace_impls(&attributes.namespace, component_name)?;
+    let namespace_impls = derive_namespace_impls(&attributes.namespace, &component_name.ident)?;
     item_impls.extend(namespace_impls);
 
     let derived = DerivedComponent {

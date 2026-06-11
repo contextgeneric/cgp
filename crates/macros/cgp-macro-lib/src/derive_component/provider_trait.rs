@@ -1,20 +1,19 @@
 use alloc::vec::Vec;
 
 use cgp_macro_core::functions::to_snake_case_ident;
+use cgp_macro_core::types::ident::IdentWithTypeGenerics;
 use cgp_macro_core::visitors::{
     ReplaceSelfReceiverVisitor, ReplaceSelfTypeVisitor, ReplaceSelfValueVisitor,
 };
 use quote::quote;
 use syn::punctuated::Punctuated;
-use syn::token::Comma;
 use syn::visit_mut::VisitMut;
 use syn::{Ident, ItemTrait, TraitItem, Type, TypeParamBound, parse_quote, parse2};
 
 use crate::parse::parse_is_provider_params;
 
 pub fn derive_provider_trait(
-    component_name: &Ident,
-    component_params: &Punctuated<Ident, Comma>,
+    component_name: &IdentWithTypeGenerics,
     consumer_trait: &ItemTrait,
     provider_name: &Ident,
     context_type_ident: &Ident,
@@ -61,7 +60,7 @@ pub fn derive_provider_trait(
     let is_provider_params = parse_is_provider_params(&consumer_trait.generics)?;
 
     let provider_supertrait: TypeParamBound = parse2(quote!(
-        IsProviderFor< #component_name < #component_params >, #context_type_ident, ( #is_provider_params ) >
+        IsProviderFor< #component_name, #context_type_ident, ( #is_provider_params ) >
     ))?;
 
     provider_trait.supertraits = Punctuated::from_iter([provider_supertrait]);

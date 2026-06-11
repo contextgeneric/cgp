@@ -1,11 +1,12 @@
 use alloc::boxed::Box;
 use alloc::vec::Vec;
 
+use cgp_macro_core::types::ident::IdentWithTypeGenerics;
 use proc_macro2::{Span, TokenStream};
 use quote::quote;
 use syn::punctuated::Punctuated;
 use syn::spanned::Spanned;
-use syn::token::{Brace, Comma, Eq, For, Impl, Plus};
+use syn::token::{Brace, Eq, For, Impl, Plus};
 use syn::{
     Error, GenericParam, Ident, ImplItem, ImplItemConst, ItemImpl, ItemTrait, Path, TraitItem,
     TypeParamBound, Visibility, parse2,
@@ -19,15 +20,14 @@ pub fn derive_provider_impl(
     context_type: &Ident,
     consumer_trait: &ItemTrait,
     provider_trait: &ItemTrait,
-    component_name: &Ident,
-    component_params: &Punctuated<Ident, Comma>,
+    component_name: &IdentWithTypeGenerics,
 ) -> syn::Result<ItemImpl> {
     let provider_name = &provider_trait.ident;
 
     let provider_type = Ident::new("__Provider__", Span::call_site());
 
     let delegate_constraint = quote! {
-        DelegateComponent< #component_name < #component_params > >
+        DelegateComponent< #component_name >
     };
 
     let delegate_type = quote! {
@@ -51,7 +51,7 @@ pub fn derive_provider_impl(
             delegate_constraints.push(parse2(delegate_constraint)?);
 
             delegate_constraints.push(parse2(quote!(
-                IsProviderFor< #component_name < #component_params >, #context_type, ( #is_provider_params ) >
+                IsProviderFor< #component_name, #context_type, ( #is_provider_params ) >
             ))?);
 
             let provider_constraint: TypeParamBound = parse2(quote! {

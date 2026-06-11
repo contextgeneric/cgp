@@ -11,6 +11,15 @@ pub struct IdentWithTypeGenerics {
     pub type_generics: TypeGenerics,
 }
 
+impl From<Ident> for IdentWithTypeGenerics {
+    fn from(ident: Ident) -> Self {
+        Self {
+            ident,
+            type_generics: TypeGenerics::default(),
+        }
+    }
+}
+
 impl Parse for IdentWithTypeGenerics {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let ident = input.parse()?;

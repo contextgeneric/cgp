@@ -56,8 +56,7 @@ pub fn cgp_getter(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStre
 
     let component_name_type: Type = {
         let component_name = &spec.component_name;
-        let component_params = &spec.component_params;
-        parse_quote!( #component_name < #component_params > )
+        parse_quote!( #component_name )
     };
 
     let is_provider_use_fields_impl =

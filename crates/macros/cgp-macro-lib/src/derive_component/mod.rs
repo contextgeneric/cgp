@@ -1,5 +1,4 @@
 mod attributes;
-mod component_name;
 mod consumer_impl;
 mod delegate_fn;
 mod delegate_type;

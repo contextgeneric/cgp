@@ -41,11 +41,7 @@ pub fn derive_type_providers(
 ) -> syn::Result<Vec<ItemImpl>> {
     let context_name = &spec.context_type;
 
-    let component_name: Type = {
-        let name = &spec.component_name;
-        let params = &spec.component_params;
-        parse2(quote! { #name < #params > })?
-    };
+    let component_name: Type = { parse2(spec.component_name.to_token_stream())? };
 
     let provider_trait_name = &provider_trait.ident;
 
