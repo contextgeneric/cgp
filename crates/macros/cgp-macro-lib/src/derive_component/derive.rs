@@ -11,7 +11,6 @@ use crate::derive_component::consumer_impl::derive_consumer_impl;
 use crate::derive_component::derive_namespace::derive_namespace_impls;
 use crate::derive_component::derive_redirect_lookup::derive_redirect_lookup_impl;
 use crate::derive_component::provider_impl::derive_provider_impl;
-use crate::derive_component::provider_trait::derive_provider_trait;
 use crate::derive_component::use_context_impl::derive_use_context_impl;
 use crate::derive_component::use_delegate_impl::derive_delegate_impl;
 
@@ -28,6 +27,8 @@ pub fn derive_component_with_ast(
 
     let component_struct = lowered.to_component_struct();
 
+    let provider_trait = lowered.to_provider_trait()?;
+
     let LoweredCgpComponent {
         args,
         item_trait,
@@ -37,9 +38,6 @@ pub fn derive_component_with_ast(
     let provider_name = &args.provider_ident;
     let context_type = &args.context_ident;
     let component_name = &args.component_name;
-
-    let provider_trait =
-        derive_provider_trait(component_name, &item_trait, provider_name, context_type)?;
 
     let consumer_impl = derive_consumer_impl(&item_trait, provider_name, context_type)?;
 
