@@ -1,12 +1,11 @@
+use cgp_macro_core::types::attributes::CgpComponentAttributes;
 use cgp_macro_core::types::cgp_component::CgpComponentRawArgs;
 use cgp_macro_core::types::is_provider_for::derive_is_provider_for;
 use proc_macro2::TokenStream;
 use quote::quote;
 use syn::{Ident, ItemTrait, Type, parse_quote, parse2};
 
-use crate::derive_component::{
-    derive_component_with_ast, parse_component_attributes, preprocess_consumer_trait,
-};
+use crate::derive_component::{derive_component_with_ast, preprocess_consumer_trait};
 use crate::derive_getter::{
     GetterField, derive_use_field_impl, derive_use_fields_impl, derive_with_provider_impl,
     parse_getter_fields,
@@ -17,7 +16,7 @@ pub fn cgp_getter(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStre
 
     let mut consumer_trait: ItemTrait = syn::parse2(body)?;
 
-    let attributes = parse_component_attributes(&mut consumer_trait.attrs)?;
+    let attributes = CgpComponentAttributes::parse(&mut consumer_trait.attrs)?;
 
     preprocess_consumer_trait(&mut consumer_trait, &attributes)?;
 

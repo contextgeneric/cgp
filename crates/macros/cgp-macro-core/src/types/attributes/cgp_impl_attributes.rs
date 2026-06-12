@@ -10,7 +10,7 @@ use crate::types::attributes::{
 use crate::types::ident::IdentWithTypeArgs;
 
 #[derive(Default)]
-pub struct ImplAttributes {
+pub struct CgpImplAttributes {
     pub uses: UsesAttributes,
     pub use_type: UseTypeAttributes,
     pub use_provider: UseProviderAttributes,
@@ -18,9 +18,9 @@ pub struct ImplAttributes {
     pub raw_attributes: Vec<Attribute>,
 }
 
-impl ImplAttributes {
-    pub fn parse(attributes: &Vec<Attribute>) -> syn::Result<ImplAttributes> {
-        let mut parsed_attributes = ImplAttributes::default();
+impl CgpImplAttributes {
+    pub fn parse(attributes: &Vec<Attribute>) -> syn::Result<CgpImplAttributes> {
+        let mut parsed_attributes = CgpImplAttributes::default();
 
         for attribute in attributes {
             if let Some(ident) = attribute.path().get_ident() {

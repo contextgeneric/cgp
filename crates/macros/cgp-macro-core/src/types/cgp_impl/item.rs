@@ -2,7 +2,7 @@ use quote::ToTokens;
 use syn::{ItemImpl, Type, parse_quote, parse2};
 
 use crate::traits::AddTypeParamBounds;
-use crate::types::attributes::ImplAttributes;
+use crate::types::attributes::CgpImplAttributes;
 use crate::types::cgp_impl::{ImplArgs, LoweredCgpImpl};
 use crate::types::implicits::ImplicitArgFields;
 
@@ -15,7 +15,7 @@ impl ItemCgpImpl {
     pub fn lower(&self) -> syn::Result<LoweredCgpImpl> {
         let mut item_impl = self.item_impl.clone();
 
-        let attributes = ImplAttributes::parse(&item_impl.attrs)?;
+        let attributes = CgpImplAttributes::parse(&item_impl.attrs)?;
         item_impl.attrs = attributes.raw_attributes;
 
         let self_type: Type = parse_quote!(Self);

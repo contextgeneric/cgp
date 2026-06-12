@@ -1,6 +1,5 @@
+use cgp_macro_core::types::attributes::CgpComponentAttributes;
 use syn::ItemTrait;
-
-use crate::derive_component::attributes::CgpComponentAttributes;
 
 pub fn preprocess_consumer_trait(
     consumer_trait: &mut ItemTrait,

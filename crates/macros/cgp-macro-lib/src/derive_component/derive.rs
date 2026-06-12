@@ -1,3 +1,4 @@
+use cgp_macro_core::types::attributes::CgpComponentAttributes;
 use cgp_macro_core::types::cgp_component::CgpComponentArgs;
 use cgp_macro_core::types::is_provider_for::derive_is_provider_for;
 use cgp_macro_core::types::provider_struct::ProviderStruct;
@@ -5,7 +6,6 @@ use proc_macro2::TokenStream;
 use quote::{ToTokens, TokenStreamExt, quote};
 use syn::{ItemImpl, ItemStruct, ItemTrait, parse2};
 
-use crate::derive_component::attributes::parse_component_attributes;
 use crate::derive_component::consumer_impl::derive_consumer_impl;
 use crate::derive_component::derive_namespace::derive_namespace_impls;
 use crate::derive_component::derive_redirect_lookup::derive_redirect_lookup_impl;
@@ -24,7 +24,7 @@ pub fn derive_component_with_ast(
 
     let component_name = &spec.component_name;
 
-    let attributes = parse_component_attributes(&mut consumer_trait.attrs)?;
+    let attributes = CgpComponentAttributes::parse(&mut consumer_trait.attrs)?;
 
     preprocess_consumer_trait(&mut consumer_trait, &attributes)?;
 

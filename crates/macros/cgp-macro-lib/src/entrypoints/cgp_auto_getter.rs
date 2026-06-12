@@ -1,8 +1,9 @@
+use cgp_macro_core::types::attributes::CgpComponentAttributes;
 use proc_macro2::{Span, TokenStream};
 use quote::quote;
 use syn::{Error, Ident, ItemTrait};
 
-use crate::derive_component::{parse_component_attributes, preprocess_consumer_trait};
+use crate::derive_component::preprocess_consumer_trait;
 use crate::derive_getter::{derive_blanket_impl, parse_getter_fields};
 
 pub fn cgp_auto_getter(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
@@ -15,7 +16,7 @@ pub fn cgp_auto_getter(attr: TokenStream, body: TokenStream) -> syn::Result<Toke
 
     let mut consumer_trait: ItemTrait = syn::parse2(body)?;
 
-    let attributes = parse_component_attributes(&mut consumer_trait.attrs)?;
+    let attributes = CgpComponentAttributes::parse(&mut consumer_trait.attrs)?;
 
     preprocess_consumer_trait(&mut consumer_trait, &attributes)?;
 

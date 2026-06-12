@@ -1,4 +1,3 @@
-mod attributes;
 mod consumer_impl;
 mod delegate_fn;
 mod delegate_type;
@@ -12,6 +11,5 @@ mod signature_args;
 mod use_context_impl;
 mod use_delegate_impl;
 
-pub use attributes::*;
 pub use derive::*;
 pub use preprocess::*;
