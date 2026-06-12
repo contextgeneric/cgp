@@ -5,7 +5,7 @@ use syn::token::{Bracket, Comma};
 
 use crate::types::attributes::DeriveDelegateAttribute;
 
-#[derive(Default)]
+#[derive(Default, Clone)]
 pub struct DeriveDelegateAttributes {
     pub attributes: Vec<DeriveDelegateAttribute>,
 }

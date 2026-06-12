@@ -6,6 +6,7 @@ use crate::types::attributes::DeriveDelegateAttributes;
 use crate::types::cgp_component::CgpComponentRawArgs;
 use crate::types::ident::IdentWithTypeGenerics;
 
+#[derive(Clone)]
 pub struct CgpComponentArgs {
     pub context_ident: Ident,
     pub provider_ident: Ident,

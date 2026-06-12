@@ -3,6 +3,7 @@ use syn::punctuated::Punctuated;
 use syn::token::{Comma, Gt, Lt, Paren};
 use syn::{Error, Ident, parenthesized};
 
+#[derive(Clone)]
 pub struct DeriveDelegateAttribute {
     pub wrapper: Ident,
     pub params: Punctuated<Ident, Comma>,
