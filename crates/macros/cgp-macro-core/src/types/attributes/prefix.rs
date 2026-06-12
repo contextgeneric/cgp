@@ -1,12 +1,13 @@
-use cgp_macro_core::types::path::UniPath;
-use syn::Ident;
+use syn::Type;
 use syn::parse::{Parse, ParseStream};
 use syn::token::In;
+
+use crate::types::path::UniPath;
 
 pub struct PrefixAttribute {
     pub path: UniPath,
     pub _in_token: In,
-    pub namespace: Ident,
+    pub namespace: Type,
 }
 
 impl Parse for PrefixAttribute {

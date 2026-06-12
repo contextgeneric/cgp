@@ -1,12 +1,10 @@
 use core::mem;
 
-use cgp_macro_core::types::attributes::{UseTypeAttribute, UseTypeAttributes};
+use cgp_macro_core::types::attributes::{PrefixAttribute, UseTypeAttribute, UseTypeAttributes};
 use syn::parse::Parse;
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
 use syn::{Attribute, TypeParamBound};
-
-use crate::attributes::PrefixAttribute;
 
 pub fn parse_component_attributes(
     attributes: &mut Vec<Attribute>,

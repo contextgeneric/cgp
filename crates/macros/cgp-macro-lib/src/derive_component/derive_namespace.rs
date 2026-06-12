@@ -1,7 +1,6 @@
+use cgp_macro_core::types::attributes::PrefixAttribute;
 use quote::quote;
 use syn::{Ident, ItemImpl, parse_quote, parse2};
-
-use crate::attributes::PrefixAttribute;
 
 pub fn derive_namespace_impls(
     attributes: &[PrefixAttribute],

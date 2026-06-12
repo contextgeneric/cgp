@@ -1,6 +1,7 @@
 mod default_impl;
 mod function;
 mod impl_attributes;
+mod prefix;
 mod use_provider;
 mod use_type;
 mod uses;
@@ -8,6 +9,7 @@ mod uses;
 pub use default_impl::*;
 pub use function::*;
 pub use impl_attributes::*;
+pub use prefix::*;
 pub use use_provider::*;
 pub use use_type::*;
 pub use uses::*;
