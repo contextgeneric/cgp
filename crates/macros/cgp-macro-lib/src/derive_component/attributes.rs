@@ -6,12 +6,12 @@ use syn::punctuated::Punctuated;
 use syn::token::Comma;
 use syn::{Attribute, TypeParamBound};
 
-use crate::attributes::UseNamespaceAttribute;
+use crate::attributes::PrefixAttribute;
 
 pub fn parse_component_attributes(
     attributes: &mut Vec<Attribute>,
-) -> syn::Result<ComponentAttributes> {
-    let mut parsed_attributes = ComponentAttributes::default();
+) -> syn::Result<CgpComponentAttributes> {
+    let mut parsed_attributes = CgpComponentAttributes::default();
 
     let in_attributes = mem::take(attributes);
 
@@ -38,8 +38,8 @@ pub fn parse_component_attributes(
 
                 parsed_attributes.use_type.attributes.extend(use_type_specs);
             } else if ident == "prefix" {
-                let namespace_specs = attribute.parse_args_with(UseNamespaceAttribute::parse)?;
-                parsed_attributes.namespace.push(namespace_specs);
+                let namespace_specs = attribute.parse_args_with(PrefixAttribute::parse)?;
+                parsed_attributes.prefixes.push(namespace_specs);
             } else {
                 attributes.push(attribute);
             }
@@ -52,8 +52,8 @@ pub fn parse_component_attributes(
 }
 
 #[derive(Default)]
-pub struct ComponentAttributes {
+pub struct CgpComponentAttributes {
     pub extend: Vec<TypeParamBound>,
     pub use_type: UseTypeAttributes,
-    pub namespace: Vec<UseNamespaceAttribute>,
+    pub prefixes: Vec<PrefixAttribute>,
 }

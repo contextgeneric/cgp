@@ -1,10 +1,10 @@
 use quote::quote;
 use syn::{Ident, ItemImpl, parse_quote, parse2};
 
-use crate::attributes::UseNamespaceAttribute;
+use crate::attributes::PrefixAttribute;
 
 pub fn derive_namespace_impls(
-    attributes: &[UseNamespaceAttribute],
+    attributes: &[PrefixAttribute],
     component_name: &Ident,
 ) -> syn::Result<Vec<ItemImpl>> {
     let mut out = Vec::new();
@@ -17,7 +17,7 @@ pub fn derive_namespace_impls(
 }
 
 pub fn derive_namespace_impl(
-    attribute: &UseNamespaceAttribute,
+    attribute: &PrefixAttribute,
     component_name: &Ident,
 ) -> syn::Result<ItemImpl> {
     let namespace = &attribute.namespace;

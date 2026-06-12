@@ -4,7 +4,7 @@ use cgp::core::component::DefaultImpls1;
 use cgp::prelude::*;
 
 #[cgp_component(ShowImpl)]
-#[prefix(@test)]
+#[prefix(@test in DefaultNamespace)]
 pub trait Show<T> {
     fn show(&self, value: &T) -> String;
 }

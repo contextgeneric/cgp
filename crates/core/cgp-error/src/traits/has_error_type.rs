@@ -24,7 +24,7 @@ use cgp_type::{TypeProvider, UseType};
    <https://patterns.contextgeneric.dev/error-handling.html>
 */
 #[cgp_type]
-#[prefix(@cgp.core.error)]
+#[prefix(@cgp.core.error in DefaultNamespace)]
 pub trait HasErrorType {
     type Error: Debug;
 }

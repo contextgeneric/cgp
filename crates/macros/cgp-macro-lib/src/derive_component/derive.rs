@@ -88,7 +88,7 @@ pub fn derive_component_with_ast(
         }
     }
 
-    let namespace_impls = derive_namespace_impls(&attributes.namespace, &component_name.ident)?;
+    let namespace_impls = derive_namespace_impls(&attributes.prefixes, &component_name.ident)?;
     item_impls.extend(namespace_impls);
 
     let derived = DerivedComponent {
