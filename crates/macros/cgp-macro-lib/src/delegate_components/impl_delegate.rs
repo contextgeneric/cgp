@@ -43,8 +43,7 @@ where
             let item_struct = EmptyStruct {
                 ident: struct_ident.clone(),
                 generics: value.struct_generics.clone(),
-            }
-            .to_item_struct()?;
+            };
 
             let (impl_generics, type_generics, _) = value.struct_generics.split_for_impl();
 

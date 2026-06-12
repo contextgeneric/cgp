@@ -1,7 +1,7 @@
 use proc_macro2::TokenStream;
 use quote::ToTokens;
 use syn::parse::{Parse, ParseStream};
-use syn::{ItemImpl, ItemStruct, Type, braced, parse2};
+use syn::{ItemImpl, Type, braced, parse2};
 
 use crate::traits::ParseOptionalKeyword;
 use crate::types::delegate_component::{DelegateEntries, ExtractInnerDelegateTables};
@@ -20,7 +20,7 @@ pub struct DelegateTable {
 
 pub struct EvaluatedDelegateTable {
     pub item_impls: Vec<ItemImpl>,
-    pub item_structs: Vec<ItemStruct>,
+    pub item_structs: Vec<EmptyStruct>,
 }
 
 impl Parse for DelegateTable {
@@ -54,13 +54,10 @@ impl DelegateTable {
 
         if self.new.is_some() {
             let struct_type: IdentWithTypeGenerics = parse2(self.table_type.to_token_stream())?;
-            item_structs.push(
-                EmptyStruct {
-                    ident: struct_type.ident,
-                    generics: struct_type.type_generics.generics,
-                }
-                .to_item_struct()?,
-            );
+            item_structs.push(EmptyStruct {
+                ident: struct_type.ident,
+                generics: struct_type.type_generics.generics,
+            });
         }
 
         item_impls.extend(
@@ -71,7 +68,7 @@ impl DelegateTable {
         let inner_tables = self.entries.extract_inner_tables();
 
         for inner_table in inner_tables {
-            item_structs.push(inner_table.build_table_struct().to_item_struct()?);
+            item_structs.push(inner_table.build_table_struct());
 
             item_impls.extend(inner_table.build_impls()?);
         }

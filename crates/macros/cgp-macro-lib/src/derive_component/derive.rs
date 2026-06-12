@@ -4,7 +4,7 @@ use cgp_macro_core::types::empty_struct::EmptyStruct;
 use cgp_macro_core::types::is_provider_for::derive_is_provider_for;
 use proc_macro2::TokenStream;
 use quote::{ToTokens, TokenStreamExt, quote};
-use syn::{ItemImpl, ItemStruct, ItemTrait, parse2};
+use syn::{ItemImpl, ItemTrait, parse2};
 
 use crate::derive_component::consumer_impl::derive_consumer_impl;
 use crate::derive_component::derive_namespace::derive_namespace_impls;
@@ -31,8 +31,7 @@ pub fn derive_component_with_ast(
     let component_struct = EmptyStruct {
         ident: component_name.ident.clone(),
         generics: component_name.type_generics.generics.clone(),
-    }
-    .to_item_struct()?;
+    };
 
     let provider_trait =
         derive_provider_trait(component_name, &consumer_trait, provider_name, context_type)?;
@@ -102,7 +101,7 @@ pub fn derive_component_with_ast(
 }
 
 pub struct DerivedComponent {
-    pub component_struct: ItemStruct,
+    pub component_struct: EmptyStruct,
     pub consumer_trait: ItemTrait,
     pub provider_trait: ItemTrait,
     pub item_impls: Vec<ItemImpl>,

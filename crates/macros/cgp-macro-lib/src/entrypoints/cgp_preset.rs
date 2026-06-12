@@ -138,8 +138,7 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
     let provider_struct = EmptyStruct {
         ident: provider_struct_name.clone(),
         generics: preset_generics.generics.clone(),
-    }
-    .to_item_struct()?;
+    };
 
     let export_provider = match ast.provider_wrapper {
         Some(wrapper) => {
