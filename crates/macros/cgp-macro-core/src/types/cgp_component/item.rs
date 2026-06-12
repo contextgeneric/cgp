@@ -21,6 +21,7 @@ impl ItemCgpComponent {
         Ok(LoweredCgpComponent {
             args: self.args.clone(),
             item_trait,
+            attributes,
         })
     }
 }

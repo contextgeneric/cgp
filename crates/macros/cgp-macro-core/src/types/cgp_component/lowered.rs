@@ -1,11 +1,13 @@
 use syn::ItemTrait;
 
+use crate::types::attributes::CgpComponentAttributes;
 use crate::types::cgp_component::CgpComponentArgs;
 use crate::types::empty_struct::EmptyStruct;
 
 pub struct LoweredCgpComponent {
     pub args: CgpComponentArgs,
     pub item_trait: ItemTrait,
+    pub attributes: CgpComponentAttributes,
 }
 
 impl LoweredCgpComponent {
