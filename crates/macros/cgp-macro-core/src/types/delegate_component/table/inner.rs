@@ -3,8 +3,8 @@ use syn::parse::{Parse, ParseStream};
 use syn::{Ident, ItemImpl, Type, braced, parse2};
 
 use crate::types::delegate_component::DelegateEntries;
+use crate::types::empty_struct::EmptyStruct;
 use crate::types::generics::TypeGenerics;
-use crate::types::provider_struct::ProviderStruct;
 
 pub trait ExtractInnerDelegateTables {
     fn extract_inner_tables(&self) -> Vec<InnerDelegateTable>;
@@ -46,11 +46,11 @@ impl InnerDelegateTable {
         parse2(quote!( #ident #type_generics ))
     }
 
-    pub fn build_table_struct(&self) -> ProviderStruct {
+    pub fn build_table_struct(&self) -> EmptyStruct {
         let ident = self.table_ident.clone();
         let generics = self.table_generics.generics.clone();
 
-        ProviderStruct { ident, generics }
+        EmptyStruct { ident, generics }
     }
 
     pub fn build_impls(&self) -> syn::Result<Vec<ItemImpl>> {

@@ -3,12 +3,12 @@ use syn::punctuated::Punctuated;
 use syn::token::Comma;
 use syn::{GenericParam, Generics, Ident, ItemStruct, Type, parse2};
 
-pub struct ProviderStruct {
+pub struct EmptyStruct {
     pub ident: Ident,
     pub generics: Generics,
 }
 
-impl ProviderStruct {
+impl EmptyStruct {
     pub fn to_item_struct(&self) -> syn::Result<ItemStruct> {
         let struct_ident = &self.ident;
         let struct_generics = &self.generics;

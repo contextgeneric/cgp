@@ -5,11 +5,11 @@ use syn::{ItemImpl, ItemStruct, Type, braced, parse2};
 
 use crate::traits::ParseOptionalKeyword;
 use crate::types::delegate_component::{DelegateEntries, ExtractInnerDelegateTables};
+use crate::types::empty_struct::EmptyStruct;
 use crate::types::generics::ImplGenerics;
 use crate::types::ident::IdentWithTypeGenerics;
 use crate::types::keyword::Keyword;
 use crate::types::keywords::New;
-use crate::types::provider_struct::ProviderStruct;
 
 pub struct DelegateTable {
     pub impl_generics: ImplGenerics,
@@ -55,7 +55,7 @@ impl DelegateTable {
         if self.new.is_some() {
             let struct_type: IdentWithTypeGenerics = parse2(self.table_type.to_token_stream())?;
             item_structs.push(
-                ProviderStruct {
+                EmptyStruct {
                     ident: struct_type.ident,
                     generics: struct_type.type_generics.generics,
                 }

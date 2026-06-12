@@ -1,9 +1,9 @@
 use std::collections::HashSet;
 
 use cgp_macro_core::functions::to_snake_case_str;
+use cgp_macro_core::types::empty_struct::EmptyStruct;
 use cgp_macro_core::types::generics::ImplGenerics;
 use cgp_macro_core::types::ident::IdentWithTypeArgs;
-use cgp_macro_core::types::provider_struct::ProviderStruct;
 use proc_macro2::{Span, TokenStream};
 use quote::{ToTokens, TokenStreamExt, quote};
 use syn::punctuated::Punctuated;
@@ -135,7 +135,7 @@ pub fn define_preset(body: TokenStream) -> syn::Result<TokenStream> {
         &delegate_entries,
     );
 
-    let provider_struct = ProviderStruct {
+    let provider_struct = EmptyStruct {
         ident: provider_struct_name.clone(),
         generics: preset_generics.generics.clone(),
     }

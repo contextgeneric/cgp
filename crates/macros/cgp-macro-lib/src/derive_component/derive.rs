@@ -1,7 +1,7 @@
 use cgp_macro_core::types::attributes::CgpComponentAttributes;
 use cgp_macro_core::types::cgp_component::CgpComponentArgs;
+use cgp_macro_core::types::empty_struct::EmptyStruct;
 use cgp_macro_core::types::is_provider_for::derive_is_provider_for;
-use cgp_macro_core::types::provider_struct::ProviderStruct;
 use proc_macro2::TokenStream;
 use quote::{ToTokens, TokenStreamExt, quote};
 use syn::{ItemImpl, ItemStruct, ItemTrait, parse2};
@@ -28,7 +28,7 @@ pub fn derive_component_with_ast(
 
     preprocess_consumer_trait(&mut consumer_trait, &attributes)?;
 
-    let component_struct = ProviderStruct {
+    let component_struct = EmptyStruct {
         ident: component_name.ident.clone(),
         generics: component_name.type_generics.generics.clone(),
     }
