@@ -3,7 +3,7 @@ use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::token::{Bracket, Comma};
 
-use crate::types::cgp_component::DeriveDelegateAttribute;
+use crate::types::attributes::DeriveDelegateAttribute;
 
 #[derive(Default)]
 pub struct DeriveDelegateAttributes {

@@ -1,4 +1,4 @@
-use cgp_macro_core::types::cgp_component::DeriveDelegateAttribute;
+use cgp_macro_core::types::attributes::DeriveDelegateAttribute;
 use proc_macro2::Span;
 use quote::quote;
 use syn::spanned::Spanned;

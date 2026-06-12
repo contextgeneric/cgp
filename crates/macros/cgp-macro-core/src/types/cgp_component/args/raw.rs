@@ -2,7 +2,7 @@ use syn::parse::{End, Parse, ParseStream};
 use syn::token::{Colon, Comma};
 use syn::{Error, Ident};
 
-use crate::types::cgp_component::DeriveDelegateAttributes;
+use crate::types::attributes::DeriveDelegateAttributes;
 use crate::types::ident::IdentWithTypeGenerics;
 
 #[derive(Default)]

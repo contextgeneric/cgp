@@ -2,7 +2,8 @@ use proc_macro2::Span;
 use syn::parse::Parse;
 use syn::{Error, Ident};
 
-use crate::types::cgp_component::{CgpComponentRawArgs, DeriveDelegateAttributes};
+use crate::types::attributes::DeriveDelegateAttributes;
+use crate::types::cgp_component::CgpComponentRawArgs;
 use crate::types::ident::IdentWithTypeGenerics;
 
 pub struct CgpComponentArgs {
