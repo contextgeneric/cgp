@@ -2,6 +2,7 @@ use alloc::boxed::Box;
 use alloc::vec::Vec;
 
 use cgp_macro_core::functions::parse_is_provider_params;
+use cgp_macro_core::types::delegate_fn::derive_delegated_fn_impl;
 use cgp_macro_core::types::ident::IdentWithTypeGenerics;
 use proc_macro2::Span;
 use quote::quote;
@@ -13,7 +14,6 @@ use syn::{
     Type, TypeParamBound, Visibility, parse_quote, parse2,
 };
 
-use crate::derive_component::delegate_fn::derive_delegated_fn_impl;
 use crate::derive_component::delegate_type::derive_delegate_type_impl;
 
 pub fn derive_provider_impl(

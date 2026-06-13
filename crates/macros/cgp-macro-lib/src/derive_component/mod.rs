@@ -1,5 +1,4 @@
 mod consumer_impl;
-mod delegate_fn;
 mod delegate_type;
 mod derive;
 mod derive_namespace;

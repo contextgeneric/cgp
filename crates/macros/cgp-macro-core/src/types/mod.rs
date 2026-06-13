@@ -3,6 +3,7 @@ pub mod cgp_component;
 pub mod cgp_impl;
 pub mod cgp_provider;
 pub mod delegate_component;
+pub mod delegate_fn;
 pub mod empty_struct;
 pub mod field;
 pub mod generics;

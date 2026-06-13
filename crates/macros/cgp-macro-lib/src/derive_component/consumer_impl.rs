@@ -1,6 +1,7 @@
 use alloc::boxed::Box;
 use alloc::vec::Vec;
 
+use cgp_macro_core::types::delegate_fn::derive_delegated_fn_impl;
 use proc_macro2::Span;
 use quote::{ToTokens, quote};
 use syn::spanned::Spanned;
@@ -10,7 +11,6 @@ use syn::{
     TraitItem, TypeParamBound, Visibility, parse2,
 };
 
-use crate::derive_component::delegate_fn::derive_delegated_fn_impl;
 use crate::derive_component::delegate_type::derive_delegate_type_impl;
 
 pub fn derive_consumer_impl(
