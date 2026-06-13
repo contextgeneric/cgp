@@ -1,17 +1,12 @@
 use proc_macro2::Span;
 use quote::quote;
 use syn::punctuated::Punctuated;
-use syn::spanned::Spanned;
-use syn::token::{Brace, Eq, For, Impl, Plus};
-use syn::{
-    Error, GenericParam, Ident, ImplItem, ImplItemConst, ItemImpl, ItemTrait, Path, TraitItem,
-    Type, TypeParamBound, Visibility, parse_quote, parse2,
-};
+use syn::token::{Brace, For, Impl, Plus};
+use syn::{Ident, ImplItem, ItemImpl, ItemTrait, Path, Type, TypeParamBound, parse_quote, parse2};
 
-use crate::functions::{
-    parse_is_provider_params, signature_to_delegated_impl_item_fn, trait_to_impl_item_type,
-};
+use crate::functions::parse_is_provider_params;
 use crate::types::cgp_component::LoweredCgpComponent;
+use crate::types::cgp_component::to_consumer_impl::consumer_trait_to_impl_items;
 
 impl LoweredCgpComponent {
     pub fn to_provider_trait_and_blanket_impl(&self) -> syn::Result<(ItemTrait, ItemImpl)> {
@@ -92,78 +87,12 @@ impl LoweredCgpComponent {
 }
 
 pub fn provider_trait_to_impl_items(
-    provider_trait: &ItemTrait,
+    item_trait: &ItemTrait,
     delegate_type: &Type,
 ) -> syn::Result<Vec<ImplItem>> {
-    let provider_name = &provider_trait.ident;
-    let provider_type_generics = provider_trait.generics.split_for_impl().1;
+    let provider_name = &item_trait.ident;
+    let provider_type_generics = item_trait.generics.split_for_impl().1;
+    let provider_trait_path: Type = parse_quote!(#provider_name #provider_type_generics);
 
-    let mut impl_items: Vec<ImplItem> = Vec::new();
-
-    for trait_item in provider_trait.items.iter() {
-        match &trait_item {
-            TraitItem::Fn(trait_fn) => {
-                let impl_fn = signature_to_delegated_impl_item_fn(&trait_fn.sig, delegate_type)?;
-
-                impl_items.push(ImplItem::Fn(impl_fn))
-            }
-            TraitItem::Type(trait_type) => {
-                let type_name = &trait_type.ident;
-
-                let type_generics = {
-                    let mut type_generics = trait_type.generics.clone();
-                    type_generics.where_clause = None;
-
-                    for param in &mut type_generics.params {
-                        if let GenericParam::Type(type_param) = param {
-                            type_param.bounds.clear();
-                        }
-                    }
-
-                    type_generics
-                };
-
-                let impl_type = trait_to_impl_item_type(
-                    trait_type,
-                    parse2(quote!(
-                        < #delegate_type as #provider_name #provider_type_generics > :: #type_name #type_generics
-                    ))?,
-                );
-
-                impl_items.push(ImplItem::Type(impl_type));
-            }
-            TraitItem::Const(trait_item_const) => {
-                let const_ident = &trait_item_const.ident;
-                let (_, type_generics, _) = trait_item_const.generics.split_for_impl();
-
-                let impl_expr = parse2(quote! {
-                    < #delegate_type as #provider_name #provider_type_generics > :: #const_ident #type_generics
-                })?;
-
-                let impl_item_const = ImplItemConst {
-                    attrs: trait_item_const.attrs.clone(),
-                    vis: Visibility::Inherited,
-                    defaultness: None,
-                    const_token: trait_item_const.const_token,
-                    ident: trait_item_const.ident.clone(),
-                    generics: trait_item_const.generics.clone(),
-                    colon_token: trait_item_const.colon_token,
-                    ty: trait_item_const.ty.clone(),
-                    eq_token: Eq(Span::call_site()),
-                    expr: impl_expr,
-                    semi_token: trait_item_const.semi_token,
-                };
-
-                impl_items.push(ImplItem::Const(impl_item_const));
-            }
-            _ => {
-                return Err(Error::new(
-                    trait_item.span(),
-                    format!("unsupported trait item: {trait_item:?}"),
-                ));
-            }
-        }
-    }
-
-    Ok(impl_items)
+    consumer_trait_to_impl_items(item_trait, delegate_type, &provider_trait_path)
 }

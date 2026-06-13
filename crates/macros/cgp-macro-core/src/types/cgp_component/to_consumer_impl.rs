@@ -3,8 +3,8 @@ use quote::quote;
 use syn::spanned::Spanned;
 use syn::token::{Brace, Eq, For, Impl};
 use syn::{
-    Error, Ident, ImplItem, ImplItemConst, ItemImpl, ItemTrait, Path, TraitItem, Type, Visibility,
-    parse2,
+    Error, ImplItem, ImplItemConst, ItemImpl, ItemTrait, Path, TraitItem, Type, Visibility,
+    parse_quote, parse2,
 };
 
 use crate::functions::{signature_to_delegated_impl_item_fn, trait_to_impl_item_type};
@@ -54,8 +54,11 @@ impl LoweredCgpComponent {
             generics
         };
 
-        let impl_items =
-            consumer_trait_to_impl_items(consumer_trait, context_type_ident, &provider_trait_path)?;
+        let impl_items = consumer_trait_to_impl_items(
+            consumer_trait,
+            &parse_quote!(#context_type_ident),
+            &provider_trait_path,
+        )?;
 
         let consumer_trait_path: Path = parse2(quote!( #consumer_name #consumer_type_generics ))?;
 
@@ -76,19 +79,16 @@ impl LoweredCgpComponent {
 }
 
 pub fn consumer_trait_to_impl_items(
-    consumer_trait: &ItemTrait,
-    context_type_ident: &Ident,
+    item_trait: &ItemTrait,
+    delegate_type: &Type,
     provider_trait_path: &Type,
 ) -> syn::Result<Vec<ImplItem>> {
     let mut impl_items: Vec<ImplItem> = Vec::new();
 
-    for trait_item in consumer_trait.items.iter() {
+    for trait_item in item_trait.items.iter() {
         match trait_item {
             TraitItem::Fn(trait_fn) => {
-                let impl_fn = signature_to_delegated_impl_item_fn(
-                    &trait_fn.sig,
-                    &parse2(quote!(#context_type_ident))?,
-                )?;
+                let impl_fn = signature_to_delegated_impl_item_fn(&trait_fn.sig, &delegate_type)?;
 
                 impl_items.push(ImplItem::Fn(impl_fn));
             }
@@ -96,7 +96,7 @@ pub fn consumer_trait_to_impl_items(
                 let type_name = &trait_type.ident;
                 let type_generics = trait_type.generics.split_for_impl().1;
                 let delegate_type = parse2(quote!(
-                    < #context_type_ident as #provider_trait_path > :: #type_name #type_generics
+                    < #delegate_type as #provider_trait_path > :: #type_name #type_generics
                 ))?;
 
                 let impl_type = trait_to_impl_item_type(trait_type, delegate_type);
@@ -108,7 +108,7 @@ pub fn consumer_trait_to_impl_items(
                 let (_, type_generics, _) = trait_item_const.generics.split_for_impl();
 
                 let impl_expr = parse2(quote! {
-                    < #context_type_ident as #provider_trait_path > :: #const_ident #type_generics
+                    < #delegate_type as #provider_trait_path > :: #const_ident #type_generics
                 })?;
 
                 let impl_item_const = ImplItemConst {
