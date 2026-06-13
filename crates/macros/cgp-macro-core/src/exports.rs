@@ -7,6 +7,7 @@ export_constructs! {
     Symbol,
     Index,
     PathCons,
+    ConcatPath,
     RedirectLookup,
     DelegateComponent,
     IsProviderFor,

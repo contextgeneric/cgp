@@ -2,13 +2,11 @@ use cgp_macro_core::types::cgp_component::{
     CgpComponentArgs, EvaluatedCgpComponent, ItemCgpComponent,
 };
 use cgp_macro_core::types::empty_struct::EmptyStruct;
-use cgp_macro_core::types::provider_impl::derive_is_provider_for;
 use proc_macro2::TokenStream;
-use quote::{ToTokens, TokenStreamExt, quote};
-use syn::{ItemImpl, ItemTrait, parse2};
+use quote::{ToTokens, TokenStreamExt};
+use syn::{ItemImpl, ItemTrait};
 
 use crate::derive_component::derive_namespace::derive_namespace_impls;
-use crate::derive_component::derive_redirect_lookup::derive_redirect_lookup_impl;
 
 pub fn derive_component_with_ast(
     args: &CgpComponentArgs,
@@ -37,20 +35,7 @@ pub fn derive_component_with_ast(
 
     let component_name = &args.component_name;
 
-    let redirect_lookup_impl = derive_redirect_lookup_impl(&consumer_trait, &provider_trait)?;
-    let redirect_lookup_is_provider_impl = derive_is_provider_for(
-        &parse2(quote! {
-            #component_name
-        })?,
-        &redirect_lookup_impl,
-    )?;
-
-    let mut item_impls = vec![
-        provider_impl,
-        consumer_impl,
-        redirect_lookup_impl,
-        redirect_lookup_is_provider_impl,
-    ];
+    let mut item_impls = vec![provider_impl, consumer_impl];
 
     item_impls.extend(provider_item_impls);
 

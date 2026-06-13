@@ -22,6 +22,9 @@ impl EvaluatedCgpComponent {
         let use_context_impl = self.to_use_context_impl()?;
         provider_impls.items.push(use_context_impl);
 
+        let redirect_lookup_impl = self.to_redirect_lookup_impl()?;
+        provider_impls.items.push(redirect_lookup_impl);
+
         let use_delegate_impls = self.to_use_delegate_impls()?;
         provider_impls.items.extend(use_delegate_impls.items);
 
