@@ -4,9 +4,8 @@ use syn::punctuated::Punctuated;
 use syn::token::{Brace, For, Impl, Plus};
 use syn::{Ident, ImplItem, ItemImpl, ItemTrait, Path, Type, TypeParamBound, parse_quote, parse2};
 
-use crate::functions::parse_is_provider_params;
+use crate::functions::{parse_is_provider_params, trait_items_to_delegated_impl_items};
 use crate::types::cgp_component::LoweredCgpComponent;
-use crate::types::cgp_component::to_consumer_impl::consumer_trait_to_impl_items;
 
 impl LoweredCgpComponent {
     pub fn to_provider_trait_and_blanket_impl(&self) -> syn::Result<(ItemTrait, ItemImpl)> {
@@ -94,5 +93,5 @@ pub fn provider_trait_to_impl_items(
     let provider_type_generics = item_trait.generics.split_for_impl().1;
     let provider_trait_path: Type = parse_quote!(#provider_name #provider_type_generics);
 
-    consumer_trait_to_impl_items(item_trait, delegate_type, &provider_trait_path)
+    trait_items_to_delegated_impl_items(&item_trait.items, delegate_type, &provider_trait_path)
 }
