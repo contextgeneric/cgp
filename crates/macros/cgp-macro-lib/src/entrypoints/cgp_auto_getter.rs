@@ -3,7 +3,6 @@ use proc_macro2::{Span, TokenStream};
 use quote::quote;
 use syn::{Error, Ident, ItemTrait};
 
-use crate::derive_component::preprocess_consumer_trait;
 use crate::derive_getter::{derive_blanket_impl, parse_getter_fields};
 
 pub fn cgp_auto_getter(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
@@ -14,20 +13,22 @@ pub fn cgp_auto_getter(attr: TokenStream, body: TokenStream) -> syn::Result<Toke
         ));
     }
 
-    let mut consumer_trait: ItemTrait = syn::parse2(body)?;
+    let mut item_trait: ItemTrait = syn::parse2(body)?;
 
-    let attributes = CgpComponentAttributes::parse(&mut consumer_trait.attrs)?;
+    let attributes = CgpComponentAttributes::parse(&mut item_trait.attrs)?;
 
-    preprocess_consumer_trait(&mut consumer_trait, &attributes)?;
+    item_trait.supertraits.extend(attributes.extend.clone());
+
+    attributes.use_type.transform_item_trait(&mut item_trait)?;
 
     let context_type = Ident::new("__Context__", Span::call_site());
 
-    let (fields, field_type) = parse_getter_fields(&context_type, &consumer_trait)?;
+    let (fields, field_type) = parse_getter_fields(&context_type, &item_trait)?;
 
-    let blanket_impl = derive_blanket_impl(&context_type, &consumer_trait, &fields, &field_type)?;
+    let blanket_impl = derive_blanket_impl(&context_type, &item_trait, &fields, &field_type)?;
 
     Ok(quote! {
-        #consumer_trait
+        #item_trait
         #blanket_impl
     })
 }
