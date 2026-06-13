@@ -1,7 +1,7 @@
 use alloc::boxed::Box;
 use alloc::vec::Vec;
 
-use cgp_macro_core::types::delegate_fn::derive_delegated_fn_impl;
+use cgp_macro_core::functions::signature_to_delegated_impl_item_fn;
 use cgp_macro_core::types::generics::TypeGenerics;
 use proc_macro2::Span;
 use quote::quote;
@@ -59,8 +59,10 @@ pub fn derive_consumer_impl(
     for trait_item in consumer_trait.items.iter() {
         match trait_item {
             TraitItem::Fn(trait_fn) => {
-                let impl_fn =
-                    derive_delegated_fn_impl(&trait_fn.sig, &parse2(quote!(#context_type))?)?;
+                let impl_fn = signature_to_delegated_impl_item_fn(
+                    &trait_fn.sig,
+                    &parse2(quote!(#context_type))?,
+                )?;
 
                 impl_items.push(ImplItem::Fn(impl_fn));
             }

@@ -1,5 +1,5 @@
+use cgp_macro_core::functions::signature_to_delegated_impl_item_fn;
 use cgp_macro_core::types::attributes::DeriveDelegateAttribute;
-use cgp_macro_core::types::delegate_fn::derive_delegated_fn_impl;
 use proc_macro2::Span;
 use quote::quote;
 use syn::spanned::Spanned;
@@ -56,8 +56,10 @@ pub fn derive_delegate_impl(
     for trait_item in provider_trait.items.iter() {
         match trait_item {
             TraitItem::Fn(trait_fn) => {
-                let impl_fn =
-                    derive_delegated_fn_impl(&trait_fn.sig, &parse_quote!( #delegate_ident ))?;
+                let impl_fn = signature_to_delegated_impl_item_fn(
+                    &trait_fn.sig,
+                    &parse_quote!( #delegate_ident ),
+                )?;
 
                 impl_items.push(ImplItem::Fn(impl_fn))
             }

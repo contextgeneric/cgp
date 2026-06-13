@@ -1,8 +1,7 @@
 use alloc::boxed::Box;
 use alloc::vec::Vec;
 
-use cgp_macro_core::functions::parse_is_provider_params;
-use cgp_macro_core::types::delegate_fn::derive_delegated_fn_impl;
+use cgp_macro_core::functions::{parse_is_provider_params, signature_to_delegated_impl_item_fn};
 use cgp_macro_core::types::ident::IdentWithTypeGenerics;
 use proc_macro2::Span;
 use quote::quote;
@@ -103,7 +102,7 @@ pub fn derive_provider_item_impls(
     for trait_item in provider_trait.items.iter() {
         match &trait_item {
             TraitItem::Fn(trait_fn) => {
-                let impl_fn = derive_delegated_fn_impl(&trait_fn.sig, delegate_type)?;
+                let impl_fn = signature_to_delegated_impl_item_fn(&trait_fn.sig, delegate_type)?;
 
                 impl_items.push(ImplItem::Fn(impl_fn))
             }
