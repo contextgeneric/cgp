@@ -8,8 +8,8 @@ use quote::quote;
 use syn::spanned::Spanned;
 use syn::token::{Brace, Eq, For, Impl};
 use syn::{
-    Error, Ident, ImplItem, ImplItemConst, ItemImpl, ItemTrait, Path, TraitItem, Type,
-    TypeParamBound, Visibility, parse2,
+    Error, Ident, ImplItem, ImplItemConst, ItemImpl, ItemTrait, Path, TraitItem, Type, Visibility,
+    parse2,
 };
 
 use crate::derive_component::delegate_type::derive_delegate_type_impl;
@@ -38,34 +38,18 @@ pub fn derive_consumer_impl(
 
         generics.params.insert(0, parse2(quote!(#context_type))?);
 
-        {
+        let where_clause = generics.make_where_clause();
+
+        if !consumer_trait.supertraits.is_empty() {
             let supertrait_constraints = consumer_trait.supertraits.clone();
-
-            if !supertrait_constraints.is_empty() {
-                match &mut generics.where_clause {
-                    Some(where_clause) => {
-                        where_clause.predicates.push(parse2(quote! {
-                            #context_type : #supertrait_constraints
-                        })?);
-                    }
-                    _ => {
-                        generics.where_clause = Some(parse2(quote! {
-                            where #context_type : #supertrait_constraints
-                        })?);
-                    }
-                }
-            }
-        }
-
-        {
-            let provider_constraint: TypeParamBound = parse2(quote! {
-                #provider_trait_path
-            })?;
-
-            generics.make_where_clause().predicates.push(parse2(quote! {
-                #context_type : #provider_constraint
+            where_clause.predicates.push(parse2(quote! {
+                #context_type : #supertrait_constraints
             })?);
         }
+
+        where_clause.predicates.push(parse2(quote! {
+            #context_type : #provider_trait_path
+        })?);
 
         generics
     };
