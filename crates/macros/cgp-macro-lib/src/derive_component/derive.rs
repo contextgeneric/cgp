@@ -35,10 +35,11 @@ pub fn derive_component_with_ast(
         attributes,
     } = evaluated;
 
-    let context_type = &args.context_ident;
+    let context_type_ident = &args.context_ident;
     let component_name = &args.component_name;
 
-    let use_context_impl = derive_use_context_impl(context_type, &consumer_trait, &provider_trait)?;
+    let use_context_impl =
+        derive_use_context_impl(context_type_ident, &consumer_trait, &provider_trait)?;
 
     let use_context_is_provider_impl = derive_is_provider_for(
         &parse2(quote! {
