@@ -1,6 +1,6 @@
 use quote::quote;
 use syn::token::{Brace, For, Impl};
-use syn::{GenericParam, Generics, ItemImpl, ItemTrait, Path, Type, parse2};
+use syn::{GenericParam, Generics, ItemImpl, ItemTrait, Path, Type, parse_quote, parse2};
 
 use crate::derive_component::provider_impl::derive_provider_item_impls;
 
@@ -41,7 +41,7 @@ pub fn derive_redirect_lookup_impl(
         __Components__: #delegate_constraint
     })?);
 
-    let delegate_type = quote! {
+    let delegate_type = parse_quote! {
         < __Components__ as #delegate_constraint > :: Delegate
     };
 

@@ -4,7 +4,8 @@ use quote::quote;
 use syn::spanned::Spanned;
 use syn::token::{Brace, Eq, For, Impl};
 use syn::{
-    Error, Ident, ImplItem, ImplItemConst, ItemImpl, ItemTrait, Path, TraitItem, Visibility, parse2,
+    Error, Ident, ImplItem, ImplItemConst, ItemImpl, ItemTrait, Path, TraitItem, Visibility,
+    parse_quote, parse2,
 };
 
 use crate::derive_component::delegate_fn::derive_delegated_fn_impl;
@@ -35,7 +36,8 @@ pub fn derive_use_context_impl(
     for trait_item in provider_trait.items.iter() {
         match trait_item {
             TraitItem::Fn(trait_fn) => {
-                let impl_fn = derive_delegated_fn_impl(&trait_fn.sig, &quote!( #context_type ))?;
+                let impl_fn =
+                    derive_delegated_fn_impl(&trait_fn.sig, &parse_quote!( #context_type ))?;
 
                 impl_items.push(ImplItem::Fn(impl_fn))
             }

@@ -3,14 +3,14 @@ use alloc::vec::Vec;
 
 use cgp_macro_core::functions::parse_is_provider_params;
 use cgp_macro_core::types::ident::IdentWithTypeGenerics;
-use proc_macro2::{Span, TokenStream};
+use proc_macro2::Span;
 use quote::quote;
 use syn::punctuated::Punctuated;
 use syn::spanned::Spanned;
 use syn::token::{Brace, Eq, For, Impl, Plus};
 use syn::{
     Error, GenericParam, Ident, ImplItem, ImplItemConst, ItemImpl, ItemTrait, Path, TraitItem,
-    TypeParamBound, Visibility, parse2,
+    Type, TypeParamBound, Visibility, parse_quote, parse2,
 };
 
 use crate::derive_component::delegate_fn::derive_delegated_fn_impl;
@@ -30,7 +30,7 @@ pub fn derive_provider_impl(
         DelegateComponent< #component_name >
     };
 
-    let delegate_type = quote! {
+    let delegate_type = parse_quote! {
         < #provider_type as #delegate_constraint > :: Delegate
     };
 
@@ -93,7 +93,7 @@ pub fn derive_provider_impl(
 
 pub fn derive_provider_item_impls(
     provider_trait: &ItemTrait,
-    delegate_type: &TokenStream,
+    delegate_type: &Type,
 ) -> syn::Result<Vec<ImplItem>> {
     let provider_name = &provider_trait.ident;
     let provider_type_generics = provider_trait.generics.split_for_impl().1;

@@ -4,12 +4,9 @@ use proc_macro2::{Span, TokenStream};
 use quote::{ToTokens, quote};
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
-use syn::{FnArg, Ident, ImplItemFn, Signature, Visibility, parse2};
+use syn::{FnArg, Ident, ImplItemFn, Signature, Type, Visibility, parse2};
 
-pub fn derive_delegated_fn_impl(
-    sig: &Signature,
-    delegator: &TokenStream,
-) -> syn::Result<ImplItemFn> {
+pub fn derive_delegated_fn_impl(sig: &Signature, delegate_type: &Type) -> syn::Result<ImplItemFn> {
     let fn_name = &sig.ident;
 
     let args: Punctuated<_, Comma> = signature_to_idents(sig)?;
@@ -21,7 +18,7 @@ pub fn derive_delegated_fn_impl(
     };
 
     let body = parse2(quote!({
-        #delegator :: #fn_name (
+        #delegate_type :: #fn_name (
             #args
         ) #await_expr
     }))?;
