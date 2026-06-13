@@ -9,7 +9,6 @@ use syn::{ItemImpl, ItemTrait, parse2};
 
 use crate::derive_component::derive_namespace::derive_namespace_impls;
 use crate::derive_component::derive_redirect_lookup::derive_redirect_lookup_impl;
-use crate::derive_component::provider_impl::derive_provider_impl;
 use crate::derive_component::use_context_impl::derive_use_context_impl;
 use crate::derive_component::use_delegate_impl::derive_delegate_impl;
 
@@ -26,7 +25,7 @@ pub fn derive_component_with_ast(
 
     let component_struct = lowered.to_component_struct();
 
-    let provider_trait = lowered.to_provider_trait()?;
+    let (provider_trait, provider_impl) = lowered.to_provider_trait_and_blanket_impl()?;
 
     let consumer_impl = lowered.to_consumer_item_impl()?;
 
@@ -38,9 +37,6 @@ pub fn derive_component_with_ast(
 
     let context_type = &args.context_ident;
     let component_name = &args.component_name;
-
-    let provider_impl =
-        derive_provider_impl(context_type, &item_trait, &provider_trait, component_name)?;
 
     let use_context_impl = derive_use_context_impl(context_type, &item_trait, &provider_trait)?;
 

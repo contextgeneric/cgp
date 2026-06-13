@@ -1,8 +1,7 @@
+use cgp_macro_core::types::cgp_component::derive_provider_item_impls;
 use quote::quote;
 use syn::token::{Brace, For, Impl};
 use syn::{GenericParam, Generics, ItemImpl, ItemTrait, Path, Type, parse_quote, parse2};
-
-use crate::derive_component::provider_impl::derive_provider_item_impls;
 
 pub fn derive_redirect_lookup_impl(
     consumer_trait: &ItemTrait,
