@@ -1,7 +1,9 @@
 use alloc::boxed::Box;
 use alloc::vec::Vec;
 
-use cgp_macro_core::functions::{parse_is_provider_params, signature_to_delegated_impl_item_fn};
+use cgp_macro_core::functions::{
+    parse_is_provider_params, signature_to_delegated_impl_item_fn, trait_to_impl_item_type,
+};
 use cgp_macro_core::types::ident::IdentWithTypeGenerics;
 use proc_macro2::Span;
 use quote::quote;
@@ -12,8 +14,6 @@ use syn::{
     Error, GenericParam, Ident, ImplItem, ImplItemConst, ItemImpl, ItemTrait, Path, TraitItem,
     Type, TypeParamBound, Visibility, parse_quote, parse2,
 };
-
-use crate::derive_component::delegate_type::derive_delegate_type_impl;
 
 pub fn derive_provider_impl(
     context_type: &Ident,
@@ -122,7 +122,7 @@ pub fn derive_provider_item_impls(
                     type_generics
                 };
 
-                let impl_type = derive_delegate_type_impl(
+                let impl_type = trait_to_impl_item_type(
                     trait_type,
                     parse2(quote!(
                         < #delegate_type as #provider_name #provider_type_generics > :: #type_name #type_generics

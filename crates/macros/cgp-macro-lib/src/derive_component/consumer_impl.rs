@@ -1,7 +1,7 @@
 use alloc::boxed::Box;
 use alloc::vec::Vec;
 
-use cgp_macro_core::functions::signature_to_delegated_impl_item_fn;
+use cgp_macro_core::functions::{signature_to_delegated_impl_item_fn, trait_to_impl_item_type};
 use cgp_macro_core::types::generics::TypeGenerics;
 use proc_macro2::Span;
 use quote::quote;
@@ -11,8 +11,6 @@ use syn::{
     Error, Ident, ImplItem, ImplItemConst, ItemImpl, ItemTrait, Path, TraitItem, Type, Visibility,
     parse2,
 };
-
-use crate::derive_component::delegate_type::derive_delegate_type_impl;
 
 pub fn derive_consumer_impl(
     consumer_trait: &ItemTrait,
@@ -73,7 +71,7 @@ pub fn derive_consumer_impl(
                     < #context_type as #provider_trait_path > :: #type_name #type_generics
                 ))?;
 
-                let impl_type = derive_delegate_type_impl(trait_type, delegate_type);
+                let impl_type = trait_to_impl_item_type(trait_type, delegate_type);
 
                 impl_items.push(ImplItem::Type(impl_type));
             }

@@ -1,4 +1,4 @@
-use cgp_macro_core::functions::signature_to_delegated_impl_item_fn;
+use cgp_macro_core::functions::{signature_to_delegated_impl_item_fn, trait_to_impl_item_type};
 use cgp_macro_core::types::attributes::DeriveDelegateAttribute;
 use proc_macro2::Span;
 use quote::quote;
@@ -8,8 +8,6 @@ use syn::{
     Error, Ident, ImplItem, ImplItemConst, ItemImpl, ItemTrait, Path, TraitItem, Visibility,
     parse_quote, parse2,
 };
-
-use crate::derive_component::delegate_type::derive_delegate_type_impl;
 
 pub fn derive_delegate_impl(
     provider_trait: &ItemTrait,
@@ -68,7 +66,7 @@ pub fn derive_delegate_impl(
 
                 let type_generics = trait_type.generics.split_for_impl().1;
 
-                let impl_type = derive_delegate_type_impl(
+                let impl_type = trait_to_impl_item_type(
                     trait_type,
                     parse2(quote!(
                         #delegate_ident :: #type_name #type_generics
