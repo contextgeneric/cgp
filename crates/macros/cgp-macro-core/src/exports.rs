@@ -12,4 +12,5 @@ export_constructs! {
     IsProviderFor,
     HasField,
     HasFieldMut,
+    UseContext,
 }
