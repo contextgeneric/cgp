@@ -8,4 +8,3 @@ mod to_provider_trait;
 pub use args::*;
 pub use item::*;
 pub use lowered::*;
-pub use to_provider_blanket_impl::*;
