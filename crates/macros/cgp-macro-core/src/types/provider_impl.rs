@@ -23,14 +23,14 @@ pub fn derive_is_provider_for(
 
 #[derive(Default)]
 pub struct ItemProviderImpls {
-    pub provider_impls: Vec<ItemProviderImpl>,
+    pub items: Vec<ItemProviderImpl>,
 }
 
 impl ItemProviderImpls {
     pub fn to_item_impls(&self) -> syn::Result<Vec<ItemImpl>> {
         let mut item_impls = Vec::new();
 
-        for provider_impl in &self.provider_impls {
+        for provider_impl in &self.items {
             item_impls.extend(provider_impl.to_item_impls()?);
         }
 

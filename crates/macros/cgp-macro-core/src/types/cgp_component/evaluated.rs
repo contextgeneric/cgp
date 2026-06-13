@@ -23,7 +23,10 @@ impl EvaluatedCgpComponent {
         let mut provider_impls = ItemProviderImpls::default();
 
         let use_context_impl = self.to_use_context_impl()?;
-        provider_impls.provider_impls.push(use_context_impl);
+        provider_impls.items.push(use_context_impl);
+
+        let use_delegate_impls = self.to_use_delegate_impls()?;
+        provider_impls.items.extend(use_delegate_impls.items);
 
         Ok(provider_impls)
     }
@@ -77,5 +80,21 @@ impl EvaluatedCgpComponent {
             component_type: parse_quote!(#component_name),
             item_impl,
         })
+    }
+
+    pub fn to_use_delegate_impls(&self) -> syn::Result<ItemProviderImpls> {
+        let provider_trait = &self.provider_trait;
+        let component_type = self.args.component_name.to_type();
+        let mut provider_impls = ItemProviderImpls::default();
+
+        for delegate_attribute in &self.args.derive_delegate_attributes.attributes {
+            let item_impl = delegate_attribute.to_provider_impl(provider_trait)?;
+            provider_impls.items.push(ItemProviderImpl {
+                component_type: component_type.clone(),
+                item_impl,
+            })
+        }
+
+        Ok(provider_impls)
     }
 }
