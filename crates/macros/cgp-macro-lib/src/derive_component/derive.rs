@@ -6,8 +6,6 @@ use proc_macro2::TokenStream;
 use quote::{ToTokens, TokenStreamExt};
 use syn::{ItemImpl, ItemTrait};
 
-use crate::derive_component::derive_namespace::derive_prefix_impls;
-
 pub fn derive_component_with_ast(
     args: &CgpComponentArgs,
     item_trait: ItemTrait,
@@ -22,6 +20,7 @@ pub fn derive_component_with_ast(
     let evaluated = preprocessed.eval()?;
 
     let provider_item_impls = evaluated.to_provider_impls()?.to_item_impls()?;
+    let namespace_impls = evaluated.to_prefix_impls()?;
 
     let EvaluatedCgpComponent {
         component_struct,
@@ -29,15 +28,12 @@ pub fn derive_component_with_ast(
         consumer_impl,
         provider_trait,
         provider_impl,
-        args,
-        attributes,
+        ..
     } = evaluated;
 
     let mut item_impls = vec![provider_impl, consumer_impl];
 
     item_impls.extend(provider_item_impls);
-
-    let namespace_impls = derive_prefix_impls(&attributes.prefixes, &args.component_name)?;
     item_impls.extend(namespace_impls);
 
     let derived = DerivedComponent {

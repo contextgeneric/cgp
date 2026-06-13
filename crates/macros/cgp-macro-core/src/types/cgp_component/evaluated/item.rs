@@ -46,4 +46,16 @@ impl EvaluatedCgpComponent {
 
         Ok(provider_impls)
     }
+
+    pub fn to_prefix_impls(&self) -> syn::Result<Vec<ItemImpl>> {
+        let component_name = &self.args.component_name;
+        let mut provider_impls = Vec::new();
+
+        for attribute in &self.attributes.prefixes {
+            let provider_impl = attribute.to_namespace_impl(component_name)?;
+            provider_impls.push(provider_impl)
+        }
+
+        Ok(provider_impls)
+    }
 }
