@@ -71,7 +71,7 @@ impl LoweredCgpComponent {
             impl_generics
         };
 
-        let impl_items = derive_provider_item_impls(&provider_trait, &delegate_type)?;
+        let impl_items = provider_trait_to_impl_items(&provider_trait, &delegate_type)?;
 
         let trait_path: Path = parse2(quote!( #provider_name #provider_type_generics ))?;
 
@@ -91,7 +91,7 @@ impl LoweredCgpComponent {
     }
 }
 
-pub fn derive_provider_item_impls(
+pub fn provider_trait_to_impl_items(
     provider_trait: &ItemTrait,
     delegate_type: &Type,
 ) -> syn::Result<Vec<ImplItem>> {

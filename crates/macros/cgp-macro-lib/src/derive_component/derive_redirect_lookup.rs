@@ -1,4 +1,4 @@
-use cgp_macro_core::types::cgp_component::derive_provider_item_impls;
+use cgp_macro_core::types::cgp_component::provider_trait_to_impl_items;
 use quote::quote;
 use syn::token::{Brace, For, Impl};
 use syn::{GenericParam, Generics, ItemImpl, ItemTrait, Path, Type, parse_quote, parse2};
@@ -48,7 +48,7 @@ pub fn derive_redirect_lookup_impl(
         #delegate_type : #provider_name #provider_type_generics
     })?);
 
-    let impl_items = derive_provider_item_impls(provider_trait, &delegate_type)?;
+    let impl_items = provider_trait_to_impl_items(provider_trait, &delegate_type)?;
 
     let self_type = parse2(quote!(RedirectLookup<__Components__, __Path__>))?;
 

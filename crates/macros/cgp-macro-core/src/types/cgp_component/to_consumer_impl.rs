@@ -2,7 +2,10 @@ use proc_macro2::Span;
 use quote::quote;
 use syn::spanned::Spanned;
 use syn::token::{Brace, Eq, For, Impl};
-use syn::{Error, ImplItem, ImplItemConst, ItemImpl, Path, TraitItem, Type, Visibility, parse2};
+use syn::{
+    Error, Ident, ImplItem, ImplItemConst, ItemImpl, ItemTrait, Path, TraitItem, Type, Visibility,
+    parse2,
+};
 
 use crate::functions::{signature_to_delegated_impl_item_fn, trait_to_impl_item_type};
 use crate::types::cgp_component::LoweredCgpComponent;
@@ -51,61 +54,8 @@ impl LoweredCgpComponent {
             generics
         };
 
-        let mut impl_items: Vec<ImplItem> = Vec::new();
-
-        for trait_item in consumer_trait.items.iter() {
-            match trait_item {
-                TraitItem::Fn(trait_fn) => {
-                    let impl_fn = signature_to_delegated_impl_item_fn(
-                        &trait_fn.sig,
-                        &parse2(quote!(#context_type_ident))?,
-                    )?;
-
-                    impl_items.push(ImplItem::Fn(impl_fn));
-                }
-                TraitItem::Type(trait_type) => {
-                    let type_name = &trait_type.ident;
-                    let type_generics = trait_type.generics.split_for_impl().1;
-                    let delegate_type = parse2(quote!(
-                        < #context_type_ident as #provider_trait_path > :: #type_name #type_generics
-                    ))?;
-
-                    let impl_type = trait_to_impl_item_type(trait_type, delegate_type);
-
-                    impl_items.push(ImplItem::Type(impl_type));
-                }
-                TraitItem::Const(trait_item_const) => {
-                    let const_ident = &trait_item_const.ident;
-                    let (_, type_generics, _) = trait_item_const.generics.split_for_impl();
-
-                    let impl_expr = parse2(quote! {
-                        < #context_type_ident as #provider_trait_path > :: #const_ident #type_generics
-                    })?;
-
-                    let impl_item_const = ImplItemConst {
-                        attrs: trait_item_const.attrs.clone(),
-                        vis: Visibility::Inherited,
-                        defaultness: None,
-                        const_token: trait_item_const.const_token,
-                        ident: trait_item_const.ident.clone(),
-                        generics: trait_item_const.generics.clone(),
-                        colon_token: trait_item_const.colon_token,
-                        ty: trait_item_const.ty.clone(),
-                        eq_token: Eq(Span::call_site()),
-                        expr: impl_expr,
-                        semi_token: trait_item_const.semi_token,
-                    };
-
-                    impl_items.push(ImplItem::Const(impl_item_const));
-                }
-                _ => {
-                    return Err(Error::new(
-                        trait_item.span(),
-                        format!("unsupported trait item: {trait_item:?}"),
-                    ));
-                }
-            }
-        }
+        let impl_items =
+            consumer_trait_to_impl_items(consumer_trait, context_type_ident, &provider_trait_path)?;
 
         let consumer_trait_path: Path = parse2(quote!( #consumer_name #consumer_type_generics ))?;
 
@@ -123,4 +73,68 @@ impl LoweredCgpComponent {
 
         Ok(item_impl)
     }
+}
+
+pub fn consumer_trait_to_impl_items(
+    consumer_trait: &ItemTrait,
+    context_type_ident: &Ident,
+    provider_trait_path: &Type,
+) -> syn::Result<Vec<ImplItem>> {
+    let mut impl_items: Vec<ImplItem> = Vec::new();
+
+    for trait_item in consumer_trait.items.iter() {
+        match trait_item {
+            TraitItem::Fn(trait_fn) => {
+                let impl_fn = signature_to_delegated_impl_item_fn(
+                    &trait_fn.sig,
+                    &parse2(quote!(#context_type_ident))?,
+                )?;
+
+                impl_items.push(ImplItem::Fn(impl_fn));
+            }
+            TraitItem::Type(trait_type) => {
+                let type_name = &trait_type.ident;
+                let type_generics = trait_type.generics.split_for_impl().1;
+                let delegate_type = parse2(quote!(
+                    < #context_type_ident as #provider_trait_path > :: #type_name #type_generics
+                ))?;
+
+                let impl_type = trait_to_impl_item_type(trait_type, delegate_type);
+
+                impl_items.push(ImplItem::Type(impl_type));
+            }
+            TraitItem::Const(trait_item_const) => {
+                let const_ident = &trait_item_const.ident;
+                let (_, type_generics, _) = trait_item_const.generics.split_for_impl();
+
+                let impl_expr = parse2(quote! {
+                    < #context_type_ident as #provider_trait_path > :: #const_ident #type_generics
+                })?;
+
+                let impl_item_const = ImplItemConst {
+                    attrs: trait_item_const.attrs.clone(),
+                    vis: Visibility::Inherited,
+                    defaultness: None,
+                    const_token: trait_item_const.const_token,
+                    ident: trait_item_const.ident.clone(),
+                    generics: trait_item_const.generics.clone(),
+                    colon_token: trait_item_const.colon_token,
+                    ty: trait_item_const.ty.clone(),
+                    eq_token: Eq(Span::call_site()),
+                    expr: impl_expr,
+                    semi_token: trait_item_const.semi_token,
+                };
+
+                impl_items.push(ImplItem::Const(impl_item_const));
+            }
+            _ => {
+                return Err(Error::new(
+                    trait_item.span(),
+                    format!("unsupported trait item: {trait_item:?}"),
+                ));
+            }
+        }
+    }
+
+    Ok(impl_items)
 }
