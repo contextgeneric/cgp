@@ -1,14 +1,14 @@
-use syn::Type;
 use syn::parse::{Parse, ParseStream};
 use syn::token::In;
 
+use crate::types::ident::IdentWithTypeArgs;
 use crate::types::path::UniPath;
 
 #[derive(Clone)]
 pub struct PrefixAttribute {
     pub path: UniPath,
     pub _in_token: In,
-    pub namespace: Type,
+    pub namespace: IdentWithTypeArgs,
 }
 
 impl Parse for PrefixAttribute {
