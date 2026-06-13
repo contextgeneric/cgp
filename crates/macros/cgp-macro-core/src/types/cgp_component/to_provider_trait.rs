@@ -4,12 +4,12 @@ use syn::visit_mut::VisitMut;
 use syn::{Ident, ItemTrait, TraitItem, Type, TypeParamBound, parse_quote, parse2};
 
 use crate::functions::{parse_is_provider_params, to_snake_case_ident};
-use crate::types::cgp_component::LoweredCgpComponent;
+use crate::types::cgp_component::PreprocessedCgpComponent;
 use crate::visitors::{
     ReplaceSelfReceiverVisitor, ReplaceSelfTypeVisitor, ReplaceSelfValueVisitor,
 };
 
-impl LoweredCgpComponent {
+impl PreprocessedCgpComponent {
     pub fn to_provider_trait(&self) -> syn::Result<ItemTrait> {
         let component_name = &self.args.component_name;
         let provider_name = &self.args.provider_ident;

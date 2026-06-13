@@ -5,9 +5,9 @@ use syn::token::{Brace, For, Impl, Plus};
 use syn::{Ident, ItemImpl, ItemTrait, Path, TypeParamBound, parse_quote, parse2};
 
 use crate::functions::{parse_is_provider_params, provider_trait_to_impl_items};
-use crate::types::cgp_component::LoweredCgpComponent;
+use crate::types::cgp_component::PreprocessedCgpComponent;
 
-impl LoweredCgpComponent {
+impl PreprocessedCgpComponent {
     pub fn to_provider_trait_and_blanket_impl(&self) -> syn::Result<(ItemTrait, ItemImpl)> {
         let consumer_trait = &self.item_trait;
         let context_type = &self.args.context_ident;

@@ -7,7 +7,7 @@ use syn::{Attribute, TypeParamBound};
 
 use crate::types::attributes::{PrefixAttribute, UseTypeAttribute, UseTypeAttributes};
 
-#[derive(Default)]
+#[derive(Default, Clone)]
 pub struct CgpComponentAttributes {
     pub extend: Vec<TypeParamBound>,
     pub use_type: UseTypeAttributes,

@@ -5,6 +5,7 @@ use syn::{Ident, Type, braced, parse_quote};
 use crate::types::attributes::UseTypeIdent;
 use crate::types::ident::IdentWithTypeArgs;
 
+#[derive(Clone)]
 pub struct UseTypeAttribute {
     pub context_type: Type,
     pub trait_path: IdentWithTypeArgs,

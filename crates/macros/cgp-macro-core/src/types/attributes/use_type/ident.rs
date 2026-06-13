@@ -2,6 +2,7 @@ use syn::parse::{Parse, ParseStream};
 use syn::token::{As, Eq};
 use syn::{Ident, Type};
 
+#[derive(Clone)]
 pub struct UseTypeIdent {
     pub type_ident: Ident,
     pub as_alias: Option<Ident>,

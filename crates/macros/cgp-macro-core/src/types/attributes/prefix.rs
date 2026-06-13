@@ -4,6 +4,7 @@ use syn::token::In;
 
 use crate::types::path::UniPath;
 
+#[derive(Clone)]
 pub struct PrefixAttribute {
     pub path: UniPath,
     pub _in_token: In,

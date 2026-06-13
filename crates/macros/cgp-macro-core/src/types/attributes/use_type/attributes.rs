@@ -6,7 +6,7 @@ use crate::types::attributes::UseTypeAttribute;
 use crate::types::attributes::use_type::type_predicates::derive_use_type_predicates;
 use crate::visitors::SubstituteAbstractType;
 
-#[derive(Default)]
+#[derive(Default, Clone)]
 pub struct UseTypeAttributes {
     pub attributes: Vec<UseTypeAttribute>,
 }

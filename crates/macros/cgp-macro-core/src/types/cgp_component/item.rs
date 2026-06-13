@@ -1,7 +1,7 @@
 use syn::ItemTrait;
 
 use crate::types::attributes::CgpComponentAttributes;
-use crate::types::cgp_component::{CgpComponentArgs, LoweredCgpComponent};
+use crate::types::cgp_component::{CgpComponentArgs, PreprocessedCgpComponent};
 
 pub struct ItemCgpComponent {
     pub args: CgpComponentArgs,
@@ -9,7 +9,7 @@ pub struct ItemCgpComponent {
 }
 
 impl ItemCgpComponent {
-    pub fn lower(&self) -> syn::Result<LoweredCgpComponent> {
+    pub fn preprocess(&self) -> syn::Result<PreprocessedCgpComponent> {
         let mut item_trait = self.item_trait.clone();
 
         let attributes = CgpComponentAttributes::parse(&mut item_trait.attrs)?;
@@ -18,7 +18,7 @@ impl ItemCgpComponent {
 
         attributes.use_type.transform_item_trait(&mut item_trait)?;
 
-        Ok(LoweredCgpComponent {
+        Ok(PreprocessedCgpComponent {
             args: self.args.clone(),
             item_trait,
             attributes,

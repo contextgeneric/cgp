@@ -3,10 +3,10 @@ use syn::token::{Brace, For, Impl};
 use syn::{ItemImpl, Path, Type, parse_quote, parse2};
 
 use crate::functions::trait_items_to_delegated_impl_items;
-use crate::types::cgp_component::LoweredCgpComponent;
+use crate::types::cgp_component::PreprocessedCgpComponent;
 use crate::types::generics::TypeGenerics;
 
-impl LoweredCgpComponent {
+impl PreprocessedCgpComponent {
     pub fn to_consumer_item_impl(&self) -> syn::Result<ItemImpl> {
         let consumer_trait = &self.item_trait;
         let provider_ident = &self.args.provider_ident;

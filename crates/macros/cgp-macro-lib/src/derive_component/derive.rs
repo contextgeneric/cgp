@@ -1,5 +1,5 @@
 use cgp_macro_core::types::cgp_component::{
-    CgpComponentArgs, ItemCgpComponent, LoweredCgpComponent,
+    CgpComponentArgs, EvaluatedCgpComponent, ItemCgpComponent,
 };
 use cgp_macro_core::types::empty_struct::EmptyStruct;
 use cgp_macro_core::types::is_provider_for::derive_is_provider_for;
@@ -21,24 +21,24 @@ pub fn derive_component_with_ast(
         item_trait,
     };
 
-    let lowered = item.lower()?;
+    let preprocessed = item.preprocess()?;
 
-    let component_struct = lowered.to_component_struct();
+    let evaluated = preprocessed.eval()?;
 
-    let (provider_trait, provider_impl) = lowered.to_provider_trait_and_blanket_impl()?;
-
-    let consumer_impl = lowered.to_consumer_item_impl()?;
-
-    let LoweredCgpComponent {
+    let EvaluatedCgpComponent {
+        component_struct,
+        consumer_trait,
+        consumer_impl,
+        provider_trait,
+        provider_impl,
         args,
-        item_trait,
         attributes,
-    } = lowered;
+    } = evaluated;
 
     let context_type = &args.context_ident;
     let component_name = &args.component_name;
 
-    let use_context_impl = derive_use_context_impl(context_type, &item_trait, &provider_trait)?;
+    let use_context_impl = derive_use_context_impl(context_type, &consumer_trait, &provider_trait)?;
 
     let use_context_is_provider_impl = derive_is_provider_for(
         &parse2(quote! {
@@ -47,7 +47,7 @@ pub fn derive_component_with_ast(
         &use_context_impl,
     )?;
 
-    let redirect_lookup_impl = derive_redirect_lookup_impl(&item_trait, &provider_trait)?;
+    let redirect_lookup_impl = derive_redirect_lookup_impl(&consumer_trait, &provider_trait)?;
     let redirect_lookup_is_provider_impl = derive_is_provider_for(
         &parse2(quote! {
             #component_name
@@ -85,7 +85,7 @@ pub fn derive_component_with_ast(
 
     let derived = DerivedComponent {
         component_struct,
-        consumer_trait: item_trait,
+        consumer_trait,
         provider_trait,
         item_impls,
     };
