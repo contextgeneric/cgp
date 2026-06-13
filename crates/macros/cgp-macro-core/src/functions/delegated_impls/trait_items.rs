@@ -26,7 +26,7 @@ pub fn trait_item_to_delegated_impl_items(
 ) -> syn::Result<ImplItem> {
     let impl_item = match trait_item {
         TraitItem::Fn(trait_fn) => {
-            let impl_fn = signature_to_delegated_impl_item_fn(&trait_fn.sig, &delegate_type)?;
+            let impl_fn = signature_to_delegated_impl_item_fn(&trait_fn.sig, delegate_type)?;
 
             ImplItem::Fn(impl_fn)
         }
