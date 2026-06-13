@@ -1,4 +1,3 @@
-mod consumer_impl;
 mod derive;
 mod derive_namespace;
 mod derive_redirect_lookup;

@@ -7,7 +7,6 @@ use proc_macro2::TokenStream;
 use quote::{ToTokens, TokenStreamExt, quote};
 use syn::{ItemImpl, ItemTrait, parse2};
 
-use crate::derive_component::consumer_impl::derive_consumer_impl;
 use crate::derive_component::derive_namespace::derive_namespace_impls;
 use crate::derive_component::derive_redirect_lookup::derive_redirect_lookup_impl;
 use crate::derive_component::provider_impl::derive_provider_impl;
@@ -29,17 +28,16 @@ pub fn derive_component_with_ast(
 
     let provider_trait = lowered.to_provider_trait()?;
 
+    let consumer_impl = lowered.to_consumer_item_impl()?;
+
     let LoweredCgpComponent {
         args,
         item_trait,
         attributes,
     } = lowered;
 
-    let provider_name = &args.provider_ident;
     let context_type = &args.context_ident;
     let component_name = &args.component_name;
-
-    let consumer_impl = derive_consumer_impl(&item_trait, provider_name, context_type)?;
 
     let provider_impl =
         derive_provider_impl(context_type, &item_trait, &provider_trait, component_name)?;
