@@ -9,7 +9,6 @@ use syn::{ItemImpl, ItemTrait, parse2};
 
 use crate::derive_component::derive_namespace::derive_namespace_impls;
 use crate::derive_component::derive_redirect_lookup::derive_redirect_lookup_impl;
-use crate::derive_component::use_context_impl::derive_use_context_impl;
 use crate::derive_component::use_delegate_impl::derive_delegate_impl;
 
 pub fn derive_component_with_ast(
@@ -25,6 +24,8 @@ pub fn derive_component_with_ast(
 
     let evaluated = preprocessed.eval()?;
 
+    let provider_item_impls = evaluated.to_provider_impls()?.to_item_impls()?;
+
     let EvaluatedCgpComponent {
         component_struct,
         consumer_trait,
@@ -35,18 +36,7 @@ pub fn derive_component_with_ast(
         attributes,
     } = evaluated;
 
-    let context_type_ident = &args.context_ident;
     let component_name = &args.component_name;
-
-    let use_context_impl =
-        derive_use_context_impl(context_type_ident, &consumer_trait, &provider_trait)?;
-
-    let use_context_is_provider_impl = derive_is_provider_for(
-        &parse2(quote! {
-            #component_name
-        })?,
-        &use_context_impl,
-    )?;
 
     let redirect_lookup_impl = derive_redirect_lookup_impl(&consumer_trait, &provider_trait)?;
     let redirect_lookup_is_provider_impl = derive_is_provider_for(
@@ -59,11 +49,11 @@ pub fn derive_component_with_ast(
     let mut item_impls = vec![
         provider_impl,
         consumer_impl,
-        use_context_impl,
-        use_context_is_provider_impl,
         redirect_lookup_impl,
         redirect_lookup_is_provider_impl,
     ];
+
+    item_impls.extend(provider_item_impls);
 
     if !args.derive_delegate_attributes.attributes.is_empty() {
         for spec in args.derive_delegate_attributes.attributes.iter() {
