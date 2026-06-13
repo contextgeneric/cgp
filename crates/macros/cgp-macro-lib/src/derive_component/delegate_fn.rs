@@ -1,12 +1,10 @@
 use alloc::vec::Vec;
 
-use proc_macro2::TokenStream;
-use quote::quote;
+use proc_macro2::{Span, TokenStream};
+use quote::{ToTokens, quote};
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
-use syn::{ImplItemFn, Signature, Visibility, parse2};
-
-use crate::derive_component::signature_args::signature_to_args;
+use syn::{FnArg, Ident, ImplItemFn, Signature, Visibility, parse2};
 
 pub fn derive_delegated_fn_impl(
     sig: &Signature,
@@ -14,7 +12,7 @@ pub fn derive_delegated_fn_impl(
 ) -> syn::Result<ImplItemFn> {
     let fn_name = &sig.ident;
 
-    let args: Punctuated<_, Comma> = signature_to_args(sig).collect();
+    let args: Punctuated<_, Comma> = signature_to_idents(sig)?;
 
     let await_expr: TokenStream = if sig.asyncness.is_some() {
         quote!( .await )
@@ -37,4 +35,17 @@ pub fn derive_delegated_fn_impl(
     };
 
     Ok(item)
+}
+
+fn signature_to_idents(sig: &Signature) -> syn::Result<Punctuated<Ident, Comma>> {
+    sig.inputs.iter().map(arg_to_ident).collect()
+}
+
+fn arg_to_ident(arg: &FnArg) -> syn::Result<Ident> {
+    let ident = match arg {
+        FnArg::Receiver(_) => Ident::new("self", Span::call_site()),
+        FnArg::Typed(pat) => parse2(pat.pat.to_token_stream())?,
+    };
+
+    Ok(ident)
 }
