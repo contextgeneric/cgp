@@ -2,13 +2,14 @@ use alloc::boxed::Box;
 use alloc::vec::Vec;
 
 use cgp_macro_core::types::delegate_fn::derive_delegated_fn_impl;
+use cgp_macro_core::types::generics::TypeGenerics;
 use proc_macro2::Span;
-use quote::{ToTokens, quote};
+use quote::quote;
 use syn::spanned::Spanned;
 use syn::token::{Brace, Eq, For, Impl};
 use syn::{
-    Error, GenericParam, Generics, Ident, ImplItem, ImplItemConst, ItemImpl, ItemTrait, Path,
-    TraitItem, TypeParamBound, Visibility, parse2,
+    Error, Ident, ImplItem, ImplItemConst, ItemImpl, ItemTrait, Path, TraitItem, Type,
+    TypeParamBound, Visibility, parse2,
 };
 
 use crate::derive_component::delegate_type::derive_delegate_type_impl;
@@ -20,19 +21,16 @@ pub fn derive_consumer_impl(
 ) -> syn::Result<ItemImpl> {
     let consumer_name = &consumer_trait.ident;
 
-    let consumer_type_generics = {
-        let (_, type_generics, _) = consumer_trait.generics.split_for_impl();
-        let generics: Generics = parse2(type_generics.to_token_stream())?;
+    let consumer_type_generics = TypeGenerics::try_from(&consumer_trait.generics)?;
 
-        generics.params
-    };
+    let provider_trait_path: Type = {
+        let mut provider_type_generics = consumer_type_generics.clone();
+        provider_type_generics
+            .generics
+            .params
+            .insert(0, parse2(quote!(#context_type))?);
 
-    let provider_type_generics = {
-        let mut generic_args = consumer_type_generics.clone();
-
-        generic_args.insert(0, parse2(quote!(#context_type))?);
-
-        generic_args
+        parse2(quote!(#provider_name #provider_type_generics))?
     };
 
     let generics_for_impl = {
@@ -61,7 +59,7 @@ pub fn derive_consumer_impl(
 
         {
             let provider_constraint: TypeParamBound = parse2(quote! {
-                #provider_name < #provider_type_generics >
+                #provider_trait_path
             })?;
 
             generics.make_where_clause().predicates.push(parse2(quote! {
@@ -84,25 +82,12 @@ pub fn derive_consumer_impl(
             }
             TraitItem::Type(trait_type) => {
                 let type_name = &trait_type.ident;
-                let type_generics = {
-                    let mut type_generics = trait_type.generics.clone();
-                    type_generics.where_clause = None;
+                let type_generics = trait_type.generics.split_for_impl().1;
+                let delegate_type = parse2(quote!(
+                    < #context_type as #provider_trait_path > :: #type_name #type_generics
+                ))?;
 
-                    for param in &mut type_generics.params {
-                        if let GenericParam::Type(type_param) = param {
-                            type_param.bounds.clear();
-                        }
-                    }
-
-                    type_generics
-                };
-
-                let impl_type = derive_delegate_type_impl(
-                    trait_type,
-                    parse2(quote!(
-                        < #context_type as #provider_name < #provider_type_generics > > :: #type_name #type_generics
-                    ))?,
-                );
+                let impl_type = derive_delegate_type_impl(trait_type, delegate_type);
 
                 impl_items.push(ImplItem::Type(impl_type));
             }
@@ -111,7 +96,7 @@ pub fn derive_consumer_impl(
                 let (_, type_generics, _) = trait_item_const.generics.split_for_impl();
 
                 let impl_expr = parse2(quote! {
-                    < #context_type as #provider_name < #provider_type_generics > > :: #const_ident #type_generics
+                    < #context_type as #provider_trait_path > :: #const_ident #type_generics
                 })?;
 
                 let impl_item_const = ImplItemConst {
@@ -139,7 +124,7 @@ pub fn derive_consumer_impl(
         }
     }
 
-    let trait_path: Path = parse2(quote!( #consumer_name < #consumer_type_generics > ))?;
+    let consumer_trait_path: Path = parse2(quote!( #consumer_name #consumer_type_generics ))?;
 
     let item_impl = ItemImpl {
         attrs: consumer_trait.attrs.clone(),
@@ -147,7 +132,7 @@ pub fn derive_consumer_impl(
         unsafety: consumer_trait.unsafety,
         impl_token: Impl::default(),
         generics: generics_for_impl,
-        trait_: Some((None, trait_path, For::default())),
+        trait_: Some((None, consumer_trait_path, For::default())),
         self_ty: Box::new(parse2(quote!(#context_type))?),
         brace_token: Brace::default(),
         items: impl_items,
