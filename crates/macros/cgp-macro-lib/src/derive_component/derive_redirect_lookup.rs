@@ -1,4 +1,4 @@
-use cgp_macro_core::types::cgp_component::provider_trait_to_impl_items;
+use cgp_macro_core::functions::provider_trait_to_impl_items;
 use quote::quote;
 use syn::token::{Brace, For, Impl};
 use syn::{GenericParam, Generics, ItemImpl, ItemTrait, Path, Type, parse_quote, parse2};

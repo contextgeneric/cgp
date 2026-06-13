@@ -2,9 +2,9 @@ use proc_macro2::Span;
 use quote::quote;
 use syn::punctuated::Punctuated;
 use syn::token::{Brace, For, Impl, Plus};
-use syn::{Ident, ImplItem, ItemImpl, ItemTrait, Path, Type, TypeParamBound, parse_quote, parse2};
+use syn::{Ident, ItemImpl, ItemTrait, Path, TypeParamBound, parse_quote, parse2};
 
-use crate::functions::{parse_is_provider_params, trait_items_to_delegated_impl_items};
+use crate::functions::{parse_is_provider_params, provider_trait_to_impl_items};
 use crate::types::cgp_component::LoweredCgpComponent;
 
 impl LoweredCgpComponent {
@@ -83,15 +83,4 @@ impl LoweredCgpComponent {
 
         Ok((provider_trait, provider_blanket_impl))
     }
-}
-
-pub fn provider_trait_to_impl_items(
-    item_trait: &ItemTrait,
-    delegate_type: &Type,
-) -> syn::Result<Vec<ImplItem>> {
-    let provider_name = &item_trait.ident;
-    let provider_type_generics = item_trait.generics.split_for_impl().1;
-    let provider_trait_path: Type = parse_quote!(#provider_name #provider_type_generics);
-
-    trait_items_to_delegated_impl_items(&item_trait.items, delegate_type, &provider_trait_path)
 }
