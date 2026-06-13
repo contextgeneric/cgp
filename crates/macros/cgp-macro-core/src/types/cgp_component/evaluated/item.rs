@@ -16,6 +16,14 @@ pub struct EvaluatedCgpComponent {
 }
 
 impl EvaluatedCgpComponent {
+    pub fn to_item_impls(&self) -> syn::Result<Vec<ItemImpl>> {
+        let mut item_impls = self.to_provider_impls()?.to_item_impls()?;
+
+        item_impls.extend(self.to_prefix_impls()?);
+
+        Ok(item_impls)
+    }
+
     pub fn to_provider_impls(&self) -> syn::Result<ItemProviderImpls> {
         let mut provider_impls = ItemProviderImpls::default();
 

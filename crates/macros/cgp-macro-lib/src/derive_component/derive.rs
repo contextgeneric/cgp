@@ -19,8 +19,7 @@ pub fn derive_component_with_ast(
 
     let evaluated = preprocessed.eval()?;
 
-    let provider_item_impls = evaluated.to_provider_impls()?.to_item_impls()?;
-    let namespace_impls = evaluated.to_prefix_impls()?;
+    let mut item_impls = evaluated.to_item_impls()?;
 
     let EvaluatedCgpComponent {
         component_struct,
@@ -31,10 +30,8 @@ pub fn derive_component_with_ast(
         ..
     } = evaluated;
 
-    let mut item_impls = vec![provider_impl, consumer_impl];
-
-    item_impls.extend(provider_item_impls);
-    item_impls.extend(namespace_impls);
+    item_impls.push(consumer_impl);
+    item_impls.push(provider_impl);
 
     let derived = DerivedComponent {
         component_struct,
