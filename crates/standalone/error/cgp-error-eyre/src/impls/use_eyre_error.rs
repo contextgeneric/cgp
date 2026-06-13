@@ -1,5 +1,5 @@
-use cgp_core::error::{ErrorTypeProvider, ErrorTypeProviderComponent};
-use cgp_core::prelude::*;
+use cgp::error::{ErrorTypeProvider, ErrorTypeProviderComponent};
+use cgp::prelude::*;
 use eyre::Error;
 
 #[cgp_new_provider]

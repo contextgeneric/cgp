@@ -1,5 +1,5 @@
-use cgp_core::error::{ErrorWrapper, ErrorWrapperComponent, HasErrorType};
-use cgp_core::prelude::*;
+use cgp::error::{ErrorWrapper, ErrorWrapperComponent, HasErrorType};
+use cgp::prelude::*;
 
 #[cgp_new_provider]
 impl<Context, Detail> ErrorWrapper<Context, Detail> for DiscardDetail

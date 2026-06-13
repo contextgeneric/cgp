@@ -1,7 +1,8 @@
 use cgp_macro_core::functions::provider_trait_to_impl_items;
+use cgp_macro_core::types::path::{PathElement, UniPath};
 use quote::quote;
 use syn::token::{Brace, For, Impl};
-use syn::{GenericParam, Generics, ItemImpl, ItemTrait, Path, Type, parse_quote, parse2};
+use syn::{GenericParam, Generics, ItemImpl, ItemTrait, Path, parse_quote, parse2};
 
 pub fn derive_redirect_lookup_impl(
     consumer_trait: &ItemTrait,
@@ -10,7 +11,7 @@ pub fn derive_redirect_lookup_impl(
     let provider_name = &provider_trait.ident;
     let provider_type_generics = provider_trait.generics.split_for_impl().1;
 
-    let generic_params = extract_type_generics(&consumer_trait.generics)?;
+    let generic_params = generic_params_to_path(&consumer_trait.generics)?;
 
     let mut impl_generics = provider_trait.generics.clone();
 
@@ -69,7 +70,7 @@ pub fn derive_redirect_lookup_impl(
     Ok(item)
 }
 
-pub fn extract_type_generics(generics: &Generics) -> syn::Result<Option<Type>> {
+fn generic_params_to_path(generics: &Generics) -> syn::Result<Option<UniPath>> {
     let type_params = generics
         .params
         .iter()
@@ -85,14 +86,11 @@ pub fn extract_type_generics(generics: &Generics) -> syn::Result<Option<Type>> {
     if type_params.is_empty() {
         Ok(None)
     } else {
-        let mut out = quote! { Nil };
-
-        for param in type_params.iter().rev() {
-            out = quote! {
-                PathCons< #param , #out >
-            };
+        let mut path = UniPath::default();
+        for param in type_params {
+            path.elements.push(PathElement::Type(parse_quote!(#param)))
         }
 
-        Ok(Some(parse2(out)?))
+        Ok(Some(path))
     }
 }

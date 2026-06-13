@@ -4,6 +4,7 @@ use syn::punctuated::Punctuated;
 use syn::token::{Brace, For, Impl, Plus};
 use syn::{Ident, ItemImpl, ItemTrait, Path, TypeParamBound, parse_quote, parse2};
 
+use crate::exports::{DelegateComponent, IsProviderFor};
 use crate::functions::{parse_is_provider_params, provider_trait_to_impl_items};
 use crate::types::cgp_component::PreprocessedCgpComponent;
 
@@ -19,7 +20,7 @@ impl PreprocessedCgpComponent {
         let provider_type = Ident::new("__Provider__", Span::call_site());
 
         let delegate_constraint = quote! {
-            DelegateComponent< #component_name >
+            #DelegateComponent< #component_name >
         };
 
         let delegate_type = parse_quote! {
@@ -44,7 +45,7 @@ impl PreprocessedCgpComponent {
                 delegate_constraints.push(parse2(delegate_constraint)?);
 
                 delegate_constraints.push(parse2(quote!(
-                    IsProviderFor< #component_name, #context_type, ( #is_provider_params ) >
+                    #IsProviderFor< #component_name, #context_type, ( #is_provider_params ) >
                 ))?);
 
                 let provider_constraint: TypeParamBound = parse2(quote! {

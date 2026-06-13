@@ -12,6 +12,6 @@ description  = """
 """
 
 [dependencies]
+cgp                 = { version = "0.7.0", path = "../../main/cgp-base", package = "cgp-base" }
 cgp-component       = { workspace = true }
 cgp-macro           = { workspace = true }
-cgp-base            = { workspace = true }

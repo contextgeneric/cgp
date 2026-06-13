@@ -1,6 +1,6 @@
 use core::marker::PhantomData;
 
-use cgp_component::{IsProviderFor, WithProvider};
+use cgp_component::WithProvider;
 use cgp_macro::cgp_provider;
 
 use crate::TypeProviderComponent;

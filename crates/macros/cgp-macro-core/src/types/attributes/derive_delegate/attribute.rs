@@ -5,6 +5,7 @@ use syn::punctuated::Punctuated;
 use syn::token::{Comma, Gt, Lt, Paren};
 use syn::{Error, Ident, ItemImpl, ItemTrait, Path, parenthesized, parse_quote, parse2};
 
+use crate::exports::DelegateComponent;
 use crate::functions::trait_items_to_delegated_impl_items;
 
 #[derive(Clone)]
@@ -31,7 +32,7 @@ impl DeriveDelegateAttribute {
         let where_clause = generics.make_where_clause();
 
         where_clause.predicates.push(parse2(quote! {
-            #components_ident: DelegateComponent<
+            #components_ident: #DelegateComponent<
                 ( #use_delegate_params ),
                 Delegate = #delegate_ident,
             >

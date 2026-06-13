@@ -1,6 +1,6 @@
 use anyhow::Error;
-use cgp_core::error::{ErrorTypeProvider, ErrorTypeProviderComponent};
-use cgp_core::prelude::*;
+use cgp::error::{ErrorTypeProvider, ErrorTypeProviderComponent};
+use cgp::prelude::*;
 
 #[cgp_new_provider]
 impl<Context> ErrorTypeProvider<Context> for UseAnyhowError {

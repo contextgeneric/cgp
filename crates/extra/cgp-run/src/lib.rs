@@ -3,7 +3,7 @@
 use core::future::Future;
 use core::marker::PhantomData;
 
-use cgp_core::prelude::*;
+use cgp::prelude::*;
 
 #[cgp_component {
     provider: Runner,

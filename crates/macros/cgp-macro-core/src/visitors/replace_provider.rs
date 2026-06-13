@@ -8,6 +8,8 @@ use syn::{
     TypeParamBound, parse_quote,
 };
 
+use crate::exports::IsProviderFor;
+
 pub fn replace_provider_in_generics(provider_map: &BTreeMap<Ident, Type>, generics: &mut Generics) {
     let mut visitor = ReplaceProviderVisitor { provider_map };
     visit_generics_mut(&mut visitor, generics);
@@ -53,7 +55,7 @@ fn replace_provider_in_type_params(
                     .collect();
 
                 let mut new_bound = trait_bound.clone();
-                new_bound.path = parse_quote!( IsProviderFor< #component_type, #context_type, (#rest_generics) > );
+                new_bound.path = parse_quote!( #IsProviderFor< #component_type, #context_type, (#rest_generics) > );
 
                 new_bounds.push(TypeParamBound::Trait(new_bound));
             }

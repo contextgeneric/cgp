@@ -6,6 +6,7 @@ use syn::spanned::Spanned;
 use syn::token::For;
 use syn::{Error, ItemImpl, Path, Type, parse_quote, parse2};
 
+use crate::exports::IsProviderFor;
 use crate::types::cgp_provider::ProviderImplArgs;
 use crate::types::ident::IdentWithTypeArgs;
 use crate::visitors::replace_provider_in_generics;
@@ -66,7 +67,7 @@ impl ItemProviderImpl {
         let context_type = &impl_args.context_type;
 
         let is_provider_path: Path =
-            parse_quote!( IsProviderFor < #component_type, #context_type, ( #impl_args ) > );
+            parse_quote!( #IsProviderFor < #component_type, #context_type, ( #impl_args ) > );
 
         let mut is_provider_impl = item_impl.clone();
 

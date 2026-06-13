@@ -2,8 +2,8 @@ use alloc::boxed::Box;
 use alloc::format;
 use core::fmt::Debug;
 
-use cgp_core::error::{ErrorRaiser, ErrorRaiserComponent, ErrorWrapper, ErrorWrapperComponent};
-use cgp_core::prelude::*;
+use cgp::error::{ErrorRaiser, ErrorRaiserComponent, ErrorWrapper, ErrorWrapperComponent};
+use cgp::prelude::*;
 
 use crate::WrapError;
 use crate::types::{Error, StringError};

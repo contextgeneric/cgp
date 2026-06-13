@@ -1,7 +1,7 @@
 use core::convert::Infallible;
 
-use cgp_core::error::{ErrorRaiser, ErrorRaiserComponent, HasErrorType};
-use cgp_core::prelude::*;
+use cgp::error::{ErrorRaiser, ErrorRaiserComponent, HasErrorType};
+use cgp::prelude::*;
 
 #[cgp_new_provider]
 impl<Context> ErrorRaiser<Context, Infallible> for RaiseInfallible

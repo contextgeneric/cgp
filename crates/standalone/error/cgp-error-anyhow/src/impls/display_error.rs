@@ -2,8 +2,8 @@ use alloc::string::ToString;
 use core::fmt::Display;
 
 use anyhow::{Error, anyhow};
-use cgp_core::error::{ErrorRaiser, ErrorRaiserComponent, ErrorWrapper, ErrorWrapperComponent};
-use cgp_core::prelude::*;
+use cgp::error::{ErrorRaiser, ErrorRaiserComponent, ErrorWrapper, ErrorWrapperComponent};
+use cgp::prelude::*;
 
 pub struct DisplayAnyhowError;
 

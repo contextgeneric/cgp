@@ -12,4 +12,4 @@ description  = """
 """
 
 [dependencies]
-cgp-core            = { workspace = true }
+cgp         = { version = "0.7.0", path = "../../main/cgp-core", package = "cgp-core" }

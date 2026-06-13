@@ -2,8 +2,8 @@ use alloc::format;
 use core::fmt::Debug;
 
 use anyhow::{Error, anyhow};
-use cgp_core::error::{ErrorRaiser, ErrorRaiserComponent, ErrorWrapper, ErrorWrapperComponent};
-use cgp_core::prelude::*;
+use cgp::error::{ErrorRaiser, ErrorRaiserComponent, ErrorWrapper, ErrorWrapperComponent};
+use cgp::prelude::*;
 
 pub struct DebugAnyhowError;
 

@@ -2,8 +2,8 @@ use alloc::format;
 use alloc::string::String;
 use core::fmt::Debug;
 
-use cgp_core::error::{ErrorRaiser, ErrorRaiserComponent, ErrorWrapper, ErrorWrapperComponent};
-use cgp_core::prelude::*;
+use cgp::error::{ErrorRaiser, ErrorRaiserComponent, ErrorWrapper, ErrorWrapperComponent};
+use cgp::prelude::*;
 
 pub struct DebugError;
 

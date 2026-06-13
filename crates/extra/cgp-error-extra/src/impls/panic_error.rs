@@ -1,7 +1,7 @@
 use core::fmt::Debug;
 
-use cgp_core::error::{ErrorRaiser, ErrorRaiserComponent, HasErrorType};
-use cgp_core::prelude::*;
+use cgp::error::{ErrorRaiser, ErrorRaiserComponent, HasErrorType};
+use cgp::prelude::*;
 
 #[cgp_new_provider]
 impl<Context, E> ErrorRaiser<Context, E> for PanicOnError

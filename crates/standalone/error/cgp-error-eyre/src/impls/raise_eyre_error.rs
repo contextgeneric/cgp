@@ -1,8 +1,8 @@
 use core::error::Error as StdError;
 use core::fmt::Display;
 
-use cgp_core::error::{ErrorRaiser, ErrorRaiserComponent, ErrorWrapper, ErrorWrapperComponent};
-use cgp_core::prelude::*;
+use cgp::error::{ErrorRaiser, ErrorRaiserComponent, ErrorWrapper, ErrorWrapperComponent};
+use cgp::prelude::*;
 use eyre::Error;
 
 pub struct RaiseEyreError;

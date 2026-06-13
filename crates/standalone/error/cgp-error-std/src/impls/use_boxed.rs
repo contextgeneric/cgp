@@ -1,5 +1,5 @@
-use cgp_core::error::{ErrorTypeProvider, ErrorTypeProviderComponent};
-use cgp_core::prelude::*;
+use cgp::error::{ErrorTypeProvider, ErrorTypeProviderComponent};
+use cgp::prelude::*;
 
 use crate::types::Error;
 

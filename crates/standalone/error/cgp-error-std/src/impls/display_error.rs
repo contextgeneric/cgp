@@ -2,10 +2,10 @@ use alloc::boxed::Box;
 use alloc::string::ToString;
 use core::fmt::Display;
 
-use cgp_core::error::{
+use cgp::error::{
     ErrorRaiser, ErrorRaiserComponent, ErrorWrapper, ErrorWrapperComponent, HasErrorType,
 };
-use cgp_core::prelude::*;
+use cgp::prelude::*;
 
 use crate::WrapError;
 use crate::types::{Error, StringError};

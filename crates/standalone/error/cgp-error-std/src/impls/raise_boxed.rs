@@ -1,7 +1,7 @@
 use core::error::Error as StdError;
 
-use cgp_core::error::{ErrorRaiser, ErrorRaiserComponent};
-use cgp_core::prelude::*;
+use cgp::error::{ErrorRaiser, ErrorRaiserComponent};
+use cgp::prelude::*;
 
 use crate::types::Error;
 

@@ -2,8 +2,8 @@ use core::error::Error as StdError;
 use core::fmt::Display;
 
 use anyhow::Error;
-use cgp_core::error::{ErrorRaiser, ErrorRaiserComponent, ErrorWrapper, ErrorWrapperComponent};
-use cgp_core::prelude::*;
+use cgp::error::{ErrorRaiser, ErrorRaiserComponent, ErrorWrapper, ErrorWrapperComponent};
+use cgp::prelude::*;
 
 pub struct RaiseAnyhowError;
 

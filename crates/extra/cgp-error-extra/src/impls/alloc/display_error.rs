@@ -1,11 +1,11 @@
 use alloc::string::{String, ToString};
 use core::fmt::Display;
 
-use cgp_core::error::{
+use cgp::error::{
     CanRaiseError, CanWrapError, ErrorRaiser, ErrorRaiserComponent, ErrorWrapper,
     ErrorWrapperComponent,
 };
-use cgp_core::prelude::*;
+use cgp::prelude::*;
 
 pub struct DisplayError;
 
