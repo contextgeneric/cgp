@@ -43,7 +43,7 @@ pub fn trait_item_to_delegated_impl_items(
         }
         TraitItem::Const(trait_item_const) => {
             let const_ident = &trait_item_const.ident;
-            let (_, type_generics, _) = trait_item_const.generics.split_for_impl();
+            let type_generics = trait_item_const.generics.split_for_impl().1;
 
             let impl_expr = parse2(quote! {
                 < #delegate_type as #provider_trait_path > :: #const_ident #type_generics

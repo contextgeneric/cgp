@@ -31,10 +31,7 @@ impl ItemProviderImpls {
         let mut item_impls = Vec::new();
 
         for provider_impl in &self.provider_impls {
-            item_impls.push(provider_impl.item_impl.clone());
-
-            let is_provider_impl = provider_impl.to_is_provider_for_impl()?;
-            item_impls.push(is_provider_impl);
+            item_impls.extend(provider_impl.to_item_impls()?);
         }
 
         Ok(item_impls)
@@ -47,6 +44,11 @@ pub struct ItemProviderImpl {
 }
 
 impl ItemProviderImpl {
+    pub fn to_item_impls(&self) -> syn::Result<Vec<ItemImpl>> {
+        let is_provider_impl = self.to_is_provider_for_impl()?;
+        Ok(vec![self.item_impl.clone(), is_provider_impl])
+    }
+
     pub fn to_is_provider_for_impl(&self) -> syn::Result<ItemImpl> {
         let component_type = &self.component_type;
         let item_impl = &self.item_impl;

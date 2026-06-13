@@ -55,20 +55,18 @@ pub fn derive_component_with_ast(
 
     item_impls.extend(provider_item_impls);
 
-    if !args.derive_delegate_attributes.attributes.is_empty() {
-        for spec in args.derive_delegate_attributes.attributes.iter() {
-            let use_delegate_impl = derive_delegate_impl(&provider_trait, spec)?;
+    for spec in args.derive_delegate_attributes.attributes.iter() {
+        let use_delegate_impl = derive_delegate_impl(&provider_trait, spec)?;
 
-            let use_delegate_is_provider_impl = derive_is_provider_for(
-                &parse2(quote! {
-                    #component_name
-                })?,
-                &use_delegate_impl,
-            )?;
+        let use_delegate_is_provider_impl = derive_is_provider_for(
+            &parse2(quote! {
+                #component_name
+            })?,
+            &use_delegate_impl,
+        )?;
 
-            item_impls.push(use_delegate_impl);
-            item_impls.push(use_delegate_is_provider_impl);
-        }
+        item_impls.push(use_delegate_impl);
+        item_impls.push(use_delegate_is_provider_impl);
     }
 
     let namespace_impls = derive_namespace_impls(&attributes.prefixes, &component_name.ident)?;
