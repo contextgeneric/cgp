@@ -14,20 +14,39 @@ pub fn derive_is_provider_for(
     component_type: &Type,
     item_impl: &ItemImpl,
 ) -> syn::Result<ItemImpl> {
-    ItemIsProviderFor {
+    ItemProviderImpl {
         component_type: component_type.clone(),
         item_impl: item_impl.clone(),
     }
-    .lower()
+    .to_is_provider_for_impl()
 }
 
-pub struct ItemIsProviderFor {
+pub struct ItemProviderImpls {
+    pub provider_impls: Vec<ItemProviderImpl>,
+}
+
+impl ItemProviderImpls {
+    pub fn to_item_impls(&self) -> syn::Result<Vec<ItemImpl>> {
+        let mut item_impls = Vec::new();
+
+        for provider_impl in &self.provider_impls {
+            item_impls.push(provider_impl.item_impl.clone());
+
+            let is_provider_impl = provider_impl.to_is_provider_for_impl()?;
+            item_impls.push(is_provider_impl);
+        }
+
+        Ok(item_impls)
+    }
+}
+
+pub struct ItemProviderImpl {
     pub component_type: Type,
     pub item_impl: ItemImpl,
 }
 
-impl ItemIsProviderFor {
-    pub fn lower(&self) -> syn::Result<ItemImpl> {
+impl ItemProviderImpl {
+    pub fn to_is_provider_for_impl(&self) -> syn::Result<ItemImpl> {
         let component_type = &self.component_type;
         let item_impl = &self.item_impl;
 

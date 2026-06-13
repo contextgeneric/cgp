@@ -5,7 +5,7 @@ use syn::{Error, Ident, ItemImpl, Type, parse_quote, parse2};
 use crate::types::cgp_provider::{LoweredCgpProvider, ProviderArgs};
 use crate::types::empty_struct::EmptyStruct;
 use crate::types::ident::{IdentWithTypeArgs, IdentWithTypeGenerics};
-use crate::types::is_provider_for::ItemIsProviderFor;
+use crate::types::provider_impl::ItemProviderImpl;
 
 pub struct ItemCgpProvider {
     pub args: ProviderArgs,
@@ -16,11 +16,11 @@ impl ItemCgpProvider {
     pub fn lower(&self) -> syn::Result<LoweredCgpProvider> {
         let provider_struct = self.to_provider_struct()?;
 
-        let is_provider_for_impl = ItemIsProviderFor {
+        let is_provider_for_impl = ItemProviderImpl {
             component_type: self.component_type()?,
             item_impl: self.item_impl.clone(),
         }
-        .lower()?;
+        .to_is_provider_for_impl()?;
 
         Ok(LoweredCgpProvider {
             item_impl: self.item_impl.clone(),

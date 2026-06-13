@@ -1,7 +1,7 @@
 use alloc::vec::Vec;
 
 use cgp_macro_core::types::cgp_component::CgpComponentArgs;
-use cgp_macro_core::types::is_provider_for::derive_is_provider_for;
+use cgp_macro_core::types::provider_impl::derive_is_provider_for;
 use quote::{ToTokens, quote};
 use syn::spanned::Spanned;
 use syn::{Error, Generics, ItemImpl, ItemTrait, TraitItem, TraitItemType, Type, parse2};

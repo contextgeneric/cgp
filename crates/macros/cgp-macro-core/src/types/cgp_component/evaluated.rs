@@ -13,3 +13,5 @@ pub struct EvaluatedCgpComponent {
     pub args: CgpComponentArgs,
     pub attributes: CgpComponentAttributes,
 }
+
+impl EvaluatedCgpComponent {}

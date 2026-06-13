@@ -1,6 +1,6 @@
 use cgp_macro_core::types::attributes::CgpComponentAttributes;
 use cgp_macro_core::types::cgp_component::CgpComponentRawArgs;
-use cgp_macro_core::types::is_provider_for::derive_is_provider_for;
+use cgp_macro_core::types::provider_impl::derive_is_provider_for;
 use proc_macro2::TokenStream;
 use quote::quote;
 use syn::{Ident, ItemTrait, Type, parse_quote, parse2};

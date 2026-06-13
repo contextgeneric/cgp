@@ -2,7 +2,7 @@ use cgp_macro_core::types::cgp_component::{
     CgpComponentArgs, EvaluatedCgpComponent, ItemCgpComponent,
 };
 use cgp_macro_core::types::empty_struct::EmptyStruct;
-use cgp_macro_core::types::is_provider_for::derive_is_provider_for;
+use cgp_macro_core::types::provider_impl::derive_is_provider_for;
 use proc_macro2::TokenStream;
 use quote::{ToTokens, TokenStreamExt, quote};
 use syn::{ItemImpl, ItemTrait, parse2};
