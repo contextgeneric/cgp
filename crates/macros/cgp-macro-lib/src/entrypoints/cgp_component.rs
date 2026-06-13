@@ -1,15 +1,17 @@
-use cgp_macro_core::types::cgp_component::CgpComponentArgs;
+use cgp_macro_core::types::cgp_component::{CgpComponentArgs, ItemCgpComponent};
 use proc_macro2::TokenStream;
-use quote::ToTokens;
+use quote::quote;
 use syn::ItemTrait;
 
-use crate::derive_component::derive_component_with_ast;
-
 pub fn cgp_component(attr: TokenStream, item: TokenStream) -> syn::Result<TokenStream> {
-    let spec: CgpComponentArgs = syn::parse2(attr)?;
-    let consumer_trait: ItemTrait = syn::parse2(item)?;
+    let args: CgpComponentArgs = syn::parse2(attr)?;
+    let item_trait: ItemTrait = syn::parse2(item)?;
 
-    let derived = derive_component_with_ast(&spec, consumer_trait)?;
+    let item_cgp_component = ItemCgpComponent { args, item_trait };
 
-    Ok(derived.to_token_stream())
+    let derived = item_cgp_component.preprocess()?.eval()?.to_items()?;
+
+    Ok(quote! {
+        #( #derived )*
+    })
 }

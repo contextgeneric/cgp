@@ -1,11 +1,17 @@
 use quote::{ToTokens, quote};
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
-use syn::{GenericParam, Generics, Ident, Type, parse_quote};
+use syn::{GenericParam, Generics, Ident, ItemStruct, Type, parse_quote};
 
 pub struct EmptyStruct {
     pub ident: Ident,
     pub generics: Generics,
+}
+
+impl EmptyStruct {
+    pub fn to_item_struct(&self) -> ItemStruct {
+        parse_quote!(#self)
+    }
 }
 
 impl ToTokens for EmptyStruct {

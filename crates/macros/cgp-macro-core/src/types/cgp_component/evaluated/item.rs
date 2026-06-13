@@ -1,4 +1,4 @@
-use syn::{ItemImpl, ItemTrait};
+use syn::{Item, ItemImpl, ItemTrait};
 
 use crate::types::attributes::CgpComponentAttributes;
 use crate::types::cgp_component::CgpComponentArgs;
@@ -16,6 +16,22 @@ pub struct EvaluatedCgpComponent {
 }
 
 impl EvaluatedCgpComponent {
+    pub fn to_items(&self) -> syn::Result<Vec<Item>> {
+        let mut items = vec![
+            Item::Trait(self.consumer_trait.clone()),
+            Item::Impl(self.consumer_impl.clone()),
+            Item::Trait(self.provider_trait.clone()),
+            Item::Impl(self.provider_impl.clone()),
+            Item::Struct(self.component_struct.to_item_struct()),
+        ];
+
+        let item_impls = self.to_item_impls()?.into_iter().map(Item::Impl);
+
+        items.extend(item_impls);
+
+        Ok(items)
+    }
+
     pub fn to_item_impls(&self) -> syn::Result<Vec<ItemImpl>> {
         let mut item_impls = self.to_provider_impls()?.to_item_impls()?;
 
