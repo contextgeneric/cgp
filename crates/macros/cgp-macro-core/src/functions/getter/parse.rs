@@ -1,8 +1,3 @@
-use alloc::vec::Vec;
-
-use cgp_macro_core::functions::{parse_field_type, parse_single_segment_type_path};
-use cgp_macro_core::types::cgp_getter::{GetterField, ReceiverMode};
-use cgp_macro_core::visitors::ReplaceSelfTypeVisitor;
 use syn::punctuated::Punctuated;
 use syn::spanned::Spanned;
 use syn::token::{Comma, Mut};
@@ -11,6 +6,10 @@ use syn::{
     Error, FnArg, GenericArgument, Ident, ItemTrait, PathArguments, PathSegment, ReturnType,
     Signature, TraitItem, TraitItemFn, TraitItemType, Type, parse_quote,
 };
+
+use crate::functions::{parse_field_type, parse_single_segment_type_path};
+use crate::types::cgp_getter::{GetterField, ReceiverMode};
+use crate::visitors::ReplaceSelfTypeVisitor;
 
 pub fn parse_getter_fields(
     context_type: &Ident,
@@ -89,7 +88,7 @@ pub fn parse_getter_fields(
     Ok((fields, field_assoc_type))
 }
 
-pub fn parse_getter_method(
+fn parse_getter_method(
     context_type: &Ident,
     method: &TraitItemFn,
     field_assoc_type: &Option<Ident>,
@@ -119,7 +118,7 @@ pub fn parse_getter_method(
     })
 }
 
-pub fn validate_getter_method_signature(signature: &Signature) -> syn::Result<()> {
+fn validate_getter_method_signature(signature: &Signature) -> syn::Result<()> {
     if signature.constness.is_some() {
         return Err(Error::new(
             signature.constness.span(),

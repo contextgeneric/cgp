@@ -1,3 +1,4 @@
+use cgp_macro_core::functions::parse_getter_fields;
 use cgp_macro_core::types::cgp_component::{
     CgpComponentRawArgs, EvaluatedCgpComponent, ItemCgpComponent,
 };
@@ -8,7 +9,7 @@ use quote::quote;
 use syn::{Ident, ItemTrait, Type, parse_quote, parse2};
 
 use crate::derive_getter::{
-    derive_use_field_impl, derive_use_fields_impl, derive_with_provider_impl, parse_getter_fields,
+    derive_use_field_impl, derive_use_fields_impl, derive_with_provider_impl,
 };
 
 pub fn cgp_getter(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {

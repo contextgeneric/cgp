@@ -1,9 +1,10 @@
+use cgp_macro_core::functions::parse_getter_fields;
 use cgp_macro_core::types::attributes::CgpComponentAttributes;
 use proc_macro2::{Span, TokenStream};
 use quote::quote;
 use syn::{Error, Ident, ItemTrait};
 
-use crate::derive_getter::{derive_blanket_impl, parse_getter_fields};
+use crate::derive_getter::derive_blanket_impl;
 
 pub fn cgp_auto_getter(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
     if !attr.is_empty() {
