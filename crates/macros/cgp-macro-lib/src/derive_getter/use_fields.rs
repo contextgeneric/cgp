@@ -59,9 +59,9 @@ pub fn derive_use_fields_impl(
             field,
             Some(quote! { ::< #field_name > }),
             None,
-        );
+        )?;
 
-        items.extend(method);
+        items.extend(method.to_token_stream());
 
         let field_type = if let Some(trait_item) = &field_assoc_type {
             let trait_item_ident = &trait_item.ident;

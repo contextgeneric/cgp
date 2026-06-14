@@ -75,12 +75,15 @@ pub fn derive_with_provider_impl(
         }
     };
 
-    items.extend(derive_getter_method(
-        &ContextArg::Ident(receiver_type),
-        field,
-        None,
-        Some(provider_ident.clone()),
-    ));
+    items.extend(
+        derive_getter_method(
+            &ContextArg::Ident(receiver_type),
+            field,
+            None,
+            Some(provider_ident.clone()),
+        )?
+        .to_token_stream(),
+    );
 
     let mut where_clause = provider_generics.make_where_clause().clone();
     where_clause

@@ -55,12 +55,10 @@ pub fn derive_use_field_impl(
             })?);
     }
 
-    items.extend(derive_getter_method(
-        &ContextArg::Ident(receiver_type.clone()),
-        field,
-        None,
-        None,
-    ));
+    items.extend(
+        derive_getter_method(&ContextArg::Ident(receiver_type.clone()), field, None, None)?
+            .to_token_stream(),
+    );
 
     let field_type = if let Some(trait_item) = &field_assoc_type {
         let trait_item_ident = &trait_item.ident;

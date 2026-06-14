@@ -2,8 +2,8 @@ use cgp_macro_core::types::cgp_getter::GetterField;
 use cgp_macro_core::types::getter::FieldMode;
 use proc_macro2::TokenStream;
 use quote::quote;
-use syn::Ident;
 use syn::token::Mut;
+use syn::{Ident, ItemFn, parse2};
 
 pub enum ContextArg {
     SelfArg,
@@ -15,7 +15,7 @@ pub fn derive_getter_method(
     spec: &GetterField,
     phantom_generics: Option<TokenStream>,
     provider_ident: Option<Ident>,
-) -> TokenStream {
+) -> syn::Result<ItemFn> {
     let field_name = &spec.field_name;
 
     let phantom_arg = match &spec.phantom_arg_type {
@@ -76,11 +76,11 @@ pub fn derive_getter_method(
 
     let return_type = &spec.return_type;
 
-    quote! {
+    parse2(quote! {
         fn #field_name( #context_fn_arg #phantom_arg ) -> #return_type {
             #call_expr
         }
-    }
+    })
 }
 
 pub fn extend_call_expr(
