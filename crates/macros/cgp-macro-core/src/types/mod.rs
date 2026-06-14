@@ -1,5 +1,6 @@
 pub mod attributes;
 pub mod cgp_component;
+pub mod cgp_getter;
 pub mod cgp_impl;
 pub mod cgp_provider;
 pub mod delegate_component;

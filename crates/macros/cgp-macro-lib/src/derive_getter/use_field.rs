@@ -1,4 +1,5 @@
 use cgp_macro_core::types::cgp_component::CgpComponentArgs;
+use cgp_macro_core::types::cgp_getter::{GetterField, ReceiverMode};
 use cgp_macro_core::types::field::HasFieldBound;
 use proc_macro2::TokenStream;
 use quote::{ToTokens, quote};
@@ -8,8 +9,7 @@ use syn::{
     Generics, ItemImpl, ItemTrait, TraitItemType, Type, TypeParamBound, parse_quote, parse2,
 };
 
-use crate::derive_getter::getter_field::GetterField;
-use crate::derive_getter::{ContextArg, ReceiverMode, derive_getter_method};
+use crate::derive_getter::{ContextArg, derive_getter_method};
 use crate::type_component::get_bounds_and_replace_self_assoc_type;
 
 pub fn derive_use_field_impl(

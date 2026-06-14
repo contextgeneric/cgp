@@ -1,6 +1,7 @@
-use cgp_macro_core::types::getter::FieldMode;
 use syn::token::Mut;
 use syn::{Ident, Type};
+
+use crate::types::getter::FieldMode;
 
 pub struct GetterField {
     pub field_name: Ident,

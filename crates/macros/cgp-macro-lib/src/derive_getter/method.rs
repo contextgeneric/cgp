@@ -1,10 +1,9 @@
+use cgp_macro_core::types::cgp_getter::GetterField;
 use cgp_macro_core::types::getter::FieldMode;
 use proc_macro2::TokenStream;
 use quote::quote;
 use syn::Ident;
 use syn::token::Mut;
-
-use crate::derive_getter::GetterField;
 
 pub enum ContextArg {
     SelfArg,
