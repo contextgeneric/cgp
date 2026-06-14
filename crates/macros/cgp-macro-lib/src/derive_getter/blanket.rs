@@ -60,12 +60,7 @@ pub fn derive_blanket_impl(
         let field_name = FieldName::from(field.field_name.clone());
         let tag_type = parse_quote!(#field_name);
 
-        let method = derive_getter_method(
-            &context_arg,
-            field,
-            Some(quote! { ::< #field_name > }),
-            None,
-        )?;
+        let method = derive_getter_method(&context_arg, field, &tag_type, None)?;
 
         items.extend(method.to_token_stream());
 

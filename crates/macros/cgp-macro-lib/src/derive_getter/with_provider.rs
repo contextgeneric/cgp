@@ -79,7 +79,7 @@ pub fn derive_with_provider_impl(
         derive_getter_method(
             &ContextArg::Type(receiver_type),
             field,
-            None,
+            &component_name.to_type(),
             Some(provider_ident.clone()),
         )?
         .to_token_stream(),

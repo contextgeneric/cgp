@@ -57,7 +57,7 @@ pub fn derive_use_fields_impl(
         let method = derive_getter_method(
             &ContextArg::Type(receiver_type.clone()),
             field,
-            Some(quote! { ::< #field_name > }),
+            &tag_type,
             None,
         )?;
 

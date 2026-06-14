@@ -13,10 +13,10 @@ pub enum ContextArg {
 pub fn derive_getter_method(
     context_arg: &ContextArg,
     spec: &GetterField,
-    phantom_generics: Option<TokenStream>,
+    tag_type: &Type,
     provider_ident: Option<Ident>,
 ) -> syn::Result<ItemFn> {
-    let field_name = &spec.field_name;
+    let getter_ident = &spec.field_name;
 
     let phantom_arg = match &spec.phantom_arg_type {
         Some(phantom) => {
@@ -62,12 +62,12 @@ pub fn derive_getter_method(
     let call_expr = match provider_ident {
         Some(provider_ident) => {
             quote! {
-                #provider_ident :: #get_field_method ( #context_var, ::core::marker::PhantomData #phantom_generics )
+                #provider_ident :: #get_field_method ( #context_var, ::core::marker::PhantomData::< #tag_type > )
             }
         }
         None => {
             quote! {
-                #context_var . #get_field_method ( ::core::marker::PhantomData #phantom_generics )
+                #context_var . #get_field_method ( ::core::marker::PhantomData::< #tag_type > )
             }
         }
     };
@@ -77,7 +77,7 @@ pub fn derive_getter_method(
     let return_type = &spec.return_type;
 
     parse2(quote! {
-        fn #field_name( #context_fn_arg #phantom_arg ) -> #return_type {
+        fn #getter_ident( #context_fn_arg #phantom_arg ) -> #return_type {
             #call_expr
         }
     })
