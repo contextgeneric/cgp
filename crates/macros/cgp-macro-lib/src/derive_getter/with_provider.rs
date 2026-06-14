@@ -1,12 +1,12 @@
 use cgp_macro_core::types::cgp_component::CgpComponentArgs;
 use cgp_macro_core::types::cgp_getter::{GetterField, ReceiverMode};
 use cgp_macro_core::types::getter::FieldMode;
+use cgp_macro_core::visitors::get_bounds_and_replace_self_assoc_type;
 use proc_macro2::{Span, TokenStream};
 use quote::{ToTokens, quote};
 use syn::{Generics, Ident, ItemImpl, ItemTrait, TraitItemType, parse_quote, parse2};
 
 use crate::derive_getter::{ContextArg, derive_getter_method};
-use crate::type_component::get_bounds_and_replace_self_assoc_type;
 
 pub fn derive_with_provider_impl(
     spec: &CgpComponentArgs,

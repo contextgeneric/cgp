@@ -2,11 +2,10 @@ use alloc::vec::Vec;
 
 use cgp_macro_core::types::cgp_component::CgpComponentArgs;
 use cgp_macro_core::types::provider_impl::derive_is_provider_for;
+use cgp_macro_core::visitors::get_bounds_and_replace_self_assoc_type;
 use quote::{ToTokens, quote};
 use syn::spanned::Spanned;
 use syn::{Error, Generics, ItemImpl, ItemTrait, TraitItem, TraitItemType, Type, parse2};
-
-use crate::type_component::replace::get_bounds_and_replace_self_assoc_type;
 
 pub fn extract_item_type_from_trait(consumer_trait: &ItemTrait) -> syn::Result<&TraitItemType> {
     if consumer_trait.items.len() != 1 {

@@ -1,6 +1,7 @@
 use cgp_macro_core::types::cgp_component::CgpComponentArgs;
 use cgp_macro_core::types::cgp_getter::{GetterField, ReceiverMode};
 use cgp_macro_core::types::field::HasFieldBound;
+use cgp_macro_core::visitors::get_bounds_and_replace_self_assoc_type;
 use proc_macro2::TokenStream;
 use quote::{ToTokens, quote};
 use syn::punctuated::Punctuated;
@@ -10,7 +11,6 @@ use syn::{
 };
 
 use crate::derive_getter::{ContextArg, derive_getter_method};
-use crate::type_component::get_bounds_and_replace_self_assoc_type;
 
 pub fn derive_use_field_impl(
     spec: &CgpComponentArgs,
