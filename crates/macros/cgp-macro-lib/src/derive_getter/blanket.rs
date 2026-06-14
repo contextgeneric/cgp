@@ -54,10 +54,7 @@ pub fn derive_blanket_impl(
     for field in fields {
         let (receiver_type, context_arg) = match &field.receiver_mode {
             ReceiverMode::SelfReceiver => (context_type.to_token_stream(), ContextArg::SelfArg),
-            ReceiverMode::Type(ty) => (
-                ty.to_token_stream(),
-                ContextArg::Ident(ty.to_token_stream()),
-            ),
+            ReceiverMode::Type(ty) => (ty.to_token_stream(), ContextArg::Type(ty.as_ref().clone())),
         };
 
         let field_name = FieldName::from(field.field_name.clone());

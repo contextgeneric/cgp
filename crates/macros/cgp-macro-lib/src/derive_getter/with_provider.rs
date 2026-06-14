@@ -20,8 +20,8 @@ pub fn derive_with_provider_impl(
     let provider_name = &spec.provider_ident;
 
     let receiver_type = match &field.receiver_mode {
-        ReceiverMode::SelfReceiver => context_type.to_token_stream(),
-        ReceiverMode::Type(ty) => ty.to_token_stream(),
+        ReceiverMode::SelfReceiver => parse_quote!(#context_type),
+        ReceiverMode::Type(ty) => ty.as_ref().clone(),
     };
 
     let field_type = match field_assoc_type {
@@ -77,7 +77,7 @@ pub fn derive_with_provider_impl(
 
     items.extend(
         derive_getter_method(
-            &ContextArg::Ident(receiver_type),
+            &ContextArg::Type(receiver_type),
             field,
             None,
             Some(provider_ident.clone()),

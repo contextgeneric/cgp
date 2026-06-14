@@ -3,11 +3,11 @@ use cgp_macro_core::types::getter::FieldMode;
 use proc_macro2::TokenStream;
 use quote::quote;
 use syn::token::Mut;
-use syn::{Ident, ItemFn, parse2};
+use syn::{Ident, ItemFn, Type, parse2};
 
 pub enum ContextArg {
     SelfArg,
-    Ident(TokenStream),
+    Type(Type),
 }
 
 pub fn derive_getter_method(
@@ -35,7 +35,7 @@ pub fn derive_getter_method(
                 quote! { &mut self }
             }
         }
-        ContextArg::Ident(context_type) => {
+        ContextArg::Type(context_type) => {
             if spec.receiver_mut.is_none() {
                 quote! { context: & #context_type}
             } else {
@@ -54,7 +54,7 @@ pub fn derive_getter_method(
         ContextArg::SelfArg => {
             quote! { self }
         }
-        ContextArg::Ident(_) => {
+        ContextArg::Type(_) => {
             quote! { context }
         }
     };
@@ -83,7 +83,7 @@ pub fn derive_getter_method(
     })
 }
 
-pub fn extend_call_expr(
+fn extend_call_expr(
     call_expr: TokenStream,
     field_mode: &FieldMode,
     field_mut: &Option<Mut>,

@@ -22,8 +22,8 @@ pub fn derive_use_field_impl(
     let provider_name = &provider_trait.ident;
 
     let receiver_type = match &field.receiver_mode {
-        ReceiverMode::SelfReceiver => context_type.to_token_stream(),
-        ReceiverMode::Type(ty) => ty.to_token_stream(),
+        ReceiverMode::SelfReceiver => parse_quote!(#context_type),
+        ReceiverMode::Type(ty) => ty.as_ref().clone(),
     };
 
     let mut field_constraints: Punctuated<TypeParamBound, Plus> = Punctuated::default();
@@ -56,7 +56,7 @@ pub fn derive_use_field_impl(
     }
 
     items.extend(
-        derive_getter_method(&ContextArg::Ident(receiver_type.clone()), field, None, None)?
+        derive_getter_method(&ContextArg::Type(receiver_type.clone()), field, None, None)?
             .to_token_stream(),
     );
 

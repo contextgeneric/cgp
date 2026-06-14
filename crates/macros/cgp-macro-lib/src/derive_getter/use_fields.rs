@@ -47,15 +47,15 @@ pub fn derive_use_fields_impl(
 
     for field in fields {
         let receiver_type = match &field.receiver_mode {
-            ReceiverMode::SelfReceiver => context_type.to_token_stream(),
-            ReceiverMode::Type(ty) => ty.to_token_stream(),
+            ReceiverMode::SelfReceiver => parse_quote!(#context_type),
+            ReceiverMode::Type(ty) => ty.as_ref().clone(),
         };
 
         let field_name = Symbol::new(field.field_name.clone());
         let tag_type: Type = parse_quote!(#field_name);
 
         let method = derive_getter_method(
-            &ContextArg::Ident(receiver_type.clone()),
+            &ContextArg::Type(receiver_type.clone()),
             field,
             Some(quote! { ::< #field_name > }),
             None,
