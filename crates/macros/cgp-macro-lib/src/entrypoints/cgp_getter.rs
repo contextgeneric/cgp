@@ -1,8 +1,7 @@
-use cgp_macro_core::functions::parse_getter_fields;
 use cgp_macro_core::types::cgp_component::{
     CgpComponentRawArgs, EvaluatedCgpComponent, ItemCgpComponent,
 };
-use cgp_macro_core::types::cgp_getter::GetterField;
+use cgp_macro_core::types::cgp_getter::{GetterField, ItemCgpGetter};
 use cgp_macro_core::types::provider_impl::derive_is_provider_for;
 use proc_macro2::TokenStream;
 use quote::quote;
@@ -36,14 +35,18 @@ pub fn cgp_getter(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStre
 
     let items = evaluated.to_items()?;
 
-    let EvaluatedCgpComponent {
-        args,
-        consumer_trait,
-        provider_trait,
-        ..
-    } = evaluated;
+    let item_getter = ItemCgpGetter::try_from(evaluated)?;
 
-    let (fields, field_assoc_type) = parse_getter_fields(&args.context_ident, &consumer_trait)?;
+    let ItemCgpGetter {
+        item_component:
+            EvaluatedCgpComponent {
+                args,
+                provider_trait,
+                ..
+            },
+        fields,
+        field_assoc_type,
+    } = item_getter;
 
     let use_fields_impl =
         derive_use_fields_impl(&args, &provider_trait, &fields, &field_assoc_type)?;
