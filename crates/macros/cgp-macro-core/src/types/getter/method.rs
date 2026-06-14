@@ -1,9 +1,10 @@
-use cgp_macro_core::types::cgp_getter::GetterField;
-use cgp_macro_core::types::getter::{ContextArg, FieldMode};
 use proc_macro2::TokenStream;
 use quote::quote;
 use syn::token::Mut;
 use syn::{Ident, ItemFn, Type, parse2};
+
+use crate::types::cgp_getter::GetterField;
+use crate::types::getter::{ContextArg, FieldMode};
 
 pub fn derive_getter_method(
     context_arg: &ContextArg,
