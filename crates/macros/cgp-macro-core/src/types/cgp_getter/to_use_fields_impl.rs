@@ -49,7 +49,7 @@ impl ItemCgpGetter {
         for field in &self.fields {
             let receiver_type = match &field.receiver_mode {
                 ReceiverMode::SelfReceiver => parse_quote!(#context_type),
-                ReceiverMode::Type(ty) => ty.as_ref().clone(),
+                ReceiverMode::Type(ty) => ty.clone(),
             };
 
             let field_name = Symbol::new(field.field_name.clone());

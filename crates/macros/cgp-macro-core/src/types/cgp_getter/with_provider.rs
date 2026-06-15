@@ -12,7 +12,7 @@ impl ItemCgpGetter {
         if self.fields.len() == 1 {
             let field = &self.fields[0];
 
-            let item_impl = self.derive_with_provider_impl(&field)?;
+            let item_impl = self.derive_with_provider_impl(field)?;
 
             let component_type = self.item_component.args.component_name.to_type();
 
@@ -39,7 +39,7 @@ impl ItemCgpGetter {
 
         let receiver_type = match &field.receiver_mode {
             ReceiverMode::SelfReceiver => parse_quote!(#context_type),
-            ReceiverMode::Type(ty) => ty.as_ref().clone(),
+            ReceiverMode::Type(ty) => ty.clone(),
         };
 
         let field_type = match field_assoc_type {
