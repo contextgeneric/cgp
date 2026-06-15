@@ -3,9 +3,8 @@ use cgp_macro_core::types::cgp_getter::{GetterField, ReceiverMode};
 use cgp_macro_core::types::field::{HasFieldBound, Symbol};
 use cgp_macro_core::types::getter::{ContextArg, derive_getter_method};
 use cgp_macro_core::visitors::get_bounds_and_replace_self_assoc_type;
-use proc_macro2::TokenStream;
 use quote::{ToTokens, quote};
-use syn::{ItemImpl, ItemTrait, TraitItemType, Type, parse_quote, parse2};
+use syn::{ImplItem, ItemImpl, ItemTrait, TraitItemType, Type, parse_quote, parse2};
 
 pub fn derive_use_fields_impl(
     spec: &CgpComponentArgs,
@@ -17,7 +16,7 @@ pub fn derive_use_fields_impl(
 
     let provider_name = &spec.provider_ident;
 
-    let mut items: TokenStream = TokenStream::new();
+    let mut items: Vec<ImplItem> = Vec::new();
 
     let mut provider_generics = provider_trait.generics.clone();
 
@@ -28,9 +27,9 @@ pub fn derive_use_fields_impl(
             .params
             .push(parse2(field_assoc_type_ident.to_token_stream())?);
 
-        items.extend(quote! {
+        items.push(parse2(quote! {
             type #field_assoc_type_ident = #field_assoc_type_ident;
-        });
+        })?);
 
         let field_constraints = get_bounds_and_replace_self_assoc_type(field_assoc_type);
 
@@ -60,7 +59,7 @@ pub fn derive_use_fields_impl(
             None,
         )?;
 
-        items.extend(method.to_token_stream());
+        items.push(method.into());
 
         let field_type = if let Some(trait_item) = &field_assoc_type {
             let trait_item_ident = &trait_item.ident;
@@ -88,7 +87,7 @@ pub fn derive_use_fields_impl(
         impl #impl_generics #provider_name #type_generics for UseFields
         #where_clause
         {
-            #items
+            #( #items )*
         }
     })?;
 
