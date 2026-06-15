@@ -7,9 +7,7 @@ use proc_macro2::TokenStream;
 use quote::quote;
 use syn::{Ident, ItemTrait, Type, parse_quote, parse2};
 
-use crate::derive_getter::{
-    derive_use_field_impl, derive_use_fields_impl, derive_with_provider_impl,
-};
+use crate::derive_getter::{derive_use_field_impl, derive_with_provider_impl};
 
 pub fn cgp_getter(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
     let mut raw_args: CgpComponentRawArgs = parse2(attr.clone())?;
@@ -37,6 +35,8 @@ pub fn cgp_getter(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStre
 
     let item_getter = ItemCgpGetter::try_from(evaluated)?;
 
+    let use_fields_impl = item_getter.to_use_fields_impl()?.to_item_impls()?;
+
     let ItemCgpGetter {
         item_component:
             EvaluatedCgpComponent {
@@ -48,25 +48,17 @@ pub fn cgp_getter(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStre
         field_assoc_type,
     } = item_getter;
 
-    let use_fields_impl =
-        derive_use_fields_impl(&args, &provider_trait, &fields, &field_assoc_type)?;
-
     let component_name_type: Type = {
         let component_name = &args.component_name;
         parse_quote!( #component_name )
     };
-
-    let is_provider_use_fields_impl =
-        derive_is_provider_for(&component_name_type, &use_fields_impl)?;
 
     let m_field: Option<[GetterField; 1]> = fields.try_into().ok();
 
     let mut derived = quote! {
         #( #items )*
 
-        #use_fields_impl
-
-        #is_provider_use_fields_impl
+        #( #use_fields_impl )*
     };
 
     if let Some([field]) = m_field {

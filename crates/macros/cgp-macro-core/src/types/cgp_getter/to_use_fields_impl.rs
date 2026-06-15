@@ -1,12 +1,11 @@
-use proc_macro2::TokenStream;
 use quote::{ToTokens, quote};
-use syn::{Type, parse_quote, parse2};
+use syn::{ImplItem, ItemImpl, Type, parse_quote, parse2};
 
 use crate::types::cgp_getter::{ItemCgpGetter, ReceiverMode};
-use crate::types::field::Symbol;
+use crate::types::field::{HasFieldBound, Symbol};
+use crate::types::getter::{ContextArg, derive_getter_method};
 use crate::types::provider_impl::ItemProviderImpl;
 use crate::visitors::get_bounds_and_replace_self_assoc_type;
-
 
 impl ItemCgpGetter {
     pub fn to_use_fields_impl(&self) -> syn::Result<ItemProviderImpl> {
@@ -16,20 +15,24 @@ impl ItemCgpGetter {
 
         let provider_name = &self.item_component.args.provider_ident;
 
-        let mut items: TokenStream = TokenStream::new();
+        let component_name = &self.item_component.args.component_name;
+
+        let field_assoc_type = &self.field_assoc_type;
+
+        let mut items: Vec<ImplItem> = Vec::new();
 
         let mut provider_generics = provider_trait.generics.clone();
 
-        if let Some(field_assoc_type) = &self.field_assoc_type {
+        if let Some(field_assoc_type) = &field_assoc_type {
             let field_assoc_type_ident = &field_assoc_type.ident;
 
             provider_generics
                 .params
                 .push(parse2(field_assoc_type_ident.to_token_stream())?);
 
-            items.extend(quote! {
+            items.push(parse2(quote! {
                 type #field_assoc_type_ident = #field_assoc_type_ident;
-            });
+            })?);
 
             let field_constraints = get_bounds_and_replace_self_assoc_type(field_assoc_type);
 
@@ -45,21 +48,21 @@ impl ItemCgpGetter {
 
         for field in &self.fields {
             let receiver_type = match &field.receiver_mode {
-                ReceiverMode::SelfReceiver => context_type.to_token_stream(),
-                ReceiverMode::Type(ty) => ty.to_token_stream(),
+                ReceiverMode::SelfReceiver => parse_quote!(#context_type),
+                ReceiverMode::Type(ty) => ty.as_ref().clone(),
             };
 
             let field_name = Symbol::new(field.field_name.clone());
             let tag_type: Type = parse_quote!(#field_name);
 
             let method = derive_getter_method(
-                &ContextArg::Ident(receiver_type.clone()),
+                &ContextArg::Type(receiver_type.clone()),
                 field,
-                Some(quote! { ::< #field_name > }),
+                &tag_type,
                 None,
-            );
+            )?;
 
-            items.extend(method);
+            items.push(method.into());
 
             let field_type = if let Some(trait_item) = &field_assoc_type {
                 let trait_item_ident = &trait_item.ident;
@@ -83,13 +86,17 @@ impl ItemCgpGetter {
         let (_, type_generics, _) = provider_trait.generics.split_for_impl();
         let (impl_generics, _, where_clause) = provider_generics.split_for_impl();
 
-        let out = parse2(quote! {
+        let item_impl: ItemImpl = parse2(quote! {
             impl #impl_generics #provider_name #type_generics for UseFields
             #where_clause
             {
-                #items
+                #( #items )*
             }
         })?;
-        todo!()
+
+        Ok(ItemProviderImpl {
+            component_type: component_name.to_type(),
+            item_impl,
+        })
     }
 }
