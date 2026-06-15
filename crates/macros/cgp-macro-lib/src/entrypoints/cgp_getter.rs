@@ -5,9 +5,9 @@ use cgp_macro_core::types::cgp_getter::{GetterField, ItemCgpGetter};
 use cgp_macro_core::types::provider_impl::derive_is_provider_for;
 use proc_macro2::TokenStream;
 use quote::quote;
-use syn::{Ident, ItemTrait, Type, parse_quote, parse2};
+use syn::{Ident, ItemTrait, Type, parse2};
 
-use crate::derive_getter::{derive_use_field_impl, derive_with_provider_impl};
+use crate::derive_getter::derive_with_provider_impl;
 
 pub fn cgp_getter(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
     let mut raw_args: CgpComponentRawArgs = parse2(attr.clone())?;
@@ -37,6 +37,8 @@ pub fn cgp_getter(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStre
 
     let use_fields_impl = item_getter.to_use_fields_impl()?.to_item_impls()?;
 
+    let use_field_impl = item_getter.to_use_field_impl()?.to_item_impls()?;
+
     let ItemCgpGetter {
         item_component:
             EvaluatedCgpComponent {
@@ -48,26 +50,18 @@ pub fn cgp_getter(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStre
         field_assoc_type,
     } = item_getter;
 
-    let component_name_type: Type = {
-        let component_name = &args.component_name;
-        parse_quote!( #component_name )
-    };
-
-    let m_field: Option<[GetterField; 1]> = fields.try_into().ok();
+    let component_name_type: Type = args.component_name.to_type();
 
     let mut derived = quote! {
         #( #items )*
 
         #( #use_fields_impl )*
+        #( #use_field_impl )*
     };
 
+    let m_field: Option<[GetterField; 1]> = fields.try_into().ok();
+
     if let Some([field]) = m_field {
-        let use_field_impl =
-            derive_use_field_impl(&args, &provider_trait, &field, &field_assoc_type)?;
-
-        let is_provider_use_field_impl =
-            derive_is_provider_for(&component_name_type, &use_field_impl)?;
-
         let use_provider_impl =
             derive_with_provider_impl(&args, &provider_trait, &field, &field_assoc_type)?;
 
@@ -75,9 +69,6 @@ pub fn cgp_getter(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStre
             derive_is_provider_for(&component_name_type, &use_provider_impl)?;
 
         derived.extend(quote! {
-            #use_field_impl
-            #is_provider_use_field_impl
-
             #use_provider_impl
             #is_provider_use_provider_impl
         });
