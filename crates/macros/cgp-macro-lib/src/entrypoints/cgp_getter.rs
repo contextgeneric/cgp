@@ -1,13 +1,10 @@
 use cgp_macro_core::types::cgp_component::{
-    CgpComponentRawArgs, EvaluatedCgpComponent, ItemCgpComponent,
+    CgpComponentRawArgs, ItemCgpComponent,
 };
-use cgp_macro_core::types::cgp_getter::{GetterField, ItemCgpGetter};
-use cgp_macro_core::types::provider_impl::derive_is_provider_for;
+use cgp_macro_core::types::cgp_getter::ItemCgpGetter;
 use proc_macro2::TokenStream;
 use quote::quote;
-use syn::{Ident, ItemTrait, Type, parse2};
-
-use crate::derive_getter::derive_with_provider_impl;
+use syn::{Ident, ItemTrait, parse2};
 
 pub fn cgp_getter(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
     let mut raw_args: CgpComponentRawArgs = parse2(attr.clone())?;
@@ -38,41 +35,15 @@ pub fn cgp_getter(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStre
     let use_fields_impl = item_getter.to_use_fields_impl()?.to_item_impls()?;
 
     let use_field_impl = item_getter.to_use_field_impl()?.to_item_impls()?;
+    let with_provider_impl = item_getter.to_with_provider_impl()?.to_item_impls()?;
 
-    let ItemCgpGetter {
-        item_component:
-            EvaluatedCgpComponent {
-                args,
-                provider_trait,
-                ..
-            },
-        fields,
-        field_assoc_type,
-    } = item_getter;
-
-    let component_name_type: Type = args.component_name.to_type();
-
-    let mut derived = quote! {
+    let derived = quote! {
         #( #items )*
 
         #( #use_fields_impl )*
         #( #use_field_impl )*
+        #( #with_provider_impl )*
     };
-
-    let m_field: Option<[GetterField; 1]> = fields.try_into().ok();
-
-    if let Some([field]) = m_field {
-        let use_provider_impl =
-            derive_with_provider_impl(&args, &provider_trait, &field, &field_assoc_type)?;
-
-        let is_provider_use_provider_impl =
-            derive_is_provider_for(&component_name_type, &use_provider_impl)?;
-
-        derived.extend(quote! {
-            #use_provider_impl
-            #is_provider_use_provider_impl
-        });
-    }
 
     Ok(derived)
 }
