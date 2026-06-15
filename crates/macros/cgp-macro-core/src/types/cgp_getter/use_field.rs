@@ -7,11 +7,11 @@ use syn::{Generics, ItemImpl, Type, TypeParamBound, parse_quote, parse2};
 use crate::types::cgp_getter::{GetterField, ItemCgpGetter, ReceiverMode};
 use crate::types::field::HasFieldBound;
 use crate::types::getter::{ContextArg, derive_getter_method};
-use crate::types::provider_impl::{ItemProviderImpl, ItemProviderImpls};
+use crate::types::provider_impl::ItemProviderImpl;
 use crate::visitors::get_bounds_and_replace_self_assoc_type;
 
 impl ItemCgpGetter {
-    pub fn to_use_field_impl(&self) -> syn::Result<ItemProviderImpls> {
+    pub fn to_use_field_impl(&self) -> syn::Result<Option<ItemProviderImpl>> {
         if self.fields.len() == 1 {
             let field = &self.fields[0];
 
@@ -24,9 +24,9 @@ impl ItemCgpGetter {
                 item_impl,
             };
 
-            Ok(ItemProviderImpls { items: vec![item] })
+            Ok(Some(item))
         } else {
-            Ok(ItemProviderImpls::default())
+            Ok(None)
         }
     }
 

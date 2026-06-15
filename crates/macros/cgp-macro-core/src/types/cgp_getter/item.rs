@@ -3,11 +3,24 @@ use syn::{Error, TraitItemType};
 use crate::functions::parse_getter_fields;
 use crate::types::cgp_component::EvaluatedCgpComponent;
 use crate::types::cgp_getter::GetterField;
+use crate::types::provider_impl::ItemProviderImpls;
 
 pub struct ItemCgpGetter {
     pub item_component: EvaluatedCgpComponent,
     pub fields: Vec<GetterField>,
     pub field_assoc_type: Option<TraitItemType>,
+}
+
+impl ItemCgpGetter {
+    pub fn to_item_provider_impls(&self) -> syn::Result<ItemProviderImpls> {
+        let mut items = ItemProviderImpls::default();
+
+        items.items.push(self.to_use_fields_impl()?);
+        items.items.extend(self.to_use_field_impl()?);
+        items.items.extend(self.to_with_provider_impl()?);
+
+        Ok(items)
+    }
 }
 
 impl TryFrom<EvaluatedCgpComponent> for ItemCgpGetter {

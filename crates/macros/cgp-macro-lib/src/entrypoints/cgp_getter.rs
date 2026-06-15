@@ -1,6 +1,4 @@
-use cgp_macro_core::types::cgp_component::{
-    CgpComponentRawArgs, ItemCgpComponent,
-};
+use cgp_macro_core::types::cgp_component::{CgpComponentRawArgs, ItemCgpComponent};
 use cgp_macro_core::types::cgp_getter::ItemCgpGetter;
 use proc_macro2::TokenStream;
 use quote::quote;
@@ -32,17 +30,12 @@ pub fn cgp_getter(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStre
 
     let item_getter = ItemCgpGetter::try_from(evaluated)?;
 
-    let use_fields_impl = item_getter.to_use_fields_impl()?.to_item_impls()?;
-
-    let use_field_impl = item_getter.to_use_field_impl()?.to_item_impls()?;
-    let with_provider_impl = item_getter.to_with_provider_impl()?.to_item_impls()?;
+    let item_impls = item_getter.to_item_provider_impls()?.to_item_impls()?;
 
     let derived = quote! {
         #( #items )*
 
-        #( #use_fields_impl )*
-        #( #use_field_impl )*
-        #( #with_provider_impl )*
+        #( #item_impls )*
     };
 
     Ok(derived)
