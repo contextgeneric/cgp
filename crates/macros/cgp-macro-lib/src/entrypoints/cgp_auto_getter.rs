@@ -1,10 +1,7 @@
-use cgp_macro_core::functions::parse_getter_fields;
-use cgp_macro_core::types::attributes::CgpComponentAttributes;
+use cgp_macro_core::types::cgp_auto_getter::ItemCgpAutoGetter;
 use proc_macro2::{Span, TokenStream};
 use quote::quote;
-use syn::{Error, Ident, ItemTrait};
-
-use crate::derive_getter::derive_blanket_impl;
+use syn::{Error, ItemTrait};
 
 pub fn cgp_auto_getter(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
     if !attr.is_empty() {
@@ -14,22 +11,13 @@ pub fn cgp_auto_getter(attr: TokenStream, body: TokenStream) -> syn::Result<Toke
         ));
     }
 
-    let mut item_trait: ItemTrait = syn::parse2(body)?;
+    let item_trait: ItemTrait = syn::parse2(body)?;
 
-    let attributes = CgpComponentAttributes::parse(&mut item_trait.attrs)?;
+    let item_cgp_auto_getter = ItemCgpAutoGetter::preprocess(&item_trait)?;
 
-    item_trait.supertraits.extend(attributes.extend.clone());
-
-    attributes.use_type.transform_item_trait(&mut item_trait)?;
-
-    let context_type = Ident::new("__Context__", Span::call_site());
-
-    let (fields, field_type) = parse_getter_fields(&context_type, &item_trait)?;
-
-    let blanket_impl = derive_blanket_impl(&context_type, &item_trait, &fields, &field_type)?;
+    let items = item_cgp_auto_getter.to_items()?;
 
     Ok(quote! {
-        #item_trait
-        #blanket_impl
+        #( #items )*
     })
 }

@@ -1,9 +1,10 @@
-use cgp_macro_core::types::cgp_getter::{GetterField, ReceiverMode};
-use cgp_macro_core::types::field::{FieldName, HasFieldBound};
-use cgp_macro_core::types::getter::{ContextArg, derive_getter_method};
-use cgp_macro_core::visitors::get_bounds_and_replace_self_assoc_type;
 use quote::{ToTokens, quote};
 use syn::{Ident, ImplItem, ItemImpl, ItemTrait, TraitItemType, parse_quote, parse2};
+
+use crate::types::cgp_getter::{GetterField, ReceiverMode};
+use crate::types::field::{FieldName, HasFieldBound};
+use crate::types::getter::{ContextArg, derive_getter_method};
+use crate::visitors::get_bounds_and_replace_self_assoc_type;
 
 pub fn derive_blanket_impl(
     context_type: &Ident,

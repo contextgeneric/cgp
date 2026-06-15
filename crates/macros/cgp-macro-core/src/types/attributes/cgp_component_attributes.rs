@@ -3,7 +3,7 @@ use core::mem;
 use syn::parse::Parse;
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
-use syn::{Attribute, TypeParamBound};
+use syn::{Attribute, ItemTrait, TypeParamBound};
 
 use crate::types::attributes::{PrefixAttribute, UseTypeAttribute, UseTypeAttributes};
 
@@ -15,6 +15,18 @@ pub struct CgpComponentAttributes {
 }
 
 impl CgpComponentAttributes {
+    pub fn preprocess(item_trait: &ItemTrait) -> syn::Result<(Self, ItemTrait)> {
+        let mut item_trait = item_trait.clone();
+
+        let attributes = Self::parse(&mut item_trait.attrs)?;
+
+        item_trait.supertraits.extend(attributes.extend.clone());
+
+        attributes.use_type.transform_item_trait(&mut item_trait)?;
+
+        Ok((attributes, item_trait))
+    }
+
     pub fn parse(attributes: &mut Vec<Attribute>) -> syn::Result<Self> {
         let mut parsed_attributes = CgpComponentAttributes::default();
 
