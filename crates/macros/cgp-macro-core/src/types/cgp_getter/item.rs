@@ -1,4 +1,4 @@
-use syn::{Error, TraitItemType};
+use syn::{Error, Item, TraitItemType};
 
 use crate::functions::parse_getter_fields;
 use crate::types::cgp_component::EvaluatedCgpComponent;
@@ -12,6 +12,15 @@ pub struct ItemCgpGetter {
 }
 
 impl ItemCgpGetter {
+    pub fn to_items(&self) -> syn::Result<Vec<Item>> {
+        let mut items = self.item_component.to_items()?;
+
+        let item_impls = self.to_item_provider_impls()?.to_item_impls()?;
+        items.extend(item_impls.into_iter().map(Item::Impl));
+
+        Ok(items)
+    }
+
     pub fn to_item_provider_impls(&self) -> syn::Result<ItemProviderImpls> {
         let mut items = ItemProviderImpls::default();
 

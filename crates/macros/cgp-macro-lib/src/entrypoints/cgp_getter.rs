@@ -26,16 +26,12 @@ pub fn cgp_getter(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStre
 
     let evaluated = item_cgp_component.preprocess()?.eval()?;
 
-    let items = evaluated.to_items()?;
-
     let item_getter = ItemCgpGetter::try_from(evaluated)?;
 
-    let item_impls = item_getter.to_item_provider_impls()?.to_item_impls()?;
+    let items = item_getter.to_items()?;
 
     let derived = quote! {
         #( #items )*
-
-        #( #item_impls )*
     };
 
     Ok(derived)
