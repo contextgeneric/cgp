@@ -8,7 +8,6 @@
 extern crate alloc;
 
 pub(crate) mod blanket_trait;
-pub(crate) mod cgp_fn;
 pub(crate) mod check_components;
 pub(crate) mod delegate_components;
 pub(crate) mod derive_builder;
@@ -23,7 +22,6 @@ pub(crate) mod symbol;
 pub(crate) mod type_component;
 
 mod entrypoints;
-pub mod utils;
 
 pub use field::derive_has_field;
 pub use product::{make_product_expr, make_product_type, make_sum_type};

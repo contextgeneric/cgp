@@ -1,4 +1,4 @@
-use cgp_macro_lib::utils::to_camel_case_str;
+use cgp_macro_core::functions::to_camel_case_str;
 use proc_macro2::TokenStream;
 use quote::quote;
 use syn::spanned::Spanned;

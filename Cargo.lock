@@ -131,7 +131,7 @@ dependencies = [
 name = "cgp-extra-macro-lib"
 version = "0.7.0"
 dependencies = [
- "cgp-macro-lib",
+ "cgp-macro-core",
  "proc-macro2",
  "quote",
  "syn",

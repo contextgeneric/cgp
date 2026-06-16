@@ -1,6 +1,7 @@
 pub mod attributes;
 pub mod cgp_auto_getter;
 pub mod cgp_component;
+pub mod cgp_fn;
 pub mod cgp_getter;
 pub mod cgp_impl;
 pub mod cgp_provider;
