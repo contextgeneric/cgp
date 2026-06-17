@@ -1,9 +1,10 @@
 use quote::quote;
 use syn::parse::{Parse, ParseStream};
 use syn::token::In;
-use syn::{ItemImpl, parse_quote, parse2};
+use syn::{ItemImpl, parse_quote};
 
 use crate::exports::RedirectLookup;
+use crate::functions::parse_internal;
 use crate::types::ident::{IdentWithTypeArgs, IdentWithTypeGenerics};
 use crate::types::path::UniPath;
 
@@ -31,7 +32,7 @@ impl PrefixAttribute {
         let mut type_generics = component_name.type_generics.clone();
         type_generics.params.insert(0, parse_quote!(__Components__));
 
-        let item_impl = parse2(quote! {
+        let item_impl = parse_internal(quote! {
             impl #type_generics #namespace for #component_name
             {
                 type Delegate = #RedirectLookup< __Components__, #path >;
