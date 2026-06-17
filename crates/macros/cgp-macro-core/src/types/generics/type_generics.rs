@@ -3,7 +3,9 @@ use core::ops::{Deref, DerefMut};
 use proc_macro2::TokenStream;
 use quote::ToTokens;
 use syn::parse::{Parse, ParseStream};
-use syn::{Error, Generics, parse2};
+use syn::{Error, Generics};
+
+use crate::functions::parse_internal;
 
 #[derive(Debug, Clone, Default)]
 pub struct TypeGenerics {
@@ -30,7 +32,7 @@ impl Parse for TypeGenerics {
 
         let (_, type_generics, _) = generics.split_for_impl();
 
-        let generics2: Generics = parse2(type_generics.to_token_stream())?;
+        let generics2: Generics = parse_internal(type_generics.to_token_stream())?;
 
         if generics != generics2 {
             return Err(Error::new_spanned(generics, "invalid type generics syntax"));
@@ -45,7 +47,7 @@ impl<'a> TryFrom<&'a Generics> for TypeGenerics {
 
     fn try_from(generics: &'a Generics) -> syn::Result<Self> {
         let (_, type_generics, _) = generics.split_for_impl();
-        let generics = parse2(type_generics.to_token_stream())?;
+        let generics = parse_internal(type_generics.to_token_stream())?;
         Ok(Self { generics })
     }
 }

@@ -1,10 +1,10 @@
 use quote::quote;
 use syn::punctuated::Punctuated;
 use syn::visit_mut::VisitMut;
-use syn::{Ident, ItemTrait, TraitItem, Type, TypeParamBound, parse_quote, parse2};
+use syn::{Ident, ItemTrait, TraitItem, Type, TypeParamBound, parse_quote};
 
 use crate::exports::IsProviderFor;
-use crate::functions::{parse_is_provider_params, to_snake_case_ident};
+use crate::functions::{parse_internal, parse_is_provider_params, to_snake_case_ident};
 use crate::types::cgp_component::PreprocessedCgpComponent;
 use crate::visitors::{
     ReplaceSelfReceiverVisitor, ReplaceSelfTypeVisitor, ReplaceSelfValueVisitor,
@@ -58,7 +58,7 @@ impl PreprocessedCgpComponent {
 
         let is_provider_params = parse_is_provider_params(&consumer_trait.generics)?;
 
-        let provider_supertrait: TypeParamBound = parse2(quote!(
+        let provider_supertrait: TypeParamBound = parse_internal(quote!(
             #IsProviderFor< #component_name, #context_type_ident, ( #is_provider_params ) >
         ))?;
 

@@ -3,10 +3,10 @@ use quote::quote;
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::token::{Comma, Gt, Lt, Paren};
-use syn::{Error, Ident, ItemImpl, ItemTrait, Path, parenthesized, parse_quote, parse2};
+use syn::{Error, Ident, ItemImpl, ItemTrait, Path, parenthesized, parse_quote};
 
 use crate::exports::DelegateComponent;
-use crate::functions::trait_items_to_delegated_impl_items;
+use crate::functions::{parse_internal, trait_items_to_delegated_impl_items};
 
 #[derive(Clone)]
 pub struct DeriveDelegateAttribute {
@@ -31,7 +31,7 @@ impl DeriveDelegateAttribute {
 
         let where_clause = generics.make_where_clause();
 
-        where_clause.predicates.push(parse2(quote! {
+        where_clause.predicates.push(parse_internal(quote! {
             #components_ident: #DelegateComponent<
                 ( #use_delegate_params ),
                 Delegate = #delegate_ident,
@@ -40,7 +40,7 @@ impl DeriveDelegateAttribute {
 
         let type_generics = provider_trait.generics.split_for_impl().1;
 
-        where_clause.predicates.push(parse2(quote! {
+        where_clause.predicates.push(parse_internal(quote! {
             #delegate_ident : #provider_trait_ident #type_generics
         })?);
 
@@ -52,7 +52,7 @@ impl DeriveDelegateAttribute {
             &parse_quote!( #provider_trait_ident #type_generics ),
         )?;
 
-        let provider_type = parse2(quote!(#wrapper_ident < #components_ident >))?;
+        let provider_type = parse_internal(quote!(#wrapper_ident < #components_ident >))?;
         let trait_path: Path = parse_quote!( #provider_trait_ident #type_generics );
 
         let item = ItemImpl {

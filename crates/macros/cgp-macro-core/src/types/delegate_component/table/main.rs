@@ -1,8 +1,9 @@
 use proc_macro2::TokenStream;
 use quote::ToTokens;
 use syn::parse::{Parse, ParseStream};
-use syn::{ItemImpl, Type, braced, parse2};
+use syn::{ItemImpl, Type, braced};
 
+use crate::functions::parse_internal;
 use crate::traits::ParseOptionalKeyword;
 use crate::types::delegate_component::{DelegateEntries, ExtractInnerDelegateTables};
 use crate::types::empty_struct::EmptyStruct;
@@ -53,7 +54,8 @@ impl DelegateTable {
         let mut item_structs = Vec::new();
 
         if self.new.is_some() {
-            let struct_type: IdentWithTypeGenerics = parse2(self.table_type.to_token_stream())?;
+            let struct_type: IdentWithTypeGenerics =
+                parse_internal(self.table_type.to_token_stream())?;
             item_structs.push(EmptyStruct {
                 ident: struct_type.ident,
                 generics: struct_type.type_generics.generics,

@@ -2,8 +2,9 @@ use proc_macro2::TokenStream;
 use quote::{ToTokens, quote};
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
-use syn::{Ident, Type, WherePredicate, parse_quote, parse2};
+use syn::{Ident, Type, WherePredicate, parse_quote};
 
+use crate::functions::parse_internal;
 use crate::types::attributes::{UseTypeAttribute, UseTypeIdent};
 
 pub fn derive_use_type_predicates(specs: &[UseTypeAttribute]) -> syn::Result<Vec<WherePredicate>> {
@@ -22,7 +23,7 @@ pub fn derive_use_type_predicates(specs: &[UseTypeAttribute]) -> syn::Result<Vec
         }
 
         if type_equalities.is_empty() {
-            predicates.push(parse2(quote! {
+            predicates.push(parse_internal(quote! {
                 #context_type: #trait_path
             })?);
         } else {
@@ -34,7 +35,7 @@ pub fn derive_use_type_predicates(specs: &[UseTypeAttribute]) -> syn::Result<Vec
                 });
             }
 
-            predicates.push(parse2(quote! {
+            predicates.push(parse_internal(quote! {
                 #context_type: #trait_path < #constraints >
             })?);
         }
@@ -44,7 +45,7 @@ pub fn derive_use_type_predicates(specs: &[UseTypeAttribute]) -> syn::Result<Vec
 }
 
 fn find_type_alias(specs: &[UseTypeAttribute], context_type: &Type) -> syn::Result<Option<Type>> {
-    let Ok(context_ident) = parse2::<Ident>(context_type.to_token_stream()) else {
+    let Ok(context_ident) = parse_internal::<Ident>(context_type.to_token_stream()) else {
         return Ok(None);
     };
 
@@ -55,7 +56,7 @@ fn find_type_alias(specs: &[UseTypeAttribute], context_type: &Type) -> syn::Resu
                 let type_ident = &ident.type_ident;
                 let trait_path = &spec.trait_path;
 
-                let new_type = parse2(quote! {
+                let new_type = parse_internal(quote! {
                     <#new_context_type as #trait_path>::#type_ident
                 })?;
 
@@ -121,14 +122,15 @@ fn find_type_equality(
             }
 
             for match_use_type in spec.type_idents.iter() {
-                let match_type: Type = parse2(match_use_type.alias_ident().to_token_stream())?;
+                let match_type: Type =
+                    parse_internal(match_use_type.alias_ident().to_token_stream())?;
                 if match_type == equal_target {
                     let trait_path = &spec.trait_path;
                     let current_type_ident = &current_ident.type_ident;
                     let match_type_ident = &match_use_type.type_ident;
                     let context_type = &spec.context_type;
 
-                    let equal_target: Type = parse2(quote! {
+                    let equal_target: Type = parse_internal(quote! {
                         <#context_type as #trait_path>::#match_type_ident
                     })?;
 

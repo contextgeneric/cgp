@@ -1,8 +1,9 @@
 use proc_macro2::TokenStream;
 use quote::quote;
 use syn::token::Mut;
-use syn::{Ident, ImplItemFn, Type, parse2};
+use syn::{Ident, ImplItemFn, Type};
 
+use crate::functions::parse_internal;
 use crate::types::cgp_getter::GetterField;
 use crate::types::getter::{ContextArg, FieldMode};
 
@@ -101,7 +102,7 @@ impl GetterMethod {
 
         let return_type = &getter_field.return_type;
 
-        parse2(quote! {
+        parse_internal(quote! {
             fn #getter_ident( #context_fn_arg #phantom_arg ) -> #return_type {
                 #call_expr
             }

@@ -3,7 +3,9 @@ use core::ops::{Deref, DerefMut};
 use proc_macro2::TokenStream;
 use quote::ToTokens;
 use syn::parse::{Parse, ParseStream};
-use syn::{Error, Generics, parse2};
+use syn::{Error, Generics};
+
+use crate::functions::parse_internal;
 
 #[derive(Debug, Clone, Default)]
 pub struct ImplGenerics {
@@ -30,7 +32,7 @@ impl Parse for ImplGenerics {
 
         let (impl_generics, _, _) = generics.split_for_impl();
 
-        let generics2: Generics = parse2(impl_generics.to_token_stream())?;
+        let generics2: Generics = parse_internal(impl_generics.to_token_stream())?;
 
         if generics != generics2 {
             return Err(Error::new_spanned(generics, "invalid impl generics syntax"));

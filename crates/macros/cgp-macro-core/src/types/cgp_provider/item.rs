@@ -1,7 +1,8 @@
 use quote::ToTokens;
 use syn::spanned::Spanned;
-use syn::{Error, Ident, ItemImpl, Type, parse_quote, parse2};
+use syn::{Error, Ident, ItemImpl, Type, parse_quote};
 
+use crate::functions::parse_internal;
 use crate::types::cgp_provider::{LoweredCgpProvider, ProviderArgs};
 use crate::types::empty_struct::EmptyStruct;
 use crate::types::ident::{IdentWithTypeArgs, IdentWithTypeGenerics};
@@ -36,14 +37,15 @@ impl ItemCgpProvider {
             Error::new(item_impl.span(), "expect provider trait name to be present")
         })?;
 
-        let provider_trait: IdentWithTypeArgs = parse2(provider_trait_path.to_token_stream())?;
+        let provider_trait: IdentWithTypeArgs =
+            parse_internal(provider_trait_path.to_token_stream())?;
 
         let component_ident = Ident::new(
             &format!("{}Component", provider_trait.ident),
             provider_trait.span(),
         );
 
-        parse2(component_ident.to_token_stream())
+        parse_internal(component_ident.to_token_stream())
     }
 
     pub fn to_provider_struct(&self) -> syn::Result<Option<EmptyStruct>> {

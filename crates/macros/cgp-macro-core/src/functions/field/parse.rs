@@ -1,10 +1,9 @@
 use quote::{ToTokens, quote};
 use syn::spanned::Spanned;
 use syn::token::Mut;
-use syn::{
-    Error, GenericArgument, PathArguments, PathSegment, Type, TypePath, parse_quote, parse2,
-};
+use syn::{Error, GenericArgument, PathArguments, PathSegment, Type, TypePath, parse_quote};
 
+use crate::functions::parse_internal;
 use crate::types::getter::FieldMode;
 
 pub fn parse_field_type(
@@ -42,7 +41,7 @@ pub fn parse_field_type(
         Type::Path(type_path) => {
             if let Some(field_type) = try_parse_option_ref(type_path) {
                 Ok((
-                    parse2(quote! { Option< #field_type > })?,
+                    parse_internal(quote! { Option< #field_type > })?,
                     FieldMode::OptionRef,
                 ))
             } else if let (Some(field_type), None) = (try_parse_mref(type_path), receiver_mut) {

@@ -1,8 +1,8 @@
 use quote::quote;
-use syn::{Generics, ItemImpl, Type, parse_quote, parse2};
+use syn::{Generics, ItemImpl, Type, parse_quote};
 
 use crate::exports::{DelegateComponent, IsProviderFor};
-use crate::functions::merge_generics;
+use crate::functions::{merge_generics, parse_internal};
 
 pub struct EvaluatedDelegateEntry {
     pub table_type: Type,
@@ -33,7 +33,7 @@ impl EvaluatedDelegateEntry {
 
         let (impl_generics, _, where_clause) = generics.split_for_impl();
 
-        parse2(quote! {
+        parse_internal(quote! {
             impl #impl_generics
                 #DelegateComponent< #key >
                 for #table_type
@@ -61,7 +61,7 @@ impl EvaluatedDelegateEntry {
 
         let (impl_generics, _, where_clause) = generics.split_for_impl();
 
-        parse2(quote! {
+        parse_internal(quote! {
             impl #impl_generics
                 #IsProviderFor< #key, __Context__, __Params__ >
                 for #table_type
@@ -82,7 +82,7 @@ impl EvaluatedDelegateEntry {
 
         let (impl_generics, _, where_clause) = generics.split_for_impl();
 
-        parse2(quote! {
+        parse_internal(quote! {
             impl #impl_generics
                 #namespace_trait
                 for #key

@@ -1,6 +1,7 @@
 use quote::{ToTokens, quote};
-use syn::{ImplItem, ItemImpl, Type, parse_quote, parse2};
+use syn::{ImplItem, ItemImpl, Type, parse_quote};
 
+use crate::functions::parse_internal;
 use crate::types::cgp_getter::{ItemCgpGetter, ReceiverMode};
 use crate::types::field::{HasFieldBound, Symbol};
 use crate::types::getter::{ContextArg, derive_getter_method};
@@ -28,9 +29,9 @@ impl ItemCgpGetter {
 
             provider_generics
                 .params
-                .push(parse2(field_assoc_type_ident.to_token_stream())?);
+                .push(parse_internal(field_assoc_type_ident.to_token_stream())?);
 
-            items.push(parse2(quote! {
+            items.push(parse_internal(quote! {
                 type #field_assoc_type_ident = #field_assoc_type_ident;
             })?);
 
@@ -39,7 +40,7 @@ impl ItemCgpGetter {
             provider_generics
                 .make_where_clause()
                 .predicates
-                .push(parse2(quote! {
+                .push(parse_internal(quote! {
                     #field_assoc_type_ident: #field_constraints
                 })?);
         }
@@ -80,13 +81,13 @@ impl ItemCgpGetter {
 
             where_clause
                 .predicates
-                .push(parse2(quote! { #receiver_type: #constraint })?);
+                .push(parse_internal(quote! { #receiver_type: #constraint })?);
         }
 
         let (_, type_generics, _) = provider_trait.generics.split_for_impl();
         let (impl_generics, _, where_clause) = provider_generics.split_for_impl();
 
-        let item_impl: ItemImpl = parse2(quote! {
+        let item_impl: ItemImpl = parse_internal(quote! {
             impl #impl_generics #provider_name #type_generics for UseFields
             #where_clause
             {

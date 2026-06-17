@@ -1,7 +1,8 @@
 use quote::ToTokens;
 use syn::visit_mut::VisitMut;
-use syn::{ItemImpl, ItemTrait, parse_quote, parse2};
+use syn::{ItemImpl, ItemTrait, parse_quote};
 
+use crate::functions::parse_internal;
 use crate::types::attributes::UseTypeAttribute;
 use crate::types::attributes::use_type::type_predicates::derive_use_type_predicates;
 use crate::visitors::SubstituteAbstractType;
@@ -38,7 +39,7 @@ impl UseTypeAttributes {
 
             item_trait
                 .supertraits
-                .push(parse2(use_type.trait_path.to_token_stream())?);
+                .push(parse_internal(use_type.trait_path.to_token_stream())?);
         }
 
         Ok(())

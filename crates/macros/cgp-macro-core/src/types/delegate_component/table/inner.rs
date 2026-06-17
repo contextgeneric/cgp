@@ -1,7 +1,8 @@
 use quote::quote;
 use syn::parse::{Parse, ParseStream};
-use syn::{Ident, ItemImpl, Type, braced, parse2};
+use syn::{Ident, ItemImpl, Type, braced};
 
+use crate::functions::parse_internal;
 use crate::types::delegate_component::DelegateEntries;
 use crate::types::empty_struct::EmptyStruct;
 use crate::types::generics::TypeGenerics;
@@ -43,7 +44,7 @@ impl InnerDelegateTable {
         let ident = &self.table_ident;
         let type_generics = self.table_generics.split_for_impl().1;
 
-        parse2(quote!( #ident #type_generics ))
+        parse_internal(quote!( #ident #type_generics ))
     }
 
     pub fn build_table_struct(&self) -> EmptyStruct {

@@ -1,8 +1,8 @@
 use quote::quote;
-use syn::{GenericParam, Generics, ItemImpl, Path, parse_quote, parse2};
+use syn::{GenericParam, Generics, ItemImpl, Path, parse_quote};
 
 use crate::exports::{ConcatPath, DelegateComponent, RedirectLookup};
-use crate::functions::provider_trait_to_impl_items;
+use crate::functions::{parse_internal, provider_trait_to_impl_items};
 use crate::types::cgp_component::EvaluatedCgpComponent;
 use crate::types::path::{PathElement, UniPath};
 use crate::types::provider_impl::ItemProviderImpl;
@@ -26,7 +26,7 @@ impl EvaluatedCgpComponent {
         let where_clause = impl_generics.make_where_clause();
 
         let delegate_constraint = if let Some(generic_params) = &generic_params {
-            where_clause.predicates.push(parse2(quote! {
+            where_clause.predicates.push(parse_internal(quote! {
                 __Path__: #ConcatPath< #generic_params >
             })?);
 
@@ -39,7 +39,7 @@ impl EvaluatedCgpComponent {
             }
         };
 
-        where_clause.predicates.push(parse2(quote! {
+        where_clause.predicates.push(parse_internal(quote! {
             __Components__: #delegate_constraint
         })?);
 
@@ -47,15 +47,15 @@ impl EvaluatedCgpComponent {
             < __Components__ as #delegate_constraint > :: Delegate
         };
 
-        where_clause.predicates.push(parse2(quote! {
+        where_clause.predicates.push(parse_internal(quote! {
             #delegate_type : #provider_name #provider_type_generics
         })?);
 
         let impl_items = provider_trait_to_impl_items(provider_trait, &delegate_type)?;
 
-        let self_type = parse2(quote!(#RedirectLookup<__Components__, __Path__>))?;
+        let self_type = parse_internal(quote!(#RedirectLookup<__Components__, __Path__>))?;
 
-        let trait_path: Path = parse2(quote!( #provider_name #provider_type_generics ))?;
+        let trait_path: Path = parse_internal(quote!( #provider_name #provider_type_generics ))?;
 
         let item_impl = ItemImpl {
             attrs: provider_trait.attrs.clone(),

@@ -3,9 +3,10 @@ use syn::punctuated::Punctuated;
 use syn::token::Plus;
 use syn::{
     Generics, Ident, Item, ItemFn, ItemImpl, ItemTrait, TraitItemFn, Type, TypeParamBound,
-    Visibility, parse_quote, parse2,
+    Visibility, parse_quote,
 };
 
+use crate::functions::parse_internal;
 use crate::traits::AddTypeParamBounds;
 use crate::types::attributes::FunctionAttributes;
 use crate::types::implicits::ImplicitArgFields;
@@ -44,7 +45,7 @@ impl PreprocessedItemCgpFn {
             semi_token: None,
         };
 
-        let mut item_trait: ItemTrait = parse2(quote! {
+        let mut item_trait: ItemTrait = parse_internal(quote! {
             pub trait #ident {
                 #trait_item_fn
             }
@@ -85,7 +86,7 @@ impl PreprocessedItemCgpFn {
 
         let self_type: Type = parse_quote!(Self);
 
-        let mut item_impl: ItemImpl = parse2(quote! {
+        let mut item_impl: ItemImpl = parse_internal(quote! {
             impl #ident #type_generics for __Context__ {
                 #item_fn
             }
@@ -107,7 +108,7 @@ impl PreprocessedItemCgpFn {
             bounds.extend(attributes.extend.clone());
 
             for import in attributes.uses.iter() {
-                bounds.push(parse2(quote! { #import })?);
+                bounds.push(parse_internal(quote! { #import })?);
             }
 
             if !bounds.is_empty() {
@@ -115,7 +116,7 @@ impl PreprocessedItemCgpFn {
                     .generics
                     .make_where_clause()
                     .predicates
-                    .push(parse2(quote! {
+                    .push(parse_internal(quote! {
                         Self: #bounds
                     })?);
             }

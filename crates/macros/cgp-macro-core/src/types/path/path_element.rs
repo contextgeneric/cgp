@@ -1,8 +1,9 @@
 use proc_macro2::TokenStream;
 use quote::ToTokens;
 use syn::parse::{Parse, ParseStream};
-use syn::{Ident, Type, parse2};
+use syn::{Ident, Type};
 
+use crate::functions::parse_internal;
 use crate::traits::ToType;
 use crate::types::field::Symbol;
 
@@ -16,7 +17,7 @@ impl Parse for PathElement {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let ty: Type = input.parse()?;
 
-        let parsed = if let Ok(path_ident) = parse2::<Ident>(ty.to_token_stream()) {
+        let parsed = if let Ok(path_ident) = parse_internal::<Ident>(ty.to_token_stream()) {
             let path_str = path_ident.to_string();
 
             if let Some(path_char) = path_str.chars().next()

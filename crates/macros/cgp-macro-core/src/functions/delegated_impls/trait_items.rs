@@ -2,9 +2,11 @@ use proc_macro2::Span;
 use quote::quote;
 use syn::spanned::Spanned;
 use syn::token::Eq;
-use syn::{Error, ImplItem, ImplItemConst, TraitItem, Type, Visibility, parse2};
+use syn::{Error, ImplItem, ImplItemConst, TraitItem, Type, Visibility};
 
-use crate::functions::{signature_to_delegated_impl_item_fn, trait_to_impl_item_type};
+use crate::functions::{
+    parse_internal, signature_to_delegated_impl_item_fn, trait_to_impl_item_type,
+};
 
 pub fn trait_items_to_delegated_impl_items(
     trait_items: &[TraitItem],
@@ -33,7 +35,7 @@ pub fn trait_item_to_delegated_impl_items(
         TraitItem::Type(trait_type) => {
             let type_name = &trait_type.ident;
             let type_generics = trait_type.generics.split_for_impl().1;
-            let delegate_type = parse2(quote!(
+            let delegate_type = parse_internal(quote!(
                 < #delegate_type as #provider_trait_path > :: #type_name #type_generics
             ))?;
 
@@ -45,7 +47,7 @@ pub fn trait_item_to_delegated_impl_items(
             let const_ident = &trait_item_const.ident;
             let type_generics = trait_item_const.generics.split_for_impl().1;
 
-            let impl_expr = parse2(quote! {
+            let impl_expr = parse_internal(quote! {
                 < #delegate_type as #provider_trait_path > :: #const_ident #type_generics
             })?;
 

@@ -1,6 +1,7 @@
 use quote::ToTokens;
-use syn::{ItemImpl, Type, parse_quote, parse2};
+use syn::{ItemImpl, Type, parse_quote};
 
+use crate::functions::parse_internal;
 use crate::traits::AddTypeParamBounds;
 use crate::types::attributes::CgpImplAttributes;
 use crate::types::cgp_impl::{ImplArgs, LoweredCgpImpl};
@@ -37,12 +38,12 @@ impl ItemCgpImpl {
 
         let (provider_trait_path, context_type) = match &item_impl.trait_ {
             Some((_, path, _)) => {
-                let provider_trait_path = parse2(path.to_token_stream())?;
+                let provider_trait_path = parse_internal(path.to_token_stream())?;
                 let context_type = item_impl.self_ty.as_ref().clone();
                 (provider_trait_path, context_type)
             }
             None => {
-                let provider_trait_path = parse2(item_impl.self_ty.to_token_stream())?;
+                let provider_trait_path = parse_internal(item_impl.self_ty.to_token_stream())?;
                 let context_type = parse_quote! { __Context__ };
 
                 item_impl

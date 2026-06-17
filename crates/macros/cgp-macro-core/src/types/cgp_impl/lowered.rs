@@ -3,9 +3,9 @@ use quote::ToTokens;
 use syn::spanned::Spanned;
 use syn::token::For;
 use syn::visit_mut::VisitMut;
-use syn::{Error, Ident, ImplItem, ItemImpl, Type, parse_quote, parse2};
+use syn::{Error, Ident, ImplItem, ItemImpl, Type, parse_quote};
 
-use crate::functions::to_snake_case_ident;
+use crate::functions::{parse_internal, to_snake_case_ident};
 use crate::types::cgp_impl::{CgpProviderOrBareImpl, ImplArgs};
 use crate::types::cgp_provider::{ItemCgpProvider, ProviderArgs};
 use crate::types::ident::IdentWithTypeArgs;
@@ -57,11 +57,12 @@ impl LoweredCgpImpl {
         let mut provider_trait_path = self.provider_trait_path.clone();
         let provider_type = &self.args.provider_type;
 
-        let context_ident = if let Ok(ident) = parse2::<Ident>(context_type.to_token_stream()) {
-            to_snake_case_ident(&ident)
-        } else {
-            Ident::new("__context__", Span::call_site())
-        };
+        let context_ident =
+            if let Ok(ident) = parse_internal::<Ident>(context_type.to_token_stream()) {
+                to_snake_case_ident(&ident)
+            } else {
+                Ident::new("__context__", Span::call_site())
+            };
 
         let local_assoc_types: Vec<Ident> = item_impl
             .items
@@ -86,7 +87,7 @@ impl LoweredCgpImpl {
 
         out_impl.trait_ = Some((
             None,
-            parse2(provider_trait_path.to_token_stream())?,
+            parse_internal(provider_trait_path.to_token_stream())?,
             For(Span::call_site()),
         ));
 

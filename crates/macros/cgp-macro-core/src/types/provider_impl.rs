@@ -4,9 +4,10 @@ use proc_macro2::Span;
 use quote::ToTokens;
 use syn::spanned::Spanned;
 use syn::token::For;
-use syn::{Error, ItemImpl, Path, Type, parse_quote, parse2};
+use syn::{Error, ItemImpl, Path, Type, parse_quote};
 
 use crate::exports::IsProviderFor;
+use crate::functions::parse_internal;
 use crate::types::cgp_provider::ProviderImplArgs;
 use crate::types::ident::IdentWithTypeArgs;
 use crate::visitors::replace_provider_in_generics;
@@ -61,7 +62,7 @@ impl ItemProviderImpl {
         let IdentWithTypeArgs {
             ident: provider_ident,
             type_args: provider_generics,
-        } = parse2(provider_path.to_token_stream())?;
+        } = parse_internal(provider_path.to_token_stream())?;
 
         let impl_args = ProviderImplArgs::from_generic_args(&provider_generics)?;
         let context_type = &impl_args.context_type;
