@@ -1,7 +1,8 @@
 use syn::parse::{Parse, ParseStream};
 use syn::token::In;
-use syn::{Generics, ItemImpl, Type, parse_quote};
+use syn::{Generics, ItemImpl, Type};
 
+use crate::parse_internal;
 use crate::types::ident::IdentWithTypeArgs;
 use crate::types::path::UniPathOrType;
 
@@ -23,14 +24,14 @@ impl DefaultImplAttribute {
         namespace_trait_path
             .type_args
             .make_args()
-            .push(parse_quote!(__Components__));
+            .push(parse_internal!(__Components__));
 
         let mut generics = provider_generics.clone();
-        generics.params.push(parse_quote!(__Components__));
+        generics.params.push(parse_internal!(__Components__));
 
         let (impl_generics, _, where_clause) = generics.split_for_impl();
 
-        let item_impl = parse_quote! {
+        let item_impl = parse_internal! {
             impl #impl_generics #namespace_trait_path for #key_type
             #where_clause
             {

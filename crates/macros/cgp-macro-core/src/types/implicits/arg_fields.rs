@@ -1,8 +1,9 @@
 use syn::punctuated::Punctuated;
 use syn::token::Plus;
-use syn::{Block, ImplItem, TypeParamBound, parse_quote};
+use syn::{Block, ImplItem, TypeParamBound};
 
 use crate::functions::extract_and_parse_implicit_args;
+use crate::parse_internal;
 use crate::traits::ToTypeParamBounds;
 use crate::types::implicits::ImplicitArgField;
 
@@ -23,7 +24,7 @@ impl ToTypeParamBounds for ImplicitArgFields {
 
         for field in &self.fields {
             let constraint = field.to_has_field_bound()?;
-            constraints.push(parse_quote!(#constraint));
+            constraints.push(parse_internal!(#constraint));
         }
 
         Ok(constraints)

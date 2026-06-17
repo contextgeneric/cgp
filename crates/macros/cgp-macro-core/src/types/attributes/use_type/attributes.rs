@@ -1,6 +1,6 @@
 use quote::ToTokens;
 use syn::visit_mut::VisitMut;
-use syn::{ItemImpl, ItemTrait, parse_quote};
+use syn::{ItemImpl, ItemTrait};
 
 use crate::functions::parse_internal;
 use crate::types::attributes::UseTypeAttribute;
@@ -33,7 +33,7 @@ impl UseTypeAttributes {
         self.substitute_abstract_types_in_item_trait(item_trait);
 
         for use_type in self.attributes.iter() {
-            if use_type.context_type != parse_quote! { Self } {
+            if use_type.context_type != parse_internal! { Self } {
                 continue;
             }
 

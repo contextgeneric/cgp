@@ -1,7 +1,8 @@
 use syn::parse::{Parse, ParseStream};
 use syn::token::Semi;
-use syn::{Generics, Ident, Type, parse_quote};
+use syn::{Generics, Ident, Type};
 
+use crate::parse_internal;
 use crate::types::delegate_component::{
     EvalDelegateEntries, EvalForEntries, EvalForEntry, EvaluatedDelegateEntry, EvaluatedForEntry,
     eval_delegate_entries_via_for,
@@ -35,10 +36,10 @@ impl EvalForEntry for NamespaceDelegateStatement {
         let entry = EvaluatedForEntry {
             generics: Generics::default(),
             table_type: table_type.clone(),
-            for_key: parse_quote!(__Key__),
-            for_value: parse_quote!(__Value__),
-            mapping_key: parse_quote!(__Key__),
-            mapping_value: parse_quote!(__Value__),
+            for_key: parse_internal!(__Key__),
+            for_value: parse_internal!(__Value__),
+            mapping_key: parse_internal!(__Key__),
+            mapping_value: parse_internal!(__Value__),
             namespace: self.ident.clone().into(),
         };
 

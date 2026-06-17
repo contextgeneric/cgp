@@ -1,5 +1,6 @@
-use syn::{Generics, Ident, Type, parse_quote};
+use syn::{Generics, Ident, Type};
 
+use crate::parse_internal;
 use crate::types::delegate_component::{EvalDelegateEntry, EvaluatedDelegateEntry};
 use crate::types::ident::IdentWithTypeArgs;
 
@@ -50,21 +51,21 @@ impl EvalDelegateEntry for EvaluatedForEntry {
             let mut namespace_generics = self.namespace.type_args.clone();
             let namespace_generic_args = &mut namespace_generics.make_args();
 
-            namespace_generic_args.push(parse_quote!(#table_type));
+            namespace_generic_args.push(parse_internal!(#table_type));
 
-            namespace_generic_args.push(parse_quote! {
+            namespace_generic_args.push(parse_internal! {
                 Delegate = #mapping_value
             });
 
-            parse_quote!( #namespace_ident #namespace_generics )
+            parse_internal!( #namespace_ident #namespace_generics )
         };
 
         let mut generics = self.generics.clone();
-        generics.params.push(parse_quote!(#for_key));
-        generics.params.push(parse_quote!(#for_value));
+        generics.params.push(parse_internal!(#for_key));
+        generics.params.push(parse_internal!(#for_value));
 
         let where_clause = generics.make_where_clause();
-        where_clause.predicates.push(parse_quote! {
+        where_clause.predicates.push(parse_internal! {
             #for_key: #namespace_trait
         });
 

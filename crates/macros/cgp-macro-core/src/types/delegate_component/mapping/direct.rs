@@ -1,7 +1,8 @@
+use syn::Type;
 use syn::token::RArrow;
-use syn::{Type, parse_quote};
 
 use crate::exports::DelegateComponent;
+use crate::parse_internal;
 use crate::types::delegate_component::{
     DelegateKey, DelegateValue, EvalDelegateEntries, EvalDelegateKey, EvalDelegateValue,
     EvaluatedDelegateEntry, ExtractInnerDelegateTables, InnerDelegateTable,
@@ -19,33 +20,32 @@ impl EvalDelegateEntries for DirectDelegateMapping {
         let keys = self.key.eval()?;
         let value_type = self.value.eval()?;
 
-        let entries = keys
-            .into_iter()
-            .map(|key| {
-                let key_type = key.key;
-                let mut generics = key.generics;
+        let mut entries = Vec::new();
 
-                let where_predicate = parse_quote! {
-                    #value_type: #DelegateComponent< #key_type >
-                };
+        for key in keys {
+            let key_type = key.key;
+            let mut generics = key.generics;
 
-                generics
-                    .make_where_clause()
-                    .predicates
-                    .push(where_predicate);
+            let where_predicate = parse_internal! {
+                #value_type: #DelegateComponent< #key_type >
+            };
 
-                let direct_value_type = parse_quote! {
-                    < #value_type as #DelegateComponent< #key_type > >::Delegate
-                };
+            generics
+                .make_where_clause()
+                .predicates
+                .push(where_predicate);
 
-                EvaluatedDelegateEntry {
-                    table_type: table_type.clone(),
-                    generics,
-                    key: key_type,
-                    value: direct_value_type,
-                }
-            })
-            .collect();
+            let direct_value_type = parse_internal! {
+                < #value_type as #DelegateComponent< #key_type > >::Delegate
+            };
+
+            entries.push(EvaluatedDelegateEntry {
+                table_type: table_type.clone(),
+                generics,
+                key: key_type,
+                value: direct_value_type,
+            });
+        }
 
         Ok(entries)
     }

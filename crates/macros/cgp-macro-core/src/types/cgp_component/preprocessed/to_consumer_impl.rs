@@ -1,6 +1,6 @@
 use quote::quote;
 use syn::token::{Brace, For, Impl};
-use syn::{ItemImpl, Path, Type, parse_quote};
+use syn::{ItemImpl, Path, Type};
 
 use crate::functions::{parse_internal, trait_items_to_delegated_impl_items};
 use crate::types::cgp_component::PreprocessedCgpComponent;
@@ -51,7 +51,7 @@ impl PreprocessedCgpComponent {
 
         let impl_items = trait_items_to_delegated_impl_items(
             &consumer_trait.items,
-            &parse_quote!(#context_type_ident),
+            &parse_internal!(#context_type_ident),
             &provider_trait_path,
         )?;
 

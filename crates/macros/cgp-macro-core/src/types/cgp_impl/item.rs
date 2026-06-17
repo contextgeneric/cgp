@@ -1,5 +1,5 @@
 use quote::ToTokens;
-use syn::{ItemImpl, Type, parse_quote};
+use syn::{ItemImpl, Type};
 
 use crate::functions::parse_internal;
 use crate::traits::AddTypeParamBounds;
@@ -19,7 +19,7 @@ impl ItemCgpImpl {
         let attributes = CgpImplAttributes::parse(&item_impl.attrs)?;
         item_impl.attrs = attributes.raw_attributes;
 
-        let self_type: Type = parse_quote!(Self);
+        let self_type: Type = parse_internal!(Self);
 
         let implicit_args = ImplicitArgFields::extract_from_impl_items(&mut item_impl.items)?;
         implicit_args.add_type_param_bounds(&self_type, &mut item_impl.generics)?;
@@ -44,12 +44,12 @@ impl ItemCgpImpl {
             }
             None => {
                 let provider_trait_path = parse_internal(item_impl.self_ty.to_token_stream())?;
-                let context_type = parse_quote! { __Context__ };
+                let context_type = parse_internal! { __Context__ };
 
                 item_impl
                     .generics
                     .params
-                    .insert(0, parse_quote! { #context_type });
+                    .insert(0, parse_internal! { #context_type });
 
                 (provider_trait_path, context_type)
             }

@@ -3,7 +3,7 @@ use syn::punctuated::Punctuated;
 use syn::token::Plus;
 use syn::{
     Generics, Ident, Item, ItemFn, ItemImpl, ItemTrait, TraitItemFn, Type, TypeParamBound,
-    Visibility, parse_quote,
+    Visibility,
 };
 
 use crate::functions::parse_internal;
@@ -84,7 +84,7 @@ impl PreprocessedItemCgpFn {
 
         let type_generics = generics.split_for_impl().1;
 
-        let self_type: Type = parse_quote!(Self);
+        let self_type: Type = parse_internal!(Self);
 
         let mut item_impl: ItemImpl = parse_internal(quote! {
             impl #ident #type_generics for __Context__ {
@@ -96,7 +96,7 @@ impl PreprocessedItemCgpFn {
         item_impl
             .generics
             .params
-            .insert(0, parse_quote!(__Context__));
+            .insert(0, parse_internal!(__Context__));
 
         item_impl
             .generics

@@ -4,10 +4,11 @@ use syn::token::{Comma, Mut};
 use syn::visit_mut::VisitMut;
 use syn::{
     Error, FnArg, GenericArgument, Ident, ItemTrait, PathArguments, PathSegment, ReturnType,
-    Signature, TraitItem, TraitItemFn, TraitItemType, Type, parse_quote,
+    Signature, TraitItem, TraitItemFn, TraitItemType, Type,
 };
 
 use crate::functions::{parse_field_type, parse_single_segment_type_path};
+use crate::parse_internal;
 use crate::types::cgp_getter::{GetterField, ReceiverMode};
 use crate::visitors::ReplaceSelfTypeVisitor;
 
@@ -68,8 +69,8 @@ pub fn parse_getter_fields(
             let field_assoc_type_ident = &field_assoc_type.ident;
             let field_type = &field.field_type;
 
-            if field_type != &parse_quote! { Self :: #field_assoc_type_ident }
-                && field_type != &parse_quote! { #context_type :: #field_assoc_type_ident }
+            if field_type != &parse_internal! { Self :: #field_assoc_type_ident }
+                && field_type != &parse_internal! { #context_type :: #field_assoc_type_ident }
             {
                 return Err(Error::new(
                     field.field_type.span(),
@@ -229,7 +230,7 @@ fn parse_receiver(context_ident: &Ident, arg: &FnArg) -> syn::Result<(ReceiverMo
                 let mut receiver = ty.elem.clone();
 
                 ReplaceSelfTypeVisitor {
-                    replaced_type: &parse_quote!(#context_ident),
+                    replaced_type: &parse_internal!(#context_ident),
                     skip_assoc_types: &Vec::new(),
                 }
                 .visit_type_mut(&mut receiver);
@@ -254,7 +255,7 @@ fn parse_return_type(
             let mut replaced_type = ty.as_ref().clone();
 
             ReplaceSelfTypeVisitor {
-                replaced_type: &parse_quote!(#context_type),
+                replaced_type: &parse_internal!(#context_type),
                 skip_assoc_types: &Vec::from_iter(field_assoc_type.clone()),
             }
             .visit_type_mut(&mut replaced_type);

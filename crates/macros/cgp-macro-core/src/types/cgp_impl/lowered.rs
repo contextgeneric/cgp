@@ -3,7 +3,7 @@ use quote::ToTokens;
 use syn::spanned::Spanned;
 use syn::token::For;
 use syn::visit_mut::VisitMut;
-use syn::{Error, Ident, ImplItem, ItemImpl, Type, parse_quote};
+use syn::{Error, Ident, ImplItem, ItemImpl, Type};
 
 use crate::functions::{parse_internal, to_snake_case_ident};
 use crate::types::cgp_impl::{CgpProviderOrBareImpl, ImplArgs};
@@ -23,7 +23,7 @@ pub struct LoweredCgpImpl {
 
 impl LoweredCgpImpl {
     pub fn lower(&self) -> syn::Result<CgpProviderOrBareImpl> {
-        if self.args.provider_type == parse_quote!(Self) {
+        if self.args.provider_type == parse_internal!(Self) {
             if self.item_impl.trait_.is_none() {
                 return Err(Error::new(
                     self.item_impl.span(),
@@ -83,7 +83,7 @@ impl LoweredCgpImpl {
         provider_trait_path
             .type_args
             .make_args()
-            .insert(0, parse_quote!(#context_type));
+            .insert(0, parse_internal!(#context_type));
 
         out_impl.trait_ = Some((
             None,

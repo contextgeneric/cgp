@@ -1,7 +1,8 @@
+use syn::TypeParamBound;
 use syn::punctuated::Punctuated;
 use syn::token::Plus;
-use syn::{TypeParamBound, parse_quote};
 
+use crate::parse_internal;
 use crate::traits::ToTypeParamBounds;
 use crate::types::ident::IdentWithTypeArgs;
 
@@ -15,7 +16,7 @@ impl ToTypeParamBounds for UsesAttributes {
         let mut bounds: Punctuated<TypeParamBound, Plus> = Punctuated::default();
 
         for import in &self.imports {
-            bounds.push(parse_quote! { #import });
+            bounds.push(parse_internal! { #import });
         }
 
         Ok(bounds)

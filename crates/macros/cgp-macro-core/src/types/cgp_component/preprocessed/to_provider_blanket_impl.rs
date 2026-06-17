@@ -2,7 +2,7 @@ use proc_macro2::Span;
 use quote::quote;
 use syn::punctuated::Punctuated;
 use syn::token::{Brace, For, Impl, Plus};
-use syn::{Ident, ItemImpl, ItemTrait, Path, TypeParamBound, parse_quote};
+use syn::{Ident, ItemImpl, ItemTrait, Path, TypeParamBound};
 
 use crate::exports::{DelegateComponent, IsProviderFor};
 use crate::functions::{parse_internal, parse_is_provider_params, provider_trait_to_impl_items};
@@ -23,7 +23,7 @@ impl PreprocessedCgpComponent {
             #DelegateComponent< #component_name >
         };
 
-        let delegate_type = parse_quote! {
+        let delegate_type = parse_internal! {
             < #provider_type as #delegate_constraint > :: Delegate
         };
 

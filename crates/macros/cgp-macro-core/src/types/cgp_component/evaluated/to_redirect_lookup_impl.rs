@@ -1,5 +1,5 @@
 use quote::quote;
-use syn::{GenericParam, Generics, ItemImpl, Path, parse_quote};
+use syn::{GenericParam, Generics, ItemImpl, Path};
 
 use crate::exports::{ConcatPath, DelegateComponent, RedirectLookup};
 use crate::functions::{parse_internal, provider_trait_to_impl_items};
@@ -19,9 +19,9 @@ impl EvaluatedCgpComponent {
 
         let mut impl_generics = provider_trait.generics.clone();
 
-        impl_generics.params.push(parse_quote!(__Components__));
+        impl_generics.params.push(parse_internal!(__Components__));
 
-        impl_generics.params.push(parse_quote!(__Path__));
+        impl_generics.params.push(parse_internal!(__Path__));
 
         let where_clause = impl_generics.make_where_clause();
 
@@ -43,7 +43,7 @@ impl EvaluatedCgpComponent {
             __Components__: #delegate_constraint
         })?);
 
-        let delegate_type = parse_quote! {
+        let delegate_type = parse_internal! {
             < __Components__ as #delegate_constraint > :: Delegate
         };
 
@@ -94,7 +94,8 @@ fn generic_params_to_path(generics: &Generics) -> syn::Result<Option<UniPath>> {
     } else {
         let mut path = UniPath::default();
         for param in type_params {
-            path.elements.push(PathElement::Type(parse_quote!(#param)))
+            path.elements
+                .push(PathElement::Type(parse_internal!(#param)))
         }
 
         Ok(Some(path))

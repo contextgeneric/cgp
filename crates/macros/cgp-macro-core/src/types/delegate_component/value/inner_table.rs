@@ -1,7 +1,8 @@
 use syn::parse::{Parse, ParseStream};
 use syn::token::{Gt, Lt};
-use syn::{Ident, Type, parse_quote};
+use syn::{Ident, Type};
 
+use crate::parse_internal;
 use crate::types::delegate_component::{
     EvalDelegateValue, ExtractInnerDelegateTables, InnerDelegateTable,
 };
@@ -41,7 +42,7 @@ impl EvalDelegateValue for DelegateValueWithInnerTable {
         let struct_ident = &self.inner_table.table_ident;
         let struct_generics = &self.inner_table.table_generics;
 
-        let ty = parse_quote!( #wrapper_ident < #struct_ident #struct_generics > );
+        let ty = parse_internal!( #wrapper_ident < #struct_ident #struct_generics > );
         Ok(ty)
     }
 }

@@ -1,5 +1,5 @@
 use quote::quote;
-use syn::{ItemImpl, Path, Type, parse_quote};
+use syn::{ItemImpl, Path, Type};
 
 use crate::exports::UseContext;
 use crate::functions::{parse_internal, trait_items_to_delegated_impl_items};
@@ -21,7 +21,7 @@ impl EvaluatedCgpComponent {
         let consumer_trait_generics = consumer_trait.generics.split_for_impl().1;
 
         let consumer_trait_path: Type =
-            parse_quote!(#consumer_trait_ident #consumer_trait_generics);
+            parse_internal!(#consumer_trait_ident #consumer_trait_generics);
 
         let mut impl_generics = provider_trait.generics.clone();
 
@@ -34,7 +34,7 @@ impl EvaluatedCgpComponent {
 
         let impl_items = trait_items_to_delegated_impl_items(
             &provider_trait.items,
-            &parse_quote!(#context_type_ident),
+            &parse_internal!(#context_type_ident),
             &consumer_trait_path,
         )?;
 
@@ -48,13 +48,13 @@ impl EvaluatedCgpComponent {
             impl_token: Default::default(),
             generics: impl_generics,
             trait_: Some((None, provider_trait_path, Default::default())),
-            self_ty: Box::new(parse_quote!(#UseContext)),
+            self_ty: Box::new(parse_internal!(#UseContext)),
             brace_token: Default::default(),
             items: impl_items,
         };
 
         Ok(ItemProviderImpl {
-            component_type: parse_quote!(#component_name),
+            component_type: parse_internal!(#component_name),
             item_impl,
         })
     }

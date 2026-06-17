@@ -1,7 +1,8 @@
 use syn::parse::{Parse, ParseStream};
 use syn::token::{At, Brace, Colon, Comma, Gt, Lt};
-use syn::{Ident, Type, braced, parse_quote};
+use syn::{Ident, Type, braced};
 
+use crate::parse_internal;
 use crate::types::attributes::UseTypeIdent;
 use crate::types::ident::IdentWithTypeArgs;
 
@@ -45,7 +46,7 @@ impl Parse for UseTypeAttribute {
                 (context_type, input)
             }
         } else {
-            (parse_quote! { Self }, input)
+            (parse_internal! { Self }, input)
         };
 
         let trait_path = if body.peek(Lt) {

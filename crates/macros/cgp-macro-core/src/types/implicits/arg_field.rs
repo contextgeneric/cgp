@@ -1,6 +1,7 @@
 use syn::token::Mut;
-use syn::{Ident, Stmt, Type, parse_quote};
+use syn::{Ident, Stmt, Type};
 
+use crate::parse_internal;
 use crate::types::field::{FieldName, HasFieldBound};
 use crate::types::getter::{FieldMode, GetFieldExpr, GetFieldWithModeExpr};
 
@@ -16,7 +17,7 @@ pub struct ImplicitArgField {
 impl ImplicitArgField {
     pub fn to_has_field_bound(&self) -> syn::Result<HasFieldBound> {
         let field_name = FieldName::from(self.field_name.clone());
-        let tag_type = parse_quote!(#field_name);
+        let tag_type = parse_internal!(#field_name);
 
         Ok(HasFieldBound {
             field_type: self.field_type.clone(),
@@ -33,13 +34,13 @@ impl ImplicitArgField {
         let get_field_expr = GetFieldWithModeExpr {
             field_mode: self.field_mode.clone(),
             get_field: GetFieldExpr {
-                receiver: parse_quote!(self),
+                receiver: parse_internal!(self),
                 field_mut: self.field_mut,
                 field_name: self.field_name.clone().into(),
             },
         };
 
-        let statement = parse_quote! {
+        let statement = parse_internal! {
             let #field_name: #arg_type = #get_field_expr;
         };
 

@@ -1,9 +1,10 @@
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::token::{Comma, Semi};
-use syn::{Type, braced, parse_quote};
+use syn::{Type, braced};
 
 use crate::exports::{Nil, PathCons, RedirectLookup};
+use crate::parse_internal;
 use crate::types::delegate_component::{EvalDelegateEntries, EvaluatedDelegateEntry};
 use crate::types::keyword::Keyword;
 use crate::types::keywords::Open;
@@ -41,7 +42,7 @@ impl EvalDelegateEntries for OpenDelegateStatement {
         let mut entries = Vec::new();
 
         for component in &self.components {
-            let value: Type = parse_quote! {
+            let value: Type = parse_internal! {
                 #RedirectLookup<
                     #table_type,
                     #PathCons<#component, #Nil>,

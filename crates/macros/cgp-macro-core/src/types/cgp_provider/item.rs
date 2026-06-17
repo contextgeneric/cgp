@@ -1,6 +1,6 @@
 use quote::ToTokens;
 use syn::spanned::Spanned;
-use syn::{Error, Ident, ItemImpl, Type, parse_quote};
+use syn::{Error, Ident, ItemImpl, Type};
 
 use crate::functions::parse_internal;
 use crate::types::cgp_provider::{LoweredCgpProvider, ProviderArgs};
@@ -57,7 +57,7 @@ impl ItemCgpProvider {
 
         let impl_self_type = &provider_impl.self_ty;
 
-        let provider_type: IdentWithTypeGenerics = parse_quote!( #impl_self_type );
+        let provider_type: IdentWithTypeGenerics = parse_internal!( #impl_self_type );
 
         let provider_struct = EmptyStruct {
             ident: provider_type.ident.clone(),

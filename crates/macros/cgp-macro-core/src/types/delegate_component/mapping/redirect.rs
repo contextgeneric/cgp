@@ -1,7 +1,8 @@
+use syn::Type;
 use syn::token::FatArrow;
-use syn::{Type, parse_quote};
 
 use crate::exports::RedirectLookup;
+use crate::parse_internal;
 use crate::types::delegate_component::{
     DelegateKey, EvalDelegateEntries, EvalDelegateKey, EvaluatedDelegateEntry,
 };
@@ -18,14 +19,14 @@ impl EvalDelegateEntries for RedirectDelegateMapping {
     fn eval_entries(&self, table_type: &Type) -> syn::Result<Vec<EvaluatedDelegateEntry>> {
         let value_type: Type = match &self.key {
             DelegateKey::Path(_) => {
-                let prefix = self.value.clone().to_prefix(parse_quote!(__Wildcard__));
-                parse_quote! {
+                let prefix = self.value.clone().to_prefix(parse_internal!(__Wildcard__));
+                parse_internal! {
                     #RedirectLookup<#table_type, #prefix>
                 }
             }
             _ => {
                 let path = &self.value;
-                parse_quote!(#RedirectLookup<#table_type, #path>)
+                parse_internal!(#RedirectLookup<#table_type, #path>)
             }
         };
 

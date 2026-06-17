@@ -1,6 +1,6 @@
 use proc_macro2::Span;
 use quote::{ToTokens, quote};
-use syn::{Generics, Ident, ImplItem, ItemImpl, parse_quote};
+use syn::{Generics, Ident, ImplItem, ItemImpl};
 
 use crate::functions::parse_internal;
 use crate::types::cgp_getter::{GetterField, ItemCgpGetter, ReceiverMode};
@@ -39,14 +39,14 @@ impl ItemCgpGetter {
         let provider_name = &args.provider_ident;
 
         let receiver_type = match &field.receiver_mode {
-            ReceiverMode::SelfReceiver => parse_quote!(#context_type),
+            ReceiverMode::SelfReceiver => parse_internal!(#context_type),
             ReceiverMode::Type(ty) => ty.clone(),
         };
 
         let field_type = match field_assoc_type {
             Some(field_assoc_type) => {
                 let field_assoc_type_ident = &field_assoc_type.ident;
-                parse_quote! { #field_assoc_type_ident }
+                parse_internal! { #field_assoc_type_ident }
             }
             None => field.field_type.clone(),
         };

@@ -4,7 +4,7 @@ use proc_macro2::Span;
 use quote::ToTokens;
 use syn::spanned::Spanned;
 use syn::token::For;
-use syn::{Error, ItemImpl, Path, Type, parse_quote};
+use syn::{Error, ItemImpl, Path, Type};
 
 use crate::exports::IsProviderFor;
 use crate::functions::parse_internal;
@@ -68,7 +68,7 @@ impl ItemProviderImpl {
         let context_type = &impl_args.context_type;
 
         let is_provider_path: Path =
-            parse_quote!( #IsProviderFor < #component_type, #context_type, ( #impl_args ) > );
+            parse_internal!( #IsProviderFor < #component_type, #context_type, ( #impl_args ) > );
 
         let mut is_provider_impl = item_impl.clone();
 

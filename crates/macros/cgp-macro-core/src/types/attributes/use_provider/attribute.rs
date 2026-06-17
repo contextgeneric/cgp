@@ -1,8 +1,9 @@
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::token::{Colon, Plus};
-use syn::{Type, TypeParamBound, WherePredicate, parse_quote};
+use syn::{Type, TypeParamBound, WherePredicate};
 
+use crate::parse_internal;
 use crate::types::ident::IdentWithTypeArgs;
 
 pub struct UseProviderAttribute {
@@ -24,9 +25,9 @@ impl UseProviderAttribute {
             bound
                 .type_args
                 .make_args()
-                .insert(0, parse_quote!(#context_type));
+                .insert(0, parse_internal!(#context_type));
 
-            bounds.push(parse_quote!(#bound));
+            bounds.push(parse_internal!(#bound));
         }
 
         Ok(bounds)
@@ -36,7 +37,7 @@ impl UseProviderAttribute {
         let provider_type = &self.provider_type;
         let bounds = self.to_type_param_bounds(context_type)?;
 
-        let predicate = parse_quote! {
+        let predicate = parse_internal! {
             #provider_type: #bounds
         };
 
@@ -46,7 +47,7 @@ impl UseProviderAttribute {
 
 impl Parse for UseProviderAttribute {
     fn parse(input: ParseStream) -> syn::Result<Self> {
-        let context_type = parse_quote!(Self);
+        let context_type = parse_internal!(Self);
         let provider_type = input.parse()?;
 
         let colon: Colon = input.parse()?;

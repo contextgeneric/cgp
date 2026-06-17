@@ -1,5 +1,5 @@
 use quote::quote;
-use syn::{Generics, ItemImpl, Type, parse_quote};
+use syn::{Generics, ItemImpl, Type};
 
 use crate::exports::{DelegateComponent, IsProviderFor};
 use crate::functions::{merge_generics, parse_internal};
@@ -52,12 +52,15 @@ impl EvaluatedDelegateEntry {
         let key = &self.key;
         let value = &self.value;
 
-        generics.params.push(parse_quote!(__Context__));
-        generics.params.push(parse_quote!(__Params__));
+        generics.params.push(parse_internal!(__Context__));
+        generics.params.push(parse_internal!(__Params__));
 
-        generics.make_where_clause().predicates.push(parse_quote! {
-            #value: #IsProviderFor<#key, __Context__, __Params__>
-        });
+        generics
+            .make_where_clause()
+            .predicates
+            .push(parse_internal! {
+                #value: #IsProviderFor<#key, __Context__, __Params__>
+            });
 
         let (impl_generics, _, where_clause) = generics.split_for_impl();
 

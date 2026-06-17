@@ -5,6 +5,8 @@ use syn::parse::Parse;
 use syn::spanned::Spanned;
 use syn::{Error, parse2};
 
+pub use crate::macros::parse_internal;
+
 pub fn parse_internal<T>(body: TokenStream) -> Result<T, Error>
 where
     T: Parse,

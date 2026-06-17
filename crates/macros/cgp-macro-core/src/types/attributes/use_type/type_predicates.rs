@@ -2,7 +2,7 @@ use proc_macro2::TokenStream;
 use quote::{ToTokens, quote};
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
-use syn::{Ident, Type, WherePredicate, parse_quote};
+use syn::{Ident, Type, WherePredicate};
 
 use crate::functions::parse_internal;
 use crate::types::attributes::{UseTypeAttribute, UseTypeIdent};
@@ -16,7 +16,7 @@ pub fn derive_use_type_predicates(specs: &[UseTypeAttribute]) -> syn::Result<Vec
         let trait_path = &use_type.trait_path;
         let mut context_type = use_type.context_type.clone();
 
-        if context_type != parse_quote!(Self)
+        if context_type != parse_internal!(Self)
             && let Some(new_context_type) = find_type_alias(specs, &context_type)?
         {
             context_type = new_context_type;

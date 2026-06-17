@@ -1,5 +1,5 @@
 use quote::{ToTokens, quote};
-use syn::{Ident, ImplItem, ItemImpl, ItemTrait, TraitItemType, parse_quote};
+use syn::{Ident, ImplItem, ItemImpl, ItemTrait, TraitItemType};
 
 use crate::functions::parse_internal;
 use crate::types::cgp_getter::{GetterField, ReceiverMode};
@@ -61,7 +61,7 @@ pub fn derive_blanket_impl(
         };
 
         let field_name = FieldName::from(field.field_name.clone());
-        let tag_type = parse_quote!(#field_name);
+        let tag_type = parse_internal!(#field_name);
 
         let method = derive_getter_method(&context_arg, field, &tag_type, None)?;
 
@@ -69,7 +69,7 @@ pub fn derive_blanket_impl(
 
         let field_type = if let Some(trait_item) = &field_assoc_type {
             let trait_item_ident = &trait_item.ident;
-            parse_quote!(#trait_item_ident)
+            parse_internal!(#trait_item_ident)
         } else {
             field.field_type.clone()
         };

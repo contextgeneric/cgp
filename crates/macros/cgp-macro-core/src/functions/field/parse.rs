@@ -1,7 +1,7 @@
 use quote::{ToTokens, quote};
 use syn::spanned::Spanned;
 use syn::token::Mut;
-use syn::{Error, GenericArgument, PathArguments, PathSegment, Type, TypePath, parse_quote};
+use syn::{Error, GenericArgument, PathArguments, PathSegment, Type, TypePath};
 
 use crate::functions::parse_internal;
 use crate::types::getter::FieldMode;
@@ -22,10 +22,10 @@ pub fn parse_field_type(
                 ));
             }
 
-            if type_ref.elem.as_ref() == &parse_quote! { str } {
+            if type_ref.elem.as_ref() == &parse_internal! { str } {
                 // Special case to handle &str as String field
 
-                let field_type: Type = parse_quote! { String };
+                let field_type: Type = parse_internal! { String };
 
                 Ok((field_type, FieldMode::Str))
             } else if let (Type::Slice(slice), None) = (type_ref.elem.as_ref(), receiver_mut) {

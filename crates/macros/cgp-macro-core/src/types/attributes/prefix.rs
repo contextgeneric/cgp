@@ -1,7 +1,7 @@
 use quote::quote;
+use syn::ItemImpl;
 use syn::parse::{Parse, ParseStream};
 use syn::token::In;
-use syn::{ItemImpl, parse_quote};
 
 use crate::exports::RedirectLookup;
 use crate::functions::parse_internal;
@@ -24,13 +24,15 @@ impl PrefixAttribute {
         namespace
             .type_args
             .make_args()
-            .push(parse_quote!(__Components__));
+            .push(parse_internal!(__Components__));
 
         let mut path = self.path.clone();
-        path.append_type(parse_quote!(#component_name));
+        path.append_type(parse_internal!(#component_name));
 
         let mut type_generics = component_name.type_generics.clone();
-        type_generics.params.insert(0, parse_quote!(__Components__));
+        type_generics
+            .params
+            .insert(0, parse_internal!(__Components__));
 
         let item_impl = parse_internal(quote! {
             impl #type_generics #namespace for #component_name

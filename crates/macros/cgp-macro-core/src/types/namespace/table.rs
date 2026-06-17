@@ -1,7 +1,8 @@
 use syn::parse::{Parse, ParseStream};
 use syn::token::Colon;
-use syn::{Error, Ident, ItemImpl, ItemStruct, ItemTrait, Type, braced, parse_quote};
+use syn::{Error, Ident, ItemImpl, ItemStruct, ItemTrait, Type, braced};
 
+use crate::parse_internal;
 use crate::traits::ParseOptionalKeyword;
 use crate::types::delegate_component::{
     DelegateEntries, EvalDelegateEntries, EvalDelegateEntry, EvalForEntry,
@@ -56,9 +57,9 @@ impl NamespaceTable {
     pub fn build_namespace_trait(&self) -> syn::Result<Type> {
         let namespace_ident = &self.namespace.ident;
         let mut namespace_generics = self.namespace.type_generics.clone();
-        namespace_generics.params.push(parse_quote!(__Table__));
+        namespace_generics.params.push(parse_internal!(__Table__));
 
-        let namespace_trait: Type = parse_quote!( #namespace_ident #namespace_generics );
+        let namespace_trait: Type = parse_internal!( #namespace_ident #namespace_generics );
         Ok(namespace_trait)
     }
 
@@ -66,7 +67,7 @@ impl NamespaceTable {
         let namespace_trait = self.build_namespace_trait()?;
 
         let item_trait: Option<ItemTrait> = if self.new.is_some() {
-            let item_trait = parse_quote! {
+            let item_trait = parse_internal! {
                 pub trait #namespace_trait {
                     type Delegate;
                 }
@@ -82,10 +83,10 @@ impl NamespaceTable {
 
     pub fn build_item_impls(&self) -> syn::Result<Vec<ItemImpl>> {
         let mut impl_generics = self.impl_generics.clone();
-        impl_generics.params.push(parse_quote!(__Table__));
+        impl_generics.params.push(parse_internal!(__Table__));
 
         let namespace_trait = self.build_namespace_trait()?;
-        let table_type: Type = parse_quote!(__Table__);
+        let table_type: Type = parse_internal!(__Table__);
 
         let evaluated_entries = self.entries.eval_entries(&table_type)?;
 
@@ -115,14 +116,14 @@ impl NamespaceTable {
 
         let namespace_ident = self.namespace.ident.clone();
 
-        let table_type: Type = parse_quote!(__Table__);
+        let table_type: Type = parse_internal!(__Table__);
 
         let namespace_struct_ident = Ident::new(
             &format!("__{}Components", namespace_ident),
             namespace_ident.span(),
         );
 
-        let namespace_struct: ItemStruct = parse_quote! {
+        let namespace_struct: ItemStruct = parse_internal! {
             pub struct #namespace_struct_ident;
         };
 
@@ -137,7 +138,7 @@ impl NamespaceTable {
         let namespace_trait = self.build_namespace_trait()?;
 
         let mut generics = self.impl_generics.generics.clone();
-        generics.params.push(parse_quote!(#table_type));
+        generics.params.push(parse_internal!(#table_type));
 
         let item_impl = evaluated_entry.build_namespace_impl(&namespace_trait, &generics)?;
 

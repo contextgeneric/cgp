@@ -1,5 +1,5 @@
 use quote::{ToTokens, quote};
-use syn::{ImplItem, ItemImpl, Type, parse_quote};
+use syn::{ImplItem, ItemImpl, Type};
 
 use crate::functions::parse_internal;
 use crate::types::cgp_getter::{ItemCgpGetter, ReceiverMode};
@@ -49,12 +49,12 @@ impl ItemCgpGetter {
 
         for field in &self.fields {
             let receiver_type = match &field.receiver_mode {
-                ReceiverMode::SelfReceiver => parse_quote!(#context_type),
+                ReceiverMode::SelfReceiver => parse_internal!(#context_type),
                 ReceiverMode::Type(ty) => ty.clone(),
             };
 
             let field_name = Symbol::new(field.field_name.clone());
-            let tag_type: Type = parse_quote!(#field_name);
+            let tag_type: Type = parse_internal!(#field_name);
 
             let method = derive_getter_method(
                 &ContextArg::Type(receiver_type.clone()),
@@ -67,7 +67,7 @@ impl ItemCgpGetter {
 
             let field_type = if let Some(trait_item) = &field_assoc_type {
                 let trait_item_ident = &trait_item.ident;
-                parse_quote!(#trait_item_ident)
+                parse_internal!(#trait_item_ident)
             } else {
                 field.field_type.clone()
             };
