@@ -1,4 +1,4 @@
-use quote::{ToTokens, quote};
+use quote::ToTokens;
 use syn::spanned::Spanned;
 use syn::token::Mut;
 use syn::{Error, GenericArgument, PathArguments, PathSegment, Type, TypePath};
@@ -41,7 +41,7 @@ pub fn parse_field_type(
         Type::Path(type_path) => {
             if let Some(field_type) = try_parse_option_ref(type_path) {
                 Ok((
-                    parse_internal(quote! { Option< #field_type > })?,
+                    parse_internal! { Option< #field_type > },
                     FieldMode::OptionRef,
                 ))
             } else if let (Some(field_type), None) = (try_parse_mref(type_path), receiver_mut) {

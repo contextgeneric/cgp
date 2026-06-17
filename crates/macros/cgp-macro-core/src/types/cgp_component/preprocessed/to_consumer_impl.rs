@@ -1,4 +1,3 @@
-use quote::quote;
 use syn::token::{Brace, For, Impl};
 use syn::{ItemImpl, Path, Type};
 
@@ -21,9 +20,9 @@ impl PreprocessedCgpComponent {
             provider_type_generics
                 .generics
                 .params
-                .insert(0, parse_internal(quote!(#context_type_ident))?);
+                .insert(0, parse_internal!(#context_type_ident));
 
-            parse_internal(quote!(#provider_ident #provider_type_generics))?
+            parse_internal!(#provider_ident #provider_type_generics)
         };
 
         let generics_for_impl = {
@@ -31,20 +30,20 @@ impl PreprocessedCgpComponent {
 
             generics
                 .params
-                .insert(0, parse_internal(quote!(#context_type_ident))?);
+                .insert(0, parse_internal!(#context_type_ident));
 
             let where_clause = generics.make_where_clause();
 
             if !consumer_trait.supertraits.is_empty() {
                 let supertrait_constraints = consumer_trait.supertraits.clone();
-                where_clause.predicates.push(parse_internal(quote! {
+                where_clause.predicates.push(parse_internal! {
                     #context_type_ident : #supertrait_constraints
-                })?);
+                });
             }
 
-            where_clause.predicates.push(parse_internal(quote! {
+            where_clause.predicates.push(parse_internal! {
                 #context_type_ident : #provider_trait_path
-            })?);
+            });
 
             generics
         };
@@ -55,8 +54,7 @@ impl PreprocessedCgpComponent {
             &provider_trait_path,
         )?;
 
-        let consumer_trait_path: Path =
-            parse_internal(quote!( #consumer_name #consumer_type_generics ))?;
+        let consumer_trait_path: Path = parse_internal!( #consumer_name #consumer_type_generics );
 
         let item_impl = ItemImpl {
             attrs: consumer_trait.attrs.clone(),
@@ -65,7 +63,7 @@ impl PreprocessedCgpComponent {
             impl_token: Impl::default(),
             generics: generics_for_impl,
             trait_: Some((None, consumer_trait_path, For::default())),
-            self_ty: Box::new(parse_internal(quote!(#context_type_ident))?),
+            self_ty: Box::new(parse_internal!(#context_type_ident)),
             brace_token: Brace::default(),
             items: impl_items,
         };

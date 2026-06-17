@@ -1,4 +1,3 @@
-use quote::quote;
 use syn::ItemImpl;
 use syn::parse::{Parse, ParseStream};
 use syn::token::In;
@@ -34,12 +33,12 @@ impl PrefixAttribute {
             .params
             .insert(0, parse_internal!(__Components__));
 
-        let item_impl = parse_internal(quote! {
+        let item_impl = parse_internal! {
             impl #type_generics #namespace for #component_name
             {
                 type Delegate = #RedirectLookup< __Components__, #path >;
             }
-        })?;
+        };
 
         Ok(item_impl)
     }

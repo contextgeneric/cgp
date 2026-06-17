@@ -20,11 +20,11 @@ pub fn signature_to_delegated_impl_item_fn(
         TokenStream::new()
     };
 
-    let body = parse_internal(quote!({
+    let body = parse_internal!({
         #delegate_type :: #fn_name (
             #args
         ) #await_expr
-    }))?;
+    });
 
     let item = ImplItemFn {
         attrs: Vec::new(),

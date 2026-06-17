@@ -64,18 +64,18 @@ impl ItemCgpGetter {
                 .params
                 .push(parse_internal(field_assoc_type_ident.to_token_stream())?);
 
-            items.push(parse_internal(quote! {
+            items.push(parse_internal! {
                 type #field_assoc_type_ident = #field_assoc_type_ident;
-            })?);
+            });
 
             let field_constraints = get_bounds_and_replace_self_assoc_type(field_assoc_type);
 
             provider_generics
                 .make_where_clause()
                 .predicates
-                .push(parse_internal(quote! {
+                .push(parse_internal! {
                     #field_assoc_type_ident: #field_constraints
-                })?);
+                });
         }
 
         let provider_constraint = if field.receiver_mut.is_none() {
@@ -104,28 +104,26 @@ impl ItemCgpGetter {
         items.push(method.into());
 
         let mut where_clause = provider_generics.make_where_clause().clone();
-        where_clause.predicates.push(parse_internal(
-            quote! { #provider_ident : #provider_constraint },
-        )?);
+        where_clause.predicates.push(parse_internal! {
+            #provider_ident : #provider_constraint
+        });
 
         let (_, type_generics, _) = provider_trait.generics.split_for_impl();
         let (impl_generics, _, _) = provider_generics.split_for_impl();
 
         let impl_generics = {
             let mut generics: Generics = parse_internal(impl_generics.to_token_stream())?;
-            generics
-                .params
-                .push(parse_internal(quote! { #provider_ident })?);
+            generics.params.push(parse_internal! { #provider_ident });
             generics
         };
 
-        let out = parse_internal(quote! {
+        let out = parse_internal! {
             impl #impl_generics #provider_name #type_generics for WithProvider< #provider_ident >
             #where_clause
             {
                 #( #items )*
             }
-        })?;
+        };
 
         Ok(out)
     }

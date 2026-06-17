@@ -23,9 +23,9 @@ pub fn derive_use_type_predicates(specs: &[UseTypeAttribute]) -> syn::Result<Vec
         }
 
         if type_equalities.is_empty() {
-            predicates.push(parse_internal(quote! {
+            predicates.push(parse_internal! {
                 #context_type: #trait_path
-            })?);
+            });
         } else {
             let mut constraints: Punctuated<TokenStream, Comma> = Punctuated::new();
 
@@ -35,9 +35,9 @@ pub fn derive_use_type_predicates(specs: &[UseTypeAttribute]) -> syn::Result<Vec
                 });
             }
 
-            predicates.push(parse_internal(quote! {
+            predicates.push(parse_internal! {
                 #context_type: #trait_path < #constraints >
-            })?);
+            });
         }
     }
 
@@ -56,9 +56,9 @@ fn find_type_alias(specs: &[UseTypeAttribute], context_type: &Type) -> syn::Resu
                 let type_ident = &ident.type_ident;
                 let trait_path = &spec.trait_path;
 
-                let new_type = parse_internal(quote! {
+                let new_type = parse_internal! {
                     <#new_context_type as #trait_path>::#type_ident
-                })?;
+                };
 
                 return Ok(Some(new_type));
             }
@@ -130,9 +130,9 @@ fn find_type_equality(
                     let match_type_ident = &match_use_type.type_ident;
                     let context_type = &spec.context_type;
 
-                    let equal_target: Type = parse_internal(quote! {
+                    let equal_target: Type = parse_internal! {
                         <#context_type as #trait_path>::#match_type_ident
-                    })?;
+                    };
 
                     return Ok(Some((current_type_ident.clone(), equal_target)));
                 }

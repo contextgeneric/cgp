@@ -1,4 +1,3 @@
-use quote::quote;
 use syn::punctuated::Punctuated;
 use syn::visit_mut::VisitMut;
 use syn::{Ident, ItemTrait, TraitItem, Type, TypeParamBound};
@@ -58,9 +57,9 @@ impl PreprocessedCgpComponent {
 
         let is_provider_params = parse_is_provider_params(&consumer_trait.generics)?;
 
-        let provider_supertrait: TypeParamBound = parse_internal(quote!(
+        let provider_supertrait: TypeParamBound = parse_internal! {
             #IsProviderFor< #component_name, #context_type_ident, ( #is_provider_params ) >
-        ))?;
+        };
 
         provider_trait.supertraits = Punctuated::from_iter([provider_supertrait]);
 

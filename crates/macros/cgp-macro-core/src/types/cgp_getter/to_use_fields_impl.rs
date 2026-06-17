@@ -1,4 +1,4 @@
-use quote::{ToTokens, quote};
+use quote::ToTokens;
 use syn::{ImplItem, ItemImpl, Type};
 
 use crate::functions::parse_internal;
@@ -31,18 +31,18 @@ impl ItemCgpGetter {
                 .params
                 .push(parse_internal(field_assoc_type_ident.to_token_stream())?);
 
-            items.push(parse_internal(quote! {
+            items.push(parse_internal! {
                 type #field_assoc_type_ident = #field_assoc_type_ident;
-            })?);
+            });
 
             let field_constraints = get_bounds_and_replace_self_assoc_type(field_assoc_type);
 
             provider_generics
                 .make_where_clause()
                 .predicates
-                .push(parse_internal(quote! {
+                .push(parse_internal! {
                     #field_assoc_type_ident: #field_constraints
-                })?);
+                });
         }
 
         let where_clause = provider_generics.make_where_clause();
@@ -81,19 +81,19 @@ impl ItemCgpGetter {
 
             where_clause
                 .predicates
-                .push(parse_internal(quote! { #receiver_type: #constraint })?);
+                .push(parse_internal! { #receiver_type: #constraint });
         }
 
         let (_, type_generics, _) = provider_trait.generics.split_for_impl();
         let (impl_generics, _, where_clause) = provider_generics.split_for_impl();
 
-        let item_impl: ItemImpl = parse_internal(quote! {
+        let item_impl: ItemImpl = parse_internal! {
             impl #impl_generics #provider_name #type_generics for UseFields
             #where_clause
             {
                 #( #items )*
             }
-        })?;
+        };
 
         Ok(ItemProviderImpl {
             component_type: component_name.to_type(),

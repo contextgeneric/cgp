@@ -34,7 +34,7 @@ impl PreprocessedCgpComponent {
 
             impl_generics
                 .params
-                .insert(0, parse_internal(quote!(#provider_type))?);
+                .insert(0, parse_internal!(#provider_type));
 
             {
                 let is_provider_params = parse_is_provider_params(&consumer_trait.generics)?;
@@ -44,23 +44,23 @@ impl PreprocessedCgpComponent {
 
                 delegate_constraints.push(parse_internal(delegate_constraint)?);
 
-                delegate_constraints.push(parse_internal(quote!(
+                delegate_constraints.push(parse_internal! {
                     #IsProviderFor< #component_name, #context_type, ( #is_provider_params ) >
-                ))?);
+                });
 
-                let provider_constraint: TypeParamBound = parse_internal(quote! {
+                let provider_constraint: TypeParamBound = parse_internal! {
                     #provider_name #provider_type_generics
-                })?;
+                };
 
                 let where_clause = impl_generics.make_where_clause();
 
-                where_clause.predicates.push(parse_internal(quote! {
+                where_clause.predicates.push(parse_internal! {
                     #provider_type : #delegate_constraints
-                })?);
+                });
 
-                where_clause.predicates.push(parse_internal(quote! {
+                where_clause.predicates.push(parse_internal! {
                     #delegate_type : #provider_constraint
-                })?);
+                });
             }
 
             impl_generics
@@ -68,7 +68,7 @@ impl PreprocessedCgpComponent {
 
         let impl_items = provider_trait_to_impl_items(&provider_trait, &delegate_type)?;
 
-        let trait_path: Path = parse_internal(quote!( #provider_name #provider_type_generics ))?;
+        let trait_path: Path = parse_internal!( #provider_name #provider_type_generics );
 
         let provider_blanket_impl = ItemImpl {
             attrs: provider_trait.attrs.clone(),
@@ -77,7 +77,7 @@ impl PreprocessedCgpComponent {
             impl_token: Impl::default(),
             generics: impl_generics,
             trait_: Some((None, trait_path, For::default())),
-            self_ty: Box::new(parse_internal(quote!(#provider_type))?),
+            self_ty: Box::new(parse_internal!(#provider_type)),
             brace_token: Brace::default(),
             items: impl_items,
         };

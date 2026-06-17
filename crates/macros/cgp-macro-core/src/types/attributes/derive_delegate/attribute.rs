@@ -1,5 +1,4 @@
 use proc_macro2::Span;
-use quote::quote;
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::token::{Comma, Gt, Lt, Paren};
@@ -31,18 +30,18 @@ impl DeriveDelegateAttribute {
 
         let where_clause = generics.make_where_clause();
 
-        where_clause.predicates.push(parse_internal(quote! {
+        where_clause.predicates.push(parse_internal! {
             #components_ident: #DelegateComponent<
                 ( #use_delegate_params ),
                 Delegate = #delegate_ident,
             >
-        })?);
+        });
 
         let type_generics = provider_trait.generics.split_for_impl().1;
 
-        where_clause.predicates.push(parse_internal(quote! {
+        where_clause.predicates.push(parse_internal! {
             #delegate_ident : #provider_trait_ident #type_generics
-        })?);
+        });
 
         let type_generics = provider_trait.generics.split_for_impl().1;
 
@@ -52,8 +51,13 @@ impl DeriveDelegateAttribute {
             &parse_internal!( #provider_trait_ident #type_generics ),
         )?;
 
-        let provider_type = parse_internal(quote!(#wrapper_ident < #components_ident >))?;
-        let trait_path: Path = parse_internal!( #provider_trait_ident #type_generics );
+        let provider_type = parse_internal! {
+            #wrapper_ident < #components_ident >
+        };
+
+        let trait_path: Path = parse_internal! {
+            #provider_trait_ident #type_generics
+        };
 
         let item = ItemImpl {
             attrs: provider_trait.attrs.clone(),

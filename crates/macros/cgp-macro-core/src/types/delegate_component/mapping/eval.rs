@@ -1,4 +1,3 @@
-use quote::quote;
 use syn::{Generics, ItemImpl, Type};
 
 use crate::exports::{DelegateComponent, IsProviderFor};
@@ -33,7 +32,7 @@ impl EvaluatedDelegateEntry {
 
         let (impl_generics, _, where_clause) = generics.split_for_impl();
 
-        parse_internal(quote! {
+        let item_impl = parse_internal! {
             impl #impl_generics
                 #DelegateComponent< #key >
                 for #table_type
@@ -41,7 +40,9 @@ impl EvaluatedDelegateEntry {
             {
                 type Delegate = #value;
             }
-        })
+        };
+
+        Ok(item_impl)
     }
 
     pub fn build_is_provider_for_impl(&self, outer_generics: &Generics) -> syn::Result<ItemImpl> {
@@ -64,13 +65,15 @@ impl EvaluatedDelegateEntry {
 
         let (impl_generics, _, where_clause) = generics.split_for_impl();
 
-        parse_internal(quote! {
+        let item_impl = parse_internal! {
             impl #impl_generics
                 #IsProviderFor< #key, __Context__, __Params__ >
                 for #table_type
             #where_clause
             {}
-        })
+        };
+
+        Ok(item_impl)
     }
 
     pub fn build_namespace_impl(
@@ -85,7 +88,7 @@ impl EvaluatedDelegateEntry {
 
         let (impl_generics, _, where_clause) = generics.split_for_impl();
 
-        parse_internal(quote! {
+        let item_impl = parse_internal! {
             impl #impl_generics
                 #namespace_trait
                 for #key
@@ -93,6 +96,8 @@ impl EvaluatedDelegateEntry {
             {
                 type Delegate = #value;
             }
-        })
+        };
+
+        Ok(item_impl)
     }
 }

@@ -1,4 +1,3 @@
-use quote::quote;
 use syn::{ItemImpl, Path, Type};
 
 use crate::exports::UseContext;
@@ -28,9 +27,9 @@ impl EvaluatedCgpComponent {
         impl_generics
             .make_where_clause()
             .predicates
-            .push(parse_internal(quote! {
+            .push(parse_internal! {
                 #context_type_ident : #consumer_trait_ident #consumer_trait_generics
-            })?);
+            });
 
         let impl_items = trait_items_to_delegated_impl_items(
             &provider_trait.items,
@@ -38,8 +37,7 @@ impl EvaluatedCgpComponent {
             &consumer_trait_path,
         )?;
 
-        let provider_trait_path: Path =
-            parse_internal(quote!( #provider_trait_ident #provider_generics ))?;
+        let provider_trait_path: Path = parse_internal!( #provider_trait_ident #provider_generics );
 
         let item_impl = ItemImpl {
             attrs: provider_trait.attrs.clone(),

@@ -1,5 +1,4 @@
 use proc_macro2::Span;
-use quote::quote;
 use syn::spanned::Spanned;
 use syn::token::Eq;
 use syn::{Error, ImplItem, ImplItemConst, TraitItem, Type, Visibility};
@@ -35,9 +34,9 @@ pub fn trait_item_to_delegated_impl_items(
         TraitItem::Type(trait_type) => {
             let type_name = &trait_type.ident;
             let type_generics = trait_type.generics.split_for_impl().1;
-            let delegate_type = parse_internal(quote!(
+            let delegate_type = parse_internal! {
                 < #delegate_type as #provider_trait_path > :: #type_name #type_generics
-            ))?;
+            };
 
             let impl_type = trait_to_impl_item_type(trait_type, delegate_type);
 
@@ -47,9 +46,9 @@ pub fn trait_item_to_delegated_impl_items(
             let const_ident = &trait_item_const.ident;
             let type_generics = trait_item_const.generics.split_for_impl().1;
 
-            let impl_expr = parse_internal(quote! {
+            let impl_expr = parse_internal! {
                 < #delegate_type as #provider_trait_path > :: #const_ident #type_generics
-            })?;
+            };
 
             let impl_item_const = ImplItemConst {
                 attrs: trait_item_const.attrs.clone(),

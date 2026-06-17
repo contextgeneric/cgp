@@ -102,11 +102,13 @@ impl GetterMethod {
 
         let return_type = &getter_field.return_type;
 
-        parse_internal(quote! {
+        let item_fn = parse_internal! {
             fn #getter_ident( #context_fn_arg #phantom_arg ) -> #return_type {
                 #call_expr
             }
-        })
+        };
+
+        Ok(item_fn)
     }
 }
 

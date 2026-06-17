@@ -66,9 +66,9 @@ impl ItemCgpGetter {
             provider_generics
                 .make_where_clause()
                 .predicates
-                .push(parse_internal(quote! {
+                .push(parse_internal! {
                     #field_assoc_type_ident: #field_constraints
-                })?);
+                });
         }
 
         items.extend(
@@ -98,9 +98,9 @@ impl ItemCgpGetter {
         field_constraints.push(parse_internal!(#constraint));
 
         let mut where_clause = provider_generics.make_where_clause().clone();
-        where_clause.predicates.push(parse_internal(
-            quote! { #receiver_type: #field_constraints },
-        )?);
+        where_clause.predicates.push(parse_internal! {
+            #receiver_type: #field_constraints
+        });
 
         let (_, type_generics, _) = provider_trait.generics.split_for_impl();
         let (impl_generics, _, _) = provider_generics.split_for_impl();
@@ -111,13 +111,13 @@ impl ItemCgpGetter {
             generics
         };
 
-        let use_field_impl: ItemImpl = parse_internal(quote! {
+        let use_field_impl: ItemImpl = parse_internal! {
             impl #impl_generics #provider_name #type_generics for UseField< #tag_type >
             #where_clause
             {
                 #items
             }
-        })?;
+        };
 
         Ok(use_field_impl)
     }

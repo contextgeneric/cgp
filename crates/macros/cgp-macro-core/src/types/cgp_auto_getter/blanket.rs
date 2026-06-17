@@ -1,4 +1,4 @@
-use quote::{ToTokens, quote};
+use quote::ToTokens;
 use syn::{Ident, ImplItem, ItemImpl, ItemTrait, TraitItemType};
 
 use crate::functions::parse_internal;
@@ -32,26 +32,26 @@ pub fn derive_blanket_impl(
             .params
             .push(parse_internal(field_assoc_type_ident.to_token_stream())?);
 
-        items.push(parse_internal(quote! {
+        items.push(parse_internal! {
             type #field_assoc_type_ident = #field_assoc_type_ident;
-        })?);
+        });
 
         let field_constraints = get_bounds_and_replace_self_assoc_type(field_assoc_type);
 
         generics
             .make_where_clause()
             .predicates
-            .push(parse_internal(quote! {
+            .push(parse_internal! {
                 #field_assoc_type_ident: #field_constraints
-            })?);
+            });
     }
 
     let where_clause = generics.make_where_clause();
 
     if !supertrait_constraints.is_empty() {
-        where_clause.predicates.push(parse_internal(quote! {
+        where_clause.predicates.push(parse_internal! {
             #context_type: #supertrait_constraints
-        })?);
+        });
     }
 
     for field in fields {
@@ -81,21 +81,21 @@ pub fn derive_blanket_impl(
             tag_type,
         };
 
-        where_clause.predicates.push(parse_internal(quote! {
+        where_clause.predicates.push(parse_internal! {
             #receiver_type: #constraint
-        })?);
+        });
     }
 
     let (_, type_generics, _) = consumer_trait.generics.split_for_impl();
     let (impl_generics, _, where_clause) = generics.split_for_impl();
 
-    let item_impl: ItemImpl = parse_internal(quote! {
+    let item_impl: ItemImpl = parse_internal! {
         impl #impl_generics #consumer_name #type_generics for #context_type
         #where_clause
         {
             #( #items )*
         }
-    })?;
+    };
 
     Ok(item_impl)
 }
