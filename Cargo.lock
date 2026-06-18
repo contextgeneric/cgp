@@ -185,6 +185,7 @@ name = "cgp-macro-core"
 version = "0.7.0"
 dependencies = [
  "itertools",
+ "prettyplease",
  "proc-macro2",
  "quote",
  "syn",
