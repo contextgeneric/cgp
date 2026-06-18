@@ -1,10 +1,11 @@
 use proc_macro2::TokenStream;
-use syn::Ident;
 use syn::parse::{Parse, ParseStream};
-use syn::token::Semi;
+use syn::{Expr, Ident, braced, parenthesized};
 
 pub struct MacroSnapshot {
     pub test_name: Ident,
+    pub arg_ident: Ident,
+    pub expr: Expr,
     pub body: TokenStream,
 }
 
@@ -12,10 +13,25 @@ impl Parse for MacroSnapshot {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let test_name = input.parse()?;
 
-        let _: Semi = input.parse()?;
+        let arg_ident = {
+            let arg_body;
+            parenthesized!(arg_body in input);
+            arg_body.parse()?
+        };
+
+        let expr = {
+            let expr_body;
+            braced!(expr_body in input);
+            expr_body.parse()?
+        };
 
         let body = input.parse()?;
 
-        Ok(MacroSnapshot { test_name, body })
+        Ok(MacroSnapshot {
+            test_name,
+            arg_ident,
+            expr,
+            body,
+        })
     }
 }
