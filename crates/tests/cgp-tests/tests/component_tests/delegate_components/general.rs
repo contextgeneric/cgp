@@ -14,7 +14,7 @@ mod test_basic_delegate_components {
     pub struct Components;
 
     snapshot_delegate_components! {
-        {
+        delegate_components! {
             Components {
                 FooKey: FooValue,
                 [
@@ -81,7 +81,7 @@ mod test_generic_delegate_components {
     pub struct Components;
 
     snapshot_delegate_components! {
-        {
+        delegate_components! {
             <'a, T1: Clone>
             Components {
                 FooKey<T1>: FooValue,

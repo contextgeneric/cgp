@@ -3,7 +3,7 @@ use cgp_macro_test_util::snapshot_delegate_components;
 use insta::assert_snapshot;
 
 snapshot_delegate_components! {
-    {
+    delegate_components! {
         new FooComponents {
             Index<0>: u64,
             Index<1>: String,
@@ -34,7 +34,7 @@ snapshot_delegate_components! {
 }
 
 snapshot_delegate_components! {
-    {
+    delegate_components! {
         new BarComponents {
             Index<0>:
                 FooComponents,
