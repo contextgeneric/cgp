@@ -25,16 +25,17 @@ impl Parse for SnapshotCgpComponent {
 
             let _: Keyword<CgpComponent> = outer_body.parse()?;
 
-            if input.peek(Paren) {
+            if outer_body.peek(Paren) {
                 let inner_body;
                 parenthesized!(inner_body in outer_body);
-                input.parse()?
+                inner_body.parse()?
             } else {
                 let inner_body;
                 braced!(inner_body in outer_body);
-                input.parse()?
+                inner_body.parse()?
             }
         };
+        // let attr = TokenStream::new();
 
         let body = input.parse()?;
 
