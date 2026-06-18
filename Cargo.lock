@@ -208,7 +208,18 @@ version = "0.7.0"
 dependencies = [
  "cgp-macro-core",
  "cgp-macro-lib",
- "itertools",
+ "cgp-macro-test-util-lib",
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
+name = "cgp-macro-test-util-lib"
+version = "0.7.0"
+dependencies = [
+ "cgp-macro-core",
+ "cgp-macro-lib",
  "proc-macro2",
  "quote",
  "syn",

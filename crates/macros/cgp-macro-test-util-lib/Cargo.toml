@@ -1,5 +1,5 @@
 [package]
-name         = "cgp-macro-test-util"
+name         = "cgp-macro-test-util-lib"
 version      = "0.7.0"
 edition      = { workspace = true }
 license      = { workspace = true }
@@ -8,14 +8,10 @@ authors      = { workspace = true }
 rust-version = { workspace = true }
 keywords     = { workspace = true }
 
-[lib]
-proc-macro = true
-
 [dependencies]
-cgp-macro-lib                   = { workspace = true }
-cgp-macro-core                  = { workspace = true }
-cgp-macro-test-util-lib         = { workspace = true }
+cgp-macro-lib   = { workspace = true }
+cgp-macro-core  = { workspace = true }
 
-syn             = { version = "2.0.95", features = [ "full", "extra-traits", "visit", "visit-mut" ] }
+syn             = { version = "2.0.95" }
 quote           = { version = "1.0.38" }
 proc-macro2     = { version = "1.0.92" }

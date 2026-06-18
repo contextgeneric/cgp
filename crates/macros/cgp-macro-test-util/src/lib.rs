@@ -1,9 +1,6 @@
-mod parse;
-
+use cgp_macro_test_util_lib::types::MacroSnapshot;
 use proc_macro::TokenStream;
 use syn::parse2;
-
-use crate::parse::MacroSnapshot;
 
 #[proc_macro]
 pub fn snapshot_delegate_components(body: TokenStream) -> TokenStream {
