@@ -1,4 +1,5 @@
 use proc_macro2::TokenStream;
+use quote::quote;
 use syn::parse::{Parse, ParseStream};
 use syn::{Ident, braced, parenthesized};
 
@@ -7,6 +8,30 @@ pub struct MacroSnapshot {
     pub arg_ident: Ident,
     pub expr: TokenStream,
     pub body: TokenStream,
+}
+
+impl MacroSnapshot {
+    pub fn wrap_output(&self, output: TokenStream) -> TokenStream {
+        let Self {
+            test_name,
+            arg_ident,
+            expr,
+            ..
+        } = self;
+
+        quote! {
+            #output
+
+            #[test]
+            fn #test_name() {
+                let #arg_ident = cgp_macro_core::functions::pretty_format(quote::quote! {
+                    #output
+                }).unwrap();
+
+                #expr
+            }
+        }
+    }
 }
 
 impl Parse for MacroSnapshot {
