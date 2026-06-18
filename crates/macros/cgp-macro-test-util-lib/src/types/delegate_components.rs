@@ -1,8 +1,9 @@
 use cgp_macro_core::define_keyword;
 use cgp_macro_core::types::keyword::Keyword;
 use proc_macro2::TokenStream;
+use syn::braced;
 use syn::parse::{Parse, ParseStream};
-use syn::{Token, braced};
+use syn::token::Not;
 
 use crate::types::MacroSnapshot;
 
@@ -16,7 +17,7 @@ pub struct AssertDelegateComponents {
 impl Parse for AssertDelegateComponents {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let _: Keyword<DelegateComponents> = input.parse()?;
-        let _: Token![!] = input.parse()?;
+        let _: Not = input.parse()?;
 
         let body = {
             let body;
