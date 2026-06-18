@@ -26,7 +26,7 @@ pub fn snapshot_delegate_components(body: TokenStream) -> TokenStream {
                 #output
             }).unwrap();
 
-            #expr;
+            #expr
         }
     };
 

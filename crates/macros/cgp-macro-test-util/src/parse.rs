@@ -1,11 +1,11 @@
 use proc_macro2::TokenStream;
 use syn::parse::{Parse, ParseStream};
-use syn::{Expr, Ident, braced, parenthesized};
+use syn::{Ident, braced, parenthesized};
 
 pub struct MacroSnapshot {
     pub test_name: Ident,
     pub arg_ident: Ident,
-    pub expr: Expr,
+    pub expr: TokenStream,
     pub body: TokenStream,
 }
 
