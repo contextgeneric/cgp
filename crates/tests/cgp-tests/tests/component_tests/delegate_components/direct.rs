@@ -3,6 +3,13 @@ use cgp_macro_test_util::assert_delegate_components;
 use insta::assert_snapshot;
 
 assert_delegate_components! {
+    {
+        new FooComponents {
+            Index<0>: u64,
+            Index<1>: String,
+        }
+    }
+
     expand_foo_component(output) {
         assert_snapshot!(output, @"
         pub struct FooComponents;
@@ -23,11 +30,6 @@ assert_delegate_components! {
             String: IsProviderFor<Index<1>, __Context__, __Params__>,
         {}
         ")
-    }
-
-    new FooComponents {
-        Index<0>: u64,
-        Index<1>: String,
     }
 }
 

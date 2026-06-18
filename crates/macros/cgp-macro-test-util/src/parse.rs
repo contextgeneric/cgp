@@ -11,6 +11,12 @@ pub struct MacroSnapshot {
 
 impl Parse for MacroSnapshot {
     fn parse(input: ParseStream) -> syn::Result<Self> {
+        let body = {
+            let body;
+            braced!(body in input);
+            body.parse()?
+        };
+
         let test_name = input.parse()?;
 
         let arg_ident = {
@@ -24,8 +30,6 @@ impl Parse for MacroSnapshot {
             braced!(expr_body in input);
             expr_body.parse()?
         };
-
-        let body = input.parse()?;
 
         Ok(MacroSnapshot {
             test_name,
