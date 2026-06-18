@@ -7,7 +7,7 @@ use syn::parse2;
 use crate::parse::MacroSnapshot;
 
 #[proc_macro]
-pub fn assert_delegate_components(body: TokenStream) -> TokenStream {
+pub fn snapshot_delegate_components(body: TokenStream) -> TokenStream {
     let MacroSnapshot {
         test_name,
         arg_ident,

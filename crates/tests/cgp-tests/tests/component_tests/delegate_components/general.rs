@@ -2,7 +2,7 @@
 
 mod test_basic_delegate_components {
     use cgp::prelude::DelegateComponent;
-    use cgp_macro_test_util::assert_delegate_components;
+    use cgp_macro_test_util::snapshot_delegate_components;
     use insta::assert_snapshot;
 
     pub struct FooKey;
@@ -13,7 +13,7 @@ mod test_basic_delegate_components {
 
     pub struct Components;
 
-    assert_delegate_components! {
+    snapshot_delegate_components! {
         {
             Components {
                 FooKey: FooValue,
@@ -69,7 +69,7 @@ mod test_generic_delegate_components {
     use core::marker::PhantomData;
 
     use cgp::prelude::DelegateComponent;
-    use cgp_macro_test_util::assert_delegate_components;
+    use cgp_macro_test_util::snapshot_delegate_components;
     use insta::assert_snapshot;
 
     pub struct FooKey<T>(pub PhantomData<T>);
@@ -80,7 +80,7 @@ mod test_generic_delegate_components {
 
     pub struct Components;
 
-    assert_delegate_components! {
+    snapshot_delegate_components! {
         {
             <'a, T1: Clone>
             Components {

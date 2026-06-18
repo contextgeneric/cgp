@@ -1,8 +1,8 @@
 use cgp::prelude::*;
-use cgp_macro_test_util::assert_delegate_components;
+use cgp_macro_test_util::snapshot_delegate_components;
 use insta::assert_snapshot;
 
-assert_delegate_components! {
+snapshot_delegate_components! {
     {
         new FooComponents {
             Index<0>: u64,
@@ -33,7 +33,7 @@ assert_delegate_components! {
     }
 }
 
-assert_delegate_components! {
+snapshot_delegate_components! {
     {
         new BarComponents {
             Index<0>:
