@@ -1,11 +1,10 @@
 #![allow(unused)]
 
-use core::marker::PhantomData;
+mod test_basic_delegate_components {
+    use cgp::prelude::DelegateComponent;
+    use cgp_macro_test_util::assert_delegate_components;
+    use insta::assert_snapshot;
 
-use cgp::prelude::*;
-
-#[test]
-fn test_basic_delegate_components() {
     pub struct FooKey;
     pub struct FooValue;
     pub struct BarKey;
@@ -14,14 +13,45 @@ fn test_basic_delegate_components() {
 
     pub struct Components;
 
-    delegate_components! {
-        Components {
-            FooKey: FooValue,
-            [
-                BarKey,
-                BazKey,
-            ]:
-                BarValue,
+    assert_delegate_components! {
+        {
+            Components {
+                FooKey: FooValue,
+                [
+                    BarKey,
+                    BazKey,
+                ]:
+                    BarValue,
+            }
+        }
+
+        expand_components(output) {
+            assert_snapshot!(output, @"
+            impl DelegateComponent<FooKey> for Components {
+                type Delegate = FooValue;
+            }
+            impl<__Context__, __Params__> IsProviderFor<FooKey, __Context__, __Params__>
+            for Components
+            where
+                FooValue: IsProviderFor<FooKey, __Context__, __Params__>,
+            {}
+            impl DelegateComponent<BarKey> for Components {
+                type Delegate = BarValue;
+            }
+            impl<__Context__, __Params__> IsProviderFor<BarKey, __Context__, __Params__>
+            for Components
+            where
+                BarValue: IsProviderFor<BarKey, __Context__, __Params__>,
+            {}
+            impl DelegateComponent<BazKey> for Components {
+                type Delegate = BarValue;
+            }
+            impl<__Context__, __Params__> IsProviderFor<BazKey, __Context__, __Params__>
+            for Components
+            where
+                BarValue: IsProviderFor<BazKey, __Context__, __Params__>,
+            {}
+            ")
         }
     }
 
@@ -35,8 +65,13 @@ fn test_basic_delegate_components() {
     impl CheckDelegates for Components {}
 }
 
-#[test]
-fn test_generic_delegate_components() {
+mod test_generic_delegate_components {
+    use core::marker::PhantomData;
+
+    use cgp::prelude::DelegateComponent;
+    use cgp_macro_test_util::assert_delegate_components;
+    use insta::assert_snapshot;
+
     pub struct FooKey<T>(pub PhantomData<T>);
     pub struct FooValue;
     pub struct BarKey<'a, T>(pub PhantomData<(&'a (), T)>);
@@ -45,15 +80,58 @@ fn test_generic_delegate_components() {
 
     pub struct Components;
 
-    delegate_components! {
-        <'a, T1: Clone>
-        Components {
-            FooKey<T1>: FooValue,
-            [
-                BarKey<'a, T1>,
-                <T2> BazKey<T1, T2>,
-            ]:
-                BarValue<T1>,
+    assert_delegate_components! {
+        {
+            <'a, T1: Clone>
+            Components {
+                FooKey<T1>: FooValue,
+                [
+                    BarKey<'a, T1>,
+                    <T2> BazKey<T1, T2>,
+                ]:
+                    BarValue<T1>,
+            }
+        }
+        expand_components(output) {
+            assert_snapshot!(output, @"
+            impl<'a, T1: Clone> DelegateComponent<FooKey<T1>> for Components {
+                type Delegate = FooValue;
+            }
+            impl<
+                'a,
+                T1: Clone,
+                __Context__,
+                __Params__,
+            > IsProviderFor<FooKey<T1>, __Context__, __Params__> for Components
+            where
+                FooValue: IsProviderFor<FooKey<T1>, __Context__, __Params__>,
+            {}
+            impl<'a, T1: Clone> DelegateComponent<BarKey<'a, T1>> for Components {
+                type Delegate = BarValue<T1>;
+            }
+            impl<
+                'a,
+                T1: Clone,
+                __Context__,
+                __Params__,
+            > IsProviderFor<BarKey<'a, T1>, __Context__, __Params__> for Components
+            where
+                BarValue<T1>: IsProviderFor<BarKey<'a, T1>, __Context__, __Params__>,
+            {}
+            impl<'a, T1: Clone, T2> DelegateComponent<BazKey<T1, T2>> for Components {
+                type Delegate = BarValue<T1>;
+            }
+            impl<
+                'a,
+                T1: Clone,
+                T2,
+                __Context__,
+                __Params__,
+            > IsProviderFor<BazKey<T1, T2>, __Context__, __Params__> for Components
+            where
+                BarValue<T1>: IsProviderFor<BazKey<T1, T2>, __Context__, __Params__>,
+            {}
+            ")
         }
     }
 

@@ -33,12 +33,42 @@ assert_delegate_components! {
     }
 }
 
-delegate_components! {
-    new BarComponents {
-        Index<0>:
-            FooComponents,
-        Index<1> ->
-            FooComponents,
+assert_delegate_components! {
+    {
+        new BarComponents {
+            Index<0>:
+                FooComponents,
+            Index<1> ->
+                FooComponents,
+        }
+    }
+
+    expand_bar_component(output) {
+        assert_snapshot!(output, @"
+        pub struct BarComponents;
+        impl DelegateComponent<Index<0>> for BarComponents {
+            type Delegate = FooComponents;
+        }
+        impl<__Context__, __Params__> IsProviderFor<Index<0>, __Context__, __Params__>
+        for BarComponents
+        where
+            FooComponents: IsProviderFor<Index<0>, __Context__, __Params__>,
+        {}
+        impl DelegateComponent<Index<1>> for BarComponents
+        where
+            FooComponents: DelegateComponent<Index<1>>,
+        {
+            type Delegate = <FooComponents as DelegateComponent<Index<1>>>::Delegate;
+        }
+        impl<__Context__, __Params__> IsProviderFor<Index<1>, __Context__, __Params__>
+        for BarComponents
+        where
+            FooComponents: DelegateComponent<Index<1>>,
+            <FooComponents as DelegateComponent<
+                Index<1>,
+            >>::Delegate: IsProviderFor<Index<1>, __Context__, __Params__>,
+        {}
+        ")
     }
 }
 
