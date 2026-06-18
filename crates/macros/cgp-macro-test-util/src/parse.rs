@@ -1,13 +1,15 @@
 use proc_macro2::TokenStream;
 use quote::quote;
 use syn::parse::{Parse, ParseStream};
-use syn::{Ident, braced, parenthesized};
+use syn::token::Pound;
+use syn::{Ident, braced, bracketed, parenthesized};
 
 pub struct MacroSnapshot {
+    pub attrs: Option<TokenStream>,
+    pub body: TokenStream,
     pub test_name: Ident,
     pub arg_ident: Ident,
     pub expr: TokenStream,
-    pub body: TokenStream,
 }
 
 impl MacroSnapshot {
@@ -36,6 +38,17 @@ impl MacroSnapshot {
 
 impl Parse for MacroSnapshot {
     fn parse(input: ParseStream) -> syn::Result<Self> {
+        let attrs = if input.peek(Pound) {
+            let _: Pound = input.parse()?;
+
+            let attrs_body;
+            bracketed!(attrs_body in input);
+
+            Some(attrs_body.parse()?)
+        } else {
+            None
+        };
+
         let body = {
             let body;
             braced!(body in input);
@@ -57,10 +70,11 @@ impl Parse for MacroSnapshot {
         };
 
         Ok(MacroSnapshot {
+            attrs,
+            body,
             test_name,
             arg_ident,
             expr,
-            body,
         })
     }
 }
