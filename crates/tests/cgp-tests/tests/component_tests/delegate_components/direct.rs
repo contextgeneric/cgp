@@ -1,6 +1,9 @@
 use cgp::prelude::*;
+use cgp_macro_test_util::assert_delegate_components;
 
-delegate_components! {
+assert_delegate_components! {
+    expand_foo_component: @"";
+
     new FooComponents {
         Index<0>: u64,
         Index<1>: String,

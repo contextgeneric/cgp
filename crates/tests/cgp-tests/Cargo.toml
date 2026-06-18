@@ -12,6 +12,11 @@ description  = """
 """
 
 [dependencies]
-cgp                 = { workspace = true }
-futures             = { version = "0.3.31" }
-const_format        = { version = "0.2.34" }
+cgp                     = { workspace = true }
+cgp-macro-test-util     = { workspace = true }
+quote                   = { version = "1.0.38" }
+futures                 = { version = "0.3.31" }
+const_format            = { version = "0.2.34" }
+insta                   = { version = "1.48.0" }
+prettyplease            = { version = "0.2.37" }
+syn                     = { version = "2.0.95", features = [ "full" ] }
