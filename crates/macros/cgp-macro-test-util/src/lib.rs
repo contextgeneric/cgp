@@ -14,8 +14,7 @@ pub fn assert_delegate_components(body: TokenStream) -> TokenStream {
         snapshot,
     } = parse2(body.into()).unwrap();
 
-    let output =
-        cgp_macro_lib::delegate_components(body).unwrap_or_else(syn::Error::into_compile_error);
+    let output = cgp_macro_lib::delegate_components(body).unwrap();
 
     let wrapped = quote! {
         #output
@@ -23,9 +22,9 @@ pub fn assert_delegate_components(body: TokenStream) -> TokenStream {
         #[test]
         fn #test_name() {
             insta::assert_snapshot!(
-                prettyplease::unparse(&syn::parse2(quote::quote! {
+                cgp_macro_core::functions::pretty_format(quote::quote! {
                     #output
-                }).unwrap()),
+                }).unwrap(),
                 @#snapshot,
             );
         }
