@@ -14,3 +14,10 @@ pub fn snapshot_cgp_component(body: TokenStream) -> TokenStream {
         .unwrap_or_else(syn::Error::into_compile_error)
         .into()
 }
+
+#[proc_macro]
+pub fn snapshot_cgp_impl(body: TokenStream) -> TokenStream {
+    entrypoints::snapshot_cgp_impl(body.into())
+        .unwrap_or_else(syn::Error::into_compile_error)
+        .into()
+}
