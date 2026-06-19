@@ -1,5 +1,7 @@
 use cgp::prelude::*;
-use cgp_macro_test_util::{snapshot_cgp_component, snapshot_cgp_provider, snapshot_check_components};
+use cgp_macro_test_util::{
+    snapshot_cgp_component, snapshot_cgp_provider, snapshot_check_components,
+};
 
 snapshot_cgp_component! {
     #[cgp_component(ReferenceGetter)]

@@ -65,7 +65,9 @@ pub fn test_component_with_const() {
 
 mod generic_const {
     use cgp::prelude::*;
-    use cgp_macro_test_util::{snapshot_cgp_provider, snapshot_cgp_type, snapshot_check_components};
+    use cgp_macro_test_util::{
+        snapshot_cgp_provider, snapshot_cgp_type, snapshot_check_components,
+    };
 
     snapshot_cgp_type! {
         #[cgp_type]
