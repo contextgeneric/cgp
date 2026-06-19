@@ -1,6 +1,5 @@
 mod attribute_snapshot;
 mod cgp_auto_getter;
-mod cgp_component;
 mod cgp_fn;
 mod cgp_getter;
 mod cgp_impl;
@@ -13,7 +12,6 @@ mod statement_snapshot;
 
 pub use attribute_snapshot::*;
 pub use cgp_auto_getter::*;
-pub use cgp_component::*;
 pub use cgp_fn::*;
 pub use cgp_getter::*;
 pub use cgp_impl::*;
