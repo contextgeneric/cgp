@@ -1,3 +1,4 @@
+mod attribute_snapshot;
 mod cgp_auto_getter;
 mod cgp_component;
 mod cgp_fn;
@@ -10,6 +11,7 @@ mod delegate_and_check_components;
 mod macro_snapshot;
 mod statement_snapshot;
 
+pub use attribute_snapshot::*;
 pub use cgp_auto_getter::*;
 pub use cgp_component::*;
 pub use cgp_fn::*;
