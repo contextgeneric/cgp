@@ -1,12 +1,51 @@
 use core::ops::Mul;
 
 use cgp::prelude::*;
+use cgp_macro_test_util::snapshot_cgp_auto_getter;
+use insta::assert_snapshot;
 
-#[cgp_auto_getter]
-pub trait HasScalarType {
-    type Scalar: Mul<Output = Self::Scalar> + Clone;
+snapshot_cgp_auto_getter! {
+    #[cgp_auto_getter]
+    pub trait HasScalarType {
+        type Scalar: Mul<Output = Self::Scalar> + Clone;
 
-    fn scalar(&self) -> &Self::Scalar;
+        fn scalar(&self) -> &Self::Scalar;
+    }
+
+    expand_has_scalar_type(output) {
+        assert_snapshot!(output, @"
+        pub trait HasScalarType {
+            type Scalar: Mul<Output = Self::Scalar> + Clone;
+            fn scalar(&self) -> &Self::Scalar;
+        }
+        impl<__Context__, Scalar> HasScalarType for __Context__
+        where
+            Scalar: Mul<Output = Scalar> + Clone,
+            __Context__: HasField<
+                Symbol<
+                    6,
+                    Chars<'s', Chars<'c', Chars<'a', Chars<'l', Chars<'a', Chars<'r', Nil>>>>>>,
+                >,
+                Value = Scalar,
+            >,
+        {
+            type Scalar = Scalar;
+            fn scalar(&self) -> &Self::Scalar {
+                self.get_field(
+                    ::core::marker::PhantomData::<
+                        Symbol<
+                            6,
+                            Chars<
+                                's',
+                                Chars<'c', Chars<'a', Chars<'l', Chars<'a', Chars<'r', Nil>>>>>,
+                            >,
+                        >,
+                    >,
+                )
+            }
+        }
+        ")
+    }
 }
 
 #[derive(HasField)]

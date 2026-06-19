@@ -76,8 +76,12 @@ fn test_chained_getter_with_inner_life() {
     assert_eq!(name, "test");
 }
 
-#[test]
-fn test_deeply_nested_getter() {
+mod deeply_nested_getter {
+    use cgp::core::field::impls::ChainGetters;
+    use cgp::prelude::*;
+    use cgp_macro_test_util::snapshot_cgp_getter;
+    use insta::assert_snapshot;
+
     #[derive(HasField)]
     pub struct A {
         pub b: B,
@@ -103,9 +107,134 @@ fn test_deeply_nested_getter() {
         pub a: A,
     }
 
-    #[cgp_getter]
-    pub trait HasName {
-        fn name(&self) -> &str;
+    snapshot_cgp_getter! {
+        #[cgp_getter]
+        pub trait HasName {
+            fn name(&self) -> &str;
+        }
+
+        expand_has_name(output) {
+            assert_snapshot!(output, @"
+            pub trait HasName {
+                fn name(&self) -> &str;
+            }
+            impl<__Context__> HasName for __Context__
+            where
+                __Context__: NameGetter<__Context__>,
+            {
+                fn name(&self) -> &str {
+                    __Context__::name(self)
+                }
+            }
+            pub trait NameGetter<__Context__>: IsProviderFor<NameGetterComponent, __Context__, ()> {
+                fn name(__context__: &__Context__) -> &str;
+            }
+            impl<__Provider__, __Context__> NameGetter<__Context__> for __Provider__
+            where
+                __Provider__: DelegateComponent<NameGetterComponent>
+                    + IsProviderFor<NameGetterComponent, __Context__, ()>,
+                <__Provider__ as DelegateComponent<
+                    NameGetterComponent,
+                >>::Delegate: NameGetter<__Context__>,
+            {
+                fn name(__context__: &__Context__) -> &str {
+                    <__Provider__ as DelegateComponent<
+                        NameGetterComponent,
+                    >>::Delegate::name(__context__)
+                }
+            }
+            pub struct NameGetterComponent;
+            impl<__Context__> NameGetter<__Context__> for UseContext
+            where
+                __Context__: HasName,
+            {
+                fn name(__context__: &__Context__) -> &str {
+                    __Context__::name(__context__)
+                }
+            }
+            impl<__Context__> IsProviderFor<NameGetterComponent, __Context__, ()> for UseContext
+            where
+                __Context__: HasName,
+            {}
+            impl<__Context__, __Components__, __Path__> NameGetter<__Context__>
+            for RedirectLookup<__Components__, __Path__>
+            where
+                __Components__: DelegateComponent<__Path__>,
+                <__Components__ as DelegateComponent<__Path__>>::Delegate: NameGetter<__Context__>,
+            {
+                fn name(__context__: &__Context__) -> &str {
+                    <__Components__ as DelegateComponent<__Path__>>::Delegate::name(__context__)
+                }
+            }
+            impl<
+                __Context__,
+                __Components__,
+                __Path__,
+            > IsProviderFor<NameGetterComponent, __Context__, ()>
+            for RedirectLookup<__Components__, __Path__>
+            where
+                __Components__: DelegateComponent<__Path__>,
+                <__Components__ as DelegateComponent<
+                    __Path__,
+                >>::Delegate: IsProviderFor<NameGetterComponent, __Context__, ()>
+                    + NameGetter<__Context__>,
+            {}
+            impl<__Context__> NameGetter<__Context__> for UseFields
+            where
+                __Context__: HasField<
+                    Symbol<4, Chars<'n', Chars<'a', Chars<'m', Chars<'e', Nil>>>>>,
+                    Value = String,
+                >,
+            {
+                fn name(__context__: &__Context__) -> &str {
+                    __context__
+                        .get_field(
+                            ::core::marker::PhantomData::<
+                                Symbol<4, Chars<'n', Chars<'a', Chars<'m', Chars<'e', Nil>>>>>,
+                            >,
+                        )
+                        .as_str()
+                }
+            }
+            impl<__Context__> IsProviderFor<NameGetterComponent, __Context__, ()> for UseFields
+            where
+                __Context__: HasField<
+                    Symbol<4, Chars<'n', Chars<'a', Chars<'m', Chars<'e', Nil>>>>>,
+                    Value = String,
+                >,
+            {}
+            impl<__Context__, __Tag__> NameGetter<__Context__> for UseField<__Tag__>
+            where
+                __Context__: HasField<__Tag__, Value = String>,
+            {
+                fn name(__context__: &__Context__) -> &str {
+                    __context__.get_field(::core::marker::PhantomData::<__Tag__>).as_str()
+                }
+            }
+            impl<__Context__, __Tag__> IsProviderFor<NameGetterComponent, __Context__, ()>
+            for UseField<__Tag__>
+            where
+                __Context__: HasField<__Tag__, Value = String>,
+            {}
+            impl<__Context__, __Provider__> NameGetter<__Context__> for WithProvider<__Provider__>
+            where
+                __Provider__: FieldGetter<__Context__, NameGetterComponent, Value = String>,
+            {
+                fn name(__context__: &__Context__) -> &str {
+                    __Provider__::get_field(
+                            __context__,
+                            ::core::marker::PhantomData::<NameGetterComponent>,
+                        )
+                        .as_str()
+                }
+            }
+            impl<__Context__, __Provider__> IsProviderFor<NameGetterComponent, __Context__, ()>
+            for WithProvider<__Provider__>
+            where
+                __Provider__: FieldGetter<__Context__, NameGetterComponent, Value = String>,
+            {}
+            ")
+        }
     }
 
     delegate_and_check_components! {
@@ -121,17 +250,20 @@ fn test_deeply_nested_getter() {
         }
     }
 
-    let context = MyContext {
-        a: A {
-            b: B {
-                c: C {
-                    d: D {
-                        name: "test".to_owned(),
+    #[test]
+    fn test_deeply_nested_getter() {
+        let context = MyContext {
+            a: A {
+                b: B {
+                    c: C {
+                        d: D {
+                            name: "test".to_owned(),
+                        },
                     },
                 },
             },
-        },
-    };
+        };
 
-    assert_eq!(context.name(), "test");
+        assert_eq!(context.name(), "test");
+    }
 }

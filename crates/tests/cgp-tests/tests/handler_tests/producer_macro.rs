@@ -1,7 +1,9 @@
 use cgp::core::error::ErrorTypeProviderComponent;
 use cgp::extra::handler::{ComputerRef, HandlerRef, TryComputerRef};
 use cgp::prelude::*;
+use cgp_macro_test_util::snapshot_delegate_components;
 use futures::executor::block_on;
+use insta::assert_snapshot;
 
 #[cgp_producer]
 pub fn magic_number() -> u64 {
@@ -10,10 +12,27 @@ pub fn magic_number() -> u64 {
 
 pub struct App;
 
-delegate_components! {
-    App {
-        ErrorTypeProviderComponent:
-            UseType<String>,
+snapshot_delegate_components! {
+    delegate_components! {
+        App {
+            ErrorTypeProviderComponent:
+                UseType<String>,
+        }
+    }
+
+    expand_producer_macro_app(output) {
+        assert_snapshot!(output, @"
+        impl DelegateComponent<ErrorTypeProviderComponent> for App {
+            type Delegate = UseType<String>;
+        }
+        impl<
+            __Context__,
+            __Params__,
+        > IsProviderFor<ErrorTypeProviderComponent, __Context__, __Params__> for App
+        where
+            UseType<String>: IsProviderFor<ErrorTypeProviderComponent, __Context__, __Params__>,
+        {}
+        ")
     }
 }
 

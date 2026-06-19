@@ -6,6 +6,8 @@ use cgp::core::field::impls::CanBuildFrom;
 use cgp::extra::dispatch::{BuildAndMerge, BuildAndSetField, BuildWithHandlers};
 use cgp::extra::handler::{Computer, Producer, ProducerComponent};
 use cgp::prelude::*;
+use cgp_macro_test_util::snapshot_delegate_components;
+use insta::assert_snapshot;
 
 #[derive(Debug, Eq, PartialEq, CgpData)]
 pub struct FooBarBaz {
@@ -82,9 +84,28 @@ pub fn build_baz() -> bool {
 
 pub struct App;
 
-delegate_components! {
-    App {
-        ErrorTypeProviderComponent: UseType<Infallible>,
+snapshot_delegate_components! {
+    delegate_components! {
+        App {
+            ErrorTypeProviderComponent: UseType<Infallible>,
+        }
+    }
+
+    expand_app(output) {
+        assert_snapshot!(output, @"
+        impl DelegateComponent<ErrorTypeProviderComponent> for App {
+            type Delegate = UseType<Infallible>;
+        }
+        impl<
+            __Context__,
+            __Params__,
+        > IsProviderFor<ErrorTypeProviderComponent, __Context__, __Params__> for App
+        where
+            UseType<
+                Infallible,
+            >: IsProviderFor<ErrorTypeProviderComponent, __Context__, __Params__>,
+        {}
+        ")
     }
 }
 

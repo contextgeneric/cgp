@@ -1,16 +1,11 @@
-use core::convert::Infallible;
-use core::marker::PhantomData;
+mod pipe_computers {
+    use core::marker::PhantomData;
 
-use cgp::core::error::ErrorTypeProviderComponent;
-use cgp::extra::handler::{
-    CanCompute, CanHandle, Computer, ComputerComponent, Handler, HandlerComponent, PipeHandlers,
-    Promote, PromoteAsync,
-};
-use cgp::prelude::*;
-use futures::executor::block_on;
+    use cgp::extra::handler::{CanCompute, Computer, ComputerComponent, PipeHandlers};
+    use cgp::prelude::*;
+    use cgp_macro_test_util::snapshot_delegate_components;
+    use insta::assert_snapshot;
 
-#[test]
-pub fn test_pipe_computers() {
     #[cgp_new_provider]
     impl<Context, Tag, Field> Computer<Context, Tag, u64> for Multiply<Field>
     where
@@ -42,16 +37,41 @@ pub fn test_pipe_computers() {
         pub baz: u64,
     }
 
-    delegate_components! {
-        MyContext {
-            ComputerComponent:
+    snapshot_delegate_components! {
+        delegate_components! {
+            MyContext {
+                ComputerComponent:
+                    PipeHandlers<
+                        Product! [
+                            Multiply<Symbol!("foo")>,
+                            Add<Symbol!("bar")>,
+                            Multiply<Symbol!("baz")>,
+                        ]
+                    >,
+            }
+        }
+
+        expand_pipe_computers(output) {
+            assert_snapshot!(output, @r#"
+            impl DelegateComponent<ComputerComponent> for MyContext {
+                type Delegate = PipeHandlers<
+                    Product![
+                        Multiply < Symbol!("foo") >, Add < Symbol!("bar") >, Multiply <
+                        Symbol!("baz") >,
+                    ],
+                >;
+            }
+            impl<__Context__, __Params__> IsProviderFor<ComputerComponent, __Context__, __Params__>
+            for MyContext
+            where
                 PipeHandlers<
-                    Product! [
-                        Multiply<Symbol!("foo")>,
-                        Add<Symbol!("bar")>,
-                        Multiply<Symbol!("baz")>,
-                    ]
-                >,
+                    Product![
+                        Multiply < Symbol!("foo") >, Add < Symbol!("bar") >, Multiply <
+                        Symbol!("baz") >,
+                    ],
+                >: IsProviderFor<ComputerComponent, __Context__, __Params__>,
+            {}
+            "#)
         }
     }
 
@@ -62,19 +82,33 @@ pub fn test_pipe_computers() {
         }
     }
 
-    let context = MyContext {
-        foo: 2,
-        bar: 3,
-        baz: 4,
-    };
+    #[test]
+    pub fn test_pipe_computers() {
+        let context = MyContext {
+            foo: 2,
+            bar: 3,
+            baz: 4,
+        };
 
-    let result = context.compute(PhantomData::<()>, 5);
+        let result = context.compute(PhantomData::<()>, 5);
 
-    assert_eq!(result, ((5 * 2) + 3) * 4);
+        assert_eq!(result, ((5 * 2) + 3) * 4);
+    }
 }
 
-#[test]
-pub fn test_pipe_handlers() {
+mod pipe_handlers {
+    use core::convert::Infallible;
+    use core::marker::PhantomData;
+
+    use cgp::core::error::ErrorTypeProviderComponent;
+    use cgp::extra::handler::{
+        CanHandle, Computer, Handler, HandlerComponent, PipeHandlers, Promote, PromoteAsync,
+    };
+    use cgp::prelude::*;
+    use cgp_macro_test_util::snapshot_delegate_components;
+    use futures::executor::block_on;
+    use insta::assert_snapshot;
+
     #[cgp_new_provider]
     impl<Context, Tag, Field> Handler<Context, Tag, u64> for Multiply<Field>
     where
@@ -110,17 +144,54 @@ pub fn test_pipe_handlers() {
         pub baz: u64,
     }
 
-    delegate_components! {
-        MyContext {
-            ErrorTypeProviderComponent: UseType<Infallible>,
-            HandlerComponent:
+    snapshot_delegate_components! {
+        delegate_components! {
+            MyContext {
+                ErrorTypeProviderComponent: UseType<Infallible>,
+                HandlerComponent:
+                    PipeHandlers<
+                        Product! [
+                            Multiply<Symbol!("foo")>,
+                            PromoteAsync<Promote<Add<Symbol!("bar")>>>,
+                            Multiply<Symbol!("baz")>,
+                        ]
+                    >,
+            }
+        }
+
+        expand_pipe_handlers(output) {
+            assert_snapshot!(output, @r#"
+            impl DelegateComponent<ErrorTypeProviderComponent> for MyContext {
+                type Delegate = UseType<Infallible>;
+            }
+            impl<
+                __Context__,
+                __Params__,
+            > IsProviderFor<ErrorTypeProviderComponent, __Context__, __Params__> for MyContext
+            where
+                UseType<
+                    Infallible,
+                >: IsProviderFor<ErrorTypeProviderComponent, __Context__, __Params__>,
+            {}
+            impl DelegateComponent<HandlerComponent> for MyContext {
+                type Delegate = PipeHandlers<
+                    Product![
+                        Multiply < Symbol!("foo") >, PromoteAsync < Promote < Add < Symbol!("bar")
+                        >>>, Multiply < Symbol!("baz") >,
+                    ],
+                >;
+            }
+            impl<__Context__, __Params__> IsProviderFor<HandlerComponent, __Context__, __Params__>
+            for MyContext
+            where
                 PipeHandlers<
-                    Product! [
-                        Multiply<Symbol!("foo")>,
-                        PromoteAsync<Promote<Add<Symbol!("bar")>>>,
-                        Multiply<Symbol!("baz")>,
-                    ]
-                >,
+                    Product![
+                        Multiply < Symbol!("foo") >, PromoteAsync < Promote < Add < Symbol!("bar")
+                        >>>, Multiply < Symbol!("baz") >,
+                    ],
+                >: IsProviderFor<HandlerComponent, __Context__, __Params__>,
+            {}
+            "#)
         }
     }
 
@@ -131,13 +202,16 @@ pub fn test_pipe_handlers() {
         }
     }
 
-    let context = MyContext {
-        foo: 2,
-        bar: 3,
-        baz: 4,
-    };
+    #[test]
+    pub fn test_pipe_handlers() {
+        let context = MyContext {
+            foo: 2,
+            bar: 3,
+            baz: 4,
+        };
 
-    let result = block_on(context.handle(PhantomData::<()>, 5)).unwrap();
+        let result = block_on(context.handle(PhantomData::<()>, 5)).unwrap();
 
-    assert_eq!(result, ((5 * 2) + 3) * 4);
+        assert_eq!(result, ((5 * 2) + 3) * 4);
+    }
 }

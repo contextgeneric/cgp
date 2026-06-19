@@ -1,11 +1,12 @@
 #![allow(dead_code)]
 
-use core::marker::PhantomData;
+mod basic_check_components {
+    use core::marker::PhantomData;
 
-use cgp::prelude::*;
+    use cgp::prelude::*;
+    use cgp_macro_test_util::snapshot_cgp_getter;
+    use insta::assert_snapshot;
 
-#[test]
-pub fn test_basic_check_components() {
     #[cgp_type]
     pub trait HasFooType {
         type Foo;
@@ -16,18 +17,357 @@ pub fn test_basic_check_components() {
         type Bar;
     }
 
-    #[cgp_getter {
-        provider: FooGetterAt,
-    }]
-    pub trait HasFooAt<I>: HasFooType {
-        fn foo(&self, _tag: PhantomData<I>) -> &Self::Foo;
+    snapshot_cgp_getter! {
+        #[cgp_getter {
+            provider: FooGetterAt,
+        }]
+        pub trait HasFooAt<I>: HasFooType {
+            fn foo(&self, _tag: PhantomData<I>) -> &Self::Foo;
+        }
+
+        expand_has_foo_at(output) {
+            assert_snapshot!(output, @"
+            pub trait HasFooAt<I>: HasFooType {
+                fn foo(&self, _tag: PhantomData<I>) -> &Self::Foo;
+            }
+            impl<__Context__, I> HasFooAt<I> for __Context__
+            where
+                __Context__: HasFooType,
+                __Context__: FooGetterAt<__Context__, I>,
+            {
+                fn foo(&self, _tag: PhantomData<I>) -> &Self::Foo {
+                    __Context__::foo(self, _tag)
+                }
+            }
+            pub trait FooGetterAt<
+                __Context__,
+                I,
+            >: IsProviderFor<FooGetterAtComponent, __Context__, (I)>
+            where
+                __Context__: HasFooType,
+            {
+                fn foo(__context__: &__Context__, _tag: PhantomData<I>) -> &__Context__::Foo;
+            }
+            impl<__Provider__, __Context__, I> FooGetterAt<__Context__, I> for __Provider__
+            where
+                __Context__: HasFooType,
+                __Provider__: DelegateComponent<FooGetterAtComponent>
+                    + IsProviderFor<FooGetterAtComponent, __Context__, (I)>,
+                <__Provider__ as DelegateComponent<
+                    FooGetterAtComponent,
+                >>::Delegate: FooGetterAt<__Context__, I>,
+            {
+                fn foo(__context__: &__Context__, _tag: PhantomData<I>) -> &__Context__::Foo {
+                    <__Provider__ as DelegateComponent<
+                        FooGetterAtComponent,
+                    >>::Delegate::foo(__context__, _tag)
+                }
+            }
+            pub struct FooGetterAtComponent;
+            impl<__Context__, I> FooGetterAt<__Context__, I> for UseContext
+            where
+                __Context__: HasFooType,
+                __Context__: HasFooAt<I>,
+            {
+                fn foo(__context__: &__Context__, _tag: PhantomData<I>) -> &__Context__::Foo {
+                    __Context__::foo(__context__, _tag)
+                }
+            }
+            impl<__Context__, I> IsProviderFor<FooGetterAtComponent, __Context__, (I)> for UseContext
+            where
+                __Context__: HasFooType,
+                __Context__: HasFooAt<I>,
+            {}
+            impl<__Context__, I, __Components__, __Path__> FooGetterAt<__Context__, I>
+            for RedirectLookup<__Components__, __Path__>
+            where
+                __Context__: HasFooType,
+                __Path__: ConcatPath<PathCons<I, Nil>>,
+                __Components__: DelegateComponent<
+                    <__Path__ as ConcatPath<PathCons<I, Nil>>>::Output,
+                >,
+                <__Components__ as DelegateComponent<
+                    <__Path__ as ConcatPath<PathCons<I, Nil>>>::Output,
+                >>::Delegate: FooGetterAt<__Context__, I>,
+            {
+                fn foo(__context__: &__Context__, _tag: PhantomData<I>) -> &__Context__::Foo {
+                    <__Components__ as DelegateComponent<
+                        <__Path__ as ConcatPath<PathCons<I, Nil>>>::Output,
+                    >>::Delegate::foo(__context__, _tag)
+                }
+            }
+            impl<
+                __Context__,
+                I,
+                __Components__,
+                __Path__,
+            > IsProviderFor<FooGetterAtComponent, __Context__, (I)>
+            for RedirectLookup<__Components__, __Path__>
+            where
+                __Context__: HasFooType,
+                __Path__: ConcatPath<PathCons<I, Nil>>,
+                __Components__: DelegateComponent<
+                    <__Path__ as ConcatPath<PathCons<I, Nil>>>::Output,
+                >,
+                <__Components__ as DelegateComponent<
+                    <__Path__ as ConcatPath<PathCons<I, Nil>>>::Output,
+                >>::Delegate: IsProviderFor<FooGetterAtComponent, __Context__, (I)>
+                    + FooGetterAt<__Context__, I>,
+            {}
+            impl<__Context__, I> FooGetterAt<__Context__, I> for UseFields
+            where
+                __Context__: HasFooType,
+                __Context__: HasField<
+                    Symbol<3, Chars<'f', Chars<'o', Chars<'o', Nil>>>>,
+                    Value = __Context__::Foo,
+                >,
+            {
+                fn foo(__context__: &__Context__, _phantom: PhantomData<I>) -> &__Context__::Foo {
+                    __context__
+                        .get_field(
+                            ::core::marker::PhantomData::<
+                                Symbol<3, Chars<'f', Chars<'o', Chars<'o', Nil>>>>,
+                            >,
+                        )
+                }
+            }
+            impl<__Context__, I> IsProviderFor<FooGetterAtComponent, __Context__, (I)> for UseFields
+            where
+                __Context__: HasFooType,
+                __Context__: HasField<
+                    Symbol<3, Chars<'f', Chars<'o', Chars<'o', Nil>>>>,
+                    Value = __Context__::Foo,
+                >,
+            {}
+            impl<__Context__, I, __Tag__> FooGetterAt<__Context__, I> for UseField<__Tag__>
+            where
+                __Context__: HasFooType,
+                __Context__: HasField<__Tag__, Value = __Context__::Foo>,
+            {
+                fn foo(__context__: &__Context__, _phantom: PhantomData<I>) -> &__Context__::Foo {
+                    __context__.get_field(::core::marker::PhantomData::<__Tag__>)
+                }
+            }
+            impl<__Context__, I, __Tag__> IsProviderFor<FooGetterAtComponent, __Context__, (I)>
+            for UseField<__Tag__>
+            where
+                __Context__: HasFooType,
+                __Context__: HasField<__Tag__, Value = __Context__::Foo>,
+            {}
+            impl<__Context__, I, __Provider__> FooGetterAt<__Context__, I>
+            for WithProvider<__Provider__>
+            where
+                __Context__: HasFooType,
+                __Provider__: FieldGetter<
+                    __Context__,
+                    FooGetterAtComponent,
+                    Value = __Context__::Foo,
+                >,
+            {
+                fn foo(__context__: &__Context__, _phantom: PhantomData<I>) -> &__Context__::Foo {
+                    __Provider__::get_field(
+                        __context__,
+                        ::core::marker::PhantomData::<FooGetterAtComponent>,
+                    )
+                }
+            }
+            impl<__Context__, I, __Provider__> IsProviderFor<FooGetterAtComponent, __Context__, (I)>
+            for WithProvider<__Provider__>
+            where
+                __Context__: HasFooType,
+                __Provider__: FieldGetter<
+                    __Context__,
+                    FooGetterAtComponent,
+                    Value = __Context__::Foo,
+                >,
+            {}
+            ")
+        }
     }
 
-    #[cgp_getter {
-        provider: BarGetterAt,
-    }]
-    pub trait HasBarAt<I, J>: HasBarType {
-        fn foo(&self, _tag: PhantomData<(I, J)>) -> &Self::Bar;
+    snapshot_cgp_getter! {
+        #[cgp_getter {
+            provider: BarGetterAt,
+        }]
+        pub trait HasBarAt<I, J>: HasBarType {
+            fn foo(&self, _tag: PhantomData<(I, J)>) -> &Self::Bar;
+        }
+
+        expand_has_bar_at(output) {
+            assert_snapshot!(output, @"
+            pub trait HasBarAt<I, J>: HasBarType {
+                fn foo(&self, _tag: PhantomData<(I, J)>) -> &Self::Bar;
+            }
+            impl<__Context__, I, J> HasBarAt<I, J> for __Context__
+            where
+                __Context__: HasBarType,
+                __Context__: BarGetterAt<__Context__, I, J>,
+            {
+                fn foo(&self, _tag: PhantomData<(I, J)>) -> &Self::Bar {
+                    __Context__::foo(self, _tag)
+                }
+            }
+            pub trait BarGetterAt<
+                __Context__,
+                I,
+                J,
+            >: IsProviderFor<BarGetterAtComponent, __Context__, (I, J)>
+            where
+                __Context__: HasBarType,
+            {
+                fn foo(__context__: &__Context__, _tag: PhantomData<(I, J)>) -> &__Context__::Bar;
+            }
+            impl<__Provider__, __Context__, I, J> BarGetterAt<__Context__, I, J> for __Provider__
+            where
+                __Context__: HasBarType,
+                __Provider__: DelegateComponent<BarGetterAtComponent>
+                    + IsProviderFor<BarGetterAtComponent, __Context__, (I, J)>,
+                <__Provider__ as DelegateComponent<
+                    BarGetterAtComponent,
+                >>::Delegate: BarGetterAt<__Context__, I, J>,
+            {
+                fn foo(__context__: &__Context__, _tag: PhantomData<(I, J)>) -> &__Context__::Bar {
+                    <__Provider__ as DelegateComponent<
+                        BarGetterAtComponent,
+                    >>::Delegate::foo(__context__, _tag)
+                }
+            }
+            pub struct BarGetterAtComponent;
+            impl<__Context__, I, J> BarGetterAt<__Context__, I, J> for UseContext
+            where
+                __Context__: HasBarType,
+                __Context__: HasBarAt<I, J>,
+            {
+                fn foo(__context__: &__Context__, _tag: PhantomData<(I, J)>) -> &__Context__::Bar {
+                    __Context__::foo(__context__, _tag)
+                }
+            }
+            impl<__Context__, I, J> IsProviderFor<BarGetterAtComponent, __Context__, (I, J)>
+            for UseContext
+            where
+                __Context__: HasBarType,
+                __Context__: HasBarAt<I, J>,
+            {}
+            impl<__Context__, I, J, __Components__, __Path__> BarGetterAt<__Context__, I, J>
+            for RedirectLookup<__Components__, __Path__>
+            where
+                __Context__: HasBarType,
+                __Path__: ConcatPath<PathCons<I, PathCons<J, Nil>>>,
+                __Components__: DelegateComponent<
+                    <__Path__ as ConcatPath<PathCons<I, PathCons<J, Nil>>>>::Output,
+                >,
+                <__Components__ as DelegateComponent<
+                    <__Path__ as ConcatPath<PathCons<I, PathCons<J, Nil>>>>::Output,
+                >>::Delegate: BarGetterAt<__Context__, I, J>,
+            {
+                fn foo(__context__: &__Context__, _tag: PhantomData<(I, J)>) -> &__Context__::Bar {
+                    <__Components__ as DelegateComponent<
+                        <__Path__ as ConcatPath<PathCons<I, PathCons<J, Nil>>>>::Output,
+                    >>::Delegate::foo(__context__, _tag)
+                }
+            }
+            impl<
+                __Context__,
+                I,
+                J,
+                __Components__,
+                __Path__,
+            > IsProviderFor<BarGetterAtComponent, __Context__, (I, J)>
+            for RedirectLookup<__Components__, __Path__>
+            where
+                __Context__: HasBarType,
+                __Path__: ConcatPath<PathCons<I, PathCons<J, Nil>>>,
+                __Components__: DelegateComponent<
+                    <__Path__ as ConcatPath<PathCons<I, PathCons<J, Nil>>>>::Output,
+                >,
+                <__Components__ as DelegateComponent<
+                    <__Path__ as ConcatPath<PathCons<I, PathCons<J, Nil>>>>::Output,
+                >>::Delegate: IsProviderFor<BarGetterAtComponent, __Context__, (I, J)>
+                    + BarGetterAt<__Context__, I, J>,
+            {}
+            impl<__Context__, I, J> BarGetterAt<__Context__, I, J> for UseFields
+            where
+                __Context__: HasBarType,
+                __Context__: HasField<
+                    Symbol<3, Chars<'f', Chars<'o', Chars<'o', Nil>>>>,
+                    Value = __Context__::Bar,
+                >,
+            {
+                fn foo(
+                    __context__: &__Context__,
+                    _phantom: PhantomData<(I, J)>,
+                ) -> &__Context__::Bar {
+                    __context__
+                        .get_field(
+                            ::core::marker::PhantomData::<
+                                Symbol<3, Chars<'f', Chars<'o', Chars<'o', Nil>>>>,
+                            >,
+                        )
+                }
+            }
+            impl<__Context__, I, J> IsProviderFor<BarGetterAtComponent, __Context__, (I, J)>
+            for UseFields
+            where
+                __Context__: HasBarType,
+                __Context__: HasField<
+                    Symbol<3, Chars<'f', Chars<'o', Chars<'o', Nil>>>>,
+                    Value = __Context__::Bar,
+                >,
+            {}
+            impl<__Context__, I, J, __Tag__> BarGetterAt<__Context__, I, J> for UseField<__Tag__>
+            where
+                __Context__: HasBarType,
+                __Context__: HasField<__Tag__, Value = __Context__::Bar>,
+            {
+                fn foo(
+                    __context__: &__Context__,
+                    _phantom: PhantomData<(I, J)>,
+                ) -> &__Context__::Bar {
+                    __context__.get_field(::core::marker::PhantomData::<__Tag__>)
+                }
+            }
+            impl<__Context__, I, J, __Tag__> IsProviderFor<BarGetterAtComponent, __Context__, (I, J)>
+            for UseField<__Tag__>
+            where
+                __Context__: HasBarType,
+                __Context__: HasField<__Tag__, Value = __Context__::Bar>,
+            {}
+            impl<__Context__, I, J, __Provider__> BarGetterAt<__Context__, I, J>
+            for WithProvider<__Provider__>
+            where
+                __Context__: HasBarType,
+                __Provider__: FieldGetter<
+                    __Context__,
+                    BarGetterAtComponent,
+                    Value = __Context__::Bar,
+                >,
+            {
+                fn foo(
+                    __context__: &__Context__,
+                    _phantom: PhantomData<(I, J)>,
+                ) -> &__Context__::Bar {
+                    __Provider__::get_field(
+                        __context__,
+                        ::core::marker::PhantomData::<BarGetterAtComponent>,
+                    )
+                }
+            }
+            impl<
+                __Context__,
+                I,
+                J,
+                __Provider__,
+            > IsProviderFor<BarGetterAtComponent, __Context__, (I, J)> for WithProvider<__Provider__>
+            where
+                __Context__: HasBarType,
+                __Provider__: FieldGetter<
+                    __Context__,
+                    BarGetterAtComponent,
+                    Value = __Context__::Bar,
+                >,
+            {}
+            ")
+        }
     }
 
     #[derive(HasField)]
@@ -124,8 +464,13 @@ pub fn test_basic_check_components() {
     }
 }
 
-#[test]
-pub fn test_generic_check_components() {
+mod generic_check_components {
+    use core::marker::PhantomData;
+
+    use cgp::prelude::*;
+    use cgp_macro_test_util::{snapshot_cgp_getter, snapshot_delegate_components};
+    use insta::assert_snapshot;
+
     #[cgp_type]
     pub trait HasFooType {
         type Foo;
@@ -136,19 +481,379 @@ pub fn test_generic_check_components() {
         type Bar;
     }
 
-    #[cgp_getter {
-        provider: FooGetterAt,
-    }]
-    pub trait HasFooAt<I: Clone>: HasFooType {
-        fn foo(&self, _tag: PhantomData<I>) -> &Self::Foo;
+    snapshot_cgp_getter! {
+        #[cgp_getter {
+            provider: FooGetterAt,
+        }]
+        pub trait HasFooAt<I: Clone>: HasFooType {
+            fn foo(&self, _tag: PhantomData<I>) -> &Self::Foo;
+        }
+
+        expand_has_foo_at(output) {
+            assert_snapshot!(output, @"
+            pub trait HasFooAt<I: Clone>: HasFooType {
+                fn foo(&self, _tag: PhantomData<I>) -> &Self::Foo;
+            }
+            impl<__Context__, I: Clone> HasFooAt<I> for __Context__
+            where
+                __Context__: HasFooType,
+                __Context__: FooGetterAt<__Context__, I>,
+            {
+                fn foo(&self, _tag: PhantomData<I>) -> &Self::Foo {
+                    __Context__::foo(self, _tag)
+                }
+            }
+            pub trait FooGetterAt<
+                __Context__,
+                I: Clone,
+            >: IsProviderFor<FooGetterAtComponent, __Context__, (I)>
+            where
+                __Context__: HasFooType,
+            {
+                fn foo(__context__: &__Context__, _tag: PhantomData<I>) -> &__Context__::Foo;
+            }
+            impl<__Provider__, __Context__, I: Clone> FooGetterAt<__Context__, I> for __Provider__
+            where
+                __Context__: HasFooType,
+                __Provider__: DelegateComponent<FooGetterAtComponent>
+                    + IsProviderFor<FooGetterAtComponent, __Context__, (I)>,
+                <__Provider__ as DelegateComponent<
+                    FooGetterAtComponent,
+                >>::Delegate: FooGetterAt<__Context__, I>,
+            {
+                fn foo(__context__: &__Context__, _tag: PhantomData<I>) -> &__Context__::Foo {
+                    <__Provider__ as DelegateComponent<
+                        FooGetterAtComponent,
+                    >>::Delegate::foo(__context__, _tag)
+                }
+            }
+            pub struct FooGetterAtComponent;
+            impl<__Context__, I: Clone> FooGetterAt<__Context__, I> for UseContext
+            where
+                __Context__: HasFooType,
+                __Context__: HasFooAt<I>,
+            {
+                fn foo(__context__: &__Context__, _tag: PhantomData<I>) -> &__Context__::Foo {
+                    __Context__::foo(__context__, _tag)
+                }
+            }
+            impl<__Context__, I: Clone> IsProviderFor<FooGetterAtComponent, __Context__, (I)>
+            for UseContext
+            where
+                __Context__: HasFooType,
+                __Context__: HasFooAt<I>,
+            {}
+            impl<__Context__, I: Clone, __Components__, __Path__> FooGetterAt<__Context__, I>
+            for RedirectLookup<__Components__, __Path__>
+            where
+                __Context__: HasFooType,
+                __Path__: ConcatPath<PathCons<I, Nil>>,
+                __Components__: DelegateComponent<
+                    <__Path__ as ConcatPath<PathCons<I, Nil>>>::Output,
+                >,
+                <__Components__ as DelegateComponent<
+                    <__Path__ as ConcatPath<PathCons<I, Nil>>>::Output,
+                >>::Delegate: FooGetterAt<__Context__, I>,
+            {
+                fn foo(__context__: &__Context__, _tag: PhantomData<I>) -> &__Context__::Foo {
+                    <__Components__ as DelegateComponent<
+                        <__Path__ as ConcatPath<PathCons<I, Nil>>>::Output,
+                    >>::Delegate::foo(__context__, _tag)
+                }
+            }
+            impl<
+                __Context__,
+                I: Clone,
+                __Components__,
+                __Path__,
+            > IsProviderFor<FooGetterAtComponent, __Context__, (I)>
+            for RedirectLookup<__Components__, __Path__>
+            where
+                __Context__: HasFooType,
+                __Path__: ConcatPath<PathCons<I, Nil>>,
+                __Components__: DelegateComponent<
+                    <__Path__ as ConcatPath<PathCons<I, Nil>>>::Output,
+                >,
+                <__Components__ as DelegateComponent<
+                    <__Path__ as ConcatPath<PathCons<I, Nil>>>::Output,
+                >>::Delegate: IsProviderFor<FooGetterAtComponent, __Context__, (I)>
+                    + FooGetterAt<__Context__, I>,
+            {}
+            impl<__Context__, I: Clone> FooGetterAt<__Context__, I> for UseFields
+            where
+                __Context__: HasFooType,
+                __Context__: HasField<
+                    Symbol<3, Chars<'f', Chars<'o', Chars<'o', Nil>>>>,
+                    Value = __Context__::Foo,
+                >,
+            {
+                fn foo(__context__: &__Context__, _phantom: PhantomData<I>) -> &__Context__::Foo {
+                    __context__
+                        .get_field(
+                            ::core::marker::PhantomData::<
+                                Symbol<3, Chars<'f', Chars<'o', Chars<'o', Nil>>>>,
+                            >,
+                        )
+                }
+            }
+            impl<__Context__, I: Clone> IsProviderFor<FooGetterAtComponent, __Context__, (I)>
+            for UseFields
+            where
+                __Context__: HasFooType,
+                __Context__: HasField<
+                    Symbol<3, Chars<'f', Chars<'o', Chars<'o', Nil>>>>,
+                    Value = __Context__::Foo,
+                >,
+            {}
+            impl<__Context__, I: Clone, __Tag__> FooGetterAt<__Context__, I> for UseField<__Tag__>
+            where
+                __Context__: HasFooType,
+                __Context__: HasField<__Tag__, Value = __Context__::Foo>,
+            {
+                fn foo(__context__: &__Context__, _phantom: PhantomData<I>) -> &__Context__::Foo {
+                    __context__.get_field(::core::marker::PhantomData::<__Tag__>)
+                }
+            }
+            impl<
+                __Context__,
+                I: Clone,
+                __Tag__,
+            > IsProviderFor<FooGetterAtComponent, __Context__, (I)> for UseField<__Tag__>
+            where
+                __Context__: HasFooType,
+                __Context__: HasField<__Tag__, Value = __Context__::Foo>,
+            {}
+            impl<__Context__, I: Clone, __Provider__> FooGetterAt<__Context__, I>
+            for WithProvider<__Provider__>
+            where
+                __Context__: HasFooType,
+                __Provider__: FieldGetter<
+                    __Context__,
+                    FooGetterAtComponent,
+                    Value = __Context__::Foo,
+                >,
+            {
+                fn foo(__context__: &__Context__, _phantom: PhantomData<I>) -> &__Context__::Foo {
+                    __Provider__::get_field(
+                        __context__,
+                        ::core::marker::PhantomData::<FooGetterAtComponent>,
+                    )
+                }
+            }
+            impl<
+                __Context__,
+                I: Clone,
+                __Provider__,
+            > IsProviderFor<FooGetterAtComponent, __Context__, (I)> for WithProvider<__Provider__>
+            where
+                __Context__: HasFooType,
+                __Provider__: FieldGetter<
+                    __Context__,
+                    FooGetterAtComponent,
+                    Value = __Context__::Foo,
+                >,
+            {}
+            ")
+        }
     }
 
-    #[cgp_getter {
-        name: BarGetterAtComponent<I>,
-        provider: BarGetterAt,
-    }]
-    pub trait HasBarAt<I: Clone, J>: HasBarType {
-        fn foo(&self, _tag: PhantomData<(I, J)>) -> &Self::Bar;
+    snapshot_cgp_getter! {
+        #[cgp_getter {
+            name: BarGetterAtComponent<I>,
+            provider: BarGetterAt,
+        }]
+        pub trait HasBarAt<I: Clone, J>: HasBarType {
+            fn foo(&self, _tag: PhantomData<(I, J)>) -> &Self::Bar;
+        }
+
+        expand_has_bar_at(output) {
+            assert_snapshot!(output, @"
+            pub trait HasBarAt<I: Clone, J>: HasBarType {
+                fn foo(&self, _tag: PhantomData<(I, J)>) -> &Self::Bar;
+            }
+            impl<__Context__, I: Clone, J> HasBarAt<I, J> for __Context__
+            where
+                __Context__: HasBarType,
+                __Context__: BarGetterAt<__Context__, I, J>,
+            {
+                fn foo(&self, _tag: PhantomData<(I, J)>) -> &Self::Bar {
+                    __Context__::foo(self, _tag)
+                }
+            }
+            pub trait BarGetterAt<
+                __Context__,
+                I: Clone,
+                J,
+            >: IsProviderFor<BarGetterAtComponent<I>, __Context__, (I, J)>
+            where
+                __Context__: HasBarType,
+            {
+                fn foo(__context__: &__Context__, _tag: PhantomData<(I, J)>) -> &__Context__::Bar;
+            }
+            impl<__Provider__, __Context__, I: Clone, J> BarGetterAt<__Context__, I, J>
+            for __Provider__
+            where
+                __Context__: HasBarType,
+                __Provider__: DelegateComponent<BarGetterAtComponent<I>>
+                    + IsProviderFor<BarGetterAtComponent<I>, __Context__, (I, J)>,
+                <__Provider__ as DelegateComponent<
+                    BarGetterAtComponent<I>,
+                >>::Delegate: BarGetterAt<__Context__, I, J>,
+            {
+                fn foo(__context__: &__Context__, _tag: PhantomData<(I, J)>) -> &__Context__::Bar {
+                    <__Provider__ as DelegateComponent<
+                        BarGetterAtComponent<I>,
+                    >>::Delegate::foo(__context__, _tag)
+                }
+            }
+            pub struct BarGetterAtComponent<I>(pub ::core::marker::PhantomData<(I)>);
+            impl<__Context__, I: Clone, J> BarGetterAt<__Context__, I, J> for UseContext
+            where
+                __Context__: HasBarType,
+                __Context__: HasBarAt<I, J>,
+            {
+                fn foo(__context__: &__Context__, _tag: PhantomData<(I, J)>) -> &__Context__::Bar {
+                    __Context__::foo(__context__, _tag)
+                }
+            }
+            impl<
+                __Context__,
+                I: Clone,
+                J,
+            > IsProviderFor<BarGetterAtComponent<I>, __Context__, (I, J)> for UseContext
+            where
+                __Context__: HasBarType,
+                __Context__: HasBarAt<I, J>,
+            {}
+            impl<__Context__, I: Clone, J, __Components__, __Path__> BarGetterAt<__Context__, I, J>
+            for RedirectLookup<__Components__, __Path__>
+            where
+                __Context__: HasBarType,
+                __Path__: ConcatPath<PathCons<I, PathCons<J, Nil>>>,
+                __Components__: DelegateComponent<
+                    <__Path__ as ConcatPath<PathCons<I, PathCons<J, Nil>>>>::Output,
+                >,
+                <__Components__ as DelegateComponent<
+                    <__Path__ as ConcatPath<PathCons<I, PathCons<J, Nil>>>>::Output,
+                >>::Delegate: BarGetterAt<__Context__, I, J>,
+            {
+                fn foo(__context__: &__Context__, _tag: PhantomData<(I, J)>) -> &__Context__::Bar {
+                    <__Components__ as DelegateComponent<
+                        <__Path__ as ConcatPath<PathCons<I, PathCons<J, Nil>>>>::Output,
+                    >>::Delegate::foo(__context__, _tag)
+                }
+            }
+            impl<
+                __Context__,
+                I: Clone,
+                J,
+                __Components__,
+                __Path__,
+            > IsProviderFor<BarGetterAtComponent<I>, __Context__, (I, J)>
+            for RedirectLookup<__Components__, __Path__>
+            where
+                __Context__: HasBarType,
+                __Path__: ConcatPath<PathCons<I, PathCons<J, Nil>>>,
+                __Components__: DelegateComponent<
+                    <__Path__ as ConcatPath<PathCons<I, PathCons<J, Nil>>>>::Output,
+                >,
+                <__Components__ as DelegateComponent<
+                    <__Path__ as ConcatPath<PathCons<I, PathCons<J, Nil>>>>::Output,
+                >>::Delegate: IsProviderFor<BarGetterAtComponent<I>, __Context__, (I, J)>
+                    + BarGetterAt<__Context__, I, J>,
+            {}
+            impl<__Context__, I: Clone, J> BarGetterAt<__Context__, I, J> for UseFields
+            where
+                __Context__: HasBarType,
+                __Context__: HasField<
+                    Symbol<3, Chars<'f', Chars<'o', Chars<'o', Nil>>>>,
+                    Value = __Context__::Bar,
+                >,
+            {
+                fn foo(
+                    __context__: &__Context__,
+                    _phantom: PhantomData<(I, J)>,
+                ) -> &__Context__::Bar {
+                    __context__
+                        .get_field(
+                            ::core::marker::PhantomData::<
+                                Symbol<3, Chars<'f', Chars<'o', Chars<'o', Nil>>>>,
+                            >,
+                        )
+                }
+            }
+            impl<
+                __Context__,
+                I: Clone,
+                J,
+            > IsProviderFor<BarGetterAtComponent<I>, __Context__, (I, J)> for UseFields
+            where
+                __Context__: HasBarType,
+                __Context__: HasField<
+                    Symbol<3, Chars<'f', Chars<'o', Chars<'o', Nil>>>>,
+                    Value = __Context__::Bar,
+                >,
+            {}
+            impl<__Context__, I: Clone, J, __Tag__> BarGetterAt<__Context__, I, J>
+            for UseField<__Tag__>
+            where
+                __Context__: HasBarType,
+                __Context__: HasField<__Tag__, Value = __Context__::Bar>,
+            {
+                fn foo(
+                    __context__: &__Context__,
+                    _phantom: PhantomData<(I, J)>,
+                ) -> &__Context__::Bar {
+                    __context__.get_field(::core::marker::PhantomData::<__Tag__>)
+                }
+            }
+            impl<
+                __Context__,
+                I: Clone,
+                J,
+                __Tag__,
+            > IsProviderFor<BarGetterAtComponent<I>, __Context__, (I, J)> for UseField<__Tag__>
+            where
+                __Context__: HasBarType,
+                __Context__: HasField<__Tag__, Value = __Context__::Bar>,
+            {}
+            impl<__Context__, I: Clone, J, __Provider__> BarGetterAt<__Context__, I, J>
+            for WithProvider<__Provider__>
+            where
+                __Context__: HasBarType,
+                __Provider__: FieldGetter<
+                    __Context__,
+                    BarGetterAtComponent<I>,
+                    Value = __Context__::Bar,
+                >,
+            {
+                fn foo(
+                    __context__: &__Context__,
+                    _phantom: PhantomData<(I, J)>,
+                ) -> &__Context__::Bar {
+                    __Provider__::get_field(
+                        __context__,
+                        ::core::marker::PhantomData::<BarGetterAtComponent<I>>,
+                    )
+                }
+            }
+            impl<
+                __Context__,
+                I: Clone,
+                J,
+                __Provider__,
+            > IsProviderFor<BarGetterAtComponent<I>, __Context__, (I, J)>
+            for WithProvider<__Provider__>
+            where
+                __Context__: HasBarType,
+                __Provider__: FieldGetter<
+                    __Context__,
+                    BarGetterAtComponent<I>,
+                    Value = __Context__::Bar,
+                >,
+            {}
+            ")
+        }
     }
 
     #[derive(HasField)]
@@ -156,18 +861,70 @@ pub fn test_generic_check_components() {
         pub dummy: (),
     }
 
-    delegate_components! {
-        Context {
-            [
-                FooTypeProviderComponent,
-                BarTypeProviderComponent,
-            ]:
-                UseType<()>,
-            [
-                FooGetterAtComponent,
-                <I> BarGetterAtComponent<I>,
-            ]:
-                UseField<Symbol!("dummy")>,
+    snapshot_delegate_components! {
+        delegate_components! {
+            Context {
+                [
+                    FooTypeProviderComponent,
+                    BarTypeProviderComponent,
+                ]:
+                    UseType<()>,
+                [
+                    FooGetterAtComponent,
+                    <I> BarGetterAtComponent<I>,
+                ]:
+                    UseField<Symbol!("dummy")>,
+            }
+        }
+
+        expand_context(output) {
+            assert_snapshot!(output, @r#"
+            impl DelegateComponent<FooTypeProviderComponent> for Context {
+                type Delegate = UseType<()>;
+            }
+            impl<
+                __Context__,
+                __Params__,
+            > IsProviderFor<FooTypeProviderComponent, __Context__, __Params__> for Context
+            where
+                UseType<()>: IsProviderFor<FooTypeProviderComponent, __Context__, __Params__>,
+            {}
+            impl DelegateComponent<BarTypeProviderComponent> for Context {
+                type Delegate = UseType<()>;
+            }
+            impl<
+                __Context__,
+                __Params__,
+            > IsProviderFor<BarTypeProviderComponent, __Context__, __Params__> for Context
+            where
+                UseType<()>: IsProviderFor<BarTypeProviderComponent, __Context__, __Params__>,
+            {}
+            impl DelegateComponent<FooGetterAtComponent> for Context {
+                type Delegate = UseField<Symbol!("dummy")>;
+            }
+            impl<
+                __Context__,
+                __Params__,
+            > IsProviderFor<FooGetterAtComponent, __Context__, __Params__> for Context
+            where
+                UseField<
+                    Symbol!("dummy"),
+                >: IsProviderFor<FooGetterAtComponent, __Context__, __Params__>,
+            {}
+            impl<I> DelegateComponent<BarGetterAtComponent<I>> for Context {
+                type Delegate = UseField<Symbol!("dummy")>;
+            }
+            impl<
+                I,
+                __Context__,
+                __Params__,
+            > IsProviderFor<BarGetterAtComponent<I>, __Context__, __Params__> for Context
+            where
+                UseField<
+                    Symbol!("dummy"),
+                >: IsProviderFor<BarGetterAtComponent<I>, __Context__, __Params__>,
+            {}
+            "#)
         }
     }
 

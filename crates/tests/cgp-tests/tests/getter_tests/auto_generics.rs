@@ -1,8 +1,35 @@
 use cgp::prelude::*;
+use cgp_macro_test_util::snapshot_cgp_auto_getter;
+use insta::assert_snapshot;
 
-#[cgp_auto_getter]
-pub trait HasFoo<Foo> {
-    fn foo(&self, _tag: PhantomData<Foo>) -> &Foo;
+snapshot_cgp_auto_getter! {
+    #[cgp_auto_getter]
+    pub trait HasFoo<Foo> {
+        fn foo(&self, _tag: PhantomData<Foo>) -> &Foo;
+    }
+
+    expand_has_foo(output) {
+        assert_snapshot!(output, @"
+        pub trait HasFoo<Foo> {
+            fn foo(&self, _tag: PhantomData<Foo>) -> &Foo;
+        }
+        impl<__Context__, Foo> HasFoo<Foo> for __Context__
+        where
+            __Context__: HasField<
+                Symbol<3, Chars<'f', Chars<'o', Chars<'o', Nil>>>>,
+                Value = Foo,
+            >,
+        {
+            fn foo(&self, _phantom: PhantomData<Foo>) -> &Foo {
+                self.get_field(
+                    ::core::marker::PhantomData::<
+                        Symbol<3, Chars<'f', Chars<'o', Chars<'o', Nil>>>>,
+                    >,
+                )
+            }
+        }
+        ")
+    }
 }
 
 #[derive(HasField)]

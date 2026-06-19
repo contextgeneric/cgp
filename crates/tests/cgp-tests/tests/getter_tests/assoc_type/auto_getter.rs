@@ -1,12 +1,42 @@
 use core::fmt::Display;
 
 use cgp::prelude::*;
+use cgp_macro_test_util::snapshot_cgp_auto_getter;
+use insta::assert_snapshot;
 
-#[cgp_auto_getter]
-pub trait HasName {
-    type Name: Display;
+snapshot_cgp_auto_getter! {
+    #[cgp_auto_getter]
+    pub trait HasName {
+        type Name: Display;
 
-    fn name(&self) -> &Self::Name;
+        fn name(&self) -> &Self::Name;
+    }
+
+    expand_has_name(output) {
+        assert_snapshot!(output, @"
+        pub trait HasName {
+            type Name: Display;
+            fn name(&self) -> &Self::Name;
+        }
+        impl<__Context__, Name> HasName for __Context__
+        where
+            Name: Display,
+            __Context__: HasField<
+                Symbol<4, Chars<'n', Chars<'a', Chars<'m', Chars<'e', Nil>>>>>,
+                Value = Name,
+            >,
+        {
+            type Name = Name;
+            fn name(&self) -> &Self::Name {
+                self.get_field(
+                    ::core::marker::PhantomData::<
+                        Symbol<4, Chars<'n', Chars<'a', Chars<'m', Chars<'e', Nil>>>>>,
+                    >,
+                )
+            }
+        }
+        ")
+    }
 }
 
 #[derive(HasField)]

@@ -4,7 +4,9 @@ use cgp::core::error::{ErrorRaiserComponent, ErrorTypeProviderComponent};
 use cgp::extra::error::RaiseFrom;
 use cgp::extra::handler::HandlerRef;
 use cgp::prelude::*;
+use cgp_macro_test_util::snapshot_delegate_components;
 use futures::executor::block_on;
+use insta::assert_snapshot;
 
 #[cgp_computer]
 async fn add(a: u64, b: u64) -> u64 {
@@ -18,12 +20,39 @@ async fn add_with_error(a: u64, b: u64) -> Result<u64, String> {
 
 pub struct App;
 
-delegate_components! {
-    App {
-        ErrorTypeProviderComponent:
-            UseType<String>,
-        ErrorRaiserComponent:
-            RaiseFrom,
+snapshot_delegate_components! {
+    delegate_components! {
+        App {
+            ErrorTypeProviderComponent:
+                UseType<String>,
+            ErrorRaiserComponent:
+                RaiseFrom,
+        }
+    }
+
+    expand_handler_macro_app(output) {
+        assert_snapshot!(output, @"
+        impl DelegateComponent<ErrorTypeProviderComponent> for App {
+            type Delegate = UseType<String>;
+        }
+        impl<
+            __Context__,
+            __Params__,
+        > IsProviderFor<ErrorTypeProviderComponent, __Context__, __Params__> for App
+        where
+            UseType<String>: IsProviderFor<ErrorTypeProviderComponent, __Context__, __Params__>,
+        {}
+        impl DelegateComponent<ErrorRaiserComponent> for App {
+            type Delegate = RaiseFrom;
+        }
+        impl<
+            __Context__,
+            __Params__,
+        > IsProviderFor<ErrorRaiserComponent, __Context__, __Params__> for App
+        where
+            RaiseFrom: IsProviderFor<ErrorRaiserComponent, __Context__, __Params__>,
+        {}
+        ")
     }
 }
 

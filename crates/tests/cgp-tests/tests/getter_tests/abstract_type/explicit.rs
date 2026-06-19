@@ -1,62 +1,242 @@
 use cgp::prelude::*;
+use cgp_macro_test_util::{snapshot_cgp_auto_getter, snapshot_cgp_getter};
+use insta::assert_snapshot;
 
-#[test]
-pub fn test_abstract_type_getter() {
-    #[cgp_type]
-    pub trait HasNameType {
-        type Name;
-    }
-
-    #[cgp_getter]
-    pub trait HasName: HasNameType {
-        fn name(&self) -> &Self::Name;
-    }
-
-    #[derive(HasField)]
-    pub struct App {
-        pub name: String,
-    }
-
-    delegate_components! {
-        App {
-            NameTypeProviderComponent: UseType<String>,
-            NameGetterComponent: UseField<Symbol!("name")>,
-        }
-    }
-
-    let context = App {
-        name: "Alice".to_owned(),
-    };
-
-    assert_eq!(context.name(), "Alice");
+#[cgp_type]
+pub trait HasScalarType {
+    type Scalar: Copy;
 }
 
-#[test]
-pub fn test_abstract_type_auto_getter() {
-    #[cgp_type]
-    pub trait HasNameType {
-        type Name;
-    }
-
+snapshot_cgp_auto_getter! {
     #[cgp_auto_getter]
-    pub trait HasName: HasNameType {
-        fn name(&self) -> &Self::Name;
+    #[extend(HasScalarType)]
+    pub trait AutoRectangleFields {
+        fn width(&self) -> Self::Scalar;
+
+        fn height(&self) -> Self::Scalar;
     }
 
-    #[derive(HasField)]
-    pub struct App {
-        pub name: String,
-    }
-
-    delegate_components! {
-        App {
-            NameTypeProviderComponent: UseType<String>,
+    expand_auto_rectangle_fields(output) {
+        assert_snapshot!(output, @"
+        pub trait AutoRectangleFields: HasScalarType {
+            fn width(&self) -> Self::Scalar;
+            fn height(&self) -> Self::Scalar;
         }
+        impl<__Context__> AutoRectangleFields for __Context__
+        where
+            __Context__: HasScalarType,
+            __Context__: HasField<
+                Symbol<5, Chars<'w', Chars<'i', Chars<'d', Chars<'t', Chars<'h', Nil>>>>>>,
+                Value = __Context__::Scalar,
+            >,
+            __Context__: HasField<
+                Symbol<
+                    6,
+                    Chars<'h', Chars<'e', Chars<'i', Chars<'g', Chars<'h', Chars<'t', Nil>>>>>>,
+                >,
+                Value = __Context__::Scalar,
+            >,
+        {
+            fn width(&self) -> __Context__::Scalar {
+                self.get_field(
+                        ::core::marker::PhantomData::<
+                            Symbol<
+                                5,
+                                Chars<'w', Chars<'i', Chars<'d', Chars<'t', Chars<'h', Nil>>>>>,
+                            >,
+                        >,
+                    )
+                    .clone()
+            }
+            fn height(&self) -> __Context__::Scalar {
+                self.get_field(
+                        ::core::marker::PhantomData::<
+                            Symbol<
+                                6,
+                                Chars<
+                                    'h',
+                                    Chars<
+                                        'e',
+                                        Chars<'i', Chars<'g', Chars<'h', Chars<'t', Nil>>>>,
+                                    >,
+                                >,
+                            >,
+                        >,
+                    )
+                    .clone()
+            }
+        }
+        ")
+    }
+}
+
+snapshot_cgp_getter! {
+    #[cgp_getter(RectangleFieldsGetter)]
+    #[extend(HasScalarType)]
+    pub trait HasRectangleFields {
+        fn width(&self) -> Self::Scalar;
+
+        fn height(&self) -> Self::Scalar;
     }
 
-    let context = App {
-        name: "Alice".to_owned(),
-    };
-
-    assert_eq!(context.name(), "Alice");
+    expand_has_rectangle_fields(output) {
+        assert_snapshot!(output, @"
+        pub trait HasRectangleFields: HasScalarType {
+            fn width(&self) -> Self::Scalar;
+            fn height(&self) -> Self::Scalar;
+        }
+        impl<__Context__> HasRectangleFields for __Context__
+        where
+            __Context__: HasScalarType,
+            __Context__: RectangleFieldsGetter<__Context__>,
+        {
+            fn width(&self) -> Self::Scalar {
+                __Context__::width(self)
+            }
+            fn height(&self) -> Self::Scalar {
+                __Context__::height(self)
+            }
+        }
+        pub trait RectangleFieldsGetter<
+            __Context__,
+        >: IsProviderFor<RectangleFieldsGetterComponent, __Context__, ()>
+        where
+            __Context__: HasScalarType,
+        {
+            fn width(__context__: &__Context__) -> __Context__::Scalar;
+            fn height(__context__: &__Context__) -> __Context__::Scalar;
+        }
+        impl<__Provider__, __Context__> RectangleFieldsGetter<__Context__> for __Provider__
+        where
+            __Context__: HasScalarType,
+            __Provider__: DelegateComponent<RectangleFieldsGetterComponent>
+                + IsProviderFor<RectangleFieldsGetterComponent, __Context__, ()>,
+            <__Provider__ as DelegateComponent<
+                RectangleFieldsGetterComponent,
+            >>::Delegate: RectangleFieldsGetter<__Context__>,
+        {
+            fn width(__context__: &__Context__) -> __Context__::Scalar {
+                <__Provider__ as DelegateComponent<
+                    RectangleFieldsGetterComponent,
+                >>::Delegate::width(__context__)
+            }
+            fn height(__context__: &__Context__) -> __Context__::Scalar {
+                <__Provider__ as DelegateComponent<
+                    RectangleFieldsGetterComponent,
+                >>::Delegate::height(__context__)
+            }
+        }
+        pub struct RectangleFieldsGetterComponent;
+        impl<__Context__> RectangleFieldsGetter<__Context__> for UseContext
+        where
+            __Context__: HasScalarType,
+            __Context__: HasRectangleFields,
+        {
+            fn width(__context__: &__Context__) -> __Context__::Scalar {
+                __Context__::width(__context__)
+            }
+            fn height(__context__: &__Context__) -> __Context__::Scalar {
+                __Context__::height(__context__)
+            }
+        }
+        impl<__Context__> IsProviderFor<RectangleFieldsGetterComponent, __Context__, ()>
+        for UseContext
+        where
+            __Context__: HasScalarType,
+            __Context__: HasRectangleFields,
+        {}
+        impl<__Context__, __Components__, __Path__> RectangleFieldsGetter<__Context__>
+        for RedirectLookup<__Components__, __Path__>
+        where
+            __Context__: HasScalarType,
+            __Components__: DelegateComponent<__Path__>,
+            <__Components__ as DelegateComponent<
+                __Path__,
+            >>::Delegate: RectangleFieldsGetter<__Context__>,
+        {
+            fn width(__context__: &__Context__) -> __Context__::Scalar {
+                <__Components__ as DelegateComponent<__Path__>>::Delegate::width(__context__)
+            }
+            fn height(__context__: &__Context__) -> __Context__::Scalar {
+                <__Components__ as DelegateComponent<__Path__>>::Delegate::height(__context__)
+            }
+        }
+        impl<
+            __Context__,
+            __Components__,
+            __Path__,
+        > IsProviderFor<RectangleFieldsGetterComponent, __Context__, ()>
+        for RedirectLookup<__Components__, __Path__>
+        where
+            __Context__: HasScalarType,
+            __Components__: DelegateComponent<__Path__>,
+            <__Components__ as DelegateComponent<
+                __Path__,
+            >>::Delegate: IsProviderFor<RectangleFieldsGetterComponent, __Context__, ()>
+                + RectangleFieldsGetter<__Context__>,
+        {}
+        impl<__Context__> RectangleFieldsGetter<__Context__> for UseFields
+        where
+            __Context__: HasScalarType,
+            __Context__: HasField<
+                Symbol<5, Chars<'w', Chars<'i', Chars<'d', Chars<'t', Chars<'h', Nil>>>>>>,
+                Value = __Context__::Scalar,
+            >,
+            __Context__: HasField<
+                Symbol<
+                    6,
+                    Chars<'h', Chars<'e', Chars<'i', Chars<'g', Chars<'h', Chars<'t', Nil>>>>>>,
+                >,
+                Value = __Context__::Scalar,
+            >,
+        {
+            fn width(__context__: &__Context__) -> __Context__::Scalar {
+                __context__
+                    .get_field(
+                        ::core::marker::PhantomData::<
+                            Symbol<
+                                5,
+                                Chars<'w', Chars<'i', Chars<'d', Chars<'t', Chars<'h', Nil>>>>>,
+                            >,
+                        >,
+                    )
+                    .clone()
+            }
+            fn height(__context__: &__Context__) -> __Context__::Scalar {
+                __context__
+                    .get_field(
+                        ::core::marker::PhantomData::<
+                            Symbol<
+                                6,
+                                Chars<
+                                    'h',
+                                    Chars<
+                                        'e',
+                                        Chars<'i', Chars<'g', Chars<'h', Chars<'t', Nil>>>>,
+                                    >,
+                                >,
+                            >,
+                        >,
+                    )
+                    .clone()
+            }
+        }
+        impl<__Context__> IsProviderFor<RectangleFieldsGetterComponent, __Context__, ()>
+        for UseFields
+        where
+            __Context__: HasScalarType,
+            __Context__: HasField<
+                Symbol<5, Chars<'w', Chars<'i', Chars<'d', Chars<'t', Chars<'h', Nil>>>>>>,
+                Value = __Context__::Scalar,
+            >,
+            __Context__: HasField<
+                Symbol<
+                    6,
+                    Chars<'h', Chars<'e', Chars<'i', Chars<'g', Chars<'h', Chars<'t', Nil>>>>>>,
+                >,
+                Value = __Context__::Scalar,
+            >,
+        {}
+        ")
+    }
 }
