@@ -7,8 +7,8 @@ mod cgp_namespace;
 mod cgp_type;
 mod check_components;
 mod delegate_and_check_components;
-mod delegate_components;
-mod snapshot;
+mod macro_snapshot;
+mod statement_snapshot;
 
 pub use cgp_auto_getter::*;
 pub use cgp_component::*;
@@ -19,5 +19,5 @@ pub use cgp_namespace::*;
 pub use cgp_type::*;
 pub use check_components::*;
 pub use delegate_and_check_components::*;
-pub use delegate_components::*;
-pub use snapshot::*;
+pub use macro_snapshot::*;
+pub use statement_snapshot::*;

@@ -1,20 +1,23 @@
+use core::marker::PhantomData;
+
+use cgp_macro_core::traits::IsKeyword;
 use cgp_macro_core::types::keyword::Keyword;
 use proc_macro2::TokenStream;
 use syn::braced;
 use syn::parse::{Parse, ParseStream};
 use syn::token::Not;
 
-use crate::keywords::DelegateComponents;
 use crate::types::MacroSnapshot;
 
-pub struct AssertDelegateComponents {
+pub struct StatementMacroSnapshot<Keyword> {
     pub body: TokenStream,
     pub snapshot: MacroSnapshot,
+    pub phantom: PhantomData<Keyword>,
 }
 
-impl Parse for AssertDelegateComponents {
+impl<K: IsKeyword> Parse for StatementMacroSnapshot<K> {
     fn parse(input: ParseStream) -> syn::Result<Self> {
-        let _: Keyword<DelegateComponents> = input.parse()?;
+        let _: Keyword<K> = input.parse()?;
         let _: Not = input.parse()?;
 
         let body = {
@@ -24,6 +27,10 @@ impl Parse for AssertDelegateComponents {
         };
 
         let snapshot = input.parse()?;
-        Ok(Self { body, snapshot })
+        Ok(Self {
+            body,
+            snapshot,
+            phantom: PhantomData,
+        })
     }
 }
