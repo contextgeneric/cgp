@@ -1,6 +1,7 @@
-use cgp::prelude::*;
+mod basic_const {
+    use cgp::prelude::*;
+    use cgp_macro_test_util::snapshot_delegate_and_check_components;
 
-pub fn test_component_with_const() {
     #[cgp_component(ConstantGetter)]
     pub trait HasConstant {
         const CONSTANT: u64;
@@ -15,18 +16,44 @@ pub fn test_component_with_const() {
 
     pub struct MyContext;
 
-    delegate_and_check_components! {
-        MyContext {
-            ConstantGetterComponent: UseConstant<42>,
+    snapshot_delegate_and_check_components! {
+        delegate_and_check_components! {
+            MyContext {
+                ConstantGetterComponent: UseConstant<42>,
+            }
+        }
+
+        expand_my_context(output) {
+            insta::assert_snapshot!(output, @"
+            impl DelegateComponent<ConstantGetterComponent> for MyContext {
+                type Delegate = UseConstant<42>;
+            }
+            impl<
+                __Context__,
+                __Params__,
+            > IsProviderFor<ConstantGetterComponent, __Context__, __Params__> for MyContext
+            where
+                UseConstant<42>: IsProviderFor<ConstantGetterComponent, __Context__, __Params__>,
+            {}
+            trait __CanUseMyContext<
+                __Component__,
+                __Params__: ?Sized,
+            >: CanUseComponent<__Component__, __Params__> {}
+            impl __CanUseMyContext<ConstantGetterComponent, ()> for MyContext {}
+            ")
         }
     }
+}
+
+pub fn test_component_with_const() {
+    use basic_const::{HasConstant, MyContext};
 
     assert_eq!(<MyContext as HasConstant>::CONSTANT, 42);
 }
 
 mod generic_const {
     use cgp::prelude::*;
-    use cgp_macro_test_util::snapshot_cgp_type;
+    use cgp_macro_test_util::{snapshot_cgp_type, snapshot_check_components};
 
     snapshot_cgp_type! {
         #[cgp_type]
@@ -156,9 +183,21 @@ mod generic_const {
         }
     }
 
-    check_components! {
-        MyContext {
-            ConstantGetterComponent,
+    snapshot_check_components! {
+        check_components! {
+            MyContext {
+                ConstantGetterComponent,
+            }
+        }
+
+        expand_check_my_context(output) {
+            insta::assert_snapshot!(output, @"
+            trait __CheckMyContext<
+                __Component__,
+                __Params__: ?Sized,
+            >: CanUseComponent<__Component__, __Params__> {}
+            impl __CheckMyContext<ConstantGetterComponent, ()> for MyContext {}
+            ")
         }
     }
 }

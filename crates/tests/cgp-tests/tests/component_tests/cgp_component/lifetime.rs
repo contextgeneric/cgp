@@ -1,5 +1,5 @@
 use cgp::prelude::*;
-use cgp_macro_test_util::snapshot_cgp_component;
+use cgp_macro_test_util::{snapshot_cgp_component, snapshot_check_components};
 
 snapshot_cgp_component! {
     #[cgp_component(ReferenceGetter)]
@@ -130,9 +130,21 @@ delegate_components! {
     }
 }
 
-check_components! {
-    <'a> App<'a> {
-        ReferenceGetterComponent:
-            (Life<'a>, str),
+snapshot_check_components! {
+    check_components! {
+        <'a> App<'a> {
+            ReferenceGetterComponent:
+                (Life<'a>, str),
+        }
+    }
+
+    expand_check_app(output) {
+        insta::assert_snapshot!(output, @"
+        trait __CheckApp<
+            __Component__,
+            __Params__: ?Sized,
+        >: CanUseComponent<__Component__, __Params__> {}
+        impl<'a> __CheckApp<ReferenceGetterComponent, (Life<'a>, str)> for App<'a> {}
+        ")
     }
 }

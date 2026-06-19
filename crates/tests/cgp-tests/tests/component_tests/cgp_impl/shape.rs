@@ -1,7 +1,9 @@
 use core::f64::consts::PI;
 
 use cgp::prelude::*;
-use cgp_macro_test_util::snapshot_cgp_fn;
+use cgp_macro_test_util::{
+    snapshot_cgp_fn, snapshot_check_components, snapshot_delegate_and_check_components,
+};
 
 snapshot_cgp_fn! {
     #[cgp_fn]
@@ -198,10 +200,36 @@ pub struct PlainRectangle {
     pub height: f64,
 }
 
-delegate_and_check_components! {
-    PlainRectangle {
-        AreaCalculatorComponent:
-            RectangleAreaCalculator,
+snapshot_delegate_and_check_components! {
+    delegate_and_check_components! {
+        PlainRectangle {
+            AreaCalculatorComponent:
+                RectangleAreaCalculator,
+        }
+    }
+
+    expand_plain_rectangle(output) {
+        insta::assert_snapshot!(output, @"
+        impl DelegateComponent<AreaCalculatorComponent> for PlainRectangle {
+            type Delegate = RectangleAreaCalculator;
+        }
+        impl<
+            __Context__,
+            __Params__,
+        > IsProviderFor<AreaCalculatorComponent, __Context__, __Params__> for PlainRectangle
+        where
+            RectangleAreaCalculator: IsProviderFor<
+                AreaCalculatorComponent,
+                __Context__,
+                __Params__,
+            >,
+        {}
+        trait __CanUsePlainRectangle<
+            __Component__,
+            __Params__: ?Sized,
+        >: CanUseComponent<__Component__, __Params__> {}
+        impl __CanUsePlainRectangle<AreaCalculatorComponent, ()> for PlainRectangle {}
+        ")
     }
 }
 
@@ -212,10 +240,34 @@ pub struct ScaledRectangle {
     pub height: f64,
 }
 
-delegate_and_check_components! {
-    ScaledRectangle {
-        AreaCalculatorComponent:
-            ScaledAreaCalculator<RectangleAreaCalculator>,
+snapshot_delegate_and_check_components! {
+    delegate_and_check_components! {
+        ScaledRectangle {
+            AreaCalculatorComponent:
+                ScaledAreaCalculator<RectangleAreaCalculator>,
+        }
+    }
+
+    expand_scaled_rectangle(output) {
+        insta::assert_snapshot!(output, @"
+        impl DelegateComponent<AreaCalculatorComponent> for ScaledRectangle {
+            type Delegate = ScaledAreaCalculator<RectangleAreaCalculator>;
+        }
+        impl<
+            __Context__,
+            __Params__,
+        > IsProviderFor<AreaCalculatorComponent, __Context__, __Params__> for ScaledRectangle
+        where
+            ScaledAreaCalculator<
+                RectangleAreaCalculator,
+            >: IsProviderFor<AreaCalculatorComponent, __Context__, __Params__>,
+        {}
+        trait __CanUseScaledRectangle<
+            __Component__,
+            __Params__: ?Sized,
+        >: CanUseComponent<__Component__, __Params__> {}
+        impl __CanUseScaledRectangle<AreaCalculatorComponent, ()> for ScaledRectangle {}
+        ")
     }
 }
 
@@ -224,10 +276,36 @@ pub struct PlainCircle {
     pub radius: f64,
 }
 
-delegate_and_check_components! {
-    PlainCircle {
-        AreaCalculatorComponent:
-            CircleAreaCalculator,
+snapshot_delegate_and_check_components! {
+    delegate_and_check_components! {
+        PlainCircle {
+            AreaCalculatorComponent:
+                CircleAreaCalculator,
+        }
+    }
+
+    expand_plain_circle(output) {
+        insta::assert_snapshot!(output, @"
+        impl DelegateComponent<AreaCalculatorComponent> for PlainCircle {
+            type Delegate = CircleAreaCalculator;
+        }
+        impl<
+            __Context__,
+            __Params__,
+        > IsProviderFor<AreaCalculatorComponent, __Context__, __Params__> for PlainCircle
+        where
+            CircleAreaCalculator: IsProviderFor<
+                AreaCalculatorComponent,
+                __Context__,
+                __Params__,
+            >,
+        {}
+        trait __CanUsePlainCircle<
+            __Component__,
+            __Params__: ?Sized,
+        >: CanUseComponent<__Component__, __Params__> {}
+        impl __CanUsePlainCircle<AreaCalculatorComponent, ()> for PlainCircle {}
+        ")
     }
 }
 
@@ -237,21 +315,60 @@ pub struct ScaledCircle {
     pub radius: f64,
 }
 
-delegate_and_check_components! {
-    ScaledCircle {
-        AreaCalculatorComponent:
-            ScaledAreaCalculator<CircleAreaCalculator>,
+snapshot_delegate_and_check_components! {
+    delegate_and_check_components! {
+        ScaledCircle {
+            AreaCalculatorComponent:
+                ScaledAreaCalculator<CircleAreaCalculator>,
+        }
+    }
+
+    expand_scaled_circle(output) {
+        insta::assert_snapshot!(output, @"
+        impl DelegateComponent<AreaCalculatorComponent> for ScaledCircle {
+            type Delegate = ScaledAreaCalculator<CircleAreaCalculator>;
+        }
+        impl<
+            __Context__,
+            __Params__,
+        > IsProviderFor<AreaCalculatorComponent, __Context__, __Params__> for ScaledCircle
+        where
+            ScaledAreaCalculator<
+                CircleAreaCalculator,
+            >: IsProviderFor<AreaCalculatorComponent, __Context__, __Params__>,
+        {}
+        trait __CanUseScaledCircle<
+            __Component__,
+            __Params__: ?Sized,
+        >: CanUseComponent<__Component__, __Params__> {}
+        impl __CanUseScaledCircle<AreaCalculatorComponent, ()> for ScaledCircle {}
+        ")
     }
 }
 
-check_components! {
-    #[check_trait(CheckScaledRectangleProviders)]
-    #[check_providers(
-        RectangleAreaCalculator,
-        ScaledAreaCalculator<RectangleAreaCalculator>,
-    )]
-    ScaledRectangle {
-        AreaCalculatorComponent,
+snapshot_check_components! {
+    check_components! {
+        #[check_trait(CheckScaledRectangleProviders)]
+        #[check_providers(
+            RectangleAreaCalculator,
+            ScaledAreaCalculator<RectangleAreaCalculator>,
+        )]
+        ScaledRectangle {
+            AreaCalculatorComponent,
+        }
+    }
+
+    expand_check_scaled_rectangle_providers(output) {
+        insta::assert_snapshot!(output, @"
+        trait CheckScaledRectangleProviders<
+            __Component__,
+            __Params__: ?Sized,
+        >: IsProviderFor<__Component__, ScaledRectangle, __Params__> {}
+        impl CheckScaledRectangleProviders<AreaCalculatorComponent, ()>
+        for RectangleAreaCalculator {}
+        impl CheckScaledRectangleProviders<AreaCalculatorComponent, ()>
+        for ScaledAreaCalculator<RectangleAreaCalculator> {}
+        ")
     }
 }
 

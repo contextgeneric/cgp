@@ -1,7 +1,7 @@
 use core::ops::Mul;
 
 use cgp::prelude::*;
-use cgp_macro_test_util::snapshot_cgp_type;
+use cgp_macro_test_util::{snapshot_cgp_type, snapshot_check_components};
 
 snapshot_cgp_type! {
     #[cgp_type]
@@ -116,8 +116,20 @@ delegate_components! {
     }
 }
 
-check_components! {
-    App {
-        ScalarTypeProviderComponent,
+snapshot_check_components! {
+    check_components! {
+        App {
+            ScalarTypeProviderComponent,
+        }
+    }
+
+    expand_check_app(output) {
+        insta::assert_snapshot!(output, @"
+        trait __CheckApp<
+            __Component__,
+            __Params__: ?Sized,
+        >: CanUseComponent<__Component__, __Params__> {}
+        impl __CheckApp<ScalarTypeProviderComponent, ()> for App {}
+        ")
     }
 }

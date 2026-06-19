@@ -4,7 +4,10 @@ mod basic_check_components {
     use core::marker::PhantomData;
 
     use cgp::prelude::*;
-    use cgp_macro_test_util::{snapshot_cgp_getter, snapshot_cgp_type};
+    use cgp_macro_test_util::{
+        snapshot_cgp_getter, snapshot_cgp_type, snapshot_check_components,
+        snapshot_delegate_and_check_components,
+    };
 
     snapshot_cgp_type! {
         #[cgp_type]
@@ -569,90 +572,223 @@ mod basic_check_components {
         pub extra_dummy: (),
     }
 
-    delegate_and_check_components! {
-        Context {
-            [
-                FooTypeProviderComponent,
-                BarTypeProviderComponent,
-            ]:
-                UseType<()>,
-
-            #[check_params(
-                (Index<5>, Index<6>),
-                (Index<7>, Index<8>),
-            )]
-            [
-                #[check_params(
-                    Index<0>,
-                    Index<1>,
-                )]
-                FooGetterAtComponent,
+    snapshot_delegate_and_check_components! {
+        delegate_and_check_components! {
+            Context {
+                [
+                    FooTypeProviderComponent,
+                    BarTypeProviderComponent,
+                ]:
+                    UseType<()>,
 
                 #[check_params(
-                    (Index<0>, Index<1>),
-                    (Index<1>, Index<0>),
+                    (Index<5>, Index<6>),
+                    (Index<7>, Index<8>),
                 )]
-                BarGetterAtComponent,
-            ]:
-                UseField<Symbol!("dummy")>,
+                [
+                    #[check_params(
+                        Index<0>,
+                        Index<1>,
+                    )]
+                    FooGetterAtComponent,
+
+                    #[check_params(
+                        (Index<0>, Index<1>),
+                        (Index<1>, Index<0>),
+                    )]
+                    BarGetterAtComponent,
+                ]:
+                    UseField<Symbol!("dummy")>,
+            }
+        }
+
+        expand_context(output) {
+            insta::assert_snapshot!(output, @r#"
+            impl DelegateComponent<FooTypeProviderComponent> for Context {
+                type Delegate = UseType<()>;
+            }
+            impl<
+                __Context__,
+                __Params__,
+            > IsProviderFor<FooTypeProviderComponent, __Context__, __Params__> for Context
+            where
+                UseType<()>: IsProviderFor<FooTypeProviderComponent, __Context__, __Params__>,
+            {}
+            impl DelegateComponent<BarTypeProviderComponent> for Context {
+                type Delegate = UseType<()>;
+            }
+            impl<
+                __Context__,
+                __Params__,
+            > IsProviderFor<BarTypeProviderComponent, __Context__, __Params__> for Context
+            where
+                UseType<()>: IsProviderFor<BarTypeProviderComponent, __Context__, __Params__>,
+            {}
+            impl DelegateComponent<FooGetterAtComponent> for Context {
+                type Delegate = UseField<Symbol!("dummy")>;
+            }
+            impl<
+                __Context__,
+                __Params__,
+            > IsProviderFor<FooGetterAtComponent, __Context__, __Params__> for Context
+            where
+                UseField<
+                    Symbol!("dummy"),
+                >: IsProviderFor<FooGetterAtComponent, __Context__, __Params__>,
+            {}
+            impl DelegateComponent<BarGetterAtComponent> for Context {
+                type Delegate = UseField<Symbol!("dummy")>;
+            }
+            impl<
+                __Context__,
+                __Params__,
+            > IsProviderFor<BarGetterAtComponent, __Context__, __Params__> for Context
+            where
+                UseField<
+                    Symbol!("dummy"),
+                >: IsProviderFor<BarGetterAtComponent, __Context__, __Params__>,
+            {}
+            trait __CanUseContext<
+                __Component__,
+                __Params__: ?Sized,
+            >: CanUseComponent<__Component__, __Params__> {}
+            impl __CanUseContext<FooTypeProviderComponent, ()> for Context {}
+            impl __CanUseContext<BarTypeProviderComponent, ()> for Context {}
+            impl __CanUseContext<FooGetterAtComponent, Index<0>> for Context {}
+            impl __CanUseContext<FooGetterAtComponent, Index<1>> for Context {}
+            impl __CanUseContext<FooGetterAtComponent, (Index<5>, Index<6>)> for Context {}
+            impl __CanUseContext<FooGetterAtComponent, (Index<7>, Index<8>)> for Context {}
+            impl __CanUseContext<BarGetterAtComponent, (Index<0>, Index<1>)> for Context {}
+            impl __CanUseContext<BarGetterAtComponent, (Index<1>, Index<0>)> for Context {}
+            impl __CanUseContext<BarGetterAtComponent, (Index<5>, Index<6>)> for Context {}
+            impl __CanUseContext<BarGetterAtComponent, (Index<7>, Index<8>)> for Context {}
+            "#)
         }
     }
 
-    check_components! {
-        #[check_trait(CanUseContext)]
-        Context {
-            FooTypeProviderComponent,
-            BarTypeProviderComponent,
-            FooGetterAtComponent: [
-                Index<0>,
-                Index<1>,
-            ],
-            FooGetterAtComponent:
-                Index<3>,
+    snapshot_check_components! {
+        check_components! {
+            #[check_trait(CanUseContext)]
+            Context {
+                FooTypeProviderComponent,
+                BarTypeProviderComponent,
+                FooGetterAtComponent: [
+                    Index<0>,
+                    Index<1>,
+                ],
+                FooGetterAtComponent:
+                    Index<3>,
+            }
+
+            #[check_trait(CanUseContext2)]
+            Context {
+                BarGetterAtComponent: [
+                    (Index<0>, Index<1>),
+                    (Index<1>, Index<0>),
+                ],
+                BarGetterAtComponent:
+                    (Index<3>, Index<4>),
+                [
+                    FooGetterAtComponent,
+                    BarGetterAtComponent,
+                ]: [
+                    (Index<5>, Index<6>),
+                    (Index<7>, Index<8>),
+                ]
+            }
+
+            #[check_trait(CanUseDummyField)]
+            #[check_providers(
+                UseField<Symbol!("dummy")>,
+                UseField<Symbol!("extra_dummy")>,
+            )]
+            Context {
+                FooGetterAtComponent: [
+                    Index<0>,
+                    Index<1>,
+                ],
+                FooGetterAtComponent:
+                    Index<3>,
+                BarGetterAtComponent: [
+                    (Index<0>, Index<1>),
+                    (Index<1>, Index<0>),
+                ],
+                BarGetterAtComponent:
+                    (Index<3>, Index<4>),
+                [
+                    FooGetterAtComponent,
+                    BarGetterAtComponent,
+                ]: [
+                    (Index<5>, Index<6>),
+                    (Index<7>, Index<8>),
+                ]
+            }
         }
 
-        #[check_trait(CanUseContext2)]
-        Context {
-            BarGetterAtComponent: [
-                (Index<0>, Index<1>),
-                (Index<1>, Index<0>),
-            ],
-            BarGetterAtComponent:
-                (Index<3>, Index<4>),
-            [
-                FooGetterAtComponent,
-                BarGetterAtComponent,
-            ]: [
-                (Index<5>, Index<6>),
-                (Index<7>, Index<8>),
-            ]
-        }
-
-        #[check_trait(CanUseDummyField)]
-        #[check_providers(
-            UseField<Symbol!("dummy")>,
-            UseField<Symbol!("extra_dummy")>,
-        )]
-        Context {
-            FooGetterAtComponent: [
-                Index<0>,
-                Index<1>,
-            ],
-            FooGetterAtComponent:
-                Index<3>,
-            BarGetterAtComponent: [
-                (Index<0>, Index<1>),
-                (Index<1>, Index<0>),
-            ],
-            BarGetterAtComponent:
-                (Index<3>, Index<4>),
-            [
-                FooGetterAtComponent,
-                BarGetterAtComponent,
-            ]: [
-                (Index<5>, Index<6>),
-                (Index<7>, Index<8>),
-            ]
+        expand_check_context(output) {
+            insta::assert_snapshot!(output, @r#"
+            trait CanUseContext<
+                __Component__,
+                __Params__: ?Sized,
+            >: CanUseComponent<__Component__, __Params__> {}
+            impl CanUseContext<FooTypeProviderComponent, ()> for Context {}
+            impl CanUseContext<BarTypeProviderComponent, ()> for Context {}
+            impl CanUseContext<FooGetterAtComponent, Index<0>> for Context {}
+            impl CanUseContext<FooGetterAtComponent, Index<1>> for Context {}
+            impl CanUseContext<FooGetterAtComponent, Index<3>> for Context {}
+            trait CanUseContext2<
+                __Component__,
+                __Params__: ?Sized,
+            >: CanUseComponent<__Component__, __Params__> {}
+            impl CanUseContext2<BarGetterAtComponent, (Index<0>, Index<1>)> for Context {}
+            impl CanUseContext2<BarGetterAtComponent, (Index<1>, Index<0>)> for Context {}
+            impl CanUseContext2<BarGetterAtComponent, (Index<3>, Index<4>)> for Context {}
+            impl CanUseContext2<FooGetterAtComponent, (Index<5>, Index<6>)> for Context {}
+            impl CanUseContext2<FooGetterAtComponent, (Index<7>, Index<8>)> for Context {}
+            impl CanUseContext2<BarGetterAtComponent, (Index<5>, Index<6>)> for Context {}
+            impl CanUseContext2<BarGetterAtComponent, (Index<7>, Index<8>)> for Context {}
+            trait CanUseDummyField<
+                __Component__,
+                __Params__: ?Sized,
+            >: IsProviderFor<__Component__, Context, __Params__> {}
+            impl CanUseDummyField<FooGetterAtComponent, Index<0>> for UseField<Symbol!("dummy")> {}
+            impl CanUseDummyField<FooGetterAtComponent, Index<0>>
+            for UseField<Symbol!("extra_dummy")> {}
+            impl CanUseDummyField<FooGetterAtComponent, Index<1>> for UseField<Symbol!("dummy")> {}
+            impl CanUseDummyField<FooGetterAtComponent, Index<1>>
+            for UseField<Symbol!("extra_dummy")> {}
+            impl CanUseDummyField<FooGetterAtComponent, Index<3>> for UseField<Symbol!("dummy")> {}
+            impl CanUseDummyField<FooGetterAtComponent, Index<3>>
+            for UseField<Symbol!("extra_dummy")> {}
+            impl CanUseDummyField<BarGetterAtComponent, (Index<0>, Index<1>)>
+            for UseField<Symbol!("dummy")> {}
+            impl CanUseDummyField<BarGetterAtComponent, (Index<0>, Index<1>)>
+            for UseField<Symbol!("extra_dummy")> {}
+            impl CanUseDummyField<BarGetterAtComponent, (Index<1>, Index<0>)>
+            for UseField<Symbol!("dummy")> {}
+            impl CanUseDummyField<BarGetterAtComponent, (Index<1>, Index<0>)>
+            for UseField<Symbol!("extra_dummy")> {}
+            impl CanUseDummyField<BarGetterAtComponent, (Index<3>, Index<4>)>
+            for UseField<Symbol!("dummy")> {}
+            impl CanUseDummyField<BarGetterAtComponent, (Index<3>, Index<4>)>
+            for UseField<Symbol!("extra_dummy")> {}
+            impl CanUseDummyField<FooGetterAtComponent, (Index<5>, Index<6>)>
+            for UseField<Symbol!("dummy")> {}
+            impl CanUseDummyField<FooGetterAtComponent, (Index<5>, Index<6>)>
+            for UseField<Symbol!("extra_dummy")> {}
+            impl CanUseDummyField<FooGetterAtComponent, (Index<7>, Index<8>)>
+            for UseField<Symbol!("dummy")> {}
+            impl CanUseDummyField<FooGetterAtComponent, (Index<7>, Index<8>)>
+            for UseField<Symbol!("extra_dummy")> {}
+            impl CanUseDummyField<BarGetterAtComponent, (Index<5>, Index<6>)>
+            for UseField<Symbol!("dummy")> {}
+            impl CanUseDummyField<BarGetterAtComponent, (Index<5>, Index<6>)>
+            for UseField<Symbol!("extra_dummy")> {}
+            impl CanUseDummyField<BarGetterAtComponent, (Index<7>, Index<8>)>
+            for UseField<Symbol!("dummy")> {}
+            impl CanUseDummyField<BarGetterAtComponent, (Index<7>, Index<8>)>
+            for UseField<Symbol!("extra_dummy")> {}
+            "#)
         }
     }
 }
@@ -662,7 +798,8 @@ mod generic_check_components {
 
     use cgp::prelude::*;
     use cgp_macro_test_util::{
-        snapshot_cgp_getter, snapshot_cgp_type, snapshot_delegate_components,
+        snapshot_cgp_getter, snapshot_cgp_type, snapshot_check_components,
+        snapshot_delegate_components,
     };
 
     snapshot_cgp_type! {
@@ -1316,13 +1453,32 @@ mod generic_check_components {
         }
     }
 
-    check_components! {
-        <'a, I> Context
-        where
-            I: Clone,
-        {
-            FooGetterAtComponent: &'a I,
-            BarGetterAtComponent<I>: (I, &'a Index<0>),
+    snapshot_check_components! {
+        check_components! {
+            <'a, I> Context
+            where
+                I: Clone,
+            {
+                FooGetterAtComponent: &'a I,
+                BarGetterAtComponent<I>: (I, &'a Index<0>),
+            }
+        }
+
+        expand_check_context(output) {
+            insta::assert_snapshot!(output, @"
+            trait __CheckContext<
+                __Component__,
+                __Params__: ?Sized,
+            >: CanUseComponent<__Component__, __Params__> {}
+            impl<'a, I> __CheckContext<FooGetterAtComponent, &'a I> for Context
+            where
+                I: Clone,
+            {}
+            impl<'a, I> __CheckContext<BarGetterAtComponent<I>, (I, &'a Index<0>)> for Context
+            where
+                I: Clone,
+            {}
+            ")
         }
     }
 }

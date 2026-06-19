@@ -2,7 +2,9 @@
 
 mod basic_delegate_and_check_components {
     use cgp::prelude::*;
-    use cgp_macro_test_util::{snapshot_cgp_getter, snapshot_cgp_type};
+    use cgp_macro_test_util::{
+        snapshot_cgp_getter, snapshot_cgp_type, snapshot_delegate_and_check_components,
+    };
 
     snapshot_cgp_type! {
         #[cgp_type]
@@ -264,18 +266,53 @@ mod basic_delegate_and_check_components {
         pub name: String,
     }
 
-    delegate_and_check_components! {
-        #[check_trait(CheckMyContext)]
-        MyContext {
-            NameTypeProviderComponent: UseType<String>,
-            NameGetterComponent: UseField<Symbol!("name")>,
+    snapshot_delegate_and_check_components! {
+        delegate_and_check_components! {
+            #[check_trait(CheckMyContext)]
+            MyContext {
+                NameTypeProviderComponent: UseType<String>,
+                NameGetterComponent: UseField<Symbol!("name")>,
+            }
+        }
+
+        expand_my_context(output) {
+            insta::assert_snapshot!(output, @r#"
+            impl DelegateComponent<NameTypeProviderComponent> for MyContext {
+                type Delegate = UseType<String>;
+            }
+            impl<
+                __Context__,
+                __Params__,
+            > IsProviderFor<NameTypeProviderComponent, __Context__, __Params__> for MyContext
+            where
+                UseType<String>: IsProviderFor<NameTypeProviderComponent, __Context__, __Params__>,
+            {}
+            impl DelegateComponent<NameGetterComponent> for MyContext {
+                type Delegate = UseField<Symbol!("name")>;
+            }
+            impl<__Context__, __Params__> IsProviderFor<NameGetterComponent, __Context__, __Params__>
+            for MyContext
+            where
+                UseField<
+                    Symbol!("name"),
+                >: IsProviderFor<NameGetterComponent, __Context__, __Params__>,
+            {}
+            trait CheckMyContext<
+                __Component__,
+                __Params__: ?Sized,
+            >: CanUseComponent<__Component__, __Params__> {}
+            impl CheckMyContext<NameTypeProviderComponent, ()> for MyContext {}
+            impl CheckMyContext<NameGetterComponent, ()> for MyContext {}
+            "#)
         }
     }
 }
 
 mod generic_delegate_and_check_components {
     use cgp::prelude::*;
-    use cgp_macro_test_util::{snapshot_cgp_getter, snapshot_cgp_type};
+    use cgp_macro_test_util::{
+        snapshot_cgp_getter, snapshot_cgp_type, snapshot_delegate_and_check_components,
+    };
 
     snapshot_cgp_type! {
         #[cgp_type]
@@ -537,11 +574,48 @@ mod generic_delegate_and_check_components {
         pub name: T,
     }
 
-    delegate_and_check_components! {
-        <T>
-        MyContext<T> {
-            NameTypeProviderComponent: UseType<T>,
-            NameGetterComponent: UseField<Symbol!("name")>,
+    snapshot_delegate_and_check_components! {
+        delegate_and_check_components! {
+            <T>
+            MyContext<T> {
+                NameTypeProviderComponent: UseType<T>,
+                NameGetterComponent: UseField<Symbol!("name")>,
+            }
+        }
+
+        expand_my_context(output) {
+            insta::assert_snapshot!(output, @r#"
+            impl<T> DelegateComponent<NameTypeProviderComponent> for MyContext<T> {
+                type Delegate = UseType<T>;
+            }
+            impl<
+                T,
+                __Context__,
+                __Params__,
+            > IsProviderFor<NameTypeProviderComponent, __Context__, __Params__> for MyContext<T>
+            where
+                UseType<T>: IsProviderFor<NameTypeProviderComponent, __Context__, __Params__>,
+            {}
+            impl<T> DelegateComponent<NameGetterComponent> for MyContext<T> {
+                type Delegate = UseField<Symbol!("name")>;
+            }
+            impl<
+                T,
+                __Context__,
+                __Params__,
+            > IsProviderFor<NameGetterComponent, __Context__, __Params__> for MyContext<T>
+            where
+                UseField<
+                    Symbol!("name"),
+                >: IsProviderFor<NameGetterComponent, __Context__, __Params__>,
+            {}
+            trait __CanUseMyContext<
+                __Component__,
+                __Params__: ?Sized,
+            >: CanUseComponent<__Component__, __Params__> {}
+            impl<T> __CanUseMyContext<NameTypeProviderComponent, ()> for MyContext<T> {}
+            impl<T> __CanUseMyContext<NameGetterComponent, ()> for MyContext<T> {}
+            "#)
         }
     }
 }

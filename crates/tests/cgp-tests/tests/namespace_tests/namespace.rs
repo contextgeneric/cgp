@@ -1,7 +1,9 @@
 use cgp::core::error::{ErrorRaiserComponent, ErrorTypeProviderComponent};
 use cgp::extra::error::ReturnError;
 use cgp::prelude::*;
-use cgp_macro_test_util::{snapshot_cgp_component, snapshot_delegate_components};
+use cgp_macro_test_util::{
+    snapshot_cgp_component, snapshot_check_components, snapshot_delegate_components,
+};
 
 pub struct MyComponents;
 
@@ -252,8 +254,20 @@ snapshot_delegate_components! {
     }
 }
 
-check_components! {
-    App {
-        ErrorRaiserComponent: String,
+snapshot_check_components! {
+    check_components! {
+        App {
+            ErrorRaiserComponent: String,
+        }
+    }
+
+    expand_check_app(output) {
+        insta::assert_snapshot!(output, @"
+        trait __CheckApp<
+            __Component__,
+            __Params__: ?Sized,
+        >: CanUseComponent<__Component__, __Params__> {}
+        impl __CheckApp<ErrorRaiserComponent, String> for App {}
+        ")
     }
 }

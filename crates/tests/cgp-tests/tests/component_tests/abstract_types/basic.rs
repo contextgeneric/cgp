@@ -3,7 +3,7 @@ use std::ops::Mul;
 
 use cgp::core::error::ErrorTypeProviderComponent;
 use cgp::prelude::*;
-use cgp_macro_test_util::snapshot_cgp_type;
+use cgp_macro_test_util::{snapshot_cgp_type, snapshot_delegate_and_check_components};
 
 snapshot_cgp_type! {
     #[cgp_type]
@@ -132,13 +132,59 @@ pub struct Rectangle {
     pub height: f64,
 }
 
-delegate_and_check_components! {
-    Rectangle {
-        ErrorTypeProviderComponent:
-            UseType<Infallible>,
-        ScalarTypeProviderComponent:
-            UseType<f64>,
-        AreaCalculatorComponent:
-            RectangleArea,
+snapshot_delegate_and_check_components! {
+    delegate_and_check_components! {
+        Rectangle {
+            ErrorTypeProviderComponent:
+                UseType<Infallible>,
+            ScalarTypeProviderComponent:
+                UseType<f64>,
+            AreaCalculatorComponent:
+                RectangleArea,
+        }
+    }
+
+    expand_rectangle(output) {
+        insta::assert_snapshot!(output, @"
+        impl DelegateComponent<ErrorTypeProviderComponent> for Rectangle {
+            type Delegate = UseType<Infallible>;
+        }
+        impl<
+            __Context__,
+            __Params__,
+        > IsProviderFor<ErrorTypeProviderComponent, __Context__, __Params__> for Rectangle
+        where
+            UseType<
+                Infallible,
+            >: IsProviderFor<ErrorTypeProviderComponent, __Context__, __Params__>,
+        {}
+        impl DelegateComponent<ScalarTypeProviderComponent> for Rectangle {
+            type Delegate = UseType<f64>;
+        }
+        impl<
+            __Context__,
+            __Params__,
+        > IsProviderFor<ScalarTypeProviderComponent, __Context__, __Params__> for Rectangle
+        where
+            UseType<f64>: IsProviderFor<ScalarTypeProviderComponent, __Context__, __Params__>,
+        {}
+        impl DelegateComponent<AreaCalculatorComponent> for Rectangle {
+            type Delegate = RectangleArea;
+        }
+        impl<
+            __Context__,
+            __Params__,
+        > IsProviderFor<AreaCalculatorComponent, __Context__, __Params__> for Rectangle
+        where
+            RectangleArea: IsProviderFor<AreaCalculatorComponent, __Context__, __Params__>,
+        {}
+        trait __CanUseRectangle<
+            __Component__,
+            __Params__: ?Sized,
+        >: CanUseComponent<__Component__, __Params__> {}
+        impl __CanUseRectangle<ErrorTypeProviderComponent, ()> for Rectangle {}
+        impl __CanUseRectangle<ScalarTypeProviderComponent, ()> for Rectangle {}
+        impl __CanUseRectangle<AreaCalculatorComponent, ()> for Rectangle {}
+        ")
     }
 }

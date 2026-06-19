@@ -1,6 +1,7 @@
 use cgp::prelude::*;
 use cgp_macro_test_util::{
-    snapshot_cgp_component, snapshot_cgp_impl, snapshot_delegate_components,
+    snapshot_cgp_component, snapshot_cgp_impl, snapshot_check_components,
+    snapshot_delegate_components,
 };
 
 pub struct App;
@@ -400,16 +401,33 @@ snapshot_delegate_components! {
     }
 }
 
-check_components! {
-    App {
-        FooProviderComponent:
-            String,
-        BarProviderComponent: [
-            u32,
-            u64,
-            bool,
-            usize,
-            isize,
-        ],
+snapshot_check_components! {
+    check_components! {
+        App {
+            FooProviderComponent:
+                String,
+            BarProviderComponent: [
+                u32,
+                u64,
+                bool,
+                usize,
+                isize,
+            ],
+        }
+    }
+
+    expand_check_app(output) {
+        insta::assert_snapshot!(output, @"
+        trait __CheckApp<
+            __Component__,
+            __Params__: ?Sized,
+        >: CanUseComponent<__Component__, __Params__> {}
+        impl __CheckApp<FooProviderComponent, String> for App {}
+        impl __CheckApp<BarProviderComponent, u32> for App {}
+        impl __CheckApp<BarProviderComponent, u64> for App {}
+        impl __CheckApp<BarProviderComponent, bool> for App {}
+        impl __CheckApp<BarProviderComponent, usize> for App {}
+        impl __CheckApp<BarProviderComponent, isize> for App {}
+        ")
     }
 }

@@ -79,7 +79,7 @@ fn test_chained_getter_with_inner_life() {
 mod deeply_nested_getter {
     use cgp::core::field::impls::ChainGetters;
     use cgp::prelude::*;
-    use cgp_macro_test_util::snapshot_cgp_getter;
+    use cgp_macro_test_util::{snapshot_cgp_getter, snapshot_delegate_and_check_components};
 
     #[derive(HasField)]
     pub struct A {
@@ -236,16 +236,50 @@ mod deeply_nested_getter {
         }
     }
 
-    delegate_and_check_components! {
-        MyContext {
-            NameGetterComponent: WithProvider<
-                ChainGetters<Product![
-                    UseField<Symbol!("a")>,
-                    UseField<Symbol!("b")>,
-                    UseField<Symbol!("c")>,
-                    UseField<Symbol!("d")>,
-                    UseField<Symbol!("name")>
-                ]>>
+    snapshot_delegate_and_check_components! {
+        delegate_and_check_components! {
+            MyContext {
+                NameGetterComponent: WithProvider<
+                    ChainGetters<Product![
+                        UseField<Symbol!("a")>,
+                        UseField<Symbol!("b")>,
+                        UseField<Symbol!("c")>,
+                        UseField<Symbol!("d")>,
+                        UseField<Symbol!("name")>
+                    ]>>
+            }
+        }
+
+        expand_my_context(output) {
+            insta::assert_snapshot!(output, @r#"
+            impl DelegateComponent<NameGetterComponent> for MyContext {
+                type Delegate = WithProvider<
+                    ChainGetters<
+                        Product![
+                            UseField < Symbol!("a") >, UseField < Symbol!("b") >, UseField <
+                            Symbol!("c") >, UseField < Symbol!("d") >, UseField < Symbol!("name") >
+                        ],
+                    >,
+                >;
+            }
+            impl<__Context__, __Params__> IsProviderFor<NameGetterComponent, __Context__, __Params__>
+            for MyContext
+            where
+                WithProvider<
+                    ChainGetters<
+                        Product![
+                            UseField < Symbol!("a") >, UseField < Symbol!("b") >, UseField <
+                            Symbol!("c") >, UseField < Symbol!("d") >, UseField < Symbol!("name") >
+                        ],
+                    >,
+                >: IsProviderFor<NameGetterComponent, __Context__, __Params__>,
+            {}
+            trait __CanUseMyContext<
+                __Component__,
+                __Params__: ?Sized,
+            >: CanUseComponent<__Component__, __Params__> {}
+            impl __CanUseMyContext<NameGetterComponent, ()> for MyContext {}
+            "#)
         }
     }
 

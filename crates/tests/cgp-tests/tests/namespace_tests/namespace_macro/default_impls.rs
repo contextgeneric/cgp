@@ -1,6 +1,6 @@
 use cgp::core::component::DefaultImpls1;
 use cgp::prelude::*;
-use cgp_macro_test_util::snapshot_delegate_components;
+use cgp_macro_test_util::{snapshot_check_components, snapshot_delegate_components};
 use cgp_tests::namespaces::default_impls::{
     DefaultShowComponents, ExtendedNamespace, ShowImplComponent, ShowWithDisplay,
 };
@@ -115,12 +115,25 @@ snapshot_delegate_components! {
     }
 }
 
-check_components! {
-    AppA {
-        ShowImplComponent: [
-            String,
-            u64,
-        ]
+snapshot_check_components! {
+    check_components! {
+        AppA {
+            ShowImplComponent: [
+                String,
+                u64,
+            ]
+        }
+    }
+
+    expand_check_app_a(output) {
+        insta::assert_snapshot!(output, @"
+        trait __CheckAppA<
+            __Component__,
+            __Params__: ?Sized,
+        >: CanUseComponent<__Component__, __Params__> {}
+        impl __CheckAppA<ShowImplComponent, String> for AppA {}
+        impl __CheckAppA<ShowImplComponent, u64> for AppA {}
+        ")
     }
 }
 
@@ -199,12 +212,25 @@ snapshot_delegate_components! {
     }
 }
 
-check_components! {
-    AppB {
-        ShowImplComponent: [
-            String,
-            u64,
-        ]
+snapshot_check_components! {
+    check_components! {
+        AppB {
+            ShowImplComponent: [
+                String,
+                u64,
+            ]
+        }
+    }
+
+    expand_check_app_b(output) {
+        insta::assert_snapshot!(output, @"
+        trait __CheckAppB<
+            __Component__,
+            __Params__: ?Sized,
+        >: CanUseComponent<__Component__, __Params__> {}
+        impl __CheckAppB<ShowImplComponent, String> for AppB {}
+        impl __CheckAppB<ShowImplComponent, u64> for AppB {}
+        ")
     }
 }
 
@@ -318,12 +344,26 @@ snapshot_delegate_components! {
     }
 }
 
-check_components! {
-    AppC {
-        ShowImplComponent: [
-            String,
-            u64,
-            u32,
-        ]
+snapshot_check_components! {
+    check_components! {
+        AppC {
+            ShowImplComponent: [
+                String,
+                u64,
+                u32,
+            ]
+        }
+    }
+
+    expand_check_app_c(output) {
+        insta::assert_snapshot!(output, @"
+        trait __CheckAppC<
+            __Component__,
+            __Params__: ?Sized,
+        >: CanUseComponent<__Component__, __Params__> {}
+        impl __CheckAppC<ShowImplComponent, String> for AppC {}
+        impl __CheckAppC<ShowImplComponent, u64> for AppC {}
+        impl __CheckAppC<ShowImplComponent, u32> for AppC {}
+        ")
     }
 }

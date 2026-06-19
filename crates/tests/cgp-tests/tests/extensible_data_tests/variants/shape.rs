@@ -8,7 +8,7 @@ use cgp::extra::dispatch::{
 };
 use cgp::extra::handler::{NoCode, UseInputDelegate};
 use cgp::prelude::*;
-use cgp_macro_test_util::snapshot_delegate_components;
+use cgp_macro_test_util::{snapshot_check_components, snapshot_delegate_components};
 
 #[derive(Debug, PartialEq, CgpData)]
 pub enum Shape {
@@ -263,11 +263,24 @@ snapshot_delegate_components! {
     }
 }
 
-check_components! {
-    App {
-        ComputerComponent: [
-            ((), Shape),
-            ((), ShapePlus),
-        ],
+snapshot_check_components! {
+    check_components! {
+        App {
+            ComputerComponent: [
+                ((), Shape),
+                ((), ShapePlus),
+            ],
+        }
+    }
+
+    expand_check_app(output) {
+        insta::assert_snapshot!(output, @"
+        trait __CheckApp<
+            __Component__,
+            __Params__: ?Sized,
+        >: CanUseComponent<__Component__, __Params__> {}
+        impl __CheckApp<ComputerComponent, ((), Shape)> for App {}
+        impl __CheckApp<ComputerComponent, ((), ShapePlus)> for App {}
+        ")
     }
 }

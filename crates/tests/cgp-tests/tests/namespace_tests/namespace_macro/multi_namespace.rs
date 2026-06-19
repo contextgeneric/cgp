@@ -1,6 +1,7 @@
 use cgp::prelude::*;
 use cgp_macro_test_util::{
-    snapshot_cgp_component, snapshot_cgp_impl, snapshot_cgp_namespace, snapshot_delegate_components,
+    snapshot_cgp_component, snapshot_cgp_impl, snapshot_cgp_namespace, snapshot_check_components,
+    snapshot_delegate_components,
 };
 
 pub struct MyApp;
@@ -355,10 +356,23 @@ snapshot_delegate_components! {
     }
 }
 
-check_components! {
-    App {
-        FooProviderComponent,
-        BarProviderComponent,
+snapshot_check_components! {
+    check_components! {
+        App {
+            FooProviderComponent,
+            BarProviderComponent,
+        }
+    }
+
+    expand_check_app(output) {
+        insta::assert_snapshot!(output, @"
+        trait __CheckApp<
+            __Component__,
+            __Params__: ?Sized,
+        >: CanUseComponent<__Component__, __Params__> {}
+        impl __CheckApp<FooProviderComponent, ()> for App {}
+        impl __CheckApp<BarProviderComponent, ()> for App {}
+        ")
     }
 }
 
@@ -486,9 +500,22 @@ snapshot_delegate_components! {
     }
 }
 
-check_components! {
-    OtherApp {
-        FooProviderComponent,
-        BarProviderComponent,
+snapshot_check_components! {
+    check_components! {
+        OtherApp {
+            FooProviderComponent,
+            BarProviderComponent,
+        }
+    }
+
+    expand_check_other_app(output) {
+        insta::assert_snapshot!(output, @"
+        trait __CheckOtherApp<
+            __Component__,
+            __Params__: ?Sized,
+        >: CanUseComponent<__Component__, __Params__> {}
+        impl __CheckOtherApp<FooProviderComponent, ()> for OtherApp {}
+        impl __CheckOtherApp<BarProviderComponent, ()> for OtherApp {}
+        ")
     }
 }

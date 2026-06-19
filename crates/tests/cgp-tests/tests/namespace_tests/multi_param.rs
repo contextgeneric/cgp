@@ -1,6 +1,7 @@
 use cgp::prelude::*;
 use cgp_macro_test_util::{
-    snapshot_cgp_component, snapshot_cgp_impl, snapshot_delegate_components,
+    snapshot_cgp_component, snapshot_cgp_impl, snapshot_check_components,
+    snapshot_delegate_components,
 };
 
 snapshot_cgp_component! {
@@ -215,14 +216,28 @@ snapshot_delegate_components! {
     }
 }
 
-check_components! {
-    AppA {
-        FooProviderComponent: [
-            <'a> (Life<'a>, String, u32),
-            <'a> (Life<'a>, bool, String),
-        ],
-        FooProviderComponent:
-            <'a> (Life<'a>, bool, bool),
+snapshot_check_components! {
+    check_components! {
+        AppA {
+            FooProviderComponent: [
+                <'a> (Life<'a>, String, u32),
+                <'a> (Life<'a>, bool, String),
+            ],
+            FooProviderComponent:
+                <'a> (Life<'a>, bool, bool),
+        }
+    }
+
+    expand_check_app_a(output) {
+        insta::assert_snapshot!(output, @"
+        trait __CheckAppA<
+            __Component__,
+            __Params__: ?Sized,
+        >: CanUseComponent<__Component__, __Params__> {}
+        impl<'a> __CheckAppA<FooProviderComponent, (Life<'a>, String, u32)> for AppA {}
+        impl<'a> __CheckAppA<FooProviderComponent, (Life<'a>, bool, String)> for AppA {}
+        impl<'a> __CheckAppA<FooProviderComponent, (Life<'a>, bool, bool)> for AppA {}
+        ")
     }
 }
 
@@ -328,11 +343,24 @@ snapshot_delegate_components! {
     }
 }
 
-check_components! {
-    <'a> AppB {
-        FooProviderComponent: [
-            (Life<'a>, String, u64),
-            (Life<'a>, bool, String),
-        ],
+snapshot_check_components! {
+    check_components! {
+        <'a> AppB {
+            FooProviderComponent: [
+                (Life<'a>, String, u64),
+                (Life<'a>, bool, String),
+            ],
+        }
+    }
+
+    expand_check_app_b(output) {
+        insta::assert_snapshot!(output, @"
+        trait __CheckAppB<
+            __Component__,
+            __Params__: ?Sized,
+        >: CanUseComponent<__Component__, __Params__> {}
+        impl<'a> __CheckAppB<FooProviderComponent, (Life<'a>, String, u64)> for AppB {}
+        impl<'a> __CheckAppB<FooProviderComponent, (Life<'a>, bool, String)> for AppB {}
+        ")
     }
 }

@@ -5,6 +5,8 @@ mod cgp_getter;
 mod cgp_impl;
 mod cgp_namespace;
 mod cgp_type;
+mod check_components;
+mod delegate_and_check_components;
 mod delegate_components;
 mod snapshot;
 
@@ -15,5 +17,7 @@ pub use cgp_getter::*;
 pub use cgp_impl::*;
 pub use cgp_namespace::*;
 pub use cgp_type::*;
+pub use check_components::*;
+pub use delegate_and_check_components::*;
 pub use delegate_components::*;
 pub use snapshot::*;

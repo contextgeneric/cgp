@@ -3,7 +3,7 @@ use std::ops::Mul;
 
 use cgp::core::error::ErrorTypeProviderComponent;
 use cgp::prelude::*;
-use cgp_macro_test_util::snapshot_cgp_type;
+use cgp_macro_test_util::{snapshot_cgp_type, snapshot_check_components};
 
 snapshot_cgp_type! {
     #[cgp_type]
@@ -147,8 +147,20 @@ delegate_components! {
     }
 }
 
-check_components! {
-    Rectangle {
-        AreaCalculatorComponent: Types,
+snapshot_check_components! {
+    check_components! {
+        Rectangle {
+            AreaCalculatorComponent: Types,
+        }
+    }
+
+    expand_check_rectangle(output) {
+        insta::assert_snapshot!(output, @"
+        trait __CheckRectangle<
+            __Component__,
+            __Params__: ?Sized,
+        >: CanUseComponent<__Component__, __Params__> {}
+        impl __CheckRectangle<AreaCalculatorComponent, Types> for Rectangle {}
+        ")
     }
 }

@@ -56,3 +56,17 @@ pub fn snapshot_cgp_type(body: TokenStream) -> TokenStream {
         .unwrap_or_else(syn::Error::into_compile_error)
         .into()
 }
+
+#[proc_macro]
+pub fn snapshot_check_components(body: TokenStream) -> TokenStream {
+    entrypoints::snapshot_check_components(body.into())
+        .unwrap_or_else(syn::Error::into_compile_error)
+        .into()
+}
+
+#[proc_macro]
+pub fn snapshot_delegate_and_check_components(body: TokenStream) -> TokenStream {
+    entrypoints::snapshot_delegate_and_check_components(body.into())
+        .unwrap_or_else(syn::Error::into_compile_error)
+        .into()
+}

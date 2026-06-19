@@ -453,64 +453,159 @@ snapshot_cgp_getter! {
     }
 }
 
-#[test]
-pub fn test_derive_delegate() {
+mod derive_delegate {
+    use core::marker::PhantomData;
+
+    use cgp::prelude::*;
+    use cgp_macro_test_util::{snapshot_check_components, snapshot_delegate_and_check_components};
+
+    use super::*;
+
     #[derive(HasField)]
     pub struct MyContext {
         pub foo: u64,
         pub bar: String,
     }
 
-    delegate_and_check_components! {
-        MyContext {
-            #[check_params(
-                (Index<1>, Index<0>),
-                (Index<0>, Index<1>),
-            )]
-            FooTypeProviderAtComponent: UseDelegate<
-                new FooTypes {
-                    Index<1>: UseType<u64>,
-                    Index<0>: UseType<String>,
-                }
-            >,
+    snapshot_delegate_and_check_components! {
+        delegate_and_check_components! {
+            MyContext {
+                #[check_params(
+                    (Index<1>, Index<0>),
+                    (Index<0>, Index<1>),
+                )]
+                FooTypeProviderAtComponent: UseDelegate<
+                    new FooTypes {
+                        Index<1>: UseType<u64>,
+                        Index<0>: UseType<String>,
+                    }
+                >,
 
-            #[check_params(
-                (Index<1>, Index<0>),
-                (Index<0>, Index<1>),
-            )]
-            FooGetterAtComponent: UseDelegate<
-                new FooGetters {
-                    Index<1>: UseField<Symbol!("foo")>,
-                    Index<0>: UseField<Symbol!("bar")>,
-                }
-            >
+                #[check_params(
+                    (Index<1>, Index<0>),
+                    (Index<0>, Index<1>),
+                )]
+                FooGetterAtComponent: UseDelegate<
+                    new FooGetters {
+                        Index<1>: UseField<Symbol!("foo")>,
+                        Index<0>: UseField<Symbol!("bar")>,
+                    }
+                >
+            }
+        }
+
+        expand_my_context(output) {
+            insta::assert_snapshot!(output, @r#"
+            impl DelegateComponent<FooTypeProviderAtComponent> for MyContext {
+                type Delegate = UseDelegate<FooTypes>;
+            }
+            impl<
+                __Context__,
+                __Params__,
+            > IsProviderFor<FooTypeProviderAtComponent, __Context__, __Params__> for MyContext
+            where
+                UseDelegate<
+                    FooTypes,
+                >: IsProviderFor<FooTypeProviderAtComponent, __Context__, __Params__>,
+            {}
+            pub struct FooTypes;
+            impl DelegateComponent<Index<1>> for FooTypes {
+                type Delegate = UseType<u64>;
+            }
+            impl<__Context__, __Params__> IsProviderFor<Index<1>, __Context__, __Params__>
+            for FooTypes
+            where
+                UseType<u64>: IsProviderFor<Index<1>, __Context__, __Params__>,
+            {}
+            impl DelegateComponent<Index<0>> for FooTypes {
+                type Delegate = UseType<String>;
+            }
+            impl<__Context__, __Params__> IsProviderFor<Index<0>, __Context__, __Params__>
+            for FooTypes
+            where
+                UseType<String>: IsProviderFor<Index<0>, __Context__, __Params__>,
+            {}
+            impl DelegateComponent<FooGetterAtComponent> for MyContext {
+                type Delegate = UseDelegate<FooGetters>;
+            }
+            impl<
+                __Context__,
+                __Params__,
+            > IsProviderFor<FooGetterAtComponent, __Context__, __Params__> for MyContext
+            where
+                UseDelegate<
+                    FooGetters,
+                >: IsProviderFor<FooGetterAtComponent, __Context__, __Params__>,
+            {}
+            pub struct FooGetters;
+            impl DelegateComponent<Index<1>> for FooGetters {
+                type Delegate = UseField<Symbol!("foo")>;
+            }
+            impl<__Context__, __Params__> IsProviderFor<Index<1>, __Context__, __Params__>
+            for FooGetters
+            where
+                UseField<Symbol!("foo")>: IsProviderFor<Index<1>, __Context__, __Params__>,
+            {}
+            impl DelegateComponent<Index<0>> for FooGetters {
+                type Delegate = UseField<Symbol!("bar")>;
+            }
+            impl<__Context__, __Params__> IsProviderFor<Index<0>, __Context__, __Params__>
+            for FooGetters
+            where
+                UseField<Symbol!("bar")>: IsProviderFor<Index<0>, __Context__, __Params__>,
+            {}
+            trait __CanUseMyContext<
+                __Component__,
+                __Params__: ?Sized,
+            >: CanUseComponent<__Component__, __Params__> {}
+            impl __CanUseMyContext<FooTypeProviderAtComponent, (Index<1>, Index<0>)> for MyContext {}
+            impl __CanUseMyContext<FooTypeProviderAtComponent, (Index<0>, Index<1>)> for MyContext {}
+            impl __CanUseMyContext<FooGetterAtComponent, (Index<1>, Index<0>)> for MyContext {}
+            impl __CanUseMyContext<FooGetterAtComponent, (Index<0>, Index<1>)> for MyContext {}
+            "#)
         }
     }
 
-    check_components! {
-        #[check_trait(CanUseMyContext)]
-        MyContext {
-            FooGetterAtComponent: [
-                (Index<1>, Index<0>),
-                (Index<0>, Index<1>),
-            ]
+    snapshot_check_components! {
+        check_components! {
+            #[check_trait(CanUseMyContext)]
+            MyContext {
+                FooGetterAtComponent: [
+                    (Index<1>, Index<0>),
+                    (Index<0>, Index<1>),
+                ]
+            }
+        }
+
+        expand_check_my_context(output) {
+            insta::assert_snapshot!(output, @"
+            trait CanUseMyContext<
+                __Component__,
+                __Params__: ?Sized,
+            >: CanUseComponent<__Component__, __Params__> {}
+            impl CanUseMyContext<FooGetterAtComponent, (Index<1>, Index<0>)> for MyContext {}
+            impl CanUseMyContext<FooGetterAtComponent, (Index<0>, Index<1>)> for MyContext {}
+            ")
         }
     }
 
-    let context = MyContext {
-        foo: 42,
-        bar: "Bar".into(),
-    };
+    #[test]
+    pub fn test_derive_delegate() {
+        let context = MyContext {
+            foo: 42,
+            bar: "Bar".into(),
+        };
 
-    assert_eq!(context.foo_at(PhantomData::<(Index<1>, Index<0>)>), &42);
-    assert_eq!(context.foo_at(PhantomData::<(Index<0>, Index<1>)>), "Bar");
+        assert_eq!(context.foo_at(PhantomData::<(Index<1>, Index<0>)>), &42);
+        assert_eq!(context.foo_at(PhantomData::<(Index<0>, Index<1>)>), "Bar");
+    }
 }
 
 mod derive_delegate2 {
     use core::marker::PhantomData;
 
     use cgp::prelude::*;
-    use cgp_macro_test_util::snapshot_delegate_components;
+    use cgp_macro_test_util::{snapshot_check_components, snapshot_delegate_components};
 
     use super::*;
 
@@ -614,12 +709,25 @@ mod derive_delegate2 {
         }
     }
 
-    check_components! {
-        MyContext {
-            FooGetterAtComponent: [
-                (Index<1>, Index<0>),
-                (Index<0>, Index<1>),
-            ]
+    snapshot_check_components! {
+        check_components! {
+            MyContext {
+                FooGetterAtComponent: [
+                    (Index<1>, Index<0>),
+                    (Index<0>, Index<1>),
+                ]
+            }
+        }
+
+        expand_check_my_context(output) {
+            insta::assert_snapshot!(output, @"
+            trait __CheckMyContext<
+                __Component__,
+                __Params__: ?Sized,
+            >: CanUseComponent<__Component__, __Params__> {}
+            impl __CheckMyContext<FooGetterAtComponent, (Index<1>, Index<0>)> for MyContext {}
+            impl __CheckMyContext<FooGetterAtComponent, (Index<0>, Index<1>)> for MyContext {}
+            ")
         }
     }
 

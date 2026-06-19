@@ -64,6 +64,8 @@ snapshot output is guaranteed to match what the production macros generate.
 | `snapshot_cgp_fn!`          | `#[cgp_fn]`           |
 | `snapshot_cgp_type!`        | `#[cgp_type]`         |
 | `snapshot_delegate_components!` | `delegate_components!` |
+| `snapshot_check_components!` | `check_components!`   |
+| `snapshot_delegate_and_check_components!` | `delegate_and_check_components!` |
 | `snapshot_cgp_namespace!`   | `cgp_namespace!`      |
 
 ## Anatomy of a snapshot invocation
@@ -248,6 +250,63 @@ snapshot_delegate_components! {
 }
 ```
 
+### `snapshot_check_components!`
+
+The *whole* `check_components! { ... }` invocation is written verbatim, followed
+by the test block:
+
+```rust
+snapshot_check_components! {
+    check_components! {
+        App {
+            ErrorRaiserComponent: String,
+        }
+    }
+
+    expand_check_app(output) {
+        assert_snapshot!(output, @"...")
+    }
+}
+```
+
+The body is forwarded to the real macro verbatim, so every `check_components!`
+form is accepted — including the `#[check_trait(...)]` and
+`#[check_providers(...)]` attributes, `#[check_params(...)]` / generic
+parameters, the array syntax for grouping components and params, and multiple
+check specs in a single invocation. The snapshot captures the generated check
+trait(s) and their `impl` blocks.
+
+Note that the snapshot macro emits the same check trait/impls into the
+surrounding module, so the compile-time wiring check is preserved — it only
+*adds* a snapshot assertion on top.
+
+### `snapshot_delegate_and_check_components!`
+
+Likewise, the *whole* `delegate_and_check_components! { ... }` invocation is
+written verbatim, followed by the test block:
+
+```rust
+snapshot_delegate_and_check_components! {
+    delegate_and_check_components! {
+        #[check_trait(CheckMyContext)]
+        MyContext {
+            NameTypeProviderComponent: UseType<String>,
+            NameGetterComponent: UseField<Symbol!("name")>,
+        }
+    }
+
+    expand_my_context(output) {
+        assert_snapshot!(output, @"...")
+    }
+}
+```
+
+All `delegate_and_check_components!` forms are accepted, since the body is
+forwarded to the real macro verbatim — including `#[check_trait(...)]`,
+`#[check_params(...)]`, `#[skip_check]`, generic parameters, and array syntax.
+The snapshot captures both the generated `DelegateComponent` / `IsProviderFor`
+impls *and* the generated check trait + impls.
+
 ### `snapshot_cgp_namespace!`
 
 Like `snapshot_delegate_components!`, the *whole* `cgp_namespace! { ... }`
@@ -323,10 +382,9 @@ When migrating an existing macro test, two situations come up:
 
 ## Notes / limitations
 
-- Snapshot macros exist only for the eight macros listed above. Other CGP macros
-  (`#[cgp_provider]`, `#[cgp_preset]`,
-  `check_components!`, `delegate_and_check_components!`, …) are not (yet)
-  snapshot-wrapped and are left as-is.
+- Snapshot macros exist only for the ten macros listed above. Other CGP macros
+  (`#[cgp_provider]`, `#[cgp_preset]`, …) are not (yet) snapshot-wrapped and are
+  left as-is.
 - The pretty-printing is done with
   [`prettyplease`](https://crates.io/crates/prettyplease), and any
   macro-prelude noise is stripped beforehand

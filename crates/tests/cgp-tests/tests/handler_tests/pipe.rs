@@ -3,7 +3,7 @@ mod pipe_computers {
 
     use cgp::extra::handler::{CanCompute, Computer, ComputerComponent, PipeHandlers};
     use cgp::prelude::*;
-    use cgp_macro_test_util::snapshot_delegate_components;
+    use cgp_macro_test_util::{snapshot_check_components, snapshot_delegate_components};
 
     #[cgp_new_provider]
     impl<Context, Tag, Field> Computer<Context, Tag, u64> for Multiply<Field>
@@ -74,10 +74,22 @@ mod pipe_computers {
         }
     }
 
-    check_components! {
-        <Tag>
-        MyContext {
-            ComputerComponent: (Tag, u64),
+    snapshot_check_components! {
+        check_components! {
+            <Tag>
+            MyContext {
+                ComputerComponent: (Tag, u64),
+            }
+        }
+
+        expand_check_pipe_computers(output) {
+            insta::assert_snapshot!(output, @"
+            trait __CheckMyContext<
+                __Component__,
+                __Params__: ?Sized,
+            >: CanUseComponent<__Component__, __Params__> {}
+            impl<Tag> __CheckMyContext<ComputerComponent, (Tag, u64)> for MyContext {}
+            ")
         }
     }
 
@@ -104,7 +116,7 @@ mod pipe_handlers {
         CanHandle, Computer, Handler, HandlerComponent, PipeHandlers, Promote, PromoteAsync,
     };
     use cgp::prelude::*;
-    use cgp_macro_test_util::snapshot_delegate_components;
+    use cgp_macro_test_util::{snapshot_check_components, snapshot_delegate_components};
     use futures::executor::block_on;
 
     #[cgp_new_provider]
@@ -193,10 +205,22 @@ mod pipe_handlers {
         }
     }
 
-    check_components! {
-        <Tag>
-        MyContext {
-            HandlerComponent: (Tag, u64),
+    snapshot_check_components! {
+        check_components! {
+            <Tag>
+            MyContext {
+                HandlerComponent: (Tag, u64),
+            }
+        }
+
+        expand_check_pipe_handlers(output) {
+            insta::assert_snapshot!(output, @"
+            trait __CheckMyContext<
+                __Component__,
+                __Params__: ?Sized,
+            >: CanUseComponent<__Component__, __Params__> {}
+            impl<Tag> __CheckMyContext<HandlerComponent, (Tag, u64)> for MyContext {}
+            ")
         }
     }
 
