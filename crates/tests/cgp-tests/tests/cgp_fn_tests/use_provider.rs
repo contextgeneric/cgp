@@ -1,5 +1,5 @@
 use cgp::prelude::*;
-use cgp_macro_test_util::{snapshot_cgp_component, snapshot_cgp_impl};
+use cgp_macro_test_util::{snapshot_cgp_component, snapshot_cgp_fn, snapshot_cgp_impl};
 use insta::assert_snapshot;
 
 snapshot_cgp_component! {
@@ -162,10 +162,28 @@ snapshot_cgp_impl! {
     }
 }
 
-#[cgp_fn]
-#[use_provider(RectangleAreaCalculator: AreaCalculator)]
-fn rectangle_area(&self) -> f64 {
-    RectangleAreaCalculator::area(self)
+snapshot_cgp_fn! {
+    #[cgp_fn]
+    #[use_provider(RectangleAreaCalculator: AreaCalculator)]
+    fn rectangle_area(&self) -> f64 {
+        RectangleAreaCalculator::area(self)
+    }
+
+    expand_rectangle_area(output) {
+        assert_snapshot!(output, @"
+        trait RectangleArea {
+            fn rectangle_area(&self) -> f64;
+        }
+        impl<__Context__> RectangleArea for __Context__
+        where
+            RectangleAreaCalculator: AreaCalculator<Self>,
+        {
+            fn rectangle_area(&self) -> f64 {
+                RectangleAreaCalculator::area(self)
+            }
+        }
+        ")
+    }
 }
 
 #[derive(HasField)]

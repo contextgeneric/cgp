@@ -2,20 +2,80 @@ use core::f64;
 use std::ops::Mul;
 
 use cgp::prelude::*;
+use cgp_macro_test_util::snapshot_cgp_fn;
+use insta::assert_snapshot;
 
 #[cgp_type]
 pub trait HasScalarType {
     type Scalar: Mul<Output = Self::Scalar> + Copy;
 }
 
-#[cgp_fn]
-#[extend(HasScalarType)]
-pub fn rectangle_area(
-    &self,
-    #[implicit] width: Self::Scalar,
-    #[implicit] height: Self::Scalar,
-) -> Self::Scalar {
-    width * height
+snapshot_cgp_fn! {
+    #[cgp_fn]
+    #[extend(HasScalarType)]
+    pub fn rectangle_area(
+        &self,
+        #[implicit] width: Self::Scalar,
+        #[implicit] height: Self::Scalar,
+    ) -> Self::Scalar {
+        width * height
+    }
+
+    expand_rectangle_area(output) {
+        assert_snapshot!(output, @"
+        pub trait RectangleArea: HasScalarType {
+            fn rectangle_area(&self) -> Self::Scalar;
+        }
+        impl<__Context__> RectangleArea for __Context__
+        where
+            Self: HasScalarType,
+            Self: HasField<
+                    Symbol<5, Chars<'w', Chars<'i', Chars<'d', Chars<'t', Chars<'h', Nil>>>>>>,
+                    Value = Self::Scalar,
+                >
+                + HasField<
+                    Symbol<
+                        6,
+                        Chars<
+                            'h',
+                            Chars<'e', Chars<'i', Chars<'g', Chars<'h', Chars<'t', Nil>>>>>,
+                        >,
+                    >,
+                    Value = Self::Scalar,
+                >,
+        {
+            fn rectangle_area(&self) -> Self::Scalar {
+                let width: Self::Scalar = self
+                    .get_field(
+                        ::core::marker::PhantomData::<
+                            Symbol<
+                                5,
+                                Chars<'w', Chars<'i', Chars<'d', Chars<'t', Chars<'h', Nil>>>>>,
+                            >,
+                        >,
+                    )
+                    .clone();
+                let height: Self::Scalar = self
+                    .get_field(
+                        ::core::marker::PhantomData::<
+                            Symbol<
+                                6,
+                                Chars<
+                                    'h',
+                                    Chars<
+                                        'e',
+                                        Chars<'i', Chars<'g', Chars<'h', Chars<'t', Nil>>>>,
+                                    >,
+                                >,
+                            >,
+                        >,
+                    )
+                    .clone();
+                width * height
+            }
+        }
+        ")
+    }
 }
 
 #[derive(HasField)]
