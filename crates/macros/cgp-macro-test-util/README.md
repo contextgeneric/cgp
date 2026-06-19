@@ -63,6 +63,7 @@ snapshot output is guaranteed to match what the production macros generate.
 | `snapshot_cgp_getter!`      | `#[cgp_getter]`       |
 | `snapshot_cgp_fn!`          | `#[cgp_fn]`           |
 | `snapshot_delegate_components!` | `delegate_components!` |
+| `snapshot_cgp_namespace!`   | `cgp_namespace!`      |
 
 ## Anatomy of a snapshot invocation
 
@@ -221,6 +222,30 @@ snapshot_delegate_components! {
 }
 ```
 
+### `snapshot_cgp_namespace!`
+
+Like `snapshot_delegate_components!`, the *whole* `cgp_namespace! { ... }`
+invocation is written verbatim, followed by the test block:
+
+```rust
+snapshot_cgp_namespace! {
+    cgp_namespace! {
+        new MyNamespace {
+            FooProviderComponent =>
+                @MyApp.MyFooComponent,
+        }
+    }
+
+    expand_my_namespace(output) {
+        assert_snapshot!(output, @"...")
+    }
+}
+```
+
+All `cgp_namespace!` forms are accepted, since the body is forwarded to the real
+macro verbatim — including parent namespaces (`new Extended: DefaultNamespace { ... }`),
+symbol/type path keys (`@my_app.MyFooComponent`), and array keys.
+
 ## Workflow with `insta`
 
 Write the test with an **empty** inline snapshot first:
@@ -272,7 +297,7 @@ When migrating an existing macro test, two situations come up:
 
 ## Notes / limitations
 
-- Snapshot macros exist only for the six macros listed above. Other CGP macros
+- Snapshot macros exist only for the seven macros listed above. Other CGP macros
   (`#[cgp_type]`, `#[cgp_provider]`, `#[cgp_preset]`,
   `check_components!`, `delegate_and_check_components!`, …) are not (yet)
   snapshot-wrapped and are left as-is.

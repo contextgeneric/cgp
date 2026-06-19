@@ -1,6 +1,6 @@
 use cgp::prelude::*;
 use cgp_macro_test_util::{
-    snapshot_cgp_component, snapshot_cgp_impl, snapshot_delegate_components,
+    snapshot_cgp_component, snapshot_cgp_impl, snapshot_cgp_namespace, snapshot_delegate_components,
 };
 
 snapshot_cgp_component! {
@@ -81,10 +81,35 @@ snapshot_cgp_component! {
     }
 }
 
-cgp_namespace! {
-    new MyNamespace {
-        FooProviderComponent =>
-            @my_app.MyFooComponent,
+snapshot_cgp_namespace! {
+    cgp_namespace! {
+        new MyNamespace {
+            FooProviderComponent =>
+                @my_app.MyFooComponent,
+        }
+    }
+
+    expand_symbol_path_my_namespace(output) {
+        insta::assert_snapshot!(output, @"
+        pub trait MyNamespace<__Table__> {
+            type Delegate;
+        }
+        impl<__Table__> MyNamespace<__Table__> for FooProviderComponent {
+            type Delegate = RedirectLookup<
+                __Table__,
+                PathCons<
+                    Symbol<
+                        6,
+                        Chars<
+                            'm',
+                            Chars<'y', Chars<'_', Chars<'a', Chars<'p', Chars<'p', Nil>>>>>,
+                        >,
+                    >,
+                    PathCons<MyFooComponent, Nil>,
+                >,
+            >;
+        }
+        ")
     }
 }
 

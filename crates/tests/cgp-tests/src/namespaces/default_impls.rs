@@ -2,7 +2,7 @@ use core::fmt::Display;
 
 use cgp::core::component::DefaultImpls1;
 use cgp::prelude::*;
-use cgp_macro_test_util::{snapshot_cgp_component, snapshot_cgp_impl};
+use cgp_macro_test_util::{snapshot_cgp_component, snapshot_cgp_impl, snapshot_cgp_namespace};
 
 snapshot_cgp_component! {
     #[cgp_component(ShowImpl)]
@@ -149,18 +149,52 @@ snapshot_cgp_impl! {
     }
 }
 
-cgp_namespace! {
-    new DefaultShowComponents {
-        [
-            String,
-            u64,
-        ]:
-            ShowWithDisplay,
+snapshot_cgp_namespace! {
+    cgp_namespace! {
+        new DefaultShowComponents {
+            [
+                String,
+                u64,
+            ]:
+                ShowWithDisplay,
+        }
+    }
+
+    expand_default_show_components(output) {
+        insta::assert_snapshot!(output, @"
+        pub trait DefaultShowComponents<__Table__> {
+            type Delegate;
+        }
+        impl<__Table__> DefaultShowComponents<__Table__> for String {
+            type Delegate = ShowWithDisplay;
+        }
+        impl<__Table__> DefaultShowComponents<__Table__> for u64 {
+            type Delegate = ShowWithDisplay;
+        }
+        ")
     }
 }
 
-cgp_namespace! {
-    new ExtendedNamespace: DefaultNamespace {
+snapshot_cgp_namespace! {
+    cgp_namespace! {
+        new ExtendedNamespace: DefaultNamespace {
+        }
+    }
+
+    expand_default_impls_extended_namespace(output) {
+        insta::assert_snapshot!(output, @"
+        pub struct __ExtendedNamespaceComponents;
+        pub trait ExtendedNamespace<__Table__> {
+            type Delegate;
+        }
+        impl<__Table__, __Key__, __Value__> ExtendedNamespace<__Table__> for __Key__
+        where
+            __Key__: DefaultNamespace<__ExtendedNamespaceComponents>,
+            __Key__: DefaultNamespace<__Table__, Delegate = __Value__>,
+        {
+            type Delegate = __Value__;
+        }
+        ")
     }
 }
 
