@@ -1,23 +1,7 @@
 mod attribute_snapshot;
-mod cgp_auto_getter;
-mod cgp_fn;
-mod cgp_getter;
-mod cgp_impl;
-mod cgp_namespace;
-mod cgp_type;
-mod check_components;
-mod delegate_and_check_components;
 mod macro_snapshot;
 mod statement_snapshot;
 
 pub use attribute_snapshot::*;
-pub use cgp_auto_getter::*;
-pub use cgp_fn::*;
-pub use cgp_getter::*;
-pub use cgp_impl::*;
-pub use cgp_namespace::*;
-pub use cgp_type::*;
-pub use check_components::*;
-pub use delegate_and_check_components::*;
 pub use macro_snapshot::*;
 pub use statement_snapshot::*;

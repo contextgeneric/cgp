@@ -2,21 +2,20 @@ use core::marker::PhantomData;
 
 use cgp_macro_core::traits::IsKeyword;
 use proc_macro2::TokenStream;
-use syn::ItemTrait;
 use syn::parse::{Parse, ParseStream};
 use syn::token::Pound;
 
 use crate::functions::parse_attribute_with_keyword;
 use crate::types::MacroSnapshot;
 
-pub struct AttributeMacroSnapshot<Keyword> {
+pub struct AttributeMacroSnapshot<Keyword, Item> {
     pub attr: TokenStream,
-    pub body: ItemTrait,
+    pub body: Item,
     pub snapshot: MacroSnapshot,
     pub phantom: PhantomData<Keyword>,
 }
 
-impl<K: IsKeyword> Parse for AttributeMacroSnapshot<K> {
+impl<K: IsKeyword, Item: Parse> Parse for AttributeMacroSnapshot<K, Item> {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let _: Pound = input.parse()?;
 

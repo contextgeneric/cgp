@@ -1,10 +1,11 @@
 use proc_macro2::TokenStream;
 use syn::parse2;
 
-use crate::types::AssertCgpNamespace;
+use crate::keywords::CgpNamespace;
+use crate::types::StatementMacroSnapshot;
 
 pub fn snapshot_cgp_namespace(body: TokenStream) -> syn::Result<TokenStream> {
-    let item: AssertCgpNamespace = parse2(body)?;
+    let item: StatementMacroSnapshot<CgpNamespace> = parse2(body)?;
 
     let output = cgp_macro_lib::cgp_namespace(item.body.clone())?;
 
