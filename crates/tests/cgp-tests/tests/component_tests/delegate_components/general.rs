@@ -26,7 +26,7 @@ mod test_basic_delegate_components {
         }
 
         expand_components(output) {
-            assert_snapshot!(output, @"
+            insta::assert_snapshot!(output, @"
             impl DelegateComponent<FooKey> for Components {
                 type Delegate = FooValue;
             }
@@ -93,7 +93,7 @@ mod test_generic_delegate_components {
             }
         }
         expand_components(output) {
-            assert_snapshot!(output, @"
+            insta::assert_snapshot!(output, @"
             impl<'a, T1: Clone> DelegateComponent<FooKey<T1>> for Components {
                 type Delegate = FooValue;
             }

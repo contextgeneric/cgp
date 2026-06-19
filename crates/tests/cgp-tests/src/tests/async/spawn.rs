@@ -19,7 +19,6 @@ use cgp::extra::run::{
 use cgp::prelude::*;
 use cgp_macro_test_util::{snapshot_cgp_component, snapshot_delegate_components};
 use futures::executor::block_on;
-use insta::assert_snapshot;
 
 // A dummy spawn function that has the same signature as tokio::spawn,
 // requiring the Future to implement Send + 'static.
@@ -50,7 +49,7 @@ snapshot_cgp_component! {
     }
 
     expand_can_fetch_foo(output) {
-        assert_snapshot!(output, @"
+        insta::assert_snapshot!(output, @"
         #[async_trait]
         pub trait CanFetchFoo: HasFooType + HasErrorType {
             async fn fetch_foo(&self) -> Result<Self::Foo, Self::Error>;
@@ -152,7 +151,7 @@ snapshot_cgp_component! {
     }
 
     expand_can_fetch_bar(output) {
-        assert_snapshot!(output, @"
+        insta::assert_snapshot!(output, @"
         #[async_trait]
         pub trait CanFetchBar: HasBarType + HasErrorType {
             async fn fetch_bar(&self) -> Result<Self::Bar, Self::Error>;
@@ -254,7 +253,7 @@ snapshot_cgp_component! {
     }
 
     expand_can_run_foo_bar(output) {
-        assert_snapshot!(output, @"
+        insta::assert_snapshot!(output, @"
         #[async_trait]
         pub trait CanRunFooBar: HasFooType + HasBarType + HasErrorType {
             async fn run_foo_bar(
@@ -468,7 +467,7 @@ snapshot_delegate_components! {
     }
 
     expand_app(output) {
-        assert_snapshot!(output, @"
+        insta::assert_snapshot!(output, @"
         pub struct AppRunnerComponents;
         impl DelegateComponent<ErrorTypeProviderComponent> for App {
             type Delegate = UseType<Infallible>;

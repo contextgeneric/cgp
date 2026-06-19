@@ -1,6 +1,5 @@
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_cgp_component;
-use insta::assert_snapshot;
 
 snapshot_cgp_component! {
     #[cgp_component(ReferenceGetter)]
@@ -9,7 +8,7 @@ snapshot_cgp_component! {
     }
 
     expand_can_greet(output) {
-        assert_snapshot!(output, @"
+        insta::assert_snapshot!(output, @"
         pub trait HasReference<'a, T: 'a + ?Sized> {
             fn get_reference(&self) -> &'a T;
         }

@@ -2,7 +2,6 @@ use cgp::prelude::*;
 use cgp_macro_test_util::{
     snapshot_cgp_component, snapshot_cgp_impl, snapshot_delegate_components,
 };
-use insta::assert_snapshot;
 
 pub struct MyApp;
 
@@ -13,7 +12,7 @@ snapshot_cgp_component! {
     }
 
     expand_multi_ns_foo(output) {
-        assert_snapshot!(output, @"
+        insta::assert_snapshot!(output, @"
         pub trait Foo {
             fn foo(&self);
         }
@@ -107,7 +106,7 @@ snapshot_cgp_component! {
     }
 
     expand_multi_ns_bar(output) {
-        assert_snapshot!(output, @"
+        insta::assert_snapshot!(output, @"
         pub trait Bar {
             fn bar(&self);
         }
@@ -210,7 +209,7 @@ snapshot_cgp_impl! {
     }
 
     expand_multi_ns_dummy_foo(output) {
-        assert_snapshot!(output, @"
+        insta::assert_snapshot!(output, @"
         impl<__Context__> FooProvider<__Context__> for DummyFoo {
             fn foo(__context__: &__Context__) {}
         }
@@ -227,7 +226,7 @@ snapshot_cgp_impl! {
     }
 
     expand_multi_ns_dummy_bar(output) {
-        assert_snapshot!(output, @"
+        insta::assert_snapshot!(output, @"
         impl<__Context__> BarProvider<__Context__> for DummyBar {
             fn bar(__context__: &__Context__) {}
         }
@@ -252,7 +251,7 @@ snapshot_delegate_components! {
     }
 
     expand_multi_ns_app(output) {
-        assert_snapshot!(output, @"
+        insta::assert_snapshot!(output, @"
         impl<__Key__, __Value__> DelegateComponent<__Key__> for App
         where
             __Key__: MyNamespace<App, Delegate = __Value__>,
@@ -337,7 +336,7 @@ snapshot_delegate_components! {
     }
 
     expand_multi_ns_other_app(output) {
-        assert_snapshot!(output, @"
+        insta::assert_snapshot!(output, @"
         impl<__Key__, __Value__> DelegateComponent<__Key__> for OtherApp
         where
             __Key__: OtherNamespace<OtherApp, Delegate = __Value__>,

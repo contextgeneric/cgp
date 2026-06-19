@@ -1,6 +1,5 @@
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_cgp_fn;
-use insta::assert_snapshot;
 
 #[cgp_component(AreaCalculator)]
 pub trait CanCalculateArea {
@@ -22,7 +21,7 @@ snapshot_cgp_fn! {
     }
 
     expand_rectangle_area(output) {
-        assert_snapshot!(output, @"
+        insta::assert_snapshot!(output, @"
         pub trait RectangleArea {
             fn rectangle_area(&self) -> f64;
         }

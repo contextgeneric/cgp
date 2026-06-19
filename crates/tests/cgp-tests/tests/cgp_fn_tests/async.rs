@@ -1,6 +1,5 @@
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_cgp_fn;
-use insta::assert_snapshot;
 
 snapshot_cgp_fn! {
     #[cgp_fn]
@@ -10,7 +9,7 @@ snapshot_cgp_fn! {
     }
 
     expand_greet(output) {
-        assert_snapshot!(output, @r#"
+        insta::assert_snapshot!(output, @r#"
         #[async_trait]
         pub trait Greet {
             async fn greet(&self) -> String;

@@ -3,7 +3,6 @@
 mod basic_delegate_and_check_components {
     use cgp::prelude::*;
     use cgp_macro_test_util::snapshot_cgp_getter;
-    use insta::assert_snapshot;
 
     #[cgp_type]
     pub trait HasNameType {
@@ -17,7 +16,7 @@ mod basic_delegate_and_check_components {
         }
 
         expand_has_name(output) {
-            assert_snapshot!(output, @"
+            insta::assert_snapshot!(output, @"
             pub trait HasName: HasNameType {
                 fn name(&self) -> &Self::Name;
             }
@@ -178,7 +177,6 @@ mod basic_delegate_and_check_components {
 mod generic_delegate_and_check_components {
     use cgp::prelude::*;
     use cgp_macro_test_util::snapshot_cgp_getter;
-    use insta::assert_snapshot;
 
     #[cgp_type]
     pub trait HasNameType {
@@ -192,7 +190,7 @@ mod generic_delegate_and_check_components {
         }
 
         expand_has_name(output) {
-            assert_snapshot!(output, @"
+            insta::assert_snapshot!(output, @"
             pub trait HasName: HasNameType {
                 fn name(&self) -> &Self::Name;
             }

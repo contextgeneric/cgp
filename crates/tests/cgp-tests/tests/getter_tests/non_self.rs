@@ -1,6 +1,5 @@
 use cgp::prelude::*;
 use cgp_macro_test_util::{snapshot_cgp_getter, snapshot_delegate_components};
-use insta::assert_snapshot;
 
 #[cgp_type]
 pub trait HasFooType {
@@ -19,7 +18,7 @@ snapshot_cgp_getter! {
     }
 
     expand_has_foo_bar(output) {
-        assert_snapshot!(output, @"
+        insta::assert_snapshot!(output, @"
         pub trait HasFooBar: HasFooType + HasBarType {
             fn foo_bar(foo: &Self::Foo) -> &Self::Bar;
         }
@@ -215,7 +214,7 @@ snapshot_delegate_components! {
     }
 
     expand_app(output) {
-        assert_snapshot!(output, @r#"
+        insta::assert_snapshot!(output, @r#"
         impl DelegateComponent<FooTypeProviderComponent> for App {
             type Delegate = UseType<Foo>;
         }

@@ -7,7 +7,6 @@ use cgp::extra::dispatch::{BuildAndMerge, BuildAndSetField, BuildWithHandlers};
 use cgp::extra::handler::{Computer, Producer, ProducerComponent};
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_delegate_components;
-use insta::assert_snapshot;
 
 #[derive(Debug, Eq, PartialEq, CgpData)]
 pub struct FooBarBaz {
@@ -92,7 +91,7 @@ snapshot_delegate_components! {
     }
 
     expand_app(output) {
-        assert_snapshot!(output, @"
+        insta::assert_snapshot!(output, @"
         impl DelegateComponent<ErrorTypeProviderComponent> for App {
             type Delegate = UseType<Infallible>;
         }

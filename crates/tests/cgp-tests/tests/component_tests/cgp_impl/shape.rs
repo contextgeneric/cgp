@@ -2,7 +2,6 @@ use core::f64::consts::PI;
 
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_cgp_fn;
-use insta::assert_snapshot;
 
 snapshot_cgp_fn! {
     #[cgp_fn]
@@ -11,7 +10,7 @@ snapshot_cgp_fn! {
     }
 
     expand_rectangle_area(output) {
-        assert_snapshot!(output, @"
+        insta::assert_snapshot!(output, @"
         pub trait RectangleArea {
             fn rectangle_area(&self) -> f64;
         }
@@ -73,7 +72,7 @@ snapshot_cgp_fn! {
     }
 
     expand_circle_area(output) {
-        assert_snapshot!(output, @"
+        insta::assert_snapshot!(output, @"
         pub trait CircleArea {
             fn circle_area(&self) -> f64;
         }

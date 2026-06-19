@@ -3,8 +3,6 @@ use core::fmt::Display;
 use cgp::core::component::DefaultImpls1;
 use cgp::prelude::*;
 use cgp_macro_test_util::{snapshot_cgp_component, snapshot_cgp_impl};
-#[cfg(test)]
-use insta::assert_snapshot;
 
 snapshot_cgp_component! {
     #[cgp_component(ShowImpl)]
@@ -14,7 +12,7 @@ snapshot_cgp_component! {
     }
 
     expand_show(output) {
-        assert_snapshot!(output, @"
+        insta::assert_snapshot!(output, @"
         pub trait Show<T> {
             fn show(&self, value: &T) -> String;
         }
@@ -113,7 +111,7 @@ snapshot_cgp_impl! {
     }
 
     expand_show_string(output) {
-        assert_snapshot!(output, @"
+        insta::assert_snapshot!(output, @"
         impl<__Context__> ShowImpl<__Context__, String> for ShowString {
             fn show(__context__: &__Context__, value: &String) -> String {
                 value.clone()
@@ -138,7 +136,7 @@ snapshot_cgp_impl! {
     }
 
     expand_show_with_display(output) {
-        assert_snapshot!(output, @"
+        insta::assert_snapshot!(output, @"
         impl<__Context__, T: Display> ShowImpl<__Context__, T> for ShowWithDisplay {
             fn show(__context__: &__Context__, value: &T) -> String {
                 value.to_string()
@@ -176,7 +174,7 @@ snapshot_cgp_impl! {
     }
 
     expand_show_u32(output) {
-        assert_snapshot!(output, @"
+        insta::assert_snapshot!(output, @"
         impl<__Context__> ShowImpl<__Context__, u32> for ShowU32 {
             fn show(__context__: &__Context__, value: &u32) -> String {
                 value.to_string()

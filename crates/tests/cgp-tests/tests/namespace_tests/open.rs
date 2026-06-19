@@ -2,7 +2,6 @@ use cgp::prelude::*;
 use cgp_macro_test_util::{
     snapshot_cgp_component, snapshot_cgp_impl, snapshot_delegate_components,
 };
-use insta::assert_snapshot;
 
 pub struct App;
 
@@ -13,7 +12,7 @@ snapshot_cgp_component! {
     }
 
     expand_open_foo(output) {
-        assert_snapshot!(output, @"
+        insta::assert_snapshot!(output, @"
         pub trait Foo<T> {
             fn foo(&self, value: &T);
         }
@@ -103,7 +102,7 @@ snapshot_cgp_component! {
     }
 
     expand_open_bar(output) {
-        assert_snapshot!(output, @"
+        insta::assert_snapshot!(output, @"
         pub trait Bar<T> {
             fn bar(&self, value: &T);
         }
@@ -193,7 +192,7 @@ snapshot_cgp_impl! {
     }
 
     expand_open_dummy_foo(output) {
-        assert_snapshot!(output, @"
+        insta::assert_snapshot!(output, @"
         impl<__Context__, T> FooProvider<__Context__, T> for DummyFoo {
             fn foo(__context__: &__Context__, _value: &T) {}
         }
@@ -210,7 +209,7 @@ snapshot_cgp_impl! {
     }
 
     expand_open_dummy_bar(output) {
-        assert_snapshot!(output, @"
+        insta::assert_snapshot!(output, @"
         impl<__Context__, T> BarProvider<__Context__, T> for DummyBar {
             fn bar(__context__: &__Context__, _value: &T) {}
         }
@@ -238,7 +237,7 @@ snapshot_delegate_components! {
     }
 
     expand_open_app(output) {
-        assert_snapshot!(output, @"
+        insta::assert_snapshot!(output, @"
         impl DelegateComponent<FooProviderComponent> for App {
             type Delegate = RedirectLookup<App, PathCons<FooProviderComponent, Nil>>;
         }

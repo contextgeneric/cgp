@@ -2,7 +2,6 @@ use core::fmt::Display;
 
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_cgp_fn;
-use insta::assert_snapshot;
 
 snapshot_cgp_fn! {
     #[cgp_fn]
@@ -15,7 +14,7 @@ snapshot_cgp_fn! {
     }
 
     expand_greet(output) {
-        assert_snapshot!(output, @r#"
+        insta::assert_snapshot!(output, @r#"
         pub trait Greet {
             fn greet(&self) -> String;
         }
@@ -49,7 +48,7 @@ snapshot_cgp_fn! {
     }
 
     expand_test_greet(output) {
-        assert_snapshot!(output, @r#"
+        insta::assert_snapshot!(output, @r#"
         pub trait TestGreet {
             fn test_greet(&self);
         }

@@ -2,7 +2,6 @@ use std::ops::Mul;
 
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_cgp_fn;
-use insta::assert_snapshot;
 
 #[cgp_type]
 pub trait HasScalarType {
@@ -25,7 +24,7 @@ snapshot_cgp_fn! {
     }
 
     expand_rectangle_area(output) {
-        assert_snapshot!(output, @"
+        insta::assert_snapshot!(output, @"
         pub trait RectangleArea<Types: HasScalarType> {
             fn rectangle_area(&self) -> <Types as HasScalarType>::Scalar;
         }

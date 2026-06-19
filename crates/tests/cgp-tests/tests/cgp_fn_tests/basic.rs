@@ -1,6 +1,5 @@
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_cgp_fn;
-use insta::assert_snapshot;
 
 snapshot_cgp_fn! {
     #[cgp_fn]
@@ -9,7 +8,7 @@ snapshot_cgp_fn! {
     }
 
     expand_greet(output) {
-        assert_snapshot!(output, @r#"
+        insta::assert_snapshot!(output, @r#"
         pub trait Greet {
             fn greet(&self);
         }
@@ -50,7 +49,7 @@ snapshot_cgp_fn! {
     }
 
     expand_rectangle_area(output) {
-        assert_snapshot!(output, @"
+        insta::assert_snapshot!(output, @"
         pub trait CanCalculateRectangleArea {
             fn rectangle_area(&self) -> f64;
         }

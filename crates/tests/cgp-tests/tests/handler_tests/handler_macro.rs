@@ -6,7 +6,6 @@ use cgp::extra::handler::HandlerRef;
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_delegate_components;
 use futures::executor::block_on;
-use insta::assert_snapshot;
 
 #[cgp_computer]
 async fn add(a: u64, b: u64) -> u64 {
@@ -31,7 +30,7 @@ snapshot_delegate_components! {
     }
 
     expand_handler_macro_app(output) {
-        assert_snapshot!(output, @"
+        insta::assert_snapshot!(output, @"
         impl DelegateComponent<ErrorTypeProviderComponent> for App {
             type Delegate = UseType<String>;
         }

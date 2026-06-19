@@ -1,6 +1,5 @@
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_cgp_component;
-use insta::assert_snapshot;
 
 #[cgp_getter]
 pub trait HasName {
@@ -18,7 +17,7 @@ snapshot_cgp_component! {
     }
 
     expand_can_greet(output) {
-        assert_snapshot!(output, @r#"
+        insta::assert_snapshot!(output, @r#"
         pub trait CanGreet: HasName {
             fn greet(&self) -> String {
                 format!("Hello, {}!", self.name())

@@ -1,6 +1,5 @@
 use cgp::prelude::*;
 use cgp_macro_test_util::{snapshot_cgp_auto_getter, snapshot_cgp_getter};
-use insta::assert_snapshot;
 
 #[cgp_type]
 pub trait HasScalarType {
@@ -17,7 +16,7 @@ snapshot_cgp_auto_getter! {
     }
 
     expand_auto_rectangle_fields(output) {
-        assert_snapshot!(output, @"
+        insta::assert_snapshot!(output, @"
         pub trait AutoRectangleFields: HasScalarType {
             fn width(&self) -> Self::Scalar;
             fn height(&self) -> Self::Scalar;
@@ -80,7 +79,7 @@ snapshot_cgp_getter! {
     }
 
     expand_has_rectangle_fields(output) {
-        assert_snapshot!(output, @"
+        insta::assert_snapshot!(output, @"
         pub trait HasRectangleFields: HasScalarType {
             fn width(&self) -> Self::Scalar;
             fn height(&self) -> Self::Scalar;

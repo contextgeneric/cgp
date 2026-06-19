@@ -3,7 +3,6 @@ use cgp::extra::handler::{ComputerRef, HandlerRef, TryComputerRef};
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_delegate_components;
 use futures::executor::block_on;
-use insta::assert_snapshot;
 
 #[cgp_producer]
 pub fn magic_number() -> u64 {
@@ -21,7 +20,7 @@ snapshot_delegate_components! {
     }
 
     expand_producer_macro_app(output) {
-        assert_snapshot!(output, @"
+        insta::assert_snapshot!(output, @"
         impl DelegateComponent<ErrorTypeProviderComponent> for App {
             type Delegate = UseType<String>;
         }

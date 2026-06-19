@@ -2,7 +2,6 @@ use core::marker::PhantomData;
 
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_cgp_getter;
-use insta::assert_snapshot;
 
 pub struct UseDelegate2<Components>(pub PhantomData<Components>);
 
@@ -30,7 +29,7 @@ snapshot_cgp_getter! {
     }
 
     expand_has_foo_at(output) {
-        assert_snapshot!(output, @"
+        insta::assert_snapshot!(output, @"
         pub trait HasFooAt<I, J>: HasFooTypeAt<I, J> {
             fn foo_at(&self, _tag: PhantomData<(I, J)>) -> &Self::Foo;
         }
@@ -344,7 +343,6 @@ mod derive_delegate2 {
 
     use cgp::prelude::*;
     use cgp_macro_test_util::snapshot_delegate_components;
-    use insta::assert_snapshot;
 
     use super::*;
 
@@ -373,7 +371,7 @@ mod derive_delegate2 {
         }
 
         expand_my_context(output) {
-            assert_snapshot!(output, @r#"
+            insta::assert_snapshot!(output, @r#"
             pub struct FooTypes;
             pub struct FooGetters;
             impl DelegateComponent<FooTypeProviderAtComponent> for MyContext {

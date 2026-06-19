@@ -2,7 +2,6 @@ use core::fmt::Display;
 
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_cgp_fn;
-use insta::assert_snapshot;
 
 pub trait HasFooType<T> {
     type Foo;
@@ -34,7 +33,7 @@ snapshot_cgp_fn! {
     }
 
     expand_do_foo_bar(output) {
-        assert_snapshot!(output, @"
+        insta::assert_snapshot!(output, @"
         #[allow(unused)]
         #[async_trait]
         pub trait DoFooBar<X, Y>: HasFooType<X> + HasFooType<Y> + HasBarType {

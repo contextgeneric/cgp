@@ -3,7 +3,6 @@ use core::convert::Infallible;
 use cgp::core::error::{ErrorRaiserComponent, ErrorTypeProviderComponent};
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_delegate_components;
-use insta::assert_snapshot;
 
 use crate::preset_tests::wrapped::preset::{BoxError, ErrorHandlerPreset};
 
@@ -20,7 +19,7 @@ snapshot_delegate_components! {
     }
 
     expand_my_context(output) {
-        assert_snapshot!(output, @"
+        insta::assert_snapshot!(output, @"
         impl DelegateComponent<ErrorTypeProviderComponent> for MyContext {
             type Delegate = UseType<BoxError>;
         }

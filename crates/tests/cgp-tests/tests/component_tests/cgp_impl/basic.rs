@@ -1,5 +1,4 @@
 use cgp_macro_test_util::{snapshot_cgp_auto_getter, snapshot_cgp_component, snapshot_cgp_impl};
-use insta::assert_snapshot;
 
 snapshot_cgp_component! {
     #[cgp_component(FooProvider)]
@@ -8,7 +7,7 @@ snapshot_cgp_component! {
     }
 
     expand_foo_component(output) {
-        assert_snapshot!(output, @"
+        insta::assert_snapshot!(output, @"
         pub trait CanDoFoo {
             fn foo(&self, value: u32) -> String;
         }
@@ -88,7 +87,7 @@ snapshot_cgp_auto_getter! {
     }
 
     expand_has_name(output) {
-        assert_snapshot!(output, @"
+        insta::assert_snapshot!(output, @"
         pub trait HasName {
             fn name(&self) -> &str;
         }
@@ -121,7 +120,7 @@ snapshot_cgp_impl! {
     }
 
     expand_value_to_string(output) {
-        assert_snapshot!(output, @"
+        insta::assert_snapshot!(output, @"
         impl<Context> FooProvider<Context> for ValueToString {
             fn foo(__context__: &Context, value: u32) -> String {
                 value.to_string()

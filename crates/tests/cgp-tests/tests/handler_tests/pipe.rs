@@ -4,7 +4,6 @@ mod pipe_computers {
     use cgp::extra::handler::{CanCompute, Computer, ComputerComponent, PipeHandlers};
     use cgp::prelude::*;
     use cgp_macro_test_util::snapshot_delegate_components;
-    use insta::assert_snapshot;
 
     #[cgp_new_provider]
     impl<Context, Tag, Field> Computer<Context, Tag, u64> for Multiply<Field>
@@ -52,7 +51,7 @@ mod pipe_computers {
         }
 
         expand_pipe_computers(output) {
-            assert_snapshot!(output, @r#"
+            insta::assert_snapshot!(output, @r#"
             impl DelegateComponent<ComputerComponent> for MyContext {
                 type Delegate = PipeHandlers<
                     Product![
@@ -107,7 +106,6 @@ mod pipe_handlers {
     use cgp::prelude::*;
     use cgp_macro_test_util::snapshot_delegate_components;
     use futures::executor::block_on;
-    use insta::assert_snapshot;
 
     #[cgp_new_provider]
     impl<Context, Tag, Field> Handler<Context, Tag, u64> for Multiply<Field>
@@ -160,7 +158,7 @@ mod pipe_handlers {
         }
 
         expand_pipe_handlers(output) {
-            assert_snapshot!(output, @r#"
+            insta::assert_snapshot!(output, @r#"
             impl DelegateComponent<ErrorTypeProviderComponent> for MyContext {
                 type Delegate = UseType<Infallible>;
             }

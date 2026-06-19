@@ -1,7 +1,6 @@
 mod clone_getter {
     use cgp::prelude::*;
     use cgp_macro_test_util::{snapshot_cgp_getter, snapshot_delegate_components};
-    use insta::assert_snapshot;
 
     #[cgp_type]
     pub trait HasNameType {
@@ -15,7 +14,7 @@ mod clone_getter {
         }
 
         expand_has_name(output) {
-            assert_snapshot!(output, @"
+            insta::assert_snapshot!(output, @"
             pub trait HasName: HasNameType<Name: Copy> {
                 fn name(&self) -> Self::Name;
             }
@@ -175,7 +174,7 @@ mod clone_getter {
         }
 
         expand_app(output) {
-            assert_snapshot!(output, @r#"
+            insta::assert_snapshot!(output, @r#"
             impl DelegateComponent<NameTypeProviderComponent> for App {
                 type Delegate = UseType<&'static str>;
             }
@@ -213,7 +212,6 @@ mod clone_getter {
 mod clone_auto_getter {
     use cgp::prelude::*;
     use cgp_macro_test_util::{snapshot_cgp_auto_getter, snapshot_delegate_components};
-    use insta::assert_snapshot;
 
     #[cgp_type]
     pub trait HasNameType {
@@ -227,7 +225,7 @@ mod clone_auto_getter {
         }
 
         expand_has_name(output) {
-            assert_snapshot!(output, @"
+            insta::assert_snapshot!(output, @"
             pub trait HasName: HasNameType<Name: Copy> {
                 fn name(&self) -> Self::Name;
             }
@@ -265,7 +263,7 @@ mod clone_auto_getter {
         }
 
         expand_app(output) {
-            assert_snapshot!(output, @"
+            insta::assert_snapshot!(output, @"
             impl DelegateComponent<NameTypeProviderComponent> for App {
                 type Delegate = UseType<&'static str>;
             }

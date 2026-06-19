@@ -80,7 +80,6 @@ mod deeply_nested_getter {
     use cgp::core::field::impls::ChainGetters;
     use cgp::prelude::*;
     use cgp_macro_test_util::snapshot_cgp_getter;
-    use insta::assert_snapshot;
 
     #[derive(HasField)]
     pub struct A {
@@ -114,7 +113,7 @@ mod deeply_nested_getter {
         }
 
         expand_has_name(output) {
-            assert_snapshot!(output, @"
+            insta::assert_snapshot!(output, @"
             pub trait HasName {
                 fn name(&self) -> &str;
             }

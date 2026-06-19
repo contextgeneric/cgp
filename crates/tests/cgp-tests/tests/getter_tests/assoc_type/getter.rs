@@ -2,7 +2,6 @@ use core::ops::Mul;
 
 use cgp::prelude::*;
 use cgp_macro_test_util::{snapshot_cgp_getter, snapshot_delegate_components};
-use insta::assert_snapshot;
 
 snapshot_cgp_getter! {
     #[cgp_getter]
@@ -13,7 +12,7 @@ snapshot_cgp_getter! {
     }
 
     expand_has_scalar(output) {
-        assert_snapshot!(output, @"
+        insta::assert_snapshot!(output, @"
         pub trait HasScalar {
             type Scalar: Mul<Output = Self::Scalar> + Clone;
             fn scalar(&self) -> &Self::Scalar;
@@ -189,7 +188,7 @@ snapshot_delegate_components! {
     }
 
     expand_app(output) {
-        assert_snapshot!(output, @r#"
+        insta::assert_snapshot!(output, @r#"
         impl DelegateComponent<ScalarGetterComponent> for App {
             type Delegate = UseField<Symbol!("scalar")>;
         }

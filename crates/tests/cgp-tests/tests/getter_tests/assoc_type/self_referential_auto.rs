@@ -2,7 +2,6 @@ use core::ops::Mul;
 
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_cgp_auto_getter;
-use insta::assert_snapshot;
 
 snapshot_cgp_auto_getter! {
     #[cgp_auto_getter]
@@ -13,7 +12,7 @@ snapshot_cgp_auto_getter! {
     }
 
     expand_has_scalar_type(output) {
-        assert_snapshot!(output, @"
+        insta::assert_snapshot!(output, @"
         pub trait HasScalarType {
             type Scalar: Mul<Output = Self::Scalar> + Clone;
             fn scalar(&self) -> &Self::Scalar;

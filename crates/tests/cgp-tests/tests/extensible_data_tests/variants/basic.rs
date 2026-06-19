@@ -14,7 +14,6 @@ use cgp::extra::handler::{
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_delegate_components;
 use futures::executor::block_on;
-use insta::assert_snapshot;
 
 #[derive(Debug, Eq, PartialEq, CgpData)]
 pub enum FooBarBaz {
@@ -137,7 +136,7 @@ snapshot_delegate_components! {
     }
 
     expand_app(output) {
-        assert_snapshot!(output, @"
+        insta::assert_snapshot!(output, @"
         impl DelegateComponent<ErrorTypeProviderComponent> for App {
             type Delegate = UseType<Infallible>;
         }

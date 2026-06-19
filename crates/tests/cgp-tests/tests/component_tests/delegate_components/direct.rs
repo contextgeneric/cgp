@@ -1,6 +1,5 @@
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_delegate_components;
-use insta::assert_snapshot;
 
 snapshot_delegate_components! {
     delegate_components! {
@@ -11,7 +10,7 @@ snapshot_delegate_components! {
     }
 
     expand_foo_component(output) {
-        assert_snapshot!(output, @"
+        insta::assert_snapshot!(output, @"
         pub struct FooComponents;
         impl DelegateComponent<Index<0>> for FooComponents {
             type Delegate = u64;
@@ -44,7 +43,7 @@ snapshot_delegate_components! {
     }
 
     expand_bar_component(output) {
-        assert_snapshot!(output, @"
+        insta::assert_snapshot!(output, @"
         pub struct BarComponents;
         impl DelegateComponent<Index<0>> for BarComponents {
             type Delegate = FooComponents;

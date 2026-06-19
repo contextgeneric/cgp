@@ -9,7 +9,6 @@ use cgp::extra::dispatch::{
 use cgp::extra::handler::{NoCode, UseInputDelegate};
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_delegate_components;
-use insta::assert_snapshot;
 
 #[derive(Debug, PartialEq, CgpData)]
 pub enum Shape {
@@ -208,7 +207,7 @@ snapshot_delegate_components! {
     }
 
     expand_app(output) {
-        assert_snapshot!(output, @"
+        insta::assert_snapshot!(output, @"
         pub struct AreaComputers;
         impl DelegateComponent<ComputerComponent> for App {
             type Delegate = UseInputDelegate<AreaComputers>;

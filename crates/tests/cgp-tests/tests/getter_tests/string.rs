@@ -1,7 +1,6 @@
 mod string_getter {
     use cgp::prelude::*;
     use cgp_macro_test_util::{snapshot_cgp_getter, snapshot_delegate_components};
-    use insta::assert_snapshot;
 
     snapshot_cgp_getter! {
         #[cgp_getter]
@@ -10,7 +9,7 @@ mod string_getter {
         }
 
         expand_has_foo(output) {
-            assert_snapshot!(output, @"
+            insta::assert_snapshot!(output, @"
             pub trait HasFoo {
                 fn foo(&self) -> &str;
             }
@@ -146,7 +145,7 @@ mod string_getter {
         }
 
         expand_app(output) {
-            assert_snapshot!(output, @r#"
+            insta::assert_snapshot!(output, @r#"
             impl DelegateComponent<FooGetterComponent> for App {
                 type Delegate = UseField<Symbol!("bar")>;
             }
@@ -172,7 +171,6 @@ mod string_getter {
 mod string_getter_with_custom_name {
     use cgp::prelude::*;
     use cgp_macro_test_util::{snapshot_cgp_getter, snapshot_delegate_components};
-    use insta::assert_snapshot;
 
     snapshot_cgp_getter! {
         #[cgp_getter(GetString)]
@@ -181,7 +179,7 @@ mod string_getter_with_custom_name {
         }
 
         expand_has_foo(output) {
-            assert_snapshot!(output, @"
+            insta::assert_snapshot!(output, @"
             pub trait HasFoo {
                 fn foo(&self) -> &str;
             }
@@ -317,7 +315,7 @@ mod string_getter_with_custom_name {
         }
 
         expand_app(output) {
-            assert_snapshot!(output, @r#"
+            insta::assert_snapshot!(output, @r#"
             impl DelegateComponent<GetStringComponent> for App {
                 type Delegate = UseField<Symbol!("bar")>;
             }
@@ -343,7 +341,6 @@ mod string_getter_with_custom_name {
 mod string_getter_with_custom_spec {
     use cgp::prelude::*;
     use cgp_macro_test_util::{snapshot_cgp_getter, snapshot_delegate_components};
-    use insta::assert_snapshot;
 
     snapshot_cgp_getter! {
         #[cgp_getter{
@@ -355,7 +352,7 @@ mod string_getter_with_custom_spec {
         }
 
         expand_has_foo(output) {
-            assert_snapshot!(output, @"
+            insta::assert_snapshot!(output, @"
             pub trait HasFoo {
                 fn foo(&self) -> &str;
             }
@@ -482,7 +479,7 @@ mod string_getter_with_custom_spec {
         }
 
         expand_app(output) {
-            assert_snapshot!(output, @r#"
+            insta::assert_snapshot!(output, @r#"
             impl DelegateComponent<GetStringComp> for App {
                 type Delegate = UseField<Symbol!("bar")>;
             }
@@ -508,7 +505,6 @@ mod string_getter_with_custom_spec {
 mod string_auto_getter {
     use cgp::prelude::*;
     use cgp_macro_test_util::snapshot_cgp_auto_getter;
-    use insta::assert_snapshot;
 
     snapshot_cgp_auto_getter! {
         #[cgp_auto_getter]
@@ -517,7 +513,7 @@ mod string_auto_getter {
         }
 
         expand_has_foo(output) {
-            assert_snapshot!(output, @"
+            insta::assert_snapshot!(output, @"
             pub trait HasFoo {
                 fn foo(&self) -> &str;
             }

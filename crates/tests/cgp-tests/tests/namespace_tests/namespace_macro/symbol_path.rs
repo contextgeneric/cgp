@@ -2,7 +2,6 @@ use cgp::prelude::*;
 use cgp_macro_test_util::{
     snapshot_cgp_component, snapshot_cgp_impl, snapshot_delegate_components,
 };
-use insta::assert_snapshot;
 
 snapshot_cgp_component! {
     #[cgp_component(FooProvider)]
@@ -11,7 +10,7 @@ snapshot_cgp_component! {
     }
 
     expand_symbol_path_foo(output) {
-        assert_snapshot!(output, @"
+        insta::assert_snapshot!(output, @"
         pub trait Foo {
             fn foo(&self);
         }
@@ -97,7 +96,7 @@ snapshot_cgp_component! {
     }
 
     expand_symbol_path_bar(output) {
-        assert_snapshot!(output, @"
+        insta::assert_snapshot!(output, @"
         pub trait Bar {
             fn bar(&self);
         }
@@ -194,7 +193,7 @@ snapshot_cgp_impl! {
     }
 
     expand_symbol_path_dummy_foo(output) {
-        assert_snapshot!(output, @"
+        insta::assert_snapshot!(output, @"
         impl<__Context__> FooProvider<__Context__> for DummyFoo {
             fn foo(__context__: &__Context__) {}
         }
@@ -211,7 +210,7 @@ snapshot_cgp_impl! {
     }
 
     expand_symbol_path_dummy_bar(output) {
-        assert_snapshot!(output, @"
+        insta::assert_snapshot!(output, @"
         impl<__Context__> BarProvider<__Context__> for DummyBar {
             fn bar(__context__: &__Context__) {}
         }
@@ -236,7 +235,7 @@ snapshot_delegate_components! {
     }
 
     expand_symbol_path_app(output) {
-        assert_snapshot!(output, @"
+        insta::assert_snapshot!(output, @"
         impl<__Key__, __Value__> DelegateComponent<__Key__> for App
         where
             __Key__: MyNamespace<App, Delegate = __Value__>,

@@ -2,7 +2,6 @@ use cgp::prelude::*;
 use cgp_macro_test_util::{
     snapshot_cgp_component, snapshot_cgp_impl, snapshot_delegate_components,
 };
-use insta::assert_snapshot;
 
 snapshot_cgp_component! {
     #[cgp_component(FooProvider)]
@@ -12,7 +11,7 @@ snapshot_cgp_component! {
     }
 
     expand_multi_param_foo(output) {
-        assert_snapshot!(output, @"
+        insta::assert_snapshot!(output, @"
         pub trait Foo<'a, T, U> {
             fn foo(&self, first: &'a T, second: U);
         }
@@ -120,7 +119,7 @@ snapshot_cgp_impl! {
     }
 
     expand_multi_param_dummy_foo(output) {
-        assert_snapshot!(output, @"
+        insta::assert_snapshot!(output, @"
         impl<'a, __Context__, T, U> FooProvider<'a, __Context__, T, U> for DummyFoo {
             fn foo(__context__: &__Context__, _first: &'a T, _second: U) {}
         }
@@ -150,7 +149,7 @@ snapshot_delegate_components! {
     }
 
     expand_multi_param_app_a(output) {
-        assert_snapshot!(output, @"
+        insta::assert_snapshot!(output, @"
         impl DelegateComponent<FooProviderComponent> for AppA {
             type Delegate = RedirectLookup<AppA, PathCons<FooProviderComponent, Nil>>;
         }
@@ -242,7 +241,7 @@ snapshot_delegate_components! {
     }
 
     expand_multi_param_app_b(output) {
-        assert_snapshot!(output, @"
+        insta::assert_snapshot!(output, @"
         impl<__Key__, __Value__> DelegateComponent<__Key__> for AppB
         where
             __Key__: DefaultNamespace<AppB, Delegate = __Value__>,

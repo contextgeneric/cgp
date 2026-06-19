@@ -2,7 +2,6 @@ use core::fmt::Display;
 
 use cgp::prelude::*;
 use cgp_macro_test_util::{snapshot_cgp_getter, snapshot_delegate_components};
-use insta::assert_snapshot;
 
 snapshot_cgp_getter! {
     #[cgp_getter]
@@ -13,7 +12,7 @@ snapshot_cgp_getter! {
     }
 
     expand_has_name(output) {
-        assert_snapshot!(output, @"
+        insta::assert_snapshot!(output, @"
         pub trait HasName {
             type Name: Display;
             fn name(&self) -> &Self::Name;
@@ -168,7 +167,7 @@ snapshot_delegate_components! {
     }
 
     expand_person(output) {
-        assert_snapshot!(output, @r#"
+        insta::assert_snapshot!(output, @r#"
         impl DelegateComponent<NameGetterComponent> for Person {
             type Delegate = UseField<Symbol!("first_name")>;
         }

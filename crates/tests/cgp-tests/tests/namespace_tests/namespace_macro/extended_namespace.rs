@@ -4,7 +4,6 @@ use cgp::extra::handler::CanTryCompute;
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_delegate_components;
 use cgp_tests::namespaces::extended::ExtendedNamespace;
-use insta::assert_snapshot;
 
 pub struct App;
 
@@ -26,7 +25,7 @@ snapshot_delegate_components! {
     }
 
     expand_extended_ns_app(output) {
-        assert_snapshot!(output, @"
+        insta::assert_snapshot!(output, @"
         impl<__Key__, __Value__> DelegateComponent<__Key__> for App
         where
             __Key__: ExtendedNamespace<App, Delegate = __Value__>,

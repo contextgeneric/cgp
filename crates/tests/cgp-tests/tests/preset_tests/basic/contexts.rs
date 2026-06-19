@@ -1,6 +1,5 @@
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_delegate_components;
-use insta::assert_snapshot;
 
 use crate::preset_tests::basic::components::{
     BarGetterComponent, BarTypeProviderComponent, FooGetterComponent, FooTypeProviderComponent,
@@ -22,7 +21,7 @@ snapshot_delegate_components! {
     }
 
     expand_my_context(output) {
-        assert_snapshot!(output, @r#"
+        insta::assert_snapshot!(output, @r#"
         impl DelegateComponent<BarGetterComponent> for MyContext {
             type Delegate = UseField<Symbol!("bar")>;
         }

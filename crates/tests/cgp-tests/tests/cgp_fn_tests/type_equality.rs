@@ -2,7 +2,6 @@ use std::fmt::Display;
 
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_cgp_fn;
-use insta::assert_snapshot;
 
 #[cgp_type]
 pub trait HasScalarType {
@@ -18,7 +17,7 @@ snapshot_cgp_fn! {
     }
 
     expand_rectangle_area(output) {
-        assert_snapshot!(output, @"
+        insta::assert_snapshot!(output, @"
         pub trait RectangleArea: HasScalarType {
             fn rectangle_area(&self) -> <Self as HasScalarType>::Scalar;
         }
@@ -93,7 +92,7 @@ snapshot_cgp_fn! {
     }
 
     expand_do_foo(output) {
-        assert_snapshot!(output, @"
+        insta::assert_snapshot!(output, @"
         pub trait DoFoo: HasFooType {
             fn do_foo(&self) -> <Self as HasFooType>::Foo;
         }
@@ -117,7 +116,7 @@ snapshot_cgp_fn! {
     }
 
     expand_do_bar(output) {
-        assert_snapshot!(output, @"
+        insta::assert_snapshot!(output, @"
         pub trait DoBar: HasBarType {
             fn do_bar(&self) -> <Self as HasBarType>::Bar;
         }
@@ -148,7 +147,7 @@ snapshot_cgp_fn! {
     }
 
     expand_return_foo_or_bar(output) {
-        assert_snapshot!(output, @"
+        insta::assert_snapshot!(output, @"
         trait ReturnFooOrBar: HasBarType + HasFooType {
             fn return_foo_or_bar(&self, flag: bool) -> <Self as HasFooType>::Foo;
         }

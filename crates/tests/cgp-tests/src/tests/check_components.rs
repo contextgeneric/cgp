@@ -5,7 +5,6 @@ mod basic_check_components {
 
     use cgp::prelude::*;
     use cgp_macro_test_util::snapshot_cgp_getter;
-    use insta::assert_snapshot;
 
     #[cgp_type]
     pub trait HasFooType {
@@ -26,7 +25,7 @@ mod basic_check_components {
         }
 
         expand_has_foo_at(output) {
-            assert_snapshot!(output, @"
+            insta::assert_snapshot!(output, @"
             pub trait HasFooAt<I>: HasFooType {
                 fn foo(&self, _tag: PhantomData<I>) -> &Self::Foo;
             }
@@ -194,7 +193,7 @@ mod basic_check_components {
         }
 
         expand_has_bar_at(output) {
-            assert_snapshot!(output, @"
+            insta::assert_snapshot!(output, @"
             pub trait HasBarAt<I, J>: HasBarType {
                 fn foo(&self, _tag: PhantomData<(I, J)>) -> &Self::Bar;
             }
@@ -469,7 +468,6 @@ mod generic_check_components {
 
     use cgp::prelude::*;
     use cgp_macro_test_util::{snapshot_cgp_getter, snapshot_delegate_components};
-    use insta::assert_snapshot;
 
     #[cgp_type]
     pub trait HasFooType {
@@ -490,7 +488,7 @@ mod generic_check_components {
         }
 
         expand_has_foo_at(output) {
-            assert_snapshot!(output, @"
+            insta::assert_snapshot!(output, @"
             pub trait HasFooAt<I: Clone>: HasFooType {
                 fn foo(&self, _tag: PhantomData<I>) -> &Self::Foo;
             }
@@ -667,7 +665,7 @@ mod generic_check_components {
         }
 
         expand_has_bar_at(output) {
-            assert_snapshot!(output, @"
+            insta::assert_snapshot!(output, @"
             pub trait HasBarAt<I: Clone, J>: HasBarType {
                 fn foo(&self, _tag: PhantomData<(I, J)>) -> &Self::Bar;
             }
@@ -878,7 +876,7 @@ mod generic_check_components {
         }
 
         expand_context(output) {
-            assert_snapshot!(output, @r#"
+            insta::assert_snapshot!(output, @r#"
             impl DelegateComponent<FooTypeProviderComponent> for Context {
                 type Delegate = UseType<()>;
             }

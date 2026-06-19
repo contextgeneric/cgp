@@ -2,7 +2,6 @@ use core::marker::PhantomData;
 
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_cgp_getter;
-use insta::assert_snapshot;
 
 #[cgp_type]
 pub trait HasFooType {
@@ -24,7 +23,7 @@ snapshot_cgp_getter! {
     }
 
     expand_has_foo_at(output) {
-        assert_snapshot!(output, @"
+        insta::assert_snapshot!(output, @"
         pub trait HasFooAt<I>: HasFooType {
             fn foo(&self, _tag: PhantomData<I>) -> &Self::Foo;
         }
@@ -194,7 +193,7 @@ snapshot_cgp_getter! {
     }
 
     expand_has_bar_at(output) {
-        assert_snapshot!(output, @"
+        insta::assert_snapshot!(output, @"
         pub trait HasBarAt<I>: HasBarType {
             fn bar(&self) -> &Self::Bar;
         }

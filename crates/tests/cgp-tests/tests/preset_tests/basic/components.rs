@@ -1,6 +1,5 @@
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_cgp_getter;
-use insta::assert_snapshot;
 
 #[cgp_type]
 pub trait HasFooType {
@@ -19,7 +18,7 @@ snapshot_cgp_getter! {
     }
 
     expand_has_foo(output) {
-        assert_snapshot!(output, @"
+        insta::assert_snapshot!(output, @"
         pub trait HasFoo: HasFooType {
             fn foo(&self) -> &Self::Foo;
         }
@@ -162,7 +161,7 @@ snapshot_cgp_getter! {
     }
 
     expand_has_bar(output) {
-        assert_snapshot!(output, @"
+        insta::assert_snapshot!(output, @"
         pub trait HasBar: HasBarType {
             fn bar(&self) -> &Self::Bar;
         }

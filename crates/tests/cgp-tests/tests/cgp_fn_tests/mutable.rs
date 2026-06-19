@@ -1,6 +1,5 @@
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_cgp_fn;
-use insta::assert_snapshot;
 
 snapshot_cgp_fn! {
     #[cgp_fn]
@@ -15,7 +14,7 @@ snapshot_cgp_fn! {
     }
 
     expand_capitalize_name(output) {
-        assert_snapshot!(output, @"
+        insta::assert_snapshot!(output, @"
         pub trait CapitalizeName {
             fn capitalize_name(&mut self);
         }

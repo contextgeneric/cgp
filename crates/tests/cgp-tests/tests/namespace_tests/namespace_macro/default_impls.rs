@@ -4,7 +4,6 @@ use cgp_macro_test_util::snapshot_delegate_components;
 use cgp_tests::namespaces::default_impls::{
     DefaultShowComponents, ExtendedNamespace, ShowImplComponent, ShowWithDisplay,
 };
-use insta::assert_snapshot;
 
 pub struct AppA;
 
@@ -23,7 +22,7 @@ snapshot_delegate_components! {
     }
 
     expand_default_impls_app_a(output) {
-        assert_snapshot!(output, @"
+        insta::assert_snapshot!(output, @"
         impl<__Key__, __Value__> DelegateComponent<__Key__> for AppA
         where
             __Key__: DefaultNamespace<AppA, Delegate = __Value__>,
@@ -139,7 +138,7 @@ snapshot_delegate_components! {
     }
 
     expand_default_impls_app_b(output) {
-        assert_snapshot!(output, @"
+        insta::assert_snapshot!(output, @"
         impl<__Key__, __Value__> DelegateComponent<__Key__> for AppB
         where
             __Key__: DefaultNamespace<AppB, Delegate = __Value__>,
@@ -226,7 +225,7 @@ snapshot_delegate_components! {
     }
 
     expand_default_impls_app_c(output) {
-        assert_snapshot!(output, @"
+        insta::assert_snapshot!(output, @"
         impl<__Key__, __Value__> DelegateComponent<__Key__> for AppC
         where
             __Key__: ExtendedNamespace<AppC, Delegate = __Value__>,

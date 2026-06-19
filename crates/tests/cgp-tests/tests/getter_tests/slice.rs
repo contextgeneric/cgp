@@ -1,7 +1,6 @@
 mod slice_getter {
     use cgp::prelude::*;
     use cgp_macro_test_util::{snapshot_cgp_getter, snapshot_delegate_components};
-    use insta::assert_snapshot;
 
     snapshot_cgp_getter! {
         #[cgp_getter]
@@ -10,7 +9,7 @@ mod slice_getter {
         }
 
         expand_has_foo(output) {
-            assert_snapshot!(output, @"
+            insta::assert_snapshot!(output, @"
             pub trait HasFoo {
                 fn foo(&self) -> &[u8];
             }
@@ -154,7 +153,7 @@ mod slice_getter {
         }
 
         expand_app(output) {
-            assert_snapshot!(output, @r#"
+            insta::assert_snapshot!(output, @r#"
             impl DelegateComponent<FooGetterComponent> for App {
                 type Delegate = UseField<Symbol!("bar")>;
             }
@@ -178,7 +177,6 @@ mod slice_getter {
 mod slice_auto_getter {
     use cgp::prelude::*;
     use cgp_macro_test_util::snapshot_cgp_auto_getter;
-    use insta::assert_snapshot;
 
     snapshot_cgp_auto_getter! {
         #[cgp_auto_getter]
@@ -187,7 +185,7 @@ mod slice_auto_getter {
         }
 
         expand_has_foo(output) {
-            assert_snapshot!(output, @"
+            insta::assert_snapshot!(output, @"
             pub trait HasFoo {
                 fn foo(&self) -> &[u8];
             }
