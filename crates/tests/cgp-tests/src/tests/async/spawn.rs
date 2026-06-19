@@ -18,7 +18,8 @@ use cgp::extra::run::{
 };
 use cgp::prelude::*;
 use cgp_macro_test_util::{
-    snapshot_cgp_component, snapshot_cgp_type, snapshot_delegate_components,
+    snapshot_cgp_component, snapshot_cgp_new_provider, snapshot_cgp_provider, snapshot_cgp_type,
+    snapshot_delegate_components,
 };
 use futures::executor::block_on;
 
@@ -565,68 +566,186 @@ snapshot_cgp_component! {
 
 // Abstract providers can be implemented without Send bounds
 
-#[cgp_new_provider(RunnerComponent)]
-impl<Context, Code> Runner<Context, Code> for RunWithFooBar
-where
-    Context: CanFetchFoo + CanFetchBar + CanRunFooBar,
-{
-    async fn run(context: &Context, _code: PhantomData<Code>) -> Result<(), Context::Error> {
-        let foo = context.fetch_foo().await?;
-        let bar = context.fetch_bar().await?;
+snapshot_cgp_new_provider! {
+    #[cgp_new_provider(RunnerComponent)]
+    impl<Context, Code> Runner<Context, Code> for RunWithFooBar
+    where
+        Context: CanFetchFoo + CanFetchBar + CanRunFooBar,
+    {
+        async fn run(context: &Context, _code: PhantomData<Code>) -> Result<(), Context::Error> {
+            let foo = context.fetch_foo().await?;
+            let bar = context.fetch_bar().await?;
 
-        context.run_foo_bar(&foo, &bar).await?;
+            context.run_foo_bar(&foo, &bar).await?;
 
-        Ok(())
+            Ok(())
+        }
+    }
+
+    expand_run_with_foo_bar(output) {
+        insta::assert_snapshot!(output, @"
+        impl<Context, Code> Runner<Context, Code> for RunWithFooBar
+        where
+            Context: CanFetchFoo + CanFetchBar + CanRunFooBar,
+        {
+            async fn run(
+                context: &Context,
+                _code: PhantomData<Code>,
+            ) -> Result<(), Context::Error> {
+                let foo = context.fetch_foo().await?;
+                let bar = context.fetch_bar().await?;
+                context.run_foo_bar(&foo, &bar).await?;
+                Ok(())
+            }
+        }
+        impl<Context, Code> IsProviderFor<RunnerComponent, Context, (Code)> for RunWithFooBar
+        where
+            Context: CanFetchFoo + CanFetchBar + CanRunFooBar,
+        {}
+        pub struct RunWithFooBar;
+        ")
     }
 }
 
-#[cgp_new_provider(RunnerComponent)]
-impl<Context, Code, InCode> Runner<Context, Code> for SpawnAndRun<InCode>
-where
-    Context: 'static + Send + Clone + CanSendRun<InCode>,
-{
-    async fn run(context: &Context, _code: PhantomData<Code>) -> Result<(), Context::Error> {
-        let context = context.clone();
+snapshot_cgp_new_provider! {
+    #[cgp_new_provider(RunnerComponent)]
+    impl<Context, Code, InCode> Runner<Context, Code> for SpawnAndRun<InCode>
+    where
+        Context: 'static + Send + Clone + CanSendRun<InCode>,
+    {
+        async fn run(context: &Context, _code: PhantomData<Code>) -> Result<(), Context::Error> {
+            let context = context.clone();
 
-        dummy_spawn(async move {
-            let _ = context.send_run(PhantomData).await;
-        });
+            dummy_spawn(async move {
+                let _ = context.send_run(PhantomData).await;
+            });
 
-        Ok(())
+            Ok(())
+        }
+    }
+
+    expand_spawn_and_run(output) {
+        insta::assert_snapshot!(output, @"
+        impl<Context, Code, InCode> Runner<Context, Code> for SpawnAndRun<InCode>
+        where
+            Context: 'static + Send + Clone + CanSendRun<InCode>,
+        {
+            async fn run(
+                context: &Context,
+                _code: PhantomData<Code>,
+            ) -> Result<(), Context::Error> {
+                let context = context.clone();
+                dummy_spawn(async move {
+                    let _ = context.send_run(PhantomData).await;
+                });
+                Ok(())
+            }
+        }
+        impl<Context, Code, InCode> IsProviderFor<RunnerComponent, Context, (Code)>
+        for SpawnAndRun<InCode>
+        where
+            Context: 'static + Send + Clone + CanSendRun<InCode>,
+        {}
+        pub struct SpawnAndRun<InCode>(pub ::core::marker::PhantomData<(InCode)>);
+        ")
     }
 }
 
-#[cgp_new_provider]
-impl<Context> FooFetcher<Context> for DummyFetchFoo
-where
-    Context: HasFooType<Foo: Default> + HasErrorType,
-{
-    async fn fetch_foo(_context: &Context) -> Result<Context::Foo, Context::Error> {
-        Ok(Default::default())
+snapshot_cgp_new_provider! {
+    #[cgp_new_provider]
+    impl<Context> FooFetcher<Context> for DummyFetchFoo
+    where
+        Context: HasFooType<Foo: Default> + HasErrorType,
+    {
+        async fn fetch_foo(_context: &Context) -> Result<Context::Foo, Context::Error> {
+            Ok(Default::default())
+        }
+    }
+
+    expand_dummy_fetch_foo(output) {
+        insta::assert_snapshot!(output, @"
+        impl<Context> FooFetcher<Context> for DummyFetchFoo
+        where
+            Context: HasFooType<Foo: Default> + HasErrorType,
+        {
+            async fn fetch_foo(_context: &Context) -> Result<Context::Foo, Context::Error> {
+                Ok(Default::default())
+            }
+        }
+        impl<Context> IsProviderFor<FooFetcherComponent, Context, ()> for DummyFetchFoo
+        where
+            Context: HasFooType<Foo: Default> + HasErrorType,
+        {}
+        pub struct DummyFetchFoo;
+        ")
     }
 }
 
-#[cgp_new_provider]
-impl<Context> BarFetcher<Context> for DummyFetchBar
-where
-    Context: HasBarType<Bar: Default> + HasErrorType,
-{
-    async fn fetch_bar(_context: &Context) -> Result<Context::Bar, Context::Error> {
-        Ok(Default::default())
+snapshot_cgp_new_provider! {
+    #[cgp_new_provider]
+    impl<Context> BarFetcher<Context> for DummyFetchBar
+    where
+        Context: HasBarType<Bar: Default> + HasErrorType,
+    {
+        async fn fetch_bar(_context: &Context) -> Result<Context::Bar, Context::Error> {
+            Ok(Default::default())
+        }
+    }
+
+    expand_dummy_fetch_bar(output) {
+        insta::assert_snapshot!(output, @"
+        impl<Context> BarFetcher<Context> for DummyFetchBar
+        where
+            Context: HasBarType<Bar: Default> + HasErrorType,
+        {
+            async fn fetch_bar(_context: &Context) -> Result<Context::Bar, Context::Error> {
+                Ok(Default::default())
+            }
+        }
+        impl<Context> IsProviderFor<BarFetcherComponent, Context, ()> for DummyFetchBar
+        where
+            Context: HasBarType<Bar: Default> + HasErrorType,
+        {}
+        pub struct DummyFetchBar;
+        ")
     }
 }
 
-#[cgp_new_provider]
-impl<Context> FooBarRunner<Context> for DummyRunFoobar
-where
-    Context: HasFooType + HasBarType + HasErrorType,
-{
-    async fn run_foo_bar(
-        _context: &Context,
-        _foo: &Context::Foo,
-        _bar: &Context::Bar,
-    ) -> Result<(), Context::Error> {
-        Ok(())
+snapshot_cgp_new_provider! {
+    #[cgp_new_provider]
+    impl<Context> FooBarRunner<Context> for DummyRunFoobar
+    where
+        Context: HasFooType + HasBarType + HasErrorType,
+    {
+        async fn run_foo_bar(
+            _context: &Context,
+            _foo: &Context::Foo,
+            _bar: &Context::Bar,
+        ) -> Result<(), Context::Error> {
+            Ok(())
+        }
+    }
+
+    expand_dummy_run_foo_bar(output) {
+        insta::assert_snapshot!(output, @"
+        impl<Context> FooBarRunner<Context> for DummyRunFoobar
+        where
+            Context: HasFooType + HasBarType + HasErrorType,
+        {
+            async fn run_foo_bar(
+                _context: &Context,
+                _foo: &Context::Foo,
+                _bar: &Context::Bar,
+            ) -> Result<(), Context::Error> {
+                Ok(())
+            }
+        }
+        impl<Context> IsProviderFor<FooBarRunnerComponent, Context, ()> for DummyRunFoobar
+        where
+            Context: HasFooType + HasBarType + HasErrorType,
+        {}
+        pub struct DummyRunFoobar;
+        ")
     }
 }
 
@@ -757,10 +876,26 @@ snapshot_delegate_components! {
 // call to Runner that is implemented by `RunWithFooBar`.
 // With the concrete context known, the Send bound can be found in the concrete future.
 
-#[cgp_provider]
-impl SendRunner<App, ActionA> for App {
-    async fn send_run(context: &App, code: PhantomData<ActionA>) -> Result<(), Infallible> {
-        context.run(code).await
+snapshot_cgp_provider! {
+    #[cgp_provider]
+    impl SendRunner<App, ActionA> for App {
+        async fn send_run(context: &App, code: PhantomData<ActionA>) -> Result<(), Infallible> {
+            context.run(code).await
+        }
+    }
+
+    expand_app_send_runner(output) {
+        insta::assert_snapshot!(output, @"
+        impl SendRunner<App, ActionA> for App {
+            async fn send_run(
+                context: &App,
+                code: PhantomData<ActionA>,
+            ) -> Result<(), Infallible> {
+                context.run(code).await
+            }
+        }
+        impl IsProviderFor<SendRunnerComponent, App, (ActionA)> for App {}
+        ")
     }
 }
 

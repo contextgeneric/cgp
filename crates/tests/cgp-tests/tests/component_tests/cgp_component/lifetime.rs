@@ -1,5 +1,5 @@
 use cgp::prelude::*;
-use cgp_macro_test_util::{snapshot_cgp_component, snapshot_check_components};
+use cgp_macro_test_util::{snapshot_cgp_component, snapshot_cgp_provider, snapshot_check_components};
 
 snapshot_cgp_component! {
     #[cgp_component(ReferenceGetter)]
@@ -102,13 +102,37 @@ snapshot_cgp_component! {
     }
 }
 
-#[cgp_provider]
-impl<'a, Context, Tag, T: 'a + ?Sized> ReferenceGetter<'a, Context, T> for UseField<Tag>
-where
-    Context: HasField<Tag, Value = &'a T>,
-{
-    fn get_reference(context: &Context) -> &'a T {
-        context.get_field(PhantomData)
+snapshot_cgp_provider! {
+    #[cgp_provider]
+    impl<'a, Context, Tag, T: 'a + ?Sized> ReferenceGetter<'a, Context, T> for UseField<Tag>
+    where
+        Context: HasField<Tag, Value = &'a T>,
+    {
+        fn get_reference(context: &Context) -> &'a T {
+            context.get_field(PhantomData)
+        }
+    }
+
+    expand_use_field_reference_getter(output) {
+        insta::assert_snapshot!(output, @"
+        impl<'a, Context, Tag, T: 'a + ?Sized> ReferenceGetter<'a, Context, T> for UseField<Tag>
+        where
+            Context: HasField<Tag, Value = &'a T>,
+        {
+            fn get_reference(context: &Context) -> &'a T {
+                context.get_field(PhantomData)
+            }
+        }
+        impl<
+            'a,
+            Context,
+            Tag,
+            T: 'a + ?Sized,
+        > IsProviderFor<ReferenceGetterComponent, Context, (Life<'a>, T)> for UseField<Tag>
+        where
+            Context: HasField<Tag, Value = &'a T>,
+        {}
+        ")
     }
 }
 

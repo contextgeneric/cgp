@@ -8,6 +8,10 @@ define_keyword!(CgpGetter, "cgp_getter");
 
 define_keyword!(CgpImpl, "cgp_impl");
 
+define_keyword!(CgpProvider, "cgp_provider");
+
+define_keyword!(CgpNewProvider, "cgp_new_provider");
+
 define_keyword!(CgpFn, "cgp_fn");
 
 define_keyword!(CgpType, "cgp_type");

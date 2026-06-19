@@ -1,6 +1,6 @@
 mod basic_const {
     use cgp::prelude::*;
-    use cgp_macro_test_util::snapshot_delegate_and_check_components;
+    use cgp_macro_test_util::{snapshot_cgp_provider, snapshot_delegate_and_check_components};
 
     #[cgp_component(ConstantGetter)]
     pub trait HasConstant {
@@ -9,9 +9,21 @@ mod basic_const {
 
     pub struct UseConstant<const CONSTANT: u64>;
 
-    #[cgp_provider]
-    impl<Context, const CONSTANT: u64> ConstantGetter<Context> for UseConstant<CONSTANT> {
-        const CONSTANT: u64 = CONSTANT;
+    snapshot_cgp_provider! {
+        #[cgp_provider]
+        impl<Context, const CONSTANT: u64> ConstantGetter<Context> for UseConstant<CONSTANT> {
+            const CONSTANT: u64 = CONSTANT;
+        }
+
+        expand_use_constant(output) {
+            insta::assert_snapshot!(output, @"
+            impl<Context, const CONSTANT: u64> ConstantGetter<Context> for UseConstant<CONSTANT> {
+                const CONSTANT: u64 = CONSTANT;
+            }
+            impl<Context, const CONSTANT: u64> IsProviderFor<ConstantGetterComponent, Context, ()>
+            for UseConstant<CONSTANT> {}
+            ")
+        }
     }
 
     pub struct MyContext;
@@ -53,7 +65,7 @@ pub fn test_component_with_const() {
 
 mod generic_const {
     use cgp::prelude::*;
-    use cgp_macro_test_util::{snapshot_cgp_type, snapshot_check_components};
+    use cgp_macro_test_util::{snapshot_cgp_provider, snapshot_cgp_type, snapshot_check_components};
 
     snapshot_cgp_type! {
         #[cgp_type]
@@ -166,12 +178,30 @@ mod generic_const {
 
     pub struct UseConstant<const CONSTANT: u64>;
 
-    #[cgp_provider]
-    impl<Context, const CONSTANT: u64> ConstantGetter<Context> for UseConstant<CONSTANT>
-    where
-        Context: HasUnitType<Unit = u64>,
-    {
-        const CONSTANT: u64 = CONSTANT;
+    snapshot_cgp_provider! {
+        #[cgp_provider]
+        impl<Context, const CONSTANT: u64> ConstantGetter<Context> for UseConstant<CONSTANT>
+        where
+            Context: HasUnitType<Unit = u64>,
+        {
+            const CONSTANT: u64 = CONSTANT;
+        }
+
+        expand_use_constant(output) {
+            insta::assert_snapshot!(output, @"
+            impl<Context, const CONSTANT: u64> ConstantGetter<Context> for UseConstant<CONSTANT>
+            where
+                Context: HasUnitType<Unit = u64>,
+            {
+                const CONSTANT: u64 = CONSTANT;
+            }
+            impl<Context, const CONSTANT: u64> IsProviderFor<ConstantGetterComponent, Context, ()>
+            for UseConstant<CONSTANT>
+            where
+                Context: HasUnitType<Unit = u64>,
+            {}
+            ")
+        }
     }
 
     pub struct MyContext;

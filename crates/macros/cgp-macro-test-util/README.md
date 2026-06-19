@@ -59,6 +59,8 @@ snapshot output is guaranteed to match what the production macros generate.
 | --------------------------- | --------------------- |
 | `snapshot_cgp_component!`   | `#[cgp_component]`    |
 | `snapshot_cgp_impl!`        | `#[cgp_impl]`         |
+| `snapshot_cgp_provider!`    | `#[cgp_provider]`     |
+| `snapshot_cgp_new_provider!`| `#[cgp_new_provider]` |
 | `snapshot_cgp_auto_getter!` | `#[cgp_auto_getter]`  |
 | `snapshot_cgp_getter!`      | `#[cgp_getter]`       |
 | `snapshot_cgp_fn!`          | `#[cgp_fn]`           |
@@ -162,6 +164,64 @@ snapshot_cgp_impl! {
     }
 }
 ```
+
+### `snapshot_cgp_provider!`
+
+Wraps `#[cgp_provider]` provider impls. The item under test is the full provider
+`impl` written exactly as you would normally write it under `#[cgp_provider]` —
+the provider struct itself is expected to already be defined elsewhere:
+
+```rust
+pub struct GreetHello;
+
+snapshot_cgp_provider! {
+    #[cgp_provider]
+    impl<Context> Greeter<Context> for GreetHello
+    where
+        Context: HasName,
+    {
+        fn greet(context: &Context) {
+            println!("Hello, {}!", context.name());
+        }
+    }
+
+    expand_greet_hello(output) {
+        assert_snapshot!(output, @"...")
+    }
+}
+```
+
+Both the default form `#[cgp_provider]` and the explicit component name form
+`#[cgp_provider(GreeterComponent)]` are accepted, mirroring the real macro. In
+addition to re-emitting the provider impl, the snapshot captures the generated
+`IsProviderFor` impl.
+
+### `snapshot_cgp_new_provider!`
+
+Has the identical shape as `snapshot_cgp_provider!`, but wraps
+`#[cgp_new_provider]`, which additionally defines the provider struct. The
+snapshot therefore also captures the generated `struct` definition:
+
+```rust
+snapshot_cgp_new_provider! {
+    #[cgp_new_provider]
+    impl<Context> Greeter<Context> for GreetHello
+    where
+        Context: HasName,
+    {
+        fn greet(context: &Context) {
+            println!("Hello, {}!", context.name());
+        }
+    }
+
+    expand_greet_hello(output) {
+        assert_snapshot!(output, @"...")
+    }
+}
+```
+
+Both the default form `#[cgp_new_provider]` and the explicit component name form
+`#[cgp_new_provider(GreeterComponent)]` are accepted, mirroring the real macro.
 
 ### `snapshot_cgp_auto_getter!` / `snapshot_cgp_getter!`
 
@@ -382,9 +442,8 @@ When migrating an existing macro test, two situations come up:
 
 ## Notes / limitations
 
-- Snapshot macros exist only for the ten macros listed above. Other CGP macros
-  (`#[cgp_provider]`, `#[cgp_preset]`, …) are not (yet) snapshot-wrapped and are
-  left as-is.
+- Snapshot macros exist only for the macros listed above. Other CGP macros
+  (`#[cgp_preset]`, …) are not (yet) snapshot-wrapped and are left as-is.
 - The pretty-printing is done with
   [`prettyplease`](https://crates.io/crates/prettyplease), and any
   macro-prelude noise is stripped beforehand

@@ -3,29 +3,75 @@ mod pipe_computers {
 
     use cgp::extra::handler::{CanCompute, Computer, ComputerComponent, PipeHandlers};
     use cgp::prelude::*;
-    use cgp_macro_test_util::{snapshot_check_components, snapshot_delegate_components};
+    use cgp_macro_test_util::{
+        snapshot_cgp_new_provider, snapshot_check_components, snapshot_delegate_components,
+    };
 
-    #[cgp_new_provider]
-    impl<Context, Tag, Field> Computer<Context, Tag, u64> for Multiply<Field>
-    where
-        Context: HasField<Field, Value = u64>,
-    {
-        type Output = u64;
+    snapshot_cgp_new_provider! {
+        #[cgp_new_provider]
+        impl<Context, Tag, Field> Computer<Context, Tag, u64> for Multiply<Field>
+        where
+            Context: HasField<Field, Value = u64>,
+        {
+            type Output = u64;
 
-        fn compute(context: &Context, _tag: PhantomData<Tag>, input: u64) -> u64 {
-            input * context.get_field(PhantomData)
+            fn compute(context: &Context, _tag: PhantomData<Tag>, input: u64) -> u64 {
+                input * context.get_field(PhantomData)
+            }
+        }
+
+        expand_multiply(output) {
+            insta::assert_snapshot!(output, @"
+            impl<Context, Tag, Field> Computer<Context, Tag, u64> for Multiply<Field>
+            where
+                Context: HasField<Field, Value = u64>,
+            {
+                type Output = u64;
+                fn compute(context: &Context, _tag: PhantomData<Tag>, input: u64) -> u64 {
+                    input * context.get_field(PhantomData)
+                }
+            }
+            impl<Context, Tag, Field> IsProviderFor<ComputerComponent, Context, (Tag, u64)>
+            for Multiply<Field>
+            where
+                Context: HasField<Field, Value = u64>,
+            {}
+            pub struct Multiply<Field>(pub ::core::marker::PhantomData<(Field)>);
+            ")
         }
     }
 
-    #[cgp_new_provider]
-    impl<Context, Tag, Field> Computer<Context, Tag, u64> for Add<Field>
-    where
-        Context: HasField<Field, Value = u64>,
-    {
-        type Output = u64;
+    snapshot_cgp_new_provider! {
+        #[cgp_new_provider]
+        impl<Context, Tag, Field> Computer<Context, Tag, u64> for Add<Field>
+        where
+            Context: HasField<Field, Value = u64>,
+        {
+            type Output = u64;
 
-        fn compute(context: &Context, _tag: PhantomData<Tag>, input: u64) -> u64 {
-            input + context.get_field(PhantomData)
+            fn compute(context: &Context, _tag: PhantomData<Tag>, input: u64) -> u64 {
+                input + context.get_field(PhantomData)
+            }
+        }
+
+        expand_add(output) {
+            insta::assert_snapshot!(output, @"
+            impl<Context, Tag, Field> Computer<Context, Tag, u64> for Add<Field>
+            where
+                Context: HasField<Field, Value = u64>,
+            {
+                type Output = u64;
+                fn compute(context: &Context, _tag: PhantomData<Tag>, input: u64) -> u64 {
+                    input + context.get_field(PhantomData)
+                }
+            }
+            impl<Context, Tag, Field> IsProviderFor<ComputerComponent, Context, (Tag, u64)>
+            for Add<Field>
+            where
+                Context: HasField<Field, Value = u64>,
+            {}
+            pub struct Add<Field>(pub ::core::marker::PhantomData<(Field)>);
+            ")
         }
     }
 
@@ -116,34 +162,84 @@ mod pipe_handlers {
         CanHandle, Computer, Handler, HandlerComponent, PipeHandlers, Promote, PromoteAsync,
     };
     use cgp::prelude::*;
-    use cgp_macro_test_util::{snapshot_check_components, snapshot_delegate_components};
+    use cgp_macro_test_util::{
+        snapshot_cgp_new_provider, snapshot_check_components, snapshot_delegate_components,
+    };
     use futures::executor::block_on;
 
-    #[cgp_new_provider]
-    impl<Context, Tag, Field> Handler<Context, Tag, u64> for Multiply<Field>
-    where
-        Context: HasErrorType + HasField<Field, Value = u64>,
-    {
-        type Output = u64;
+    snapshot_cgp_new_provider! {
+        #[cgp_new_provider]
+        impl<Context, Tag, Field> Handler<Context, Tag, u64> for Multiply<Field>
+        where
+            Context: HasErrorType + HasField<Field, Value = u64>,
+        {
+            type Output = u64;
 
-        async fn handle(
-            context: &Context,
-            _tag: PhantomData<Tag>,
-            input: u64,
-        ) -> Result<Self::Output, Context::Error> {
-            Ok(input * context.get_field(PhantomData))
+            async fn handle(
+                context: &Context,
+                _tag: PhantomData<Tag>,
+                input: u64,
+            ) -> Result<Self::Output, Context::Error> {
+                Ok(input * context.get_field(PhantomData))
+            }
+        }
+
+        expand_multiply(output) {
+            insta::assert_snapshot!(output, @"
+            impl<Context, Tag, Field> Handler<Context, Tag, u64> for Multiply<Field>
+            where
+                Context: HasErrorType + HasField<Field, Value = u64>,
+            {
+                type Output = u64;
+                async fn handle(
+                    context: &Context,
+                    _tag: PhantomData<Tag>,
+                    input: u64,
+                ) -> Result<Self::Output, Context::Error> {
+                    Ok(input * context.get_field(PhantomData))
+                }
+            }
+            impl<Context, Tag, Field> IsProviderFor<HandlerComponent, Context, (Tag, u64)>
+            for Multiply<Field>
+            where
+                Context: HasErrorType + HasField<Field, Value = u64>,
+            {}
+            pub struct Multiply<Field>(pub ::core::marker::PhantomData<(Field)>);
+            ")
         }
     }
 
-    #[cgp_new_provider]
-    impl<Context, Tag, Field> Computer<Context, Tag, u64> for Add<Field>
-    where
-        Context: HasField<Field, Value = u64>,
-    {
-        type Output = u64;
+    snapshot_cgp_new_provider! {
+        #[cgp_new_provider]
+        impl<Context, Tag, Field> Computer<Context, Tag, u64> for Add<Field>
+        where
+            Context: HasField<Field, Value = u64>,
+        {
+            type Output = u64;
 
-        fn compute(context: &Context, _tag: PhantomData<Tag>, input: u64) -> u64 {
-            input + context.get_field(PhantomData)
+            fn compute(context: &Context, _tag: PhantomData<Tag>, input: u64) -> u64 {
+                input + context.get_field(PhantomData)
+            }
+        }
+
+        expand_add(output) {
+            insta::assert_snapshot!(output, @"
+            impl<Context, Tag, Field> Computer<Context, Tag, u64> for Add<Field>
+            where
+                Context: HasField<Field, Value = u64>,
+            {
+                type Output = u64;
+                fn compute(context: &Context, _tag: PhantomData<Tag>, input: u64) -> u64 {
+                    input + context.get_field(PhantomData)
+                }
+            }
+            impl<Context, Tag, Field> IsProviderFor<ComputerComponent, Context, (Tag, u64)>
+            for Add<Field>
+            where
+                Context: HasField<Field, Value = u64>,
+            {}
+            pub struct Add<Field>(pub ::core::marker::PhantomData<(Field)>);
+            ")
         }
     }
 

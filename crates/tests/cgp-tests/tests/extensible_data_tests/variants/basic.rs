@@ -12,7 +12,7 @@ use cgp::extra::handler::{
     Computer, ComputerComponent, ComputerRef, ComputerRefComponent, PromoteAsync,
 };
 use cgp::prelude::*;
-use cgp_macro_test_util::snapshot_delegate_components;
+use cgp_macro_test_util::{snapshot_cgp_new_provider, snapshot_delegate_components};
 use futures::executor::block_on;
 
 #[derive(Debug, Eq, PartialEq, CgpData)]
@@ -232,15 +232,41 @@ fn test_dispatch_values_ref() {
     );
 }
 
-#[cgp_new_provider]
-impl<Context, Code, Value> Computer<Context, Code, &Value> for ValueToString
-where
-    Value: Display,
-{
-    type Output = String;
+snapshot_cgp_new_provider! {
+    #[cgp_new_provider]
+    impl<Context, Code, Value> Computer<Context, Code, &Value> for ValueToString
+    where
+        Value: Display,
+    {
+        type Output = String;
 
-    fn compute(_context: &Context, _code: PhantomData<Code>, input: &Value) -> Self::Output {
-        input.to_string()
+        fn compute(_context: &Context, _code: PhantomData<Code>, input: &Value) -> Self::Output {
+            input.to_string()
+        }
+    }
+
+    expand_value_to_string(output) {
+        insta::assert_snapshot!(output, @"
+        impl<Context, Code, Value> Computer<Context, Code, &Value> for ValueToString
+        where
+            Value: Display,
+        {
+            type Output = String;
+            fn compute(
+                _context: &Context,
+                _code: PhantomData<Code>,
+                input: &Value,
+            ) -> Self::Output {
+                input.to_string()
+            }
+        }
+        impl<Context, Code, Value> IsProviderFor<ComputerComponent, Context, (Code, &Value)>
+        for ValueToString
+        where
+            Value: Display,
+        {}
+        pub struct ValueToString;
+        ")
     }
 }
 
