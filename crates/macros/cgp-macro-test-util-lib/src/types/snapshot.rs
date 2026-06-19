@@ -1,9 +1,10 @@
-use cgp_macro_core::functions::pretty_format;
 use proc_macro2::TokenStream;
 use quote::quote;
 use syn::parse::{Parse, ParseStream};
 use syn::spanned::Spanned;
 use syn::{Ident, LitStr, braced, parenthesized};
+
+use crate::functions::pretty_format;
 
 pub struct MacroSnapshot {
     pub test_name: Ident,
