@@ -8,5 +8,5 @@ pub fn snapshot_delegate_components(body: TokenStream) -> syn::Result<TokenStrea
 
     let output = cgp_macro_lib::delegate_components(item.body.clone())?;
 
-    Ok(item.snapshot.wrap_output(output))
+    item.snapshot.wrap_output(output)
 }

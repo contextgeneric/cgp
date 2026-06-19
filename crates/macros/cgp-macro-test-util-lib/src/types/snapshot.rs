@@ -1,7 +1,9 @@
+use cgp_macro_core::functions::pretty_format;
 use proc_macro2::TokenStream;
 use quote::quote;
 use syn::parse::{Parse, ParseStream};
-use syn::{Ident, braced, parenthesized};
+use syn::spanned::Spanned;
+use syn::{Ident, LitStr, braced, parenthesized};
 
 pub struct MacroSnapshot {
     pub test_name: Ident,
@@ -10,25 +12,28 @@ pub struct MacroSnapshot {
 }
 
 impl MacroSnapshot {
-    pub fn wrap_output(&self, output: TokenStream) -> TokenStream {
+    pub fn wrap_output(&self, output: TokenStream) -> syn::Result<TokenStream> {
         let Self {
             test_name,
             arg_ident,
             expr,
         } = self;
 
-        quote! {
+        let output_string = pretty_format(output.clone())?;
+        let output_literal = LitStr::new(&output_string, output.span());
+
+        let out = quote! {
             #output
 
             #[test]
             fn #test_name() {
-                let #arg_ident = cgp_macro_core::functions::pretty_format(quote::quote! {
-                    #output
-                }).unwrap();
+                let #arg_ident = #output_literal;
 
                 #expr
             }
-        }
+        };
+
+        Ok(out)
     }
 }
 

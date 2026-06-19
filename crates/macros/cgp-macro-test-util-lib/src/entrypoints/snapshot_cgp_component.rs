@@ -9,5 +9,5 @@ pub fn snapshot_cgp_component(body: TokenStream) -> syn::Result<TokenStream> {
 
     let output = cgp_macro_lib::cgp_component(item.attr, item.body.to_token_stream())?;
 
-    Ok(item.snapshot.wrap_output(output))
+    item.snapshot.wrap_output(output)
 }
