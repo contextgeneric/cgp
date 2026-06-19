@@ -1,5 +1,4 @@
-use cgp::prelude::*;
-use cgp_macro_test_util::{snapshot_cgp_component, snapshot_cgp_impl};
+use cgp_macro_test_util::{snapshot_cgp_auto_getter, snapshot_cgp_component, snapshot_cgp_impl};
 use insta::assert_snapshot;
 
 snapshot_cgp_component! {
@@ -82,9 +81,35 @@ snapshot_cgp_component! {
     }
 }
 
-#[cgp_auto_getter]
-pub trait HasName {
-    fn name(&self) -> &str;
+snapshot_cgp_auto_getter! {
+    #[cgp_auto_getter]
+    pub trait HasName {
+        fn name(&self) -> &str;
+    }
+
+    expand_has_name(output) {
+        assert_snapshot!(output, @"
+        pub trait HasName {
+            fn name(&self) -> &str;
+        }
+        impl<__Context__> HasName for __Context__
+        where
+            __Context__: HasField<
+                Symbol<4, Chars<'n', Chars<'a', Chars<'m', Chars<'e', Nil>>>>>,
+                Value = String,
+            >,
+        {
+            fn name(&self) -> &str {
+                self.get_field(
+                        ::core::marker::PhantomData::<
+                            Symbol<4, Chars<'n', Chars<'a', Chars<'m', Chars<'e', Nil>>>>>,
+                        >,
+                    )
+                    .as_str()
+            }
+        }
+        ")
+    }
 }
 
 snapshot_cgp_impl! {
