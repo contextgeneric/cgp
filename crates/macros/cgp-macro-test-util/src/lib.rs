@@ -49,3 +49,10 @@ pub fn snapshot_cgp_namespace(body: TokenStream) -> TokenStream {
         .unwrap_or_else(syn::Error::into_compile_error)
         .into()
 }
+
+#[proc_macro]
+pub fn snapshot_cgp_type(body: TokenStream) -> TokenStream {
+    entrypoints::snapshot_cgp_type(body.into())
+        .unwrap_or_else(syn::Error::into_compile_error)
+        .into()
+}

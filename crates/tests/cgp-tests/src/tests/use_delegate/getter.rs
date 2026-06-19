@@ -1,19 +1,187 @@
 use core::marker::PhantomData;
 
 use cgp::prelude::*;
-use cgp_macro_test_util::snapshot_cgp_getter;
+use cgp_macro_test_util::{snapshot_cgp_getter, snapshot_cgp_type};
 
 pub struct UseDelegate2<Components>(pub PhantomData<Components>);
 
-#[cgp_type {
-    provider: FooTypeProviderAt,
-    derive_delegate: [
-        UseDelegate<I>,
-        UseDelegate2<(I, J)>,
-    ],
-}]
-pub trait HasFooTypeAt<I, J> {
-    type Foo;
+snapshot_cgp_type! {
+    #[cgp_type {
+        provider: FooTypeProviderAt,
+        derive_delegate: [
+            UseDelegate<I>,
+            UseDelegate2<(I, J)>,
+        ],
+    }]
+    pub trait HasFooTypeAt<I, J> {
+        type Foo;
+    }
+
+    expand_has_foo_type_at(output) {
+        insta::assert_snapshot!(output, @"
+        pub trait HasFooTypeAt<I, J> {
+            type Foo;
+        }
+        impl<__Context__, I, J> HasFooTypeAt<I, J> for __Context__
+        where
+            __Context__: FooTypeProviderAt<__Context__, I, J>,
+        {
+            type Foo = <__Context__ as FooTypeProviderAt<__Context__, I, J>>::Foo;
+        }
+        pub trait FooTypeProviderAt<
+            __Context__,
+            I,
+            J,
+        >: IsProviderFor<FooTypeProviderAtComponent, __Context__, (I, J)> {
+            type Foo;
+        }
+        impl<__Provider__, __Context__, I, J> FooTypeProviderAt<__Context__, I, J>
+        for __Provider__
+        where
+            __Provider__: DelegateComponent<FooTypeProviderAtComponent>
+                + IsProviderFor<FooTypeProviderAtComponent, __Context__, (I, J)>,
+            <__Provider__ as DelegateComponent<
+                FooTypeProviderAtComponent,
+            >>::Delegate: FooTypeProviderAt<__Context__, I, J>,
+        {
+            type Foo = <<__Provider__ as DelegateComponent<
+                FooTypeProviderAtComponent,
+            >>::Delegate as FooTypeProviderAt<__Context__, I, J>>::Foo;
+        }
+        pub struct FooTypeProviderAtComponent;
+        impl<__Context__, I, J> FooTypeProviderAt<__Context__, I, J> for UseContext
+        where
+            __Context__: HasFooTypeAt<I, J>,
+        {
+            type Foo = <__Context__ as HasFooTypeAt<I, J>>::Foo;
+        }
+        impl<__Context__, I, J> IsProviderFor<FooTypeProviderAtComponent, __Context__, (I, J)>
+        for UseContext
+        where
+            __Context__: HasFooTypeAt<I, J>,
+        {}
+        impl<__Context__, I, J, __Components__, __Path__> FooTypeProviderAt<__Context__, I, J>
+        for RedirectLookup<__Components__, __Path__>
+        where
+            __Path__: ConcatPath<PathCons<I, PathCons<J, Nil>>>,
+            __Components__: DelegateComponent<
+                <__Path__ as ConcatPath<PathCons<I, PathCons<J, Nil>>>>::Output,
+            >,
+            <__Components__ as DelegateComponent<
+                <__Path__ as ConcatPath<PathCons<I, PathCons<J, Nil>>>>::Output,
+            >>::Delegate: FooTypeProviderAt<__Context__, I, J>,
+        {
+            type Foo = <<__Components__ as DelegateComponent<
+                <__Path__ as ConcatPath<PathCons<I, PathCons<J, Nil>>>>::Output,
+            >>::Delegate as FooTypeProviderAt<__Context__, I, J>>::Foo;
+        }
+        impl<
+            __Context__,
+            I,
+            J,
+            __Components__,
+            __Path__,
+        > IsProviderFor<FooTypeProviderAtComponent, __Context__, (I, J)>
+        for RedirectLookup<__Components__, __Path__>
+        where
+            __Path__: ConcatPath<PathCons<I, PathCons<J, Nil>>>,
+            __Components__: DelegateComponent<
+                <__Path__ as ConcatPath<PathCons<I, PathCons<J, Nil>>>>::Output,
+            >,
+            <__Components__ as DelegateComponent<
+                <__Path__ as ConcatPath<PathCons<I, PathCons<J, Nil>>>>::Output,
+            >>::Delegate: IsProviderFor<FooTypeProviderAtComponent, __Context__, (I, J)>
+                + FooTypeProviderAt<__Context__, I, J>,
+        {}
+        impl<
+            __Context__,
+            I,
+            J,
+            __Components__,
+            __Delegate__,
+        > FooTypeProviderAt<__Context__, I, J> for UseDelegate<__Components__>
+        where
+            __Components__: DelegateComponent<(I), Delegate = __Delegate__>,
+            __Delegate__: FooTypeProviderAt<__Context__, I, J>,
+        {
+            type Foo = <__Delegate__ as FooTypeProviderAt<__Context__, I, J>>::Foo;
+        }
+        impl<
+            __Context__,
+            I,
+            J,
+            __Components__,
+            __Delegate__,
+        > IsProviderFor<FooTypeProviderAtComponent, __Context__, (I, J)>
+        for UseDelegate<__Components__>
+        where
+            __Components__: DelegateComponent<(I), Delegate = __Delegate__>,
+            __Delegate__: IsProviderFor<FooTypeProviderAtComponent, __Context__, (I, J)>
+                + FooTypeProviderAt<__Context__, I, J>,
+        {}
+        impl<
+            __Context__,
+            I,
+            J,
+            __Components__,
+            __Delegate__,
+        > FooTypeProviderAt<__Context__, I, J> for UseDelegate2<__Components__>
+        where
+            __Components__: DelegateComponent<(I, J), Delegate = __Delegate__>,
+            __Delegate__: FooTypeProviderAt<__Context__, I, J>,
+        {
+            type Foo = <__Delegate__ as FooTypeProviderAt<__Context__, I, J>>::Foo;
+        }
+        impl<
+            __Context__,
+            I,
+            J,
+            __Components__,
+            __Delegate__,
+        > IsProviderFor<FooTypeProviderAtComponent, __Context__, (I, J)>
+        for UseDelegate2<__Components__>
+        where
+            __Components__: DelegateComponent<(I, J), Delegate = __Delegate__>,
+            __Delegate__: IsProviderFor<FooTypeProviderAtComponent, __Context__, (I, J)>
+                + FooTypeProviderAt<__Context__, I, J>,
+        {}
+        impl<Foo, __Context__, I, J> FooTypeProviderAt<__Context__, I, J> for UseType<Foo>
+        where
+            Foo:,
+        {
+            type Foo = Foo;
+        }
+        impl<
+            Foo,
+            __Context__,
+            I,
+            J,
+        > IsProviderFor<FooTypeProviderAtComponent, __Context__, (I, J)> for UseType<Foo>
+        where
+            Foo:,
+        {}
+        impl<__Provider__, Foo, __Context__, I, J> FooTypeProviderAt<__Context__, I, J>
+        for WithProvider<__Provider__>
+        where
+            __Provider__: TypeProvider<__Context__, FooTypeProviderAtComponent, Type = Foo>,
+            Foo:,
+        {
+            type Foo = Foo;
+        }
+        impl<
+            __Provider__,
+            Foo,
+            __Context__,
+            I,
+            J,
+        > IsProviderFor<FooTypeProviderAtComponent, __Context__, (I, J)>
+        for WithProvider<__Provider__>
+        where
+            __Provider__: TypeProvider<__Context__, FooTypeProviderAtComponent, Type = Foo>,
+            Foo:,
+        {}
+        ")
+    }
 }
 
 snapshot_cgp_getter! {

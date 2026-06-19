@@ -62,6 +62,7 @@ snapshot output is guaranteed to match what the production macros generate.
 | `snapshot_cgp_auto_getter!` | `#[cgp_auto_getter]`  |
 | `snapshot_cgp_getter!`      | `#[cgp_getter]`       |
 | `snapshot_cgp_fn!`          | `#[cgp_fn]`           |
+| `snapshot_cgp_type!`        | `#[cgp_type]`         |
 | `snapshot_delegate_components!` | `delegate_components!` |
 | `snapshot_cgp_namespace!`   | `cgp_namespace!`      |
 
@@ -202,6 +203,31 @@ snapshot_cgp_fn! {
 Both the default form `#[cgp_fn]` and the custom trait name form
 `#[cgp_fn(CanCalculateRectangleArea)]` are accepted, mirroring the real macro.
 
+### `snapshot_cgp_type!`
+
+Wraps `#[cgp_type]` abstract-type traits. The item under test is written exactly
+as you would normally write the `#[cgp_type]` invocation:
+
+```rust
+snapshot_cgp_type! {
+    #[cgp_type]
+    pub trait HasScalarType {
+        type Scalar;
+    }
+
+    expand_has_scalar_type(output) {
+        assert_snapshot!(output, @"...")
+    }
+}
+```
+
+Both the default form `#[cgp_type]` and the custom provider name forms
+`#[cgp_type(ScalarTypeProvider)]` and
+`#[cgp_type { provider: ..., derive_delegate: ... }]` are accepted, mirroring the
+real macro. In addition to the usual `#[cgp_component]` output, the snapshot
+captures the extra `UseType` / `WithProvider` providers that `#[cgp_type]`
+generates.
+
 ### `snapshot_delegate_components!`
 
 Here the *whole* `delegate_components! { ... }` invocation is written verbatim,
@@ -297,8 +323,8 @@ When migrating an existing macro test, two situations come up:
 
 ## Notes / limitations
 
-- Snapshot macros exist only for the seven macros listed above. Other CGP macros
-  (`#[cgp_type]`, `#[cgp_provider]`, `#[cgp_preset]`,
+- Snapshot macros exist only for the eight macros listed above. Other CGP macros
+  (`#[cgp_provider]`, `#[cgp_preset]`,
   `check_components!`, `delegate_and_check_components!`, …) are not (yet)
   snapshot-wrapped and are left as-is.
 - The pretty-printing is done with

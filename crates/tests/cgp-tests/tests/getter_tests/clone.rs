@@ -1,10 +1,111 @@
 mod clone_getter {
     use cgp::prelude::*;
-    use cgp_macro_test_util::{snapshot_cgp_getter, snapshot_delegate_components};
+    use cgp_macro_test_util::{
+        snapshot_cgp_getter, snapshot_cgp_type, snapshot_delegate_components,
+    };
 
-    #[cgp_type]
-    pub trait HasNameType {
-        type Name;
+    snapshot_cgp_type! {
+        #[cgp_type]
+        pub trait HasNameType {
+            type Name;
+        }
+
+        expand_has_name_type(output) {
+            insta::assert_snapshot!(output, @"
+            pub trait HasNameType {
+                type Name;
+            }
+            impl<__Context__> HasNameType for __Context__
+            where
+                __Context__: NameTypeProvider<__Context__>,
+            {
+                type Name = <__Context__ as NameTypeProvider<__Context__>>::Name;
+            }
+            pub trait NameTypeProvider<
+                __Context__,
+            >: IsProviderFor<NameTypeProviderComponent, __Context__, ()> {
+                type Name;
+            }
+            impl<__Provider__, __Context__> NameTypeProvider<__Context__> for __Provider__
+            where
+                __Provider__: DelegateComponent<NameTypeProviderComponent>
+                    + IsProviderFor<NameTypeProviderComponent, __Context__, ()>,
+                <__Provider__ as DelegateComponent<
+                    NameTypeProviderComponent,
+                >>::Delegate: NameTypeProvider<__Context__>,
+            {
+                type Name = <<__Provider__ as DelegateComponent<
+                    NameTypeProviderComponent,
+                >>::Delegate as NameTypeProvider<__Context__>>::Name;
+            }
+            pub struct NameTypeProviderComponent;
+            impl<__Context__> NameTypeProvider<__Context__> for UseContext
+            where
+                __Context__: HasNameType,
+            {
+                type Name = <__Context__ as HasNameType>::Name;
+            }
+            impl<__Context__> IsProviderFor<NameTypeProviderComponent, __Context__, ()>
+            for UseContext
+            where
+                __Context__: HasNameType,
+            {}
+            impl<__Context__, __Components__, __Path__> NameTypeProvider<__Context__>
+            for RedirectLookup<__Components__, __Path__>
+            where
+                __Components__: DelegateComponent<__Path__>,
+                <__Components__ as DelegateComponent<
+                    __Path__,
+                >>::Delegate: NameTypeProvider<__Context__>,
+            {
+                type Name = <<__Components__ as DelegateComponent<
+                    __Path__,
+                >>::Delegate as NameTypeProvider<__Context__>>::Name;
+            }
+            impl<
+                __Context__,
+                __Components__,
+                __Path__,
+            > IsProviderFor<NameTypeProviderComponent, __Context__, ()>
+            for RedirectLookup<__Components__, __Path__>
+            where
+                __Components__: DelegateComponent<__Path__>,
+                <__Components__ as DelegateComponent<
+                    __Path__,
+                >>::Delegate: IsProviderFor<NameTypeProviderComponent, __Context__, ()>
+                    + NameTypeProvider<__Context__>,
+            {}
+            impl<Name, __Context__> NameTypeProvider<__Context__> for UseType<Name>
+            where
+                Name:,
+            {
+                type Name = Name;
+            }
+            impl<Name, __Context__> IsProviderFor<NameTypeProviderComponent, __Context__, ()>
+            for UseType<Name>
+            where
+                Name:,
+            {}
+            impl<__Provider__, Name, __Context__> NameTypeProvider<__Context__>
+            for WithProvider<__Provider__>
+            where
+                __Provider__: TypeProvider<__Context__, NameTypeProviderComponent, Type = Name>,
+                Name:,
+            {
+                type Name = Name;
+            }
+            impl<
+                __Provider__,
+                Name,
+                __Context__,
+            > IsProviderFor<NameTypeProviderComponent, __Context__, ()>
+            for WithProvider<__Provider__>
+            where
+                __Provider__: TypeProvider<__Context__, NameTypeProviderComponent, Type = Name>,
+                Name:,
+            {}
+            ")
+        }
     }
 
     snapshot_cgp_getter! {
@@ -211,11 +312,112 @@ mod clone_getter {
 
 mod clone_auto_getter {
     use cgp::prelude::*;
-    use cgp_macro_test_util::{snapshot_cgp_auto_getter, snapshot_delegate_components};
+    use cgp_macro_test_util::{
+        snapshot_cgp_auto_getter, snapshot_cgp_type, snapshot_delegate_components,
+    };
 
-    #[cgp_type]
-    pub trait HasNameType {
-        type Name;
+    snapshot_cgp_type! {
+        #[cgp_type]
+        pub trait HasNameType {
+            type Name;
+        }
+
+        expand_has_name_type(output) {
+            insta::assert_snapshot!(output, @"
+            pub trait HasNameType {
+                type Name;
+            }
+            impl<__Context__> HasNameType for __Context__
+            where
+                __Context__: NameTypeProvider<__Context__>,
+            {
+                type Name = <__Context__ as NameTypeProvider<__Context__>>::Name;
+            }
+            pub trait NameTypeProvider<
+                __Context__,
+            >: IsProviderFor<NameTypeProviderComponent, __Context__, ()> {
+                type Name;
+            }
+            impl<__Provider__, __Context__> NameTypeProvider<__Context__> for __Provider__
+            where
+                __Provider__: DelegateComponent<NameTypeProviderComponent>
+                    + IsProviderFor<NameTypeProviderComponent, __Context__, ()>,
+                <__Provider__ as DelegateComponent<
+                    NameTypeProviderComponent,
+                >>::Delegate: NameTypeProvider<__Context__>,
+            {
+                type Name = <<__Provider__ as DelegateComponent<
+                    NameTypeProviderComponent,
+                >>::Delegate as NameTypeProvider<__Context__>>::Name;
+            }
+            pub struct NameTypeProviderComponent;
+            impl<__Context__> NameTypeProvider<__Context__> for UseContext
+            where
+                __Context__: HasNameType,
+            {
+                type Name = <__Context__ as HasNameType>::Name;
+            }
+            impl<__Context__> IsProviderFor<NameTypeProviderComponent, __Context__, ()>
+            for UseContext
+            where
+                __Context__: HasNameType,
+            {}
+            impl<__Context__, __Components__, __Path__> NameTypeProvider<__Context__>
+            for RedirectLookup<__Components__, __Path__>
+            where
+                __Components__: DelegateComponent<__Path__>,
+                <__Components__ as DelegateComponent<
+                    __Path__,
+                >>::Delegate: NameTypeProvider<__Context__>,
+            {
+                type Name = <<__Components__ as DelegateComponent<
+                    __Path__,
+                >>::Delegate as NameTypeProvider<__Context__>>::Name;
+            }
+            impl<
+                __Context__,
+                __Components__,
+                __Path__,
+            > IsProviderFor<NameTypeProviderComponent, __Context__, ()>
+            for RedirectLookup<__Components__, __Path__>
+            where
+                __Components__: DelegateComponent<__Path__>,
+                <__Components__ as DelegateComponent<
+                    __Path__,
+                >>::Delegate: IsProviderFor<NameTypeProviderComponent, __Context__, ()>
+                    + NameTypeProvider<__Context__>,
+            {}
+            impl<Name, __Context__> NameTypeProvider<__Context__> for UseType<Name>
+            where
+                Name:,
+            {
+                type Name = Name;
+            }
+            impl<Name, __Context__> IsProviderFor<NameTypeProviderComponent, __Context__, ()>
+            for UseType<Name>
+            where
+                Name:,
+            {}
+            impl<__Provider__, Name, __Context__> NameTypeProvider<__Context__>
+            for WithProvider<__Provider__>
+            where
+                __Provider__: TypeProvider<__Context__, NameTypeProviderComponent, Type = Name>,
+                Name:,
+            {
+                type Name = Name;
+            }
+            impl<
+                __Provider__,
+                Name,
+                __Context__,
+            > IsProviderFor<NameTypeProviderComponent, __Context__, ()>
+            for WithProvider<__Provider__>
+            where
+                __Provider__: TypeProvider<__Context__, NameTypeProviderComponent, Type = Name>,
+                Name:,
+            {}
+            ")
+        }
     }
 
     snapshot_cgp_auto_getter! {

@@ -1,16 +1,210 @@
 use core::marker::PhantomData;
 
 use cgp::prelude::*;
-use cgp_macro_test_util::snapshot_cgp_getter;
+use cgp_macro_test_util::{snapshot_cgp_getter, snapshot_cgp_type};
 
-#[cgp_type]
-pub trait HasFooType {
-    type Foo;
+snapshot_cgp_type! {
+    #[cgp_type]
+    pub trait HasFooType {
+        type Foo;
+    }
+
+    expand_has_foo_type(output) {
+        insta::assert_snapshot!(output, @"
+        pub trait HasFooType {
+            type Foo;
+        }
+        impl<__Context__> HasFooType for __Context__
+        where
+            __Context__: FooTypeProvider<__Context__>,
+        {
+            type Foo = <__Context__ as FooTypeProvider<__Context__>>::Foo;
+        }
+        pub trait FooTypeProvider<
+            __Context__,
+        >: IsProviderFor<FooTypeProviderComponent, __Context__, ()> {
+            type Foo;
+        }
+        impl<__Provider__, __Context__> FooTypeProvider<__Context__> for __Provider__
+        where
+            __Provider__: DelegateComponent<FooTypeProviderComponent>
+                + IsProviderFor<FooTypeProviderComponent, __Context__, ()>,
+            <__Provider__ as DelegateComponent<
+                FooTypeProviderComponent,
+            >>::Delegate: FooTypeProvider<__Context__>,
+        {
+            type Foo = <<__Provider__ as DelegateComponent<
+                FooTypeProviderComponent,
+            >>::Delegate as FooTypeProvider<__Context__>>::Foo;
+        }
+        pub struct FooTypeProviderComponent;
+        impl<__Context__> FooTypeProvider<__Context__> for UseContext
+        where
+            __Context__: HasFooType,
+        {
+            type Foo = <__Context__ as HasFooType>::Foo;
+        }
+        impl<__Context__> IsProviderFor<FooTypeProviderComponent, __Context__, ()> for UseContext
+        where
+            __Context__: HasFooType,
+        {}
+        impl<__Context__, __Components__, __Path__> FooTypeProvider<__Context__>
+        for RedirectLookup<__Components__, __Path__>
+        where
+            __Components__: DelegateComponent<__Path__>,
+            <__Components__ as DelegateComponent<
+                __Path__,
+            >>::Delegate: FooTypeProvider<__Context__>,
+        {
+            type Foo = <<__Components__ as DelegateComponent<
+                __Path__,
+            >>::Delegate as FooTypeProvider<__Context__>>::Foo;
+        }
+        impl<
+            __Context__,
+            __Components__,
+            __Path__,
+        > IsProviderFor<FooTypeProviderComponent, __Context__, ()>
+        for RedirectLookup<__Components__, __Path__>
+        where
+            __Components__: DelegateComponent<__Path__>,
+            <__Components__ as DelegateComponent<
+                __Path__,
+            >>::Delegate: IsProviderFor<FooTypeProviderComponent, __Context__, ()>
+                + FooTypeProvider<__Context__>,
+        {}
+        impl<Foo, __Context__> FooTypeProvider<__Context__> for UseType<Foo>
+        where
+            Foo:,
+        {
+            type Foo = Foo;
+        }
+        impl<Foo, __Context__> IsProviderFor<FooTypeProviderComponent, __Context__, ()>
+        for UseType<Foo>
+        where
+            Foo:,
+        {}
+        impl<__Provider__, Foo, __Context__> FooTypeProvider<__Context__>
+        for WithProvider<__Provider__>
+        where
+            __Provider__: TypeProvider<__Context__, FooTypeProviderComponent, Type = Foo>,
+            Foo:,
+        {
+            type Foo = Foo;
+        }
+        impl<
+            __Provider__,
+            Foo,
+            __Context__,
+        > IsProviderFor<FooTypeProviderComponent, __Context__, ()> for WithProvider<__Provider__>
+        where
+            __Provider__: TypeProvider<__Context__, FooTypeProviderComponent, Type = Foo>,
+            Foo:,
+        {}
+        ")
+    }
 }
 
-#[cgp_type]
-pub trait HasBarType {
-    type Bar;
+snapshot_cgp_type! {
+    #[cgp_type]
+    pub trait HasBarType {
+        type Bar;
+    }
+
+    expand_has_bar_type(output) {
+        insta::assert_snapshot!(output, @"
+        pub trait HasBarType {
+            type Bar;
+        }
+        impl<__Context__> HasBarType for __Context__
+        where
+            __Context__: BarTypeProvider<__Context__>,
+        {
+            type Bar = <__Context__ as BarTypeProvider<__Context__>>::Bar;
+        }
+        pub trait BarTypeProvider<
+            __Context__,
+        >: IsProviderFor<BarTypeProviderComponent, __Context__, ()> {
+            type Bar;
+        }
+        impl<__Provider__, __Context__> BarTypeProvider<__Context__> for __Provider__
+        where
+            __Provider__: DelegateComponent<BarTypeProviderComponent>
+                + IsProviderFor<BarTypeProviderComponent, __Context__, ()>,
+            <__Provider__ as DelegateComponent<
+                BarTypeProviderComponent,
+            >>::Delegate: BarTypeProvider<__Context__>,
+        {
+            type Bar = <<__Provider__ as DelegateComponent<
+                BarTypeProviderComponent,
+            >>::Delegate as BarTypeProvider<__Context__>>::Bar;
+        }
+        pub struct BarTypeProviderComponent;
+        impl<__Context__> BarTypeProvider<__Context__> for UseContext
+        where
+            __Context__: HasBarType,
+        {
+            type Bar = <__Context__ as HasBarType>::Bar;
+        }
+        impl<__Context__> IsProviderFor<BarTypeProviderComponent, __Context__, ()> for UseContext
+        where
+            __Context__: HasBarType,
+        {}
+        impl<__Context__, __Components__, __Path__> BarTypeProvider<__Context__>
+        for RedirectLookup<__Components__, __Path__>
+        where
+            __Components__: DelegateComponent<__Path__>,
+            <__Components__ as DelegateComponent<
+                __Path__,
+            >>::Delegate: BarTypeProvider<__Context__>,
+        {
+            type Bar = <<__Components__ as DelegateComponent<
+                __Path__,
+            >>::Delegate as BarTypeProvider<__Context__>>::Bar;
+        }
+        impl<
+            __Context__,
+            __Components__,
+            __Path__,
+        > IsProviderFor<BarTypeProviderComponent, __Context__, ()>
+        for RedirectLookup<__Components__, __Path__>
+        where
+            __Components__: DelegateComponent<__Path__>,
+            <__Components__ as DelegateComponent<
+                __Path__,
+            >>::Delegate: IsProviderFor<BarTypeProviderComponent, __Context__, ()>
+                + BarTypeProvider<__Context__>,
+        {}
+        impl<Bar, __Context__> BarTypeProvider<__Context__> for UseType<Bar>
+        where
+            Bar:,
+        {
+            type Bar = Bar;
+        }
+        impl<Bar, __Context__> IsProviderFor<BarTypeProviderComponent, __Context__, ()>
+        for UseType<Bar>
+        where
+            Bar:,
+        {}
+        impl<__Provider__, Bar, __Context__> BarTypeProvider<__Context__>
+        for WithProvider<__Provider__>
+        where
+            __Provider__: TypeProvider<__Context__, BarTypeProviderComponent, Type = Bar>,
+            Bar:,
+        {
+            type Bar = Bar;
+        }
+        impl<
+            __Provider__,
+            Bar,
+            __Context__,
+        > IsProviderFor<BarTypeProviderComponent, __Context__, ()> for WithProvider<__Provider__>
+        where
+            __Provider__: TypeProvider<__Context__, BarTypeProviderComponent, Type = Bar>,
+            Bar:,
+        {}
+        ")
+    }
 }
 
 snapshot_cgp_getter! {
