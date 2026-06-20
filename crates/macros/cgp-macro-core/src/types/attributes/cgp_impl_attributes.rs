@@ -7,7 +7,7 @@ use crate::types::attributes::{
     DefaultImplAttribute, DefaultImplAttributes, UseProviderAttribute, UseProviderAttributes,
     UseTypeAttribute, UseTypeAttributes, UsesAttributes,
 };
-use crate::types::ident::IdentWithTypeArgs;
+use crate::types::ident::PathWithTypeArgs;
 
 #[derive(Default)]
 pub struct CgpImplAttributes {
@@ -27,7 +27,7 @@ impl CgpImplAttributes {
                 match ident.to_string().as_ref() {
                     "uses" => {
                         let uses = attribute.parse_args_with(
-                            Punctuated::<IdentWithTypeArgs, Comma>::parse_terminated,
+                            Punctuated::<PathWithTypeArgs, Comma>::parse_terminated,
                         )?;
 
                         parsed_attributes.uses.imports.extend(uses);

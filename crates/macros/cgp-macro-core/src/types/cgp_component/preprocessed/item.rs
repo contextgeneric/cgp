@@ -15,7 +15,7 @@ impl PreprocessedCgpComponent {
         let component_name = &self.args.component_name;
         EmptyStruct {
             ident: component_name.ident.clone(),
-            generics: component_name.type_generics.generics.clone(),
+            generics: component_name.type_generics.to_generics(),
         }
     }
 

@@ -2,7 +2,7 @@ use syn::{Generics, Ident, Type};
 
 use crate::parse_internal;
 use crate::types::delegate_component::{EvalDelegateEntry, EvaluatedDelegateEntry};
-use crate::types::ident::IdentWithTypeArgs;
+use crate::types::ident::{PathWithTypeArgs, TypeArg};
 
 pub trait EvalForEntries {
     fn eval_for_entries(&self, table_type: &Type) -> syn::Result<Vec<EvaluatedForEntry>>;
@@ -17,7 +17,7 @@ pub struct EvaluatedForEntry {
     pub table_type: Type,
     pub for_key: Ident,
     pub for_value: Ident,
-    pub namespace: IdentWithTypeArgs,
+    pub namespace: PathWithTypeArgs,
     pub mapping_key: Type,
     pub mapping_value: Type,
 }
@@ -47,17 +47,21 @@ impl EvalDelegateEntry for EvaluatedForEntry {
         let table_type = &self.table_type;
 
         let namespace_trait: Type = {
-            let namespace_ident = &self.namespace.ident;
-            let mut namespace_generics = self.namespace.type_args.clone();
-            let namespace_generic_args = &mut namespace_generics.make_args();
+            // The namespace argument list is extended with the table type and a
+            // `Delegate = ..` associated binding. The binding cannot live inside
+            // a `TypeArgs` (which faithfully rejects associated bindings), so the
+            // trait bound is reconstructed directly from the parsed path and its
+            // existing arguments.
+            let namespace_path = &self.namespace.path;
 
-            namespace_generic_args.push(parse_internal!(#table_type));
+            let existing_args: Vec<&TypeArg> = match &self.namespace.type_args.args {
+                Some(args) => args.iter().collect(),
+                None => Vec::new(),
+            };
 
-            namespace_generic_args.push(parse_internal! {
-                Delegate = #mapping_value
-            });
-
-            parse_internal!( #namespace_ident #namespace_generics )
+            parse_internal! {
+                #namespace_path < #( #existing_args, )* #table_type, Delegate = #mapping_value >
+            }
         };
 
         let mut generics = self.generics.clone();

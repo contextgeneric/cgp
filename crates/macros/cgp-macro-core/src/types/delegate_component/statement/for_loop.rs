@@ -8,7 +8,7 @@ use crate::types::delegate_component::{
     EvaluatedDelegateEntry, EvaluatedForEntry, NormalDelegateMapping,
     eval_delegate_entries_via_for,
 };
-use crate::types::ident::IdentWithTypeArgs;
+use crate::types::ident::PathWithTypeArgs;
 
 #[derive(Debug, Clone)]
 pub struct ForDelegateStatement {
@@ -19,7 +19,7 @@ pub struct ForDelegateStatement {
     pub value: Ident,
     pub gt: Gt,
     pub in_token: In,
-    pub namespace: IdentWithTypeArgs,
+    pub namespace: PathWithTypeArgs,
     pub where_clause: Option<WhereClause>,
     pub mappings: Punctuated<NormalDelegateMapping, Comma>,
 }

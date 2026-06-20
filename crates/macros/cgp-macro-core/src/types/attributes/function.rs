@@ -5,13 +5,13 @@ use syn::{Attribute, GenericParam, TypeParamBound, WherePredicate};
 use crate::types::attributes::{
     UseProviderAttribute, UseProviderAttributes, UseTypeAttribute, UseTypeAttributes,
 };
-use crate::types::ident::IdentWithTypeArgs;
+use crate::types::ident::PathWithTypeArgs;
 
 #[derive(Default)]
 pub struct FunctionAttributes {
     pub extend: Vec<TypeParamBound>,
     pub extend_where: Vec<WherePredicate>,
-    pub uses: Vec<IdentWithTypeArgs>,
+    pub uses: Vec<PathWithTypeArgs>,
     pub use_type: UseTypeAttributes,
     pub use_provider: UseProviderAttributes,
     pub impl_generics: Vec<GenericParam>,
@@ -35,9 +35,8 @@ impl FunctionAttributes {
 
                     parsed_attributes.extend_where.extend(where_predicates);
                 } else if ident == "uses" {
-                    let uses = attribute.parse_args_with(
-                        Punctuated::<IdentWithTypeArgs, Comma>::parse_terminated,
-                    )?;
+                    let uses = attribute
+                        .parse_args_with(Punctuated::<PathWithTypeArgs, Comma>::parse_terminated)?;
 
                     parsed_attributes.uses.extend(uses);
                 } else if ident == "use_type" {

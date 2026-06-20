@@ -3,9 +3,9 @@ use quote::{ToTokens, quote};
 use syn::punctuated::Punctuated;
 use syn::spanned::Spanned;
 use syn::token::Comma;
-use syn::{Error, GenericArgument, Lifetime, Type};
+use syn::{Error, Lifetime, Type};
 
-use crate::types::generics::GenericArguments;
+use crate::types::ident::{TypeArg, TypeArgs};
 
 pub struct ProviderImplArgs {
     pub context_type: Type,
@@ -18,27 +18,27 @@ pub enum ProviderImplArg {
 }
 
 impl ProviderImplArgs {
-    pub fn from_generic_args(generic_args: &GenericArguments) -> syn::Result<Self> {
+    pub fn from_generic_args(generic_args: &TypeArgs) -> syn::Result<Self> {
         let mut impl_args: Punctuated<ProviderImplArg, Comma> = Punctuated::new();
         let mut context_type: Option<Type> = None;
 
         if let Some(args) = &generic_args.args {
-            for arg in &args.args {
+            for arg in args {
                 match arg {
-                    GenericArgument::Lifetime(life) => {
+                    TypeArg::Lifetime(life) => {
                         impl_args.push(ProviderImplArg::Life(life.clone()));
                     }
-                    GenericArgument::Type(ty) => {
+                    TypeArg::Type(ty) => {
                         if context_type.is_none() {
                             context_type = Some(ty.clone());
                         } else {
                             impl_args.push(ProviderImplArg::Type(ty.clone()));
                         }
                     }
-                    _ => {
+                    TypeArg::Const(expr) => {
                         return Err(Error::new(
-                            arg.span(),
-                            format!("unsupported type argument: {:?}", arg),
+                            expr.span(),
+                            "const arguments are not supported in provider impl trait arguments",
                         ));
                     }
                 }

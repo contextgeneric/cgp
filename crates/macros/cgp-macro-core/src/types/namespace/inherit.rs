@@ -2,11 +2,11 @@ use syn::{Generics, Ident, Type};
 
 use crate::parse_internal;
 use crate::types::delegate_component::{EvalForEntry, EvaluatedForEntry};
-use crate::types::ident::IdentWithTypeArgs;
+use crate::types::ident::PathWithTypeArgs;
 
 #[derive(Debug, Clone)]
 pub struct InheritNamespaceStatement {
-    pub namespace: IdentWithTypeArgs,
+    pub namespace: PathWithTypeArgs,
     pub local_table_ident: Ident,
 }
 

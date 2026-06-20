@@ -9,7 +9,7 @@ use syn::{Error, ItemImpl, Path, Type};
 use crate::exports::IsProviderFor;
 use crate::functions::parse_internal;
 use crate::types::cgp_provider::ProviderImplArgs;
-use crate::types::ident::IdentWithTypeArgs;
+use crate::types::ident::PathWithTypeArgs;
 use crate::visitors::replace_provider_in_generics;
 
 pub fn derive_is_provider_for(
@@ -59,12 +59,11 @@ impl ItemProviderImpl {
             Error::new(item_impl.span(), "provider impl should contain trait path")
         })?;
 
-        let IdentWithTypeArgs {
-            ident: provider_ident,
-            type_args: provider_generics,
-        } = parse_internal(provider_path.to_token_stream())?;
+        let provider: PathWithTypeArgs = parse_internal(provider_path.to_token_stream())?;
+        let provider_ident = provider.ident().clone();
+        let provider_generics = &provider.type_args;
 
-        let impl_args = ProviderImplArgs::from_generic_args(&provider_generics)?;
+        let impl_args = ProviderImplArgs::from_generic_args(provider_generics)?;
         let context_type = &impl_args.context_type;
 
         let is_provider_path: Path =

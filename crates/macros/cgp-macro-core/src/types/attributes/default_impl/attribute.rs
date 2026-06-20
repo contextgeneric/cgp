@@ -3,13 +3,13 @@ use syn::token::In;
 use syn::{Generics, ItemImpl, Type};
 
 use crate::parse_internal;
-use crate::types::ident::IdentWithTypeArgs;
+use crate::types::ident::PathWithTypeArgs;
 use crate::types::path::UniPathOrType;
 
 pub struct DefaultImplAttribute {
     pub key_type: UniPathOrType,
     pub in_token: In,
-    pub namespace: IdentWithTypeArgs,
+    pub namespace: PathWithTypeArgs,
 }
 
 impl DefaultImplAttribute {

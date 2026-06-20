@@ -8,7 +8,7 @@ use crate::types::delegate_component::{
     DelegateEntries, EvalDelegateEntries, EvalDelegateEntry, EvalForEntry,
 };
 use crate::types::generics::ImplGenerics;
-use crate::types::ident::{IdentWithTypeArgs, IdentWithTypeGenerics};
+use crate::types::ident::{NewIdentWithTypeGenerics, PathWithTypeArgs};
 use crate::types::keyword::Keyword;
 use crate::types::keywords::New;
 use crate::types::namespace::{EvaluatedNamespaceTable, InheritNamespaceStatement};
@@ -16,8 +16,8 @@ use crate::types::namespace::{EvaluatedNamespaceTable, InheritNamespaceStatement
 pub struct NamespaceTable {
     pub impl_generics: ImplGenerics,
     pub new: Option<Keyword<New>>,
-    pub namespace: IdentWithTypeGenerics,
-    pub parent_namespace: Option<(Colon, IdentWithTypeArgs)>,
+    pub namespace: NewIdentWithTypeGenerics,
+    pub parent_namespace: Option<(Colon, PathWithTypeArgs)>,
     pub entries: DelegateEntries,
 }
 
@@ -57,7 +57,9 @@ impl NamespaceTable {
     pub fn build_namespace_trait(&self) -> syn::Result<Type> {
         let namespace_ident = &self.namespace.ident;
         let mut namespace_generics = self.namespace.type_generics.clone();
-        namespace_generics.params.push(parse_internal!(__Table__));
+        namespace_generics
+            .make_params()
+            .push(parse_internal!(__Table__));
 
         let namespace_trait: Type = parse_internal!( #namespace_ident #namespace_generics );
         Ok(namespace_trait)
@@ -109,7 +111,7 @@ impl NamespaceTable {
 
         if self.new.is_none() {
             return Err(Error::new(
-                parent_namespace.ident.span(),
+                parent_namespace.ident().span(),
                 "parent namespace can only be specified with `new` namespaces",
             ));
         }

@@ -8,7 +8,7 @@ use syn::{Error, Ident, ImplItem, ItemImpl, Type};
 use crate::functions::{parse_internal, to_snake_case_ident};
 use crate::types::cgp_impl::{CgpProviderOrBareImpl, ImplArgs};
 use crate::types::cgp_provider::{ItemCgpProvider, ProviderArgs};
-use crate::types::ident::IdentWithTypeArgs;
+use crate::types::ident::PathWithTypeArgs;
 use crate::visitors::{
     ReplaceSelfReceiverVisitor, ReplaceSelfTypeVisitor, ReplaceSelfValueVisitor,
 };
@@ -17,7 +17,7 @@ pub struct LoweredCgpImpl {
     pub args: ImplArgs,
     pub item_impl: ItemImpl,
     pub context_type: Type,
-    pub provider_trait_path: IdentWithTypeArgs,
+    pub provider_trait_path: PathWithTypeArgs,
     pub default_impls: Vec<ItemImpl>,
 }
 

@@ -4,11 +4,11 @@ use syn::token::Plus;
 
 use crate::parse_internal;
 use crate::traits::ToTypeParamBounds;
-use crate::types::ident::IdentWithTypeArgs;
+use crate::types::ident::PathWithTypeArgs;
 
 #[derive(Default)]
 pub struct UsesAttributes {
-    pub imports: Vec<IdentWithTypeArgs>,
+    pub imports: Vec<PathWithTypeArgs>,
 }
 
 impl ToTypeParamBounds for UsesAttributes {
