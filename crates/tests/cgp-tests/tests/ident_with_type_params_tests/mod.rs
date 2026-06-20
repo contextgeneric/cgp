@@ -11,8 +11,6 @@
 
 pub mod new_ident_with_type_args;
 pub mod new_ident_with_type_generics;
-pub mod old_constructs;
-pub mod old_vs_new;
 pub mod path_with_type_args;
 
 use proc_macro2::TokenStream;
