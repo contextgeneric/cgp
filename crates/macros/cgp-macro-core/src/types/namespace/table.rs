@@ -8,7 +8,7 @@ use crate::types::delegate_component::{
     DelegateEntries, EvalDelegateEntries, EvalDelegateEntry, EvalForEntry,
 };
 use crate::types::generics::ImplGenerics;
-use crate::types::ident::{NewIdentWithTypeGenerics, PathWithTypeArgs};
+use crate::types::ident::{IdentWithTypeGenerics, PathWithTypeArgs};
 use crate::types::keyword::Keyword;
 use crate::types::keywords::New;
 use crate::types::namespace::{EvaluatedNamespaceTable, InheritNamespaceStatement};
@@ -16,7 +16,7 @@ use crate::types::namespace::{EvaluatedNamespaceTable, InheritNamespaceStatement
 pub struct NamespaceTable {
     pub impl_generics: ImplGenerics,
     pub new: Option<Keyword<New>>,
-    pub namespace: NewIdentWithTypeGenerics,
+    pub namespace: IdentWithTypeGenerics,
     pub parent_namespace: Option<(Colon, PathWithTypeArgs)>,
     pub entries: DelegateEntries,
 }

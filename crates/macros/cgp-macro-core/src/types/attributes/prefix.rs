@@ -4,7 +4,7 @@ use syn::token::In;
 
 use crate::exports::RedirectLookup;
 use crate::functions::parse_internal;
-use crate::types::ident::{NewIdentWithTypeGenerics, PathWithTypeArgs};
+use crate::types::ident::{IdentWithTypeGenerics, PathWithTypeArgs};
 use crate::types::path::UniPath;
 
 #[derive(Clone)]
@@ -17,7 +17,7 @@ pub struct PrefixAttribute {
 impl PrefixAttribute {
     pub fn to_namespace_impl(
         &self,
-        component_name: &NewIdentWithTypeGenerics,
+        component_name: &IdentWithTypeGenerics,
     ) -> syn::Result<ItemImpl> {
         let mut namespace = self.namespace.clone();
         namespace

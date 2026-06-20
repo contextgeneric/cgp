@@ -4,13 +4,13 @@ use syn::{Error, Ident};
 
 use crate::types::attributes::DeriveDelegateAttributes;
 use crate::types::cgp_component::CgpComponentRawArgs;
-use crate::types::ident::NewIdentWithTypeGenerics;
+use crate::types::ident::IdentWithTypeGenerics;
 
 #[derive(Clone)]
 pub struct CgpComponentArgs {
     pub context_ident: Ident,
     pub provider_ident: Ident,
-    pub component_name: NewIdentWithTypeGenerics,
+    pub component_name: IdentWithTypeGenerics,
     pub derive_delegate_attributes: DeriveDelegateAttributes,
 }
 
@@ -35,7 +35,7 @@ impl TryFrom<CgpComponentRawArgs> for CgpComponentArgs {
             .unwrap_or_else(|| Ident::new("__Context__", Span::call_site()));
 
         let component_name = raw_args.component_name.unwrap_or_else(|| {
-            NewIdentWithTypeGenerics::from(Ident::new(
+            IdentWithTypeGenerics::from(Ident::new(
                 &format!("{provider_ident}Component"),
                 Span::call_site(),
             ))

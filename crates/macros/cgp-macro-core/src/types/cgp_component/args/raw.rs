@@ -3,13 +3,13 @@ use syn::token::{Colon, Comma};
 use syn::{Error, Ident};
 
 use crate::types::attributes::DeriveDelegateAttributes;
-use crate::types::ident::NewIdentWithTypeGenerics;
+use crate::types::ident::IdentWithTypeGenerics;
 
 #[derive(Default)]
 pub struct CgpComponentRawArgs {
     pub context_ident: Option<Ident>,
     pub provider_ident: Option<Ident>,
-    pub component_name: Option<NewIdentWithTypeGenerics>,
+    pub component_name: Option<IdentWithTypeGenerics>,
     pub derive_delegate_attributes: Option<DeriveDelegateAttributes>,
 }
 

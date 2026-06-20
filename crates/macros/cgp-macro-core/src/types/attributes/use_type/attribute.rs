@@ -4,7 +4,7 @@ use syn::{Ident, Type, braced};
 
 use crate::parse_internal;
 use crate::types::attributes::UseTypeIdent;
-use crate::types::ident::{NewIdentWithTypeArgs, PathWithTypeArgs};
+use crate::types::ident::{IdentWithTypeArgs, PathWithTypeArgs};
 
 #[derive(Clone)]
 pub struct UseTypeAttribute {
@@ -37,7 +37,7 @@ impl Parse for UseTypeAttribute {
             // The context type is followed by a `::`-separated trait path, so it
             // must parse only a single identifier head; a full path parser would
             // greedily consume the trailing `::Trait::Type`.
-            let context_type: Type = input.parse::<NewIdentWithTypeArgs>()?.into();
+            let context_type: Type = input.parse::<IdentWithTypeArgs>()?.into();
 
             let _: Colon = input.parse()?;
             let _: Colon = input.parse()?;

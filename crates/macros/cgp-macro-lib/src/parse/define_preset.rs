@@ -1,4 +1,4 @@
-use cgp_macro_core::types::ident::NewIdentWithTypeArgs;
+use cgp_macro_core::types::ident::IdentWithTypeArgs;
 use proc_macro2::TokenStream;
 use quote::ToTokens;
 use syn::parse::{Parse, ParseStream};
@@ -17,7 +17,7 @@ pub struct DefinePreset {
 
 pub struct DelegatePresetEntry {
     pub is_override: Option<Override>,
-    pub entry: DelegateEntry<NewIdentWithTypeArgs>,
+    pub entry: DelegateEntry<IdentWithTypeArgs>,
 }
 
 impl Parse for DefinePreset {
@@ -82,7 +82,7 @@ impl Parse for DelegatePresetEntry {
 #[derive(Clone)]
 pub struct PresetParent {
     pub has_expanded: Option<At>,
-    pub parent_type: NewIdentWithTypeArgs,
+    pub parent_type: IdentWithTypeArgs,
 }
 
 impl Parse for PresetParent {

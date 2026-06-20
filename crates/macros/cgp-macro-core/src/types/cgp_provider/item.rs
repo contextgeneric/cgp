@@ -5,7 +5,7 @@ use syn::{Error, Ident, ItemImpl, Type};
 use crate::functions::parse_internal;
 use crate::types::cgp_provider::{LoweredCgpProvider, ProviderArgs};
 use crate::types::empty_struct::EmptyStruct;
-use crate::types::ident::{NewIdentWithTypeGenerics, PathWithTypeArgs};
+use crate::types::ident::{IdentWithTypeGenerics, PathWithTypeArgs};
 use crate::types::provider_impl::ItemProviderImpl;
 
 pub struct ItemCgpProvider {
@@ -57,7 +57,7 @@ impl ItemCgpProvider {
 
         let impl_self_type = &provider_impl.self_ty;
 
-        let provider_type: NewIdentWithTypeGenerics = parse_internal!( #impl_self_type );
+        let provider_type: IdentWithTypeGenerics = parse_internal!( #impl_self_type );
 
         let provider_struct = EmptyStruct {
             ident: provider_type.ident.clone(),

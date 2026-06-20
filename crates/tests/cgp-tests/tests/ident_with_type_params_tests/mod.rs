@@ -2,8 +2,8 @@
 //! constructs in `cgp-macro-core`.
 //!
 //! These cover both the original constructs (`IdentWithTypeArgs`,
-//! `IdentWithTypeGenerics`) and the new ones (`NewIdentWithTypeArgs`,
-//! `NewIdentWithTypeGenerics`, `PathWithTypeArgs`), including a side-by-side
+//! `IdentWithTypeGenerics`) and the new ones (`IdentWithTypeArgs`,
+//! `IdentWithTypeGenerics`, `PathWithTypeArgs`), including a side-by-side
 //! comparison that documents exactly where their behaviors diverge.
 //!
 //! See `crates/macros/cgp-macro-core/src/types/ident/README.md` for the prose

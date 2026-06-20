@@ -1,13 +1,13 @@
-//! Corner cases for `NewIdentWithTypeArgs` — an identifier followed by an
+//! Corner cases for `IdentWithTypeArgs` — an identifier followed by an
 //! optional *type-expression* argument list, e.g. `Foo<A, B>`.
 
-use cgp_macro_core::types::ident::{NewIdentWithTypeArgs, TypeArg};
+use cgp_macro_core::types::ident::{IdentWithTypeArgs, TypeArg};
 use quote::quote;
 use syn::parse2;
 
 use super::{assert_idempotent, assert_parses, assert_rejects};
 
-type Subject = NewIdentWithTypeArgs;
+type Subject = IdentWithTypeArgs;
 
 #[test]
 fn accepts_bare_ident() {

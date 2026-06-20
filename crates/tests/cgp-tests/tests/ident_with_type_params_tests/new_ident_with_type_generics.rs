@@ -1,14 +1,14 @@
-//! Corner cases for `NewIdentWithTypeGenerics` — an identifier followed by an
+//! Corner cases for `IdentWithTypeGenerics` — an identifier followed by an
 //! optional *definition-site* generic parameter list, e.g. `Foo<A, B>` or
 //! `Bar<'a, C>`.
 
-use cgp_macro_core::types::ident::{NewIdentWithTypeGenerics, TypeGenericParam};
+use cgp_macro_core::types::ident::{IdentWithTypeGenerics, TypeGenericParam};
 use quote::quote;
 use syn::parse2;
 
 use super::{assert_idempotent, assert_parses, assert_rejects};
 
-type Subject = NewIdentWithTypeGenerics;
+type Subject = IdentWithTypeGenerics;
 
 #[test]
 fn accepts_bare_ident() {

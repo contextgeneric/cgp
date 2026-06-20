@@ -8,7 +8,7 @@ use crate::traits::ParseOptionalKeyword;
 use crate::types::delegate_component::{DelegateEntries, ExtractInnerDelegateTables};
 use crate::types::empty_struct::EmptyStruct;
 use crate::types::generics::ImplGenerics;
-use crate::types::ident::NewIdentWithTypeGenerics;
+use crate::types::ident::IdentWithTypeGenerics;
 use crate::types::keyword::Keyword;
 use crate::types::keywords::New;
 
@@ -54,7 +54,7 @@ impl DelegateTable {
         let mut item_structs = Vec::new();
 
         if self.new.is_some() {
-            let struct_type: NewIdentWithTypeGenerics =
+            let struct_type: IdentWithTypeGenerics =
                 parse_internal(self.table_type.to_token_stream())?;
             item_structs.push(EmptyStruct {
                 ident: struct_type.ident,

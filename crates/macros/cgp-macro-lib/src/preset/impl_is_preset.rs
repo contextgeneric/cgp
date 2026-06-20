@@ -1,7 +1,7 @@
 use alloc::vec::Vec;
 
 use cgp_macro_core::types::generics::ImplGenerics;
-use cgp_macro_core::types::ident::NewIdentWithTypeArgs;
+use cgp_macro_core::types::ident::IdentWithTypeArgs;
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
 use syn::{Ident, ItemImpl, Type, parse_quote};
@@ -12,7 +12,7 @@ pub fn impl_components_is_preset(
     trait_name: &Ident,
     preset_type: &Type,
     preset_generics: &ImplGenerics,
-    delegate_entries: &Punctuated<DelegateEntry<NewIdentWithTypeArgs>, Comma>,
+    delegate_entries: &Punctuated<DelegateEntry<IdentWithTypeArgs>, Comma>,
 ) -> Vec<ItemImpl> {
     delegate_entries
         .iter()
@@ -28,7 +28,7 @@ pub fn impl_component_is_preset(
     trait_name: &Ident,
     _preset_type: &Type,
     _preset_generics: &ImplGenerics,
-    component: &DelegateKey<NewIdentWithTypeArgs>,
+    component: &DelegateKey<IdentWithTypeArgs>,
 ) -> ItemImpl {
     let component_type = &component.ty;
 

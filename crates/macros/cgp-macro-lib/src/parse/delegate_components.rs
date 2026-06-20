@@ -2,7 +2,7 @@ use core::iter;
 
 use cgp_macro_core::functions::merge_generics;
 use cgp_macro_core::types::generics::{ImplGenerics, TypeGenerics};
-use cgp_macro_core::types::ident::NewIdentWithTypeArgs;
+use cgp_macro_core::types::ident::IdentWithTypeArgs;
 use proc_macro2::TokenStream;
 use quote::{ToTokens, TokenStreamExt, quote};
 use syn::parse::discouraged::Speculative;
@@ -129,14 +129,14 @@ impl Parse for DelegateEntry<Type> {
     }
 }
 
-impl Parse for DelegateEntry<NewIdentWithTypeArgs> {
+impl Parse for DelegateEntry<IdentWithTypeArgs> {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let components = if input.peek(Bracket) {
             let components_body;
             bracketed!(components_body in input);
             components_body.parse_terminated(DelegateKey::parse, Token![,])?
         } else {
-            let component: DelegateKey<NewIdentWithTypeArgs> = input.parse()?;
+            let component: DelegateKey<IdentWithTypeArgs> = input.parse()?;
             Punctuated::from_iter(iter::once(component))
         };
 

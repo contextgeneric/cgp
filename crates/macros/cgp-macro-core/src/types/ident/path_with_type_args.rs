@@ -5,7 +5,7 @@ use syn::punctuated::Punctuated;
 use syn::{Error, Ident, Path, PathArguments, Type, parse_quote};
 
 use crate::traits::ToType;
-use crate::types::ident::{NewIdentWithTypeArgs, TypeArg, TypeArgs};
+use crate::types::ident::{IdentWithTypeArgs, TypeArg, TypeArgs};
 
 /// A full Rust path followed by an optional type-expression argument list, e.g.
 /// `Foo`, `Foo<A, B>`, `path::to::Foo`, or `path::to::Bar<(A, B), B>`.
@@ -114,8 +114,8 @@ impl From<Ident> for PathWithTypeArgs {
     }
 }
 
-impl From<NewIdentWithTypeArgs> for PathWithTypeArgs {
-    fn from(value: NewIdentWithTypeArgs) -> Self {
+impl From<IdentWithTypeArgs> for PathWithTypeArgs {
+    fn from(value: IdentWithTypeArgs) -> Self {
         Self {
             path: Path::from(value.ident),
             type_args: value.type_args,
