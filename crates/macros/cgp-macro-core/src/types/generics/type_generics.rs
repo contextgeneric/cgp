@@ -7,6 +7,18 @@ use syn::{Error, Generics};
 
 use crate::functions::parse_internal;
 
+/// A validated newtype around [`syn::Generics`] restricted to a definition-site
+/// generic list (no bounds). Because it `Deref`s to [`syn::Generics`], the full
+/// `syn` API (`split_for_impl`, mutating `params`, …) is available, and its
+/// `TryFrom<&Generics>` adapts a generic list already parsed off an item.
+///
+/// Prefer this when adapting or manipulating an existing `syn::Generics`. When
+/// instead *parsing tokens* and you want strict, kind-classified parameters,
+/// prefer [`TypeGenericParams`]. The two are intentionally kept separate; see
+/// [`TypeGenericParams`] for the full rationale (notably, `TryFrom` here
+/// normalizes a `const N: T` parameter down to a bare `N`).
+///
+/// [`TypeGenericParams`]: crate::types::ident::TypeGenericParams
 #[derive(Debug, Clone, Default)]
 pub struct TypeGenerics {
     pub generics: Generics,

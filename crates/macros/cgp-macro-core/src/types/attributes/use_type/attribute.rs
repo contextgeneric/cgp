@@ -35,8 +35,11 @@ impl Parse for UseTypeAttribute {
             let _: At = input.parse()?;
 
             // The context type is followed by a `::`-separated trait path, so it
-            // must parse only a single identifier head; a full path parser would
-            // greedily consume the trailing `::Trait::Type`.
+            // must parse only a single identifier head. This is the one place
+            // that deliberately keeps `IdentWithTypeArgs` rather than the
+            // otherwise-dominant `PathWithTypeArgs`: a path parser is greedy
+            // across `::` and would silently consume the trailing `::Trait::Type`
+            // here, with no parse error. Do NOT swap this for `PathWithTypeArgs`.
             let context_type: Type = input.parse::<IdentWithTypeArgs>()?.into();
 
             let _: Colon = input.parse()?;

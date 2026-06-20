@@ -19,10 +19,13 @@ use crate::types::ident::{parse_angle_bracketed, to_tokens_angle_bracketed};
 /// - defaults, e.g. `A = B` or `const N: usize = 0`,
 /// - composite forms, e.g. `(A, B)`.
 ///
-/// The existing `TypeGenerics` type approximates this by parsing a full
-/// `syn::Generics` and then round-tripping it through `split_for_impl` to
-/// detect bounds. Modelling the valid forms directly is both clearer and
-/// catches more invalid inputs (such as defaults) up front.
+/// This complements (rather than replaces) [`TypeGenerics`], which detects
+/// bounds by round-tripping a full `syn::Generics` through `split_for_impl`.
+/// Modelling the valid forms directly here is clearer and catches more invalid
+/// inputs (such as defaults) up front when *parsing tokens*; see
+/// [`TypeGenericParams`] for guidance on which of the two to use.
+///
+/// [`TypeGenerics`]: crate::types::generics::TypeGenerics
 #[derive(Debug, Clone)]
 pub enum TypeGenericParam {
     /// A lifetime parameter, e.g. the `'a` in `Bar<'a>`.
@@ -116,6 +119,27 @@ impl ToTokens for TypeGenericParam {
 
 /// The angle-bracketed parameter list at a type definition site, e.g. the
 /// `<'a, C>` in `Bar<'a, C>`.
+///
+/// # `TypeGenericParams` vs [`TypeGenerics`]
+///
+/// Both model a definition-site generic list, but they are different tools:
+///
+/// - Reach for `TypeGenericParams` when **parsing tokens** where you want the
+///   restrictions enforced strictly and the parameters classified by kind. It
+///   is a hand-written parser that rejects bounds and defaults up front and
+///   exposes each parameter as a [`TypeGenericParam`] variant.
+/// - Reach for [`TypeGenerics`] when adapting an **already-parsed
+///   [`syn::Generics`]** (e.g. off an `ItemTrait`/`ItemStruct`). It is a thin
+///   newtype that `Deref`s to `syn::Generics`, so `split_for_impl()` and the
+///   usual `syn` manipulation are available, and its `TryFrom<&Generics>`
+///   normalizes through `split_for_impl` (which, notably, collapses a
+///   `const N: T` parameter down to a bare type-like `N`).
+///
+/// They are intentionally not merged: the normalization behavior above is
+/// load-bearing for some callers, so a faithful conversion into the strict
+/// `TypeGenericParam` model would change behavior around const generics.
+///
+/// [`TypeGenerics`]: crate::types::generics::TypeGenerics
 ///
 /// Both the absence of angle brackets and an explicit empty `<>` are
 /// represented as an empty [`Punctuated`]. An empty list renders as nothing,

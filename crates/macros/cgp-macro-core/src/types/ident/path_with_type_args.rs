@@ -1,11 +1,10 @@
 use proc_macro2::TokenStream;
 use quote::ToTokens;
 use syn::parse::{Parse, ParseStream};
-use syn::punctuated::Punctuated;
-use syn::{Error, Ident, Path, PathArguments, Type, parse_quote};
+use syn::{Error, Ident, Path, PathArguments, Type, parse_quote, parse2};
 
 use crate::traits::ToType;
-use crate::types::ident::{IdentWithTypeArgs, TypeArg, TypeArgs};
+use crate::types::ident::{IdentWithTypeArgs, TypeArgs};
 
 /// A full Rust path followed by an optional type-expression argument list, e.g.
 /// `Foo`, `Foo<A, B>`, `path::to::Foo`, or `path::to::Bar<(A, B), B>`.
@@ -15,8 +14,8 @@ use crate::types::ident::{IdentWithTypeArgs, TypeArg, TypeArgs};
 /// generic arguments buried inside the last [`syn::PathSegment`], which is
 /// awkward to read and rewrite. This type lifts those arguments out into a
 /// separate [`TypeArgs`] field while keeping the remaining path in `path`,
-/// applying the same restrictions as [`TypeArg`] (no associated bindings or
-/// bounds).
+/// applying the same restrictions as [`TypeArg`](crate::types::ident::TypeArg)
+/// (no associated bindings or bounds).
 ///
 /// Only the final segment may carry generic arguments. Intermediate generics
 /// (e.g. `path::to<X>::Foo`) and parenthesized arguments (e.g. `Fn(A) -> B`)
@@ -34,8 +33,12 @@ impl PathWithTypeArgs {
     /// The identifier of the final path segment, e.g. `Foo` in
     /// `path::to::Foo<A, B>`.
     pub fn ident(&self) -> &Ident {
-        // A parsed `syn::Path` always has at least one segment.
-        &self.path.segments.last().unwrap().ident
+        &self
+            .path
+            .segments
+            .last()
+            .expect("PathWithTypeArgs always wraps a non-empty syn::Path")
+            .ident
     }
 }
 
@@ -59,9 +62,7 @@ impl Parse for PathWithTypeArgs {
         let last_segment = path.segments.last_mut().unwrap();
 
         let type_args = match &last_segment.arguments {
-            PathArguments::None => TypeArgs {
-                args: Punctuated::new(),
-            },
+            PathArguments::None => TypeArgs::default(),
             PathArguments::AngleBracketed(arguments) => {
                 // Reject turbofish (`Foo::<A>`); only the type-position form
                 // `Foo<A>` is accepted, matching `IdentWithTypeArgs`.
@@ -72,17 +73,13 @@ impl Parse for PathWithTypeArgs {
                     ));
                 }
 
-                let mut args = Punctuated::new();
-
-                for pair in arguments.args.pairs() {
-                    let (arg, punct) = pair.into_tuple();
-                    args.push_value(TypeArg::from_generic_argument(arg)?);
-                    if let Some(comma) = punct {
-                        args.push_punct(*comma);
-                    }
-                }
-
-                TypeArgs { args }
+                // Re-parse the already-parsed `<...>` through `TypeArgs` so the
+                // argument-form restrictions (no associated bindings or bounds)
+                // live in exactly one place — `TypeArg`'s own parser — rather
+                // than being duplicated here against `syn::GenericArgument`.
+                // With the turbofish ruled out above, `arguments` re-emits as a
+                // plain `< .. >`, which is exactly what `TypeArgs` expects.
+                parse2::<TypeArgs>(arguments.to_token_stream())?
             }
             PathArguments::Parenthesized(arguments) => {
                 return Err(Error::new_spanned(

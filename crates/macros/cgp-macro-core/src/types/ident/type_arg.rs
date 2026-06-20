@@ -3,7 +3,7 @@ use quote::ToTokens;
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::token::{Brace, Comma};
-use syn::{Error, Expr, ExprBlock, ExprLit, GenericArgument, Lifetime, Lit, Token, Type};
+use syn::{Error, Expr, ExprBlock, ExprLit, Lifetime, Lit, Token, Type};
 
 use crate::types::ident::{parse_angle_bracketed, to_tokens_angle_bracketed};
 
@@ -30,35 +30,6 @@ pub enum TypeArg {
     /// the `N` in `Foo<N>`) is syntactically indistinguishable from a type and
     /// is therefore parsed as [`TypeArg::Type`].
     Const(Expr),
-}
-
-impl TypeArg {
-    /// Convert a [`syn::GenericArgument`] into a [`TypeArg`], rejecting the
-    /// associated-binding and bound forms that are not valid in type-argument
-    /// positions.
-    ///
-    /// This is useful when post-processing a value that `syn` has already
-    /// parsed into a [`syn::Path`] (see [`PathWithTypeArgs`]).
-    ///
-    /// [`PathWithTypeArgs`]: crate::types::ident::PathWithTypeArgs
-    pub fn from_generic_argument(arg: &GenericArgument) -> syn::Result<Self> {
-        match arg {
-            GenericArgument::Lifetime(life) => Ok(Self::Lifetime(life.clone())),
-            GenericArgument::Type(ty) => Ok(Self::Type(ty.clone())),
-            GenericArgument::Const(expr) => Ok(Self::Const(expr.clone())),
-            GenericArgument::AssocType(_) | GenericArgument::AssocConst(_) => {
-                Err(Error::new_spanned(
-                    arg,
-                    "associated bindings (`Name = ...`) are not allowed in type arguments",
-                ))
-            }
-            GenericArgument::Constraint(_) => Err(Error::new_spanned(
-                arg,
-                "associated type bounds (`Name: ...`) are not allowed in type arguments",
-            )),
-            _ => Err(Error::new_spanned(arg, "unsupported generic argument")),
-        }
-    }
 }
 
 impl Parse for TypeArg {
