@@ -28,7 +28,7 @@ pub enum TypeGenericParam {
     /// A type parameter, e.g. the `C` in `Bar<C>`.
     Type(Ident),
     /// A const parameter, e.g. the `const N: usize` in `Bar<const N: usize>`.
-    Const(ConstGenericParam),
+    Const(Box<ConstGenericParam>),
 }
 
 /// A const generic parameter at a definition site: the `const N: usize` in
@@ -69,12 +69,12 @@ impl Parse for TypeGenericParam {
                 ));
             }
 
-            return Ok(Self::Const(ConstGenericParam {
+            return Ok(Self::Const(Box::new(ConstGenericParam {
                 const_token,
                 ident,
                 colon,
                 ty,
-            }));
+            })));
         }
 
         let ident: Ident = input.parse()?;
