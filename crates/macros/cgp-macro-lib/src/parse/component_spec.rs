@@ -2,7 +2,7 @@ use alloc::format;
 use std::collections::BTreeMap;
 
 use cgp_macro_core::types::cgp_component::DeriveDelegateAttributes;
-use cgp_macro_core::types::ident::IdentWithTypeGenerics;
+use cgp_macro_core::types::ident::NewIdentWithTypeGenerics;
 use proc_macro2::{Span, TokenStream};
 use syn::parse::{End, Parse, ParseStream};
 use syn::{Error, Ident, parse2};
@@ -12,7 +12,7 @@ use crate::parse::Entries;
 pub struct CgpComponentArgs {
     pub provider_ident: Ident,
     pub context_ident: Ident,
-    pub component_name: IdentWithTypeGenerics,
+    pub component_name: NewIdentWithTypeGenerics,
     pub derive_delegate_attributes: DeriveDelegateAttributes,
 }
 
@@ -84,7 +84,7 @@ impl CgpComponentArgs {
             if let Some(raw_component_name) = raw_component_name {
                 parse2(raw_component_name.clone())?
             } else {
-                IdentWithTypeGenerics::from(Ident::new(
+                NewIdentWithTypeGenerics::from(Ident::new(
                     &format!("{provider_name}Component"),
                     provider_name.span(),
                 ))

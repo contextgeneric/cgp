@@ -1,5 +1,5 @@
 use cgp_macro_core::types::generics::ImplGenerics;
-use cgp_macro_core::types::ident::IdentWithTypeArgs;
+use cgp_macro_core::types::ident::NewIdentWithTypeArgs;
 use proc_macro2::Span;
 use quote::ToTokens;
 use syn::parse::{Parse, ParseStream};
@@ -96,7 +96,7 @@ impl Parse for CheckComponents {
         let trait_name = if let Some(check_trait_name) = m_check_trait_name {
             check_trait_name
         } else {
-            let context_type: IdentWithTypeArgs = parse2(context_type.to_token_stream())?;
+            let context_type: NewIdentWithTypeArgs = parse2(context_type.to_token_stream())?;
 
             Ident::new(
                 &format!("__Check{}", context_type.ident),

@@ -1,5 +1,5 @@
 use cgp_macro_core::types::generics::TypeGenerics;
-use cgp_macro_core::types::ident::IdentWithTypeArgs;
+use cgp_macro_core::types::ident::NewIdentWithTypeArgs;
 use proc_macro2::TokenStream;
 use quote::quote;
 use syn::{Ident, ItemImpl, ItemStruct, parse_quote, parse2};
@@ -7,7 +7,7 @@ use syn::{Ident, ItemImpl, ItemStruct, parse_quote, parse2};
 pub fn cgp_inherit(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
     let context_struct: ItemStruct = parse2(body)?;
 
-    let preset: IdentWithTypeArgs = parse2(attr)?;
+    let preset: NewIdentWithTypeArgs = parse2(attr)?;
 
     let type_generics = TypeGenerics::try_from(&context_struct.generics)?;
 
@@ -26,7 +26,7 @@ pub fn cgp_inherit(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStr
 pub fn derive_delegate_preset(
     provider_name: &Ident,
     provider_generics: &Option<TypeGenerics>,
-    preset: &IdentWithTypeArgs,
+    preset: &NewIdentWithTypeArgs,
 ) -> syn::Result<(ItemImpl, ItemImpl)> {
     let preset_name = &preset.ident;
     let preset_generics = &preset.type_args;
