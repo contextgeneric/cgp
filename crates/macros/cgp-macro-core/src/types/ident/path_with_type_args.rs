@@ -133,6 +133,6 @@ impl ToType for PathWithTypeArgs {
 
 impl From<PathWithTypeArgs> for Type {
     fn from(value: PathWithTypeArgs) -> Self {
-        parse_quote!(#value)
+        value.to_type()
     }
 }

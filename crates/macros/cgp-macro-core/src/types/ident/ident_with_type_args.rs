@@ -52,6 +52,6 @@ impl ToType for IdentWithTypeArgs {
 
 impl From<IdentWithTypeArgs> for Type {
     fn from(value: IdentWithTypeArgs) -> Self {
-        parse_quote!(#value)
+        value.to_type()
     }
 }

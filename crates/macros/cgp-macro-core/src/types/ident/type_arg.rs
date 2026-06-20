@@ -1,9 +1,11 @@
 use proc_macro2::TokenStream;
-use quote::{ToTokens, quote};
+use quote::ToTokens;
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
-use syn::token::{Brace, Comma, Gt, Lt};
+use syn::token::{Brace, Comma};
 use syn::{Error, Expr, ExprBlock, ExprLit, GenericArgument, Lifetime, Lit, Token, Type};
+
+use crate::types::ident::{parse_angle_bracketed, to_tokens_angle_bracketed};
 
 /// A single generic argument that can appear in a *type expression* position,
 /// such as each of `'a`, `A`, `(A, B)`, and `Bar<A>` inside
@@ -137,37 +139,14 @@ impl TypeArgs {
 
 impl Parse for TypeArgs {
     fn parse(input: ParseStream) -> syn::Result<Self> {
-        if !input.peek(Lt) {
-            return Ok(Self {
-                args: Punctuated::new(),
-            });
-        }
-
-        let _: Lt = input.parse()?;
-
-        let mut args = Punctuated::new();
-
-        while !input.peek(Gt) {
-            args.push_value(input.parse()?);
-
-            if input.peek(Gt) {
-                break;
-            }
-
-            args.push_punct(input.parse()?);
-        }
-
-        let _: Gt = input.parse()?;
-
-        Ok(Self { args })
+        Ok(Self {
+            args: parse_angle_bracketed(input)?,
+        })
     }
 }
 
 impl ToTokens for TypeArgs {
     fn to_tokens(&self, tokens: &mut TokenStream) {
-        if !self.args.is_empty() {
-            let args = &self.args;
-            tokens.extend(quote! { < #args > });
-        }
+        to_tokens_angle_bracketed(&self.args, tokens);
     }
 }

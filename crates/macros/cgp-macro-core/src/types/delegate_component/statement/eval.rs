@@ -2,7 +2,7 @@ use syn::{Generics, Ident, Type};
 
 use crate::parse_internal;
 use crate::types::delegate_component::{EvalDelegateEntry, EvaluatedDelegateEntry};
-use crate::types::ident::{PathWithTypeArgs, TypeArg};
+use crate::types::ident::PathWithTypeArgs;
 
 pub trait EvalForEntries {
     fn eval_for_entries(&self, table_type: &Type) -> syn::Result<Vec<EvaluatedForEntry>>;
@@ -54,7 +54,7 @@ impl EvalDelegateEntry for EvaluatedForEntry {
             // existing arguments.
             let namespace_path = &self.namespace.path;
 
-            let existing_args: Vec<&TypeArg> = self.namespace.type_args.args.iter().collect();
+            let existing_args = self.namespace.type_args.args.iter();
 
             parse_internal! {
                 #namespace_path < #( #existing_args, )* #table_type, Delegate = #mapping_value >

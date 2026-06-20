@@ -1,9 +1,11 @@
 use proc_macro2::TokenStream;
-use quote::{ToTokens, quote};
+use quote::ToTokens;
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
-use syn::token::{Colon, Comma, Const, Gt, Lt};
+use syn::token::{Colon, Comma, Const};
 use syn::{Error, Generics, Ident, Lifetime, Token, Type, parse_quote};
+
+use crate::types::ident::{parse_angle_bracketed, to_tokens_angle_bracketed};
 
 /// A single generic parameter that can appear at a *type definition* site,
 /// such as each of `'a` and `C` inside `Bar<'a, C>`.
@@ -138,35 +140,14 @@ impl TypeGenericParams {
 
 impl Parse for TypeGenericParams {
     fn parse(input: ParseStream) -> syn::Result<Self> {
-        let mut params = Punctuated::new();
-
-        if !input.peek(Lt) {
-            return Ok(Self { params });
-        }
-
-        let _: Lt = input.parse()?;
-
-        while !input.peek(Gt) {
-            params.push_value(input.parse()?);
-
-            if input.peek(Gt) {
-                break;
-            }
-
-            params.push_punct(input.parse()?);
-        }
-
-        let _: Gt = input.parse()?;
-
-        Ok(Self { params })
+        Ok(Self {
+            params: parse_angle_bracketed(input)?,
+        })
     }
 }
 
 impl ToTokens for TypeGenericParams {
     fn to_tokens(&self, tokens: &mut TokenStream) {
-        if !self.params.is_empty() {
-            let params = &self.params;
-            tokens.extend(quote! { < #params > });
-        }
+        to_tokens_angle_bracketed(&self.params, tokens);
     }
 }
