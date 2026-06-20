@@ -36,6 +36,7 @@ members = [
     "crates/standalone/error/cgp-error-std",
 
     "crates/tests/cgp-tests",
+    "crates/tests/cgp-macro-tests",
 ]
 
 [workspace.package]

@@ -226,6 +226,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "cgp-macro-tests"
+version = "0.7.0"
+dependencies = [
+ "cgp",
+ "cgp-macro-core",
+ "cgp-macro-test-util",
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
 name = "cgp-monad"
 version = "0.7.0"
 dependencies = [
