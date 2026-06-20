@@ -9,11 +9,6 @@ use crate::types::ident::TypeArgs;
 /// An identifier followed by an optional type-expression argument list, e.g.
 /// `Foo`, `Foo<A, B>`, `Foo<(A, B), C>`, or `Foo<Bar<A>, C>`.
 ///
-/// This is the intended replacement for `IdentWithTypeArgs`. The difference is
-/// that the argument list is modelled by [`TypeArgs`] rather than
-/// `syn::AngleBracketedGenericArguments`, so invalid forms such as
-/// `Foo<A, B = C>` are rejected at parse time.
-///
 /// For the path-headed counterpart (`path::to::Foo<A, B>`), see
 /// [`PathWithTypeArgs`].
 ///

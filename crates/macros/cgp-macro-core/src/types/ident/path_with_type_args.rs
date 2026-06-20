@@ -10,7 +10,7 @@ use crate::types::ident::{IdentWithTypeArgs, TypeArg, TypeArgs};
 /// A full Rust path followed by an optional type-expression argument list, e.g.
 /// `Foo`, `Foo<A, B>`, `path::to::Foo`, or `path::to::Bar<(A, B), B>`.
 ///
-/// This generalizes [`NewIdentWithTypeArgs`] from a single identifier head to a
+/// This generalizes [`IdentWithTypeArgs`] from a single identifier head to a
 /// full [`syn::Path`] head. The motivation is that `syn::Path` keeps the final
 /// generic arguments buried inside the last [`syn::PathSegment`], which is
 /// awkward to read and rewrite. This type lifts those arguments out into a
@@ -62,7 +62,7 @@ impl Parse for PathWithTypeArgs {
             PathArguments::None => TypeArgs { args: None },
             PathArguments::AngleBracketed(arguments) => {
                 // Reject turbofish (`Foo::<A>`); only the type-position form
-                // `Foo<A>` is accepted, matching `NewIdentWithTypeArgs`.
+                // `Foo<A>` is accepted, matching `IdentWithTypeArgs`.
                 if arguments.colon2_token.is_some() {
                     return Err(Error::new_spanned(
                         arguments,
