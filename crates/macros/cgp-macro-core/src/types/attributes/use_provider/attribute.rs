@@ -24,7 +24,7 @@ impl UseProviderAttribute {
             let mut bound = bound.clone();
             bound
                 .type_args
-                .make_args()
+                .args
                 .insert(0, parse_internal!(#context_type));
 
             bounds.push(parse_internal!(#bound));

@@ -82,7 +82,7 @@ impl LoweredCgpImpl {
 
         provider_trait_path
             .type_args
-            .make_args()
+            .args
             .insert(0, parse_internal!(#context_type));
 
         out_impl.trait_ = Some((

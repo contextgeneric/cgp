@@ -22,7 +22,7 @@ impl PrefixAttribute {
         let mut namespace = self.namespace.clone();
         namespace
             .type_args
-            .make_args()
+            .args
             .push(parse_internal!(__Components__));
 
         let mut path = self.path.clone();

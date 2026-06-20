@@ -23,7 +23,7 @@ impl DefaultImplAttribute {
 
         namespace_trait_path
             .type_args
-            .make_args()
+            .args
             .push(parse_internal!(__Components__));
 
         let mut generics = provider_generics.clone();

@@ -130,12 +130,6 @@ pub struct TypeArgs {
 }
 
 impl TypeArgs {
-    /// Get a mutable reference to the underlying argument list. This matches the
-    /// `GenericArguments::make_args` API to ease migration.
-    pub fn make_args(&mut self) -> &mut Punctuated<TypeArg, Comma> {
-        &mut self.args
-    }
-
     pub fn is_empty(&self) -> bool {
         self.args.is_empty()
     }
