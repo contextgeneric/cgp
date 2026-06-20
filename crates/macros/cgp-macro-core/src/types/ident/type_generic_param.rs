@@ -112,28 +112,20 @@ impl ToTokens for TypeGenericParam {
     }
 }
 
-/// The optional angle-bracketed parameter list at a type definition site, e.g.
-/// the `<'a, C>` in `Bar<'a, C>`.
+/// The angle-bracketed parameter list at a type definition site, e.g. the
+/// `<'a, C>` in `Bar<'a, C>`.
 ///
-/// As with [`TypeArgs`], `None` represents no angle brackets while
-/// `Some(empty)` represents an explicit empty `<>`.
-///
-/// [`TypeArgs`]: crate::types::ident::TypeArgs
+/// Both the absence of angle brackets and an explicit empty `<>` are
+/// represented as an empty [`Punctuated`]. An empty list renders as nothing,
+/// so a parsed `<>` round-trips back to no angle brackets.
 #[derive(Debug, Clone, Default)]
 pub struct TypeGenericParams {
-    pub params: Option<Punctuated<TypeGenericParam, Comma>>,
+    pub params: Punctuated<TypeGenericParam, Comma>,
 }
 
 impl TypeGenericParams {
-    pub fn make_params(&mut self) -> &mut Punctuated<TypeGenericParam, Comma> {
-        self.params.get_or_insert_with(Punctuated::new)
-    }
-
     pub fn is_empty(&self) -> bool {
-        match &self.params {
-            Some(params) => params.is_empty(),
-            None => true,
-        }
+        self.params.is_empty()
     }
 
     /// Lower these parameters into a plain [`syn::Generics`]. This is handy for
@@ -146,13 +138,13 @@ impl TypeGenericParams {
 
 impl Parse for TypeGenericParams {
     fn parse(input: ParseStream) -> syn::Result<Self> {
+        let mut params = Punctuated::new();
+
         if !input.peek(Lt) {
-            return Ok(Self { params: None });
+            return Ok(Self { params });
         }
 
         let _: Lt = input.parse()?;
-
-        let mut params = Punctuated::new();
 
         while !input.peek(Gt) {
             params.push_value(input.parse()?);
@@ -166,15 +158,14 @@ impl Parse for TypeGenericParams {
 
         let _: Gt = input.parse()?;
 
-        Ok(Self {
-            params: Some(params),
-        })
+        Ok(Self { params })
     }
 }
 
 impl ToTokens for TypeGenericParams {
     fn to_tokens(&self, tokens: &mut TokenStream) {
-        if let Some(params) = &self.params {
+        if !self.params.is_empty() {
+            let params = &self.params;
             tokens.extend(quote! { < #params > });
         }
     }

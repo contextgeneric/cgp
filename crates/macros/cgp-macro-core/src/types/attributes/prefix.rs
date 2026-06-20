@@ -30,7 +30,7 @@ impl PrefixAttribute {
 
         let mut type_generics = component_name.type_generics.clone();
         type_generics
-            .make_params()
+            .params
             .insert(0, parse_internal!(__Components__));
 
         let item_impl = parse_internal! {

@@ -75,10 +75,7 @@ fn rejects_path_head() {
 fn classifies_each_parameter_form() {
     let parsed: Subject = parse2(quote!(Bar<'a, C, const N: usize>)).unwrap();
 
-    let params = parsed
-        .type_generics
-        .params
-        .expect("expected a parameter list");
+    let params = &parsed.type_generics.params;
 
     let kinds: Vec<&str> = params
         .iter()

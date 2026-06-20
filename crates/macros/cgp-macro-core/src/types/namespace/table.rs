@@ -57,9 +57,7 @@ impl NamespaceTable {
     pub fn build_namespace_trait(&self) -> syn::Result<Type> {
         let namespace_ident = &self.namespace.ident;
         let mut namespace_generics = self.namespace.type_generics.clone();
-        namespace_generics
-            .make_params()
-            .push(parse_internal!(__Table__));
+        namespace_generics.params.push(parse_internal!(__Table__));
 
         let namespace_trait: Type = parse_internal!( #namespace_ident #namespace_generics );
         Ok(namespace_trait)

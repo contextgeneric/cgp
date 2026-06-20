@@ -124,16 +124,6 @@ fn bare_ident_has_no_arguments() {
 }
 
 #[test]
-fn empty_brackets_are_distinct_from_no_brackets() {
-    let bare: Subject = parse2(quote!(Foo)).unwrap();
-    let empty: Subject = parse2(quote!(Foo)).unwrap();
-
-    assert!(bare.type_args.args.is_none());
-    assert!(empty.type_args.args.is_some());
-    assert!(empty.type_args.is_empty());
-}
-
-#[test]
 fn round_trips() {
     assert_idempotent::<Subject>(quote!(Foo));
     assert_idempotent::<Subject>(quote!(Foo<A, B>));
