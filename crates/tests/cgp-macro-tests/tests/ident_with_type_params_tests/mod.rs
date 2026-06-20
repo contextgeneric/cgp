@@ -1,14 +1,3 @@
-//! Tests exploring the parsing behavior of the ident/path-with-type-parameter
-//! constructs in `cgp-macro-core`.
-//!
-//! These cover both the original constructs (`IdentWithTypeArgs`,
-//! `IdentWithTypeGenerics`) and the new ones (`IdentWithTypeArgs`,
-//! `IdentWithTypeGenerics`, `PathWithTypeArgs`), including a side-by-side
-//! comparison that documents exactly where their behaviors diverge.
-//!
-//! See `crates/macros/cgp-macro-core/src/types/ident/README.md` for the prose
-//! explanation that accompanies these tests.
-
 pub mod new_ident_with_type_args;
 pub mod new_ident_with_type_generics;
 pub mod path_with_type_args;
