@@ -1,4 +1,3 @@
-mod draft_tests;
 mod ident_with_type_args;
 mod ident_with_type_generics;
 mod new_ident_with_type_args;

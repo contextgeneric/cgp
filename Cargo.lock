@@ -252,9 +252,13 @@ name = "cgp-tests"
 version = "0.7.0"
 dependencies = [
  "cgp",
+ "cgp-macro-core",
  "cgp-macro-test-util",
  "futures",
  "insta",
+ "proc-macro2",
+ "quote",
+ "syn",
 ]
 
 [[package]]
