@@ -54,10 +54,7 @@ impl EvalDelegateEntry for EvaluatedForEntry {
             // existing arguments.
             let namespace_path = &self.namespace.path;
 
-            let existing_args: Vec<&TypeArg> = match &self.namespace.type_args.args {
-                Some(args) => args.iter().collect(),
-                None => Vec::new(),
-            };
+            let existing_args: Vec<&TypeArg> = self.namespace.type_args.args.iter().collect();
 
             parse_internal! {
                 #namespace_path < #( #existing_args, )* #table_type, Delegate = #mapping_value >

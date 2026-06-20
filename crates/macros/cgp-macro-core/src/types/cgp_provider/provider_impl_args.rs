@@ -22,25 +22,23 @@ impl ProviderImplArgs {
         let mut impl_args: Punctuated<ProviderImplArg, Comma> = Punctuated::new();
         let mut context_type: Option<Type> = None;
 
-        if let Some(args) = &generic_args.args {
-            for arg in args {
-                match arg {
-                    TypeArg::Lifetime(life) => {
-                        impl_args.push(ProviderImplArg::Life(life.clone()));
+        for arg in &generic_args.args {
+            match arg {
+                TypeArg::Lifetime(life) => {
+                    impl_args.push(ProviderImplArg::Life(life.clone()));
+                }
+                TypeArg::Type(ty) => {
+                    if context_type.is_none() {
+                        context_type = Some(ty.clone());
+                    } else {
+                        impl_args.push(ProviderImplArg::Type(ty.clone()));
                     }
-                    TypeArg::Type(ty) => {
-                        if context_type.is_none() {
-                            context_type = Some(ty.clone());
-                        } else {
-                            impl_args.push(ProviderImplArg::Type(ty.clone()));
-                        }
-                    }
-                    TypeArg::Const(expr) => {
-                        return Err(Error::new(
-                            expr.span(),
-                            "const arguments are not supported in provider impl trait arguments",
-                        ));
-                    }
+                }
+                TypeArg::Const(expr) => {
+                    return Err(Error::new(
+                        expr.span(),
+                        "const arguments are not supported in provider impl trait arguments",
+                    ));
                 }
             }
         }

@@ -118,38 +118,35 @@ impl ToTokens for TypeArg {
     }
 }
 
-/// The optional angle-bracketed argument list that follows an identifier or
-/// path in a type expression, e.g. the `<'a, A, Bar<A>>` in `Foo<'a, A, Bar<A>>`.
+/// The angle-bracketed argument list that follows an identifier or path in a
+/// type expression, e.g. the `<'a, A, Bar<A>>` in `Foo<'a, A, Bar<A>>`.
 ///
-/// `None` represents the absence of any angle brackets (the bare `Foo` case),
-/// whereas `Some(empty)` represents an explicit empty `Foo<>`. This mirrors the
-/// behaviour of the existing `GenericArguments` type so the two can be used
-/// interchangeably during migration.
+/// An empty list represents both the absence of any angle brackets (the bare
+/// `Foo` case) and an explicit empty `Foo<>`; the two are not distinguished, and
+/// an empty list always renders as nothing.
 #[derive(Debug, Clone, Default)]
 pub struct TypeArgs {
-    pub args: Option<Punctuated<TypeArg, Comma>>,
+    pub args: Punctuated<TypeArg, Comma>,
 }
 
 impl TypeArgs {
-    /// Get a mutable reference to the underlying argument list, inserting an
-    /// empty `<>` list if none is present yet. This matches the
+    /// Get a mutable reference to the underlying argument list. This matches the
     /// `GenericArguments::make_args` API to ease migration.
     pub fn make_args(&mut self) -> &mut Punctuated<TypeArg, Comma> {
-        self.args.get_or_insert_with(Punctuated::new)
+        &mut self.args
     }
 
     pub fn is_empty(&self) -> bool {
-        match &self.args {
-            Some(args) => args.is_empty(),
-            None => true,
-        }
+        self.args.is_empty()
     }
 }
 
 impl Parse for TypeArgs {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         if !input.peek(Lt) {
-            return Ok(Self { args: None });
+            return Ok(Self {
+                args: Punctuated::new(),
+            });
         }
 
         let _: Lt = input.parse()?;
@@ -168,13 +165,14 @@ impl Parse for TypeArgs {
 
         let _: Gt = input.parse()?;
 
-        Ok(Self { args: Some(args) })
+        Ok(Self { args })
     }
 }
 
 impl ToTokens for TypeArgs {
     fn to_tokens(&self, tokens: &mut TokenStream) {
-        if let Some(args) = &self.args {
+        if !self.args.is_empty() {
+            let args = &self.args;
             tokens.extend(quote! { < #args > });
         }
     }

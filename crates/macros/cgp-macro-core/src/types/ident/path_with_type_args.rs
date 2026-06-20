@@ -59,7 +59,9 @@ impl Parse for PathWithTypeArgs {
         let last_segment = path.segments.last_mut().unwrap();
 
         let type_args = match &last_segment.arguments {
-            PathArguments::None => TypeArgs { args: None },
+            PathArguments::None => TypeArgs {
+                args: Punctuated::new(),
+            },
             PathArguments::AngleBracketed(arguments) => {
                 // Reject turbofish (`Foo::<A>`); only the type-position form
                 // `Foo<A>` is accepted, matching `IdentWithTypeArgs`.
@@ -80,7 +82,7 @@ impl Parse for PathWithTypeArgs {
                     }
                 }
 
-                TypeArgs { args: Some(args) }
+                TypeArgs { args }
             }
             PathArguments::Parenthesized(arguments) => {
                 return Err(Error::new_spanned(

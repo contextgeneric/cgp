@@ -16,7 +16,8 @@ fn accepts_bare_ident() {
 
 #[test]
 fn accepts_empty_argument_list() {
-    // An explicit empty `<>` is allowed and distinct from no brackets at all.
+    // An explicit empty `<>` is allowed and parses to an empty argument list,
+    // indistinguishable from no brackets at all.
     assert_parses::<Subject>(quote!(Foo));
 }
 
@@ -99,7 +100,7 @@ fn rejects_unterminated_arguments() {
 fn classifies_each_argument_form() {
     let parsed: Subject = parse2(quote!(Foo<'a, A, (A, B), Bar<C>, 3, { N }>)).unwrap();
 
-    let args = parsed.type_args.args.expect("expected an argument list");
+    let args = &parsed.type_args.args;
 
     let kinds: Vec<&str> = args
         .iter()
@@ -119,7 +120,7 @@ fn classifies_each_argument_form() {
 #[test]
 fn bare_ident_has_no_arguments() {
     let parsed: Subject = parse2(quote!(Foo)).unwrap();
-    assert!(parsed.type_args.args.is_none());
+    assert!(parsed.type_args.args.is_empty());
     assert!(parsed.type_args.is_empty());
 }
 

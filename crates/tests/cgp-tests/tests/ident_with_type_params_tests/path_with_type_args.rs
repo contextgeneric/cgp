@@ -79,7 +79,7 @@ fn strips_arguments_from_stored_path() {
     let last = parsed.path.segments.last().unwrap();
     assert!(last.arguments.is_none());
 
-    let args = parsed.type_args.args.expect("expected an argument list");
+    let args = &parsed.type_args.args;
     assert_eq!(args.len(), 2);
     assert!(matches!(args[0], TypeArg::Type(_)));
 }
@@ -87,7 +87,7 @@ fn strips_arguments_from_stored_path() {
 #[test]
 fn single_segment_path_has_no_args_for_bare_ident() {
     let parsed: Subject = parse2(quote!(path::to::Foo)).unwrap();
-    assert!(parsed.type_args.args.is_none());
+    assert!(parsed.type_args.args.is_empty());
     assert_eq!(parsed.path.segments.len(), 3);
 }
 
