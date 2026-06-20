@@ -1,0 +1,181 @@
+use proc_macro2::TokenStream;
+use quote::{ToTokens, quote};
+use syn::parse::{Parse, ParseStream};
+use syn::punctuated::Punctuated;
+use syn::token::{Colon, Comma, Const, Gt, Lt};
+use syn::{Error, Generics, Ident, Lifetime, Token, Type, parse_quote};
+
+/// A single generic parameter that can appear at a *type definition* site,
+/// such as each of `'a` and `C` inside `Bar<'a, C>`.
+///
+/// This is a deliberately restricted version of [`syn::GenericParam`]. Unlike
+/// the impl-generics used in `impl` blocks, definition-site parameters in CGP
+/// are only ever simple, unconstrained parameters: a bare lifetime, a bare type
+/// identifier, or a const parameter. In particular this rejects:
+///
+/// - trait/lifetime bounds, e.g. `A: Clone` or `'a: 'b`,
+/// - defaults, e.g. `A = B` or `const N: usize = 0`,
+/// - composite forms, e.g. `(A, B)`.
+///
+/// The existing `TypeGenerics` type approximates this by parsing a full
+/// `syn::Generics` and then round-tripping it through `split_for_impl` to
+/// detect bounds. Modelling the valid forms directly is both clearer and
+/// catches more invalid inputs (such as defaults) up front.
+#[derive(Debug, Clone)]
+pub enum TypeGenericParam {
+    /// A lifetime parameter, e.g. the `'a` in `Bar<'a>`.
+    Lifetime(Lifetime),
+    /// A type parameter, e.g. the `C` in `Bar<C>`.
+    Type(Ident),
+    /// A const parameter, e.g. the `const N: usize` in `Bar<const N: usize>`.
+    Const(ConstGenericParam),
+}
+
+/// A const generic parameter at a definition site: the `const N: usize` in
+/// `Bar<const N: usize>`. Defaults (`= 0`) are deliberately not represented.
+#[derive(Debug, Clone)]
+pub struct ConstGenericParam {
+    pub const_token: Const,
+    pub ident: Ident,
+    pub colon: Colon,
+    pub ty: Type,
+}
+
+impl Parse for TypeGenericParam {
+    fn parse(input: ParseStream) -> syn::Result<Self> {
+        if input.peek(Lifetime) {
+            let life: Lifetime = input.parse()?;
+
+            if input.peek(Token![:]) {
+                return Err(Error::new(
+                    life.span(),
+                    "lifetime bounds (`'a: 'b`) are not allowed in type generics",
+                ));
+            }
+
+            return Ok(Self::Lifetime(life));
+        }
+
+        if input.peek(Token![const]) {
+            let const_token = input.parse()?;
+            let ident = input.parse()?;
+            let colon = input.parse()?;
+            let ty: Type = input.parse()?;
+
+            if input.peek(Token![=]) {
+                return Err(Error::new(
+                    input.span(),
+                    "default const parameters (`const N: T = ...`) are not allowed in type generics",
+                ));
+            }
+
+            return Ok(Self::Const(ConstGenericParam {
+                const_token,
+                ident,
+                colon,
+                ty,
+            }));
+        }
+
+        let ident: Ident = input.parse()?;
+
+        if input.peek(Token![:]) {
+            return Err(Error::new(
+                ident.span(),
+                "trait bounds (`A: Clone`) are not allowed in type generics",
+            ));
+        }
+
+        if input.peek(Token![=]) {
+            return Err(Error::new(
+                ident.span(),
+                "default type parameters (`A = B`) are not allowed in type generics",
+            ));
+        }
+
+        Ok(Self::Type(ident))
+    }
+}
+
+impl ToTokens for TypeGenericParam {
+    fn to_tokens(&self, tokens: &mut TokenStream) {
+        match self {
+            Self::Lifetime(life) => life.to_tokens(tokens),
+            Self::Type(ident) => ident.to_tokens(tokens),
+            Self::Const(param) => {
+                param.const_token.to_tokens(tokens);
+                param.ident.to_tokens(tokens);
+                param.colon.to_tokens(tokens);
+                param.ty.to_tokens(tokens);
+            }
+        }
+    }
+}
+
+/// The optional angle-bracketed parameter list at a type definition site, e.g.
+/// the `<'a, C>` in `Bar<'a, C>`.
+///
+/// As with [`TypeArgs`], `None` represents no angle brackets while
+/// `Some(empty)` represents an explicit empty `<>`.
+///
+/// [`TypeArgs`]: crate::types::ident::TypeArgs
+#[derive(Debug, Clone, Default)]
+pub struct TypeGenericParams {
+    pub params: Option<Punctuated<TypeGenericParam, Comma>>,
+}
+
+impl TypeGenericParams {
+    pub fn make_params(&mut self) -> &mut Punctuated<TypeGenericParam, Comma> {
+        self.params.get_or_insert_with(Punctuated::new)
+    }
+
+    pub fn is_empty(&self) -> bool {
+        match &self.params {
+            Some(params) => params.is_empty(),
+            None => true,
+        }
+    }
+
+    /// Lower these parameters into a plain [`syn::Generics`]. This is handy for
+    /// downstream code that needs to feed the parameters into constructs (such
+    /// as struct definitions) that are expressed in terms of `syn::Generics`.
+    pub fn to_generics(&self) -> Generics {
+        parse_quote!( #self )
+    }
+}
+
+impl Parse for TypeGenericParams {
+    fn parse(input: ParseStream) -> syn::Result<Self> {
+        if !input.peek(Lt) {
+            return Ok(Self { params: None });
+        }
+
+        let _: Lt = input.parse()?;
+
+        let mut params = Punctuated::new();
+
+        while !input.peek(Gt) {
+            params.push_value(input.parse()?);
+
+            if input.peek(Gt) {
+                break;
+            }
+
+            params.push_punct(input.parse()?);
+        }
+
+        let _: Gt = input.parse()?;
+
+        Ok(Self {
+            params: Some(params),
+        })
+    }
+}
+
+impl ToTokens for TypeGenericParams {
+    fn to_tokens(&self, tokens: &mut TokenStream) {
+        if let Some(params) = &self.params {
+            tokens.extend(quote! { < #params > });
+        }
+    }
+}

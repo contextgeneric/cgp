@@ -1,0 +1,136 @@
+use proc_macro2::TokenStream;
+use quote::ToTokens;
+use syn::parse::{Parse, ParseStream};
+use syn::punctuated::Punctuated;
+use syn::{Error, Ident, Path, PathArguments, Type, parse_quote};
+
+use crate::traits::ToType;
+use crate::types::ident::{NewIdentWithTypeArgs, TypeArg, TypeArgs};
+
+/// A full Rust path followed by an optional type-expression argument list, e.g.
+/// `Foo`, `Foo<A, B>`, `path::to::Foo`, or `path::to::Bar<(A, B), B>`.
+///
+/// This generalizes [`NewIdentWithTypeArgs`] from a single identifier head to a
+/// full [`syn::Path`] head. The motivation is that `syn::Path` keeps the final
+/// generic arguments buried inside the last [`syn::PathSegment`], which is
+/// awkward to read and rewrite. This type lifts those arguments out into a
+/// separate [`TypeArgs`] field while keeping the remaining path in `path`,
+/// applying the same restrictions as [`TypeArg`] (no associated bindings or
+/// bounds).
+///
+/// Only the final segment may carry generic arguments. Intermediate generics
+/// (e.g. `path::to<X>::Foo`) and parenthesized arguments (e.g. `Fn(A) -> B`)
+/// are rejected.
+#[derive(Debug, Clone)]
+pub struct PathWithTypeArgs {
+    /// The full path with the final segment's arguments stripped, e.g.
+    /// `path::to::Foo` for an input of `path::to::Foo<A, B>`.
+    pub path: Path,
+    /// The arguments lifted out of the final path segment, e.g. `<A, B>`.
+    pub type_args: TypeArgs,
+}
+
+impl PathWithTypeArgs {
+    /// The identifier of the final path segment, e.g. `Foo` in
+    /// `path::to::Foo<A, B>`.
+    pub fn ident(&self) -> &Ident {
+        // A parsed `syn::Path` always has at least one segment.
+        &self.path.segments.last().unwrap().ident
+    }
+}
+
+impl Parse for PathWithTypeArgs {
+    fn parse(input: ParseStream) -> syn::Result<Self> {
+        let mut path: Path = input.parse()?;
+
+        let last_index = path.segments.len() - 1;
+
+        // Generic arguments are only meaningful on the final segment for our
+        // use cases. Reject them on intermediate segments.
+        for (index, segment) in path.segments.iter().enumerate() {
+            if index != last_index && !segment.arguments.is_none() {
+                return Err(Error::new_spanned(
+                    segment,
+                    "generic arguments are only allowed on the final path segment",
+                ));
+            }
+        }
+
+        let last_segment = path.segments.last_mut().unwrap();
+
+        let type_args = match &last_segment.arguments {
+            PathArguments::None => TypeArgs { args: None },
+            PathArguments::AngleBracketed(arguments) => {
+                // Reject turbofish (`Foo::<A>`); only the type-position form
+                // `Foo<A>` is accepted, matching `NewIdentWithTypeArgs`.
+                if arguments.colon2_token.is_some() {
+                    return Err(Error::new_spanned(
+                        arguments,
+                        "turbofish arguments (`Foo::<A>`) are not allowed; use `Foo<A>`",
+                    ));
+                }
+
+                let mut args = Punctuated::new();
+
+                for pair in arguments.args.pairs() {
+                    let (arg, punct) = pair.into_tuple();
+                    args.push_value(TypeArg::from_generic_argument(arg)?);
+                    if let Some(comma) = punct {
+                        args.push_punct(*comma);
+                    }
+                }
+
+                TypeArgs { args: Some(args) }
+            }
+            PathArguments::Parenthesized(arguments) => {
+                return Err(Error::new_spanned(
+                    arguments,
+                    "parenthesized generic arguments (`Fn(A) -> B`) are not allowed",
+                ));
+            }
+        };
+
+        // Keep `path` free of the final arguments so that `ToTokens` can
+        // reconstruct the original input as `path` followed by `type_args`.
+        last_segment.arguments = PathArguments::None;
+
+        Ok(Self { path, type_args })
+    }
+}
+
+impl ToTokens for PathWithTypeArgs {
+    fn to_tokens(&self, tokens: &mut TokenStream) {
+        self.path.to_tokens(tokens);
+        self.type_args.to_tokens(tokens);
+    }
+}
+
+impl From<Ident> for PathWithTypeArgs {
+    fn from(ident: Ident) -> Self {
+        Self {
+            path: Path::from(ident),
+            type_args: TypeArgs::default(),
+        }
+    }
+}
+
+impl From<NewIdentWithTypeArgs> for PathWithTypeArgs {
+    fn from(value: NewIdentWithTypeArgs) -> Self {
+        Self {
+            path: Path::from(value.ident),
+            type_args: value.type_args,
+        }
+    }
+}
+
+impl ToType for PathWithTypeArgs {
+    fn to_type(&self) -> Type {
+        parse_quote!(#self)
+    }
+}
+
+impl From<PathWithTypeArgs> for Type {
+    fn from(value: PathWithTypeArgs) -> Self {
+        parse_quote!(#value)
+    }
+}
