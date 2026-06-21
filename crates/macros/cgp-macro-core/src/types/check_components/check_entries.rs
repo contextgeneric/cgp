@@ -4,15 +4,15 @@ use syn::spanned::Spanned;
 use syn::token::{Bracket, Colon, Comma};
 use syn::{Type, bracketed};
 
-use crate::types::check_components::{CheckEntry, TypeWithGenerics};
+use crate::types::check_components::{EvaluatedCheckEntry, TypeWithGenerics};
 use crate::types::generics::ImplGenerics;
 
 pub struct CheckEntries {
-    pub entries: Vec<CheckEntry>,
+    pub entries: Vec<EvaluatedCheckEntry>,
 }
 
 struct ParseCheckEntries {
-    pub entries: Vec<CheckEntry>,
+    pub entries: Vec<EvaluatedCheckEntry>,
 }
 
 impl Parse for CheckEntries {
@@ -51,6 +51,7 @@ impl Parse for ParseCheckEntries {
 
                 let types: Punctuated<TypeWithGenerics, Comma> =
                     Punctuated::parse_terminated(&content)?;
+
                 types.into_iter().collect()
             } else {
                 vec![input.parse()?]
@@ -65,7 +66,7 @@ impl Parse for ParseCheckEntries {
 
         for component_type in component_types.iter() {
             if component_params.is_empty() {
-                entries.push(CheckEntry {
+                entries.push(EvaluatedCheckEntry {
                     component_type: component_type.clone(),
                     component_params: None,
                     span: component_type.span(),
@@ -84,7 +85,7 @@ impl Parse for ParseCheckEntries {
                         component_param_type.span()
                     };
 
-                    entries.push(CheckEntry {
+                    entries.push(EvaluatedCheckEntry {
                         component_type: component_type.clone(),
                         component_params: Some(component_param_type.clone()),
                         span,

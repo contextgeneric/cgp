@@ -1,4 +1,6 @@
-use cgp_macro_core::types::check_components::{CheckComponentsTable, CheckEntries, CheckEntry};
+use cgp_macro_core::types::check_components::{
+    CheckComponentsTable, CheckEntries, EvaluatedCheckEntry,
+};
 use cgp_macro_core::types::generics::ImplGenerics;
 use proc_macro2::{Span, TokenStream};
 use quote::{ToTokens, TokenStreamExt};
@@ -14,7 +16,7 @@ use crate::parse::{DelegateAndCheckSpec, DelegateEntry, DelegateKey};
 pub fn delegate_and_check_components(body: TokenStream) -> syn::Result<TokenStream> {
     let spec: DelegateAndCheckSpec = parse2(body)?;
 
-    let check_entries: Vec<CheckEntry> = spec
+    let check_entries: Vec<EvaluatedCheckEntry> = spec
         .entries
         .iter()
         .flat_map(|entry| {
@@ -25,14 +27,14 @@ pub fn delegate_and_check_components(body: TokenStream) -> syn::Result<TokenStre
                 match &key.check_params {
                     Some(check_params) => check_params
                         .iter()
-                        .map(|generic| CheckEntry {
+                        .map(|generic| EvaluatedCheckEntry {
                             component_type: component_type.clone(),
                             component_params: Some(generic.clone()),
                             span,
                             generics: ImplGenerics::default(),
                         })
                         .collect::<Vec<_>>(),
-                    None => vec![CheckEntry {
+                    None => vec![EvaluatedCheckEntry {
                         component_type: component_type.clone(),
                         component_params: None,
                         span,

@@ -1,5 +1,5 @@
 use cgp_macro_core::functions::merge_generics;
-use cgp_macro_core::types::check_components::{CheckComponentsTable, CheckEntry};
+use cgp_macro_core::types::check_components::{CheckComponentsTable, EvaluatedCheckEntry};
 use quote::quote;
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
@@ -26,7 +26,7 @@ pub fn derive_check_components(
         trait #trait_name <__Component__, __Params__: ?Sized>: CanUseComponent<__Component__, __Params__> {}
     })?;
 
-    for CheckEntry {
+    for EvaluatedCheckEntry {
         component_type,
         component_params,
         span,
@@ -71,7 +71,7 @@ pub fn derive_check_provider(
         trait #trait_name <__Component__, __Params__: ?Sized>: IsProviderFor<__Component__, #context_type, __Params__> {}
     })?;
 
-    for CheckEntry {
+    for EvaluatedCheckEntry {
         component_type,
         component_params,
         ..

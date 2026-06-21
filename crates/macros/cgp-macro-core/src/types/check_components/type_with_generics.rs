@@ -4,6 +4,7 @@ use syn::token::Lt;
 
 use crate::types::generics::ImplGenerics;
 
+#[derive(Clone)]
 pub struct TypeWithGenerics {
     pub ty: Type,
     pub generics: ImplGenerics,
