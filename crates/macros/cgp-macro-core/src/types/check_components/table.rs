@@ -4,9 +4,11 @@ use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::spanned::Spanned;
 use syn::token::{Comma, Lt, Pound, Where};
-use syn::{Attribute, Ident, Type, WhereClause, braced, parse2};
+use syn::{Attribute, Ident, ItemImpl, ItemTrait, Type, WhereClause, braced, parse2};
 
-use crate::types::check_components::CheckEntries;
+use crate::functions::merge_generics;
+use crate::parse_internal;
+use crate::types::check_components::{CheckEntries, EvaluatedCheckEntry, TypeWithGenerics};
 use crate::types::generics::ImplGenerics;
 use crate::types::ident::IdentWithTypeArgs;
 
@@ -17,6 +19,70 @@ pub struct CheckComponentsTable {
     pub context_type: Type,
     pub where_clause: WhereClause,
     pub check_entries: CheckEntries,
+}
+
+impl CheckComponentsTable {
+    pub fn eval(&self) -> syn::Result<(ItemTrait, Vec<ItemImpl>)> {
+        let mut item_impls = Vec::new();
+        let unit: Type = parse_internal!(());
+
+        let context_type = &self.context_type;
+        let trait_name = &self.trait_name;
+        let impl_generics = &self.impl_generics;
+        let where_clause = &self.where_clause;
+
+        let item_trait: ItemTrait = if self.check_providers.is_some() {
+            parse_internal! {
+                trait #trait_name <__Component__, __Params__: ?Sized>: IsProviderFor<__Component__, #context_type, __Params__> {}
+            }
+        } else {
+            parse_internal! {
+                trait #trait_name <__Component__, __Params__: ?Sized>: CanUseComponent<__Component__, __Params__> {}
+            }
+        };
+
+        let evaluated_entries = self.check_entries.eval();
+
+        for entry in evaluated_entries {
+            let EvaluatedCheckEntry {
+                key: component_type,
+                value: component_params,
+                span,
+            } = entry;
+
+            let self_types = if let Some(check_providers) = &self.check_providers {
+                Vec::from_iter(check_providers.iter().cloned())
+            } else {
+                // Override the span of the context type so that any unsatisfied constraint
+                // error is highlighted on the component type instead
+                let context_type = override_span(&span, context_type)?;
+                vec![context_type]
+            };
+
+            let TypeWithGenerics {
+                ty: component_param,
+                generics: check_generics,
+            } = component_params.unwrap_or_else(|| unit.clone().into());
+
+            let generics = merge_generics(&check_generics.generics, &impl_generics.generics);
+
+            let impl_generics = generics.split_for_impl().0;
+
+            for self_type in self_types {
+                let item_impl: ItemImpl = parse_internal! {
+                    impl #impl_generics
+                        #trait_name < #component_type, #component_param >
+                        for #self_type
+                    #where_clause
+                    {}
+                };
+
+                item_impls.push(item_impl);
+            }
+        }
+
+        Ok((item_trait, item_impls))
+    }
 }
 
 impl Parse for CheckComponentsTable {
@@ -97,4 +163,19 @@ impl Parse for CheckComponentsTable {
             check_entries: entries,
         })
     }
+}
+
+fn override_span<T>(span: &Span, body: &T) -> syn::Result<T>
+where
+    T: Parse + ToTokens,
+{
+    parse2(
+        body.to_token_stream()
+            .into_iter()
+            .map(|mut tree| {
+                tree.set_span(*span);
+                tree
+            })
+            .collect(),
+    )
 }

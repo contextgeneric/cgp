@@ -1,4 +1,4 @@
-mod check_entries;
+mod entries;
 mod entry;
 mod evaluated_check_entry;
 mod key;
@@ -7,7 +7,7 @@ mod tables;
 mod type_with_generics;
 mod value;
 
-pub use check_entries::*;
+pub use entries::*;
 pub use entry::*;
 pub use evaluated_check_entry::*;
 pub use key::*;
