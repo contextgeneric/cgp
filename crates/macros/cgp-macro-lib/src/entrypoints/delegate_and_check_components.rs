@@ -1,11 +1,10 @@
 use cgp_macro_core::types::check_components::{
-    CheckComponentsTable, CheckEntries, EvaluatedCheckEntry,
+    CheckComponentsTable, CheckEntries, CheckEntry, CheckKey, CheckValue, TypeWithGenerics,
 };
 use cgp_macro_core::types::generics::ImplGenerics;
 use proc_macro2::{Span, TokenStream};
 use quote::{ToTokens, TokenStreamExt};
 use syn::punctuated::Punctuated;
-use syn::spanned::Spanned;
 use syn::token::{Comma, Where};
 use syn::{Type, WhereClause, parse2};
 
@@ -16,34 +15,33 @@ use crate::parse::{DelegateAndCheckSpec, DelegateEntry, DelegateKey};
 pub fn delegate_and_check_components(body: TokenStream) -> syn::Result<TokenStream> {
     let spec: DelegateAndCheckSpec = parse2(body)?;
 
-    let check_entries: Vec<EvaluatedCheckEntry> = spec
-        .entries
-        .iter()
-        .flat_map(|entry| {
-            entry.keys.iter().flat_map(|key| {
-                let component_type = &key.component_type;
-                let span = component_type.span();
+    let mut check_entries = Punctuated::new();
 
-                match &key.check_params {
-                    Some(check_params) => check_params
+    for entry in &spec.entries {
+        for key in &entry.keys {
+            let component_type = &key.component_type;
+
+            match &key.check_params {
+                Some(check_params) => {
+                    let values = check_params
                         .iter()
-                        .map(|generic| EvaluatedCheckEntry {
-                            component_type: component_type.clone(),
-                            component_params: Some(generic.clone()),
-                            span,
-                            generics: ImplGenerics::default(),
-                        })
-                        .collect::<Vec<_>>(),
-                    None => vec![EvaluatedCheckEntry {
-                        component_type: component_type.clone(),
-                        component_params: None,
-                        span,
-                        generics: ImplGenerics::default(),
-                    }],
+                        .cloned()
+                        .map(TypeWithGenerics::from)
+                        .collect();
+                    check_entries.push(CheckEntry {
+                        key: CheckKey::Single(component_type.clone()),
+                        value: Some(CheckValue::Multi(values)),
+                    });
                 }
-            })
-        })
-        .collect();
+                None => {
+                    check_entries.push(CheckEntry {
+                        key: CheckKey::Single(component_type.clone()),
+                        value: None,
+                    });
+                }
+            }
+        }
+    }
 
     let delegate_entries: Punctuated<DelegateEntry<Type>, Comma> = spec
         .entries

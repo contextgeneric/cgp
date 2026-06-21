@@ -31,11 +31,11 @@ pub fn derive_check_components(
         component_params,
         span,
         generics: check_generics,
-    } in spec.check_entries.entries.iter()
+    } in spec.check_entries.eval()
     {
         // Override the span of the context type so that any unsatisfied constraint
         // error is highlighted on the component type instead
-        let context_type = override_span(span, context_type)?;
+        let context_type = override_span(&span, context_type)?;
 
         let component_param = component_params.as_ref().unwrap_or(&unit);
 
@@ -75,7 +75,7 @@ pub fn derive_check_provider(
         component_type,
         component_params,
         ..
-    } in spec.check_entries.entries.iter()
+    } in spec.check_entries.eval()
     {
         let component_param = component_params.as_ref().unwrap_or(&unit);
 

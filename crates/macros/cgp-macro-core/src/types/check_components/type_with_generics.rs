@@ -23,3 +23,12 @@ impl Parse for TypeWithGenerics {
         Ok(Self { ty, generics })
     }
 }
+
+impl From<Type> for TypeWithGenerics {
+    fn from(ty: Type) -> Self {
+        Self {
+            ty,
+            generics: ImplGenerics::default(),
+        }
+    }
+}
