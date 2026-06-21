@@ -23,15 +23,18 @@ pub fn delegate_and_check_components(body: TokenStream) -> syn::Result<TokenStre
 
             match &key.check_params {
                 Some(check_params) => {
-                    let values = check_params
-                        .iter()
-                        .cloned()
-                        .map(TypeWithGenerics::from)
-                        .collect();
-                    check_entries.push(CheckEntry {
-                        key: CheckKey::Single(component_type.clone()),
-                        value: Some(CheckValue::Multi(values)),
-                    });
+                    // Emit one check entry per param so that a single-key/single-param
+                    // entry resolves the error span to the component type (via eval()'s
+                    // `component_types_count >= component_params_count` heuristic), and so
+                    // that an empty param list (i.e. `#[skip_check]`) emits no check at all.
+                    for check_param in check_params {
+                        check_entries.push(CheckEntry {
+                            key: CheckKey::Single(component_type.clone()),
+                            value: Some(CheckValue::Single(Box::new(TypeWithGenerics::from(
+                                check_param.clone(),
+                            )))),
+                        });
+                    }
                 }
                 None => {
                     check_entries.push(CheckEntry {
