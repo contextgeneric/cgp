@@ -7,7 +7,6 @@
 
 extern crate alloc;
 
-pub(crate) mod blanket_trait;
 pub(crate) mod check_components;
 pub(crate) mod delegate_components;
 pub(crate) mod derive_builder;

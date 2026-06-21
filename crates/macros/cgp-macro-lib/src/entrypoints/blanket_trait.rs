@@ -1,8 +1,7 @@
+use cgp_macro_core::types::blanket_trait::ItemBlanketTrait;
 use proc_macro2::{Span, TokenStream};
 use quote::quote;
 use syn::{Ident, ItemTrait, parse2};
-
-use crate::blanket_trait::derive_blanket_trait;
 
 pub fn blanket_trait(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
     let context_ident: Ident = if attr.is_empty() {
@@ -11,15 +10,16 @@ pub fn blanket_trait(attr: TokenStream, body: TokenStream) -> syn::Result<TokenS
         parse2(attr)?
     };
 
-    let mut item_trait: ItemTrait = parse2(body)?;
+    let item_trait: ItemTrait = parse2(body)?;
 
-    let item_impl = derive_blanket_trait(&context_ident, &mut item_trait)?;
-
-    let out = quote! {
-        #item_trait
-
-        #item_impl
+    let item_blanket_impl = ItemBlanketTrait {
+        context_ident,
+        item_trait,
     };
 
-    Ok(out)
+    let items = item_blanket_impl.to_items()?;
+
+    Ok(quote! {
+        #( #items )*
+    })
 }
