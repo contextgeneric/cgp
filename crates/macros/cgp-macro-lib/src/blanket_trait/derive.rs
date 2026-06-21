@@ -1,3 +1,4 @@
+use cgp_macro_core::visitors::remove_self_path;
 use proc_macro2::Span;
 use quote::{ToTokens, quote};
 use syn::token::{Eq, For, Impl, Semi};
@@ -5,8 +6,6 @@ use syn::{
     Error, Ident, ImplItem, ImplItemConst, ImplItemFn, ImplItemType, ItemImpl, ItemTrait, Path,
     TraitItem, Type, TypeParamBound, Visibility, WherePredicate, parse2,
 };
-
-use crate::blanket_trait::remove_self_path;
 
 pub fn derive_blanket_trait(
     context_ident: &Ident,
@@ -40,10 +39,7 @@ pub fn derive_blanket_trait(
 
                     for bound in current_assoc_bounds.iter_mut() {
                         if let TypeParamBound::Trait(bound) = bound {
-                            bound.path = parse2(remove_self_path(
-                                bound.path.to_token_stream(),
-                                &assoc_idents,
-                            ))?;
+                            remove_self_path(&mut bound.path, &assoc_idents);
                         }
                     }
 
@@ -142,10 +138,7 @@ pub fn derive_blanket_trait(
 
     for bound in supertraits.iter_mut() {
         if let TypeParamBound::Trait(trait_bound) = bound {
-            trait_bound.path = parse2(remove_self_path(
-                trait_bound.path.to_token_stream(),
-                &assoc_idents,
-            ))?;
+            remove_self_path(&mut trait_bound.path, &assoc_idents);
         }
     }
 
