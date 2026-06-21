@@ -6,14 +6,14 @@ use syn::token::{Bracket, Comma};
 use crate::types::check_components::TypeWithGenerics;
 
 pub enum CheckValue {
-    Single(TypeWithGenerics),
+    Single(Box<TypeWithGenerics>),
     Multi(Punctuated<TypeWithGenerics, Comma>),
 }
 
 impl CheckValue {
     pub fn to_values(&self) -> Vec<TypeWithGenerics> {
         match self {
-            Self::Single(value) => vec![value.clone()],
+            Self::Single(value) => vec![value.as_ref().clone()],
             Self::Multi(values) => Vec::from_iter(values.iter().cloned()),
         }
     }
