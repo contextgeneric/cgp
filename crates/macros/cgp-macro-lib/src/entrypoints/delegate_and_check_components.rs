@@ -3,12 +3,11 @@ use cgp_macro_core::types::check_components::{
 };
 use cgp_macro_core::types::generics::ImplGenerics;
 use proc_macro2::{Span, TokenStream};
-use quote::{ToTokens, TokenStreamExt};
+use quote::quote;
 use syn::punctuated::Punctuated;
 use syn::token::{Comma, Where};
 use syn::{Type, WhereClause, parse2};
 
-use crate::check_components::derive_check_components;
 use crate::delegate_components::impl_delegate_components;
 use crate::parse::{DelegateAndCheckSpec, DelegateEntry, DelegateKey};
 
@@ -84,10 +83,11 @@ pub fn delegate_and_check_components(body: TokenStream) -> syn::Result<TokenStre
         },
     };
 
-    let (check_item_trait, check_item_impls) = derive_check_components(&check_spec)?;
+    let items = check_spec.to_items()?;
 
-    out.extend(check_item_trait.to_token_stream());
-    out.append_all(check_item_impls);
+    out.extend(quote! {
+        #( #items )*
+    });
 
     Ok(out)
 }

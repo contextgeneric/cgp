@@ -4,7 +4,7 @@ use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::spanned::Spanned;
 use syn::token::{Comma, Lt, Pound, Where};
-use syn::{Attribute, Ident, ItemImpl, ItemTrait, Type, WhereClause, braced, parse2};
+use syn::{Attribute, Ident, Item, ItemImpl, ItemTrait, Type, WhereClause, braced, parse2};
 
 use crate::functions::merge_generics;
 use crate::parse_internal;
@@ -22,6 +22,15 @@ pub struct CheckComponentsTable {
 }
 
 impl CheckComponentsTable {
+    pub fn to_items(&self) -> syn::Result<Vec<Item>> {
+        let (item_trait, item_impls) = self.eval()?;
+
+        let mut items = vec![item_trait.into()];
+        items.extend(item_impls.into_iter().map(Into::into));
+
+        Ok(items)
+    }
+
     pub fn eval(&self) -> syn::Result<(ItemTrait, Vec<ItemImpl>)> {
         let mut item_impls = Vec::new();
         let unit: Type = parse_internal!(());
