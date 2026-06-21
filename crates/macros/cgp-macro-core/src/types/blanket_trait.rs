@@ -1,12 +1,13 @@
 use proc_macro2::Span;
 use quote::{ToTokens, quote};
 use syn::token::{Eq, Semi};
+use syn::visit_mut::VisitMut;
 use syn::{
     Error, Ident, ImplItem, ImplItemConst, ImplItemFn, ImplItemType, Item, ItemImpl, ItemTrait,
-    Path, TraitItem, Type, TypeParamBound, Visibility, WherePredicate, parse2,
+    Path, TraitItem, Type, Visibility, WherePredicate, parse2,
 };
 
-use crate::visitors::remove_self_path;
+use crate::visitors::RemoveSelfPathVisitor;
 
 pub struct ItemBlanketTrait {
     pub context_ident: Ident,
@@ -37,6 +38,11 @@ impl ItemBlanketTrait {
             }
         }
 
+        RemoveSelfPathVisitor {
+            assoc_idents: &assoc_idents,
+        }
+        .visit_item_trait_mut(&mut item_trait);
+
         for trait_item in item_trait.items.iter_mut() {
             match trait_item {
                 TraitItem::Type(trait_item_type) => {
@@ -49,13 +55,7 @@ impl ItemBlanketTrait {
                     })?;
 
                     if !trait_item_type.bounds.is_empty() {
-                        let mut current_assoc_bounds = trait_item_type.bounds.clone();
-
-                        for bound in current_assoc_bounds.iter_mut() {
-                            if let TypeParamBound::Trait(bound) = bound {
-                                remove_self_path(&mut bound.path, &assoc_idents);
-                            }
-                        }
+                        let current_assoc_bounds = trait_item_type.bounds.clone();
 
                         assoc_bounds.push(parse2(quote! {
                             #item_type_ident : #current_assoc_bounds
@@ -148,13 +148,7 @@ impl ItemBlanketTrait {
                 .push(parse2(assoc_ident.to_token_stream())?);
         }
 
-        let mut supertraits = item_trait.supertraits.clone();
-
-        for bound in supertraits.iter_mut() {
-            if let TypeParamBound::Trait(trait_bound) = bound {
-                remove_self_path(&mut trait_bound.path, &assoc_idents);
-            }
-        }
+        let supertraits = item_trait.supertraits.clone();
 
         let where_clause = impl_generics.make_where_clause();
         where_clause.predicates.push(parse2(quote! {

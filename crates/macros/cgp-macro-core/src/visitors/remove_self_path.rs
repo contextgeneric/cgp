@@ -1,13 +1,8 @@
-use syn::visit_mut::{VisitMut, visit_path_mut, visit_type_mut};
+use syn::visit_mut::{VisitMut, visit_type_mut};
 use syn::{Ident, PathArguments, Type, TypePath};
 
-pub fn remove_self_path(path: &mut syn::Path, assoc_idents: &[Ident]) {
-    let mut visitor = RemoveSelfPathVisitor { assoc_idents };
-    visit_path_mut(&mut visitor, path);
-}
-
-struct RemoveSelfPathVisitor<'a> {
-    assoc_idents: &'a [Ident],
+pub struct RemoveSelfPathVisitor<'a> {
+    pub assoc_idents: &'a [Ident],
 }
 
 impl VisitMut for RemoveSelfPathVisitor<'_> {
