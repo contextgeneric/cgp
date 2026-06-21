@@ -1,13 +1,15 @@
 use cgp_macro_core::functions::merge_generics;
+use cgp_macro_core::types::check_components::{CheckComponentsTable, CheckEntry};
 use quote::quote;
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
 use syn::{ItemImpl, ItemTrait, Type, parse2};
 
 use crate::check_components::override_span;
-use crate::parse::{CheckComponents, CheckEntry};
 
-pub fn derive_check_components(spec: &CheckComponents) -> syn::Result<(ItemTrait, Vec<ItemImpl>)> {
+pub fn derive_check_components(
+    spec: &CheckComponentsTable,
+) -> syn::Result<(ItemTrait, Vec<ItemImpl>)> {
     if let Some(check_providers) = &spec.check_providers {
         return derive_check_provider(spec, check_providers);
     }
@@ -54,7 +56,7 @@ pub fn derive_check_components(spec: &CheckComponents) -> syn::Result<(ItemTrait
 }
 
 pub fn derive_check_provider(
-    spec: &CheckComponents,
+    spec: &CheckComponentsTable,
     providers: &Punctuated<Type, Comma>,
 ) -> syn::Result<(ItemTrait, Vec<ItemImpl>)> {
     let mut item_impls = Vec::new();

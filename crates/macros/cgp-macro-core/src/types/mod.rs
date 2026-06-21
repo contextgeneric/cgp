@@ -6,6 +6,7 @@ pub mod cgp_fn;
 pub mod cgp_getter;
 pub mod cgp_impl;
 pub mod cgp_provider;
+pub mod check_components;
 pub mod delegate_component;
 pub mod empty_struct;
 pub mod field;

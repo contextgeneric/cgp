@@ -1,3 +1,4 @@
+use cgp_macro_core::types::check_components::{CheckComponentsTable, CheckEntries, CheckEntry};
 use cgp_macro_core::types::generics::ImplGenerics;
 use proc_macro2::{Span, TokenStream};
 use quote::{ToTokens, TokenStreamExt};
@@ -8,9 +9,7 @@ use syn::{Type, WhereClause, parse2};
 
 use crate::check_components::derive_check_components;
 use crate::delegate_components::impl_delegate_components;
-use crate::parse::{
-    CheckComponents, CheckEntries, CheckEntry, DelegateAndCheckSpec, DelegateEntry, DelegateKey,
-};
+use crate::parse::{DelegateAndCheckSpec, DelegateEntry, DelegateKey};
 
 pub fn delegate_and_check_components(body: TokenStream) -> syn::Result<TokenStream> {
     let spec: DelegateAndCheckSpec = parse2(body)?;
@@ -68,7 +67,7 @@ pub fn delegate_and_check_components(body: TokenStream) -> syn::Result<TokenStre
     let mut out =
         impl_delegate_components(&spec.context_type, &spec.impl_generics, &delegate_entries)?;
 
-    let check_spec = CheckComponents {
+    let check_spec = CheckComponentsTable {
         check_providers: None,
         impl_generics: spec.impl_generics,
         trait_name: spec.trait_name,
