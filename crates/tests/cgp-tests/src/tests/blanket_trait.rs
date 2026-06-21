@@ -1,14 +1,25 @@
 #![allow(dead_code)]
 
-use cgp::core::macros::blanket_trait;
+mod basic_blanket_trait {
+    use cgp_macro_test_util::snapshot_blanket_trait;
 
-#[test]
-pub fn test_basic_blanket_trait() {
     pub trait Foo {}
     pub trait Bar {}
 
-    #[blanket_trait]
-    pub trait FooBar: Foo + Bar {}
+    snapshot_blanket_trait! {
+        #[blanket_trait]
+        pub trait FooBar: Foo + Bar {}
+
+        expand_foo_bar(output) {
+            insta::assert_snapshot!(output, @"
+            pub trait FooBar: Foo + Bar {}
+            impl<__Context__> FooBar for __Context__
+            where
+                __Context__: Foo + Bar,
+            {}
+            ")
+        }
+    }
 
     pub struct Context;
 
@@ -19,8 +30,9 @@ pub fn test_basic_blanket_trait() {
     impl CanUseFooBar for Context {}
 }
 
-#[test]
-pub fn test_blanket_trait_with_method() {
+mod blanket_trait_with_method {
+    use cgp_macro_test_util::snapshot_blanket_trait;
+
     pub trait Foo {
         fn foo(&self);
     }
@@ -28,11 +40,33 @@ pub fn test_blanket_trait_with_method() {
         fn bar(&self);
     }
 
-    #[blanket_trait]
-    pub trait FooBar: Foo + Bar {
-        fn foo_bar(&self) {
-            self.foo();
-            self.bar();
+    snapshot_blanket_trait! {
+        #[blanket_trait]
+        pub trait FooBar: Foo + Bar {
+            fn foo_bar(&self) {
+                self.foo();
+                self.bar();
+            }
+        }
+
+        expand_foo_bar(output) {
+            insta::assert_snapshot!(output, @"
+            pub trait FooBar: Foo + Bar {
+                fn foo_bar(&self) {
+                    self.foo();
+                    self.bar();
+                }
+            }
+            impl<__Context__> FooBar for __Context__
+            where
+                __Context__: Foo + Bar,
+            {
+                fn foo_bar(&self) {
+                    self.foo();
+                    self.bar();
+                }
+            }
+            ")
         }
     }
 
@@ -50,17 +84,34 @@ pub fn test_blanket_trait_with_method() {
     impl CanUseFooBar for Context {}
 }
 
-#[test]
-pub fn test_blanket_trait_with_associated_type_without_constraints() {
+mod blanket_trait_with_associated_type_without_constraints {
+    use cgp_macro_test_util::snapshot_blanket_trait;
+
     pub trait HasFooTypeAt<I> {
         type Foo;
     }
 
     pub struct Bar;
 
-    #[blanket_trait]
-    pub trait HasFooTypeAtBar: HasFooTypeAt<Bar, Foo = Self::FooBar> {
-        type FooBar;
+    snapshot_blanket_trait! {
+        #[blanket_trait]
+        pub trait HasFooTypeAtBar: HasFooTypeAt<Bar, Foo = Self::FooBar> {
+            type FooBar;
+        }
+
+        expand_foo_bar(output) {
+            insta::assert_snapshot!(output, @"
+            pub trait HasFooTypeAtBar: HasFooTypeAt<Bar, Foo = Self::FooBar> {
+                type FooBar;
+            }
+            impl<__Context__, FooBar> HasFooTypeAtBar for __Context__
+            where
+                __Context__: HasFooTypeAt<Bar, Foo = FooBar>,
+            {
+                type FooBar = FooBar;
+            }
+            ")
+        }
     }
 
     pub struct Context;
@@ -74,17 +125,35 @@ pub fn test_blanket_trait_with_associated_type_without_constraints() {
     impl CanUseFooTypeAtBar for Context {}
 }
 
-#[test]
-pub fn test_blanket_trait_with_associated_type_and_constraints() {
+mod blanket_trait_with_associated_type_and_constraints {
+    use cgp_macro_test_util::snapshot_blanket_trait;
+
     pub trait HasFooTypeAt<I> {
         type Foo;
     }
 
     pub struct Bar;
 
-    #[blanket_trait]
-    pub trait HasFooTypeAtBar: HasFooTypeAt<Bar, Foo = Self::FooBar> {
-        type FooBar: Clone;
+    snapshot_blanket_trait! {
+        #[blanket_trait]
+        pub trait HasFooTypeAtBar: HasFooTypeAt<Bar, Foo = Self::FooBar> {
+            type FooBar: Clone;
+        }
+
+        expand_foo_bar(output) {
+            insta::assert_snapshot!(output, @"
+            pub trait HasFooTypeAtBar: HasFooTypeAt<Bar, Foo = Self::FooBar> {
+                type FooBar: Clone;
+            }
+            impl<__Context__, FooBar> HasFooTypeAtBar for __Context__
+            where
+                __Context__: HasFooTypeAt<Bar, Foo = FooBar>,
+                FooBar: Clone,
+            {
+                type FooBar = FooBar;
+            }
+            ")
+        }
     }
 
     pub struct Context;

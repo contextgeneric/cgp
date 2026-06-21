@@ -1,3 +1,4 @@
+mod snapshot_blanket_trait;
 mod snapshot_cgp_auto_getter;
 mod snapshot_cgp_component;
 mod snapshot_cgp_fn;
@@ -11,6 +12,7 @@ mod snapshot_check_components;
 mod snapshot_delegate_and_check_components;
 mod snapshot_delegate_components;
 
+pub use snapshot_blanket_trait::*;
 pub use snapshot_cgp_auto_getter::*;
 pub use snapshot_cgp_component::*;
 pub use snapshot_cgp_fn::*;

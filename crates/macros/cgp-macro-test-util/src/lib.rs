@@ -84,3 +84,10 @@ pub fn snapshot_delegate_and_check_components(body: TokenStream) -> TokenStream 
         .unwrap_or_else(syn::Error::into_compile_error)
         .into()
 }
+
+#[proc_macro]
+pub fn snapshot_blanket_trait(body: TokenStream) -> TokenStream {
+    entrypoints::snapshot_blanket_trait(body.into())
+        .unwrap_or_else(syn::Error::into_compile_error)
+        .into()
+}

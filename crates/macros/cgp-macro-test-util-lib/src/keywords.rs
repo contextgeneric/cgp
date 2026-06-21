@@ -23,3 +23,5 @@ define_keyword!(DelegateComponents, "delegate_components");
 define_keyword!(CheckComponents, "check_components");
 
 define_keyword!(DelegateAndCheckComponents, "delegate_and_check_components");
+
+define_keyword!(BlanketTrait, "blanket_trait");
