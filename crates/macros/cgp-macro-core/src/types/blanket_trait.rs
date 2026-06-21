@@ -1,12 +1,12 @@
 use proc_macro2::Span;
-use quote::{ToTokens, quote};
 use syn::token::{Eq, Semi};
 use syn::visit_mut::VisitMut;
 use syn::{
     Error, Ident, ImplItem, ImplItemConst, ImplItemFn, ImplItemType, Item, ItemImpl, ItemTrait,
-    Path, TraitItem, Type, Visibility, WherePredicate, parse2,
+    Path, TraitItem, Type, Visibility, WherePredicate,
 };
 
+use crate::parse_internal;
 use crate::visitors::RemoveSelfPathVisitor;
 
 pub struct ItemBlanketTrait {
@@ -50,16 +50,16 @@ impl ItemBlanketTrait {
 
                     let item_type_ident = &trait_item_type.ident;
 
-                    let type_impl = parse2(quote! {
+                    let type_impl = parse_internal! {
                         #item_type_ident
-                    })?;
+                    };
 
                     if !trait_item_type.bounds.is_empty() {
                         let current_assoc_bounds = trait_item_type.bounds.clone();
 
-                        assoc_bounds.push(parse2(quote! {
+                        assoc_bounds.push(parse_internal! {
                             #item_type_ident : #current_assoc_bounds
-                        })?);
+                        });
                     }
 
                     let impl_item_type = ImplItemType {
@@ -134,33 +134,31 @@ impl ItemBlanketTrait {
             }
         }
 
-        let context_type: Type = parse2(quote! { #context_ident })?;
+        let context_type: Type = parse_internal!(#context_ident);
 
         let mut impl_generics = item_trait.generics.clone();
 
-        impl_generics
-            .params
-            .push(parse2(context_type.to_token_stream())?);
+        impl_generics.params.push(parse_internal!(#context_type));
 
         for assoc_ident in assoc_idents.iter() {
-            impl_generics
-                .params
-                .push(parse2(assoc_ident.to_token_stream())?);
+            impl_generics.params.push(parse_internal!(#assoc_ident));
         }
 
         let supertraits = item_trait.supertraits.clone();
 
         let where_clause = impl_generics.make_where_clause();
-        where_clause.predicates.push(parse2(quote! {
+        where_clause.predicates.push(parse_internal! {
             #context_type: #supertraits
-        })?);
+        });
 
         where_clause.predicates.extend(assoc_bounds);
 
         let trait_name = &item_trait.ident;
         let (_, type_generics, _) = item_trait.generics.split_for_impl();
 
-        let trait_path: Path = parse2(quote! { #trait_name #type_generics })?;
+        let trait_path: Path = parse_internal! {
+            #trait_name #type_generics
+        };
 
         let item_impl = ItemImpl {
             attrs: item_trait.attrs.clone(),
