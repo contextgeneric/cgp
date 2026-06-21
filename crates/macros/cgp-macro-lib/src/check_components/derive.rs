@@ -1,5 +1,7 @@
 use cgp_macro_core::functions::merge_generics;
-use cgp_macro_core::types::check_components::{CheckComponentsTable, EvaluatedCheckEntry};
+use cgp_macro_core::types::check_components::{
+    CheckComponentsTable, EvaluatedCheckEntry, TypeWithGenerics,
+};
 use quote::quote;
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
@@ -27,22 +29,26 @@ pub fn derive_check_components(
     })?;
 
     for EvaluatedCheckEntry {
-        component_type,
-        component_params,
+        key: component_type,
+        value: component_params,
         span,
-        generics: check_generics,
     } in spec.check_entries.eval()
     {
         // Override the span of the context type so that any unsatisfied constraint
         // error is highlighted on the component type instead
         let context_type = override_span(&span, context_type)?;
 
-        let component_param = component_params.as_ref().unwrap_or(&unit);
+        let TypeWithGenerics {
+            ty: component_param,
+            generics: check_generics,
+        } = component_params.unwrap_or_else(|| unit.clone().into());
 
         let generics = merge_generics(&check_generics.generics, &impl_generics.generics);
 
+        let impl_generics = generics.split_for_impl().0;
+
         let item_impl: ItemImpl = parse2(quote! {
-            impl #generics
+            impl #impl_generics
                 #trait_name < #component_type, #component_param >
                 for #context_type
             #where_clause
@@ -72,12 +78,18 @@ pub fn derive_check_provider(
     })?;
 
     for EvaluatedCheckEntry {
-        component_type,
-        component_params,
+        key: component_type,
+        value: component_params,
         ..
     } in spec.check_entries.eval()
     {
-        let component_param = component_params.as_ref().unwrap_or(&unit);
+        let TypeWithGenerics {
+            ty: component_param,
+            generics: check_generics,
+        } = component_params.unwrap_or_else(|| unit.clone().into());
+
+        let generics = merge_generics(&check_generics.generics, &impl_generics.generics);
+        let impl_generics = generics.split_for_impl().0;
 
         for provider in providers {
             let item_impl: ItemImpl = parse2(quote! {

@@ -2,8 +2,7 @@ use syn::parse::{Parse, ParseStream};
 use syn::spanned::Spanned;
 use syn::token::Colon;
 
-use crate::types::check_components::{CheckKey, CheckValue, EvaluatedCheckEntry};
-use crate::types::generics::ImplGenerics;
+use crate::types::check_components::{CheckKey, CheckValue, EvaluatedCheckEntry, TypeWithGenerics};
 
 pub struct CheckEntry {
     pub key: CheckKey,
@@ -24,10 +23,9 @@ impl CheckEntry {
 
                 if values.is_empty() {
                     entries.push(EvaluatedCheckEntry {
-                        component_type: component_type.clone(),
-                        component_params: None,
+                        key: component_type.clone(),
+                        value: None,
                         span: component_type.span(),
-                        generics: ImplGenerics::default(),
                     })
                 } else {
                     let component_params_count = values.len();
@@ -43,19 +41,20 @@ impl CheckEntry {
                         };
 
                         entries.push(EvaluatedCheckEntry {
-                            component_type: component_type.clone(),
-                            component_params: Some(component_param_type.clone()),
+                            key: component_type.clone(),
+                            value: Some(TypeWithGenerics {
+                                ty: component_param_type.clone(),
+                                generics: component_param_generics.clone(),
+                            }),
                             span,
-                            generics: component_param_generics.clone(),
                         })
                     }
                 }
             } else {
                 entries.push(EvaluatedCheckEntry {
-                    component_type: component_type.clone(),
-                    component_params: None,
+                    key: component_type.clone(),
+                    value: None,
                     span: component_type.span(),
-                    generics: ImplGenerics::default(),
                 })
             }
         }
