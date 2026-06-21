@@ -1,5 +1,3 @@
-use proc_macro2::Span;
-use syn::token::{Eq, Semi};
 use syn::visit_mut::VisitMut;
 use syn::{
     Error, Ident, ImplItem, ImplItemConst, ImplItemFn, ImplItemType, Item, ItemImpl, ItemTrait,
@@ -69,9 +67,9 @@ impl ItemBlanketTrait {
                         type_token: trait_item_type.type_token,
                         ident: trait_item_type.ident.clone(),
                         generics: trait_item_type.generics.clone(),
-                        eq_token: Eq(Span::call_site()),
+                        eq_token: Default::default(),
                         ty: type_impl,
-                        semi_token: Semi(Span::call_site()),
+                        semi_token: Default::default(),
                     };
 
                     impl_items.push(ImplItem::Type(impl_item_type));
