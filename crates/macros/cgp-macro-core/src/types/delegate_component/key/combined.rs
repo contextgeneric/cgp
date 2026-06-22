@@ -1,3 +1,4 @@
+use syn::Attribute;
 use syn::parse::{Parse, ParseStream};
 use syn::token::{At, Bracket};
 
@@ -16,12 +17,14 @@ pub enum DelegateKey {
 impl Parse for DelegateKey {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let fork = input.fork();
+
+        let _attributes = fork.call(Attribute::parse_outer)?;
         let _generics: ImplGenerics = fork.parse()?;
 
         let key = if fork.peek(At) {
             let path = input.parse()?;
             Self::Path(path)
-        } else if input.peek(Bracket) {
+        } else if fork.peek(Bracket) {
             let keys = input.parse()?;
             Self::Multi(keys)
         } else {
