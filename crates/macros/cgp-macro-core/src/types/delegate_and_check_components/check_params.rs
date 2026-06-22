@@ -11,6 +11,10 @@ pub enum CheckParamsAttribute {
 
 impl CheckParamsAttribute {
     pub fn parse_attributes(attributes: &[Attribute]) -> syn::Result<Self> {
+        if attributes.is_empty() {
+            return Ok(Self::None);
+        }
+
         let attribute = &attributes[0];
 
         if attribute.path().is_ident("check_params") {
