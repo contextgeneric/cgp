@@ -4,7 +4,7 @@ use crate::types::check_components::{
     CheckEntries, CheckEntry, CheckKey, CheckValue, TypeWithGenerics,
 };
 use crate::types::delegate_and_check_components::{CheckParamsAttribute, ToCheckEntries};
-use crate::types::delegate_component::SingleDelegateKey;
+use crate::types::delegate_component::{MultiDelegateKey, SingleDelegateKey};
 
 impl ToCheckEntries for SingleDelegateKey {
     fn to_check_entries(&self) -> syn::Result<CheckEntries> {
@@ -35,5 +35,11 @@ impl ToCheckEntries for SingleDelegateKey {
                 Ok(entries)
             }
         }
+    }
+}
+
+impl ToCheckEntries for MultiDelegateKey {
+    fn to_check_entries(&self) -> syn::Result<CheckEntries> {
+        todo!()
     }
 }
