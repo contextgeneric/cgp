@@ -14,7 +14,7 @@ pub struct KeyWithCheckParams {
 impl KeyWithCheckParams {
     pub fn to_check_entry(&self) -> CheckEntries {
         match &self.check_params {
-            CheckParamsAttribute::None => {
+            CheckParamsAttribute::Default => {
                 let entry = CheckEntry {
                     key: CheckKey::Single(self.key_type.clone()),
                     value: None,
