@@ -1,7 +1,6 @@
-use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::spanned::Spanned;
-use syn::token::{Comma, Pound};
+use syn::token::Comma;
 use syn::{Attribute, Type};
 
 pub enum CheckParamsAttribute {
@@ -10,17 +9,9 @@ pub enum CheckParamsAttribute {
     Multi(Punctuated<Type, Comma>),
 }
 
-impl Parse for CheckParamsAttribute {
-    fn parse(input: ParseStream) -> syn::Result<Self> {
-        if !input.peek(Pound) {
-            return Ok(Self::None);
-        }
-
-        let attributes = input.call(Attribute::parse_outer)?;
-
-        let [attribute]: [Attribute; 1] = attributes
-            .try_into()
-            .map_err(|_| input.error("Expected exactly one key attribute"))?;
+impl CheckParamsAttribute {
+    pub fn parse_attributes(attributes: &[Attribute]) -> syn::Result<Self> {
+        let attribute = &attributes[0];
 
         if attribute.path().is_ident("check_params") {
             let params = attribute.parse_args_with(Punctuated::parse_terminated)?;
