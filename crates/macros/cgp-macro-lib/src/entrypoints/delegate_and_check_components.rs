@@ -5,8 +5,8 @@ use cgp_macro_core::types::generics::ImplGenerics;
 use proc_macro2::{Span, TokenStream};
 use quote::quote;
 use syn::punctuated::Punctuated;
-use syn::token::{Comma, Where};
-use syn::{Type, WhereClause, parse2};
+use syn::token::Where;
+use syn::{WhereClause, parse2};
 
 use crate::delegate_components::impl_delegate_components;
 use crate::parse::{DelegateAndCheckSpec, DelegateEntry, DelegateKey};
@@ -45,26 +45,24 @@ pub fn delegate_and_check_components(body: TokenStream) -> syn::Result<TokenStre
         }
     }
 
-    let delegate_entries: Punctuated<DelegateEntry<Type>, Comma> = spec
-        .entries
-        .into_iter()
-        .map(|entry| {
-            let keys = entry
-                .keys
-                .into_iter()
-                .map(|key| DelegateKey {
-                    ty: key.component_type,
-                    generics: ImplGenerics::default(),
-                })
-                .collect();
+    let mut delegate_entries = Punctuated::new();
 
-            DelegateEntry {
-                keys,
-                value: entry.value,
-                mode: entry.mode,
-            }
+    for entry in spec.entries {
+        let keys = entry
+            .keys
+            .into_iter()
+            .map(|key| DelegateKey {
+                ty: key.component_type,
+                generics: ImplGenerics::default(),
+            })
+            .collect();
+
+        delegate_entries.push(DelegateEntry {
+            keys,
+            value: entry.value,
+            mode: entry.mode,
         })
-        .collect();
+    }
 
     let mut out =
         impl_delegate_components(&spec.context_type, &spec.impl_generics, &delegate_entries)?;
