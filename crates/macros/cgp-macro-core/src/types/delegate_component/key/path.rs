@@ -1,3 +1,4 @@
+use syn::Attribute;
 use syn::parse::{Parse, ParseStream};
 use syn::token::At;
 
@@ -9,6 +10,7 @@ use crate::types::path::PathHead;
 
 #[derive(Debug, Clone)]
 pub struct PathDelegateKey {
+    pub attributes: Vec<Attribute>,
     pub generics: ImplGenerics,
     pub at: At,
     pub path: PathHead,
@@ -16,11 +18,18 @@ pub struct PathDelegateKey {
 
 impl Parse for PathDelegateKey {
     fn parse(input: ParseStream) -> syn::Result<Self> {
+        let attributes = input.call(Attribute::parse_outer)?;
+
         let generics = input.parse()?;
         let at = input.parse()?;
         let path = input.parse()?;
 
-        Ok(Self { generics, at, path })
+        Ok(Self {
+            attributes,
+            generics,
+            at,
+            path,
+        })
     }
 }
 

@@ -1,22 +1,25 @@
-use syn::bracketed;
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
+use syn::{Attribute, bracketed};
 
 use crate::types::delegate_component::{EvalDelegateKey, EvaluatedDelegateKey, SingleDelegateKey};
 
 #[derive(Debug, Clone)]
 pub struct MultiDelegateKey {
+    pub attributes: Vec<Attribute>,
     pub keys: Punctuated<SingleDelegateKey, Comma>,
 }
 
 impl Parse for MultiDelegateKey {
     fn parse(input: ParseStream) -> syn::Result<Self> {
+        let attributes = input.call(Attribute::parse_outer)?;
+
         let body;
         bracketed!(body in input);
         let keys = Punctuated::parse_terminated(&body)?;
 
-        Ok(Self { keys })
+        Ok(Self { attributes, keys })
     }
 }
 
