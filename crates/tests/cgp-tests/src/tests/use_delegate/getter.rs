@@ -496,6 +496,8 @@ mod derive_delegate {
 
         expand_my_context(output) {
             insta::assert_snapshot!(output, @r#"
+            pub struct FooTypes;
+            pub struct FooGetters;
             impl DelegateComponent<FooTypeProviderAtComponent> for MyContext {
                 type Delegate = UseDelegate<FooTypes>;
             }
@@ -508,7 +510,18 @@ mod derive_delegate {
                     FooTypes,
                 >: IsProviderFor<FooTypeProviderAtComponent, __Context__, __Params__>,
             {}
-            pub struct FooTypes;
+            impl DelegateComponent<FooGetterAtComponent> for MyContext {
+                type Delegate = UseDelegate<FooGetters>;
+            }
+            impl<
+                __Context__,
+                __Params__,
+            > IsProviderFor<FooGetterAtComponent, __Context__, __Params__> for MyContext
+            where
+                UseDelegate<
+                    FooGetters,
+                >: IsProviderFor<FooGetterAtComponent, __Context__, __Params__>,
+            {}
             impl DelegateComponent<Index<1>> for FooTypes {
                 type Delegate = UseType<u64>;
             }
@@ -525,19 +538,6 @@ mod derive_delegate {
             where
                 UseType<String>: IsProviderFor<Index<0>, __Context__, __Params__>,
             {}
-            impl DelegateComponent<FooGetterAtComponent> for MyContext {
-                type Delegate = UseDelegate<FooGetters>;
-            }
-            impl<
-                __Context__,
-                __Params__,
-            > IsProviderFor<FooGetterAtComponent, __Context__, __Params__> for MyContext
-            where
-                UseDelegate<
-                    FooGetters,
-                >: IsProviderFor<FooGetterAtComponent, __Context__, __Params__>,
-            {}
-            pub struct FooGetters;
             impl DelegateComponent<Index<1>> for FooGetters {
                 type Delegate = UseField<Symbol!("foo")>;
             }

@@ -654,14 +654,14 @@ mod basic_check_components {
             >: CanUseComponent<__Component__, __Params__> {}
             impl __CanUseContext<FooTypeProviderComponent, ()> for Context {}
             impl __CanUseContext<BarTypeProviderComponent, ()> for Context {}
-            impl __CanUseContext<FooGetterAtComponent, Index<0>> for Context {}
-            impl __CanUseContext<FooGetterAtComponent, Index<1>> for Context {}
             impl __CanUseContext<FooGetterAtComponent, (Index<5>, Index<6>)> for Context {}
             impl __CanUseContext<FooGetterAtComponent, (Index<7>, Index<8>)> for Context {}
-            impl __CanUseContext<BarGetterAtComponent, (Index<0>, Index<1>)> for Context {}
-            impl __CanUseContext<BarGetterAtComponent, (Index<1>, Index<0>)> for Context {}
+            impl __CanUseContext<FooGetterAtComponent, Index<0>> for Context {}
+            impl __CanUseContext<FooGetterAtComponent, Index<1>> for Context {}
             impl __CanUseContext<BarGetterAtComponent, (Index<5>, Index<6>)> for Context {}
             impl __CanUseContext<BarGetterAtComponent, (Index<7>, Index<8>)> for Context {}
+            impl __CanUseContext<BarGetterAtComponent, (Index<0>, Index<1>)> for Context {}
+            impl __CanUseContext<BarGetterAtComponent, (Index<1>, Index<0>)> for Context {}
             "#)
         }
     }
