@@ -3,7 +3,8 @@ use syn::spanned::Spanned;
 use syn::{Attribute, Error};
 
 use crate::types::delegate_component::{
-    DelegateKey, DelegateTable, MultiDelegateKey, PathDelegateKey, SingleDelegateKey,
+    DelegateEntries, DelegateKey, DelegateMapping, DelegateTable, MultiDelegateKey,
+    PathDelegateKey, SingleDelegateKey,
 };
 
 /**
@@ -66,8 +67,33 @@ impl ValidateAttributes for DelegateKey {
     }
 }
 
+impl ValidateAttributes for DelegateMapping {
+    fn validate_attributes(&self) -> syn::Result<()> {
+        match self {
+            DelegateMapping::Normal(mapping) => mapping.key.validate_attributes(),
+            DelegateMapping::Direct(mapping) => mapping.key.validate_attributes(),
+            DelegateMapping::Redirect(mapping) => mapping.key.validate_attributes(),
+        }
+    }
+}
+
+impl ValidateAttributes for DelegateEntries {
+    fn validate_attributes(&self) -> syn::Result<()> {
+        // Note: keys nested inside statement forms (`for`/`namespace`/`open`) are
+        // not validated here, matching the scope of the check-components handling.
+        for entry in &self.entries {
+            entry.validate_attributes()?;
+        }
+
+        Ok(())
+    }
+}
+
 impl ValidateAttributes for DelegateTable {
     fn validate_attributes(&self) -> syn::Result<()> {
-        reject_non_empty_attributes(&self.attributes)
+        reject_non_empty_attributes(&self.attributes)?;
+        self.entries.validate_attributes()?;
+
+        Ok(())
     }
 }

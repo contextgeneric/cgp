@@ -19,16 +19,10 @@ impl CheckParamsAttribute {
             (Self::Multi(params_a), Self::Multi(params_b)) => Self::Multi(Punctuated::from_iter(
                 params_a.iter().chain(params_b.iter()).cloned(),
             )),
-            (Self::Skip, Self::Multi(params)) => {
+            (Self::Skip, Self::Multi(params)) | (Self::Multi(params), Self::Skip) => {
                 return Err(Error::new(
                     params.span(),
-                    "cannot combine #[skip] with #[check_params]",
-                ));
-            }
-            (Self::Multi(params), Self::Skip) => {
-                return Err(Error::new(
-                    params.span(),
-                    "cannot combine #[skip] with #[check_params]",
+                    "cannot combine #[skip_check] with #[check_params]",
                 ));
             }
         };
@@ -41,17 +35,29 @@ impl CheckParamsAttribute {
             return Ok(Self::Default);
         }
 
+        if attributes.len() > 1 {
+            return Err(Error::new(
+                attributes[1].span(),
+                "Expected at most one `#[check_params]` or `#[skip_check]` attribute",
+            ));
+        }
+
         let attribute = &attributes[0];
 
         if attribute.path().is_ident("check_params") {
             let params = attribute.parse_args_with(Punctuated::parse_terminated)?;
             Ok(CheckParamsAttribute::Multi(params))
         } else if attribute.path().is_ident("skip_check") {
-            // TODO: validate that the attribute args are empty
+            attribute.meta.require_path_only().map_err(|_| {
+                Error::new(
+                    attribute.span(),
+                    "`#[skip_check]` does not take any arguments",
+                )
+            })?;
 
             Ok(CheckParamsAttribute::Skip)
         } else {
-            Err(syn::Error::new(
+            Err(Error::new(
                 attribute.span(),
                 "Expected either `#[skip_check]` or `#[check_params]` attribute for specifying the check generics",
             ))

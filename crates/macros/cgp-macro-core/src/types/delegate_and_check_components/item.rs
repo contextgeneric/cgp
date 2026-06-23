@@ -2,11 +2,11 @@ use syn::parse::{Parse, ParseStream};
 use syn::spanned::Spanned;
 use syn::{Error, Ident};
 
-use crate::parse_internal;
-use crate::types::check_components::{CheckComponentsTable, CheckEntries};
+use crate::types::check_components::{
+    CheckComponentsTable, CheckEntries, derive_check_trait_ident,
+};
 use crate::types::delegate_and_check_components::ToKeysWithCheckParams;
 use crate::types::delegate_component::DelegateTable;
-use crate::types::ident::IdentWithTypeArgs;
 
 pub struct ItemDelegateAndCheckComponents {
     pub table: DelegateTable,
@@ -45,13 +45,7 @@ impl ItemDelegateAndCheckComponents {
         let attributes = &self.table.attributes;
 
         if attributes.is_empty() {
-            let context_type = &self.table.table_type;
-            let context_type: IdentWithTypeArgs = parse_internal!(#context_type);
-
-            Ok(Ident::new(
-                &format!("__CanUse{}", context_type.ident),
-                context_type.span(),
-            ))
+            derive_check_trait_ident(&self.table.table_type, "__CanUse")
         } else if attributes.len() > 1 {
             Err(Error::new(
                 attributes[1].span(),
