@@ -1,87 +1,20 @@
-use cgp_macro_core::types::check_components::{
-    CheckComponentsTable, CheckEntries, CheckEntry, CheckKey, CheckValue, TypeWithGenerics,
-};
-use cgp_macro_core::types::generics::ImplGenerics;
+use cgp_macro_core::types::delegate_and_check_components::ItemDelegateAndCheckComponents;
 use proc_macro2::TokenStream;
 use quote::quote;
 use syn::parse2;
-use syn::punctuated::Punctuated;
-
-use crate::delegate_components::impl_delegate_components;
-use crate::parse::{DelegateAndCheckSpec, DelegateEntry, DelegateKey};
 
 pub fn delegate_and_check_components(body: TokenStream) -> syn::Result<TokenStream> {
-    let spec: DelegateAndCheckSpec = parse2(body)?;
+    let item: ItemDelegateAndCheckComponents = parse2(body)?;
 
-    let mut check_entries = Punctuated::new();
+    let check_table = item.to_check_components()?;
 
-    for entry in &spec.entries {
-        for key in &entry.keys {
-            let component_type = &key.component_type;
+    let evaluated_table = item.table.eval()?;
 
-            match &key.check_params {
-                Some(check_params) => {
-                    // Emit one check entry per param so that a single-key/single-param
-                    // entry resolves the error span to the component type (via eval()'s
-                    // `component_types_count >= component_params_count` heuristic), and so
-                    // that an empty param list (i.e. `#[skip_check]`) emits no check at all.
-                    for check_param in check_params {
-                        check_entries.push(CheckEntry {
-                            key: CheckKey::Single(component_type.clone()),
-                            value: Some(CheckValue::Single(Box::new(TypeWithGenerics::from(
-                                check_param.clone(),
-                            )))),
-                        });
-                    }
-                }
-                None => {
-                    check_entries.push(CheckEntry {
-                        key: CheckKey::Single(component_type.clone()),
-                        value: None,
-                    });
-                }
-            }
-        }
-    }
+    let check_items = check_table.to_items()?;
 
-    let mut delegate_entries = Punctuated::new();
+    Ok(quote! {
+        #evaluated_table
 
-    for entry in spec.entries {
-        let keys = entry
-            .keys
-            .into_iter()
-            .map(|key| DelegateKey {
-                ty: key.component_type,
-                generics: ImplGenerics::default(),
-            })
-            .collect();
-
-        delegate_entries.push(DelegateEntry {
-            keys,
-            value: entry.value,
-            mode: entry.mode,
-        })
-    }
-
-    let mut out =
-        impl_delegate_components(&spec.context_type, &spec.impl_generics, &delegate_entries)?;
-
-    let check_spec = CheckComponentsTable {
-        check_providers: None,
-        impl_generics: spec.impl_generics,
-        trait_name: spec.trait_name,
-        context_type: spec.context_type,
-        where_clause: None,
-        check_entries: CheckEntries {
-            entries: check_entries,
-        },
-    };
-
-    let items = check_spec.to_items()?;
-
-    out.extend(quote! {
-        #( #items )*
-    });
-
-    Ok(out)
+        #( #check_items )*
+    })
 }
