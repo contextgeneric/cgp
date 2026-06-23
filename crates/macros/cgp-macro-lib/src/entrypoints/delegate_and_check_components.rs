@@ -2,11 +2,10 @@ use cgp_macro_core::types::check_components::{
     CheckComponentsTable, CheckEntries, CheckEntry, CheckKey, CheckValue, TypeWithGenerics,
 };
 use cgp_macro_core::types::generics::ImplGenerics;
-use proc_macro2::{Span, TokenStream};
+use proc_macro2::TokenStream;
 use quote::quote;
+use syn::parse2;
 use syn::punctuated::Punctuated;
-use syn::token::Where;
-use syn::{WhereClause, parse2};
 
 use crate::delegate_components::impl_delegate_components;
 use crate::parse::{DelegateAndCheckSpec, DelegateEntry, DelegateKey};
@@ -72,10 +71,7 @@ pub fn delegate_and_check_components(body: TokenStream) -> syn::Result<TokenStre
         impl_generics: spec.impl_generics,
         trait_name: spec.trait_name,
         context_type: spec.context_type,
-        where_clause: WhereClause {
-            where_token: Where(Span::call_site()),
-            predicates: Punctuated::default(),
-        },
+        where_clause: None,
         check_entries: CheckEntries {
             entries: check_entries,
         },

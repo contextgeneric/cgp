@@ -17,7 +17,7 @@ pub struct CheckComponentsTable {
     pub impl_generics: ImplGenerics,
     pub trait_name: Ident,
     pub context_type: Type,
-    pub where_clause: WhereClause,
+    pub where_clause: Option<WhereClause>,
     pub check_entries: CheckEntries,
 }
 
@@ -150,12 +150,9 @@ impl Parse for CheckComponentsTable {
         };
 
         let where_clause = if input.peek(Where) {
-            input.parse()?
+            Some(input.parse()?)
         } else {
-            WhereClause {
-                where_token: Where(Span::call_site()),
-                predicates: Punctuated::default(),
-            }
+            None
         };
 
         let content;

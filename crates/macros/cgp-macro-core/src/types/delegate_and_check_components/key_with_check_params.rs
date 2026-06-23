@@ -12,7 +12,7 @@ pub struct KeyWithCheckParams {
 }
 
 impl KeyWithCheckParams {
-    pub fn to_check_entry(&self) -> CheckEntries {
+    pub fn to_check_entries(&self) -> CheckEntries {
         match &self.check_params {
             CheckParamsAttribute::Default => {
                 let entry = CheckEntry {
