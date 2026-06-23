@@ -3,8 +3,8 @@ use syn::spanned::Spanned;
 use syn::{Attribute, Error};
 
 use crate::types::delegate_component::{
-    DelegateEntries, DelegateKey, DelegateMapping, DelegateTable, MultiDelegateKey,
-    PathDelegateKey, SingleDelegateKey,
+    DelegateEntries, DelegateKey, DelegateMapping, DelegateStatement, DelegateTable,
+    ForDelegateStatement, MultiDelegateKey, PathDelegateKey, SingleDelegateKey,
 };
 
 /**
@@ -77,10 +77,34 @@ impl ValidateAttributes for DelegateMapping {
     }
 }
 
+impl ValidateAttributes for ForDelegateStatement {
+    fn validate_attributes(&self) -> syn::Result<()> {
+        for mapping in &self.mappings {
+            mapping.key.validate_attributes()?;
+        }
+
+        Ok(())
+    }
+}
+
+impl ValidateAttributes for DelegateStatement {
+    fn validate_attributes(&self) -> syn::Result<()> {
+        match self {
+            // `namespace` and `open` statements carry no keys that can hold attributes.
+            DelegateStatement::Namespace(_) | DelegateStatement::Open(_) => Ok(()),
+            DelegateStatement::For(statement) => statement.validate_attributes(),
+        }
+    }
+}
+
 impl ValidateAttributes for DelegateEntries {
     fn validate_attributes(&self) -> syn::Result<()> {
-        // Note: keys nested inside statement forms (`for`/`namespace`/`open`) are
-        // not validated here, matching the scope of the check-components handling.
+        // Keys nested inside statement forms (`for`/`namespace`/`open`) do not
+        // support attributes, so reject any rather than silently discarding them.
+        for statement in &self.statements {
+            statement.validate_attributes()?;
+        }
+
         for entry in &self.entries {
             entry.validate_attributes()?;
         }

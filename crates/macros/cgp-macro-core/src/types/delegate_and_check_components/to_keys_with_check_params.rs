@@ -12,6 +12,11 @@ impl ToKeysWithCheckParams for SingleDelegateKey {
     fn to_keys_with_check_params(&self) -> syn::Result<Vec<KeyWithCheckParams>> {
         let check_params = CheckParamsAttribute::parse_attributes(&self.attributes)?;
 
+        // Note: any per-key `ImplGenerics` (`self.generics`) are not carried into
+        // the check entry. The generated check impl only sees the table-level
+        // generics, so a key that introduces its own generic parameters would
+        // reference them unbound. Generic keys are therefore not yet supported in
+        // the check half; use `#[skip_check]` for such keys if needed.
         let key = KeyWithCheckParams {
             check_params,
             key_type: self.ty.clone(),
@@ -74,9 +79,14 @@ impl ToKeysWithCheckParams for DelegateEntries {
     fn to_keys_with_check_params(&self) -> syn::Result<Vec<KeyWithCheckParams>> {
         let mut out = Vec::new();
 
-        // Note: statement forms (`for`/`namespace`/`open`) are intentionally not
-        // checked for now. They still produce delegate impls via `eval`, but no
-        // check entries are generated for them.
+        // Statement forms (`for`/`namespace`/`open`) are intentionally not checked
+        // for now. They still produce delegate impls via `eval`, but no check
+        // entries are generated for them. Since they cannot carry check params,
+        // reject any attribute on their keys rather than silently ignoring it.
+        for statement in &self.statements {
+            statement.validate_attributes()?;
+        }
+
         for entry in &self.entries {
             out.extend(entry.to_keys_with_check_params()?);
         }
