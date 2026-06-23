@@ -1,6 +1,7 @@
 use crate::types::delegate_and_check_components::{CheckParamsAttribute, KeyWithCheckParams};
 use crate::types::delegate_component::{
     DelegateEntries, DelegateKey, DelegateMapping, MultiDelegateKey, SingleDelegateKey,
+    ValidateAttributes,
 };
 
 pub trait ToKeysWithCheckParams {
@@ -46,7 +47,10 @@ impl ToKeysWithCheckParams for DelegateKey {
         match self {
             DelegateKey::Single(key) => key.to_keys_with_check_params(),
             DelegateKey::Multi(key) => key.to_keys_with_check_params(),
-            DelegateKey::Path(_key) => Ok(Vec::new()),
+            DelegateKey::Path(key) => {
+                key.validate_attributes()?;
+                Ok(Vec::new())
+            }
         }
     }
 }
