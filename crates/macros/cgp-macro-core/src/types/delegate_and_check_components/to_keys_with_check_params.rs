@@ -59,8 +59,14 @@ impl ToKeysWithCheckParams for DelegateMapping {
     fn to_keys_with_check_params(&self) -> syn::Result<Vec<KeyWithCheckParams>> {
         match self {
             DelegateMapping::Normal(mapping) => mapping.key.to_keys_with_check_params(),
-            DelegateMapping::Direct(_mapping) => Ok(Vec::new()),
-            DelegateMapping::Redirect(_mapping) => Ok(Vec::new()),
+            DelegateMapping::Direct(mapping) => {
+                mapping.key.validate_attributes()?;
+                Ok(Vec::new())
+            }
+            DelegateMapping::Redirect(mapping) => {
+                mapping.key.validate_attributes()?;
+                Ok(Vec::new())
+            }
         }
     }
 }

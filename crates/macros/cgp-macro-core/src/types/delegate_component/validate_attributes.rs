@@ -2,7 +2,9 @@ use quote::ToTokens;
 use syn::spanned::Spanned;
 use syn::{Attribute, Error};
 
-use crate::types::delegate_component::{MultiDelegateKey, PathDelegateKey, SingleDelegateKey};
+use crate::types::delegate_component::{
+    DelegateKey, DelegateTable, MultiDelegateKey, PathDelegateKey, SingleDelegateKey,
+};
 
 /**
     Validate that the attributes in the delegate table constructs are valid.
@@ -51,5 +53,21 @@ impl ValidateAttributes for PathDelegateKey {
         reject_non_empty_attributes(&self.attributes)?;
 
         Ok(())
+    }
+}
+
+impl ValidateAttributes for DelegateKey {
+    fn validate_attributes(&self) -> syn::Result<()> {
+        match self {
+            DelegateKey::Single(key) => key.validate_attributes(),
+            DelegateKey::Multi(key) => key.validate_attributes(),
+            DelegateKey::Path(key) => key.validate_attributes(),
+        }
+    }
+}
+
+impl ValidateAttributes for DelegateTable {
+    fn validate_attributes(&self) -> syn::Result<()> {
+        reject_non_empty_attributes(&self.attributes)
     }
 }
