@@ -1,7 +1,7 @@
 use proc_macro2::TokenStream;
 use quote::ToTokens;
 use syn::parse::{Parse, ParseStream};
-use syn::{ItemImpl, Type, braced};
+use syn::{Attribute, ItemImpl, Type, braced};
 
 use crate::functions::parse_internal;
 use crate::traits::ParseOptionalKeyword;
@@ -13,6 +13,7 @@ use crate::types::keyword::Keyword;
 use crate::types::keywords::New;
 
 pub struct DelegateTable {
+    pub attributes: Vec<Attribute>,
     pub impl_generics: ImplGenerics,
     pub new: Option<Keyword<New>>,
     pub table_type: Type,
@@ -26,6 +27,8 @@ pub struct EvaluatedDelegateTable {
 
 impl Parse for DelegateTable {
     fn parse(input: ParseStream) -> syn::Result<Self> {
+        let attributes = input.call(Attribute::parse_outer)?;
+
         let impl_generics = input.parse()?;
 
         let new = input.parse_optional_keyword()?;
@@ -40,6 +43,7 @@ impl Parse for DelegateTable {
         };
 
         Ok(Self {
+            attributes,
             impl_generics,
             new,
             table_type,
