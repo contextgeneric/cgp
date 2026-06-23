@@ -1,5 +1,7 @@
 use crate::types::delegate_and_check_components::{CheckParamsAttribute, KeyWithCheckParams};
-use crate::types::delegate_component::{DelegateKey, MultiDelegateKey, SingleDelegateKey};
+use crate::types::delegate_component::{
+    DelegateEntries, DelegateKey, DelegateMapping, MultiDelegateKey, SingleDelegateKey,
+};
 
 pub trait ToKeysWithCheckParams {
     fn to_keys_with_check_params(&self) -> syn::Result<Vec<KeyWithCheckParams>>;
@@ -46,5 +48,27 @@ impl ToKeysWithCheckParams for DelegateKey {
             DelegateKey::Multi(key) => key.to_keys_with_check_params(),
             DelegateKey::Path(_key) => Ok(Vec::new()),
         }
+    }
+}
+
+impl ToKeysWithCheckParams for DelegateMapping {
+    fn to_keys_with_check_params(&self) -> syn::Result<Vec<KeyWithCheckParams>> {
+        match self {
+            DelegateMapping::Normal(mapping) => mapping.key.to_keys_with_check_params(),
+            DelegateMapping::Direct(_mapping) => Ok(Vec::new()),
+            DelegateMapping::Redirect(_mapping) => Ok(Vec::new()),
+        }
+    }
+}
+
+impl ToKeysWithCheckParams for DelegateEntries {
+    fn to_keys_with_check_params(&self) -> syn::Result<Vec<KeyWithCheckParams>> {
+        let mut out = Vec::new();
+
+        for entry in &self.entries {
+            out.extend(entry.to_keys_with_check_params()?);
+        }
+
+        Ok(out)
     }
 }
