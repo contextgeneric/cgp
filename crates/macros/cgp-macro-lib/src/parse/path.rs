@@ -42,10 +42,14 @@ pub struct ComponentPath<Path> {
 
 pub fn path_head_to_prefix(path_head: &PathHead) -> Vec<ComponentPath<TokenStream>> {
     match path_head {
-        PathHead::Type(generics, path_type, rest) => {
+        PathHead::Type(path_element, rest) => {
             let rest_types = path_head_to_prefix(rest);
 
-            prepend_path(path_type.to_token_stream(), generics.clone(), rest_types)
+            prepend_path(
+                path_element.element.to_token_stream(),
+                path_element.generics.clone(),
+                rest_types,
+            )
         }
         PathHead::Group(path_elements, rest) => {
             let rest_types = path_head_to_prefix(rest);
@@ -53,8 +57,8 @@ pub fn path_head_to_prefix(path_head: &PathHead) -> Vec<ComponentPath<TokenStrea
 
             for path_element in path_elements {
                 let paths = prepend_path(
-                    path_element.to_token_stream(),
-                    Default::default(),
+                    path_element.element.to_token_stream(),
+                    path_element.generics.clone(),
                     rest_types.clone(),
                 );
                 out.extend(paths);
