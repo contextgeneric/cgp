@@ -1,7 +1,7 @@
-use syn::braced;
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
-use syn::token::{Brace, Comma, Dot};
+use syn::token::{Brace, Bracket, Comma, Dot};
+use syn::{braced, bracketed};
 
 use crate::types::generics::ImplGenerics;
 use crate::types::path::{PathElement, UniPath};
@@ -9,7 +9,8 @@ use crate::types::path::{PathElement, UniPath};
 #[derive(Debug, Clone)]
 pub enum PathHead {
     Type(ImplGenerics, Box<PathElement>, Box<PathHead>),
-    Group(Punctuated<PathHead, Comma>),
+    Nested(Punctuated<PathHead, Comma>),
+    Group(Punctuated<PathElement, Comma>, Box<PathHead>),
     End,
 }
 
@@ -29,10 +30,24 @@ impl PathHead {
 
                 out_paths
             }
-            Self::Group(path_heads) => path_heads
+            Self::Nested(path_heads) => path_heads
                 .iter()
                 .flat_map(|path| path.into_paths())
                 .collect(),
+            Self::Group(path_elements, tail) => {
+                let tail_paths = tail.into_paths();
+                let mut out_paths = Vec::new();
+
+                for path_element in path_elements {
+                    for (tail_generics, tail_path) in &tail_paths {
+                        let mut path = tail_path.clone();
+                        path.elements.insert(0, path_element.clone());
+                        out_paths.push((tail_generics.clone(), path));
+                    }
+                }
+
+                out_paths
+            }
             Self::End => {
                 vec![(ImplGenerics::default(), UniPath::default())]
             }
@@ -50,7 +65,21 @@ impl Parse for PathHead {
 
             let group = Punctuated::parse_terminated(&body)?;
 
-            Ok(Self::Group(group))
+            Ok(Self::Nested(group))
+        } else if input.peek(Bracket) {
+            let body;
+            bracketed!(body in input);
+
+            let group = Punctuated::parse_terminated(&body)?;
+
+            let rest_path = if input.peek(Dot) {
+                let _: Dot = input.parse()?;
+                Box::new(Self::parse(input)?)
+            } else {
+                Box::new(Self::End)
+            };
+
+            Ok(Self::Group(group, rest_path))
         } else {
             let generics = input.parse()?;
 
