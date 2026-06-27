@@ -13,6 +13,7 @@ use crate::UseInputDelegate;
         UseInputDelegate<Input>,
     ],
 }]
+#[prefix(@cgp.extra.handler in DefaultNamespace)]
 pub trait CanComputeAsync<Code, Input> {
     type Output;
 
@@ -27,6 +28,7 @@ pub trait CanComputeAsync<Code, Input> {
         UseInputDelegate<Input>,
     ],
 }]
+#[prefix(@cgp.extra.handler in DefaultNamespace)]
 pub trait CanComputeAsyncRef<Code, Input> {
     type Output;
 

@@ -7,6 +7,7 @@ use cgp::prelude::*;
     provider: Producer,
     derive_delegate: UseDelegate<Code>,
 }]
+#[prefix(@cgp.extra.handler in DefaultNamespace)]
 pub trait CanProduce<Code> {
     type Output;
 

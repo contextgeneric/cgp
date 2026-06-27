@@ -12,6 +12,7 @@ use crate::UseInputDelegate;
         UseInputDelegate<Input>,
     ],
 }]
+#[prefix(@cgp.extra.handler in DefaultNamespace)]
 pub trait CanTryCompute<Code, Input>: HasErrorType {
     type Output;
 
@@ -29,6 +30,7 @@ pub trait CanTryCompute<Code, Input>: HasErrorType {
         UseInputDelegate<Input>,
     ],
 }]
+#[prefix(@cgp.extra.handler in DefaultNamespace)]
 pub trait CanTryComputeRef<Code, Input>: HasErrorType {
     type Output;
 

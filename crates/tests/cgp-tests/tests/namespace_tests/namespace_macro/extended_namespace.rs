@@ -19,7 +19,7 @@ snapshot_delegate_components! {
                 ErrorWrapperComponent,
             }:
                 RaiseFrom,
-            TryComputerComponent:
+            @cgp.extra.handler.TryComputerComponent:
                 Foo,
         }
     }

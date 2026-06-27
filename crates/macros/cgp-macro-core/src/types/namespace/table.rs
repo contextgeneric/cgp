@@ -1,14 +1,14 @@
 use syn::parse::{Parse, ParseStream};
 use syn::token::Colon;
-use syn::{Error, Ident, ItemImpl, ItemStruct, ItemTrait, Type, braced};
+use syn::{Ident, ItemImpl, ItemStruct, ItemTrait, Type, braced};
 
-use crate::parse_internal;
+use crate::functions::parse_internal;
 use crate::traits::ParseOptionalKeyword;
 use crate::types::delegate_component::{
     DelegateEntries, EvalDelegateEntries, EvalDelegateEntry, EvalForEntry,
 };
 use crate::types::generics::ImplGenerics;
-use crate::types::ident::{IdentWithTypeGenerics, PathWithTypeArgs};
+use crate::types::ident::{IdentWithTypeArgs, PathWithTypeArgs};
 use crate::types::keyword::Keyword;
 use crate::types::keywords::New;
 use crate::types::namespace::{EvaluatedNamespaceTable, InheritNamespaceStatement};
@@ -16,7 +16,7 @@ use crate::types::namespace::{EvaluatedNamespaceTable, InheritNamespaceStatement
 pub struct NamespaceTable {
     pub impl_generics: ImplGenerics,
     pub new: Option<Keyword<New>>,
-    pub namespace: IdentWithTypeGenerics,
+    pub namespace: IdentWithTypeArgs,
     pub parent_namespace: Option<(Colon, PathWithTypeArgs)>,
     pub entries: DelegateEntries,
 }
@@ -55,11 +55,11 @@ impl Parse for NamespaceTable {
 
 impl NamespaceTable {
     pub fn build_namespace_trait(&self) -> syn::Result<Type> {
-        let namespace_ident = &self.namespace.ident;
-        let mut namespace_generics = self.namespace.type_generics.clone();
-        namespace_generics.params.push(parse_internal!(__Table__));
+        let mut namespace = self.namespace.clone();
 
-        let namespace_trait: Type = parse_internal!( #namespace_ident #namespace_generics );
+        namespace.type_args.args.push(parse_internal!(__Table__));
+
+        let namespace_trait: Type = parse_internal!( #namespace );
         Ok(namespace_trait)
     }
 
@@ -102,21 +102,12 @@ impl NamespaceTable {
         Ok(item_impls)
     }
 
-    pub fn build_parent_namespace_impl(&self) -> syn::Result<Option<(ItemStruct, ItemImpl)>> {
-        let Some((_, parent_namespace)) = &self.parent_namespace else {
-            return Ok(None);
-        };
-
+    pub fn build_namespace_struct(&self) -> syn::Result<Option<ItemStruct>> {
         if self.new.is_none() {
-            return Err(Error::new(
-                parent_namespace.ident().span(),
-                "parent namespace can only be specified with `new` namespaces",
-            ));
+            return Ok(None);
         }
 
-        let namespace_ident = self.namespace.ident.clone();
-
-        let table_type: Type = parse_internal!(__Table__);
+        let namespace_ident = &self.namespace.ident;
 
         let namespace_struct_ident = Ident::new(
             &format!("__{}Components", namespace_ident),
@@ -126,6 +117,23 @@ impl NamespaceTable {
         let namespace_struct: ItemStruct = parse_internal! {
             pub struct #namespace_struct_ident;
         };
+
+        Ok(Some(namespace_struct))
+    }
+
+    pub fn build_parent_namespace_impl(&self) -> syn::Result<Option<ItemImpl>> {
+        let Some((_, parent_namespace)) = &self.parent_namespace else {
+            return Ok(None);
+        };
+
+        let namespace_ident = self.namespace.ident.clone();
+
+        let table_type: Type = parse_internal!(__Table__);
+
+        let namespace_struct_ident = Ident::new(
+            &format!("__{}Components", namespace_ident),
+            namespace_ident.span(),
+        );
 
         let for_entry = InheritNamespaceStatement {
             namespace: parent_namespace.clone(),
@@ -142,17 +150,16 @@ impl NamespaceTable {
 
         let item_impl = evaluated_entry.build_namespace_impl(&namespace_trait, &generics)?;
 
-        Ok(Some((namespace_struct, item_impl)))
+        Ok(Some(item_impl))
     }
 
     pub fn eval(&self) -> syn::Result<EvaluatedNamespaceTable> {
-        let mut item_struct = None;
         let item_trait = self.build_item_trait()?;
         let mut item_impls = self.build_item_impls()?;
+        let item_struct = self.build_namespace_struct()?;
 
-        if let Some((namespace_struct, item_impl)) = self.build_parent_namespace_impl()? {
+        if let Some(item_impl) = self.build_parent_namespace_impl()? {
             item_impls.insert(0, item_impl);
-            item_struct = Some(namespace_struct);
         }
 
         Ok(EvaluatedNamespaceTable {
