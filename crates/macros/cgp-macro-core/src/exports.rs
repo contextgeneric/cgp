@@ -11,7 +11,9 @@ export_constructs! {
     RedirectLookup,
     DelegateComponent,
     IsProviderFor,
+    CanUseComponent,
     HasField,
     HasFieldMut,
     UseContext,
+    Life,
 }

@@ -5,6 +5,7 @@ use syn::spanned::Spanned;
 use syn::token::Comma;
 use syn::{Error, Lifetime, Type};
 
+use crate::exports::Life;
 use crate::types::ident::{TypeArg, TypeArgs};
 
 pub struct ProviderImplArgs {
@@ -68,7 +69,7 @@ impl ToTokens for ProviderImplArg {
                 ty.to_tokens(tokens);
             }
             ProviderImplArg::Life(life) => {
-                tokens.extend(quote!(Life<#life>));
+                tokens.extend(quote!(#Life<#life>));
             }
         }
     }

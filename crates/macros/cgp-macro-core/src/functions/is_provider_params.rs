@@ -2,6 +2,7 @@ use syn::punctuated::Punctuated;
 use syn::token::Comma;
 use syn::{GenericParam, Generics, Type};
 
+use crate::exports::Life;
 use crate::parse_internal;
 use crate::types::generics::TypeGenerics;
 
@@ -18,7 +19,7 @@ pub fn parse_is_provider_params(generics: &Generics) -> syn::Result<Punctuated<T
             }
             GenericParam::Lifetime(life_param) => {
                 let life = &life_param.lifetime;
-                parse_internal! { Life<#life> }
+                parse_internal! { #Life<#life> }
             }
             GenericParam::Const(_) => {
                 unimplemented!("const generic parameters are not yet supported in CGP traits")

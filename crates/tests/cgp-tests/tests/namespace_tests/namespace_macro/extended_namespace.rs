@@ -172,15 +172,94 @@ snapshot_delegate_components! {
                 __Params__,
             >,
         {}
-        impl DelegateComponent<TryComputerComponent> for App {
+        impl<
+            __Wildcard__,
+        > DelegateComponent<
+            PathCons<
+                Symbol<3, Chars<'c', Chars<'g', Chars<'p', Nil>>>>,
+                PathCons<
+                    Symbol<5, Chars<'e', Chars<'x', Chars<'t', Chars<'r', Chars<'a', Nil>>>>>>,
+                    PathCons<
+                        Symbol<
+                            7,
+                            Chars<
+                                'h',
+                                Chars<
+                                    'a',
+                                    Chars<
+                                        'n',
+                                        Chars<'d', Chars<'l', Chars<'e', Chars<'r', Nil>>>>,
+                                    >,
+                                >,
+                            >,
+                        >,
+                        PathCons<TryComputerComponent, __Wildcard__>,
+                    >,
+                >,
+            >,
+        > for App {
             type Delegate = Foo;
         }
         impl<
+            __Wildcard__,
             __Context__,
             __Params__,
-        > IsProviderFor<TryComputerComponent, __Context__, __Params__> for App
+        > IsProviderFor<
+            PathCons<
+                Symbol<3, Chars<'c', Chars<'g', Chars<'p', Nil>>>>,
+                PathCons<
+                    Symbol<5, Chars<'e', Chars<'x', Chars<'t', Chars<'r', Chars<'a', Nil>>>>>>,
+                    PathCons<
+                        Symbol<
+                            7,
+                            Chars<
+                                'h',
+                                Chars<
+                                    'a',
+                                    Chars<
+                                        'n',
+                                        Chars<'d', Chars<'l', Chars<'e', Chars<'r', Nil>>>>,
+                                    >,
+                                >,
+                            >,
+                        >,
+                        PathCons<TryComputerComponent, __Wildcard__>,
+                    >,
+                >,
+            >,
+            __Context__,
+            __Params__,
+        > for App
         where
-            Foo: IsProviderFor<TryComputerComponent, __Context__, __Params__>,
+            Foo: IsProviderFor<
+                PathCons<
+                    Symbol<3, Chars<'c', Chars<'g', Chars<'p', Nil>>>>,
+                    PathCons<
+                        Symbol<
+                            5,
+                            Chars<'e', Chars<'x', Chars<'t', Chars<'r', Chars<'a', Nil>>>>>,
+                        >,
+                        PathCons<
+                            Symbol<
+                                7,
+                                Chars<
+                                    'h',
+                                    Chars<
+                                        'a',
+                                        Chars<
+                                            'n',
+                                            Chars<'d', Chars<'l', Chars<'e', Chars<'r', Nil>>>>,
+                                        >,
+                                    >,
+                                >,
+                            >,
+                            PathCons<TryComputerComponent, __Wildcard__>,
+                        >,
+                    >,
+                >,
+                __Context__,
+                __Params__,
+            >,
         {}
         ")
     }

@@ -1,4 +1,3 @@
-use cgp::prelude::*;
 use cgp_macro_test_util::{
     snapshot_cgp_component, snapshot_cgp_impl, snapshot_cgp_namespace, snapshot_check_components,
     snapshot_delegate_components,
@@ -94,6 +93,7 @@ snapshot_cgp_namespace! {
 
     expand_multi_ns_my_namespace(output) {
         insta::assert_snapshot!(output, @"
+        pub struct __MyNamespaceComponents;
         pub trait MyNamespace<__Table__> {
             type Delegate;
         }
@@ -117,6 +117,7 @@ snapshot_cgp_namespace! {
 
     expand_multi_ns_other_namespace(output) {
         insta::assert_snapshot!(output, @"
+        pub struct __OtherNamespaceComponents;
         pub trait OtherNamespace<__Table__> {
             type Delegate;
         }

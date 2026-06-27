@@ -3,6 +3,8 @@ use syn::punctuated::Punctuated;
 use syn::token::Comma;
 use syn::{GenericParam, Generics, Ident, ItemStruct, Type, parse_quote};
 
+use crate::exports::Life;
+
 pub struct EmptyStruct {
     pub ident: Ident,
     pub generics: Generics,
@@ -41,7 +43,7 @@ impl ToTokens for EmptyStruct {
                         life_param.bounds.clear();
 
                         let lifetime = &life_param.lifetime;
-                        phantom_params.push(parse_quote!( Life<#lifetime> ));
+                        phantom_params.push(parse_quote!( #Life<#lifetime> ));
                     }
                     _ => {}
                 }

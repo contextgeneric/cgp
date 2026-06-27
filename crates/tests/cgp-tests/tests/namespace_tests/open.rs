@@ -1,4 +1,3 @@
-use cgp::prelude::*;
 use cgp_macro_test_util::{
     snapshot_cgp_component, snapshot_cgp_impl, snapshot_check_components,
     snapshot_delegate_components,

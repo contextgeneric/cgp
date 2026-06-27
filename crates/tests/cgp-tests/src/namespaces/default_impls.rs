@@ -162,6 +162,7 @@ snapshot_cgp_namespace! {
 
     expand_default_show_components(output) {
         insta::assert_snapshot!(output, @"
+        pub struct __DefaultShowComponentsComponents;
         pub trait DefaultShowComponents<__Table__> {
             type Delegate;
         }

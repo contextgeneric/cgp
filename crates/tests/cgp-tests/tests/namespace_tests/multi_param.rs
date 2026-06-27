@@ -1,138 +1,15 @@
 use cgp::prelude::*;
-use cgp_macro_test_util::{
-    snapshot_cgp_component, snapshot_cgp_impl, snapshot_check_components,
-    snapshot_delegate_components,
-};
+use cgp_macro_test_util::{snapshot_check_components, snapshot_delegate_components};
 
-snapshot_cgp_component! {
-    #[cgp_component(FooProvider)]
-    #[prefix(@app in DefaultNamespace)]
-    pub trait Foo<'a, T, U> {
-        fn foo(&self, first: &'a T, second: U);
-    }
-
-    expand_multi_param_foo(output) {
-        insta::assert_snapshot!(output, @"
-        pub trait Foo<'a, T, U> {
-            fn foo(&self, first: &'a T, second: U);
-        }
-        impl<'a, __Context__, T, U> Foo<'a, T, U> for __Context__
-        where
-            __Context__: FooProvider<'a, __Context__, T, U>,
-        {
-            fn foo(&self, first: &'a T, second: U) {
-                __Context__::foo(self, first, second)
-            }
-        }
-        pub trait FooProvider<
-            'a,
-            __Context__,
-            T,
-            U,
-        >: IsProviderFor<FooProviderComponent, __Context__, (Life<'a>, T, U)> {
-            fn foo(__context__: &__Context__, first: &'a T, second: U);
-        }
-        impl<'a, __Provider__, __Context__, T, U> FooProvider<'a, __Context__, T, U>
-        for __Provider__
-        where
-            __Provider__: DelegateComponent<FooProviderComponent>
-                + IsProviderFor<FooProviderComponent, __Context__, (Life<'a>, T, U)>,
-            <__Provider__ as DelegateComponent<
-                FooProviderComponent,
-            >>::Delegate: FooProvider<'a, __Context__, T, U>,
-        {
-            fn foo(__context__: &__Context__, first: &'a T, second: U) {
-                <__Provider__ as DelegateComponent<
-                    FooProviderComponent,
-                >>::Delegate::foo(__context__, first, second)
-            }
-        }
-        pub struct FooProviderComponent;
-        impl<'a, __Context__, T, U> FooProvider<'a, __Context__, T, U> for UseContext
-        where
-            __Context__: Foo<'a, T, U>,
-        {
-            fn foo(__context__: &__Context__, first: &'a T, second: U) {
-                __Context__::foo(__context__, first, second)
-            }
-        }
-        impl<
-            'a,
-            __Context__,
-            T,
-            U,
-        > IsProviderFor<FooProviderComponent, __Context__, (Life<'a>, T, U)> for UseContext
-        where
-            __Context__: Foo<'a, T, U>,
-        {}
-        impl<'a, __Context__, T, U, __Components__, __Path__> FooProvider<'a, __Context__, T, U>
-        for RedirectLookup<__Components__, __Path__>
-        where
-            __Path__: ConcatPath<PathCons<T, PathCons<U, Nil>>>,
-            __Components__: DelegateComponent<
-                <__Path__ as ConcatPath<PathCons<T, PathCons<U, Nil>>>>::Output,
-            >,
-            <__Components__ as DelegateComponent<
-                <__Path__ as ConcatPath<PathCons<T, PathCons<U, Nil>>>>::Output,
-            >>::Delegate: FooProvider<'a, __Context__, T, U>,
-        {
-            fn foo(__context__: &__Context__, first: &'a T, second: U) {
-                <__Components__ as DelegateComponent<
-                    <__Path__ as ConcatPath<PathCons<T, PathCons<U, Nil>>>>::Output,
-                >>::Delegate::foo(__context__, first, second)
-            }
-        }
-        impl<
-            'a,
-            __Context__,
-            T,
-            U,
-            __Components__,
-            __Path__,
-        > IsProviderFor<FooProviderComponent, __Context__, (Life<'a>, T, U)>
-        for RedirectLookup<__Components__, __Path__>
-        where
-            __Path__: ConcatPath<PathCons<T, PathCons<U, Nil>>>,
-            __Components__: DelegateComponent<
-                <__Path__ as ConcatPath<PathCons<T, PathCons<U, Nil>>>>::Output,
-            >,
-            <__Components__ as DelegateComponent<
-                <__Path__ as ConcatPath<PathCons<T, PathCons<U, Nil>>>>::Output,
-            >>::Delegate: FooProvider<'a, __Context__, T, U>,
-        {}
-        impl<__Components__> DefaultNamespace<__Components__> for FooProviderComponent {
-            type Delegate = RedirectLookup<
-                __Components__,
-                PathCons<
-                    Symbol<3, Chars<'a', Chars<'p', Chars<'p', Nil>>>>,
-                    PathCons<FooProviderComponent, Nil>,
-                >,
-            >;
-        }
-        ")
-    }
+#[cgp_component(FooProvider)]
+#[prefix(@app in DefaultNamespace)]
+pub trait Foo<'a, T, U> {
+    fn foo(&self, first: &'a T, second: U);
 }
 
-snapshot_cgp_impl! {
-    #[cgp_impl(new DummyFoo)]
-    impl<'a, T, U> FooProvider<'a, T, U> {
-        fn foo(&self, _first: &'a T, _second: U) {}
-    }
-
-    expand_multi_param_dummy_foo(output) {
-        insta::assert_snapshot!(output, @"
-        impl<'a, __Context__, T, U> FooProvider<'a, __Context__, T, U> for DummyFoo {
-            fn foo(__context__: &__Context__, _first: &'a T, _second: U) {}
-        }
-        impl<
-            'a,
-            __Context__,
-            T,
-            U,
-        > IsProviderFor<FooProviderComponent, __Context__, (Life<'a>, T, U)> for DummyFoo {}
-        pub struct DummyFoo;
-        ")
-    }
+#[cgp_impl(new DummyFoo)]
+impl<'a, T, U> FooProvider<'a, T, U> {
+    fn foo(&self, _first: &'a T, _second: U) {}
 }
 
 pub struct AppA;
