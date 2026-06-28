@@ -127,38 +127,3 @@ pub fn test_delegate_new_with_array_key() {
         }
     }
 }
-
-pub mod test_delegate_new_value_in_preset {
-    #[cgp::re_export_imports]
-    mod preset {
-        use cgp::core::component::UseDelegate;
-        use cgp::prelude::{DelegateComponent, *};
-
-        pub struct FooKey;
-        pub struct FooValue;
-        pub struct BarKey;
-        pub struct BazKey;
-        pub struct BazValue;
-
-        cgp_preset! {
-            PresetWithNewValue {
-                FooKey: FooValue,
-                BarKey: UseDelegate<new BarValue {
-                    BazKey: BazValue,
-                }>
-            }
-        }
-
-        pub trait CheckDelegates:
-            DelegateComponent<FooKey, Delegate = FooValue>
-            + DelegateComponent<BarKey, Delegate = UseDelegate<BarValue>>
-        {
-        }
-
-        impl CheckDelegates for PresetWithNewValue::Provider {}
-
-        pub trait CheckInnerDelegates: DelegateComponent<BazKey, Delegate = BazValue> {}
-
-        impl CheckInnerDelegates for BarValue {}
-    }
-}

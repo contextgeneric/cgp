@@ -625,90 +625,6 @@ pub fn delegate_and_check_components(body: TokenStream) -> TokenStream {
 }
 
 /**
-    CGP presets are made of extensible collection of key/value mappings, that can be inherited
-    to form new mappings.
-
-    Instead of defining regular structs and build mappings with `delegate_components!`,
-    presets are constructed as _modules_ using the `cgp_preset!` macro together with the
-    `#[re_export_imports]`. For example, the same mappings earlier would be rewritten as:
-
-    ```rust,ignore
-    #[cgp::re_export_imports]
-    mod preset {
-        use crate_a::{KeyA, ...};
-        use crate_b::{ValueA, ...};
-
-        cgp_preset! {
-            PresetA {
-                KeyA: ValueA,
-                KeyB: ValueB,
-                KeyC: ValueC1,
-            }
-        }
-    }
-    ```
-
-    The `#[cgp::re_export_imports]` macro is used over a surrogate `mod preset`, which wraps
-    around the inner module to re-export the imports, so that they can be reused during the
-    merging. This is required, because the merging works through macros, which don't have access to the actual type information. Aside from that, the macro re-exports all exports from the inner module, so that we can write regular code as if the `mod preset` modifier never existed.
-
-    The macro `cgp_preset!` works similar to `delegate_components!`, but it defines a new
-    _inner module_ that contains the mapping struct, together with macros and re-exports to
-    support the merging operation.
-
-    Similarly, the second preset would be re-written as:
-
-    ```rust,ignore
-    #[cgp::re_export_imports]
-    mod preset {
-        use crate_c::{KeyC, ...};
-        use crate_d::{ValueD, ...};
-
-        cgp_preset! {
-            PresetB {
-                KeyC: ValueC2,
-                KeyD: ValueD,
-                KeyE: ValueE,
-            }
-        }
-    }
-    ```
-
-    To merge the two presets, we can define a new `PresetC` that _inherits_ from both `PresetA`
-    and `PresetB`, like follows:
-
-    ```rust,ignore
-    #[cgp::re_export_imports]
-    mod preset {
-        use preset_a::PresetA;
-        use preset_b::PresetB;
-        use crate_f::{KeyF, ...};
-
-        cgp_preset! {
-            PresetC: PresetA + PresetB {
-                override KeyC: ValueC2,
-                KeyF: ValueF,
-            }
-        }
-    }
-    ```
-
-    As we can see, CGP supports *multiple inheritance* for presets by using macros to "copy"
-    over the entries from the parent preset. To resolve conflicts or override entries from
-    the parent presets, the `override` keyword can be used to exclude a given mapping from
-    being copied over and instead use the local definition. And since the underlying
-    implementation still uses `DelegateComponent` to implement the lookup, any non-overridden
-    conflicts would simply result in a trait error due to overlapping instances, thus preventing
-    the diamond inheritance dillema.
-*/
-#[proc_macro]
-pub fn cgp_preset(body: TokenStream) -> TokenStream {
-    cgp_macro_lib::define_preset(body.into())
-        .unwrap_or_else(syn::Error::into_compile_error)
-        .into()
-}
-
-/**
     `#[cgp_type]` is an extension to [`#[cgp_component]`](macro@cgp_component) that
     derives additional constructs for abstract type components.
 
@@ -782,41 +698,6 @@ pub fn cgp_type(attrs: TokenStream, body: TokenStream) -> TokenStream {
 }
 
 /**
-    The macro also allows the context provider to inherit its component mappings
-    from a specified preset.
-
-    The context would implement `DelegateComponent` for all keys in the
-    preset, with the `Delegate` target pointing to `Preset::Provider`. This is
-    done through the `IsPreset` trait generated from the [`cgp_preset!`] macro.
-
-    For example, given the following definition:
-
-    ```rust,ignore
-    #[cgp_inherit(MyPreset)]
-    pub struct MyApp {
-        name: String,
-    }
-    ```
-
-    The following blanket implementation would be generated:
-
-    ```rust,ignore
-    impl<Name> DelegateComponent<Name> for MyApp
-    where
-        Self: MyPreset::IsPreset<Name>,
-    {
-        type Delegate = MyPreset::Provider;
-    }
-    ```
-*/
-#[proc_macro_attribute]
-pub fn cgp_inherit(attr: TokenStream, item: TokenStream) -> TokenStream {
-    cgp_macro_lib::cgp_inherit(attr.into(), item.into())
-        .unwrap_or_else(syn::Error::into_compile_error)
-        .into()
-}
-
-/**
    The `#[blanket_trait]` macro can be used to define trait aliases that contain
    empty body and trivial blanket implementations.
 
@@ -843,20 +724,6 @@ pub fn cgp_inherit(attr: TokenStream, item: TokenStream) -> TokenStream {
 #[proc_macro_attribute]
 pub fn blanket_trait(attr: TokenStream, item: TokenStream) -> TokenStream {
     cgp_macro_lib::blanket_trait(attr.into(), item.into())
-        .unwrap_or_else(syn::Error::into_compile_error)
-        .into()
-}
-
-#[proc_macro_attribute]
-pub fn re_export_imports(attrs: TokenStream, body: TokenStream) -> TokenStream {
-    cgp_macro_lib::re_export_imports(attrs.into(), body.into())
-        .unwrap_or_else(syn::Error::into_compile_error)
-        .into()
-}
-
-#[proc_macro]
-pub fn replace_with(body: TokenStream) -> TokenStream {
-    cgp_macro_lib::replace_with(body.into())
         .unwrap_or_else(syn::Error::into_compile_error)
         .into()
 }
