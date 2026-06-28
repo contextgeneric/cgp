@@ -74,21 +74,14 @@ snapshot_cgp_type! {
             >>::Delegate: IsProviderFor<ScalarTypeProviderComponent, __Context__, ()>
                 + ScalarTypeProvider<__Context__>,
         {}
-        impl<Scalar, __Context__> ScalarTypeProvider<__Context__> for UseType<Scalar>
-        where
-            Scalar:,
-        {
+        impl<Scalar, __Context__> ScalarTypeProvider<__Context__> for UseType<Scalar> {
             type Scalar = Scalar;
         }
         impl<Scalar, __Context__> IsProviderFor<ScalarTypeProviderComponent, __Context__, ()>
-        for UseType<Scalar>
-        where
-            Scalar:,
-        {}
+        for UseType<Scalar> {}
         impl<__Provider__, Scalar, __Context__> ScalarTypeProvider<__Context__>
         for WithProvider<__Provider__>
         where
-            Scalar:,
             __Provider__: TypeProvider<__Context__, ScalarTypeProviderComponent, Type = Scalar>,
         {
             type Scalar = Scalar;
@@ -100,7 +93,6 @@ snapshot_cgp_type! {
         > IsProviderFor<ScalarTypeProviderComponent, __Context__, ()>
         for WithProvider<__Provider__>
         where
-            Scalar:,
             __Provider__: TypeProvider<__Context__, ScalarTypeProviderComponent, Type = Scalar>,
         {}
         ")
@@ -178,21 +170,14 @@ snapshot_cgp_type! {
             >>::Delegate: IsProviderFor<TypesTypeProviderComponent, __Context__, ()>
                 + TypesTypeProvider<__Context__>,
         {}
-        impl<Types, __Context__> TypesTypeProvider<__Context__> for UseType<Types>
-        where
-            Types:,
-        {
+        impl<Types, __Context__> TypesTypeProvider<__Context__> for UseType<Types> {
             type Types = Types;
         }
         impl<Types, __Context__> IsProviderFor<TypesTypeProviderComponent, __Context__, ()>
-        for UseType<Types>
-        where
-            Types:,
-        {}
+        for UseType<Types> {}
         impl<__Provider__, Types, __Context__> TypesTypeProvider<__Context__>
         for WithProvider<__Provider__>
         where
-            Types:,
             __Provider__: TypeProvider<__Context__, TypesTypeProviderComponent, Type = Types>,
         {
             type Types = Types;
@@ -204,7 +189,6 @@ snapshot_cgp_type! {
         > IsProviderFor<TypesTypeProviderComponent, __Context__, ()>
         for WithProvider<__Provider__>
         where
-            Types:,
             __Provider__: TypeProvider<__Context__, TypesTypeProviderComponent, Type = Types>,
         {}
         ")

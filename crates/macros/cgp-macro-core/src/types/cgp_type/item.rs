@@ -40,12 +40,15 @@ impl ItemCgpType {
 
         let mut generics = provider_trait.generics.clone();
         generics.params.insert(0, parse_internal!(#type_name));
-        generics
-            .make_where_clause()
-            .predicates
-            .push(parse_internal! {
-                    #type_name: #type_bounds
-            });
+
+        if !type_bounds.is_empty() {
+            generics
+                .make_where_clause()
+                .predicates
+                .push(parse_internal! {
+                        #type_name: #type_bounds
+                });
+        }
 
         let (_, type_generics, _) = provider_trait.generics.split_for_impl();
         let (impl_generics, _, where_clause) = generics.split_for_impl();

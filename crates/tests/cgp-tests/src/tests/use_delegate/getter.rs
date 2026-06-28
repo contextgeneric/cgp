@@ -141,10 +141,7 @@ snapshot_cgp_type! {
             __Delegate__: IsProviderFor<FooTypeProviderAtComponent, __Context__, (I, J)>
                 + FooTypeProviderAt<__Context__, I, J>,
         {}
-        impl<Foo, __Context__, I, J> FooTypeProviderAt<__Context__, I, J> for UseType<Foo>
-        where
-            Foo:,
-        {
+        impl<Foo, __Context__, I, J> FooTypeProviderAt<__Context__, I, J> for UseType<Foo> {
             type Foo = Foo;
         }
         impl<
@@ -152,14 +149,10 @@ snapshot_cgp_type! {
             __Context__,
             I,
             J,
-        > IsProviderFor<FooTypeProviderAtComponent, __Context__, (I, J)> for UseType<Foo>
-        where
-            Foo:,
-        {}
+        > IsProviderFor<FooTypeProviderAtComponent, __Context__, (I, J)> for UseType<Foo> {}
         impl<__Provider__, Foo, __Context__, I, J> FooTypeProviderAt<__Context__, I, J>
         for WithProvider<__Provider__>
         where
-            Foo:,
             __Provider__: TypeProvider<__Context__, FooTypeProviderAtComponent, Type = Foo>,
         {
             type Foo = Foo;
@@ -173,7 +166,6 @@ snapshot_cgp_type! {
         > IsProviderFor<FooTypeProviderAtComponent, __Context__, (I, J)>
         for WithProvider<__Provider__>
         where
-            Foo:,
             __Provider__: TypeProvider<__Context__, FooTypeProviderAtComponent, Type = Foo>,
         {}
         ")

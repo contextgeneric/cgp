@@ -75,21 +75,14 @@ mod clone_getter {
                 >>::Delegate: IsProviderFor<NameTypeProviderComponent, __Context__, ()>
                     + NameTypeProvider<__Context__>,
             {}
-            impl<Name, __Context__> NameTypeProvider<__Context__> for UseType<Name>
-            where
-                Name:,
-            {
+            impl<Name, __Context__> NameTypeProvider<__Context__> for UseType<Name> {
                 type Name = Name;
             }
             impl<Name, __Context__> IsProviderFor<NameTypeProviderComponent, __Context__, ()>
-            for UseType<Name>
-            where
-                Name:,
-            {}
+            for UseType<Name> {}
             impl<__Provider__, Name, __Context__> NameTypeProvider<__Context__>
             for WithProvider<__Provider__>
             where
-                Name:,
                 __Provider__: TypeProvider<__Context__, NameTypeProviderComponent, Type = Name>,
             {
                 type Name = Name;
@@ -101,7 +94,6 @@ mod clone_getter {
             > IsProviderFor<NameTypeProviderComponent, __Context__, ()>
             for WithProvider<__Provider__>
             where
-                Name:,
                 __Provider__: TypeProvider<__Context__, NameTypeProviderComponent, Type = Name>,
             {}
             ")
@@ -387,21 +379,14 @@ mod clone_auto_getter {
                 >>::Delegate: IsProviderFor<NameTypeProviderComponent, __Context__, ()>
                     + NameTypeProvider<__Context__>,
             {}
-            impl<Name, __Context__> NameTypeProvider<__Context__> for UseType<Name>
-            where
-                Name:,
-            {
+            impl<Name, __Context__> NameTypeProvider<__Context__> for UseType<Name> {
                 type Name = Name;
             }
             impl<Name, __Context__> IsProviderFor<NameTypeProviderComponent, __Context__, ()>
-            for UseType<Name>
-            where
-                Name:,
-            {}
+            for UseType<Name> {}
             impl<__Provider__, Name, __Context__> NameTypeProvider<__Context__>
             for WithProvider<__Provider__>
             where
-                Name:,
                 __Provider__: TypeProvider<__Context__, NameTypeProviderComponent, Type = Name>,
             {
                 type Name = Name;
@@ -413,7 +398,6 @@ mod clone_auto_getter {
             > IsProviderFor<NameTypeProviderComponent, __Context__, ()>
             for WithProvider<__Provider__>
             where
-                Name:,
                 __Provider__: TypeProvider<__Context__, NameTypeProviderComponent, Type = Name>,
             {}
             ")
