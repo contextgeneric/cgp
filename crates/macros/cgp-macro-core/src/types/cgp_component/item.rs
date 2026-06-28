@@ -10,12 +10,7 @@ pub struct ItemCgpComponent {
 
 impl ItemCgpComponent {
     pub fn preprocess(&self) -> syn::Result<PreprocessedCgpComponent> {
-        let (mut attributes, item_trait) = CgpComponentAttributes::preprocess(&self.item_trait)?;
-
-        attributes
-            .derive_delegate_attributes
-            .attributes
-            .extend(self.args.derive_delegate_attributes.attributes.clone());
+        let (attributes, item_trait) = CgpComponentAttributes::preprocess(&self.item_trait)?;
 
         Ok(PreprocessedCgpComponent {
             args: self.args.clone(),

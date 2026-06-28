@@ -2,7 +2,6 @@ use proc_macro2::Span;
 use syn::parse::Parse;
 use syn::{Error, Ident};
 
-use crate::types::attributes::DeriveDelegateAttributes;
 use crate::types::cgp_component::CgpComponentRawArgs;
 use crate::types::ident::IdentWithTypeGenerics;
 
@@ -11,7 +10,6 @@ pub struct CgpComponentArgs {
     pub context_ident: Ident,
     pub provider_ident: Ident,
     pub component_name: IdentWithTypeGenerics,
-    pub derive_delegate_attributes: DeriveDelegateAttributes,
 }
 
 impl Parse for CgpComponentArgs {
@@ -41,13 +39,10 @@ impl TryFrom<CgpComponentRawArgs> for CgpComponentArgs {
             ))
         });
 
-        let derive_delegate_attributes = raw_args.derive_delegate_attributes.unwrap_or_default();
-
         Ok(Self {
             context_ident,
             provider_ident,
             component_name,
-            derive_delegate_attributes,
         })
     }
 }

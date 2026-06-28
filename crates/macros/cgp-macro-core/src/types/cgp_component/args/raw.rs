@@ -2,7 +2,6 @@ use syn::parse::{End, Parse, ParseStream};
 use syn::token::{Colon, Comma};
 use syn::{Error, Ident};
 
-use crate::types::attributes::DeriveDelegateAttributes;
 use crate::types::ident::IdentWithTypeGenerics;
 
 #[derive(Default)]
@@ -10,7 +9,6 @@ pub struct CgpComponentRawArgs {
     pub context_ident: Option<Ident>,
     pub provider_ident: Option<Ident>,
     pub component_name: Option<IdentWithTypeGenerics>,
-    pub derive_delegate_attributes: Option<DeriveDelegateAttributes>,
 }
 
 impl Parse for CgpComponentRawArgs {
@@ -52,12 +50,6 @@ impl Parse for CgpComponentRawArgs {
                     }
 
                     args.provider_ident = Some(input.parse()?);
-                }
-                "derive_delegate" => {
-                    if args.derive_delegate_attributes.is_some() {
-                        return Err(Error::new(key.span(), "duplicate key is not allowed"));
-                    }
-                    args.derive_delegate_attributes = Some(input.parse()?);
                 }
                 _ => {
                     return Err(Error::new(key.span(), format!("unknown key {key}")));
