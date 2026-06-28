@@ -20,6 +20,7 @@ mod derive_build_field;
 mod derive_extract_field;
 mod derive_from_variant;
 mod derive_has_fields;
+mod path;
 mod re_export_imports;
 mod replace_with;
 
@@ -45,5 +46,6 @@ pub use derive_build_field::*;
 pub use derive_extract_field::*;
 pub use derive_from_variant::*;
 pub use derive_has_fields::*;
+pub use path::*;
 pub use re_export_imports::*;
 pub use replace_with::*;

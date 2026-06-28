@@ -11,8 +11,6 @@ mod namespaces;
 mod providers;
 mod traits;
 
-pub use namespaces::{DefaultImpls1, DefaultImpls2, DefaultNamespace};
-pub use providers::{
-    RedirectLookup, UseContext, UseDefault, UseDelegate, UseFields, WithContext, WithProvider,
-};
-pub use traits::{CanUseComponent, DelegateComponent, IsProviderFor};
+pub use namespaces::*;
+pub use providers::*;
+pub use traits::*;
