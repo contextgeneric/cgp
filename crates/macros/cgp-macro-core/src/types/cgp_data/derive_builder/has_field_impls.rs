@@ -1,7 +1,7 @@
 use quote::quote;
 use syn::{Ident, ItemImpl, ItemStruct, parse2};
 
-use crate::derive_builder::{
+use crate::types::cgp_data::{
     field_to_member, field_to_tag, index_to_generic_ident, to_generic_args,
 };
 

@@ -1,24 +1,23 @@
 use quote::quote;
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
-use syn::{FieldValue, Ident, ItemImpl, ItemStruct, parse2};
+use syn::{FieldValue, Ident, ItemImpl, ItemStruct, Type, parse2};
 
-use crate::derive_builder::{field_to_member, field_value_expr, to_generic_args};
+use crate::types::cgp_data::{field_to_member, field_value_expr, to_generic_args};
 
-pub fn derive_into_builder_impl(
+pub fn derive_finalize_build_impl(
     context_struct: &ItemStruct,
     builder_ident: &Ident,
 ) -> syn::Result<ItemImpl> {
-    let (impl_generics, ty_generics, where_clause) = context_struct.generics.split_for_impl();
-
     let context_ident = &context_struct.ident;
+    let generics = &context_struct.generics;
 
-    let mut builder_generics = to_generic_args(&context_struct.generics)?;
+    let mut generic_args = to_generic_args(generics)?;
 
     let mut builder_fields = <Punctuated<FieldValue, Comma>>::new();
 
     for (i, field) in context_struct.fields.iter().enumerate() {
-        builder_generics.args.push(parse2(quote! {
+        generic_args.args.push(parse2(quote! {
             IsPresent
         })?);
 
@@ -30,15 +29,18 @@ pub fn derive_into_builder_impl(
         )?);
     }
 
+    let (impl_generics, _, where_clause) = generics.split_for_impl();
+
+    let builder_type: Type = parse2(quote! {
+        #builder_ident #generic_args
+    })?;
+
     let item_impl = parse2(quote! {
-        impl #impl_generics IntoBuilder
-            for #context_ident #ty_generics
+        impl #impl_generics FinalizeBuild for #builder_type
         #where_clause
         {
-            type Builder = #builder_ident #builder_generics;
-
-            fn into_builder(self) -> Self::Builder {
-                #builder_ident {
+            fn finalize_build(self) -> Self::Target {
+                #context_ident {
                     #builder_fields
                 }
             }

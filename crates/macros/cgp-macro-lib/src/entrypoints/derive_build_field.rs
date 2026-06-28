@@ -1,12 +1,11 @@
-use proc_macro2::TokenStream;
-use quote::quote;
-use syn::{Ident, ItemStruct, parse2};
-
-use crate::derive_builder::{
+use cgp_macro_core::types::cgp_data::{
     derive_builder_struct, derive_finalize_build_impl, derive_has_builder_impl,
     derive_has_field_impls, derive_into_builder_impl, derive_partial_data_impl,
     derive_update_field_impls,
 };
+use proc_macro2::TokenStream;
+use quote::quote;
+use syn::{Ident, ItemStruct, parse2};
 
 pub fn derive_build_field(body: TokenStream) -> syn::Result<TokenStream> {
     let context_struct: ItemStruct = parse2(body)?;

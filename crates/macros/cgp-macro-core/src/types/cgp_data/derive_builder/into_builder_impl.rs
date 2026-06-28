@@ -3,9 +3,9 @@ use syn::punctuated::Punctuated;
 use syn::token::Comma;
 use syn::{FieldValue, Ident, ItemImpl, ItemStruct, parse2};
 
-use crate::derive_builder::{field_to_member, field_value_expr, to_generic_args};
+use crate::types::cgp_data::{field_to_member, field_value_expr, to_generic_args};
 
-pub fn derive_has_builder_impl(
+pub fn derive_into_builder_impl(
     context_struct: &ItemStruct,
     builder_ident: &Ident,
 ) -> syn::Result<ItemImpl> {
@@ -19,22 +19,25 @@ pub fn derive_has_builder_impl(
 
     for (i, field) in context_struct.fields.iter().enumerate() {
         builder_generics.args.push(parse2(quote! {
-            IsNothing
+            IsPresent
         })?);
 
         let field_member = field_to_member(i, field);
 
-        builder_fields.push(field_value_expr(field_member, quote! { () })?);
+        builder_fields.push(field_value_expr(
+            field_member.clone(),
+            quote! { self. #field_member },
+        )?);
     }
 
     let item_impl = parse2(quote! {
-        impl #impl_generics HasBuilder
+        impl #impl_generics IntoBuilder
             for #context_ident #ty_generics
         #where_clause
         {
             type Builder = #builder_ident #builder_generics;
 
-            fn builder() -> Self::Builder {
+            fn into_builder(self) -> Self::Builder {
                 #builder_ident {
                     #builder_fields
                 }

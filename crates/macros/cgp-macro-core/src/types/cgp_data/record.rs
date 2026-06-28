@@ -1,6 +1,7 @@
 use syn::spanned::Spanned;
 use syn::{Fields, ItemImpl, ItemStruct, LitInt, parse_quote};
 
+use crate::types::cgp_data::derive_has_fields_impls_from_struct;
 use crate::types::field::{Index, Symbol};
 
 pub struct ItemCgpRecord {
@@ -115,7 +116,7 @@ impl ItemCgpRecord {
         Ok(item_impls)
     }
 
-    // pub fn to_has_fields_impls(&self) -> syn::Result<Vec<ItemImpl>> {
-
-    // }
+    pub fn to_has_fields_impls(&self) -> syn::Result<Vec<ItemImpl>> {
+        derive_has_fields_impls_from_struct(&self.item_struct)
+    }
 }

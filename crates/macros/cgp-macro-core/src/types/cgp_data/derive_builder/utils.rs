@@ -1,9 +1,10 @@
-use cgp_macro_core::types::field::{FieldName, Index, Symbol};
 use proc_macro2::{Span, TokenStream};
 use quote::{ToTokens, quote};
 use syn::spanned::Spanned;
 use syn::token::Colon;
 use syn::{AngleBracketedGenericArguments, Field, FieldValue, Generics, Ident, Member, parse2};
+
+use crate::types::field::{FieldName, Index, Symbol};
 
 pub fn to_generic_args(generics: &Generics) -> syn::Result<AngleBracketedGenericArguments> {
     if generics.params.is_empty() {

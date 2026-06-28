@@ -1,7 +1,7 @@
 use quote::quote;
 use syn::{GenericParam, Ident, ItemStruct, Type, TypeParam, parse2};
 
-use crate::derive_builder::index_to_generic_ident;
+use crate::types::cgp_data::index_to_generic_ident;
 
 pub fn derive_builder_struct(
     context_struct: &ItemStruct,

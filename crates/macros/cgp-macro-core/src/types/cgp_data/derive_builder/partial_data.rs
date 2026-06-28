@@ -1,7 +1,7 @@
 use quote::quote;
 use syn::{Ident, ItemImpl, ItemStruct, parse2};
 
-use crate::derive_builder::index_to_generic_ident;
+use crate::types::cgp_data::index_to_generic_ident;
 
 pub fn derive_partial_data_impl(
     context_struct: &ItemStruct,

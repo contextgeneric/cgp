@@ -7,7 +7,6 @@
 
 extern crate alloc;
 
-pub(crate) mod derive_builder;
 pub(crate) mod derive_extractor;
 
 mod entrypoints;

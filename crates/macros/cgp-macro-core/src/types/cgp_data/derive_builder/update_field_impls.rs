@@ -3,7 +3,7 @@ use syn::punctuated::Punctuated;
 use syn::token::Comma;
 use syn::{FieldValue, GenericArgument, Ident, ItemImpl, ItemStruct, Type, parse2};
 
-use crate::derive_builder::{
+use crate::types::cgp_data::{
     field_to_member, field_to_tag, field_value_expr, index_to_generic_ident, to_generic_args,
 };
 

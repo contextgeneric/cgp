@@ -1,7 +1,6 @@
+use cgp_macro_core::types::cgp_data::to_generic_args;
 use quote::quote;
 use syn::{Ident, ItemEnum, ItemImpl, Type, parse2};
-
-use crate::derive_builder::to_generic_args;
 
 pub fn derive_finalize_extract_impl(
     context_enum: &ItemEnum,
