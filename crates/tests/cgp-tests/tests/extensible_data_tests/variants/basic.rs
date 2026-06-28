@@ -12,14 +12,347 @@ use cgp::extra::handler::{
     Computer, ComputerComponent, ComputerRef, ComputerRefComponent, PromoteAsync,
 };
 use cgp::prelude::*;
-use cgp_macro_test_util::{snapshot_cgp_new_provider, snapshot_delegate_components};
+use cgp_macro_test_util::{
+    snapshot_cgp_new_provider, snapshot_delegate_components, snapshot_derive_cgp_data,
+};
 use futures::executor::block_on;
 
-#[derive(Debug, Eq, PartialEq, CgpData)]
-pub enum FooBarBaz {
-    Foo(u64),
-    Bar(String),
-    Baz(bool),
+snapshot_derive_cgp_data! {
+    #[derive(CgpData)]
+    #[derive(Debug, Eq, PartialEq)]
+    pub enum FooBarBaz {
+        Foo(u64),
+        Bar(String),
+        Baz(bool),
+    }
+
+    expand_foo_bar_baz(output) {
+            insta::assert_snapshot!(output, @"
+            impl HasFields for FooBarBaz {
+                type Fields = Either<
+                    Field<Symbol<3, Chars<'F', Chars<'o', Chars<'o', Nil>>>>, u64>,
+                    Either<
+                        Field<Symbol<3, Chars<'B', Chars<'a', Chars<'r', Nil>>>>, String>,
+                        Either<Field<Symbol<3, Chars<'B', Chars<'a', Chars<'z', Nil>>>>, bool>, θ>,
+                    >,
+                >;
+            }
+            impl HasFieldsRef for FooBarBaz {
+                type FieldsRef<'__a> = Either<
+                    Field<Symbol<3, Chars<'F', Chars<'o', Chars<'o', Nil>>>>, &'__a u64>,
+                    Either<
+                        Field<Symbol<3, Chars<'B', Chars<'a', Chars<'r', Nil>>>>, &'__a String>,
+                        Either<
+                            Field<Symbol<3, Chars<'B', Chars<'a', Chars<'z', Nil>>>>, &'__a bool>,
+                            θ,
+                        >,
+                    >,
+                >
+                where
+                    Self: '__a;
+            }
+            impl FromFields for FooBarBaz {
+                fn from_fields(rest: Self::Fields) -> Self {
+                    match rest {
+                        Either::Left(field) => {
+                            let field = field.value;
+                            Self::Foo(field)
+                        }
+                        Either::Right(rest) => {
+                            match rest {
+                                Either::Left(field) => {
+                                    let field = field.value;
+                                    Self::Bar(field)
+                                }
+                                Either::Right(rest) => {
+                                    match rest {
+                                        Either::Left(field) => {
+                                            let field = field.value;
+                                            Self::Baz(field)
+                                        }
+                                        Either::Right(rest) => match rest {}
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            impl ToFields for FooBarBaz {
+                fn to_fields(self) -> Self::Fields {
+                    match self {
+                        Self::Foo(field) => Either::Left(field.into()),
+                        Self::Bar(field) => Either::Right(Either::Left(field.into())),
+                        Self::Baz(field) => Either::Right(Either::Right(Either::Left(field.into()))),
+                    }
+                }
+            }
+            impl ToFieldsRef for FooBarBaz {
+                fn to_fields_ref<'__a>(&'__a self) -> Self::FieldsRef<'__a>
+                where
+                    Self: '__a,
+                {
+                    match self {
+                        Self::Foo(field) => Either::Left(field.into()),
+                        Self::Bar(field) => Either::Right(Either::Left(field.into())),
+                        Self::Baz(field) => Either::Right(Either::Right(Either::Left(field.into()))),
+                    }
+                }
+            }
+            impl FromVariant<Symbol<3, Chars<'F', Chars<'o', Chars<'o', Nil>>>>> for FooBarBaz {
+                type Value = u64;
+                fn from_variant(
+                    _tag: ::core::marker::PhantomData<
+                        Symbol<3, Chars<'F', Chars<'o', Chars<'o', Nil>>>>,
+                    >,
+                    value: Self::Value,
+                ) -> Self {
+                    Self::Foo(value)
+                }
+            }
+            impl FromVariant<Symbol<3, Chars<'B', Chars<'a', Chars<'r', Nil>>>>> for FooBarBaz {
+                type Value = String;
+                fn from_variant(
+                    _tag: ::core::marker::PhantomData<
+                        Symbol<3, Chars<'B', Chars<'a', Chars<'r', Nil>>>>,
+                    >,
+                    value: Self::Value,
+                ) -> Self {
+                    Self::Bar(value)
+                }
+            }
+            impl FromVariant<Symbol<3, Chars<'B', Chars<'a', Chars<'z', Nil>>>>> for FooBarBaz {
+                type Value = bool;
+                fn from_variant(
+                    _tag: ::core::marker::PhantomData<
+                        Symbol<3, Chars<'B', Chars<'a', Chars<'z', Nil>>>>,
+                    >,
+                    value: Self::Value,
+                ) -> Self {
+                    Self::Baz(value)
+                }
+            }
+            pub enum __PartialFooBarBaz<__F0__: MapType, __F1__: MapType, __F2__: MapType> {
+                Foo(<__F0__ as MapType>::Map<u64>),
+                Bar(<__F1__ as MapType>::Map<String>),
+                Baz(<__F2__ as MapType>::Map<bool>),
+            }
+            pub enum __PartialRefFooBarBaz<
+                '__a__,
+                __R__: MapTypeRef,
+                __F0__: MapType,
+                __F1__: MapType,
+                __F2__: MapType,
+            > {
+                Foo(<__F0__ as MapType>::Map<<__R__ as MapTypeRef>::Map<'__a__, u64>>),
+                Bar(<__F1__ as MapType>::Map<<__R__ as MapTypeRef>::Map<'__a__, String>>),
+                Baz(<__F2__ as MapType>::Map<<__R__ as MapTypeRef>::Map<'__a__, bool>>),
+            }
+            impl<__F0__: MapType, __F1__: MapType, __F2__: MapType> PartialData
+            for __PartialFooBarBaz<__F0__, __F1__, __F2__> {
+                type Target = FooBarBaz;
+            }
+            impl<
+                '__a__,
+                __R__: MapTypeRef,
+                __F0__: MapType,
+                __F1__: MapType,
+                __F2__: MapType,
+            > PartialData for __PartialRefFooBarBaz<'__a__, __R__, __F0__, __F1__, __F2__> {
+                type Target = FooBarBaz;
+            }
+            impl HasExtractor for FooBarBaz {
+                type Extractor = __PartialFooBarBaz<IsPresent, IsPresent, IsPresent>;
+                fn to_extractor(self) -> Self::Extractor {
+                    match self {
+                        Self::Foo(value) => __PartialFooBarBaz::Foo(value),
+                        Self::Bar(value) => __PartialFooBarBaz::Bar(value),
+                        Self::Baz(value) => __PartialFooBarBaz::Baz(value),
+                    }
+                }
+                fn from_extractor(extractor: Self::Extractor) -> Self {
+                    match extractor {
+                        __PartialFooBarBaz::Foo(value) => Self::Foo(value),
+                        __PartialFooBarBaz::Bar(value) => Self::Bar(value),
+                        __PartialFooBarBaz::Baz(value) => Self::Baz(value),
+                    }
+                }
+            }
+            impl HasExtractorRef for FooBarBaz {
+                type ExtractorRef<'a> = __PartialRefFooBarBaz<
+                    'a,
+                    IsRef,
+                    IsPresent,
+                    IsPresent,
+                    IsPresent,
+                >
+                where
+                    Self: 'a;
+                fn extractor_ref<'a>(&'a self) -> Self::ExtractorRef<'a> {
+                    match self {
+                        Self::Foo(value) => __PartialRefFooBarBaz::Foo(value),
+                        Self::Bar(value) => __PartialRefFooBarBaz::Bar(value),
+                        Self::Baz(value) => __PartialRefFooBarBaz::Baz(value),
+                    }
+                }
+            }
+            impl HasExtractorMut for FooBarBaz {
+                type ExtractorMut<'a> = __PartialRefFooBarBaz<
+                    'a,
+                    IsMut,
+                    IsPresent,
+                    IsPresent,
+                    IsPresent,
+                >
+                where
+                    Self: 'a;
+                fn extractor_mut<'a>(&'a mut self) -> Self::ExtractorMut<'a> {
+                    match self {
+                        Self::Foo(value) => __PartialRefFooBarBaz::Foo(value),
+                        Self::Bar(value) => __PartialRefFooBarBaz::Bar(value),
+                        Self::Baz(value) => __PartialRefFooBarBaz::Baz(value),
+                    }
+                }
+            }
+            impl FinalizeExtract for __PartialFooBarBaz<IsVoid, IsVoid, IsVoid> {
+                fn finalize_extract<__T__>(self) -> __T__ {
+                    match self {}
+                }
+            }
+            impl<'a, __R__: MapTypeRef> FinalizeExtract
+            for __PartialRefFooBarBaz<'a, __R__, IsVoid, IsVoid, IsVoid> {
+                fn finalize_extract<__T__>(self) -> __T__ {
+                    match self {}
+                }
+            }
+            impl<
+                __F1__: MapType,
+                __F2__: MapType,
+            > ExtractField<Symbol<3, Chars<'F', Chars<'o', Chars<'o', Nil>>>>>
+            for __PartialFooBarBaz<IsPresent, __F1__, __F2__> {
+                type Value = u64;
+                type Remainder = __PartialFooBarBaz<IsVoid, __F1__, __F2__>;
+                fn extract_field(
+                    self,
+                    _tag: ::core::marker::PhantomData<
+                        Symbol<3, Chars<'F', Chars<'o', Chars<'o', Nil>>>>,
+                    >,
+                ) -> Result<Self::Value, Self::Remainder> {
+                    match self {
+                        __PartialFooBarBaz::Foo(value) => Ok(value),
+                        __PartialFooBarBaz::Bar(value) => Err(__PartialFooBarBaz::Bar(value)),
+                        __PartialFooBarBaz::Baz(value) => Err(__PartialFooBarBaz::Baz(value)),
+                    }
+                }
+            }
+            impl<
+                __F0__: MapType,
+                __F2__: MapType,
+            > ExtractField<Symbol<3, Chars<'B', Chars<'a', Chars<'r', Nil>>>>>
+            for __PartialFooBarBaz<__F0__, IsPresent, __F2__> {
+                type Value = String;
+                type Remainder = __PartialFooBarBaz<__F0__, IsVoid, __F2__>;
+                fn extract_field(
+                    self,
+                    _tag: ::core::marker::PhantomData<
+                        Symbol<3, Chars<'B', Chars<'a', Chars<'r', Nil>>>>,
+                    >,
+                ) -> Result<Self::Value, Self::Remainder> {
+                    match self {
+                        __PartialFooBarBaz::Foo(value) => Err(__PartialFooBarBaz::Foo(value)),
+                        __PartialFooBarBaz::Bar(value) => Ok(value),
+                        __PartialFooBarBaz::Baz(value) => Err(__PartialFooBarBaz::Baz(value)),
+                    }
+                }
+            }
+            impl<
+                __F0__: MapType,
+                __F1__: MapType,
+            > ExtractField<Symbol<3, Chars<'B', Chars<'a', Chars<'z', Nil>>>>>
+            for __PartialFooBarBaz<__F0__, __F1__, IsPresent> {
+                type Value = bool;
+                type Remainder = __PartialFooBarBaz<__F0__, __F1__, IsVoid>;
+                fn extract_field(
+                    self,
+                    _tag: ::core::marker::PhantomData<
+                        Symbol<3, Chars<'B', Chars<'a', Chars<'z', Nil>>>>,
+                    >,
+                ) -> Result<Self::Value, Self::Remainder> {
+                    match self {
+                        __PartialFooBarBaz::Foo(value) => Err(__PartialFooBarBaz::Foo(value)),
+                        __PartialFooBarBaz::Bar(value) => Err(__PartialFooBarBaz::Bar(value)),
+                        __PartialFooBarBaz::Baz(value) => Ok(value),
+                    }
+                }
+            }
+            impl<
+                '__a__,
+                __R__: MapTypeRef,
+                __F1__: MapType,
+                __F2__: MapType,
+            > ExtractField<Symbol<3, Chars<'F', Chars<'o', Chars<'o', Nil>>>>>
+            for __PartialRefFooBarBaz<'__a__, __R__, IsPresent, __F1__, __F2__> {
+                type Value = <__R__ as MapTypeRef>::Map<'__a__, u64>;
+                type Remainder = __PartialRefFooBarBaz<'__a__, __R__, IsVoid, __F1__, __F2__>;
+                fn extract_field(
+                    self,
+                    _tag: ::core::marker::PhantomData<
+                        Symbol<3, Chars<'F', Chars<'o', Chars<'o', Nil>>>>,
+                    >,
+                ) -> Result<Self::Value, Self::Remainder> {
+                    match self {
+                        __PartialRefFooBarBaz::Foo(value) => Ok(value),
+                        __PartialRefFooBarBaz::Bar(value) => Err(__PartialRefFooBarBaz::Bar(value)),
+                        __PartialRefFooBarBaz::Baz(value) => Err(__PartialRefFooBarBaz::Baz(value)),
+                    }
+                }
+            }
+            impl<
+                '__a__,
+                __R__: MapTypeRef,
+                __F0__: MapType,
+                __F2__: MapType,
+            > ExtractField<Symbol<3, Chars<'B', Chars<'a', Chars<'r', Nil>>>>>
+            for __PartialRefFooBarBaz<'__a__, __R__, __F0__, IsPresent, __F2__> {
+                type Value = <__R__ as MapTypeRef>::Map<'__a__, String>;
+                type Remainder = __PartialRefFooBarBaz<'__a__, __R__, __F0__, IsVoid, __F2__>;
+                fn extract_field(
+                    self,
+                    _tag: ::core::marker::PhantomData<
+                        Symbol<3, Chars<'B', Chars<'a', Chars<'r', Nil>>>>,
+                    >,
+                ) -> Result<Self::Value, Self::Remainder> {
+                    match self {
+                        __PartialRefFooBarBaz::Foo(value) => Err(__PartialRefFooBarBaz::Foo(value)),
+                        __PartialRefFooBarBaz::Bar(value) => Ok(value),
+                        __PartialRefFooBarBaz::Baz(value) => Err(__PartialRefFooBarBaz::Baz(value)),
+                    }
+                }
+            }
+            impl<
+                '__a__,
+                __R__: MapTypeRef,
+                __F0__: MapType,
+                __F1__: MapType,
+            > ExtractField<Symbol<3, Chars<'B', Chars<'a', Chars<'z', Nil>>>>>
+            for __PartialRefFooBarBaz<'__a__, __R__, __F0__, __F1__, IsPresent> {
+                type Value = <__R__ as MapTypeRef>::Map<'__a__, bool>;
+                type Remainder = __PartialRefFooBarBaz<'__a__, __R__, __F0__, __F1__, IsVoid>;
+                fn extract_field(
+                    self,
+                    _tag: ::core::marker::PhantomData<
+                        Symbol<3, Chars<'B', Chars<'a', Chars<'z', Nil>>>>,
+                    >,
+                ) -> Result<Self::Value, Self::Remainder> {
+                    match self {
+                        __PartialRefFooBarBaz::Foo(value) => Err(__PartialRefFooBarBaz::Foo(value)),
+                        __PartialRefFooBarBaz::Bar(value) => Err(__PartialRefFooBarBaz::Bar(value)),
+                        __PartialRefFooBarBaz::Baz(value) => Ok(value),
+                    }
+                }
+            }
+            ")
+    }
 }
 
 #[derive(Debug, Eq, PartialEq, CgpData)]

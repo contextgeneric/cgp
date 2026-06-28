@@ -42,6 +42,7 @@ impl ItemCgpVariant {
 
         let extractor_ident =
             Ident::new(&format!("__Partial{context_ident}"), context_ident.span());
+
         let extractor_enum = derive_extractor_enum(item_enum, &extractor_ident)?;
 
         let extractor_ref_ident = Ident::new(

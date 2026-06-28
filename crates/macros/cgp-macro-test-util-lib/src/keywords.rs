@@ -31,3 +31,5 @@ define_keyword!(BlanketTrait, "blanket_trait");
 define_keyword!(HasField, "HasField");
 
 define_keyword!(HasFields, "HasFields");
+
+define_keyword!(CgpData, "CgpData");

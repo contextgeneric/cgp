@@ -9,6 +9,8 @@ pub fn derive_builder_struct(
     builder_ident: &Ident,
 ) -> syn::Result<ItemStruct> {
     let mut builder_struct = context_struct.clone();
+
+    builder_struct.attrs.clear();
     builder_struct.ident = builder_ident.clone();
 
     let generics = &mut builder_struct.generics;

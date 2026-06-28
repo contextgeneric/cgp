@@ -16,21 +16,24 @@ pub mod single_name_field {
         expand_person(output) {
             insta::assert_snapshot!(output, @"
             impl HasFields for Person {
-                type Fields = π<
-                    ω<Symbol<4, Chars<'n', Chars<'a', Chars<'m', Chars<'e', Nil>>>>>, String>,
+                type Fields = Cons<
+                    Field<Symbol<4, Chars<'n', Chars<'a', Chars<'m', Chars<'e', Nil>>>>>, String>,
                     ε,
                 >;
             }
             impl HasFieldsRef for Person {
-                type FieldsRef<'__a> = π<
-                    ω<Symbol<4, Chars<'n', Chars<'a', Chars<'m', Chars<'e', Nil>>>>>, &'__a String>,
+                type FieldsRef<'__a> = Cons<
+                    Field<
+                        Symbol<4, Chars<'n', Chars<'a', Chars<'m', Chars<'e', Nil>>>>>,
+                        &'__a String,
+                    >,
                     ε,
                 >
                 where
                     Self: '__a;
             }
             impl FromFields for Person {
-                fn from_fields(π(name, ε): Self::Fields) -> Self {
+                fn from_fields(π(name, Nil): Self::Fields) -> Self {
                     Self { name: name.value }
                 }
             }

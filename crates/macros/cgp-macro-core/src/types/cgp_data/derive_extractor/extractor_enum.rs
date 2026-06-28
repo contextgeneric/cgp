@@ -11,6 +11,8 @@ pub fn derive_extractor_enum(
 ) -> syn::Result<ItemEnum> {
     let mut extractor_enum = context_enum.clone();
 
+    extractor_enum.attrs.clear();
+
     extractor_enum.ident = extractor_ident.clone();
 
     let generics = &mut extractor_enum.generics;
@@ -41,6 +43,8 @@ pub fn derive_extractor_enum_ref(
     extractor_ident: &Ident,
 ) -> syn::Result<ItemEnum> {
     let mut extractor_enum = context_enum.clone();
+
+    extractor_enum.attrs.clear();
 
     extractor_enum.ident = extractor_ident.clone();
 
