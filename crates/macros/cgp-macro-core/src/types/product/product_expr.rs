@@ -1,15 +1,14 @@
+use quote::quote;
 use syn::Type;
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
-use quote::quote;
 
 use crate::exports::{Cons, Nil};
 use crate::functions::parse_internal;
 
-
 pub struct ProductExpr {
-    pub types: Punctuated<Type, Comma>
+    pub types: Punctuated<Type, Comma>,
 }
 
 impl ProductExpr {

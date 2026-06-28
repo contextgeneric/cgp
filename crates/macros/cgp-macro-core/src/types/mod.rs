@@ -19,5 +19,6 @@ pub mod keyword;
 pub mod keywords;
 pub mod namespace;
 pub mod path;
-pub mod provider_impl;
 pub mod product;
+pub mod provider_impl;
+pub mod sum;

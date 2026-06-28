@@ -12,7 +12,6 @@ pub fn Product(body: TokenStream) -> syn::Result<TokenStream> {
     Ok(evaluated.to_token_stream())
 }
 
-
 pub fn product(body: TokenStream) -> syn::Result<TokenStream> {
     let product_expr: ProductExpr = parse2(body)?;
 

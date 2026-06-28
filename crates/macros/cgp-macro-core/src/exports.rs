@@ -3,6 +3,8 @@ use crate::export_constructs;
 export_constructs! {
     Nil,
     Cons,
+    Void,
+    Either,
     Chars,
     Symbol,
     Index,

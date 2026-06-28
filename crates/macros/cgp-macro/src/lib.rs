@@ -841,13 +841,15 @@ pub fn product(body: TokenStream) -> TokenStream {
 #[proc_macro]
 #[allow(non_snake_case)]
 pub fn Sum(body: TokenStream) -> TokenStream {
-    cgp_macro_lib::make_sum_type(body.into()).into()
+    cgp_macro_lib::Sum(body.into())
+        .unwrap_or_else(syn::Error::into_compile_error)
+        .into()
 }
 
 #[proc_macro]
 #[allow(non_snake_case)]
 pub fn Path(body: TokenStream) -> TokenStream {
-    cgp_macro_lib::path(body.into())
+    cgp_macro_lib::Path(body.into())
         .unwrap_or_else(syn::Error::into_compile_error)
         .into()
 }

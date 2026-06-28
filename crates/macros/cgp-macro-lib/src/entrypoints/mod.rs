@@ -20,8 +20,8 @@ mod derive_from_variant;
 mod derive_has_fields;
 mod path;
 mod product;
+mod sum;
 
-pub use product::*;
 pub use blanket_trait::*;
 pub use cgp_auto_getter::*;
 pub use cgp_component::*;
@@ -43,3 +43,5 @@ pub use derive_extract_field::*;
 pub use derive_from_variant::*;
 pub use derive_has_fields::*;
 pub use path::*;
+pub use product::*;
+pub use sum::*;
