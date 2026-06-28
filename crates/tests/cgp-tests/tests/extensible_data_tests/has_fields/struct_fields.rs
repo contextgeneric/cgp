@@ -4,7 +4,7 @@ use cgp::prelude::*;
 
 pub mod single_name_field {
     use cgp::prelude::*;
-use cgp_macro_test_util::snapshot_derive_has_fields;
+    use cgp_macro_test_util::snapshot_derive_has_fields;
 
     snapshot_derive_has_fields! {
         #[derive(HasFields)]
@@ -53,7 +53,6 @@ use cgp_macro_test_util::snapshot_derive_has_fields;
 
     #[test]
     fn test_single_named_field() {
-
         let name = "Alice".to_owned();
 
         let person1 = Person { name: name.clone() };

@@ -5,6 +5,7 @@ use syn::spanned::Spanned;
 use syn::token::Comma;
 use syn::{Error, Fields, Ident, ItemEnum, ItemImpl, Variant, parse2};
 
+use crate::exports::{Either, ToFields};
 use crate::types::cgp_data::{FieldLabel, derive_to_fields_constructor};
 
 pub fn derive_to_fields_for_enum(item_enum: &ItemEnum) -> syn::Result<ItemImpl> {
@@ -15,7 +16,7 @@ pub fn derive_to_fields_for_enum(item_enum: &ItemEnum) -> syn::Result<ItemImpl> 
 
     let item_impl = quote! {
         impl #impl_generics
-            ToFields for #enum_name #type_generics
+            #ToFields for #enum_name #type_generics
         #where_clause
         {
             fn to_fields(
@@ -58,14 +59,14 @@ pub fn derive_to_fields_match_arms(
         let variant_args = extract_variant_args(&variant.fields)?;
 
         let inject_variant = inject_prefix(quote! {
-            σ::Left( #constructor .into() )
+            #Either::Left( #constructor .into() )
         });
 
         inject_prefix = Box::new(move |inner| {
             let outer = inject_prefix(inner);
 
             quote! {
-                σ::Right( #outer )
+                #Either::Right( #outer )
             }
         });
 

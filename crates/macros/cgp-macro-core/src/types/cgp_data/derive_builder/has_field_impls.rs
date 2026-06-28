@@ -1,6 +1,7 @@
 use quote::quote;
 use syn::{Ident, ItemImpl, ItemStruct, parse2};
 
+use crate::exports::{HasField, IsPresent, MapType};
 use crate::types::cgp_data::{
     field_to_member, field_to_tag, index_to_generic_ident, to_generic_args,
 };
@@ -26,7 +27,7 @@ pub fn derive_has_field_impls(
                 let generic_param_name = index_to_generic_ident(other_index);
 
                 generics.params.push(parse2(quote! {
-                    #generic_param_name: MapType
+                    #generic_param_name: #MapType
                 })?);
 
                 source_generic_args.push(parse2(quote! {
@@ -34,7 +35,7 @@ pub fn derive_has_field_impls(
                 })?);
             } else {
                 source_generic_args.push(parse2(quote! {
-                    IsPresent
+                    #IsPresent
                 })?);
             }
         }
@@ -42,7 +43,7 @@ pub fn derive_has_field_impls(
         let (impl_generics, _, where_clause) = generics.split_for_impl();
 
         let item_impl = parse2(quote! {
-            impl #impl_generics HasField< #tag_type >
+            impl #impl_generics #HasField< #tag_type >
                 for #builder_ident < #source_generic_args >
             #where_clause
             {

@@ -1,6 +1,7 @@
 use quote::quote;
 use syn::{Arm, Ident, ItemEnum, ItemImpl, parse2};
 
+use crate::exports::{HasExtractor, HasExtractorMut, HasExtractorRef, IsMut, IsPresent, IsRef};
 use crate::types::cgp_data::to_generic_args;
 
 pub fn derive_has_extractor_impl(
@@ -19,7 +20,7 @@ pub fn derive_has_extractor_impl(
 
     for variant in context_enum.variants.iter() {
         extractor_generics.args.push(parse2(quote! {
-            IsPresent
+            #IsPresent
         })?);
 
         let variant_ident = &variant.ident;
@@ -38,7 +39,7 @@ pub fn derive_has_extractor_impl(
     }
 
     let item_impl = parse2(quote! {
-        impl #impl_generics HasExtractor
+        impl #impl_generics #HasExtractor
             for #context_ident #ty_generics
         #where_clause
         {
@@ -80,7 +81,7 @@ pub fn derive_has_extractor_ref_impl(
     extractor_generics.args.insert(
         1,
         parse2(quote! {
-            IsRef
+            #IsRef
         })?,
     );
 
@@ -88,7 +89,7 @@ pub fn derive_has_extractor_ref_impl(
 
     for variant in context_enum.variants.iter() {
         extractor_generics.args.push(parse2(quote! {
-            IsPresent
+            #IsPresent
         })?);
 
         let variant_ident = &variant.ident;
@@ -101,7 +102,7 @@ pub fn derive_has_extractor_ref_impl(
     }
 
     let item_impl = parse2(quote! {
-        impl #impl_generics HasExtractorRef
+        impl #impl_generics #HasExtractorRef
             for #context_ident #ty_generics
         #where_clause
         {
@@ -139,7 +140,7 @@ pub fn derive_has_extractor_mut_impl(
     extractor_generics.args.insert(
         1,
         parse2(quote! {
-            IsMut
+            #IsMut
         })?,
     );
 
@@ -147,7 +148,7 @@ pub fn derive_has_extractor_mut_impl(
 
     for variant in context_enum.variants.iter() {
         extractor_generics.args.push(parse2(quote! {
-            IsPresent
+            #IsPresent
         })?);
 
         let variant_ident = &variant.ident;
@@ -160,7 +161,7 @@ pub fn derive_has_extractor_mut_impl(
     }
 
     let item_impl = parse2(quote! {
-        impl #impl_generics HasExtractorMut
+        impl #impl_generics #HasExtractorMut
             for #context_ident #ty_generics
         #where_clause
         {

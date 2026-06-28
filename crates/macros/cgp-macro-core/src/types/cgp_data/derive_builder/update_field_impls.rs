@@ -3,6 +3,7 @@ use syn::punctuated::Punctuated;
 use syn::token::Comma;
 use syn::{FieldValue, GenericArgument, Ident, ItemImpl, ItemStruct, Type, parse2};
 
+use crate::exports::{MapType, UpdateField};
 use crate::types::cgp_data::{
     field_to_member, field_to_tag, field_value_expr, index_to_generic_ident, to_generic_args,
 };
@@ -30,7 +31,7 @@ pub fn derive_update_field_impls(
                 let generic_param_name = index_to_generic_ident(other_index);
 
                 generics.params.push(parse2(quote! {
-                    #generic_param_name: MapType
+                    #generic_param_name: #MapType
                 })?);
 
                 let generic_arg: GenericArgument = parse2(quote! { #generic_param_name })?;
@@ -46,11 +47,11 @@ pub fn derive_update_field_impls(
                 output_generic_args.push(parse2(quote! { __M2__ })?);
 
                 generics.params.push(parse2(quote! {
-                    __M1__: MapType
+                    __M1__: #MapType
                 })?);
 
                 generics.params.push(parse2(quote! {
-                    __M2__: MapType
+                    __M2__: #MapType
                 })?);
 
                 builder_fields.push(field_value_expr(field_member, quote! { value })?);
@@ -72,7 +73,7 @@ pub fn derive_update_field_impls(
         let member = field_to_member(current_index, current_field);
 
         let item_impl = parse2(quote! {
-            impl #impl_generics UpdateField< #tag_type, __M2__ >
+            impl #impl_generics #UpdateField< #tag_type, __M2__ >
                 for #source_type
             #where_clause
             {

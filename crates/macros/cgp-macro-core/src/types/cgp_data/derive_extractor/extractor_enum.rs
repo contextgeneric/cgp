@@ -2,6 +2,7 @@ use proc_macro2::Span;
 use quote::quote;
 use syn::{GenericParam, Ident, ItemEnum, Lifetime, LifetimeParam, Type, TypeParam, parse2};
 
+use crate::exports::{MapType, MapTypeRef};
 use crate::types::cgp_data::{get_variant_type, index_to_generic_ident, type_to_variant_fields};
 
 pub fn derive_extractor_enum(
@@ -74,7 +75,7 @@ pub fn derive_extractor_enum_ref(
     generics.params.insert(
         1,
         parse2(quote! {
-            __R__: MapTypeRef
+            __R__: #MapTypeRef
         })?,
     );
 
@@ -82,7 +83,7 @@ pub fn derive_extractor_enum_ref(
         let generic_param_name = index_to_generic_ident(i);
 
         let generic_param: TypeParam = parse2(quote! {
-            #generic_param_name : MapType
+            #generic_param_name : #MapType
         })?;
 
         generics.params.push(GenericParam::Type(generic_param));
@@ -90,8 +91,8 @@ pub fn derive_extractor_enum_ref(
         let field_type = get_variant_type(variant)?;
 
         let mapped_type: Type = parse2(quote! {
-            <#generic_param_name as MapType>::Map<
-                <__R__ as MapTypeRef>::Map<'__a__ , #field_type >
+            <#generic_param_name as #MapType>::Map<
+                <__R__ as #MapTypeRef>::Map<'__a__ , #field_type >
             >
         })?;
 

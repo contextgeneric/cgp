@@ -1,6 +1,7 @@
 use quote::quote;
 use syn::{Arm, GenericArgument, Ident, ItemEnum, ItemImpl, Type, parse2};
 
+use crate::exports::ExtractField;
 use crate::types::cgp_data::{get_variant_type, index_to_generic_ident, to_generic_args};
 use crate::types::field::Symbol;
 
@@ -95,7 +96,7 @@ pub fn derive_extract_field_impls(
         let (impl_generics, _, where_clause) = generics.split_for_impl();
 
         let item_impl = parse2(quote! {
-            impl #impl_generics ExtractField< #tag_type >
+            impl #impl_generics #ExtractField< #tag_type >
                 for #source_type
             #where_clause
             {

@@ -3,6 +3,8 @@ use quote::quote;
 use syn::spanned::Spanned;
 use syn::{Error, Fields, Ident, ItemImpl, ItemStruct, parse2};
 
+use crate::exports::{Cons, Nil};
+
 pub fn derive_from_fields_for_struct(item_struct: &ItemStruct) -> syn::Result<ItemImpl> {
     let struct_name = &item_struct.ident;
     let (impl_generics, type_generics, where_clause) = item_struct.generics.split_for_impl();
@@ -28,7 +30,7 @@ pub fn derive_from_fields_for_struct(item_struct: &ItemStruct) -> syn::Result<It
 pub fn derive_from_field_params(fields: &Fields) -> syn::Result<(TokenStream, TokenStream)> {
     match fields {
         Fields::Named(fields) => {
-            let mut fields_arg = quote! { ε };
+            let mut fields_arg = quote! { #Nil };
             let mut constructor_args = quote! {};
 
             for field in fields.named.iter().rev() {
@@ -67,7 +69,7 @@ pub fn derive_from_field_params(fields: &Fields) -> syn::Result<(TokenStream, To
                     let field_name: Ident = Ident::new(&format!("field_{i}"), field.span());
 
                     fields_arg = quote! {
-                        π( #field_name, #fields_arg )
+                        #Cons( #field_name, #fields_arg )
                     };
 
                     constructor_args = quote! {
@@ -84,6 +86,6 @@ pub fn derive_from_field_params(fields: &Fields) -> syn::Result<(TokenStream, To
                 ))
             }
         }
-        Fields::Unit => Ok((quote! { ε }, TokenStream::new())),
+        Fields::Unit => Ok((quote! { #Nil }, TokenStream::new())),
     }
 }

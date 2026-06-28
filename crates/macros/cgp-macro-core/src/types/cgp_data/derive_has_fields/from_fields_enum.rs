@@ -1,6 +1,7 @@
 use quote::quote;
 use syn::{ItemEnum, ItemImpl, parse2};
 
+use crate::exports::Either;
 use crate::types::cgp_data::derive_from_field_params;
 
 pub fn derive_from_fields_for_enum(item_enum: &ItemEnum) -> syn::Result<ItemImpl> {
@@ -18,11 +19,11 @@ pub fn derive_from_fields_for_enum(item_enum: &ItemEnum) -> syn::Result<ItemImpl
 
         match_expr = quote! {
             match rest {
-                σ::Left( field ) => {
+                #Either::Left( field ) => {
                     let #product_arg = field.value;
                     Self:: #variant_ident #product_constructor_args
                 }
-                σ::Right(rest) => {
+                #Either::Right(rest) => {
                     #match_expr
                 }
             }

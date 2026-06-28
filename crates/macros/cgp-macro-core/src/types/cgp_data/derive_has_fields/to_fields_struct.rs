@@ -3,6 +3,8 @@ use quote::{ToTokens, quote};
 use syn::spanned::Spanned;
 use syn::{Error, Fields, Ident, ItemImpl, ItemStruct, LitInt, parse2};
 
+use crate::exports::{Cons, ToFields};
+
 pub fn derive_to_fields_for_struct(item_struct: &ItemStruct) -> syn::Result<ItemImpl> {
     let struct_name = &item_struct.ident;
     let (impl_generics, type_generics, where_clause) = item_struct.generics.split_for_impl();
@@ -19,7 +21,7 @@ pub fn derive_to_fields_for_struct(item_struct: &ItemStruct) -> syn::Result<Item
 
     let item_impl = parse2(quote! {
         impl #impl_generics
-            ToFields for #struct_name #type_generics
+            #ToFields for #struct_name #type_generics
         #where_clause
         {
             fn to_fields(
@@ -74,9 +76,6 @@ pub fn derive_to_fields_constructor(
         }
         Fields::Unnamed(fields) => {
             if fields.unnamed.len() == 1 {
-                // constructors = quote! {
-                //     field
-                // }
                 constructors = construct_field(FieldLabel::None);
             } else {
                 for (i, field) in fields.unnamed.iter().enumerate().rev() {
@@ -85,7 +84,7 @@ pub fn derive_to_fields_constructor(
                     let constructor = construct_field(FieldLabel::Unnamed(field_name));
 
                     constructors = quote! {
-                        π(
+                        #Cons(
                             #constructor,
                             #constructors
                         )

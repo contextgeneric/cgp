@@ -1,6 +1,7 @@
 use quote::quote;
 use syn::{Ident, ItemEnum, ItemImpl, parse2};
 
+use crate::exports::{MapType, MapTypeRef, PartialData};
 use crate::types::cgp_data::index_to_generic_ident;
 
 pub fn derive_partial_data_impl_from_enum(
@@ -21,7 +22,7 @@ pub fn derive_partial_data_impl_from_enum(
         generics.params.insert(
             0,
             parse2(quote! {
-                __R__: MapTypeRef
+                __R__: #MapTypeRef
             })?,
         );
     }
@@ -30,7 +31,7 @@ pub fn derive_partial_data_impl_from_enum(
         let generic_param_name = index_to_generic_ident(index);
 
         generics.params.push(parse2(quote! {
-            #generic_param_name: MapType
+            #generic_param_name: #MapType
         })?);
     }
 
@@ -40,7 +41,7 @@ pub fn derive_partial_data_impl_from_enum(
     let context_generics = context_struct.generics.split_for_impl().1;
 
     let item_impl = parse2(quote! {
-        impl #impl_generics PartialData
+        impl #impl_generics #PartialData
             for #builder_ident #type_generics
         #where_clause
         {

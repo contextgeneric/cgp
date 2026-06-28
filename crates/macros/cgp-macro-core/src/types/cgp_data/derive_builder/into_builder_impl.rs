@@ -3,6 +3,7 @@ use syn::punctuated::Punctuated;
 use syn::token::Comma;
 use syn::{FieldValue, Ident, ItemImpl, ItemStruct, parse2};
 
+use crate::exports::{IntoBuilder, IsPresent};
 use crate::types::cgp_data::{field_to_member, field_value_expr, to_generic_args};
 
 pub fn derive_into_builder_impl(
@@ -19,7 +20,7 @@ pub fn derive_into_builder_impl(
 
     for (i, field) in context_struct.fields.iter().enumerate() {
         builder_generics.args.push(parse2(quote! {
-            IsPresent
+            #IsPresent
         })?);
 
         let field_member = field_to_member(i, field);
@@ -31,7 +32,7 @@ pub fn derive_into_builder_impl(
     }
 
     let item_impl = parse2(quote! {
-        impl #impl_generics IntoBuilder
+        impl #impl_generics #IntoBuilder
             for #context_ident #ty_generics
         #where_clause
         {

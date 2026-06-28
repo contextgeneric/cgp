@@ -1,6 +1,7 @@
 use quote::quote;
 use syn::{ItemEnum, ItemImpl, parse2};
 
+use crate::exports::ToFieldsRef;
 use crate::types::cgp_data::derive_to_fields_match_arms;
 
 pub fn derive_to_fields_ref_for_enum(item_enum: &ItemEnum) -> syn::Result<ItemImpl> {
@@ -13,7 +14,7 @@ pub fn derive_to_fields_ref_for_enum(item_enum: &ItemEnum) -> syn::Result<ItemIm
 
     let item_impl = quote! {
         impl #impl_generics
-            ToFieldsRef for #struct_name #type_generics
+            #ToFieldsRef for #struct_name #type_generics
         #where_clause
         {
             fn to_fields_ref< #life >(

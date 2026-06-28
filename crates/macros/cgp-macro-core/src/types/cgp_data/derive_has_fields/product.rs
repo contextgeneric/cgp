@@ -3,6 +3,7 @@ use quote::quote;
 use syn::spanned::Spanned;
 use syn::{Error, Fields, LitInt, Type, parse2};
 
+use crate::exports::{Cons, Field, Index};
 use crate::types::field::Symbol;
 
 pub fn item_fields_to_product_type(fields: &Fields, reference: &TokenStream) -> syn::Result<Type> {
@@ -19,7 +20,7 @@ pub fn item_fields_to_product_type(fields: &Fields, reference: &TokenStream) -> 
                 let field_type = &field.ty;
 
                 fields_type = parse2(quote! {
-                    π< ω< #field_tag, #reference #field_type >, #fields_type >
+                    #Cons< #Field< #field_tag, #reference #field_type >, #fields_type >
                 })?;
             }
         }
@@ -33,11 +34,11 @@ pub fn item_fields_to_product_type(fields: &Fields, reference: &TokenStream) -> 
                 for (i, field) in fields.unnamed.iter().enumerate().rev() {
                     let index = LitInt::new(&format!("{i}"), field.span());
 
-                    let field_tag = quote! { δ< #index > };
+                    let field_tag = quote! { #Index< #index > };
                     let field_type = &field.ty;
 
                     fields_type = parse2(quote! {
-                        π< ω< #field_tag, #reference #field_type >, #fields_type >
+                        #Cons< #Field< #field_tag, #reference #field_type >, #fields_type >
                     })?;
                 }
             }

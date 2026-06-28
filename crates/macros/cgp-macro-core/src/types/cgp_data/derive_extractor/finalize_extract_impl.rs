@@ -1,6 +1,7 @@
 use quote::quote;
 use syn::{Ident, ItemEnum, ItemImpl, Type, parse2};
 
+use crate::exports::{FinalizeExtract, IsVoid, MapTypeRef};
 use crate::types::cgp_data::to_generic_args;
 
 pub fn derive_finalize_extract_impl(
@@ -22,7 +23,7 @@ pub fn derive_finalize_extract_impl(
             generics.params.insert(
                 0,
                 parse2(quote! {
-                    __R__: MapTypeRef
+                    __R__: #MapTypeRef
                 })?,
             );
         }
@@ -34,7 +35,7 @@ pub fn derive_finalize_extract_impl(
 
     for _variant in context_enum.variants.iter() {
         generic_args.args.push(parse2(quote! {
-            IsVoid
+            #IsVoid
         })?);
     }
 
@@ -45,7 +46,7 @@ pub fn derive_finalize_extract_impl(
     })?;
 
     let item_impl = parse2(quote! {
-        impl #impl_generics FinalizeExtract for #extractor_type
+        impl #impl_generics #FinalizeExtract for #extractor_type
         #where_clause
         {
             fn finalize_extract<__T__>(self) -> __T__ {

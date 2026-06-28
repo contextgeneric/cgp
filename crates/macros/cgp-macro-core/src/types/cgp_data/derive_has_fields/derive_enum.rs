@@ -2,6 +2,7 @@ use proc_macro2::TokenStream;
 use quote::quote;
 use syn::{ItemEnum, ItemImpl, parse2};
 
+use crate::exports::{HasFields, HasFieldsRef};
 use crate::types::cgp_data::{
     derive_from_fields_for_enum, derive_to_fields_for_enum, derive_to_fields_ref_for_enum,
     variants_to_sum_type,
@@ -18,7 +19,7 @@ pub fn derive_has_fields_impls_from_enum(item_enum: &ItemEnum) -> syn::Result<Ve
 
     let has_fields_impl: ItemImpl = parse2(quote! {
         impl #impl_generics
-            HasFields for #struct_name #type_generics
+            #HasFields for #struct_name #type_generics
         #where_clause
         {
             type Fields = #sum_type ;
@@ -27,7 +28,7 @@ pub fn derive_has_fields_impls_from_enum(item_enum: &ItemEnum) -> syn::Result<Ve
 
     let has_fields_ref_impl: ItemImpl = parse2(quote! {
         impl #impl_generics
-            HasFieldsRef for #struct_name #type_generics
+            #HasFieldsRef for #struct_name #type_generics
         #where_clause
         {
             type FieldsRef< #life > = #sum_type_ref
