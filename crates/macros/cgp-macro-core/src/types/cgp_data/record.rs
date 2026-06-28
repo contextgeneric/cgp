@@ -40,7 +40,7 @@ impl ItemCgpRecord {
 
         let has_field_impls = derive_has_field_impls(item_struct, &builder_ident)?;
 
-        let mut out = vec![
+        let mut items = vec![
             builder_struct.into(),
             has_builder_impl.into(),
             into_builder_impl.into(),
@@ -48,9 +48,9 @@ impl ItemCgpRecord {
             finalize_build_impl.into(),
         ];
 
-        out.extend(update_field_impls.into_iter().map(Item::from));
-        out.extend(has_field_impls.into_iter().map(Item::from));
+        items.extend(update_field_impls.into_iter().map(Item::from));
+        items.extend(has_field_impls.into_iter().map(Item::from));
 
-        Ok(out)
+        Ok(items)
     }
 }
