@@ -60,7 +60,7 @@ impl EvaluatedCgpComponent {
         let component_type = self.args.component_name.to_type();
         let mut provider_impls = ItemProviderImpls::default();
 
-        for delegate_attribute in &self.args.derive_delegate_attributes.attributes {
+        for delegate_attribute in &self.attributes.derive_delegate_attributes.attributes {
             let item_impl = delegate_attribute.to_provider_impl(provider_trait)?;
             provider_impls.items.push(ItemProviderImpl {
                 component_type: component_type.clone(),

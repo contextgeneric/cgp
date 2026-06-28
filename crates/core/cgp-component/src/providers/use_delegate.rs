@@ -31,10 +31,8 @@ use core::marker::PhantomData;
     Given the following component definition:
 
     ```rust,ignore
-    #[cgp_component {
-        provider: ErrorRaiser,
-        derive_delegate: UseDelegate<SourceError>,
-    }]
+    #[cgp_component(ErrorRaiser)]
+    #[derive_delegate(UseDelegate<SourceError>)]
     pub trait CanRaiseError<SourceError>: HasErrorType {
         fn raise_error(error: SourceError) -> Self::Error;
     }

@@ -5,28 +5,20 @@ use cgp::prelude::*;
 
 use crate::UseInputDelegate;
 
-#[cgp_component {
-    provider: Computer,
-    derive_delegate: [
-        UseDelegate<Code>,
-        UseInputDelegate<Input>,
-    ],
-}]
+#[cgp_component(Computer)]
 #[prefix(@cgp.extra.handler in DefaultNamespace)]
+#[derive_delegate(UseDelegate<Code>)]
+#[derive_delegate(UseInputDelegate<Input>)]
 pub trait CanCompute<Code, Input> {
     type Output;
 
     fn compute(&self, _code: PhantomData<Code>, input: Input) -> Self::Output;
 }
 
-#[cgp_component {
-    provider: ComputerRef,
-    derive_delegate: [
-        UseDelegate<Code>,
-        UseInputDelegate<Input>,
-    ],
-}]
+#[cgp_component(ComputerRef)]
 #[prefix(@cgp.extra.handler in DefaultNamespace)]
+#[derive_delegate(UseDelegate<Code>)]
+#[derive_delegate(UseInputDelegate<Input>)]
 pub trait CanComputeRef<Code, Input> {
     type Output;
 

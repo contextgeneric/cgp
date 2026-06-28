@@ -6,14 +6,10 @@ use cgp::prelude::*;
 use crate::UseInputDelegate;
 
 #[async_trait]
-#[cgp_component {
-    provider: Handler,
-    derive_delegate: [
-        UseDelegate<Code>,
-        UseInputDelegate<Input>,
-    ],
-}]
+#[cgp_component(Handler)]
 #[prefix(@cgp.extra.handler in DefaultNamespace)]
+#[derive_delegate(UseDelegate<Code>)]
+#[derive_delegate(UseInputDelegate<Input>)]
 pub trait CanHandle<Code, Input>: HasErrorType {
     type Output;
 
@@ -25,14 +21,10 @@ pub trait CanHandle<Code, Input>: HasErrorType {
 }
 
 #[async_trait]
-#[cgp_component {
-    provider: HandlerRef,
-    derive_delegate: [
-        UseDelegate<Code>,
-        UseInputDelegate<Input>,
-    ],
-}]
+#[cgp_component(HandlerRef)]
 #[prefix(@cgp.extra.handler in DefaultNamespace)]
+#[derive_delegate(UseDelegate<Code>)]
+#[derive_delegate(UseInputDelegate<Input>)]
 pub trait CanHandleRef<Code, Input>: HasErrorType {
     type Output;
 

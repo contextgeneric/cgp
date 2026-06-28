@@ -1,10 +1,8 @@
 use cgp::macro_prelude::*;
 use cgp_macro::cgp_component;
 
-#[cgp_component {
-    provider: TypeProvider,
-    derive_delegate: UseDelegate<Tag>,
-}]
+#[cgp_component(TypeProvider)]
+#[derive_delegate(UseDelegate<Tag>)]
 pub trait HasType<Tag> {
     type Type;
 }

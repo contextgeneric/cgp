@@ -6,13 +6,9 @@ use cgp_macro_test_util::{snapshot_cgp_getter, snapshot_cgp_type};
 pub struct UseDelegate2<Components>(pub PhantomData<Components>);
 
 snapshot_cgp_type! {
-    #[cgp_type {
-        provider: FooTypeProviderAt,
-        derive_delegate: [
-            UseDelegate<I>,
-            UseDelegate2<(I, J)>,
-        ],
-    }]
+    #[cgp_type(FooTypeProviderAt)]
+    #[derive_delegate(UseDelegate<I>)]
+    #[derive_delegate(UseDelegate2<(I, J)>)]
     pub trait HasFooTypeAt<I, J> {
         type Foo;
     }
@@ -185,13 +181,9 @@ snapshot_cgp_type! {
 }
 
 snapshot_cgp_getter! {
-    #[cgp_getter {
-        provider: FooGetterAt,
-        derive_delegate: [
-            UseDelegate<I>,
-            UseDelegate2<(I, J)>,
-        ],
-    }]
+    #[cgp_getter(FooGetterAt)]
+    #[derive_delegate(UseDelegate<I>)]
+    #[derive_delegate(UseDelegate2<(I, J)>)]
     pub trait HasFooAt<I, J>: HasFooTypeAt<I, J> {
         fn foo_at(&self, _tag: PhantomData<(I, J)>) -> &Self::Foo;
     }

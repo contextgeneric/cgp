@@ -5,13 +5,17 @@ use syn::punctuated::Punctuated;
 use syn::token::Comma;
 use syn::{Attribute, ItemTrait, TypeParamBound};
 
-use crate::types::attributes::{PrefixAttribute, UseTypeAttribute, UseTypeAttributes};
+use crate::types::attributes::{
+    DeriveDelegateAttribute, DeriveDelegateAttributes, PrefixAttribute, UseTypeAttribute,
+    UseTypeAttributes,
+};
 
 #[derive(Default, Clone)]
 pub struct CgpComponentAttributes {
     pub extend: Vec<TypeParamBound>,
     pub use_type: UseTypeAttributes,
     pub prefixes: Vec<PrefixAttribute>,
+    pub derive_delegate_attributes: DeriveDelegateAttributes,
 }
 
 impl CgpComponentAttributes {
@@ -57,6 +61,13 @@ impl CgpComponentAttributes {
                 } else if ident == "prefix" {
                     let namespace_specs = attribute.parse_args_with(PrefixAttribute::parse)?;
                     parsed_attributes.prefixes.push(namespace_specs);
+                } else if ident == "derive_delegate" {
+                    let derive_delegate_attribute =
+                        attribute.parse_args_with(DeriveDelegateAttribute::parse)?;
+                    parsed_attributes
+                        .derive_delegate_attributes
+                        .attributes
+                        .push(derive_delegate_attribute);
                 } else {
                     attributes.push(attribute);
                 }

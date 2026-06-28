@@ -5,20 +5,16 @@ use core::marker::PhantomData;
 
 use cgp::prelude::*;
 
-#[cgp_component {
-    provider: Runner,
-    derive_delegate: UseDelegate<Code>,
-}]
+#[cgp_component(Runner)]
 #[async_trait]
+#[derive_delegate(UseDelegate<Code>)]
 pub trait CanRun<Code>: HasErrorType {
     async fn run(&self, _code: PhantomData<Code>) -> Result<(), Self::Error>;
 }
 
-#[cgp_component {
-    provider: SendRunner,
-    derive_delegate: UseDelegate<Code>,
-}]
+#[cgp_component(SendRunner)]
 #[async_trait]
+#[derive_delegate(UseDelegate<Code>)]
 pub trait CanSendRun<Code>: HasErrorType {
     fn send_run(
         &self,

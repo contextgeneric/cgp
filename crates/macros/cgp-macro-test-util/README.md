@@ -285,7 +285,7 @@ snapshot_cgp_type! {
 
 Both the default form `#[cgp_type]` and the custom provider name forms
 `#[cgp_type(ScalarTypeProvider)]` and
-`#[cgp_type { provider: ..., derive_delegate: ... }]` are accepted, mirroring the
+`#[cgp_type { provider: ... }]` are accepted, mirroring the
 real macro. In addition to the usual `#[cgp_component]` output, the snapshot
 captures the extra `UseType` / `WithProvider` providers that `#[cgp_type]`
 generates.
