@@ -11,7 +11,7 @@ pub enum FieldName {
 
 impl From<Ident> for FieldName {
     fn from(value: Ident) -> Self {
-        Self::Ident(Symbol::new(value))
+        Self::Ident(Symbol::from_ident(value))
     }
 }
 

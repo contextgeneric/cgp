@@ -761,7 +761,7 @@ pub fn blanket_trait(attr: TokenStream, item: TokenStream) -> TokenStream {
 #[proc_macro]
 #[allow(non_snake_case)]
 pub fn Symbol(body: TokenStream) -> TokenStream {
-    cgp_macro_lib::make_symbol(body.into())
+    cgp_macro_lib::Symbol(body.into())
         .unwrap_or_else(syn::Error::into_compile_error)
         .into()
 }

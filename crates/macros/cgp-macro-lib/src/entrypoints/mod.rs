@@ -21,6 +21,7 @@ mod derive_has_fields;
 mod path;
 mod product;
 mod sum;
+mod symbol;
 
 pub use blanket_trait::*;
 pub use cgp_auto_getter::*;
@@ -45,3 +46,4 @@ pub use derive_has_fields::*;
 pub use path::*;
 pub use product::*;
 pub use sum::*;
+pub use symbol::*;

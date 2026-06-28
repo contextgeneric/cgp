@@ -24,7 +24,7 @@ impl Parse for PathElement {
                 && path_char.is_ascii_lowercase()
                 && !is_primitive_type(&path_str)
             {
-                Self::Symbol(Symbol::new(path_ident))
+                Self::Symbol(Symbol::from_ident(path_ident))
             } else {
                 Self::Type(ty)
             }

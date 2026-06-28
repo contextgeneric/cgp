@@ -53,7 +53,7 @@ impl ItemCgpGetter {
                 ReceiverMode::Type(ty) => ty.clone(),
             };
 
-            let field_name = Symbol::new(field.field_name.clone());
+            let field_name = Symbol::from_ident(field.field_name.clone());
             let tag_type: Type = parse_internal!(#field_name);
 
             let method = derive_getter_method(
