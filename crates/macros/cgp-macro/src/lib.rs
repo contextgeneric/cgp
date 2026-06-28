@@ -797,7 +797,16 @@ pub fn Symbol(body: TokenStream) -> TokenStream {
 #[proc_macro]
 #[allow(non_snake_case)]
 pub fn Product(body: TokenStream) -> TokenStream {
-    cgp_macro_lib::make_product_type(body.into()).into()
+    cgp_macro_lib::Product(body.into())
+        .unwrap_or_else(syn::Error::into_compile_error)
+        .into()
+}
+
+#[proc_macro]
+pub fn product(body: TokenStream) -> TokenStream {
+    cgp_macro_lib::product(body.into())
+        .unwrap_or_else(syn::Error::into_compile_error)
+        .into()
 }
 
 /**
@@ -841,11 +850,6 @@ pub fn Path(body: TokenStream) -> TokenStream {
     cgp_macro_lib::path(body.into())
         .unwrap_or_else(syn::Error::into_compile_error)
         .into()
-}
-
-#[proc_macro]
-pub fn product(body: TokenStream) -> TokenStream {
-    cgp_macro_lib::make_product_expr(body.into()).into()
 }
 
 #[proc_macro_derive(HasField)]

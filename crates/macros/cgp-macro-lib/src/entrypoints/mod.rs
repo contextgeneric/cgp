@@ -19,7 +19,9 @@ mod derive_extract_field;
 mod derive_from_variant;
 mod derive_has_fields;
 mod path;
+mod product;
 
+pub use product::*;
 pub use blanket_trait::*;
 pub use cgp_auto_getter::*;
 pub use cgp_component::*;
