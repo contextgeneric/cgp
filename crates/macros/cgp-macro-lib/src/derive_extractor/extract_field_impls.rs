@@ -1,9 +1,9 @@
+use cgp_macro_core::types::field::Symbol;
 use quote::quote;
 use syn::{Arm, GenericArgument, Ident, ItemEnum, ItemImpl, Type, parse2};
 
 use crate::derive_builder::{index_to_generic_ident, to_generic_args};
 use crate::derive_extractor::get_variant_type;
-use crate::symbol::symbol_from_string;
 
 pub fn derive_extract_field_impls(
     context_enum: &ItemEnum,
@@ -83,7 +83,7 @@ pub fn derive_extract_field_impls(
             }
         };
 
-        let tag_type = symbol_from_string(&current_variant.ident.to_string())?;
+        let tag_type = Symbol::from_ident(current_variant.ident.clone());
 
         let source_type: Type = parse2(quote! {
             #extractor_ident < #source_generic_args >

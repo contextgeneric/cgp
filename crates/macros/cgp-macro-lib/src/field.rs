@@ -1,12 +1,10 @@
-use alloc::string::ToString;
 use alloc::vec::Vec;
 
+use cgp_macro_core::types::field::Symbol;
 use proc_macro2::TokenStream;
 use quote::quote;
 use syn::spanned::Spanned;
 use syn::{Fields, ItemImpl, ItemStruct, LitInt, parse_quote};
-
-use crate::symbol::symbol_from_string;
 
 pub fn derive_has_field_impls_from_struct(item_struct: &ItemStruct) -> syn::Result<Vec<ItemImpl>> {
     let struct_ident = &item_struct.ident;
@@ -20,7 +18,7 @@ pub fn derive_has_field_impls_from_struct(item_struct: &ItemStruct) -> syn::Resu
             for field in fields.named.iter() {
                 let field_ident = field.ident.as_ref().unwrap();
 
-                let field_symbol = symbol_from_string(&field_ident.to_string())?;
+                let field_symbol = Symbol::from_ident(field_ident.clone());
 
                 let field_type = &field.ty;
 

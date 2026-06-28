@@ -65,7 +65,7 @@ pub fn derive_update_field_impls(
             #builder_ident < #output_generic_args >
         })?;
 
-        let tag_type = field_to_tag(current_index, current_field)?;
+        let tag_type = field_to_tag(current_index, current_field);
 
         let (impl_generics, _, where_clause) = generics.split_for_impl();
 

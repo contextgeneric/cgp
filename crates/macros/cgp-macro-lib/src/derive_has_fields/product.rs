@@ -1,9 +1,8 @@
+use cgp_macro_core::types::field::Symbol;
 use proc_macro2::TokenStream;
 use quote::quote;
 use syn::spanned::Spanned;
 use syn::{Error, Fields, LitInt, Type, parse2};
-
-use crate::symbol::symbol_from_string;
 
 pub fn item_fields_to_product_type(fields: &Fields, reference: &TokenStream) -> syn::Result<Type> {
     let mut fields_type = quote! { ε };
@@ -15,7 +14,7 @@ pub fn item_fields_to_product_type(fields: &Fields, reference: &TokenStream) -> 
                     Error::new_spanned(field, "expect struct field to contain name identifier")
                 })?;
 
-                let field_tag = symbol_from_string(&field_name.to_string())?;
+                let field_tag = Symbol::from_ident(field_name.clone());
                 let field_type = &field.ty;
 
                 fields_type = parse2(quote! {

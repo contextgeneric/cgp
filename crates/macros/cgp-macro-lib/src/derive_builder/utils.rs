@@ -1,13 +1,9 @@
+use cgp_macro_core::types::field::{FieldName, Index, Symbol};
 use proc_macro2::{Span, TokenStream};
 use quote::{ToTokens, quote};
 use syn::spanned::Spanned;
 use syn::token::Colon;
-use syn::{
-    AngleBracketedGenericArguments, Field, FieldValue, Generics, Ident, LitInt, Member, Type,
-    parse2,
-};
-
-use crate::symbol::symbol_from_string;
+use syn::{AngleBracketedGenericArguments, Field, FieldValue, Generics, Ident, Member, parse2};
 
 pub fn to_generic_args(generics: &Generics) -> syn::Result<AngleBracketedGenericArguments> {
     if generics.params.is_empty() {
@@ -24,13 +20,13 @@ pub fn field_to_member(index: usize, field: &Field) -> Member {
     }
 }
 
-pub fn field_to_tag(index: usize, field: &Field) -> syn::Result<Type> {
+pub fn field_to_tag(index: usize, field: &Field) -> FieldName {
     match &field.ident {
-        Some(ident) => symbol_from_string(&ident.to_string()),
-        None => {
-            let index = LitInt::new(&format!("{index}"), field.span());
-            parse2(quote! { δ< #index > })
-        }
+        Some(ident) => FieldName::Ident(Symbol::from_ident(ident.clone())),
+        None => FieldName::Index(Index {
+            index,
+            span: field.span(),
+        }),
     }
 }
 

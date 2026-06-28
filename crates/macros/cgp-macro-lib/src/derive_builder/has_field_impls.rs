@@ -15,7 +15,7 @@ pub fn derive_has_field_impls(
 
     for (current_index, current_field) in context_struct.fields.iter().enumerate() {
         let field_member = field_to_member(current_index, current_field);
-        let tag_type = field_to_tag(current_index, current_field)?;
+        let tag_type = field_to_tag(current_index, current_field);
         let value_type = &current_field.ty;
 
         let mut generics = context_struct.generics.clone();

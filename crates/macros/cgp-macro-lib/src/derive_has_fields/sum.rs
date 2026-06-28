@@ -1,3 +1,4 @@
+use cgp_macro_core::types::field::Symbol;
 use proc_macro2::TokenStream;
 use quote::quote;
 use syn::punctuated::Punctuated;
@@ -5,7 +6,6 @@ use syn::token::Comma;
 use syn::{Type, Variant, parse2};
 
 use crate::derive_has_fields::product::item_fields_to_product_type;
-use crate::symbol::symbol_from_string;
 
 pub fn variants_to_sum_type(
     variants: &Punctuated<Variant, Comma>,
@@ -15,7 +15,7 @@ pub fn variants_to_sum_type(
 
     for variant in variants.iter().rev() {
         let variant_ident = &variant.ident;
-        let variant_symbol = symbol_from_string(&variant_ident.to_string())?;
+        let variant_symbol = Symbol::from_ident(variant_ident.clone());
 
         let variant_fields = item_fields_to_product_type(&variant.fields, reference)?;
 

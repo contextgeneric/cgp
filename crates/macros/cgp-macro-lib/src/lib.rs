@@ -11,12 +11,10 @@ pub(crate) mod derive_builder;
 pub(crate) mod derive_extractor;
 pub(crate) mod derive_has_fields;
 pub(crate) mod field;
-pub(crate) mod symbol;
 pub(crate) mod type_component;
 
 mod entrypoints;
 
 pub use field::derive_has_field;
-pub use symbol::make_symbol;
 
 pub use crate::entrypoints::*;
