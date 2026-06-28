@@ -20,7 +20,7 @@ use core::marker::PhantomData;
     that overlaps on the generic parameters.
 
     The implementation of `UseDelegate` can be automatically generated through
-    the `derive_delegate` entry in `#[cgp_component]`. It is also possible to
+    the `#[derive_delegate]` attribute in `#[cgp_component]`. It is also possible to
     implement the dispatcher pattern on types other than `UseDelegate`, especially
     when there are multiple generic parameters that could be dispatched differently.
     We mainly use `UseDelegate` as the default dispatcher, so that users don't need
