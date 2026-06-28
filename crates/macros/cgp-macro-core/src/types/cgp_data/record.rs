@@ -1,3 +1,4 @@
+use syn::parse::{Parse, ParseStream};
 use syn::{Ident, Item, ItemImpl, ItemStruct};
 
 use crate::types::cgp_data::{
@@ -12,6 +13,20 @@ pub struct ItemCgpRecord {
 }
 
 impl ItemCgpRecord {
+    pub fn to_items(&self) -> syn::Result<Vec<Item>> {
+        let has_field_impls = self.to_has_field_impls()?;
+        let has_fields_impls = self.to_has_fields_impls()?;
+        let build_field_impls = self.to_build_field_items()?;
+
+        let mut items = Vec::new();
+
+        items.extend(has_field_impls.into_iter().map(Item::from));
+        items.extend(has_fields_impls.into_iter().map(Item::from));
+        items.extend(build_field_impls);
+
+        Ok(items)
+    }
+
     pub fn to_has_field_impls(&self) -> syn::Result<Vec<ItemImpl>> {
         derive_has_field_impls_from_struct(&self.item_struct)
     }
@@ -52,5 +67,13 @@ impl ItemCgpRecord {
         items.extend(has_field_impls.into_iter().map(Item::from));
 
         Ok(items)
+    }
+}
+
+impl Parse for ItemCgpRecord {
+    fn parse(input: ParseStream) -> syn::Result<Self> {
+        let item_struct = input.parse()?;
+
+        Ok(Self { item_struct })
     }
 }

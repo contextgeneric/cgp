@@ -1,3 +1,4 @@
+use syn::parse::{Parse, ParseStream};
 use syn::{Ident, Item, ItemEnum, ItemImpl};
 
 use crate::types::cgp_data::{
@@ -12,6 +13,20 @@ pub struct ItemCgpVariant {
 }
 
 impl ItemCgpVariant {
+    pub fn to_items(&self) -> syn::Result<Vec<Item>> {
+        let has_fields = self.to_has_fields_impls()?;
+        let from_variant_impls = self.to_from_variant_impls()?;
+        let extract_field = self.to_extract_field_items()?;
+
+        let mut items = Vec::new();
+
+        items.extend(has_fields.into_iter().map(Item::from));
+        items.extend(from_variant_impls.into_iter().map(Item::from));
+        items.extend(extract_field);
+
+        Ok(items)
+    }
+
     pub fn to_from_variant_impls(&self) -> syn::Result<Vec<ItemImpl>> {
         derive_from_variant_from_enum(&self.item_enum)
     }
@@ -76,5 +91,13 @@ impl ItemCgpVariant {
         items.extend(extractor_ref_impls.into_iter().map(Item::from));
 
         Ok(items)
+    }
+}
+
+impl Parse for ItemCgpVariant {
+    fn parse(input: ParseStream) -> syn::Result<Self> {
+        let item_enum = input.parse()?;
+
+        Ok(Self { item_enum })
     }
 }
