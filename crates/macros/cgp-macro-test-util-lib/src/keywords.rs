@@ -29,3 +29,5 @@ define_keyword!(DelegateAndCheckComponents, "delegate_and_check_components");
 define_keyword!(BlanketTrait, "blanket_trait");
 
 define_keyword!(HasField, "HasField");
+
+define_keyword!(HasFields, "HasFields");

@@ -98,3 +98,10 @@ pub fn snapshot_derive_has_field(body: TokenStream) -> TokenStream {
         .unwrap_or_else(syn::Error::into_compile_error)
         .into()
 }
+
+#[proc_macro]
+pub fn snapshot_derive_has_fields(body: TokenStream) -> TokenStream {
+    entrypoints::snapshot_derive_has_fields(body.into())
+        .unwrap_or_else(syn::Error::into_compile_error)
+        .into()
+}
