@@ -5,7 +5,7 @@ use syn::spanned::Spanned;
 use syn::token::Comma;
 use syn::{Error, Fields, Ident, ItemEnum, ItemImpl, Variant, parse2};
 
-use crate::derive_has_fields::to_fields_struct::{FieldLabel, derive_to_fields_constructor};
+use crate::types::cgp_data::{FieldLabel, derive_to_fields_constructor};
 
 pub fn derive_to_fields_for_enum(item_enum: &ItemEnum) -> syn::Result<ItemImpl> {
     let enum_name = &item_enum.ident;

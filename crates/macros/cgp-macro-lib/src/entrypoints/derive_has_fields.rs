@@ -1,10 +1,9 @@
+use cgp_macro_core::types::cgp_data::{
+    derive_has_fields_impls_from_enum, derive_has_fields_impls_from_struct,
+};
 use proc_macro2::TokenStream;
 use quote::quote;
 use syn::{Error, Item, parse2};
-
-use crate::derive_has_fields::{
-    derive_has_fields_impls_from_enum, derive_has_fields_impls_from_struct,
-};
 
 pub fn derive_has_fields(body: TokenStream) -> syn::Result<TokenStream> {
     let item: Item = parse2(body)?;

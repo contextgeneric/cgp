@@ -1,8 +1,8 @@
+use cgp_macro_core::types::cgp_data::derive_has_fields_impls_from_enum;
 use proc_macro2::TokenStream;
 use quote::quote;
 use syn::{ItemEnum, parse2};
 
-use crate::derive_has_fields::derive_has_fields_impls_from_enum;
 use crate::{derive_extract_field_from_enum, derive_from_variant_from_enum};
 
 pub fn derive_cgp_variant(body: TokenStream) -> syn::Result<TokenStream> {

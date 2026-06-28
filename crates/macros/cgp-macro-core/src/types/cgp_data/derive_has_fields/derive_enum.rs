@@ -2,10 +2,10 @@ use proc_macro2::TokenStream;
 use quote::quote;
 use syn::{ItemEnum, ItemImpl, parse2};
 
-use crate::derive_has_fields::from_fields_enum::derive_from_fields_for_enum;
-use crate::derive_has_fields::sum::variants_to_sum_type;
-use crate::derive_has_fields::to_fields_enum::derive_to_fields_for_enum;
-use crate::derive_has_fields::to_fields_ref_enum::derive_to_fields_ref_for_enum;
+use crate::types::cgp_data::{
+    derive_from_fields_for_enum, derive_to_fields_for_enum, derive_to_fields_ref_for_enum,
+    variants_to_sum_type,
+};
 
 pub fn derive_has_fields_impls_from_enum(item_enum: &ItemEnum) -> syn::Result<Vec<ItemImpl>> {
     let struct_name = &item_enum.ident;

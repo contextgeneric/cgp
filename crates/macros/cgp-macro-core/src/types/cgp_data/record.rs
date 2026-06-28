@@ -114,4 +114,8 @@ impl ItemCgpRecord {
 
         Ok(item_impls)
     }
+
+    // pub fn to_has_fields_impls(&self) -> syn::Result<Vec<ItemImpl>> {
+
+    // }
 }

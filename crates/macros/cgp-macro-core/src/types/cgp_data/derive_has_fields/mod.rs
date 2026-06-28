@@ -11,3 +11,11 @@ mod to_fields_struct;
 
 pub use derive_enum::*;
 pub use derive_struct::*;
+pub use from_fields_enum::*;
+pub use from_fields_struct::*;
+pub use product::*;
+pub use sum::*;
+pub use to_fields_enum::*;
+pub use to_fields_ref_enum::*;
+pub use to_fields_ref_struct::*;
+pub use to_fields_struct::*;

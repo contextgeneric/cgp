@@ -1,10 +1,9 @@
-use cgp_macro_core::types::cgp_data::ItemCgpRecord;
+use cgp_macro_core::types::cgp_data::{ItemCgpRecord, derive_has_fields_impls_from_struct};
 use proc_macro2::TokenStream;
 use quote::quote;
 use syn::{ItemStruct, parse2};
 
 use crate::derive_build_field_from_struct;
-use crate::derive_has_fields::derive_has_fields_impls_from_struct;
 
 pub fn derive_cgp_record(body: TokenStream) -> syn::Result<TokenStream> {
     let item_struct = parse2(body)?;

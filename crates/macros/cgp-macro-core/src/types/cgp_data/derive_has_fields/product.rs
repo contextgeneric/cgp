@@ -1,8 +1,9 @@
-use cgp_macro_core::types::field::Symbol;
 use proc_macro2::TokenStream;
 use quote::quote;
 use syn::spanned::Spanned;
 use syn::{Error, Fields, LitInt, Type, parse2};
+
+use crate::types::field::Symbol;
 
 pub fn item_fields_to_product_type(fields: &Fields, reference: &TokenStream) -> syn::Result<Type> {
     let mut fields_type = quote! { ε };
