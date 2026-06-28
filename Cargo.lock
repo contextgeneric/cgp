@@ -47,6 +47,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "cgp-base-extra"
+version = "0.7.0"
+dependencies = [
+ "cgp-base",
+ "cgp-type",
+]
+
+[[package]]
 name = "cgp-base-types"
 version = "0.7.0"
 
@@ -80,7 +88,7 @@ dependencies = [
 name = "cgp-error"
 version = "0.7.0"
 dependencies = [
- "cgp-base",
+ "cgp-base-extra",
  "cgp-field",
  "cgp-macro",
  "cgp-type",

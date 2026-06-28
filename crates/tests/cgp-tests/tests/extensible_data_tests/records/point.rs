@@ -49,25 +49,25 @@ snapshot_derive_cgp_data! {
         impl HasFields for Point2d {
             type Fields = Cons<
                 Field<Symbol<1, Chars<'x', Nil>>, u64>,
-                Cons<Field<Symbol<1, Chars<'y', Nil>>, u64>, ε>,
+                Cons<Field<Symbol<1, Chars<'y', Nil>>, u64>, Nil>,
             >;
         }
         impl HasFieldsRef for Point2d {
             type FieldsRef<'__a> = Cons<
                 Field<Symbol<1, Chars<'x', Nil>>, &'__a u64>,
-                Cons<Field<Symbol<1, Chars<'y', Nil>>, &'__a u64>, ε>,
+                Cons<Field<Symbol<1, Chars<'y', Nil>>, &'__a u64>, Nil>,
             >
             where
                 Self: '__a;
         }
         impl FromFields for Point2d {
-            fn from_fields(π(x, π(y, Nil)): Self::Fields) -> Self {
+            fn from_fields(Cons(x, Cons(y, Nil)): Self::Fields) -> Self {
                 Self { x: x.value, y: y.value }
             }
         }
         impl ToFields for Point2d {
             fn to_fields(self) -> Self::Fields {
-                π(self.x.into(), π(self.y.into(), ε))
+                Cons(self.x.into(), Cons(self.y.into(), Nil))
             }
         }
         impl ToFieldsRef for Point2d {
@@ -75,7 +75,7 @@ snapshot_derive_cgp_data! {
             where
                 Self: '__a,
             {
-                π((&self.x).into(), π((&self.y).into(), ε))
+                Cons((&self.x).into(), Cons((&self.y).into(), Nil))
             }
         }
         struct __PartialPoint2d<__F0__: MapType, __F1__: MapType> {

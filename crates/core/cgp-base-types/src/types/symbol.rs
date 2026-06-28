@@ -1,9 +1,7 @@
 use core::fmt::Display;
 use core::marker::PhantomData;
 
-pub struct ψ<const LEN: usize, Chars>(pub PhantomData<Chars>);
-
-pub use ψ as Symbol;
+pub struct Symbol<const LEN: usize, Chars>(pub PhantomData<Chars>);
 
 use crate::traits::StaticFormat;
 

@@ -21,7 +21,7 @@ pub fn derive_extractor_enum(
         let generic_param_name = index_to_generic_ident(i);
 
         let generic_param: TypeParam = parse2(quote! {
-            #generic_param_name : MapType
+            #generic_param_name : #MapType
         })?;
 
         generics.params.push(GenericParam::Type(generic_param));
@@ -29,7 +29,7 @@ pub fn derive_extractor_enum(
         let field_type = get_variant_type(variant)?;
 
         let mapped_type: Type = parse2(quote! {
-            <#generic_param_name as MapType>::Map<#field_type>
+            <#generic_param_name as #MapType>::Map<#field_type>
         })?;
 
         variant.fields = type_to_variant_fields(&mapped_type);

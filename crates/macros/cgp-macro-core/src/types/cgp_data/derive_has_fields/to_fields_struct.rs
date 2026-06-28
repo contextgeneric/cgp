@@ -3,7 +3,7 @@ use quote::{ToTokens, quote};
 use syn::spanned::Spanned;
 use syn::{Error, Fields, Ident, ItemImpl, ItemStruct, LitInt, parse2};
 
-use crate::exports::{Cons, ToFields};
+use crate::exports::{Cons, Nil, ToFields};
 
 pub fn derive_to_fields_for_struct(item_struct: &ItemStruct) -> syn::Result<ItemImpl> {
     let struct_name = &item_struct.ident;
@@ -55,7 +55,7 @@ pub fn derive_to_fields_constructor(
     fields: &Fields,
     construct_field: impl Fn(FieldLabel) -> TokenStream,
 ) -> syn::Result<TokenStream> {
-    let mut constructors = quote! { ε };
+    let mut constructors = quote! { #Nil };
 
     match &fields {
         Fields::Named(fields) => {
@@ -67,7 +67,7 @@ pub fn derive_to_fields_constructor(
                 let constructor = construct_field(FieldLabel::Named(field_name));
 
                 constructors = quote! {
-                    π(
+                    #Cons(
                         #constructor,
                         #constructors
                     )

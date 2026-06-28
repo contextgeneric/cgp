@@ -5,6 +5,7 @@ resolver = "3"
 members = [
     "crates/main/cgp",
     "crates/main/cgp-base",
+    "crates/main/cgp-base-extra",
     "crates/main/cgp-core",
     "crates/main/cgp-extra",
 
@@ -50,6 +51,7 @@ keywords        = ["cgp"]
 [workspace.dependencies]
 cgp                         = { version = "0.7.0", path = "./crates/main/cgp" }
 cgp-base                    = { version = "0.7.0", path = "./crates/main/cgp-base" }
+cgp-base-extra              = { version = "0.7.0", path = "./crates/main/cgp-base-extra" }
 cgp-core                    = { version = "0.7.0", path = "./crates/main/cgp-core" }
 cgp-extra                   = { version = "0.7.0", path = "./crates/main/cgp-extra" }
 

@@ -3,7 +3,7 @@ use quote::quote;
 use syn::spanned::Spanned;
 use syn::{Error, Fields, Ident, ItemImpl, ItemStruct, parse2};
 
-use crate::exports::{Cons, Nil};
+use crate::exports::{Cons, FromFields, Nil};
 
 pub fn derive_from_fields_for_struct(item_struct: &ItemStruct) -> syn::Result<ItemImpl> {
     let struct_name = &item_struct.ident;
@@ -13,7 +13,7 @@ pub fn derive_from_fields_for_struct(item_struct: &ItemStruct) -> syn::Result<It
 
     let item_impl: ItemImpl = parse2(quote! {
         impl #impl_generics
-            FromFields for #struct_name #type_generics
+            #FromFields for #struct_name #type_generics
         #where_clause
         {
             fn from_fields(
@@ -39,7 +39,7 @@ pub fn derive_from_field_params(fields: &Fields) -> syn::Result<(TokenStream, To
                 })?;
 
                 fields_arg = quote! {
-                    π( #field_name, #fields_arg )
+                    #Cons( #field_name, #fields_arg )
                 };
 
                 constructor_args = quote! {
@@ -62,7 +62,7 @@ pub fn derive_from_field_params(fields: &Fields) -> syn::Result<(TokenStream, To
 
                 Ok((fields_arg, constructor_args))
             } else {
-                let mut fields_arg = quote! { ε };
+                let mut fields_arg = quote! { #Nil };
                 let mut constructor_args = quote! {};
 
                 for (i, field) in fields.unnamed.iter().enumerate() {

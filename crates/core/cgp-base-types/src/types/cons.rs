@@ -1,14 +1,9 @@
 /**
-    The `Cons` type, a.k.a. `π`, is used to represent the head of a _type-level list_,
+    The `Cons` type is used to represent the head of a _type-level list_,
     also known as an _anonymous product type_.
 
     `Cons` is used together with [`Nil`] to produce a type-level list using
     the `Product!` macro.
-
-    `Cons` is also shown as `π`, together with [`Nil`] shown as `ε`, to improve the
-    readability of compiler error messages. Through the shortened name, a product
-    type would take slightly less space, making it more likely to fit on a single
-    line for the user to read what the type is.
 
     ## Example
 
@@ -23,15 +18,6 @@
     ```rust,ignore
     type MyTypes = Cons<u32, Cons<String, Cons<bool, Nil>>>;
     ```
-
-    which would be shown with the shortened representation as:
-
-    ```rust,ignore
-    type MyTypes = π<u32, π<String, π<bool, ε>>>;
-    ```
 */
 #[derive(Eq, PartialEq, Clone, Default, Debug)]
-#[allow(non_camel_case_types)]
-pub struct π<Head, Tail>(pub Head, pub Tail);
-
-pub use π as Cons;
+pub struct Cons<Head, Tail>(pub Head, pub Tail);

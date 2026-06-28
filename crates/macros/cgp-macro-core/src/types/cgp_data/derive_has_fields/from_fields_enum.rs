@@ -1,7 +1,7 @@
 use quote::quote;
 use syn::{ItemEnum, ItemImpl, parse2};
 
-use crate::exports::Either;
+use crate::exports::{Either, FromFields};
 use crate::types::cgp_data::derive_from_field_params;
 
 pub fn derive_from_fields_for_enum(item_enum: &ItemEnum) -> syn::Result<ItemImpl> {
@@ -32,7 +32,7 @@ pub fn derive_from_fields_for_enum(item_enum: &ItemEnum) -> syn::Result<ItemImpl
 
     let item_impl = quote! {
         impl #impl_generics
-            FromFields for #enum_name #type_generics
+            #FromFields for #enum_name #type_generics
         #where_clause
         {
             fn from_fields(

@@ -14,9 +14,7 @@ pub use cgp_field::traits::{
     HasFieldsRef, IntoBuilder, MapType, MapTypeRef, MutFieldGetter, PartialData, ToFields,
     ToFieldsRef, UpdateField,
 };
-pub use cgp_field::types::{
-    Chars, Cons, Either, Field, Index, Life, Nil, Symbol, Void, δ, ε, ζ, θ, π, σ, ψ, ω,
-};
+pub use cgp_field::types::{Chars, Cons, Either, Field, Index, Life, Nil, Symbol, Void};
 pub use cgp_macro::{
     BuildField, CgpData, CgpRecord, CgpVariant, ExtractField, FromVariant, HasField, HasFields,
     Product, Sum, Symbol, cgp_auto_getter, cgp_component, cgp_fn, cgp_getter, cgp_impl,

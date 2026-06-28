@@ -4,6 +4,7 @@ use syn::punctuated::Punctuated;
 use syn::token::Plus;
 use syn::{Generics, ItemImpl, Type, TypeParamBound};
 
+use crate::exports::UseField;
 use crate::functions::parse_internal;
 use crate::types::cgp_getter::{GetterField, ItemCgpGetter, ReceiverMode};
 use crate::types::field::HasFieldBound;
@@ -112,7 +113,7 @@ impl ItemCgpGetter {
         };
 
         let use_field_impl: ItemImpl = parse_internal! {
-            impl #impl_generics #provider_name #type_generics for UseField< #tag_type >
+            impl #impl_generics #provider_name #type_generics for #UseField< #tag_type >
             #where_clause
             {
                 #items

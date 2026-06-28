@@ -262,7 +262,7 @@ snapshot_derive_cgp_data! {
                         >,
                         String,
                     >,
-                    ε,
+                    Nil,
                 >,
             >;
         }
@@ -316,14 +316,14 @@ snapshot_derive_cgp_data! {
                         >,
                         &'__a String,
                     >,
-                    ε,
+                    Nil,
                 >,
             >
             where
                 Self: '__a;
         }
         impl FromFields for Person {
-            fn from_fields(π(first_name, π(last_name, Nil)): Self::Fields) -> Self {
+            fn from_fields(Cons(first_name, Cons(last_name, Nil)): Self::Fields) -> Self {
                 Self {
                     first_name: first_name.value,
                     last_name: last_name.value,
@@ -332,7 +332,7 @@ snapshot_derive_cgp_data! {
         }
         impl ToFields for Person {
             fn to_fields(self) -> Self::Fields {
-                π(self.first_name.into(), π(self.last_name.into(), ε))
+                Cons(self.first_name.into(), Cons(self.last_name.into(), Nil))
             }
         }
         impl ToFieldsRef for Person {
@@ -340,7 +340,7 @@ snapshot_derive_cgp_data! {
             where
                 Self: '__a,
             {
-                π((&self.first_name).into(), π((&self.last_name).into(), ε))
+                Cons((&self.first_name).into(), Cons((&self.last_name).into(), Nil))
             }
         }
         pub struct __PartialPerson<__F0__: MapType, __F1__: MapType> {

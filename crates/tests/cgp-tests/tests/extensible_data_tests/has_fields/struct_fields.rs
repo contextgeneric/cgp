@@ -14,7 +14,7 @@ pub mod single_name_field {
             impl HasFields for Person {
                 type Fields = Cons<
                     Field<Symbol<4, Chars<'n', Chars<'a', Chars<'m', Chars<'e', Nil>>>>>, String>,
-                    ε,
+                    Nil,
                 >;
             }
             impl HasFieldsRef for Person {
@@ -23,19 +23,19 @@ pub mod single_name_field {
                         Symbol<4, Chars<'n', Chars<'a', Chars<'m', Chars<'e', Nil>>>>>,
                         &'__a String,
                     >,
-                    ε,
+                    Nil,
                 >
                 where
                     Self: '__a;
             }
             impl FromFields for Person {
-                fn from_fields(π(name, Nil): Self::Fields) -> Self {
+                fn from_fields(Cons(name, Nil): Self::Fields) -> Self {
                     Self { name: name.value }
                 }
             }
             impl ToFields for Person {
                 fn to_fields(self) -> Self::Fields {
-                    π(self.name.into(), ε)
+                    Cons(self.name.into(), Nil)
                 }
             }
             impl ToFieldsRef for Person {
@@ -43,7 +43,7 @@ pub mod single_name_field {
                 where
                     Self: '__a,
                 {
-                    π((&self.name).into(), ε)
+                    Cons((&self.name).into(), Nil)
                 }
             }
             ")
@@ -85,7 +85,7 @@ pub mod two_named_field {
             impl HasFields for Person {
                 type Fields = Cons<
                     Field<Symbol<4, Chars<'n', Chars<'a', Chars<'m', Chars<'e', Nil>>>>>, String>,
-                    Cons<Field<Symbol<3, Chars<'a', Chars<'g', Chars<'e', Nil>>>>, u8>, ε>,
+                    Cons<Field<Symbol<3, Chars<'a', Chars<'g', Chars<'e', Nil>>>>, u8>, Nil>,
                 >;
             }
             impl HasFieldsRef for Person {
@@ -94,13 +94,13 @@ pub mod two_named_field {
                         Symbol<4, Chars<'n', Chars<'a', Chars<'m', Chars<'e', Nil>>>>>,
                         &'__a String,
                     >,
-                    Cons<Field<Symbol<3, Chars<'a', Chars<'g', Chars<'e', Nil>>>>, &'__a u8>, ε>,
+                    Cons<Field<Symbol<3, Chars<'a', Chars<'g', Chars<'e', Nil>>>>, &'__a u8>, Nil>,
                 >
                 where
                     Self: '__a;
             }
             impl FromFields for Person {
-                fn from_fields(π(name, π(age, Nil)): Self::Fields) -> Self {
+                fn from_fields(Cons(name, Cons(age, Nil)): Self::Fields) -> Self {
                     Self {
                         name: name.value,
                         age: age.value,
@@ -109,7 +109,7 @@ pub mod two_named_field {
             }
             impl ToFields for Person {
                 fn to_fields(self) -> Self::Fields {
-                    π(self.name.into(), π(self.age.into(), ε))
+                    Cons(self.name.into(), Cons(self.age.into(), Nil))
                 }
             }
             impl ToFieldsRef for Person {
@@ -117,7 +117,7 @@ pub mod two_named_field {
                 where
                     Self: '__a,
                 {
-                    π((&self.name).into(), π((&self.age).into(), ε))
+                    Cons((&self.name).into(), Cons((&self.age).into(), Nil))
                 }
             }
             ")
@@ -170,7 +170,7 @@ pub mod generic_struct {
             {
                 type Fields = Cons<
                     Field<Symbol<4, Chars<'n', Chars<'a', Chars<'m', Chars<'e', Nil>>>>>, Name>,
-                    Cons<Field<Symbol<3, Chars<'a', Chars<'g', Chars<'e', Nil>>>>, u8>, ε>,
+                    Cons<Field<Symbol<3, Chars<'a', Chars<'g', Chars<'e', Nil>>>>, u8>, Nil>,
                 >;
             }
             impl<Name> HasFieldsRef for Person<Name>
@@ -182,7 +182,7 @@ pub mod generic_struct {
                         Symbol<4, Chars<'n', Chars<'a', Chars<'m', Chars<'e', Nil>>>>>,
                         &'__a Name,
                     >,
-                    Cons<Field<Symbol<3, Chars<'a', Chars<'g', Chars<'e', Nil>>>>, &'__a u8>, ε>,
+                    Cons<Field<Symbol<3, Chars<'a', Chars<'g', Chars<'e', Nil>>>>, &'__a u8>, Nil>,
                 >
                 where
                     Self: '__a;
@@ -191,7 +191,7 @@ pub mod generic_struct {
             where
                 Name: Display,
             {
-                fn from_fields(π(name, π(age, Nil)): Self::Fields) -> Self {
+                fn from_fields(Cons(name, Cons(age, Nil)): Self::Fields) -> Self {
                     Self {
                         name: name.value,
                         age: age.value,
@@ -203,7 +203,7 @@ pub mod generic_struct {
                 Name: Display,
             {
                 fn to_fields(self) -> Self::Fields {
-                    π(self.name.into(), π(self.age.into(), ε))
+                    Cons(self.name.into(), Cons(self.age.into(), Nil))
                 }
             }
             impl<Name> ToFieldsRef for Person<Name>
@@ -214,7 +214,7 @@ pub mod generic_struct {
                 where
                     Self: '__a,
                 {
-                    π((&self.name).into(), π((&self.age).into(), ε))
+                    Cons((&self.name).into(), Cons((&self.age).into(), Nil))
                 }
             }
             ")
@@ -267,7 +267,7 @@ pub mod generic_lifetime_struct {
             {
                 type Fields = Cons<
                     Field<Symbol<4, Chars<'n', Chars<'a', Chars<'m', Chars<'e', Nil>>>>>, &'a Name>,
-                    Cons<Field<Symbol<3, Chars<'a', Chars<'g', Chars<'e', Nil>>>>, &'a u8>, ε>,
+                    Cons<Field<Symbol<3, Chars<'a', Chars<'g', Chars<'e', Nil>>>>, &'a u8>, Nil>,
                 >;
             }
             impl<'a, Name> HasFieldsRef for Person<'a, Name>
@@ -279,7 +279,10 @@ pub mod generic_lifetime_struct {
                         Symbol<4, Chars<'n', Chars<'a', Chars<'m', Chars<'e', Nil>>>>>,
                         &'__a &'a Name,
                     >,
-                    Cons<Field<Symbol<3, Chars<'a', Chars<'g', Chars<'e', Nil>>>>, &'__a &'a u8>, ε>,
+                    Cons<
+                        Field<Symbol<3, Chars<'a', Chars<'g', Chars<'e', Nil>>>>, &'__a &'a u8>,
+                        Nil,
+                    >,
                 >
                 where
                     Self: '__a;
@@ -288,7 +291,7 @@ pub mod generic_lifetime_struct {
             where
                 Name: Display,
             {
-                fn from_fields(π(name, π(age, Nil)): Self::Fields) -> Self {
+                fn from_fields(Cons(name, Cons(age, Nil)): Self::Fields) -> Self {
                     Self {
                         name: name.value,
                         age: age.value,
@@ -300,7 +303,7 @@ pub mod generic_lifetime_struct {
                 Name: Display,
             {
                 fn to_fields(self) -> Self::Fields {
-                    π(self.name.into(), π(self.age.into(), ε))
+                    Cons(self.name.into(), Cons(self.age.into(), Nil))
                 }
             }
             impl<'a, Name> ToFieldsRef for Person<'a, Name>
@@ -311,7 +314,7 @@ pub mod generic_lifetime_struct {
                 where
                     Self: '__a,
                 {
-                    π((&self.name).into(), π((&self.age).into(), ε))
+                    Cons((&self.name).into(), Cons((&self.age).into(), Nil))
                 }
             }
             ")
@@ -408,24 +411,24 @@ pub mod single_unnamed_multi_field {
         expand_person(output) {
             insta::assert_snapshot!(output, @"
             impl HasFields for Person {
-                type Fields = Cons<Field<Index<0>, String>, Cons<Field<Index<1>, u8>, ε>>;
+                type Fields = Cons<Field<Index<0>, String>, Cons<Field<Index<1>, u8>, Nil>>;
             }
             impl HasFieldsRef for Person {
                 type FieldsRef<'__a> = Cons<
                     Field<Index<0>, &'__a String>,
-                    Cons<Field<Index<1>, &'__a u8>, ε>,
+                    Cons<Field<Index<1>, &'__a u8>, Nil>,
                 >
                 where
                     Self: '__a;
             }
             impl FromFields for Person {
-                fn from_fields(Cons(field_1, Cons(field_0, ε)): Self::Fields) -> Self {
+                fn from_fields(Cons(field_1, Cons(field_0, Nil)): Self::Fields) -> Self {
                     Self(field_1.value, field_0.value)
                 }
             }
             impl ToFields for Person {
                 fn to_fields(self) -> Self::Fields {
-                    Cons(self.0.into(), Cons(self.1.into(), ε))
+                    Cons(self.0.into(), Cons(self.1.into(), Nil))
                 }
             }
             impl ToFieldsRef for Person {
@@ -433,7 +436,7 @@ pub mod single_unnamed_multi_field {
                 where
                     Self: '__a,
                 {
-                    Cons((&self.0).into(), Cons((&self.1).into(), ε))
+                    Cons((&self.0).into(), Cons((&self.1).into(), Nil))
                 }
             }
             ")

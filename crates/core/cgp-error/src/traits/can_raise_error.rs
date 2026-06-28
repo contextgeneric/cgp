@@ -1,4 +1,4 @@
-use cgp::macro_prelude::*;
+use cgp::component::{DefaultNamespace, UseDelegate};
 use cgp_macro::cgp_component;
 
 use crate::traits::has_error_type::HasErrorType;

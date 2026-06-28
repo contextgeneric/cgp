@@ -4,7 +4,7 @@ use core::marker::PhantomData;
 use crate::traits::StaticFormat;
 
 /**
-    The `Chars` type, a.k.a. `ζ`, is used to represent _type-level_ list of
+    The `Chars` type is used to represent _type-level_ list of
     `Chars`s, which are equivalent to type-level strings.
 
     `Chars` is a specialized version of [`Cons`](crate::types::Cons), with the
@@ -12,11 +12,6 @@ use crate::traits::StaticFormat;
     Similar to `Cons`, `Chars` is also parameterized by a `Tail` type, which is
     expected to be either the next `Chars`, or [`Nil`](crate::types::Nil) to
     represent the end of the string.
-
-    Instead of reusing `Cons`, we combine the use of `Cons` within `Chars` so
-    that its representation is more compact when shown in compiler error messages.
-    Similar to `Cons`, `Chars` is also shown as `ζ` to further improve its
-    readability.
 
     We represent type-level strings as list of `Chars`s, because it is currently
     not possible to use types like `String` or `&str` as const-generic parameters.
@@ -40,17 +35,9 @@ use crate::traits::StaticFormat;
     ```rust,ignore
     type Hello = Chars<'h', Chars<'e', Chars<'l', Chars<'l', Chars<'o', Nil>>>>>;
     ```
-
-    which would be shown with the shortened representation as:
-
-    ```rust,ignore
-    type Hello = ζ<'h', ζ<'e', ζ<'l', ζ<'l', ζ<'o', ε>>>>>;
-    ```
 */
 #[derive(Eq, PartialEq, Clone, Copy, Default)]
-pub struct ζ<const CHAR: char, Tail>(pub PhantomData<Tail>);
-
-pub use ζ as Chars;
+pub struct Chars<const CHAR: char, Tail>(pub PhantomData<Tail>);
 
 impl<const CHAR: char, Tail> Display for Chars<CHAR, Tail>
 where

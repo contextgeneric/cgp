@@ -1,6 +1,5 @@
 use std::ops::Mul;
 
-use cgp::prelude::*;
 use cgp_macro_test_util::{snapshot_cgp_fn, snapshot_cgp_type};
 
 snapshot_cgp_type! {

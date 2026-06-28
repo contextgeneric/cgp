@@ -1,5 +1,3 @@
-#![allow(mixed_script_confusables)]
-
 pub mod exports;
 pub mod functions;
 pub mod macros;

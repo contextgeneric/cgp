@@ -6,7 +6,7 @@ use syn::spanned::Spanned;
 use syn::token::{Comma, Lt, Pound, Where};
 use syn::{Attribute, Ident, Item, ItemImpl, ItemTrait, Type, WhereClause, braced, parse2};
 
-use crate::exports::CanUseComponent;
+use crate::exports::{CanUseComponent, IsProviderFor};
 use crate::functions::merge_generics;
 use crate::parse_internal;
 use crate::types::check_components::{CheckEntries, EvaluatedCheckEntry, TypeWithGenerics};
@@ -43,7 +43,7 @@ impl CheckComponentsTable {
 
         let item_trait: ItemTrait = if self.check_providers.is_some() {
             parse_internal! {
-                trait #trait_name <__Component__, __Params__: ?Sized>: IsProviderFor<__Component__, #context_type, __Params__> {}
+                trait #trait_name <__Component__, __Params__: ?Sized>: #IsProviderFor<__Component__, #context_type, __Params__> {}
             }
         } else {
             parse_internal! {

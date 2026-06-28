@@ -58,19 +58,19 @@ snapshot_derive_cgp_data! {
         impl HasFields for Context {
             type Fields = Cons<
                 Field<Symbol<3, Chars<'f', Chars<'o', Chars<'o', Nil>>>>, String>,
-                Cons<Field<Symbol<3, Chars<'b', Chars<'a', Chars<'r', Nil>>>>, u64>, ε>,
+                Cons<Field<Symbol<3, Chars<'b', Chars<'a', Chars<'r', Nil>>>>, u64>, Nil>,
             >;
         }
         impl HasFieldsRef for Context {
             type FieldsRef<'__a> = Cons<
                 Field<Symbol<3, Chars<'f', Chars<'o', Chars<'o', Nil>>>>, &'__a String>,
-                Cons<Field<Symbol<3, Chars<'b', Chars<'a', Chars<'r', Nil>>>>, &'__a u64>, ε>,
+                Cons<Field<Symbol<3, Chars<'b', Chars<'a', Chars<'r', Nil>>>>, &'__a u64>, Nil>,
             >
             where
                 Self: '__a;
         }
         impl FromFields for Context {
-            fn from_fields(π(foo, π(bar, Nil)): Self::Fields) -> Self {
+            fn from_fields(Cons(foo, Cons(bar, Nil)): Self::Fields) -> Self {
                 Self {
                     foo: foo.value,
                     bar: bar.value,
@@ -79,7 +79,7 @@ snapshot_derive_cgp_data! {
         }
         impl ToFields for Context {
             fn to_fields(self) -> Self::Fields {
-                π(self.foo.into(), π(self.bar.into(), ε))
+                Cons(self.foo.into(), Cons(self.bar.into(), Nil))
             }
         }
         impl ToFieldsRef for Context {
@@ -87,7 +87,7 @@ snapshot_derive_cgp_data! {
             where
                 Self: '__a,
             {
-                π((&self.foo).into(), π((&self.bar).into(), ε))
+                Cons((&self.foo).into(), Cons((&self.bar).into(), Nil))
             }
         }
         pub struct __PartialContext<__F0__: MapType, __F1__: MapType> {

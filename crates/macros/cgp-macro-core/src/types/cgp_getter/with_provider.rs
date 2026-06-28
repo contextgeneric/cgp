@@ -2,6 +2,7 @@ use proc_macro2::Span;
 use quote::{ToTokens, quote};
 use syn::{Generics, Ident, ImplItem, ItemImpl};
 
+use crate::exports::{FieldGetter, MutFieldGetter, WithProvider};
 use crate::functions::parse_internal;
 use crate::types::cgp_getter::{GetterField, ItemCgpGetter, ReceiverMode};
 use crate::types::getter::{ContextArg, FieldMode, derive_getter_method};
@@ -81,16 +82,16 @@ impl ItemCgpGetter {
         let provider_constraint = if field.receiver_mut.is_none() {
             if let FieldMode::Slice = field.field_mode {
                 quote! {
-                    FieldGetter< #receiver_type, #component_name, Value: AsRef< [ #field_type ] > + 'static >
+                    #FieldGetter< #receiver_type, #component_name, Value: AsRef< [ #field_type ] > + 'static >
                 }
             } else {
                 quote! {
-                    FieldGetter< #receiver_type, #component_name , Value = #field_type >
+                    #FieldGetter< #receiver_type, #component_name , Value = #field_type >
                 }
             }
         } else {
             quote! {
-                MutFieldGetter< #receiver_type, #component_name, Value = #field_type >
+                #MutFieldGetter< #receiver_type, #component_name, Value = #field_type >
             }
         };
 
@@ -118,7 +119,7 @@ impl ItemCgpGetter {
         };
 
         let out = parse_internal! {
-            impl #impl_generics #provider_name #type_generics for WithProvider< #provider_ident >
+            impl #impl_generics #provider_name #type_generics for #WithProvider< #provider_ident >
             #where_clause
             {
                 #( #items )*

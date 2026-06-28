@@ -57,7 +57,7 @@ snapshot_derive_cgp_data! {
                         >,
                         Rectangle,
                     >,
-                    θ,
+                    Void,
                 >,
             >;
         }
@@ -96,7 +96,7 @@ snapshot_derive_cgp_data! {
                         >,
                         &'__a Rectangle,
                     >,
-                    θ,
+                    Void,
                 >,
             >
             where

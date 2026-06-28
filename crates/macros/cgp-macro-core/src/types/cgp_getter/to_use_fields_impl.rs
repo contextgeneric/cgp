@@ -1,6 +1,7 @@
 use quote::ToTokens;
 use syn::{ImplItem, ItemImpl, Type};
 
+use crate::exports::UseFields;
 use crate::functions::parse_internal;
 use crate::types::cgp_getter::{ItemCgpGetter, ReceiverMode};
 use crate::types::field::{HasFieldBound, Symbol};
@@ -88,7 +89,7 @@ impl ItemCgpGetter {
         let (impl_generics, _, where_clause) = provider_generics.split_for_impl();
 
         let item_impl: ItemImpl = parse_internal! {
-            impl #impl_generics #provider_name #type_generics for UseFields
+            impl #impl_generics #provider_name #type_generics for #UseFields
             #where_clause
             {
                 #( #items )*

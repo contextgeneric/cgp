@@ -1,8 +1,7 @@
 use core::fmt::Debug;
 
-use cgp::macro_prelude::*;
+use cgp::component::DefaultNamespace;
 use cgp_macro::cgp_type;
-use cgp_type::{TypeProvider, UseType};
 
 /**
     The `HasErrorType` trait provides an abstract error type that can be used by

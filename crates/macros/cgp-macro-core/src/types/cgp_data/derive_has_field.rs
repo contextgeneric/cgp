@@ -1,6 +1,7 @@
 use syn::spanned::Spanned;
 use syn::{Fields, ItemImpl, ItemStruct, LitInt};
 
+use crate::exports::{HasField, HasFieldMut};
 use crate::parse_internal;
 use crate::types::field::{Index, Symbol};
 
@@ -21,7 +22,7 @@ pub fn derive_has_field_impls_from_struct(item_struct: &ItemStruct) -> syn::Resu
                 let field_type = &field.ty;
 
                 let has_field_impl: ItemImpl = parse_internal! {
-                    impl #impl_generics HasField< #field_symbol >
+                    impl #impl_generics #HasField< #field_symbol >
                         for #struct_ident #ty_generics
                     #where_clause
                     {
@@ -38,7 +39,7 @@ pub fn derive_has_field_impls_from_struct(item_struct: &ItemStruct) -> syn::Resu
                 };
 
                 let has_field_mut_impl: ItemImpl = parse_internal! {
-                    impl #impl_generics HasFieldMut< #field_symbol >
+                    impl #impl_generics #HasFieldMut< #field_symbol >
                         for #struct_ident #ty_generics
                     #where_clause
                     {
@@ -68,7 +69,7 @@ pub fn derive_has_field_impls_from_struct(item_struct: &ItemStruct) -> syn::Resu
                 let field_type = &field.ty;
 
                 let has_field_impl: ItemImpl = parse_internal! {
-                    impl #impl_generics HasField< #field_tag >
+                    impl #impl_generics #HasField< #field_tag >
                         for #struct_ident #ty_generics
                     #where_clause
                     {
@@ -85,7 +86,7 @@ pub fn derive_has_field_impls_from_struct(item_struct: &ItemStruct) -> syn::Resu
                 };
 
                 let has_field_mut_impl: ItemImpl = parse_internal! {
-                    impl #impl_generics HasFieldMut< #field_tag >
+                    impl #impl_generics #HasFieldMut< #field_tag >
                         for #struct_ident #ty_generics
                     #where_clause
                     {

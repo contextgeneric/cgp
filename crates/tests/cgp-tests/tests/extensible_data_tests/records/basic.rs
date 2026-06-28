@@ -87,7 +87,7 @@ snapshot_derive_cgp_data! {
                     Field<Symbol<3, Chars<'f', Chars<'o', Chars<'o', Nil>>>>, u64>,
                     Cons<
                         Field<Symbol<3, Chars<'b', Chars<'a', Chars<'r', Nil>>>>, String>,
-                        Cons<Field<Symbol<3, Chars<'b', Chars<'a', Chars<'z', Nil>>>>, bool>, ε>,
+                        Cons<Field<Symbol<3, Chars<'b', Chars<'a', Chars<'z', Nil>>>>, bool>, Nil>,
                     >,
                 >;
             }
@@ -98,7 +98,7 @@ snapshot_derive_cgp_data! {
                         Field<Symbol<3, Chars<'b', Chars<'a', Chars<'r', Nil>>>>, &'__a String>,
                         Cons<
                             Field<Symbol<3, Chars<'b', Chars<'a', Chars<'z', Nil>>>>, &'__a bool>,
-                            ε,
+                            Nil,
                         >,
                     >,
                 >
@@ -106,7 +106,7 @@ snapshot_derive_cgp_data! {
                     Self: '__a;
             }
             impl FromFields for FooBarBaz {
-                fn from_fields(π(foo, π(bar, π(baz, Nil))): Self::Fields) -> Self {
+                fn from_fields(Cons(foo, Cons(bar, Cons(baz, Nil))): Self::Fields) -> Self {
                     Self {
                         foo: foo.value,
                         bar: bar.value,
@@ -116,7 +116,7 @@ snapshot_derive_cgp_data! {
             }
             impl ToFields for FooBarBaz {
                 fn to_fields(self) -> Self::Fields {
-                    π(self.foo.into(), π(self.bar.into(), π(self.baz.into(), ε)))
+                    Cons(self.foo.into(), Cons(self.bar.into(), Cons(self.baz.into(), Nil)))
                 }
             }
             impl ToFieldsRef for FooBarBaz {
@@ -124,7 +124,7 @@ snapshot_derive_cgp_data! {
                 where
                     Self: '__a,
                 {
-                    π((&self.foo).into(), π((&self.bar).into(), π((&self.baz).into(), ε)))
+                    Cons((&self.foo).into(), Cons((&self.bar).into(), Cons((&self.baz).into(), Nil)))
                 }
             }
             pub struct __PartialFooBarBaz<__F0__: MapType, __F1__: MapType, __F2__: MapType> {

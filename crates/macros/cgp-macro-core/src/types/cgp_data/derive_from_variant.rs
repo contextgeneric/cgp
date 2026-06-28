@@ -1,5 +1,6 @@
 use syn::{ItemEnum, ItemImpl};
 
+use crate::exports::FromVariant;
 use crate::parse_internal;
 use crate::types::cgp_data::get_variant_type;
 use crate::types::field::Symbol;
@@ -17,7 +18,7 @@ pub fn derive_from_variant_from_enum(item_enum: &ItemEnum) -> syn::Result<Vec<It
         let variant_type = get_variant_type(variant)?;
 
         let item_impl: ItemImpl = parse_internal! {
-            impl #impl_generics FromVariant<#variant_tag> for #enum_ident #ty_generics
+            impl #impl_generics #FromVariant<#variant_tag> for #enum_ident #ty_generics
             #where_clause
             {
                 type Value = #variant_type;

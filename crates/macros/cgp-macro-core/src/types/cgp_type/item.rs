@@ -1,6 +1,7 @@
 use syn::spanned::Spanned;
 use syn::{Error, Item, ItemImpl, ItemTrait, TraitItem, TraitItemType};
 
+use crate::exports::{TypeProvider, UseType, WithProvider};
 use crate::parse_internal;
 use crate::types::cgp_component::EvaluatedCgpComponent;
 use crate::types::provider_impl::{ItemProviderImpl, ItemProviderImpls};
@@ -56,7 +57,7 @@ impl ItemCgpType {
         let use_type_impl: ItemImpl = parse_internal! {
             impl #impl_generics
                 #provider_trait_name #type_generics
-                for UseType< #type_name >
+                for #UseType< #type_name >
             #where_clause
             {
                 type #type_name = #type_name;
@@ -73,7 +74,7 @@ impl ItemCgpType {
             .make_where_clause()
             .predicates
             .push(parse_internal! {
-                __Provider__: TypeProvider< #context_name, #component_type, Type = #type_name >
+                __Provider__: #TypeProvider< #context_name, #component_type, Type = #type_name >
             });
 
         let (impl_generics, _, where_clause) = generics.split_for_impl();
@@ -81,7 +82,7 @@ impl ItemCgpType {
         let with_provider_impl: ItemImpl = parse_internal! {
             impl #impl_generics
                 #provider_trait_name #type_generics
-                for WithProvider< __Provider__ >
+                for #WithProvider< __Provider__ >
             #where_clause
             {
                 type #type_name = #type_name;

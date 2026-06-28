@@ -1,4 +1,3 @@
-use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_derive_cgp_data;
 
 snapshot_derive_cgp_data! {
@@ -52,27 +51,27 @@ snapshot_derive_cgp_data! {
         impl HasFields for Context {
             type Fields = Cons<
                 Field<Index<0>, u64>,
-                Cons<Field<Index<1>, String>, Cons<Field<Index<2>, bool>, ε>>,
+                Cons<Field<Index<1>, String>, Cons<Field<Index<2>, bool>, Nil>>,
             >;
         }
         impl HasFieldsRef for Context {
             type FieldsRef<'__a> = Cons<
                 Field<Index<0>, &'__a u64>,
-                Cons<Field<Index<1>, &'__a String>, Cons<Field<Index<2>, &'__a bool>, ε>>,
+                Cons<Field<Index<1>, &'__a String>, Cons<Field<Index<2>, &'__a bool>, Nil>>,
             >
             where
                 Self: '__a;
         }
         impl FromFields for Context {
             fn from_fields(
-                Cons(field_2, Cons(field_1, Cons(field_0, ε))): Self::Fields,
+                Cons(field_2, Cons(field_1, Cons(field_0, Nil))): Self::Fields,
             ) -> Self {
                 Self(field_2.value, field_1.value, field_0.value)
             }
         }
         impl ToFields for Context {
             fn to_fields(self) -> Self::Fields {
-                Cons(self.0.into(), Cons(self.1.into(), Cons(self.2.into(), ε)))
+                Cons(self.0.into(), Cons(self.1.into(), Cons(self.2.into(), Nil)))
             }
         }
         impl ToFieldsRef for Context {
@@ -80,7 +79,7 @@ snapshot_derive_cgp_data! {
             where
                 Self: '__a,
             {
-                Cons((&self.0).into(), Cons((&self.1).into(), Cons((&self.2).into(), ε)))
+                Cons((&self.0).into(), Cons((&self.1).into(), Cons((&self.2).into(), Nil)))
             }
         }
         pub struct __PartialContext<__F0__: MapType, __F1__: MapType, __F2__: MapType>(

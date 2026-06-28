@@ -2,7 +2,7 @@ use core::fmt::Debug;
 use core::marker::PhantomData;
 
 /**
-   The `Field` type, a.k.a. `ω`, is used to represent a _named_ field entry
+   The `Field` type is used to represent a _named_ field entry
    within a product type or a sum type.
 
    `Field` is parameterized by a phantom `Tag` type, which is used to represent
@@ -13,11 +13,6 @@ use core::marker::PhantomData;
    `Field` is mainly used within the derived [`HasFields`](crate::traits::HasFields)
    implementations, to include the field name in the generic product or sum
    representation of the given struct or enum.
-
-   `Field` is also shown as `ω` to improve the readability of compiler error
-   messages. It is mainly useful when the type from `HasFields::Fields` is shown,
-   which would contain a lot of `Field`s and tend to take up a lot of screen space
-   to read.
 
    ## Example
 
@@ -38,24 +33,11 @@ use core::marker::PhantomData;
        type Fields = Product![Field<Symbol!("name"), String>, Field<Symbol!("age"), u8>];
    }
    ```
-
-   which would be shown with the shortened representation as:
-
-   ```rust,ignore
-   impl HasFields for MyContext {
-       type Fields =
-           π<ω<Symbol!("name"), String>,
-               π<ω<Symbol!("age"), u8>,
-                   ε>>;
-   }
-   ```
 */
-pub struct ω<Tag, Value> {
+pub struct Field<Tag, Value> {
     pub value: Value,
     pub phantom: PhantomData<Tag>,
 }
-
-pub use ω as Field;
 
 impl<Tag, Value> From<Value> for Field<Tag, Value> {
     fn from(value: Value) -> Self {

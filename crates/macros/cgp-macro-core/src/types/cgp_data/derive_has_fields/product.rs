@@ -3,11 +3,11 @@ use quote::quote;
 use syn::spanned::Spanned;
 use syn::{Error, Fields, LitInt, Type, parse2};
 
-use crate::exports::{Cons, Field, Index};
+use crate::exports::{Cons, Field, Index, Nil};
 use crate::types::field::Symbol;
 
 pub fn item_fields_to_product_type(fields: &Fields, reference: &TokenStream) -> syn::Result<Type> {
-    let mut fields_type = quote! { ε };
+    let mut fields_type = quote! { #Nil };
 
     match fields {
         Fields::Named(fields) => {

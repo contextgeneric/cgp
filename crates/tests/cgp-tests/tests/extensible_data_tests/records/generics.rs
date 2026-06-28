@@ -1,4 +1,3 @@
-use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_derive_cgp_data;
 
 snapshot_derive_cgp_data! {
@@ -109,7 +108,7 @@ snapshot_derive_cgp_data! {
                 Field<Symbol<3, Chars<'f', Chars<'o', Chars<'o', Nil>>>>, Foo>,
                 Cons<
                     Field<Symbol<3, Chars<'b', Chars<'a', Chars<'r', Nil>>>>, Bar>,
-                    Cons<Field<Symbol<3, Chars<'b', Chars<'a', Chars<'z', Nil>>>>, Baz>, ε>,
+                    Cons<Field<Symbol<3, Chars<'b', Chars<'a', Chars<'z', Nil>>>>, Baz>, Nil>,
                 >,
             >;
         }
@@ -123,7 +122,7 @@ snapshot_derive_cgp_data! {
                     Field<Symbol<3, Chars<'b', Chars<'a', Chars<'r', Nil>>>>, &'__a Bar>,
                     Cons<
                         Field<Symbol<3, Chars<'b', Chars<'a', Chars<'z', Nil>>>>, &'__a Baz>,
-                        ε,
+                        Nil,
                     >,
                 >,
             >
@@ -134,7 +133,7 @@ snapshot_derive_cgp_data! {
         where
             Foo: Clone,
         {
-            fn from_fields(π(foo, π(bar, π(baz, Nil))): Self::Fields) -> Self {
+            fn from_fields(Cons(foo, Cons(bar, Cons(baz, Nil))): Self::Fields) -> Self {
                 Self {
                     foo: foo.value,
                     bar: bar.value,
@@ -147,7 +146,7 @@ snapshot_derive_cgp_data! {
             Foo: Clone,
         {
             fn to_fields(self) -> Self::Fields {
-                π(self.foo.into(), π(self.bar.into(), π(self.baz.into(), ε)))
+                Cons(self.foo.into(), Cons(self.bar.into(), Cons(self.baz.into(), Nil)))
             }
         }
         impl<Foo, Bar, Baz> ToFieldsRef for Context<Foo, Bar, Baz>
@@ -158,7 +157,7 @@ snapshot_derive_cgp_data! {
             where
                 Self: '__a,
             {
-                π((&self.foo).into(), π((&self.bar).into(), π((&self.baz).into(), ε)))
+                Cons((&self.foo).into(), Cons((&self.bar).into(), Cons((&self.baz).into(), Nil)))
             }
         }
         pub struct __PartialContext<

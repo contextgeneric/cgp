@@ -44,7 +44,7 @@ pub mod simple_enum {
                             >,
                             String,
                         >,
-                        θ,
+                        Void,
                     >,
                 >;
             }
@@ -80,7 +80,7 @@ pub mod simple_enum {
                             >,
                             &'__a String,
                         >,
-                        θ,
+                        Void,
                     >,
                 >
                 where
@@ -206,7 +206,7 @@ pub mod generic_enum {
                             >,
                             &'a Name,
                         >,
-                        θ,
+                        Void,
                     >,
                 >;
             }
@@ -242,7 +242,7 @@ pub mod generic_enum {
                             >,
                             &'__a &'a Name,
                         >,
-                        θ,
+                        Void,
                     >,
                 >
                 where

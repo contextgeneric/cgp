@@ -1,4 +1,3 @@
-use cgp::prelude::*;
 use cgp_macro_test_util::{snapshot_cgp_auto_getter, snapshot_cgp_getter, snapshot_cgp_type};
 
 snapshot_cgp_type! {

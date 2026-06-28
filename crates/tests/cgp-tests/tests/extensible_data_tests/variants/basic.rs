@@ -33,7 +33,7 @@ snapshot_derive_cgp_data! {
                     Field<Symbol<3, Chars<'F', Chars<'o', Chars<'o', Nil>>>>, u64>,
                     Either<
                         Field<Symbol<3, Chars<'B', Chars<'a', Chars<'r', Nil>>>>, String>,
-                        Either<Field<Symbol<3, Chars<'B', Chars<'a', Chars<'z', Nil>>>>, bool>, θ>,
+                        Either<Field<Symbol<3, Chars<'B', Chars<'a', Chars<'z', Nil>>>>, bool>, Void>,
                     >,
                 >;
             }
@@ -44,7 +44,7 @@ snapshot_derive_cgp_data! {
                         Field<Symbol<3, Chars<'B', Chars<'a', Chars<'r', Nil>>>>, &'__a String>,
                         Either<
                             Field<Symbol<3, Chars<'B', Chars<'a', Chars<'z', Nil>>>>, &'__a bool>,
-                            θ,
+                            Void,
                         >,
                     >,
                 >
