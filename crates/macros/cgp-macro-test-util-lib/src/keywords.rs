@@ -1,5 +1,7 @@
 use cgp_macro_core::define_keyword;
 
+define_keyword!(Derive, "derive");
+
 define_keyword!(CgpComponent, "cgp_component");
 
 define_keyword!(CgpAutoGetter, "cgp_auto_getter");
@@ -25,3 +27,5 @@ define_keyword!(CheckComponents, "check_components");
 define_keyword!(DelegateAndCheckComponents, "delegate_and_check_components");
 
 define_keyword!(BlanketTrait, "blanket_trait");
+
+define_keyword!(HasField, "HasField");

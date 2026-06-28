@@ -11,6 +11,7 @@ mod snapshot_cgp_type;
 mod snapshot_check_components;
 mod snapshot_delegate_and_check_components;
 mod snapshot_delegate_components;
+mod snapshot_derive_has_field;
 
 pub use snapshot_blanket_trait::*;
 pub use snapshot_cgp_auto_getter::*;
@@ -25,3 +26,4 @@ pub use snapshot_cgp_type::*;
 pub use snapshot_check_components::*;
 pub use snapshot_delegate_and_check_components::*;
 pub use snapshot_delegate_components::*;
+pub use snapshot_derive_has_field::*;
