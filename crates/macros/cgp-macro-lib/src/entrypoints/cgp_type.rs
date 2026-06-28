@@ -1,11 +1,10 @@
 use alloc::format;
 
 use cgp_macro_core::types::cgp_component::{CgpComponentRawArgs, ItemCgpComponent};
+use cgp_macro_core::types::cgp_type::{ItemCgpType, extract_item_type_from_trait};
 use proc_macro2::TokenStream;
 use quote::quote;
 use syn::{Ident, ItemTrait, parse2};
-
-use crate::type_component::{derive_type_providers, extract_item_type_from_trait};
 
 pub fn cgp_type(attrs: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
     let mut raw_args: CgpComponentRawArgs = parse2(attrs.clone())?;
@@ -28,16 +27,13 @@ pub fn cgp_type(attrs: TokenStream, body: TokenStream) -> syn::Result<TokenStrea
 
     let evaluated = item_cgp_component.preprocess()?.eval()?;
 
-    let items = evaluated.to_items()?;
-
-    let type_provider_impls =
-        derive_type_providers(&evaluated.args, &evaluated.provider_trait, &item_type)?;
-
-    let out = quote! {
-        #( #items )*
-
-        #(#type_provider_impls)*
+    let item_cgp_type = ItemCgpType {
+        item_component: evaluated,
     };
 
-    Ok(out)
+    let items = item_cgp_type.to_items()?;
+
+    Ok(quote! {
+        #( #items )*
+    })
 }

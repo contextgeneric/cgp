@@ -11,7 +11,6 @@ pub(crate) mod derive_builder;
 pub(crate) mod derive_extractor;
 pub(crate) mod derive_has_fields;
 pub(crate) mod field;
-pub(crate) mod type_component;
 
 mod entrypoints;
 

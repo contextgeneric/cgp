@@ -1,5 +1,5 @@
 use syn::spanned::Spanned;
-use syn::{Error, Item, ItemImpl, TraitItem, TraitItemType};
+use syn::{Error, Item, ItemImpl, ItemTrait, TraitItem, TraitItemType};
 
 use crate::parse_internal;
 use crate::types::cgp_component::EvaluatedCgpComponent;
@@ -22,33 +22,7 @@ impl ItemCgpType {
     }
 
     pub fn to_trait_item_type(&self) -> syn::Result<TraitItemType> {
-        let consumer_trait = &self.item_component.consumer_trait;
-
-        if consumer_trait.items.len() != 1 {
-            return Err(Error::new(
-                consumer_trait.span(),
-                "type trait should contain exactly one associated type item",
-            ));
-        }
-
-        match consumer_trait.items.first() {
-            Some(TraitItem::Type(item_type)) => {
-                if !item_type.generics.params.is_empty()
-                    || item_type.generics.where_clause.is_some()
-                {
-                    return Err(Error::new(
-                        consumer_trait.span(),
-                        "generic associated type and where clause are not supported",
-                    ));
-                }
-
-                Ok(item_type.clone())
-            }
-            _ => Err(Error::new(
-                consumer_trait.span(),
-                "type trait should contain exactly one associated type item",
-            )),
-        }
+        extract_item_type_from_trait(&self.item_component.consumer_trait)
     }
 
     pub fn to_item_provider_impls(&self) -> syn::Result<ItemProviderImpls> {
@@ -70,7 +44,7 @@ impl ItemCgpType {
             .make_where_clause()
             .predicates
             .push(parse_internal! {
-                    #type_name: #type_bounds,
+                    #type_name: #type_bounds
             });
 
         let (_, type_generics, _) = provider_trait.generics.split_for_impl();
@@ -119,5 +93,31 @@ impl ItemCgpType {
         Ok(ItemProviderImpls {
             items: vec![use_type_provider, with_provider_provider],
         })
+    }
+}
+
+pub fn extract_item_type_from_trait(consumer_trait: &ItemTrait) -> syn::Result<TraitItemType> {
+    if consumer_trait.items.len() != 1 {
+        return Err(Error::new(
+            consumer_trait.span(),
+            "type trait should contain exactly one associated type item",
+        ));
+    }
+
+    match consumer_trait.items.first() {
+        Some(TraitItem::Type(item_type)) => {
+            if !item_type.generics.params.is_empty() || item_type.generics.where_clause.is_some() {
+                return Err(Error::new(
+                    consumer_trait.span(),
+                    "generic associated type and where clause are not supported",
+                ));
+            }
+
+            Ok(item_type.clone())
+        }
+        _ => Err(Error::new(
+            consumer_trait.span(),
+            "type trait should contain exactly one associated type item",
+        )),
     }
 }
