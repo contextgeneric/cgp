@@ -1,6 +1,6 @@
 use cgp_macro_core::types::cgp_data::{
     derive_builder_struct, derive_finalize_build_impl, derive_has_builder_impl,
-    derive_has_field_impls, derive_into_builder_impl, derive_partial_data_impl,
+    derive_has_field_impls, derive_into_builder_impl, derive_partial_data_impl_from_struct,
     derive_update_field_impls,
 };
 use proc_macro2::TokenStream;
@@ -22,7 +22,7 @@ pub fn derive_build_field_from_struct(context_struct: &ItemStruct) -> syn::Resul
 
     let into_builder_impl = derive_into_builder_impl(context_struct, &builder_ident)?;
 
-    let partial_data_impl = derive_partial_data_impl(context_struct, &builder_ident)?;
+    let partial_data_impl = derive_partial_data_impl_from_struct(context_struct, &builder_ident)?;
 
     let update_field_impls = derive_update_field_impls(context_struct, &builder_ident)?;
 

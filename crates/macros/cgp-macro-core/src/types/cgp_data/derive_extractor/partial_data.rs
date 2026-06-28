@@ -1,8 +1,9 @@
-use cgp_macro_core::types::cgp_data::index_to_generic_ident;
 use quote::quote;
 use syn::{Ident, ItemEnum, ItemImpl, parse2};
 
-pub fn derive_partial_data_impl(
+use crate::types::cgp_data::index_to_generic_ident;
+
+pub fn derive_partial_data_impl_from_enum(
     context_struct: &ItemEnum,
     builder_ident: &Ident,
     is_ref: bool,

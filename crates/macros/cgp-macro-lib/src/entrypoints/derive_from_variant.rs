@@ -1,9 +1,8 @@
+use cgp_macro_core::types::cgp_data::get_variant_type;
 use cgp_macro_core::types::field::Symbol;
 use proc_macro2::TokenStream;
 use quote::quote;
 use syn::{ItemEnum, ItemImpl, parse2};
-
-use crate::derive_extractor::get_variant_type;
 
 pub fn derive_from_variant(body: TokenStream) -> syn::Result<TokenStream> {
     let item_enum: ItemEnum = parse2(body)?;

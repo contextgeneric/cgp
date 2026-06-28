@@ -1,9 +1,8 @@
-use cgp_macro_core::types::cgp_data::{index_to_generic_ident, to_generic_args};
-use cgp_macro_core::types::field::Symbol;
 use quote::quote;
 use syn::{Arm, GenericArgument, Ident, ItemEnum, ItemImpl, Type, parse2};
 
-use crate::derive_extractor::get_variant_type;
+use crate::types::cgp_data::{get_variant_type, index_to_generic_ident, to_generic_args};
+use crate::types::field::Symbol;
 
 pub fn derive_extract_field_impls(
     context_enum: &ItemEnum,

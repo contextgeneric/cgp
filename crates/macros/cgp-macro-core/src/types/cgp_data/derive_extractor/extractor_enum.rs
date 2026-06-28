@@ -1,9 +1,8 @@
-use cgp_macro_core::types::cgp_data::index_to_generic_ident;
 use proc_macro2::Span;
 use quote::quote;
 use syn::{GenericParam, Ident, ItemEnum, Lifetime, LifetimeParam, Type, TypeParam, parse2};
 
-use crate::derive_extractor::{get_variant_type, type_to_variant_fields};
+use crate::types::cgp_data::{get_variant_type, index_to_generic_ident, type_to_variant_fields};
 
 pub fn derive_extractor_enum(
     context_enum: &ItemEnum,

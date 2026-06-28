@@ -7,8 +7,6 @@
 
 extern crate alloc;
 
-pub(crate) mod derive_extractor;
-
 mod entrypoints;
 
 pub use crate::entrypoints::*;

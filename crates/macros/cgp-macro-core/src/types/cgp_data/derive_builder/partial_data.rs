@@ -3,7 +3,7 @@ use syn::{Ident, ItemImpl, ItemStruct, parse2};
 
 use crate::types::cgp_data::index_to_generic_ident;
 
-pub fn derive_partial_data_impl(
+pub fn derive_partial_data_impl_from_struct(
     context_struct: &ItemStruct,
     builder_ident: &Ident,
 ) -> syn::Result<ItemImpl> {
