@@ -1,7 +1,11 @@
 use syn::spanned::Spanned;
-use syn::{Fields, ItemImpl, ItemStruct, LitInt, parse_quote};
+use syn::{Fields, Ident, Item, ItemImpl, ItemStruct, LitInt, parse_quote};
 
-use crate::types::cgp_data::derive_has_fields_impls_from_struct;
+use crate::types::cgp_data::{
+    derive_builder_struct, derive_finalize_build_impl, derive_has_builder_impl,
+    derive_has_field_impls, derive_has_fields_impls_from_struct, derive_into_builder_impl,
+    derive_partial_data_impl_from_struct, derive_update_field_impls,
+};
 use crate::types::field::{Index, Symbol};
 
 pub struct ItemCgpRecord {
@@ -118,5 +122,39 @@ impl ItemCgpRecord {
 
     pub fn to_has_fields_impls(&self) -> syn::Result<Vec<ItemImpl>> {
         derive_has_fields_impls_from_struct(&self.item_struct)
+    }
+
+    pub fn to_build_field_items(&self) -> syn::Result<Vec<Item>> {
+        let item_struct = &self.item_struct;
+
+        let context_ident = &item_struct.ident;
+        let builder_ident = Ident::new(&format!("__Partial{context_ident}"), context_ident.span());
+
+        let builder_struct = derive_builder_struct(item_struct, &builder_ident)?;
+
+        let has_builder_impl = derive_has_builder_impl(item_struct, &builder_ident)?;
+
+        let into_builder_impl = derive_into_builder_impl(item_struct, &builder_ident)?;
+
+        let partial_data_impl = derive_partial_data_impl_from_struct(item_struct, &builder_ident)?;
+
+        let finalize_build_impl = derive_finalize_build_impl(item_struct, &builder_ident)?;
+
+        let update_field_impls = derive_update_field_impls(item_struct, &builder_ident)?;
+
+        let has_field_impls = derive_has_field_impls(item_struct, &builder_ident)?;
+
+        let mut out = vec![
+            builder_struct.into(),
+            has_builder_impl.into(),
+            into_builder_impl.into(),
+            partial_data_impl.into(),
+            finalize_build_impl.into(),
+        ];
+
+        out.extend(update_field_impls.into_iter().map(Item::from));
+        out.extend(has_field_impls.into_iter().map(Item::from));
+
+        Ok(out)
     }
 }
