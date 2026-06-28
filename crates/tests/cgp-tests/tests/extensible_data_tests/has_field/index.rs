@@ -1,7 +1,43 @@
 use cgp::prelude::*;
+use cgp_macro_test_util::snapshot_derive_has_field;
 
-#[derive(HasField)]
-pub struct Context(pub String, pub u64);
+snapshot_derive_has_field! {
+    #[derive(HasField)]
+    pub struct Context(pub String, pub u64);
+
+    expand_context(output) {
+        insta::assert_snapshot!(output, @"
+        impl HasField<Index<0>> for Context {
+            type Value = String;
+            fn get_field(&self, key: ::core::marker::PhantomData<Index<0>>) -> &Self::Value {
+                &self.0
+            }
+        }
+        impl HasFieldMut<Index<0>> for Context {
+            fn get_field_mut(
+                &mut self,
+                key: ::core::marker::PhantomData<Index<0>>,
+            ) -> &mut Self::Value {
+                &mut self.0
+            }
+        }
+        impl HasField<Index<1>> for Context {
+            type Value = u64;
+            fn get_field(&self, key: ::core::marker::PhantomData<Index<1>>) -> &Self::Value {
+                &self.1
+            }
+        }
+        impl HasFieldMut<Index<1>> for Context {
+            fn get_field_mut(
+                &mut self,
+                key: ::core::marker::PhantomData<Index<1>>,
+            ) -> &mut Self::Value {
+                &mut self.1
+            }
+        }
+        ")
+    }
+}
 
 pub trait CheckHasFieldImpls:
     HasField<Index<0>, Value = String> + HasField<Index<1>, Value = u64>
