@@ -159,8 +159,8 @@ snapshot_cgp_type! {
         impl<__Provider__, Foo, __Context__, I, J> FooTypeProviderAt<__Context__, I, J>
         for WithProvider<__Provider__>
         where
-            __Provider__: TypeProvider<__Context__, FooTypeProviderAtComponent, Type = Foo>,
             Foo:,
+            __Provider__: TypeProvider<__Context__, FooTypeProviderAtComponent, Type = Foo>,
         {
             type Foo = Foo;
         }
@@ -173,8 +173,8 @@ snapshot_cgp_type! {
         > IsProviderFor<FooTypeProviderAtComponent, __Context__, (I, J)>
         for WithProvider<__Provider__>
         where
-            __Provider__: TypeProvider<__Context__, FooTypeProviderAtComponent, Type = Foo>,
             Foo:,
+            __Provider__: TypeProvider<__Context__, FooTypeProviderAtComponent, Type = Foo>,
         {}
         ")
     }

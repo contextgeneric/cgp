@@ -15,5 +15,11 @@ pub fn snapshot_derive_has_field(body: TokenStream) -> syn::Result<TokenStream> 
         #body
     })?;
 
-    item.snapshot.wrap_output(output)
+    let wrapped = item.snapshot.wrap_output(output)?;
+
+    Ok(quote! {
+        #body
+
+        #wrapped
+    })
 }

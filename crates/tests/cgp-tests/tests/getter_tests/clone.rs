@@ -89,8 +89,8 @@ mod clone_getter {
             impl<__Provider__, Name, __Context__> NameTypeProvider<__Context__>
             for WithProvider<__Provider__>
             where
-                __Provider__: TypeProvider<__Context__, NameTypeProviderComponent, Type = Name>,
                 Name:,
+                __Provider__: TypeProvider<__Context__, NameTypeProviderComponent, Type = Name>,
             {
                 type Name = Name;
             }
@@ -101,8 +101,8 @@ mod clone_getter {
             > IsProviderFor<NameTypeProviderComponent, __Context__, ()>
             for WithProvider<__Provider__>
             where
-                __Provider__: TypeProvider<__Context__, NameTypeProviderComponent, Type = Name>,
                 Name:,
+                __Provider__: TypeProvider<__Context__, NameTypeProviderComponent, Type = Name>,
             {}
             ")
         }
@@ -401,8 +401,8 @@ mod clone_auto_getter {
             impl<__Provider__, Name, __Context__> NameTypeProvider<__Context__>
             for WithProvider<__Provider__>
             where
-                __Provider__: TypeProvider<__Context__, NameTypeProviderComponent, Type = Name>,
                 Name:,
+                __Provider__: TypeProvider<__Context__, NameTypeProviderComponent, Type = Name>,
             {
                 type Name = Name;
             }
@@ -413,8 +413,8 @@ mod clone_auto_getter {
             > IsProviderFor<NameTypeProviderComponent, __Context__, ()>
             for WithProvider<__Provider__>
             where
-                __Provider__: TypeProvider<__Context__, NameTypeProviderComponent, Type = Name>,
                 Name:,
+                __Provider__: TypeProvider<__Context__, NameTypeProviderComponent, Type = Name>,
             {}
             ")
         }

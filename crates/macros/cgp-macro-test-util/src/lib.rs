@@ -91,3 +91,10 @@ pub fn snapshot_blanket_trait(body: TokenStream) -> TokenStream {
         .unwrap_or_else(syn::Error::into_compile_error)
         .into()
 }
+
+#[proc_macro]
+pub fn snapshot_derive_has_field(body: TokenStream) -> TokenStream {
+    entrypoints::snapshot_derive_has_field(body.into())
+        .unwrap_or_else(syn::Error::into_compile_error)
+        .into()
+}

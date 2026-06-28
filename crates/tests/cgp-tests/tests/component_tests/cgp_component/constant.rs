@@ -154,8 +154,8 @@ mod generic_const {
             impl<__Provider__, Unit, __Context__> UnitTypeProvider<__Context__>
             for WithProvider<__Provider__>
             where
-                __Provider__: TypeProvider<__Context__, UnitTypeProviderComponent, Type = Unit>,
                 Unit:,
+                __Provider__: TypeProvider<__Context__, UnitTypeProviderComponent, Type = Unit>,
             {
                 type Unit = Unit;
             }
@@ -166,8 +166,8 @@ mod generic_const {
             > IsProviderFor<UnitTypeProviderComponent, __Context__, ()>
             for WithProvider<__Provider__>
             where
-                __Provider__: TypeProvider<__Context__, UnitTypeProviderComponent, Type = Unit>,
                 Unit:,
+                __Provider__: TypeProvider<__Context__, UnitTypeProviderComponent, Type = Unit>,
             {}
             ")
         }

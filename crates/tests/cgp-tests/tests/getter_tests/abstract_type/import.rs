@@ -86,8 +86,8 @@ snapshot_cgp_type! {
         impl<__Provider__, Scalar, __Context__> ScalarTypeProvider<__Context__>
         for WithProvider<__Provider__>
         where
-            __Provider__: TypeProvider<__Context__, ScalarTypeProviderComponent, Type = Scalar>,
             Scalar: Copy,
+            __Provider__: TypeProvider<__Context__, ScalarTypeProviderComponent, Type = Scalar>,
         {
             type Scalar = Scalar;
         }
@@ -98,8 +98,8 @@ snapshot_cgp_type! {
         > IsProviderFor<ScalarTypeProviderComponent, __Context__, ()>
         for WithProvider<__Provider__>
         where
-            __Provider__: TypeProvider<__Context__, ScalarTypeProviderComponent, Type = Scalar>,
             Scalar: Copy,
+            __Provider__: TypeProvider<__Context__, ScalarTypeProviderComponent, Type = Scalar>,
         {}
         ")
     }
