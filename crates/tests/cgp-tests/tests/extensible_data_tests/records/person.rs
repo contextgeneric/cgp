@@ -1,11 +1,617 @@
 use cgp::core::field::impls::CanBuildFrom;
 use cgp::extra::dispatch::{BuildAndMerge, BuildAndSetField, BuildWithHandlers};
 use cgp::prelude::*;
+use cgp_macro_test_util::snapshot_derive_cgp_data;
 
-#[derive(CgpData)]
-pub struct Person {
-    pub first_name: String,
-    pub last_name: String,
+snapshot_derive_cgp_data! {
+    #[derive(CgpData)]
+    pub struct Person {
+        pub first_name: String,
+        pub last_name: String,
+    }
+
+    expand_person(output) {
+        insta::assert_snapshot!(output, @"
+        impl HasField<
+            Symbol<
+                10,
+                Chars<
+                    'f',
+                    Chars<
+                        'i',
+                        Chars<
+                            'r',
+                            Chars<
+                                's',
+                                Chars<
+                                    't',
+                                    Chars<
+                                        '_',
+                                        Chars<'n', Chars<'a', Chars<'m', Chars<'e', Nil>>>>,
+                                    >,
+                                >,
+                            >,
+                        >,
+                    >,
+                >,
+            >,
+        > for Person {
+            type Value = String;
+            fn get_field(
+                &self,
+                key: ::core::marker::PhantomData<
+                    Symbol<
+                        10,
+                        Chars<
+                            'f',
+                            Chars<
+                                'i',
+                                Chars<
+                                    'r',
+                                    Chars<
+                                        's',
+                                        Chars<
+                                            't',
+                                            Chars<
+                                                '_',
+                                                Chars<'n', Chars<'a', Chars<'m', Chars<'e', Nil>>>>,
+                                            >,
+                                        >,
+                                    >,
+                                >,
+                            >,
+                        >,
+                    >,
+                >,
+            ) -> &Self::Value {
+                &self.first_name
+            }
+        }
+        impl HasFieldMut<
+            Symbol<
+                10,
+                Chars<
+                    'f',
+                    Chars<
+                        'i',
+                        Chars<
+                            'r',
+                            Chars<
+                                's',
+                                Chars<
+                                    't',
+                                    Chars<
+                                        '_',
+                                        Chars<'n', Chars<'a', Chars<'m', Chars<'e', Nil>>>>,
+                                    >,
+                                >,
+                            >,
+                        >,
+                    >,
+                >,
+            >,
+        > for Person {
+            fn get_field_mut(
+                &mut self,
+                key: ::core::marker::PhantomData<
+                    Symbol<
+                        10,
+                        Chars<
+                            'f',
+                            Chars<
+                                'i',
+                                Chars<
+                                    'r',
+                                    Chars<
+                                        's',
+                                        Chars<
+                                            't',
+                                            Chars<
+                                                '_',
+                                                Chars<'n', Chars<'a', Chars<'m', Chars<'e', Nil>>>>,
+                                            >,
+                                        >,
+                                    >,
+                                >,
+                            >,
+                        >,
+                    >,
+                >,
+            ) -> &mut Self::Value {
+                &mut self.first_name
+            }
+        }
+        impl HasField<
+            Symbol<
+                9,
+                Chars<
+                    'l',
+                    Chars<
+                        'a',
+                        Chars<
+                            's',
+                            Chars<
+                                't',
+                                Chars<'_', Chars<'n', Chars<'a', Chars<'m', Chars<'e', Nil>>>>>,
+                            >,
+                        >,
+                    >,
+                >,
+            >,
+        > for Person {
+            type Value = String;
+            fn get_field(
+                &self,
+                key: ::core::marker::PhantomData<
+                    Symbol<
+                        9,
+                        Chars<
+                            'l',
+                            Chars<
+                                'a',
+                                Chars<
+                                    's',
+                                    Chars<
+                                        't',
+                                        Chars<
+                                            '_',
+                                            Chars<'n', Chars<'a', Chars<'m', Chars<'e', Nil>>>>,
+                                        >,
+                                    >,
+                                >,
+                            >,
+                        >,
+                    >,
+                >,
+            ) -> &Self::Value {
+                &self.last_name
+            }
+        }
+        impl HasFieldMut<
+            Symbol<
+                9,
+                Chars<
+                    'l',
+                    Chars<
+                        'a',
+                        Chars<
+                            's',
+                            Chars<
+                                't',
+                                Chars<'_', Chars<'n', Chars<'a', Chars<'m', Chars<'e', Nil>>>>>,
+                            >,
+                        >,
+                    >,
+                >,
+            >,
+        > for Person {
+            fn get_field_mut(
+                &mut self,
+                key: ::core::marker::PhantomData<
+                    Symbol<
+                        9,
+                        Chars<
+                            'l',
+                            Chars<
+                                'a',
+                                Chars<
+                                    's',
+                                    Chars<
+                                        't',
+                                        Chars<
+                                            '_',
+                                            Chars<'n', Chars<'a', Chars<'m', Chars<'e', Nil>>>>,
+                                        >,
+                                    >,
+                                >,
+                            >,
+                        >,
+                    >,
+                >,
+            ) -> &mut Self::Value {
+                &mut self.last_name
+            }
+        }
+        impl HasFields for Person {
+            type Fields = Cons<
+                Field<
+                    Symbol<
+                        10,
+                        Chars<
+                            'f',
+                            Chars<
+                                'i',
+                                Chars<
+                                    'r',
+                                    Chars<
+                                        's',
+                                        Chars<
+                                            't',
+                                            Chars<
+                                                '_',
+                                                Chars<'n', Chars<'a', Chars<'m', Chars<'e', Nil>>>>,
+                                            >,
+                                        >,
+                                    >,
+                                >,
+                            >,
+                        >,
+                    >,
+                    String,
+                >,
+                Cons<
+                    Field<
+                        Symbol<
+                            9,
+                            Chars<
+                                'l',
+                                Chars<
+                                    'a',
+                                    Chars<
+                                        's',
+                                        Chars<
+                                            't',
+                                            Chars<
+                                                '_',
+                                                Chars<'n', Chars<'a', Chars<'m', Chars<'e', Nil>>>>,
+                                            >,
+                                        >,
+                                    >,
+                                >,
+                            >,
+                        >,
+                        String,
+                    >,
+                    ε,
+                >,
+            >;
+        }
+        impl HasFieldsRef for Person {
+            type FieldsRef<'__a> = Cons<
+                Field<
+                    Symbol<
+                        10,
+                        Chars<
+                            'f',
+                            Chars<
+                                'i',
+                                Chars<
+                                    'r',
+                                    Chars<
+                                        's',
+                                        Chars<
+                                            't',
+                                            Chars<
+                                                '_',
+                                                Chars<'n', Chars<'a', Chars<'m', Chars<'e', Nil>>>>,
+                                            >,
+                                        >,
+                                    >,
+                                >,
+                            >,
+                        >,
+                    >,
+                    &'__a String,
+                >,
+                Cons<
+                    Field<
+                        Symbol<
+                            9,
+                            Chars<
+                                'l',
+                                Chars<
+                                    'a',
+                                    Chars<
+                                        's',
+                                        Chars<
+                                            't',
+                                            Chars<
+                                                '_',
+                                                Chars<'n', Chars<'a', Chars<'m', Chars<'e', Nil>>>>,
+                                            >,
+                                        >,
+                                    >,
+                                >,
+                            >,
+                        >,
+                        &'__a String,
+                    >,
+                    ε,
+                >,
+            >
+            where
+                Self: '__a;
+        }
+        impl FromFields for Person {
+            fn from_fields(π(first_name, π(last_name, Nil)): Self::Fields) -> Self {
+                Self {
+                    first_name: first_name.value,
+                    last_name: last_name.value,
+                }
+            }
+        }
+        impl ToFields for Person {
+            fn to_fields(self) -> Self::Fields {
+                π(self.first_name.into(), π(self.last_name.into(), ε))
+            }
+        }
+        impl ToFieldsRef for Person {
+            fn to_fields_ref<'__a>(&'__a self) -> Self::FieldsRef<'__a>
+            where
+                Self: '__a,
+            {
+                π((&self.first_name).into(), π((&self.last_name).into(), ε))
+            }
+        }
+        pub struct __PartialPerson<__F0__: MapType, __F1__: MapType> {
+            pub first_name: <__F0__ as MapType>::Map<String>,
+            pub last_name: <__F1__ as MapType>::Map<String>,
+        }
+        impl HasBuilder for Person {
+            type Builder = __PartialPerson<IsNothing, IsNothing>;
+            fn builder() -> Self::Builder {
+                __PartialPerson {
+                    first_name: (),
+                    last_name: (),
+                }
+            }
+        }
+        impl IntoBuilder for Person {
+            type Builder = __PartialPerson<IsPresent, IsPresent>;
+            fn into_builder(self) -> Self::Builder {
+                __PartialPerson {
+                    first_name: self.first_name,
+                    last_name: self.last_name,
+                }
+            }
+        }
+        impl<__F0__: MapType, __F1__: MapType> PartialData for __PartialPerson<__F0__, __F1__> {
+            type Target = Person;
+        }
+        impl FinalizeBuild for __PartialPerson<IsPresent, IsPresent> {
+            fn finalize_build(self) -> Self::Target {
+                Person {
+                    first_name: self.first_name,
+                    last_name: self.last_name,
+                }
+            }
+        }
+        impl<
+            __M1__: MapType,
+            __M2__: MapType,
+            __F1__: MapType,
+        > UpdateField<
+            Symbol<
+                10,
+                Chars<
+                    'f',
+                    Chars<
+                        'i',
+                        Chars<
+                            'r',
+                            Chars<
+                                's',
+                                Chars<
+                                    't',
+                                    Chars<
+                                        '_',
+                                        Chars<'n', Chars<'a', Chars<'m', Chars<'e', Nil>>>>,
+                                    >,
+                                >,
+                            >,
+                        >,
+                    >,
+                >,
+            >,
+            __M2__,
+        > for __PartialPerson<__M1__, __F1__> {
+            type Value = String;
+            type Mapper = __M1__;
+            type Output = __PartialPerson<__M2__, __F1__>;
+            fn update_field(
+                self,
+                _tag: ::core::marker::PhantomData<
+                    Symbol<
+                        10,
+                        Chars<
+                            'f',
+                            Chars<
+                                'i',
+                                Chars<
+                                    'r',
+                                    Chars<
+                                        's',
+                                        Chars<
+                                            't',
+                                            Chars<
+                                                '_',
+                                                Chars<'n', Chars<'a', Chars<'m', Chars<'e', Nil>>>>,
+                                            >,
+                                        >,
+                                    >,
+                                >,
+                            >,
+                        >,
+                    >,
+                >,
+                value: __M2__::Map<Self::Value>,
+            ) -> (__M1__::Map<Self::Value>, Self::Output) {
+                (
+                    self.first_name,
+                    __PartialPerson {
+                        first_name: value,
+                        last_name: self.last_name,
+                    },
+                )
+            }
+        }
+        impl<
+            __F0__: MapType,
+            __M1__: MapType,
+            __M2__: MapType,
+        > UpdateField<
+            Symbol<
+                9,
+                Chars<
+                    'l',
+                    Chars<
+                        'a',
+                        Chars<
+                            's',
+                            Chars<
+                                't',
+                                Chars<'_', Chars<'n', Chars<'a', Chars<'m', Chars<'e', Nil>>>>>,
+                            >,
+                        >,
+                    >,
+                >,
+            >,
+            __M2__,
+        > for __PartialPerson<__F0__, __M1__> {
+            type Value = String;
+            type Mapper = __M1__;
+            type Output = __PartialPerson<__F0__, __M2__>;
+            fn update_field(
+                self,
+                _tag: ::core::marker::PhantomData<
+                    Symbol<
+                        9,
+                        Chars<
+                            'l',
+                            Chars<
+                                'a',
+                                Chars<
+                                    's',
+                                    Chars<
+                                        't',
+                                        Chars<
+                                            '_',
+                                            Chars<'n', Chars<'a', Chars<'m', Chars<'e', Nil>>>>,
+                                        >,
+                                    >,
+                                >,
+                            >,
+                        >,
+                    >,
+                >,
+                value: __M2__::Map<Self::Value>,
+            ) -> (__M1__::Map<Self::Value>, Self::Output) {
+                (
+                    self.last_name,
+                    __PartialPerson {
+                        first_name: self.first_name,
+                        last_name: value,
+                    },
+                )
+            }
+        }
+        impl<
+            __F1__: MapType,
+        > HasField<
+            Symbol<
+                10,
+                Chars<
+                    'f',
+                    Chars<
+                        'i',
+                        Chars<
+                            'r',
+                            Chars<
+                                's',
+                                Chars<
+                                    't',
+                                    Chars<
+                                        '_',
+                                        Chars<'n', Chars<'a', Chars<'m', Chars<'e', Nil>>>>,
+                                    >,
+                                >,
+                            >,
+                        >,
+                    >,
+                >,
+            >,
+        > for __PartialPerson<IsPresent, __F1__> {
+            type Value = String;
+            fn get_field(
+                &self,
+                tag: ::core::marker::PhantomData<
+                    Symbol<
+                        10,
+                        Chars<
+                            'f',
+                            Chars<
+                                'i',
+                                Chars<
+                                    'r',
+                                    Chars<
+                                        's',
+                                        Chars<
+                                            't',
+                                            Chars<
+                                                '_',
+                                                Chars<'n', Chars<'a', Chars<'m', Chars<'e', Nil>>>>,
+                                            >,
+                                        >,
+                                    >,
+                                >,
+                            >,
+                        >,
+                    >,
+                >,
+            ) -> &Self::Value {
+                &self.first_name
+            }
+        }
+        impl<
+            __F0__: MapType,
+        > HasField<
+            Symbol<
+                9,
+                Chars<
+                    'l',
+                    Chars<
+                        'a',
+                        Chars<
+                            's',
+                            Chars<
+                                't',
+                                Chars<'_', Chars<'n', Chars<'a', Chars<'m', Chars<'e', Nil>>>>>,
+                            >,
+                        >,
+                    >,
+                >,
+            >,
+        > for __PartialPerson<__F0__, IsPresent> {
+            type Value = String;
+            fn get_field(
+                &self,
+                tag: ::core::marker::PhantomData<
+                    Symbol<
+                        9,
+                        Chars<
+                            'l',
+                            Chars<
+                                'a',
+                                Chars<
+                                    's',
+                                    Chars<
+                                        't',
+                                        Chars<
+                                            '_',
+                                            Chars<'n', Chars<'a', Chars<'m', Chars<'e', Nil>>>>,
+                                        >,
+                                    >,
+                                >,
+                            >,
+                        >,
+                    >,
+                >,
+            ) -> &Self::Value {
+                &self.last_name
+            }
+        }
+        ")
+    }
 }
 
 #[derive(CgpData)]

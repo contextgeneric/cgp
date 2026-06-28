@@ -67,6 +67,8 @@ snapshot output is guaranteed to match what the production macros generate.
 | `snapshot_cgp_fn!`          | `#[cgp_fn]`           |
 | `snapshot_cgp_type!`        | `#[cgp_type]`         |
 | `snapshot_derive_has_field!`| `#[derive(HasField)]` |
+| `snapshot_derive_has_fields!`| `#[derive(HasFields)]` |
+| `snapshot_derive_cgp_data!` | `#[derive(CgpData)]`  |
 | `snapshot_delegate_components!` | `delegate_components!` |
 | `snapshot_check_components!` | `check_components!`   |
 | `snapshot_delegate_and_check_components!` | `delegate_and_check_components!` |
@@ -331,6 +333,101 @@ can be wrapped — see [Migrating existing tests](#migrating-existing-tests). Th
 usual pattern is to move the struct into an inner `mod` alongside the snapshot
 macro, and keep the original `#[test]` in that same module so its runtime
 assertions are preserved.
+
+### `snapshot_derive_has_fields!`
+
+Wraps the `#[derive(HasFields)]` derive macro. The item under test is the type
+definition written exactly as you would normally write it under
+`#[derive(HasFields)]`, with any other derives kept alongside it:
+
+```rust
+snapshot_derive_has_fields! {
+    #[derive(HasFields)]
+    #[derive(Clone, Debug, Eq, PartialEq)]
+    pub struct Person {
+        pub name: String,
+    }
+
+    expand_person(output) {
+        assert_snapshot!(output, @"...")
+    }
+}
+```
+
+Like the other derive snapshot macros, the type is re-emitted verbatim with its
+derives (so the compiler still generates the real impls), while the snapshot
+captures the `HasFields` / `HasFieldsRef` / `FromFields` / `ToFields` /
+`ToFieldsRef` impls that `#[derive(HasFields)]` produces.
+
+Both **`struct`s** and **`enum`s** are accepted:
+
+- For a **`struct`** (a *record*), the field list is a product type
+  (`Cons` / `Nil`), and the conversions destructure/build the struct fields.
+- For an **`enum`** (a *variant*), the field list is a sum type
+  (`Either` / `Void`), and the conversions `match` over the variants.
+
+Generic type parameters and lifetimes are propagated to the generated impls.
+As with the other derive snapshot macros, a `#[derive(HasFields)]` type that
+currently lives *inside* a test function must be lifted out before it can be
+wrapped — see [Migrating existing tests](#migrating-existing-tests). The usual
+pattern is to move each type into its own inner `mod` alongside the snapshot
+macro, and keep the original `#[test]` in that same module so its runtime
+assertions are preserved.
+
+### `snapshot_derive_cgp_data!`
+
+Wraps the `#[derive(CgpData)]` derive macro. `CgpData` is the umbrella derive for
+extensible data types: rather than a single trait, it generates the *entire*
+field/variant toolkit for a `struct` or `enum`. The item under test is the type
+definition written exactly as you would normally write it under
+`#[derive(CgpData)]`, with any other derives kept alongside it:
+
+```rust
+snapshot_derive_cgp_data! {
+    #[derive(CgpData)]
+    #[derive(Debug, Eq, PartialEq)]
+    pub struct FooBarBaz {
+        pub foo: u64,
+        pub bar: String,
+        pub baz: bool,
+    }
+
+    expand_foo_bar_baz(output) {
+        assert_snapshot!(output, @"...")
+    }
+}
+```
+
+Like `snapshot_derive_has_field!`, the type is re-emitted verbatim with its
+derives (so the compiler still generates the real impls), while the snapshot
+captures the *derived* impls that `#[derive(CgpData)]` produces. Because
+`CgpData` generates a large amount of code, these snapshots are correspondingly
+large — but that is precisely what makes them valuable as golden tests.
+
+What gets captured depends on whether the item is a `struct` (a *record*) or an
+`enum` (a *variant*):
+
+- For a **record `struct`**, the snapshot covers the per-field `HasField` /
+  `HasFieldMut` impls, the `HasFields` / `HasFieldsRef` field-list impls, the
+  `FromFields` / `ToFields` / `ToFieldsRef` conversions, and the generated
+  `__Partial*` builder struct together with its `HasBuilder` / `IntoBuilder` /
+  `PartialData` / `FinalizeBuild` / `UpdateField` impls.
+- For a **variant `enum`**, the snapshot covers the `HasFields` /
+  `HasFieldsRef` impls, the `FromFields` / `ToFields` / `ToFieldsRef`
+  conversions, the per-variant `FromVariant` impls, the generated `__Partial*`
+  / `__PartialRef*` enums, and the `HasExtractor` / `HasExtractorRef` /
+  `HasExtractorMut` / `FinalizeExtract` / `ExtractField` extractor impls.
+
+All shapes accepted by `#[derive(CgpData)]` are accepted, since the body is
+forwarded to the real derive verbatim — including generic type parameters (with
+`where` clauses), tuple structs keyed by `Index<N>`, and generic enums.
+
+As with the other derive snapshot macros, a `#[derive(CgpData)]` type that
+currently lives *inside* a test function must be lifted out before it can be
+wrapped — see [Migrating existing tests](#migrating-existing-tests). When several
+auxiliary types share a file, the usual convention is to wrap only the primary
+type under test in `snapshot_derive_cgp_data!`, and leave the auxiliary fixture
+types as plain `#[derive(CgpData)]` definitions.
 
 ### `snapshot_delegate_components!`
 
