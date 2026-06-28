@@ -1,5 +1,3 @@
-use alloc::format;
-
 use cgp_macro_core::types::cgp_component::{CgpComponentRawArgs, ItemCgpComponent};
 use cgp_macro_core::types::cgp_type::{ItemCgpType, extract_item_type_from_trait};
 use proc_macro2::TokenStream;

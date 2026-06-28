@@ -1,12 +1,51 @@
-/*!
-   This is an internal crate used by the `cgp-macro` crate. We implement the
-   proc macros for `cgp-component` as a library, so that it can be more easily tested.
-   The constructs are then re-exported as proc macros in the `cgp-macro` crate,
-   which is defined as a proc macro crate.
-*/
+mod blanket_trait;
+mod cgp_auto_getter;
+mod cgp_component;
+mod cgp_data;
+mod cgp_fn;
+mod cgp_getter;
+mod cgp_impl;
+mod cgp_namespace;
+mod cgp_new_provider;
+mod cgp_provider;
+mod cgp_record;
+mod cgp_type;
+mod cgp_variant;
+mod check_components;
+mod delegate_and_check_components;
+mod delegate_components;
+mod derive_build_field;
+mod derive_extract_field;
+mod derive_from_variant;
+mod derive_has_field;
+mod derive_has_fields;
+mod path;
+mod product;
+mod sum;
+mod symbol;
 
-extern crate alloc;
-
-mod entrypoints;
-
-pub use crate::entrypoints::*;
+pub use blanket_trait::*;
+pub use cgp_auto_getter::*;
+pub use cgp_component::*;
+pub use cgp_data::*;
+pub use cgp_fn::*;
+pub use cgp_getter::*;
+pub use cgp_impl::*;
+pub use cgp_namespace::*;
+pub use cgp_new_provider::*;
+pub use cgp_provider::*;
+pub use cgp_record::*;
+pub use cgp_type::*;
+pub use cgp_variant::*;
+pub use check_components::*;
+pub use delegate_and_check_components::*;
+pub use delegate_components::*;
+pub use derive_build_field::*;
+pub use derive_extract_field::*;
+pub use derive_from_variant::*;
+pub use derive_has_field::*;
+pub use derive_has_fields::*;
+pub use path::*;
+pub use product::*;
+pub use sum::*;
+pub use symbol::*;
