@@ -1,9 +1,9 @@
 use syn::spanned::Spanned;
-use syn::{Error, ItemImpl, TraitItem, TraitItemType};
+use syn::{Error, Item, ItemImpl, TraitItem, TraitItemType};
 
 use crate::parse_internal;
 use crate::types::cgp_component::EvaluatedCgpComponent;
-use crate::types::provider_impl::derive_is_provider_for;
+use crate::types::provider_impl::{ItemProviderImpl, ItemProviderImpls};
 use crate::visitors::get_bounds_and_replace_self_assoc_type;
 
 pub struct ItemCgpType {
@@ -11,6 +11,16 @@ pub struct ItemCgpType {
 }
 
 impl ItemCgpType {
+    pub fn to_items(&self) -> syn::Result<Vec<Item>> {
+        let mut items = self.item_component.to_items()?;
+
+        let item_impls = self.to_item_provider_impls()?.to_item_impls()?;
+
+        items.extend(item_impls.into_iter().map(Item::from));
+
+        Ok(items)
+    }
+
     pub fn to_trait_item_type(&self) -> syn::Result<TraitItemType> {
         let consumer_trait = &self.item_component.consumer_trait;
 
@@ -41,9 +51,9 @@ impl ItemCgpType {
         }
     }
 
-    pub fn to_item_impls(&self) -> syn::Result<Vec<ItemImpl>> {
+    pub fn to_item_provider_impls(&self) -> syn::Result<ItemProviderImpls> {
         let context_name = &self.item_component.args.context_ident;
-        let component_name = self.item_component.args.component_name.to_type();
+        let component_type = self.item_component.args.component_name.to_type();
 
         let provider_trait = &self.item_component.provider_trait;
         let provider_trait_name = &provider_trait.ident;
@@ -76,14 +86,17 @@ impl ItemCgpType {
             }
         };
 
-        let use_type_is_provider_impl = derive_is_provider_for(&component_name, &use_type_impl)?;
+        let use_type_provider = ItemProviderImpl {
+            component_type: component_type.clone(),
+            item_impl: use_type_impl,
+        };
 
         generics.params.insert(0, parse_internal!(__Provider__));
         generics
             .make_where_clause()
             .predicates
             .push(parse_internal! {
-                __Provider__: TypeProvider< #context_name, #component_name, Type = #type_name >
+                __Provider__: TypeProvider< #context_name, #component_type, Type = #type_name >
             });
 
         let (impl_generics, _, where_clause) = generics.split_for_impl();
@@ -98,14 +111,13 @@ impl ItemCgpType {
             }
         };
 
-        let with_provider_is_provider_impl =
-            derive_is_provider_for(&component_name, &with_provider_impl)?;
+        let with_provider_provider = ItemProviderImpl {
+            component_type: component_type.clone(),
+            item_impl: with_provider_impl,
+        };
 
-        Ok(vec![
-            use_type_impl,
-            use_type_is_provider_impl,
-            with_provider_impl,
-            with_provider_is_provider_impl,
-        ])
+        Ok(ItemProviderImpls {
+            items: vec![use_type_provider, with_provider_provider],
+        })
     }
 }
