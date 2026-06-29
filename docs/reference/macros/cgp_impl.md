@@ -72,7 +72,7 @@ impl<Context> IsProviderFor<FooProviderComponent, Context, ()> for ValueToString
 pub struct ValueToString;
 ```
 
-Three transformations happened here. The trait `FooProvider` gained `Context` as its leading type argument; the `Self` type of the impl changed from `Context` to the provider `ValueToString`; and the method receiver `&self` became the explicit parameter `__context__: &Context`. The receiver identifier is the snake-cased form of the context type — `Context` becomes `context`, and the default `__Context__` becomes `__context__` — and every use of `self` in the body is rewritten to that identifier while every use of `Self` is rewritten to the context type.
+Three transformations happened here. The trait `FooProvider` gained `Context` as its leading type argument; the `Self` type of the impl changed from `Context` to the provider `ValueToString`; and the method receiver `&self` became the explicit parameter `__context__: &Context`. The receiver identifier is the snake-cased form of the context type wrapped in double underscores: both `Context` and the default `__Context__` become `__context__`. Every use of `self` in the body is rewritten to that identifier, while every use of `Self` is rewritten to the context type.
 
 When the `for Context` clause is omitted, the only difference is that the inserted context parameter is `__Context__`. The earlier `RectangleArea` example is equivalent to writing the context out by hand:
 

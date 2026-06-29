@@ -24,7 +24,7 @@ pub struct Person {
 }
 ```
 
-Each named field becomes a type-level string `Symbol!` used as the field's `Tag`, and its declared type becomes its value type. Generic parameters on the struct are carried onto the generated impls. The derive emits the same builder impls that the record path of [`#[derive(CgpData)]`](derive_cgp_data.md) emits — it is that slice in isolation, with no `HasField` getters or `HasFields` representation traits.
+Each named field becomes a type-level string `Symbol!` used as the field's `Tag`, and its declared type becomes its value type. A tuple struct works equally well: an unnamed field at position `N` is keyed by [`Index<N>`](../types/index.md) instead of a `Symbol!`. Generic parameters on the struct are carried onto the generated impls. The derive emits the same builder impls that the record path of [`#[derive(CgpData)]`](derive_cgp_data.md) emits — it is that slice in isolation, with no `HasField` getters or `HasFields` representation traits.
 
 ## Expansion
 
@@ -65,7 +65,7 @@ impl<__F0__: MapType, __F1__: MapType> PartialData for __PartialPerson<__F0__, _
 }
 
 impl FinalizeBuild for __PartialPerson<IsPresent, IsPresent> {
-    fn finalize_build(self) -> Person { Person { first_name: self.first_name, last_name: self.last_name } }
+    fn finalize_build(self) -> Self::Target { Person { first_name: self.first_name, last_name: self.last_name } }
 }
 ```
 
@@ -125,7 +125,7 @@ Each step changes the partial type, and only after the last field is set does th
 
 ## Related constructs
 
-`#[derive(BuildField)]` is one slice of the record output of [`#[derive(CgpData)]`](derive_cgp_data.md) and [`#[derive(CgpRecord)]`](derive_cgp_record.md); those derives include it alongside the [`#[derive(HasField)]`](derive_has_field.md) getters and [`#[derive(HasFields)]`](derive_has_fields.md) representation traits. Its enum analogues are [`#[derive(ExtractField)]`](derive_extract_field.md) for incremental matching and [`#[derive(FromVariant)]`](derive_from_variant.md) for variant construction. The generated code reads back fields through [`HasField`](../traits/has_field.md), stores them in the [`product`](../macros/product.md)-shaped partial struct, and switches on the `MapType` markers `IsPresent`/`IsNothing`/`IsVoid`.
+`#[derive(BuildField)]` is one slice of the record output of [`#[derive(CgpData)]`](derive_cgp_data.md) and [`#[derive(CgpRecord)]`](derive_cgp_record.md); those derives include it alongside the [`#[derive(HasField)]`](derive_has_field.md) getters and [`#[derive(HasFields)]`](derive_has_fields.md) representation traits. Its enum analogues are [`#[derive(ExtractField)]`](derive_extract_field.md) for incremental matching and [`#[derive(FromVariant)]`](derive_from_variant.md) for variant construction. The entry and exit points it generates target the [`HasBuilder`](../traits/has_builder.md) family of traits. The generated code reads back fields through [`HasField`](../traits/has_field.md), stores them in the [`product`](../macros/product.md)-shaped partial struct, and switches on the [`MapType`](../traits/map_type.md) markers `IsPresent`/`IsNothing`/`IsVoid`.
 
 ## Source
 

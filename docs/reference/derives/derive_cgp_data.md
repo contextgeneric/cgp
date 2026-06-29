@@ -34,7 +34,7 @@ pub enum Shape {
 
 What the derive generates depends entirely on the kind of item. For a struct it produces the record machinery (field getters, the field representation, and the incremental builder); for an enum it produces the variant machinery (the field representation, variant constructors, and the incremental extractor). The two paths share the `HasFields`/`FromFields`/`ToFields` representation traits but otherwise emit different impls, so the sections below treat them separately.
 
-Field names drive everything. Each named struct field or enum variant becomes a type-level string `Symbol!`, and that symbol is the `Tag` used to address the field in the generated impls. Struct field types and single-field variant payload types become the field values. Generic parameters on the type are carried through onto the generated impls.
+Field tags drive everything. A named struct field or an enum variant becomes a type-level string [`Symbol!`](../macros/symbol.md), and an unnamed field of a tuple struct becomes a positional [`Index<N>`](../types/index.md); that tag is what addresses the field in the generated impls. Struct field types and single-field variant payload types become the field values. Generic parameters on the type are carried through onto the generated impls.
 
 ## Expansion
 
@@ -133,7 +133,7 @@ impl HasExtractor for Shape {
 
 This extractor expansion is exactly what [`#[derive(ExtractField)]`](derive_extract_field.md) produces, and the `FromVariant` impls are what [`#[derive(FromVariant)]`](derive_from_variant.md) produces. `#[derive(CgpData)]` on an enum is the union of those two building-block derives plus the shared representation traits.
 
-Two details of the expansion are worth holding onto. The partial type is named `__Partial{Name}` (and `__PartialRef{Name}` for the borrowed extractor), with reserved double-underscore names so they do not collide with user types. And the field/variant `Tag` is always the type-level string of the field or variant name, even for tuple-struct fields the related [`#[derive(HasField)]`](derive_has_field.md) would address by `Index` — `CgpData`'s representation uses the declared names.
+Two details of the expansion are worth holding onto. The partial type is named `__Partial{Name}` (and `__PartialRef{Name}` for the borrowed extractor), with reserved double-underscore names so they do not collide with user types. And the `Tag` that keys each field follows the same rule as [`#[derive(HasField)]`](derive_has_field.md): a named field or enum variant is keyed by the [`Symbol!`](../macros/symbol.md) of its identifier, while an unnamed field of a tuple struct is keyed by its positional [`Index<N>`](../types/index.md). A tuple-struct record therefore exposes `Field<Index<0>, _>` entries in its `Fields` product and `UpdateField<Index<0>, _>` impls in its builder, not symbol tags.
 
 ## Examples
 

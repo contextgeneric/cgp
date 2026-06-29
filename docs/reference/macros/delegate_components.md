@@ -40,7 +40,7 @@ delegate_components! {
 
 A leading `<...>` generic list on the target makes the whole table generic, so the same wiring can apply across a family of context types — for example `delegate_components! { <T> MyContext<T> { ... } }` wires every `MyContext<T>` at once.
 
-A value may itself open a nested table, which is the common shape for dispatching a generic-parameter component. Writing `UseDelegate<new InnerComponents { ... }>` as a value both wires the outer key to [`UseDelegate`](../provider/use_delegate.md) over an inner table and defines that inner table in place:
+A value may itself open a nested table, which is the common shape for dispatching a generic-parameter component. Writing `UseDelegate<new InnerComponents { ... }>` as a value both wires the outer key to [`UseDelegate`](../providers/use_delegate.md) over an inner table and defines that inner table in place:
 
 ```rust
 delegate_components! {
@@ -53,6 +53,8 @@ delegate_components! {
     }
 }
 ```
+
+Beyond plain `Key: Value` entries, the table body also accepts the namespace-oriented statement forms used to opt a context into a [`#[cgp_namespace]`](cgp_namespace.md): a leading `namespace SomeNamespace;` header that forwards every lookup through that namespace, `@`-path keys such as `@app.ErrorRaiserComponent` that target a route rather than a bare component name, and `for <T, Provider> in SomeTable { ... }` loops that pull entries out of another lookup table. These forms are described under [`#[cgp_namespace]`](cgp_namespace.md), where they are most often written.
 
 The macro accepts no attributes on the table or its keys and rejects any it finds. Attribute-driven variants such as `#[check_params(...)]` and `#[skip_check]` belong to [`delegate_and_check_components!`](delegate_and_check_components.md), not here.
 
@@ -120,7 +122,7 @@ delegate_components! {
 }
 ```
 
-Because the inner value was written with `new`, the macro also defines `struct AreaCalculatorComponents;`. At the impl level this means `MyApp`'s table maps `AreaCalculatorComponent` to `UseDelegate<AreaCalculatorComponents>`, while `AreaCalculatorComponents` is a second table whose `Shape`-keyed entries (`Rectangle`, `Circle`) tell `UseDelegate` which provider to dispatch to for each shape. See [`use_delegate.md`](../provider/use_delegate.md) for how `UseDelegate` performs that inner lookup.
+Because the inner value was written with `new`, the macro also defines `struct AreaCalculatorComponents;`. At the impl level this means `MyApp`'s table maps `AreaCalculatorComponent` to `UseDelegate<AreaCalculatorComponents>`, while `AreaCalculatorComponents` is a second table whose `Shape`-keyed entries (`Rectangle`, `Circle`) tell `UseDelegate` which provider to dispatch to for each shape. See [`use_delegate.md`](../providers/use_delegate.md) for how `UseDelegate` performs that inner lookup.
 
 ## Examples
 
@@ -175,8 +177,8 @@ delegate_components! {
 
 ## Related constructs
 
-`delegate_components!` is the wiring step for components defined by [`#[cgp_component]`](cgp_component.md), and the providers it names are written with [`#[cgp_impl]`](cgp_impl.md), [`#[cgp_provider]`](cgp_provider.md), or [`#[cgp_fn]`](cgp_fn.md). Each entry expands to a [`DelegateComponent`](../traits/delegate_component.md) impl plus an [`IsProviderFor`](../traits/is_provider_for.md) impl. Nested-table values rely on [`UseDelegate`](../provider/use_delegate.md) to dispatch on a generic parameter; field-backed getters are commonly wired to [`UseField`](../provider/use_field.md). To verify a table is complete, pair it with [`check_components!`](check_components.md), or use [`delegate_and_check_components!`](delegate_and_check_components.md) to wire and check in one step — the recommended choice for a main context's wiring, with plain `delegate_components!` reserved for intermediary provider tables. When a component is defined inside a namespace, see [`#[cgp_namespace]`](cgp_namespace.md).
+`delegate_components!` is the wiring step for components defined by [`#[cgp_component]`](cgp_component.md), and the providers it names are written with [`#[cgp_impl]`](cgp_impl.md), [`#[cgp_provider]`](cgp_provider.md), or [`#[cgp_fn]`](cgp_fn.md). Each entry expands to a [`DelegateComponent`](../traits/delegate_component.md) impl plus an [`IsProviderFor`](../traits/is_provider_for.md) impl. Nested-table values rely on [`UseDelegate`](../providers/use_delegate.md) to dispatch on a generic parameter; field-backed getters are commonly wired to [`UseField`](../providers/use_field.md). To verify a table is complete, pair it with [`check_components!`](check_components.md), or use [`delegate_and_check_components!`](delegate_and_check_components.md) to wire and check in one step — the recommended choice for a main context's wiring, with plain `delegate_components!` reserved for intermediary provider tables. When a component is defined inside a namespace, see [`#[cgp_namespace]`](cgp_namespace.md).
 
 ## Source
 
-The macro entry point is `delegate_components` in [crates/macros/cgp-macro-lib/src/delegate_components.rs](../../../crates/macros/cgp-macro-lib/src/delegate_components.rs), which parses a `DelegateTable`, validates that no attributes are present, evaluates it, and emits the tokens. The logic lives in [crates/macros/cgp-macro-core/src/types/delegate_component/](../../../crates/macros/cgp-macro-core/src/types/delegate_component/): the top-level table and the `new` keyword in `table/main.rs`, key parsing (single, array/`Multi`, path) in `key/`, value parsing including the nested-table form in `value/`, and the `DelegateComponent`/`IsProviderFor` impl construction in `mapping/eval.rs`. Attribute rejection is in `validate_attributes.rs`. Expansion snapshots are in [crates/tests/cgp-tests/src/tests/check_components.rs](../../../crates/tests/cgp-tests/src/tests/check_components.rs) and [crates/tests/cgp-tests/src/tests/delegate_and_check_components.rs](../../../crates/tests/cgp-tests/src/tests/delegate_and_check_components.rs).
+The macro entry point is `delegate_components` in [crates/macros/cgp-macro-lib/src/delegate_components.rs](../../../crates/macros/cgp-macro-lib/src/delegate_components.rs), which parses a `DelegateTable`, validates that no attributes are present, evaluates it, and emits the tokens. The logic lives in [crates/macros/cgp-macro-core/src/types/delegate_component/](../../../crates/macros/cgp-macro-core/src/types/delegate_component/): the top-level table and the `new` keyword in `table/main.rs`, key parsing (single, array/`Multi`, path) in `key/`, value parsing including the nested-table form in `value/`, and the `DelegateComponent`/`IsProviderFor` impl construction in `mapping/eval.rs`. Attribute rejection is in `validate_attributes.rs`. Expansion snapshots covering the single-entry, array, and generic-table forms are in [crates/tests/cgp-tests/tests/component_tests/delegate_components/](../../../crates/tests/cgp-tests/tests/component_tests/delegate_components/), and the namespace-header form (`namespace …;`, `@`-path keys) is exercised by the namespace snapshots in [crates/tests/cgp-tests/tests/namespace_tests/namespace_macro/](../../../crates/tests/cgp-tests/tests/namespace_tests/namespace_macro/).

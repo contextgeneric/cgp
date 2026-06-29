@@ -18,7 +18,7 @@ pub struct UseFieldRef<Tag, Value>(pub PhantomData<(Tag, Value)>);
 pub type WithFieldRef<Tag, Value> = WithProvider<UseFieldRef<Tag, Value>>;
 ```
 
-`Tag` names the field, as in [`UseField`](use_field.md), and `Value` is the type the getter exposes — the type the stored field can be borrowed as via `AsRef<Value>`. The `WithFieldRef<Tag, Value>` alias wraps the provider in [`WithProvider`](with_provider.md), so a getter component can be backed by a ref-style field accessor through the macro-generated `WithProvider` impl.
+`Tag` names the field, as in [`UseField`](use_field.md), and `Value` is the type the getter exposes — the type the stored field can be borrowed as via `AsRef<Value>`. The `WithFieldRef<Tag, Value>` alias wraps the provider in [`WithProvider`](with_provider.md), so a getter component can be backed by a ref-style field accessor through the macro-generated `WithProvider` impl. Unlike the more common [`UseField`](use_field.md), neither `UseFieldRef` nor `WithFieldRef` is re-exported through `cgp::prelude`; reach them through `cgp::core::field::impls`.
 
 ## Implementations
 
@@ -47,6 +47,7 @@ A typical use exposes a `&str` getter over a context that stores the name as a `
 
 ```rust
 use cgp::prelude::*;
+use cgp::core::field::impls::UseFieldRef; // not re-exported through the prelude
 
 #[cgp_getter]
 pub trait HasName {

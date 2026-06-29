@@ -12,7 +12,7 @@ Crucially, a namespace is *not* a context. It is a trait — named after the nam
 
 ## Path-based redirection
 
-What lets one namespace inherit from another, and lets a context shadow a single inherited entry without disturbing the rest, is that the forwarding is keyed by a *path* rather than a bare component name. A path is a type-level list of symbols and component names — written with the `@` sigil as a dotted sequence like `@MyFooComponent`, `@app.ErrorRaiserComponent`, or `@cgp.core.error` — and each namespace entry redirects a key along such a path instead of naming a provider outright. The redirection is carried by the [`RedirectLookup`](../provider/redirect_lookup.md) provider, which resolves a key by walking the given path inside whatever table it is handed:
+What lets one namespace inherit from another, and lets a context shadow a single inherited entry without disturbing the rest, is that the forwarding is keyed by a *path* rather than a bare component name. A path is a type-level list of symbols and component names — written with the `@` sigil as a dotted sequence like `@MyFooComponent`, `@app.ErrorRaiserComponent`, or `@cgp.core.error` — and each namespace entry redirects a key along such a path instead of naming a provider outright. The redirection is carried by the [`RedirectLookup`](../providers/redirect_lookup.md) provider, which resolves a key by walking the given path inside whatever table it is handed:
 
 ```rust
 cgp_namespace! {
@@ -27,7 +27,7 @@ This says that when `MyNamespace` is asked for `FooProviderComponent`, it should
 
 ## Attaching components and joining namespaces
 
-A namespace is consumed from two sides: components register themselves into it, and contexts join it. A component attaches to a namespace through the `#[prefix(...)]` attribute on its trait, which emits one extra impl registering the component into the named namespace under a path prefix. CGP's own [`HasErrorType`](../traits/has_error_type.md), for instance, carries `#[prefix(@cgp.core.error in DefaultNamespace)]`, placing it into the built-in `DefaultNamespace` under the `cgp.core.error` prefix so any context joining that namespace inherits the standard error wiring. A context joins a namespace inside [`delegate_components!`](../macros/delegate_components.md) with a `namespace` header line, after which every lookup it cannot resolve directly forwards through the namespace:
+A namespace is consumed from two sides: components register themselves into it, and contexts join it. A component attaches to a namespace through the `#[prefix(...)]` attribute on its trait, which emits one extra impl registering the component into the named namespace under a path prefix. CGP's own [`HasErrorType`](../components/has_error_type.md), for instance, carries `#[prefix(@cgp.core.error in DefaultNamespace)]`, placing it into the built-in `DefaultNamespace` under the `cgp.core.error` prefix so any context joining that namespace inherits the standard error wiring. A context joins a namespace inside [`delegate_components!`](../macros/delegate_components.md) with a `namespace` header line, after which every lookup it cannot resolve directly forwards through the namespace:
 
 ```rust
 delegate_components! {
@@ -59,7 +59,7 @@ cgp_namespace! {
 
 ## Related constructs
 
-Namespaces are defined with [`cgp_namespace!`](../macros/cgp_namespace.md), whose `#[prefix(...)]` attribute (on a [`#[cgp_component]`](../macros/cgp_component.md) trait) registers a component into a namespace and whose entries are resolved through the [`RedirectLookup`](../provider/redirect_lookup.md) provider. Inheritance and per-type default lookups go through the [`DefaultNamespace` / `DefaultImpls` traits](../traits/default_namespace.md) in `cgp-component`. Every `@` path desugars into a [`PathCons`](../types/path_cons.md) type-level list built by the [`Path!`](../macros/path.md) macro. A context joins a namespace inside [`delegate_components!`](../macros/delegate_components.md) via its `namespace` header, or [`delegate_and_check_components!`](../macros/delegate_and_check_components.md) to join and verify at once; the underlying per-key table that `RedirectLookup` walks is [`DelegateComponent`](../traits/delegate_component.md). There is no `cgp_preset!` macro — presets are expressed entirely through namespaces.
+Namespaces are defined with [`cgp_namespace!`](../macros/cgp_namespace.md), whose `#[prefix(...)]` attribute (on a [`#[cgp_component]`](../macros/cgp_component.md) trait) registers a component into a namespace and whose entries are resolved through the [`RedirectLookup`](../providers/redirect_lookup.md) provider. Inheritance and per-type default lookups go through the [`DefaultNamespace` / `DefaultImpls` traits](../traits/default_namespace.md) in `cgp-component`. Every `@` path desugars into a [`PathCons`](../types/path_cons.md) type-level list built by the [`Path!`](../macros/path.md) macro. A context joins a namespace inside [`delegate_components!`](../macros/delegate_components.md) via its `namespace` header, or [`delegate_and_check_components!`](../macros/delegate_and_check_components.md) to join and verify at once; the underlying per-key table that `RedirectLookup` walks is [`DelegateComponent`](../traits/delegate_component.md). There is no `cgp_preset!` macro — presets are expressed entirely through namespaces.
 
 ## Source
 

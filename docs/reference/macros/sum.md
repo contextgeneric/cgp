@@ -74,7 +74,7 @@ type Token = Sum![u32, String, bool];
 
 ## Related constructs
 
-`Sum!` is the coproduct counterpart to [`Product!`](product.md): the two share a right-nested shape, but `Sum!` branches with `Either` and terminates in the uninhabited `Void`, while `Product!` pairs with `Cons` and terminates in `Nil`. Its branches are typically [`Field`](../types/field.md) entries whose tags are [`Symbol!`](symbol.md) variant names. The sum type as a whole is what [`#[derive(HasFields)]`](../derives/derive_has_fields.md) assigns to an enum, and it underpins the extensible-variant derives `CgpVariant` and `FromVariant`, which build and consume individual `Either` branches. For struct fields, the per-field tags are produced by [`#[derive(HasField)]`](../derives/derive_has_field.md).
+`Sum!` is the coproduct counterpart to [`Product!`](product.md): the two share a right-nested shape, but `Sum!` branches with [`Either`](../types/either.md) and terminates in the uninhabited `Void`, while `Product!` pairs with [`Cons`](../types/cons.md) and terminates in `Nil`. Its branches are typically [`Field`](../types/field.md) entries whose tags are [`Symbol!`](symbol.md) variant names. The sum type as a whole is what [`#[derive(HasFields)]`](../derives/derive_has_fields.md) assigns to an enum, and it underpins the extensible-variant derives [`#[derive(CgpVariant)]`](../derives/derive_cgp_variant.md) and [`#[derive(FromVariant)]`](../derives/derive_from_variant.md), which build and consume individual `Either` branches. For struct fields, the per-field tags are produced by [`#[derive(HasField)]`](../derives/derive_has_field.md).
 
 ## Source
 

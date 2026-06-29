@@ -22,11 +22,11 @@ pub enum Shape {
 }
 ```
 
-Each single-payload variant's name becomes a type-level string `Symbol!` used as the variant's `Tag`, and its payload type becomes the constructor's value type. Generic parameters on the enum are carried onto the generated impls. The derive emits exactly the `FromVariant` impls that the variant path of [`#[derive(CgpData)]`](derive_cgp_data.md) emits — that slice in isolation.
+Each variant's name becomes a type-level string `Symbol!` used as the variant's `Tag`, and its payload type becomes the constructor's value type. Every variant must carry exactly one unnamed payload — a single-field tuple variant such as `Circle(Circle)`; a fieldless, multi-field, or struct-style variant is a compile error. Generic parameters on the enum are carried onto the generated impls. The derive emits exactly the `FromVariant` impls that the variant path of [`#[derive(CgpData)]`](derive_cgp_data.md) emits — that slice in isolation.
 
 ## Expansion
 
-`#[derive(FromVariant)]` expands into one [`FromVariant`](../../../crates/core/cgp-field/src/traits/from_variant.rs) impl per variant and nothing else. The symbols below are abbreviated as `Symbol!("Name")` in place of the full `Symbol<Len, Chars<...>>` form. Starting from:
+`#[derive(FromVariant)]` expands into one [`FromVariant`](../traits/from_variant.md) impl per variant and nothing else. The symbols below are abbreviated as `Symbol!("Name")` in place of the full `Symbol<Len, Chars<...>>` form. Starting from:
 
 ```rust
 #[derive(FromVariant)]
@@ -41,14 +41,14 @@ the derive emits a constructor keyed by each variant's name symbol, with the pay
 ```rust
 impl FromVariant<Symbol!("Circle")> for Shape {
     type Value = Circle;
-    fn from_variant(_tag: PhantomData<Symbol!("Circle")>, value: Circle) -> Self {
+    fn from_variant(_tag: PhantomData<Symbol!("Circle")>, value: Self::Value) -> Self {
         Self::Circle(value)
     }
 }
 
 impl FromVariant<Symbol!("Rectangle")> for Shape {
     type Value = Rectangle;
-    fn from_variant(_tag: PhantomData<Symbol!("Rectangle")>, value: Rectangle) -> Self {
+    fn from_variant(_tag: PhantomData<Symbol!("Rectangle")>, value: Self::Value) -> Self {
         Self::Rectangle(value)
     }
 }
@@ -78,7 +78,11 @@ The call is equivalent to `Shape::Circle(circle)`, but the variant is selected b
 
 ## Related constructs
 
-`#[derive(FromVariant)]` is one slice of the variant output of [`#[derive(CgpData)]`](derive_cgp_data.md) and [`#[derive(CgpVariant)]`](derive_cgp_variant.md); those derives include it alongside the [`#[derive(ExtractField)]`](derive_extract_field.md) extractor and the [`#[derive(HasFields)]`](derive_has_fields.md) representation traits. Its closest relative is `ExtractField`, the reverse operation that takes a variant out rather than putting one in. For structs, the analogous field-setting building block is [`#[derive(BuildField)]`](derive_build_field.md). The generated constructors correspond to the arms of the enum's [`sum`](../macros/sum.md) representation (`Either`/`Void`).
+`#[derive(FromVariant)]` is one slice of the variant output of [`#[derive(CgpData)]`](derive_cgp_data.md) and [`#[derive(CgpVariant)]`](derive_cgp_variant.md); those derives include it alongside the [`#[derive(ExtractField)]`](derive_extract_field.md) extractor and the [`#[derive(HasFields)]`](derive_has_fields.md) representation traits. Its closest relative is [`ExtractField`](../traits/extract_field.md), the reverse operation that takes a variant out rather than putting one in. For structs, the analogous field-setting building block is [`#[derive(BuildField)]`](derive_build_field.md). The generated constructors correspond to the arms of the enum's [`sum`](../macros/sum.md) representation ([`Either`/`Void`](../types/either.md)).
+
+## Known issues
+
+The derive only accepts enums whose every variant is a single-field tuple variant. A fieldless variant like `Empty`, a multi-field variant like `Pair(A, B)`, or a struct-style variant like `Named { x: A }` causes the macro to fail with the error "Expected variant to contain exactly one unnamed field." There is no way to opt a variant out of the requirement, so an enum that mixes shapes cannot derive the constructor at all.
 
 ## Source
 

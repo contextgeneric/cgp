@@ -16,7 +16,7 @@ The list is a type-level [`Cons`](../types/cons.md) spine — `Cons<GetterA, Con
 pub struct ChainGetters<Getters>(pub PhantomData<Getters>);
 ```
 
-`Getters` is a [`Cons`](../types/cons.md)/`Nil` list whose elements are field getters. The provider has no `With...` alias; it is used directly in wiring as the provider for a getter component, or composed inside other getter wiring.
+`Getters` is a [`Cons`](../types/cons.md)/`Nil` list whose elements are field getters. The provider has no `With...` alias; it is used directly in wiring as the provider for a getter component, or composed inside other getter wiring. `ChainGetters` is not re-exported through `cgp::prelude`; reach it through `cgp::core::field::impls`.
 
 ## Implementations
 
@@ -61,6 +61,7 @@ A typical use reaches a field on a nested inner context by chaining the getter t
 
 ```rust
 use cgp::prelude::*;
+use cgp::core::field::impls::ChainGetters; // not re-exported through the prelude
 
 #[cgp_getter]
 pub trait HasPort {

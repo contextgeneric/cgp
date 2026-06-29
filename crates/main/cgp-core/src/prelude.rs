@@ -17,7 +17,7 @@ pub use cgp_field::traits::{
 pub use cgp_field::types::{Chars, Cons, Either, Field, Index, Life, Nil, Symbol, Void};
 pub use cgp_macro::{
     BuildField, CgpData, CgpRecord, CgpVariant, ExtractField, FromVariant, HasField, HasFields,
-    Product, Sum, Symbol, cgp_auto_getter, cgp_component, cgp_fn, cgp_getter, cgp_impl,
+    Path, Product, Sum, Symbol, cgp_auto_getter, cgp_component, cgp_fn, cgp_getter, cgp_impl,
     cgp_namespace, cgp_new_provider, cgp_provider, cgp_type, check_components,
     delegate_and_check_components, delegate_components, product,
 };

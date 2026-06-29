@@ -53,7 +53,7 @@ Both `borrowed` and `made` have the same type and are consumed the same way; onl
 
 ## Related constructs
 
-`MRef` is one of the getter return modes recognized by the field-getter macros: a getter declared to return `MRef<'a, T>` over `&self` generates a borrowing accessor, parallel to how returning `&T`, `Option<&T>`, or `&str` selects other accessor shapes. It is therefore commonly seen with [`#[cgp_getter]`](../macros/cgp_getter.md) and the [`HasField`](../traits/has_field.md) access it builds on, and with the [`UseField`](../provider/use_field.md) provider that wires those getters. Its lifetime is an ordinary borrow lifetime and is unrelated to the type-level lifetime lift [`Life`](life.md), which serves a different purpose in provider wiring.
+`MRef` is one of the getter return modes recognized by the field-getter macros: a getter declared to return `MRef<'a, T>` over `&self` generates a borrowing accessor, parallel to how returning `&T`, `Option<&T>`, or `&str` selects other accessor shapes. It is therefore commonly seen with [`#[cgp_getter]`](../macros/cgp_getter.md) and the [`HasField`](../traits/has_field.md) access it builds on, and with the [`UseField`](../providers/use_field.md) provider that wires those getters. Its lifetime is an ordinary borrow lifetime and is unrelated to the type-level lifetime lift [`Life`](life.md), which serves a different purpose in provider wiring.
 
 ## Source
 

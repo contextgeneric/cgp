@@ -41,7 +41,7 @@ where
 
 Two tags appear here for a reason. `OutTag` is the tag the *component* asks under (the getter component's name), while `Tag` is the *field* tag the provider was parameterized with. The impl ignores `OutTag` entirely and reads `Tag` from the context, which is precisely the decoupling: the component's identity and the field name are independent. The associated `Value` is taken from the context's `HasField<Tag>` impl, so the returned reference is to the real field.
 
-`UseField<Tag>` also implements the mutable getter [`MutFieldGetter`](../traits/has_field.md) the same way, requiring `Context: HasFieldMut<Tag>` and returning `&mut Value` via `get_field_mut`. And it implements [`TypeProvider`](../traits/has_type.md), reporting the field's `Value` type as an abstract type — so the *type* of a field can itself be wired as a context's abstract type. Each impl is paired with an `IsProviderFor` impl carrying the same `HasField` bound, so delegation propagates the dependency and check traits report a missing field precisely.
+`UseField<Tag>` also implements the mutable getter [`MutFieldGetter`](../traits/has_field.md) the same way, requiring `Context: HasFieldMut<Tag>` and returning `&mut Value` via `get_field_mut`. And it implements [`TypeProvider`](../components/has_type.md), reporting the field's `Value` type as an abstract type — so the *type* of a field can itself be wired as a context's abstract type. Each impl is paired with an `IsProviderFor` impl carrying the same `HasField` bound, so delegation propagates the dependency and check traits report a missing field precisely.
 
 ## Examples
 

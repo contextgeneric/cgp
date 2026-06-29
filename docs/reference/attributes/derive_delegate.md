@@ -6,7 +6,7 @@
 
 `#[derive_delegate]` solves the problem of choosing a different provider per value of a generic parameter. A component with a generic parameter, such as `CanCalculateArea<Shape>`, often wants `Rectangle` to be handled by one provider and `Circle` by another. Without help, the author would have to write a dispatcher provider by hand — an impl of the provider trait that looks up the right delegate based on the `Shape` type and forwards every method to it. That impl is mechanical and identical in shape across every component, differing only in which generic parameter is the dispatch key.
 
-The attribute generates that dispatcher for you. Adding `#[derive_delegate(UseDelegate<Shape>)]` to the component emits an implementation of the provider trait for [`UseDelegate`](../provider/use_delegate.md) that treats its inner `Components` type as a type-level table keyed on `Shape`, looks up the delegate for each concrete `Shape`, and forwards the call. A context then wires the component to `UseDelegate<SomeTable>` and fills `SomeTable` with one provider per shape, getting per-type dispatch without writing the dispatcher.
+The attribute generates that dispatcher for you. Adding `#[derive_delegate(UseDelegate<Shape>)]` to the component emits an implementation of the provider trait for [`UseDelegate`](../providers/use_delegate.md) that treats its inner `Components` type as a type-level table keyed on `Shape`, looks up the delegate for each concrete `Shape`, and forwards the call. A context then wires the component to `UseDelegate<SomeTable>` and fills `SomeTable` with one provider per shape, getting per-type dispatch without writing the dispatcher.
 
 A component may need to dispatch on more than one parameter, and `#[derive_delegate]` supports this by accepting several attributes, each naming its own dispatcher type and key. The `UseDelegate` type CGP provides is the default dispatcher, but the same machinery works for any wrapper type, so a component can dispatch on one parameter through `UseDelegate` and on another through a custom dispatcher such as `UseInputDelegate`. Only the parameter named in the dispatcher's angle brackets is used as the lookup key; the others flow through unchanged.
 
@@ -68,7 +68,9 @@ where
 }
 ```
 
-The dispatch key is wrapped in a tuple, `DelegateComponent<(Shape), ...>`, so that a multi-parameter key composes uniformly. The `Components` type is the inner table: when a context looks up the entry for a concrete `Shape`, `DelegateComponent` yields the `Delegate` provider, and the impl forwards `area` to it. The provider trait's other parameters — here just `Context` — pass through to the delegate unchanged.
+The dispatch key is wrapped in a tuple, `DelegateComponent<(Shape), ...>`, so that a multi-parameter key composes uniformly. The `Components` type is the inner table: when a context looks up the entry for a concrete `Shape`, `DelegateComponent` yields the `Delegate` provider, and the impl forwards `area` to it. The provider trait's other parameters — here just `Context` — pass through to the delegate unchanged. The generic added for the table is named `__Components__` and the looked-up delegate `__Delegate__` in the real output, alongside the provider trait's own context generic `__Context__`; the shorter names are used here for readability.
+
+When the component carries supertraits, they ride along into the dispatcher. The provider trait records each supertrait as a `Context: Supertrait` predicate in its `where` clause, and because the dispatcher impl reuses the provider trait's generics, that predicate appears on the generated `UseDelegate` impl as well — so a `#[derive_delegate]` on a trait like `CanRaiseError<SourceError>: HasErrorType` produces a dispatcher whose `where` clause also requires `Context: HasErrorType`.
 
 When several `#[derive_delegate]` attributes are present, one such impl is generated per attribute, each keyed on its own parameter. The `CanCompute` component above produces one impl for `UseDelegate<Components>` keyed on `(Code)` and a second for `UseInputDelegate<Components>` keyed on `(Input)`, both forwarding `compute` to the looked-up delegate. The two dispatchers are independent, so a context can pick which parameter to dispatch on, or compose them by nesting one table inside another.
 
@@ -139,7 +141,7 @@ Now `MyApp` implements `CanCalculateArea<Rectangle>` through `RectangleArea` and
 
 ## Related constructs
 
-`#[derive_delegate]` is an attribute on [`#[cgp_component]`](../macros/cgp_component.md) and only makes sense for components that carry generic parameters. It generates an impl for the [`UseDelegate`](../provider/use_delegate.md) provider (or a user-defined dispatcher of the same shape), whose role and behavior that document covers in full. The inner lookup table it dispatches through is populated with [`delegate_components!`](../macros/delegate_components.md), whose nested-table syntax is the idiomatic way to define `UseDelegate<...>` wirings in place.
+`#[derive_delegate]` is an attribute on [`#[cgp_component]`](../macros/cgp_component.md) and only makes sense for components that carry generic parameters. It generates an impl for the [`UseDelegate`](../providers/use_delegate.md) provider (or a user-defined dispatcher of the same shape), whose role and behavior that document covers in full. The inner lookup table it dispatches through is populated with [`delegate_components!`](../macros/delegate_components.md), whose nested-table syntax is the idiomatic way to define `UseDelegate<...>` wirings in place.
 
 ## Source
 

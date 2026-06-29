@@ -48,10 +48,10 @@ The same expansion appears verbatim inside the wirings that embed `@`-paths. A [
 
 ## Examples
 
-A path is typically written to express a redirect target. Used directly as a type, `Path!` names a route that a [`RedirectLookup`](../provider/redirect_lookup.md) can resolve against a table:
+A path is typically written to express a redirect target. Used directly as a type, `Path!` names a route that a [`RedirectLookup`](../providers/redirect_lookup.md) can resolve against a table:
 
 ```rust
-use cgp_macro::Path;
+use cgp::prelude::*;
 
 type ErrorRoute = Path!(@app.error.ErrorRaiserComponent);
 // ErrorRoute = PathCons<Symbol!("app"),
@@ -59,7 +59,7 @@ type ErrorRoute = Path!(@app.error.ErrorRaiserComponent);
 //                      PathCons<ErrorRaiserComponent, Nil>>>
 ```
 
-The example imports `Path` from `cgp_macro` directly because the macro is not part of the `cgp::prelude` re-exports — see Known issues. In practice the same syntax is embedded in a namespace table rather than written through the bare macro, since `#[cgp_namespace]` accepts `@`-paths in its entries and is reached through the prelude:
+In practice the same syntax is more often embedded in a namespace table than written through the bare macro, since [`#[cgp_namespace]`](cgp_namespace.md) accepts `@`-paths directly in its entries:
 
 ```rust
 use cgp::prelude::*;
@@ -75,13 +75,9 @@ cgp_namespace! {
 
 Either way the path is the same `PathCons` list; the macro and the namespace simply offer two places to write it.
 
-## Known issues
-
-The `Path!` macro is defined as a `#[proc_macro]` in `cgp-macro` but is not re-exported through `cgp::prelude`, which lists its sibling construction macros `Product`, `Sum`, and `Symbol` but omits `Path`. Code that wants to invoke `Path!` directly must therefore import it from `cgp_macro::Path` rather than relying on `use cgp::prelude::*;`. The `@`-path *syntax* the macro implements is still fully reachable through the prelude wherever it is embedded — inside [`#[cgp_namespace]`](cgp_namespace.md) entries and `#[prefix(...)]` attributes — so the gap affects only standalone use of the bare macro.
-
 ## Related constructs
 
-`Path!` constructs the [`PathCons`](../types/path_cons.md) spine, the type it desugars to, and its lowercase segments are [`Symbol!`](symbol.md) type-level strings. It is the routing-list counterpart to the product and sum construction macros [`Product!`](product.md) and `Sum!`, sharing their right-fold-onto-`Nil` shape. The paths it builds are consumed by [`RedirectLookup`](../provider/redirect_lookup.md) when resolving a delegation, and its `@`-path syntax is embedded throughout [`#[cgp_namespace]`](cgp_namespace.md), where namespace entries and `#[prefix(...)]` attributes use the same dotted form.
+`Path!` constructs the [`PathCons`](../types/path_cons.md) spine, the type it desugars to, and its lowercase segments are [`Symbol!`](symbol.md) type-level strings. It is the routing-list counterpart to the product and sum construction macros [`Product!`](product.md) and [`Sum!`](sum.md), sharing their right-fold-onto-`Nil` shape. The paths it builds are consumed by [`RedirectLookup`](../providers/redirect_lookup.md) when resolving a delegation, and its `@`-path syntax is embedded throughout [`#[cgp_namespace]`](cgp_namespace.md), where namespace entries and `#[prefix(...)]` attributes use the same dotted form.
 
 ## Source
 

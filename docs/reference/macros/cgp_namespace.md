@@ -65,7 +65,7 @@ pub trait MyNamespace<__Table__> {
 }
 ```
 
-Each `=>` entry becomes an `impl` of that trait for the entry's key, whose `Delegate` is a [`RedirectLookup`](../provider/redirect_lookup.md) pointing the table at the entry's path. The `@MyFooComponent` path desugars into a `PathCons<…, Nil>` type-level list:
+Each `=>` entry becomes an `impl` of that trait for the entry's key, whose `Delegate` is a [`RedirectLookup`](../providers/redirect_lookup.md) pointing the table at the entry's path. The `@MyFooComponent` path desugars into a `PathCons<…, Nil>` type-level list:
 
 ```rust
 impl<__Table__> MyNamespace<__Table__> for FooProviderComponent {
@@ -176,7 +176,7 @@ Inheritance composes the same way at the namespace level: `ExtendedNamespace: De
 
 ## Related constructs
 
-`cgp_namespace!` sits between component definitions and context wiring, so it relates to constructs on both sides. [`#[cgp_component]`](cgp_component.md) defines the components whose keys a namespace maps, and its [`#[prefix(...)]`](cgp_component.md) attribute is what registers a component into a namespace under a path. [`delegate_components!`](delegate_components.md) is where a context joins a namespace (via its `namespace` header) and where individual overrides are written; [`delegate_and_check_components!`](delegate_and_check_components.md) does the same while also verifying the resulting wiring. The namespace's `Delegate` entries are resolved through [`RedirectLookup`](../provider/redirect_lookup.md), and per-type defaults are commonly expressed through [`use_delegate`](../provider/use_delegate.md)-style dispatch and the `DefaultNamespace` / `DefaultImpls1` traits in `cgp-component`. The underlying per-key table machinery is [`DelegateComponent`](../traits/delegate_component.md), which `RedirectLookup` walks at resolution time.
+`cgp_namespace!` sits between component definitions and context wiring, so it relates to constructs on both sides. [`#[cgp_component]`](cgp_component.md) defines the components whose keys a namespace maps, and its [`#[prefix(...)]`](cgp_component.md) attribute is what registers a component into a namespace under a path. [`delegate_components!`](delegate_components.md) is where a context joins a namespace (via its `namespace` header) and where individual overrides are written; [`delegate_and_check_components!`](delegate_and_check_components.md) does the same while also verifying the resulting wiring. The namespace's `Delegate` entries are resolved through [`RedirectLookup`](../providers/redirect_lookup.md), and per-type defaults are commonly expressed through [`use_delegate`](../providers/use_delegate.md)-style dispatch and the `DefaultNamespace` / `DefaultImpls1` traits in `cgp-component`. The underlying per-key table machinery is [`DelegateComponent`](../traits/delegate_component.md), which `RedirectLookup` walks at resolution time.
 
 ## Source
 

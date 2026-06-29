@@ -23,7 +23,7 @@ The default provider name is keyed off the *associated type* name, not the trait
 
 ## Wiring a concrete type with `UseType`
 
-A context binds an abstract type to a concrete one by wiring its provider component to [`UseType<T>`](../provider/use_type.md). Because every abstract-type provider has the same trivial shape — "the associated type *is* this concrete type" — `#[cgp_type]` generates that shape once as a blanket impl of the provider trait for `UseType<Scalar>`, setting the associated type to the generic parameter. A context then names the concrete type directly in its delegation table:
+A context binds an abstract type to a concrete one by wiring its provider component to [`UseType<T>`](../providers/use_type.md). Because every abstract-type provider has the same trivial shape — "the associated type *is* this concrete type" — `#[cgp_type]` generates that shape once as a blanket impl of the provider trait for `UseType<Scalar>`, setting the associated type to the generic parameter. A context then names the concrete type directly in its delegation table:
 
 ```rust
 use cgp::prelude::*;
@@ -64,7 +64,7 @@ Here `Rectangle` and `Circle` carry no scalar type of their own; the context tha
 
 ## The canonical example: `HasErrorType`
 
-CGP's most-used abstract type is [`HasErrorType`](../traits/has_error_type.md), which supplies one `Error` type that an entire context's code agrees on. It is defined with `#[cgp_type]` exactly as above:
+CGP's most-used abstract type is [`HasErrorType`](../components/has_error_type.md), which supplies one `Error` type that an entire context's code agrees on. It is defined with `#[cgp_type]` exactly as above:
 
 ```rust
 #[cgp_type]
@@ -77,7 +77,7 @@ A context wires `ErrorTypeProviderComponent` to `UseType<anyhow::Error>` (or any
 
 ## Related constructs
 
-Abstract types are defined with [`#[cgp_type]`](../macros/cgp_type.md), the abstract-type specialization of [`#[cgp_component]`](../macros/cgp_component.md). They are built on CGP's foundational [`HasType`/`TypeProvider`](../traits/has_type.md) component, the built-in abstract-type machinery that `#[cgp_type]` adapts. A context binds a concrete type through the [`UseType` provider](../provider/use_type.md), and other definitions import an abstract type and rewrite bare mentions of it with the [`#[use_type]` attribute](../attributes/use_type.md) — a different construct from the provider despite the shared name. [`HasErrorType`](../traits/has_error_type.md) is the canonical abstract type, supplying a shared `Error` type across a context's code. Abstract-type components are wired with [`delegate_components!`](../macros/delegate_components.md) and verified with [`check_components!`](../macros/check_components.md) like any other component.
+Abstract types are defined with [`#[cgp_type]`](../macros/cgp_type.md), the abstract-type specialization of [`#[cgp_component]`](../macros/cgp_component.md). They are built on CGP's foundational [`HasType`/`TypeProvider`](../components/has_type.md) component, the built-in abstract-type machinery that `#[cgp_type]` adapts. A context binds a concrete type through the [`UseType` provider](../providers/use_type.md), and other definitions import an abstract type and rewrite bare mentions of it with the [`#[use_type]` attribute](../attributes/use_type.md) — a different construct from the provider despite the shared name. [`HasErrorType`](../components/has_error_type.md) is the canonical abstract type, supplying a shared `Error` type across a context's code. Abstract-type components are wired with [`delegate_components!`](../macros/delegate_components.md) and verified with [`check_components!`](../macros/check_components.md) like any other component.
 
 ## Source
 

@@ -96,7 +96,7 @@ where
 
 The generated context type parameter is literally `__Context__`, not `Context` — the same reserved name `#[cgp_component]` uses — and references to it inside the impl appear as `Self`. The `Symbol!("...")` shorthand stands for the type-level string the macro actually emits (for `width`, `Symbol<5, Chars<'w', Chars<'i', Chars<'d', Chars<'t', Chars<'h', Nil>>>>>>`). Each implicit binding follows the same conversion rules as [`#[cgp_auto_getter]`](cgp_auto_getter.md): an owned value gets a trailing `.clone()`, and a `&str` return gets `.as_str()`, while a borrowed `&Name` is taken by reference with no conversion.
 
-Generics and the `where` clause expand according to the split described above. Given the `Scalar` example, the generic goes on both trait and impl while the bound stays on the impl, ordered after the implicit `HasField` bounds:
+Generics and the `where` clause expand according to the split described above. Given the `Scalar` example, the generic goes on both trait and impl while the function's `where` bound stays on the impl, ordered before the implicit `HasField` bounds — the implicit bounds are always appended last:
 
 ```rust
 pub trait RectangleArea<Scalar> {

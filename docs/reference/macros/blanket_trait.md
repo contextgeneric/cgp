@@ -107,7 +107,7 @@ where
 }
 ```
 
-When the associated type declares bounds, those bounds are moved into the impl's `where` clause as predicates on the introduced parameter. Declaring `type FooBar: Clone` adds `FooBar: Clone` to the generated `where` clause alongside the supertrait requirement. Associated constants are forwarded in the same way as methods: their default expressions become the impl's constant definitions, and the trait keeps only the declaration. A method, constant, or associated item without a usable default is an error, since the macro has no body to forward.
+When the associated type declares bounds, those bounds are moved into the impl's `where` clause as predicates on the introduced parameter. Declaring `type FooBar: Clone` adds `FooBar: Clone` to the generated `where` clause alongside the supertrait requirement. Associated constants are forwarded in the same way as methods: their default expressions become the impl's constant definitions, and the trait keeps only the declaration. A method or constant without a usable default is an error, since the macro has no body to forward; associated types need no default, because the macro supplies the assignment (`type FooBar = FooBar;`) itself from the introduced parameter.
 
 ## Examples
 

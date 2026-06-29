@@ -24,7 +24,7 @@ pub type ErrorOf<Context> = <Context as HasErrorType>::Error;
 
 The associated `Error` type is the context's abstract error, and its `Debug` bound is required so that `Self::Error` can be used in `.unwrap()` calls and in straightforward error logging without a separate constraint. The `ErrorOf<Context>` alias is the convenient spelling of `<Context as HasErrorType>::Error`, used wherever writing the full associated-type path would be noise.
 
-Because the trait is declared with `#[cgp_type]`, it is a full abstract-type component rather than a plain trait: the macro generates a provider trait (`ErrorTypeProvider`), the component marker, the consumer and provider blanket impls, and a [`UseType`](../provider/use_type.md) blanket impl. The `Debug` bound on `Error` is carried through every generated construct, so any concrete error wired in must implement `Debug`. The `#[prefix(...)]` attribute places the generated names in the error namespace.
+Because the trait is declared with `#[cgp_type]`, it is a full abstract-type component rather than a plain trait: the macro generates a provider trait (`ErrorTypeProvider`), the component marker, the consumer and provider blanket impls, and a [`UseType`](../providers/use_type.md) blanket impl. The `Debug` bound on `Error` is carried through every generated construct, so any concrete error wired in must implement `Debug`. The `#[prefix(...)]` attribute places the generated names in the error namespace.
 
 ## Behavior
 

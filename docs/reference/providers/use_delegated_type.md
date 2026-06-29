@@ -20,11 +20,11 @@ pub struct UseDelegatedType<Components>(pub PhantomData<Components>);
 pub type WithDelegatedType<Components> = WithProvider<UseDelegatedType<Components>>;
 ```
 
-The `Components` parameter is a type that implements [`DelegateComponent`](../traits/delegate_component.md) for each type tag the provider must answer — the same kind of type-level key-value map that `delegate_components!` builds. The `WithDelegatedType<Components>` alias wraps the provider in [`WithProvider`](with_provider.md), so a user-defined [`#[cgp_type]`](../macros/cgp_type.md) component (whose generated `WithProvider` impl forwards to any `TypeProvider`) can be backed by a delegated lookup as well as the built-in [`HasType`](../traits/has_type.md) component.
+The `Components` parameter is a type that implements [`DelegateComponent`](../traits/delegate_component.md) for each type tag the provider must answer — the same kind of type-level key-value map that `delegate_components!` builds. The `WithDelegatedType<Components>` alias wraps the provider in [`WithProvider`](with_provider.md), so a user-defined [`#[cgp_type]`](../macros/cgp_type.md) component (whose generated `WithProvider` impl forwards to any `TypeProvider`) can be backed by a delegated lookup as well as the built-in [`HasType`](../components/has_type.md) component. Neither `UseDelegatedType` nor `WithDelegatedType` is re-exported through `cgp::prelude`; reach them through `cgp::core::types`.
 
 ## Behavior
 
-`UseDelegatedType<Components>` implements [`TypeProvider`](../traits/has_type.md) by looking the type tag `Tag` up in `Components` and reporting the delegate it finds as the abstract type:
+`UseDelegatedType<Components>` implements [`TypeProvider`](../components/has_type.md) by looking the type tag `Tag` up in `Components` and reporting the delegate it finds as the abstract type:
 
 ```rust
 #[cgp_provider(TypeProviderComponent)]
@@ -46,6 +46,7 @@ A typical use defines a lookup table mapping type tags to concrete types and wir
 
 ```rust
 use cgp::prelude::*;
+use cgp::core::types::UseDelegatedType; // not re-exported through the prelude
 
 #[cgp_type]
 pub trait HasScalarType {
@@ -83,7 +84,7 @@ This is what makes `UseDelegatedType` valuable for bundling: the set of concrete
 
 ## Related constructs
 
-`UseDelegatedType` is the type-level counterpart of [`UseDelegate`](use_delegate.md), which performs the same `DelegateComponent` lookup for behavioral (method) components. It resolves through the [`DelegateComponent`](../traits/delegate_component.md) trait, the type-level key-value map that `delegate_components!` populates, and implements the [`HasType` / `TypeProvider`](../traits/has_type.md) component it answers for. Its sibling [`UseType`](use_type.md) is the simpler provider that fixes an abstract type to one concrete type without a lookup. Its `WithDelegatedType` alias is one of the named wrappers around [`WithProvider`](with_provider.md), used to back a [`#[cgp_type]`](../macros/cgp_type.md) component with a delegated lookup.
+`UseDelegatedType` is the type-level counterpart of [`UseDelegate`](use_delegate.md), which performs the same `DelegateComponent` lookup for behavioral (method) components. It resolves through the [`DelegateComponent`](../traits/delegate_component.md) trait, the type-level key-value map that `delegate_components!` populates, and implements the [`HasType` / `TypeProvider`](../components/has_type.md) component it answers for. Its sibling [`UseType`](use_type.md) is the simpler provider that fixes an abstract type to one concrete type without a lookup. Its `WithDelegatedType` alias is one of the named wrappers around [`WithProvider`](with_provider.md), used to back a [`#[cgp_type]`](../macros/cgp_type.md) component with a delegated lookup.
 
 ## Source
 

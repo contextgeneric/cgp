@@ -8,7 +8,7 @@ This document describes the `UseType` **provider** — the struct `UseType<Type>
 
 `UseType` removes the need to hand-write a provider impl every time a context wants to fix an abstract type to a concrete one. An abstract type in CGP is a trait with a single associated type, defined with [`#[cgp_type]`](../macros/cgp_type.md) — for example `trait HasScalarType { type Scalar; }`. Generic code refers to `Self::Scalar` without committing to any particular type, and a concrete context decides what `Scalar` actually is. Without `UseType`, making that decision would mean writing a bespoke provider whose only content is `type Scalar = f64;`, repeated for every abstract type and every concrete choice.
 
-`UseType<T>` is the one provider that captures this trivial shape once and for all: it is a [`TypeProvider`](../traits/has_type.md) that reports its type parameter `T` as the abstract type. Wiring a context's type component to `UseType<f64>` therefore sets that context's abstract type to `f64` with no custom impl. This is the type-level counterpart of how [`UseField`](use_field.md) lets a getter read an arbitrary field by name — a general-purpose provider parameterized by exactly the thing the context wants to supply.
+`UseType<T>` is the one provider that captures this trivial shape once and for all: it is a [`TypeProvider`](../components/has_type.md) that reports its type parameter `T` as the abstract type. Wiring a context's type component to `UseType<f64>` therefore sets that context's abstract type to `f64` with no custom impl. This is the type-level counterpart of how [`UseField`](use_field.md) lets a getter read an arbitrary field by name — a general-purpose provider parameterized by exactly the thing the context wants to supply.
 
 Because the provider carries no runtime data — it is a type-level marker, `PhantomData` and nothing more — `UseType<T>` exists only to be named in a delegation table. It is never constructed as a value during normal use.
 
@@ -26,7 +26,7 @@ The `WithType<Type>` alias wraps `UseType<Type>` in [`WithProvider`](with_provid
 
 ## Behavior
 
-`UseType<Type>` implements the built-in provider trait [`TypeProvider`](../traits/has_type.md) for every context and tag, setting its associated `Type` to the struct's own type parameter:
+`UseType<Type>` implements the built-in provider trait [`TypeProvider`](../components/has_type.md) for every context and tag, setting its associated `Type` to the struct's own type parameter:
 
 ```rust
 #[cgp_provider(TypeProviderComponent)]
@@ -92,7 +92,7 @@ Both forms produce the same result — `App::Scalar` is `f64` — which is why `
 
 ## Related constructs
 
-`UseType` is the provider that [`#[cgp_type]`](../macros/cgp_type.md) generates an impl for, so the two are almost always seen together: `#[cgp_type]` defines the abstract type and `UseType<T>` supplies the concrete one at wiring time. It implements the built-in [`HasType` / `TypeProvider`](../traits/has_type.md) component, the foundation on which all abstract types rest. Its `WithType` alias is one of the named wrappers around [`WithProvider`](with_provider.md). It is the type-level analogue of the [`UseField`](use_field.md) provider that [`#[cgp_getter]`](../macros/cgp_getter.md) generates, and of [`UseDelegate`](use_delegate.md) for behavioral components. For resolving an abstract type through a lookup table rather than a fixed type, see [`UseDelegatedType`](use_delegated_type.md). Do not confuse this provider with the similarly named [`#[use_type]` attribute](../attributes/use_type.md), which imports and rewrites abstract type names in definitions.
+`UseType` is the provider that [`#[cgp_type]`](../macros/cgp_type.md) generates an impl for, so the two are almost always seen together: `#[cgp_type]` defines the abstract type and `UseType<T>` supplies the concrete one at wiring time. It implements the built-in [`HasType` / `TypeProvider`](../components/has_type.md) component, the foundation on which all abstract types rest. Its `WithType` alias is one of the named wrappers around [`WithProvider`](with_provider.md). It is the type-level analogue of the [`UseField`](use_field.md) provider that [`#[cgp_getter]`](../macros/cgp_getter.md) generates, and of [`UseDelegate`](use_delegate.md) for behavioral components. For resolving an abstract type through a lookup table rather than a fixed type, see [`UseDelegatedType`](use_delegated_type.md). Do not confuse this provider with the similarly named [`#[use_type]` attribute](../attributes/use_type.md), which imports and rewrites abstract type names in definitions.
 
 ## Source
 

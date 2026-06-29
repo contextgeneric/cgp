@@ -28,7 +28,7 @@ pub enum Shape {
 }
 ```
 
-For a struct the generated `Fields` type is a product; for an enum it is a sum. Named fields within either are tagged by [`Symbol!`](../macros/symbol.md), and unnamed (tuple) fields by `Index<N>`, exactly as in `HasField`. A single-field tuple struct (a newtype) is treated specially: its `Fields` is the inner type directly, not wrapped in a one-element product. Applying the derive to anything other than a struct or enum is a compile error.
+For a struct the generated `Fields` type is a product; for an enum it is a sum. Named fields within either are tagged by [`Symbol!`](../macros/symbol.md), and unnamed (tuple) fields by [`Index<N>`](../types/index.md), exactly as in `HasField`. A single-field tuple struct (a newtype) is treated specially: its `Fields` is the inner type directly, not wrapped in a one-element product. Applying the derive to anything other than a struct or enum is a compile error.
 
 ## Expansion
 
@@ -42,7 +42,7 @@ pub struct Person {
 }
 ```
 
-each field becomes a [`Field<Tag, Value>`](derive_has_field.md) entry — the `Value` wrapped together with its type-level name tag — and the entries are chained into a [`Product!`](../macros/product.md). The `HasFields` impl names that product, and `HasFieldsRef` names the same product with each value borrowed:
+each field becomes a [`Field<Tag, Value>`](../types/field.md) entry — the `Value` wrapped together with its type-level name tag — and the entries are chained into a [`Product!`](../macros/product.md). The `HasFields` impl names that product, and `HasFieldsRef` names the same product with each value borrowed:
 
 ```rust
 impl HasFields for Person {

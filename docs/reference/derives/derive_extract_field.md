@@ -24,7 +24,7 @@ pub enum Shape {
 }
 ```
 
-Each single-payload variant's name becomes a type-level string `Symbol!` used as the variant's `Tag`, and its payload type becomes its value type. Generic parameters on the enum are carried onto the generated impls. The derive emits the same extractor impls that the variant path of [`#[derive(CgpData)]`](derive_cgp_data.md) emits — it is that slice in isolation, with no `HasFields` representation traits and no [`FromVariant`](../traits/from_variant.md) constructors.
+Each variant's name becomes a type-level string `Symbol!` used as the variant's `Tag`, and its payload type becomes its value type. Every variant must carry exactly one unnamed payload — a single-field tuple variant such as `Circle(Circle)`; a fieldless, multi-field, or struct-style variant is a compile error. Generic parameters on the enum are carried onto the generated impls. The derive emits the same extractor impls that the variant path of [`#[derive(CgpData)]`](derive_cgp_data.md) emits — it is that slice in isolation, with no `HasFields` representation traits and no [`FromVariant`](../traits/from_variant.md) constructors.
 
 ## Expansion
 
@@ -57,8 +57,18 @@ It then emits `PartialData` (both partial enums target `Shape`) and the extracto
 ```rust
 impl HasExtractor for Shape {
     type Extractor = __PartialShape<IsPresent, IsPresent>;
-    fn to_extractor(self) -> Self::Extractor { /* map each variant across */ }
-    fn from_extractor(extractor: Self::Extractor) -> Self { /* map back */ }
+    fn to_extractor(self) -> Self::Extractor {
+        match self {
+            Self::Circle(value) => __PartialShape::Circle(value),
+            Self::Rectangle(value) => __PartialShape::Rectangle(value),
+        }
+    }
+    fn from_extractor(extractor: Self::Extractor) -> Self {
+        match extractor {
+            __PartialShape::Circle(value) => Self::Circle(value),
+            __PartialShape::Rectangle(value) => Self::Rectangle(value),
+        }
+    }
 }
 
 impl HasExtractorRef for Shape {
@@ -128,7 +138,11 @@ After the second extraction the remainder type has both markers `IsVoid`, so `fi
 
 ## Related constructs
 
-`#[derive(ExtractField)]` is one slice of the variant output of [`#[derive(CgpData)]`](derive_cgp_data.md) and [`#[derive(CgpVariant)]`](derive_cgp_variant.md); those derives include it alongside the [`#[derive(FromVariant)]`](derive_from_variant.md) constructors and [`#[derive(HasFields)]`](derive_has_fields.md) representation traits. Its struct analogue is [`#[derive(BuildField)]`](derive_build_field.md), the incremental builder. The generated code stores variants in [`sum`](../macros/sum.md)-shaped partial enums (`Either`/`Void`) and switches on the `MapType` markers `IsPresent`/`IsVoid`.
+`#[derive(ExtractField)]` is one slice of the variant output of [`#[derive(CgpData)]`](derive_cgp_data.md) and [`#[derive(CgpVariant)]`](derive_cgp_variant.md); those derives include it alongside the [`#[derive(FromVariant)]`](derive_from_variant.md) constructors and [`#[derive(HasFields)]`](derive_has_fields.md) representation traits. Its struct analogue is [`#[derive(BuildField)]`](derive_build_field.md), the incremental builder. The capability it generates is the [`ExtractField`](../traits/extract_field.md) trait. The generated code stores variants in [`sum`](../macros/sum.md)-shaped partial enums ([`Either`/`Void`](../types/either.md)) and switches on the [`MapType`](../traits/map_type.md) markers `IsPresent`/`IsVoid`.
+
+## Known issues
+
+The derive only accepts enums whose every variant is a single-field tuple variant. A fieldless variant like `Empty`, a multi-field variant like `Pair(A, B)`, or a struct-style variant like `Named { x: A }` causes the macro to fail with the error "Expected variant to contain exactly one unnamed field." There is no way to opt a variant out of the requirement, so an enum that mixes shapes cannot derive the extractor at all.
 
 ## Source
 

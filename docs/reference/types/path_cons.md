@@ -41,7 +41,7 @@ impl<Other: ?Sized> ConcatPath<Other> for Nil {
 }
 ```
 
-Beyond concatenation, a `PathCons` path is consumed by [`RedirectLookup`](../provider/redirect_lookup.md), the provider that resolves a delegation by walking a context's table along a path. When a namespace or a prefixed component re-routes a lookup, it does so by producing a `RedirectLookup<Components, Path>` whose `Path` is a `PathCons` chain; `RedirectLookup` follows the chain segment by segment until it lands on a concrete provider. The path itself never names a provider — it only describes where to look — so the same path can resolve to different providers depending on the table it is walked against.
+Beyond concatenation, a `PathCons` path is consumed by [`RedirectLookup`](../providers/redirect_lookup.md), the provider that resolves a delegation by walking a context's table along a path. When a namespace or a prefixed component re-routes a lookup, it does so by producing a `RedirectLookup<Components, Path>` whose `Path` is a `PathCons` chain; `RedirectLookup` follows the chain segment by segment until it lands on a concrete provider. The path itself never names a provider — it only describes where to look — so the same path can resolve to different providers depending on the table it is walked against.
 
 ## Examples
 
@@ -74,7 +74,7 @@ Here the lookup steps first through `MyBarComponent` and then through `BarProvid
 
 ## Related constructs
 
-`PathCons` is the routing counterpart to the product spine [`Cons`](cons.md)/`Nil`; it shares the right-nested, `Nil`-terminated shape but its segments are `?Sized` markers rather than sized field values. Its segments are [`Symbol`](chars.md) type-level strings (for lowercase names) and named component or namespace types (for capitalized names). Paths are built by the [`Path!`](../macros/path.md) macro, appended through [`ConcatPath`](../traits/static_format.md), and walked by [`RedirectLookup`](../provider/redirect_lookup.md) when resolving a delegation. They are produced throughout [`#[cgp_namespace]`](../macros/cgp_namespace.md), which uses them to reroute namespace entries and to register prefixed components.
+`PathCons` is the routing counterpart to the product spine [`Cons`](cons.md)/`Nil`; it shares the right-nested, `Nil`-terminated shape but its segments are `?Sized` markers rather than sized field values. Its segments are [`Symbol`](chars.md) type-level strings (for lowercase names) and named component or namespace types (for capitalized names). Paths are built by the [`Path!`](../macros/path.md) macro, appended through [`ConcatPath`](../traits/static_format.md), and walked by [`RedirectLookup`](../providers/redirect_lookup.md) when resolving a delegation. They are produced throughout [`#[cgp_namespace]`](../macros/cgp_namespace.md), which uses them to reroute namespace entries and to register prefixed components.
 
 ## Source
 

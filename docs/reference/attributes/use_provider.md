@@ -1,30 +1,28 @@
 # `#[use_provider]`
 
-`#[use_provider]` improves the ergonomics of higher-order providers by hiding the extra `Self` generic that a provider trait inserts at its first position, in two complementary forms: an outer form that writes the inner provider's bound for you, and an inner form that dispatches a method call to a named provider.
+`#[use_provider]` improves the ergonomics of higher-order providers by writing the inner provider's bound for you, hiding the extra `Self` generic that a provider trait inserts at its first position.
 
 ## Purpose
 
 `#[use_provider]` exists to keep higher-order providers looking like ordinary providers. A higher-order provider is one that takes another provider as a generic parameter and delegates part of its work to it — for example a `ScaledArea` provider that multiplies whatever an `InnerCalculator` computes. The catch is that provider traits move the original `Self` into an explicit leading `Context` parameter, so the inner provider must be bound as `InnerCalculator: AreaCalculator<Self>`, not `InnerCalculator: AreaCalculator`. That stray `<Self>` is exactly the detail a reader does not expect, because the consumer trait it mirrors has no such parameter.
 
-The outer form lets the author write the bound without the `<Self>`. Annotating an impl with `#[use_provider(InnerCalculator: AreaCalculator)]` adds the `Self` argument back automatically and inserts the completed bound into the impl's `where` clause, so the source reads `InnerCalculator: AreaCalculator` while the generated code carries `InnerCalculator: AreaCalculator<Self>`. This preserves the illusion that a provider trait looks the same as the consumer trait it came from.
+`#[use_provider]` lets the author write the bound without the `<Self>`. Annotating an impl with `#[use_provider(InnerCalculator: AreaCalculator)]` adds the `Self` argument back automatically and inserts the completed bound into the impl's `where` clause, so the source reads `InnerCalculator: AreaCalculator` while the generated code carries `InnerCalculator: AreaCalculator<Self>`. This preserves the illusion that a provider trait looks the same as the consumer trait it came from, which is why it is the idiomatic way to declare the inner dependency of a higher-order provider.
 
-The inner form, as described by the `/cgp` skill, addresses the matching problem on the call side: dispatching a method to the inner provider rather than to the context. Because the inner provider is invoked as an associated function — `InnerCalculator::area(self)` — rather than as a method, the call site stops reading like a method chain. The inner `#[use_provider]` is meant to let the author keep the `receiver.method(args)` form and have the macro rewrite it into `Provider::method(receiver, args)`. The `/cgp` skill recommends `#[use_provider]` whenever higher-order providers are written, because without it the extra `Self` parameter and the associated-function calls confuse readers who expect provider code to mirror consumer code.
+The body of such a provider still calls the inner provider as an associated function — `InnerCalculator::area(self)` rather than `self.area()` — because the inner provider is named explicitly rather than routed through the context's own wiring. `#[use_provider]` removes the surprise from the bound; the associated-function call at the use site is written out directly.
 
 ## Syntax
 
-The outer form is an attribute on a `#[cgp_impl]` or `#[cgp_fn]` definition and takes a provider type followed by a colon and the provider trait bounds it should satisfy. The shape is a provider, a colon, and one or more trait bounds joined by `+`:
+`#[use_provider]` is an attribute on a `#[cgp_impl]` or `#[cgp_fn]` definition, taking a provider type followed by a colon and the provider trait bounds it should satisfy. The shape is a provider, a colon, and one or more trait bounds joined by `+`:
 
 ```rust
 #[use_provider(InnerCalculator: AreaCalculator)]
 ```
 
-`InnerCalculator` is the provider type — usually a generic parameter of the impl — and `AreaCalculator` is the provider trait whose `Self`/context argument the macro fills in. The trait may carry its own further generic arguments after the context slot, and several `#[use_provider]` attributes may be stacked to bind more than one inner provider.
-
-The inner form, per the `/cgp` skill, is an attribute applied to a method-call expression inside a function body and takes only the provider type. Written as `#[use_provider(InnerCalculator)] self.area()`, it names the provider that the immediately following method call should be dispatched to. Unlike the outer form it has no colon and no trait bounds — it carries just the provider identifier.
+`InnerCalculator` is the provider type — usually a generic parameter of the impl — and `AreaCalculator` is the provider trait whose `Self`/context argument the macro fills in. The trait may carry its own further generic arguments after the context slot, and these are preserved in order behind the inserted `Self`. Several `#[use_provider]` bounds may be supplied — separated by commas inside one attribute or split across stacked attributes — to bind more than one inner provider.
 
 ## Expansion
 
-The outer form rewrites nothing in the body; it only completes and inserts the `where`-clause bound. Take this higher-order provider, where `ScaledArea` scales the area produced by an inner calculator:
+`#[use_provider]` rewrites nothing in the body; it only completes and inserts the `where`-clause bound. Take this higher-order provider, where `ScaledArea` scales the area produced by an inner calculator:
 
 ```rust
 #[cgp_component(AreaCalculator)]
@@ -82,17 +80,7 @@ where
 }
 ```
 
-The inner form, as the `/cgp` skill describes it, rewrites the annotated call site rather than the `where` clause. It turns the method-call form back into an associated-function call against the named provider, so the following two expressions are equivalent:
-
-```rust
-#[use_provider(InnerCalculator)] self.area()
-```
-
-```rust
-InnerCalculator::area(self)
-```
-
-More generally `#[use_provider(Provider)] receiver.method(args)` becomes `Provider::method(receiver, args)`, dispatching the call to the specified provider instead of routing it through the context's own wiring. This lets the author keep reading `self.area()` while the call is statically directed to `InnerCalculator`. In current code the inner provider is invoked directly in the associated-function form (`InnerCalculator::area(self)`), as the examples above show.
+In both cases the body is left untouched, so it must invoke the inner provider directly as an associated function — `RectangleAreaCalculator::area(self)` — passing `self` as the explicit context argument. `#[use_provider]` supplies only the bound; it does not rewrite the call expression. Calling the inner provider as a method (`self.area()`) would instead route through whatever provider the context itself has wired for `AreaCalculator`, which is a different dispatch and usually not what a higher-order provider wants.
 
 ## Examples
 
@@ -131,7 +119,11 @@ A context can now wire `AreaCalculatorComponent` to `ScaledArea<RectangleArea>`,
 
 ## Related constructs
 
-`#[use_provider]` is written almost exclusively inside [`#[cgp_impl]`](../macros/cgp_impl.md) and [`#[cgp_fn]`](../macros/cgp_fn.md) implementations of components defined with [`#[cgp_component]`](../macros/cgp_component.md), and is the idiomatic tool for the higher-order provider pattern those macros support. It is the provider-bound counterpart to [`#[uses]`](uses.md), which imports consumer-trait dependencies on `Self`; where `#[uses]` adds a bound on the context, `#[use_provider]` adds a bound on a separate provider type and fills in that type's context argument. For dispatching to different providers based on a generic type rather than naming one statically, see [`UseDelegate`](../provider/use_delegate.md) and [`#[derive_delegate]`](derive_delegate.md).
+`#[use_provider]` is written almost exclusively inside [`#[cgp_impl]`](../macros/cgp_impl.md) and [`#[cgp_fn]`](../macros/cgp_fn.md) implementations of components defined with [`#[cgp_component]`](../macros/cgp_component.md), and is the idiomatic tool for the higher-order provider pattern those macros support. It is the provider-bound counterpart to [`#[uses]`](uses.md), which imports consumer-trait dependencies on `Self`; where `#[uses]` adds a bound on the context, `#[use_provider]` adds a bound on a separate provider type and fills in that type's context argument. For dispatching to different providers based on a generic type rather than naming one statically, see [`UseDelegate`](../providers/use_delegate.md) and [`#[derive_delegate]`](derive_delegate.md).
+
+## Known issues
+
+`#[use_provider]` only completes and inserts a `where`-clause bound; there is no call-site form that rewrites a method call into a provider dispatch. The attribute's parser requires the `Provider: Trait` shape — a provider, a colon, and the trait bounds — so a bare `#[use_provider(InnerCalculator)]` applied to an expression is not accepted, and no pass rewrites `receiver.method(args)` into `Provider::method(receiver, args)`. A body that delegates to a named inner provider must therefore spell the associated-function call out itself, as `InnerCalculator::area(self)`.
 
 ## Source
 
