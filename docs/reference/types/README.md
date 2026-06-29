@@ -1,5 +1,0 @@
-# Runtime types and providers (pending)
-
-This directory will hold reference documents for the CGP providers and type-level types that the macros expand into — the zero-sized provider structs used in wiring and the type-level building blocks they operate on. None are written yet; their semantics currently live inside the macro documents that generate and use them.
-
-The planned documents begin with the standard providers that appear directly in user wiring — `use_context.md` (`UseContext`), `use_delegate.md` (`UseDelegate`), `use_field.md` (`UseField`), `use_type_provider.md` (the `UseType` provider, distinct from the [`#[use_type]`](../attributes/use_type.md) attribute), `with_provider.md` (`WithProvider`), and `redirect_lookup.md` (`RedirectLookup`) — and continue with the type-level types `field.md` (`Field`) and `index.md` (`Index`). See the [reference index](../README.md) for how these fit the whole catalog, and [../../CLAUDE.md](../../CLAUDE.md) for the authoring rules every document here must follow.

@@ -4,7 +4,7 @@
 
 ## Purpose
 
-`#[cgp_new_provider]` exists to save the one line of boilerplate that almost always accompanies a fresh provider: the `pub struct ProviderName;` declaration. A provider struct is a type-level-only marker — it is never instantiated and holds no runtime state — so declaring it separately from the impl that gives it meaning is pure ceremony. `#[cgp_new_provider]` folds that declaration into the impl, producing the struct, the provider impl, and the generated [`IsProviderFor`](cgp_component.md) impl together.
+`#[cgp_new_provider]` exists to save the one line of boilerplate that almost always accompanies a fresh provider: the `pub struct ProviderName;` declaration. A provider struct is a type-level-only marker — it is never instantiated and holds no runtime state — so declaring it separately from the impl that gives it meaning is pure ceremony. `#[cgp_new_provider]` folds that declaration into the impl, producing the struct, the provider impl, and the generated [`IsProviderFor`](../traits/is_provider_for.md) impl together.
 
 Use `#[cgp_new_provider]` when you are introducing a new provider; use [`#[cgp_provider]`](cgp_provider.md) when the struct already exists, for example because it is declared with default generic parameters that the attribute form cannot express, or because several impls share one struct.
 

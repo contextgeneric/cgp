@@ -131,7 +131,7 @@ A context can now wire `AreaCalculatorComponent` to `ScaledArea<RectangleArea>`,
 
 ## Related constructs
 
-`#[use_provider]` is written almost exclusively inside [`#[cgp_impl]`](../macros/cgp_impl.md) and [`#[cgp_fn]`](../macros/cgp_fn.md) implementations of components defined with [`#[cgp_component]`](../macros/cgp_component.md), and is the idiomatic tool for the higher-order provider pattern those macros support. It is the provider-bound counterpart to [`#[uses]`](uses.md), which imports consumer-trait dependencies on `Self`; where `#[uses]` adds a bound on the context, `#[use_provider]` adds a bound on a separate provider type and fills in that type's context argument. For dispatching to different providers based on a generic type rather than naming one statically, see [`UseDelegate`](../types/use_delegate.md) and [`#[derive_delegate]`](derive_delegate.md).
+`#[use_provider]` is written almost exclusively inside [`#[cgp_impl]`](../macros/cgp_impl.md) and [`#[cgp_fn]`](../macros/cgp_fn.md) implementations of components defined with [`#[cgp_component]`](../macros/cgp_component.md), and is the idiomatic tool for the higher-order provider pattern those macros support. It is the provider-bound counterpart to [`#[uses]`](uses.md), which imports consumer-trait dependencies on `Self`; where `#[uses]` adds a bound on the context, `#[use_provider]` adds a bound on a separate provider type and fills in that type's context argument. For dispatching to different providers based on a generic type rather than naming one statically, see [`UseDelegate`](../provider/use_delegate.md) and [`#[derive_delegate]`](derive_delegate.md).
 
 ## Source
 

@@ -6,7 +6,7 @@
 
 `Product!` exists to represent an ordered sequence of types as a single type, so that a collection of fields can be reasoned about generically. CGP uses this to describe the *shape* of a struct: the list of its fields, in order, as one type. A type-level list is sometimes called an anonymous product type, because like a tuple it holds several things at once, but unlike a tuple it is built from a recursive `Cons`/`Nil` spine that generic code can take apart one element at a time.
 
-The list is what makes structural, field-by-field operations possible. Because the fields of a struct are exposed as a single list type through [`HasFields`](../derives/derive_has_fields.md), a provider can be written once to iterate, transform, or rebuild *any* struct's fields without knowing the concrete struct, by recursing over the `Cons`/`Nil` structure. A plain tuple cannot be decomposed this way in generic code; the recursive list can.
+The list is what makes structural, field-by-field operations possible. Because the fields of a struct are exposed as a single list type through [`HasFields`](../traits/has_fields.md), a provider can be written once to iterate, transform, or rebuild *any* struct's fields without knowing the concrete struct, by recursing over the `Cons`/`Nil` structure. A plain tuple cannot be decomposed this way in generic code; the recursive list can.
 
 `Product!` and `product!` are two halves of the same idea, split across the type and value levels. `Product!` produces a *type* and is used in type position — associated types, bounds, `type` aliases. `product!` produces a *value* of a matching type and is used in expression position. The uppercase/lowercase convention mirrors Rust's own split between, say, a struct type and a struct literal.
 
@@ -32,14 +32,8 @@ Product![A, B, C]
 ```
 
 ```rust
-// after — readable form
+// after
 Cons<A, Cons<B, Cons<C, Nil>>>
-```
-
-In compiler error messages the same type is abbreviated with Greek-letter aliases, where `Cons` displays as `π` and `Nil` as `ε`:
-
-```rust
-π<A, π<B, π<C, ε>>>
 ```
 
 The two building blocks are defined in `cgp-base-types`. `Cons<Head, Tail>` is a pair holding the first element and the rest of the list as `Cons<Head, Tail>(pub Head, pub Tail)`; chaining it through `Tail` and terminating with the empty `Nil` struct produces a list of any length. An empty `Product![]` is simply `Nil`. The macro constructs the chain by folding the elements from right to left onto `Nil`.
@@ -91,7 +85,7 @@ let row: Row = product![1, "hi".to_string(), true];
 
 ## Related constructs
 
-`Product!` is the product (record-like) counterpart to [`Sum!`](sum.md), which builds the coproduct used for enum variants; the two share the same right-nested shape but `Sum!` terminates in `Void` rather than `Nil`. The list elements are most often [`Field`](../derives/derive_has_fields.md) entries whose tags are [`Symbol!`](symbol.md) field names or [`Index`](../types/index.md) positions. The list type as a whole is what [`#[derive(HasFields)]`](../derives/derive_has_fields.md) assigns to a struct, building on the per-field [`#[derive(HasField)]`](../derives/derive_has_field.md). The `Chars` list inside `Symbol!` is a specialized version of this same `Cons`/`Nil` structure.
+`Product!` is the product (record-like) counterpart to [`Sum!`](sum.md), which builds the coproduct used for enum variants; the two share the same right-nested shape but `Sum!` terminates in `Void` rather than `Nil`. The list elements are most often [`Field`](../types/field.md) entries whose tags are [`Symbol!`](symbol.md) field names or [`Index`](../types/index.md) positions. The list type as a whole is what [`#[derive(HasFields)]`](../derives/derive_has_fields.md) assigns to a struct, building on the per-field [`#[derive(HasField)]`](../derives/derive_has_field.md). The `Chars` list inside `Symbol!` is a specialized version of this same `Cons`/`Nil` structure.
 
 ## Source
 

@@ -87,7 +87,7 @@ impl ToFieldsRef for Person {
 }
 ```
 
-An enum expands to a [`Sum`](../macros/sum.md) instead of a product. Each variant becomes an [`Either`](../macros/sum.md) arm tagged by the variant name with [`Symbol!`](../macros/symbol.md), carrying that variant's own fields as a nested product, and the chain is terminated by `Void`. Starting from:
+An enum expands to a [`Sum`](../macros/sum.md) instead of a product. Each variant becomes an [`Either`](../types/either.md) arm tagged by the variant name with [`Symbol!`](../macros/symbol.md), carrying that variant's own fields as a nested product, and the chain is terminated by `Void`. Starting from:
 
 ```rust
 #[derive(HasFields)]

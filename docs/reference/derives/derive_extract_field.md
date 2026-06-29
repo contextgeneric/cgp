@@ -24,7 +24,7 @@ pub enum Shape {
 }
 ```
 
-Each single-payload variant's name becomes a type-level string `Symbol!` used as the variant's `Tag`, and its payload type becomes its value type. Generic parameters on the enum are carried onto the generated impls. The derive emits the same extractor impls that the variant path of [`#[derive(CgpData)]`](derive_cgp_data.md) emits — it is that slice in isolation, with no `HasFields` representation traits and no [`FromVariant`](derive_from_variant.md) constructors.
+Each single-payload variant's name becomes a type-level string `Symbol!` used as the variant's `Tag`, and its payload type becomes its value type. Generic parameters on the enum are carried onto the generated impls. The derive emits the same extractor impls that the variant path of [`#[derive(CgpData)]`](derive_cgp_data.md) emits — it is that slice in isolation, with no `HasFields` representation traits and no [`FromVariant`](../traits/from_variant.md) constructors.
 
 ## Expansion
 
@@ -38,7 +38,7 @@ pub enum Shape {
 }
 ```
 
-it first emits the owned partial enum `__PartialShape` and the borrowed partial enum `__PartialRefShape`. Each variant's payload is wrapped in a `MapType` marker, where `IsPresent` keeps the payload and `IsVoid` maps it to the empty [`Void`](../macros/sum.md) type; the borrowed form adds a `MapTypeRef` parameter that selects shared or mutable references:
+it first emits the owned partial enum `__PartialShape` and the borrowed partial enum `__PartialRefShape`. Each variant's payload is wrapped in a `MapType` marker, where `IsPresent` keeps the payload and `IsVoid` maps it to the empty [`Void`](../types/either.md) type; the borrowed form adds a `MapTypeRef` parameter that selects shared or mutable references:
 
 ```rust
 pub enum __PartialShape<__F0__: MapType, __F1__: MapType> {

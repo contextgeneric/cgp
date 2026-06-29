@@ -6,7 +6,7 @@
 
 `Sum!` exists to represent a choice among several types as a single type, so that the variants of an enum can be reasoned about generically. Where a [`Product!`](product.md) list holds a value for *every* element at once (a record), a `Sum!` holds a value for exactly *one* element (a tagged union). It is sometimes called an anonymous sum type or coproduct, and it is the structural mirror image of the product: both are right-nested chains over the same kind of spine, but the sum branches at each step instead of pairing.
 
-The sum is what makes structural, variant-by-variant operations possible. Because an enum's variants are exposed as a single sum type through [`HasFields`](../derives/derive_has_fields.md), a provider can be written once to match, dispatch on, or construct *any* enum's variants without knowing the concrete enum, by recursing over the nested branch structure. This is the basis for CGP's extensible-variant machinery, where each variant is handled by walking the chain rather than by writing a hand-rolled `match` against a fixed enum.
+The sum is what makes structural, variant-by-variant operations possible. Because an enum's variants are exposed as a single sum type through [`HasFields`](../traits/has_fields.md), a provider can be written once to match, dispatch on, or construct *any* enum's variants without knowing the concrete enum, by recursing over the nested branch structure. This is the basis for CGP's extensible-variant machinery, where each variant is handled by walking the chain rather than by writing a hand-rolled `match` against a fixed enum.
 
 `Sum!` is the variant-level analogue of `Product!`, and the two are used together. A struct's fields desugar to a `Product!`; an enum's variants desugar to a `Sum!` of the same `Field<Tag, Value>` entries. Knowing one shape tells you the other.
 
@@ -74,7 +74,7 @@ type Token = Sum![u32, String, bool];
 
 ## Related constructs
 
-`Sum!` is the coproduct counterpart to [`Product!`](product.md): the two share a right-nested shape, but `Sum!` branches with `Either` and terminates in the uninhabited `Void`, while `Product!` pairs with `Cons` and terminates in `Nil`. Its branches are typically [`Field`](../derives/derive_has_fields.md) entries whose tags are [`Symbol!`](symbol.md) variant names. The sum type as a whole is what [`#[derive(HasFields)]`](../derives/derive_has_fields.md) assigns to an enum, and it underpins the extensible-variant derives `CgpVariant` and `FromVariant`, which build and consume individual `Either` branches. For struct fields, the per-field tags are produced by [`#[derive(HasField)]`](../derives/derive_has_field.md).
+`Sum!` is the coproduct counterpart to [`Product!`](product.md): the two share a right-nested shape, but `Sum!` branches with `Either` and terminates in the uninhabited `Void`, while `Product!` pairs with `Cons` and terminates in `Nil`. Its branches are typically [`Field`](../types/field.md) entries whose tags are [`Symbol!`](symbol.md) variant names. The sum type as a whole is what [`#[derive(HasFields)]`](../derives/derive_has_fields.md) assigns to an enum, and it underpins the extensible-variant derives `CgpVariant` and `FromVariant`, which build and consume individual `Either` branches. For struct fields, the per-field tags are produced by [`#[derive(HasField)]`](../derives/derive_has_field.md).
 
 ## Source
 

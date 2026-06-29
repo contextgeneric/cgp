@@ -1,6 +1,6 @@
 # `#[cgp_getter]`
 
-`#[cgp_getter]` defines a getter as a full CGP component — the same convenience as [`#[cgp_auto_getter]`](cgp_auto_getter.md), but wired through [`#[cgp_component]`](cgp_component.md) and backed by a [`UseField`](../types/use_field.md) provider so the field name can differ from the method name and the getter can be swapped per context.
+`#[cgp_getter]` defines a getter as a full CGP component — the same convenience as [`#[cgp_auto_getter]`](cgp_auto_getter.md), but wired through [`#[cgp_component]`](cgp_component.md) and backed by a [`UseField`](../provider/use_field.md) provider so the field name can differ from the method name and the getter can be swapped per context.
 
 ## Purpose
 
@@ -60,7 +60,7 @@ where
 
 This is the contrast with `#[cgp_auto_getter]`, whose blanket impl hard-codes the tag to `Symbol!("name")`. Here the tag is a parameter, so wiring to `UseField<Symbol!("first_name")>` supplies `first_name` as `__Tag__` and the getter reads that field instead. The `&str` shorthand is handled the same way in both macros: the `Value` is `String` and the body appends `.as_str()`.
 
-When the getter trait contains exactly one method, the macro additionally generates a `WithProvider` impl, which adapts a [field-getter](../types/use_field.md) provider into the getter component:
+When the getter trait contains exactly one method, the macro additionally generates a `WithProvider` impl, which adapts a [field-getter](../provider/use_field.md) provider into the getter component:
 
 ```rust
 impl<__Context__, __Provider__> NameGetter<__Context__> for WithProvider<__Provider__>
@@ -136,7 +136,7 @@ The direct implementation is the most transparent option and shows that a `#[cgp
 
 ## Related constructs
 
-`#[cgp_getter]` is the wireable counterpart to [`#[cgp_auto_getter]`](cgp_auto_getter.md): the latter emits a single `HasField` blanket impl keyed by the method name, while `#[cgp_getter]` emits a full component plus a `UseField` provider so the field name can be chosen at wiring time. It is built on [`#[cgp_component]`](cgp_component.md), inheriting that macro's entire expansion and provider-name defaulting, and it is wired with [`delegate_components!`](delegate_components.md) and verified with [`check_components!`](check_components.md). The generated provider keys off [`UseField`](../types/use_field.md) and reads fields produced by [`#[derive(HasField)]`](../derives/derive_has_field.md), keyed by [`Symbol!`](symbol.md). When the getter's return type is an abstract associated type, the construct overlaps with [`#[cgp_type]`](cgp_type.md).
+`#[cgp_getter]` is the wireable counterpart to [`#[cgp_auto_getter]`](cgp_auto_getter.md): the latter emits a single `HasField` blanket impl keyed by the method name, while `#[cgp_getter]` emits a full component plus a `UseField` provider so the field name can be chosen at wiring time. It is built on [`#[cgp_component]`](cgp_component.md), inheriting that macro's entire expansion and provider-name defaulting, and it is wired with [`delegate_components!`](delegate_components.md) and verified with [`check_components!`](check_components.md). The generated provider keys off [`UseField`](../provider/use_field.md) and reads fields produced by [`#[derive(HasField)]`](../derives/derive_has_field.md), keyed by [`Symbol!`](symbol.md). When the getter's return type is an abstract associated type, the construct overlaps with [`#[cgp_type]`](cgp_type.md).
 
 ## Source
 

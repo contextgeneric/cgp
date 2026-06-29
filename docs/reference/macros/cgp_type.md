@@ -1,12 +1,12 @@
 # `#[cgp_type]`
 
-`#[cgp_type]` defines an abstract-type component — a trait carrying a single associated type — by extending [`#[cgp_component]`](cgp_component.md) and generating the extra constructs that let a context choose the concrete type through wiring, most notably a [`UseType`](../attributes/use_type.md) blanket impl.
+`#[cgp_type]` defines an abstract-type component — a trait carrying a single associated type — by extending [`#[cgp_component]`](cgp_component.md) and generating the extra constructs that let a context choose the concrete type through wiring, most notably a [`UseType`](../provider/use_type.md) blanket impl.
 
 ## Purpose
 
 `#[cgp_type]` exists to make associated types swappable across contexts the same way `#[cgp_component]` makes behavior swappable. An abstract type in CGP is just a trait with one associated type — `trait HasScalarType { type Scalar; }` — that lets generic code refer to `Self::Scalar` without committing to a concrete type. On its own such a trait is wired like any other component, but choosing the concrete type would otherwise mean writing a provider impl by hand for every type you want to plug in. `#[cgp_type]` removes that friction.
 
-The macro's value is the additional generated constructs layered on top of the component expansion. Because every abstract-type provider follows the same trivial shape — "the associated type *is* this concrete type" — `#[cgp_type]` can generate that shape once and for all as a [`UseType`](../attributes/use_type.md) blanket impl. A context then names the concrete type directly in its wiring (`UseType<String>`) instead of defining a bespoke provider. This is the same convenience relationship that `#[cgp_getter]` has to `UseField`: a general-purpose provider parameterized by the thing the context wants to supply.
+The macro's value is the additional generated constructs layered on top of the component expansion. Because every abstract-type provider follows the same trivial shape — "the associated type *is* this concrete type" — `#[cgp_type]` can generate that shape once and for all as a [`UseType`](../provider/use_type.md) blanket impl. A context then names the concrete type directly in its wiring (`UseType<String>`) instead of defining a bespoke provider. This is the same convenience relationship that `#[cgp_getter]` has to `UseField`: a general-purpose provider parameterized by the thing the context wants to supply.
 
 Direct implementation remains available and is often the clearest choice. An abstract type can always be implemented straight on a concrete context through its consumer trait, which is barely more verbose than wiring `UseType` and is the most transparent way to show that a CGP abstract type is nothing more than a vanilla Rust trait with an associated type.
 
@@ -36,7 +36,7 @@ A bound on the associated type is preserved everywhere the type appears in the e
 
 `#[cgp_type]` expands to the full `#[cgp_component]` output for the trait, followed by two abstract-type provider impls. The component part is exactly what `#[cgp_component(ScalarTypeProvider)]` would produce for an associated-type trait — the consumer trait, the provider trait, the consumer and provider blanket impls, the `ScalarTypeProviderComponent` marker, and the standard `UseContext` and `RedirectLookup` provider impls. The difference from a behavioral component is that every blanket impl forwards the *associated type* rather than a method; see [`#[cgp_component]`](cgp_component.md) for that core shape.
 
-The first extra construct is the [`UseType`](../attributes/use_type.md) blanket impl, which is the heart of `#[cgp_type]`. It implements the provider trait for `UseType<Scalar>` by setting the abstract associated type to the generic parameter `Scalar`. Starting from:
+The first extra construct is the [`UseType`](../provider/use_type.md) blanket impl, which is the heart of `#[cgp_type]`. It implements the provider trait for `UseType<Scalar>` by setting the abstract associated type to the generic parameter `Scalar`. Starting from:
 
 ```rust
 #[cgp_type]
@@ -114,7 +114,7 @@ This direct form is only marginally longer than the wired form and is the most a
 
 ## Related constructs
 
-`#[cgp_type]` is the abstract-type specialization of [`#[cgp_component]`](cgp_component.md), inheriting its full expansion and provider-name override syntax while keying the default name off the associated type. Its central generated construct is the [`UseType`](../attributes/use_type.md) provider, the type-level analogue of the [`UseField`](../types/use_field.md) provider that [`#[cgp_getter]`](cgp_getter.md) generates. It builds on CGP's foundational [`HasType`/`TypeProvider`](../traits/has_type.md) component via the generated `WithProvider` impl. Abstract-type components are wired with [`delegate_components!`](delegate_components.md) and checked with [`check_components!`](check_components.md), and they are imported into other definitions with [`#[use_type]`](../attributes/use_type.md). When an abstract type's only role is to be a getter's return type, [`#[cgp_auto_getter]`](cgp_auto_getter.md) can declare it inline instead.
+`#[cgp_type]` is the abstract-type specialization of [`#[cgp_component]`](cgp_component.md), inheriting its full expansion and provider-name override syntax while keying the default name off the associated type. Its central generated construct is the [`UseType`](../provider/use_type.md) provider, the type-level analogue of the [`UseField`](../provider/use_field.md) provider that [`#[cgp_getter]`](cgp_getter.md) generates. It builds on CGP's foundational [`HasType`/`TypeProvider`](../traits/has_type.md) component via the generated `WithProvider` impl. Abstract-type components are wired with [`delegate_components!`](delegate_components.md) and checked with [`check_components!`](check_components.md), and they are imported into other definitions with [`#[use_type]`](../attributes/use_type.md). When an abstract type's only role is to be a getter's return type, [`#[cgp_auto_getter]`](cgp_auto_getter.md) can declare it inline instead.
 
 ## Source
 

@@ -98,7 +98,7 @@ pub enum Shape {
 }
 ```
 
-it generates the representation traits (now over a sum), the [`FromVariant`](derive_from_variant.md) constructors, and the extractor machinery. The representation is a sum of named fields terminated by [`Void`](../macros/sum.md):
+it generates the representation traits (now over a sum), the [`FromVariant`](../traits/from_variant.md) constructors, and the extractor machinery. The representation is a sum of named fields terminated by [`Void`](../types/either.md):
 
 ```rust
 impl HasFields for Shape {
@@ -117,7 +117,7 @@ impl FromVariant<Symbol!("Circle")> for Shape {
 // plus FromVariant for Rectangle, and FromFields/ToFields/ToFieldsRef
 ```
 
-The extractor half generates partial enums `__PartialShape` and `__PartialRefShape`, plus `HasExtractor`/`HasExtractorRef`/`HasExtractorMut`, `FinalizeExtract`, and per-variant [`ExtractField`](derive_extract_field.md) impls that peel one variant off and return the remaining variants:
+The extractor half generates partial enums `__PartialShape` and `__PartialRefShape`, plus `HasExtractor`/`HasExtractorRef`/`HasExtractorMut`, `FinalizeExtract`, and per-variant [`ExtractField`](../traits/extract_field.md) impls that peel one variant off and return the remaining variants:
 
 ```rust
 pub enum __PartialShape<__F0__: MapType, __F1__: MapType> {

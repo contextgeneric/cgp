@@ -38,7 +38,7 @@ pub enum Shape {
 }
 ```
 
-the derive first emits the representation traits, exposing the enum as a type-level sum of named [`Field`](../types/field.md) entries terminated by [`Void`](../macros/sum.md), with whole-value conversions — the [`#[derive(HasFields)]`](derive_has_fields.md) output for enums:
+the derive first emits the representation traits, exposing the enum as a type-level sum of named [`Field`](../types/field.md) entries terminated by [`Void`](../types/either.md), with whole-value conversions — the [`#[derive(HasFields)]`](derive_has_fields.md) output for enums:
 
 ```rust
 impl HasFields for Shape {
@@ -52,7 +52,7 @@ impl FromFields for Shape { /* match each Either arm back to a variant */ }
 // plus ToFields, HasFieldsRef, ToFieldsRef
 ```
 
-Second, it emits one [`FromVariant`](derive_from_variant.md) impl per variant, so the enum can be constructed generically from any single variant by name:
+Second, it emits one [`FromVariant`](../traits/from_variant.md) impl per variant, so the enum can be constructed generically from any single variant by name:
 
 ```rust
 impl FromVariant<Symbol!("Circle")> for Shape {

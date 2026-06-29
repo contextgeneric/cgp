@@ -18,7 +18,7 @@ pub trait HasField<Tag> {
 }
 ```
 
-Higher-level constructs are built directly on these generated impls. [`#[cgp_auto_getter]`](../macros/cgp_auto_getter.md) and [`#[cgp_getter]`](../macros/cgp_getter.md) (through the [`UseField`](../types/use_field.md) provider) generate blanket impls whose `where` clauses are `HasField` bounds, and the [`#[implicit]`](../attributes/implicit.md) argument form desugars function parameters into `get_field` calls. All of them assume the context has derived `HasField`; this derive is what makes them work.
+Higher-level constructs are built directly on these generated impls. [`#[cgp_auto_getter]`](../macros/cgp_auto_getter.md) and [`#[cgp_getter]`](../macros/cgp_getter.md) (through the [`UseField`](../provider/use_field.md) provider) generate blanket impls whose `where` clauses are `HasField` bounds, and the [`#[implicit]`](../attributes/implicit.md) argument form desugars function parameters into `get_field` calls. All of them assume the context has derived `HasField`; this derive is what makes them work.
 
 ## Syntax
 
@@ -167,7 +167,7 @@ In practice the explicit `HasField` bound is rarely written by hand. The same `n
 
 ## Related constructs
 
-`#[derive(HasField)]` underpins most value-level dependency injection in CGP. [`#[cgp_auto_getter]`](../macros/cgp_auto_getter.md) turns a getter-trait method into a blanket impl backed by a `HasField` bound, and [`#[cgp_getter]`](../macros/cgp_getter.md) does the same through the [`UseField`](../types/use_field.md) provider, which reads an arbitrary field by tag. The [`#[implicit]`](../attributes/implicit.md) argument form desugars context parameters into `get_field` calls against these impls. The tags it generates are documented in [`Symbol!`](../macros/symbol.md) (named fields) and the `Index` type (tuple fields). For the aggregate view of all fields at once, see [`#[derive(HasFields)]`](derive_has_fields.md), which is commonly derived alongside this one and is itself the basis for [`#[derive(CgpData)]`](derive_cgp_data.md).
+`#[derive(HasField)]` underpins most value-level dependency injection in CGP. [`#[cgp_auto_getter]`](../macros/cgp_auto_getter.md) turns a getter-trait method into a blanket impl backed by a `HasField` bound, and [`#[cgp_getter]`](../macros/cgp_getter.md) does the same through the [`UseField`](../provider/use_field.md) provider, which reads an arbitrary field by tag. The [`#[implicit]`](../attributes/implicit.md) argument form desugars context parameters into `get_field` calls against these impls. The tags it generates are documented in [`Symbol!`](../macros/symbol.md) (named fields) and the `Index` type (tuple fields). For the aggregate view of all fields at once, see [`#[derive(HasFields)]`](derive_has_fields.md), which is commonly derived alongside this one and is itself the basis for [`#[derive(CgpData)]`](derive_cgp_data.md).
 
 ## Source
 
