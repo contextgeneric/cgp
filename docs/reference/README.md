@@ -29,6 +29,7 @@ These documents explain the ideas that connect the constructs, each linking down
 - [Dispatching](concepts/dispatching.md) — routing extensible-data inputs to per-field and per-variant handlers.
 - [Monadic handlers](concepts/monadic-handlers.md) — composing handlers through the identity/ok/err monads.
 - [Type-level DSLs](concepts/type-level-dsls.md) — encoding a small language as types and interpreting it at compile time through CGP wiring.
+- [Recovering `Send` bounds](concepts/send-bounds.md) — restoring the `Send` guarantee an async trait method drops, as a stand-in for the Return Type Notation stable Rust lacks.
 
 ## Component definition macros — [macros/](macros/)
 

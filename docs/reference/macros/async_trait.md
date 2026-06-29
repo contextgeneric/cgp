@@ -131,7 +131,7 @@ Defining the same capability as a single implementation with [`#[cgp_fn]`](cgp_f
 
 `#[async_trait]` rewrites only the method signature, never the method body, so an async trait method that carries a *default body* is mishandled. The macro strips `async` from such a method's signature and changes its return type to `impl Future`, but the body is left verbatim — it is not wrapped in an `async { ... }` block. The result is a non-async method whose body still returns a plain value and may use `.await`, which fails to compile. In practice this is rarely hit, because async methods in a trait are almost always declarations without bodies, and provided async behavior is supplied by a provider impl instead; but a default-bodied `async fn` inside a `#[async_trait]` trait is not supported.
 
-The generated future carries no `Send` bound. Because the rewrite produces a bare `impl Future<Output = T>`, the returned future is `Send` only when the concrete future happens to be, and the trait does not require it. Code that must spawn the future onto a work-stealing, multi-threaded executor — which demands `Send` futures — cannot express that requirement through this macro and must add the bound by other means.
+The generated future carries no `Send` bound. Because the rewrite produces a bare `impl Future<Output = T>`, the returned future is `Send` only when the concrete future happens to be, and the trait does not require it. Code that must spawn the future onto a work-stealing, multi-threaded executor — which demands `Send` futures — cannot express that requirement through this macro and must add the bound by other means, as described in [recovering `Send` bounds](../concepts/send-bounds.md).
 
 ## Source
 
