@@ -39,6 +39,7 @@ These macros define CGP components and the providers that implement them — the
 - [`#[cgp_provider]`](macros/cgp_provider.md) — write a provider by implementing the provider trait directly.
 - [`#[cgp_new_provider]`](macros/cgp_new_provider.md) — `#[cgp_provider]` that also defines the provider struct.
 - [`#[cgp_fn]`](macros/cgp_fn.md) — define a single-implementation capability as a blanket-impl trait from a function.
+- [`#[async_trait]`](macros/async_trait.md) — rewrite a trait's `async fn` declarations to `-> impl Future`, the lint-clean way to declare async CGP methods.
 - [`#[cgp_type]`](macros/cgp_type.md) — define an abstract-type component.
 - [`#[cgp_getter]`](macros/cgp_getter.md) — define a getter component wired through CGP.
 - [`#[cgp_auto_getter]`](macros/cgp_auto_getter.md) — define a getter as a blanket impl over `HasField`.

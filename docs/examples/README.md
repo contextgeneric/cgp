@@ -14,5 +14,6 @@ The authoring rules for examples, including how to add a new one, live in [../CL
 
 - [Area calculation](area-calculation.md) — computing the area of several shapes, progressing from field-driven functions to a wireable area component with composable higher-order providers.
 - [Shell-scripting DSL](shell-scripting-dsl.md) — a type-level DSL whose programs are types interpreted at compile time, progressing from a fixed CLI program through the handler component and its namespace wiring to a custom context and a language extension.
+- [Profile picture lookup](profile-picture.md) — fetching a user's profile picture across a database query and an object-storage download, progressing from field-driven async functions through impl-only generics that vary the database engine to a storage component wired per context.
 </content>
 </invoke>
