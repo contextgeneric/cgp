@@ -28,6 +28,7 @@ These documents explain the ideas that connect the constructs, each linking down
 - [Handlers](concepts/handlers.md) — the Computer/Producer/Handler family of computation components and their sync/async/fallible/by-reference variants.
 - [Dispatching](concepts/dispatching.md) — routing extensible-data inputs to per-field and per-variant handlers.
 - [Monadic handlers](concepts/monadic-handlers.md) — composing handlers through the identity/ok/err monads.
+- [Type-level DSLs](concepts/type-level-dsls.md) — encoding a small language as types and interpreting it at compile time through CGP wiring.
 
 ## Component definition macros — [macros/](macros/)
 
