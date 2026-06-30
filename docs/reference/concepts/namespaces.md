@@ -25,6 +25,25 @@ cgp_namespace! {
 
 This says that when `MyNamespace` is asked for `FooProviderComponent`, it should look up the path `MyFooComponent` rather than resolve to a fixed provider — the actual provider is decided wherever the path eventually lands. Because lookups are paths rather than flat keys, a parent namespace's entire subtree can be rerouted at once (`@cgp.core.error => @app` redirects everything under that prefix), and a child context can introduce a more specific path that takes precedence over an inherited one. Under the hood every `@` path desugars into a [`PathCons`](../types/path_cons.md) type-level list built by the [`Path!`](../macros/path.md) macro, with lowercase dotted segments becoming `Symbol` string literals and capitalized segments becoming named types; the `=>` entries become `RedirectLookup` impls while plain `:` entries map a key straight to a provider as in `delegate_components!`.
 
+## Per-component dispatch with `open`
+
+The most common place a path appears is the `open` statement, which uses path-based redirection to dispatch a single component on its generic parameter — inline, in a context's own table. Writing `open { ValueSerializerComponent };` at the head of a [`delegate_components!`](../macros/delegate_components.md) block redirects that component's lookup along a path rooted at the component name into the context's own table; the per-value entries that follow are then ordinary `@`-path keys pointing into that route:
+
+```rust
+delegate_components! {
+    AppA {
+        open {ValueSerializerComponent};
+
+        @ValueSerializerComponent.Vec<u8>:
+            SerializeHex,
+        @ValueSerializerComponent.DateTime<Utc>:
+            SerializeRfc3339Date,
+    }
+}
+```
+
+Each `@ValueSerializerComponent.Vec<u8>: SerializeHex` entry maps one value of the component's dispatch parameter — here the `Vec<u8>` serialized type — to the provider that handles it, and the [`RedirectLookup`](../providers/redirect_lookup.md) impl every component carries appends that parameter onto the redirect path to find the entry. The effect is the per-type dispatch that the legacy `UseDelegate` nested table also provides, but with the entries living on the context rather than in a separate table type, so no `UseDelegate` wrapper or `#[derive_delegate]` attribute is involved. This is the form the [modular serialization](../../examples/modular-serialization.md) example uses throughout.
+
 ## Attaching components and joining namespaces
 
 A namespace is consumed from two sides: components register themselves into it, and contexts join it. A component attaches to a namespace through the `#[prefix(...)]` attribute on its trait, which emits one extra impl registering the component into the named namespace under a path prefix. CGP's own [`HasErrorType`](../components/has_error_type.md), for instance, carries `#[prefix(@cgp.core.error in DefaultNamespace)]`, placing it into the built-in `DefaultNamespace` under the `cgp.core.error` prefix so any context joining that namespace inherits the standard error wiring. A context joins a namespace inside [`delegate_components!`](../macros/delegate_components.md) with a `namespace` header line, after which every lookup it cannot resolve directly forwards through the namespace:
