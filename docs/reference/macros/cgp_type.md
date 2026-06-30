@@ -32,6 +32,16 @@ pub trait HasScalarType {
 
 A bound on the associated type is preserved everywhere the type appears in the expansion. For example `type Scalar: Copy;` carries the `Copy` bound onto the generated provider trait and into the `where` clauses of the generated provider impls.
 
+## Syntax Grammar
+
+The attribute argument of `#[cgp_type]` is the same grammar as [`#[cgp_component]`](cgp_component.md)'s `CgpComponentArgs` — a bare provider name or the keyed `name`/`provider`/`context` form:
+
+```ebnf
+CgpTypeArgs -> CgpComponentArgs    // see #[cgp_component]
+```
+
+The only difference from `#[cgp_component]` is the default applied when `provider` is omitted: instead of failing, the macro derives the provider name from the *associated type's* name with a `TypeProvider` suffix (so `type Scalar;` yields `ScalarTypeProvider`). All other keys and their defaults behave exactly as documented for `#[cgp_component]`.
+
 ## Expansion
 
 `#[cgp_type]` expands to the full `#[cgp_component]` output for the trait, followed by two abstract-type provider impls. The component part is exactly what `#[cgp_component(ScalarTypeProvider)]` would produce for an associated-type trait — the consumer trait, the provider trait, the consumer and provider blanket impls, the `ScalarTypeProviderComponent` marker, and the standard `UseContext` and `RedirectLookup` provider impls. The difference from a behavioral component is that every blanket impl forwards the *associated type* rather than a method; see [`#[cgp_component]`](cgp_component.md) for that core shape.

@@ -67,6 +67,25 @@ delegate_and_check_components! {
 
 The `#[check_params(...)]` and `#[skip_check]` attributes are mutually exclusive on a given key, and at most one may appear. The same array syntax that `delegate_components!` allows on the key side works here, with check params attaching per bracketed key as needed.
 
+## Syntax Grammar
+
+The body of `delegate_and_check_components!` is the same table shape as [`delegate_components!`](delegate_components.md), with an optional table-level check-trait attribute and a per-entry check attribute added:
+
+```ebnf
+DelegateAndCheck -> TableAttr* Generics? `new`? TargetType `{` TableBody `}`
+
+TableAttr        -> `#` `[` `check_trait` `(` IDENTIFIER `)` `]`
+
+TableBody        -> Statement* ( CheckedMapping ( `,` CheckedMapping )* `,`? )?
+
+CheckedMapping   -> EntryAttr? Mapping       // Mapping, Key, ProviderValue — see delegate_components!
+
+EntryAttr        -> `#` `[` `check_params` `(` Type ( `,` Type )* `,`? `)` `]`
+                  | `#` `[` `skip_check` `]`
+```
+
+The `Mapping`, `Key`, `ProviderValue`, and `Statement` productions are exactly those of [`delegate_components!`](delegate_components.md); only the attributes differ. The table-level `#[check_trait(...)]` overrides the derived `__CanUse{Context}` trait name. Each mapping may carry at most one `EntryAttr`, and `#[check_params(...)]` and `#[skip_check]` are mutually exclusive: `#[check_params(...)]` supplies the generic parameters the derived check needs for a component with type parameters, and `#[skip_check]` wires the entry without generating a check at all.
+
 ## Expansion
 
 The macro emits the delegation impls exactly as [`delegate_components!`](delegate_components.md) would, then appends a check trait and one impl per non-skipped entry, exactly as [`check_components!`](check_components.md) would. Starting from:

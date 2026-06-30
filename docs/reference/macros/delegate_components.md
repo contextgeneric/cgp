@@ -58,6 +58,36 @@ Beyond plain `Key: Value` entries, the table body also accepts the namespace-ori
 
 The macro accepts no attributes on the table or its keys and rejects any it finds. Attribute-driven variants such as `#[check_params(...)]` and `#[skip_check]` belong to [`delegate_and_check_components!`](delegate_and_check_components.md), not here.
 
+## Syntax Grammar
+
+The body of `delegate_components!` is an optional generic list and `new` keyword, a target type, and a brace-delimited table of mappings:
+
+```ebnf
+DelegateComponents -> Generics? `new`? TargetType `{` TableBody `}`
+
+TargetType    -> Type
+
+TableBody     -> Statement* ( Mapping ( `,` Mapping )* `,`? )?
+
+Statement     -> NamespaceStmt | ForStmt    // namespace forms — see #[cgp_namespace]
+
+Mapping       -> Key `:`  ProviderValue
+               | Key `->` ProviderValue
+               | Key `=>` Path
+
+Key           -> SingleKey | MultiKey | PathKey
+SingleKey     -> Generics? Type
+MultiKey      -> `[` SingleKey ( `,` SingleKey )* `,`? `]`
+PathKey       -> Generics? Path
+
+ProviderValue -> Type
+               | IDENTIFIER `<` `new` TargetType `{` TableBody `}` `>`
+
+Path          -> `@` PathSegment ( `.` PathSegment )*    // see Path!
+```
+
+A leading `Generics` list (a Rust `< … >`) makes the whole table generic over the target; the `new` keyword additionally emits the target struct. Each `Mapping` chooses one of three operators: `` `:` `` maps a key directly to the named provider — the common form — while `` `->` `` delegates to the value's own entry for that key and `` `=>` `` redirects the lookup along an `@`-`Path`; the operators other than `:` are used mainly by the namespace machinery and detailed under [`#[cgp_namespace]`](cgp_namespace.md). A `Key` may be a single type, a bracketed list expanding to one entry per name, or an `@`-`PathKey`. The nested-table `ProviderValue` form wires the key to a `UseDelegate`-style wrapper while defining the inner table in place. `Mapping`, `Key`, and `ProviderValue` are the shared productions reused by [`delegate_and_check_components!`](delegate_and_check_components.md) and [`#[cgp_namespace]`](cgp_namespace.md); the `NamespaceStmt` and `ForStmt` statement forms and the `Path` segment rules are defined under [`#[cgp_namespace]`](cgp_namespace.md) and [`Path!`](path.md). The macro accepts no attributes on the table or its entries and rejects any it finds.
+
 ## Expansion
 
 Each table entry expands to a pair of impls: a `DelegateComponent` impl that stores the value, and an `IsProviderFor` impl that forwards the value's dependencies. Starting from the single-entry table:

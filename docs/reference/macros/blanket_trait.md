@@ -33,6 +33,18 @@ pub trait FooBar: Foo + Bar { /* ... */ }
 
 The trait may carry generic parameters and associated types. Generic parameters on the trait are copied onto the impl. Associated types are turned into fresh generic parameters on the impl and bound through the supertrait's associated-type equality, which is how the pattern lifts an associated type out of a supertrait — covered in the expansion below.
 
+## Syntax Grammar
+
+The attribute argument of `#[blanket_trait]` is a single optional context name:
+
+```ebnf
+BlanketTraitArgs -> ContextName?
+
+ContextName      -> IDENTIFIER
+```
+
+When the argument is omitted, the generic context type in the generated impl defaults to the reserved identifier `__Context__`. A given `IDENTIFIER` overrides that name.
+
 ## Expansion
 
 `#[blanket_trait]` emits two items: the trait, unchanged from its definition, and a blanket impl for a generic context. The impl forwards each default method body, requires the trait's supertraits in its `where` clause, and strips the defaults from the trait so the trait declaration stays a pure interface. Starting from the method example:

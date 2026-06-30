@@ -22,6 +22,16 @@ Symbol!("")
 
 Any valid string literal is accepted, including the empty string and multi-byte Unicode (`Symbol!("世界")`), and the macro is most commonly seen inside a `HasField` bound such as `HasField<Symbol!("name"), Value = String>`.
 
+## Syntax Grammar
+
+The input to `Symbol!` is a single string literal:
+
+```ebnf
+SymbolInput -> STRING_LITERAL
+```
+
+`STRING_LITERAL` is the Rust string-literal token, so any valid string literal is accepted — including the empty string and multi-byte Unicode. The macro is used in type position, so this single literal is the whole of its input.
+
 ## Expansion
 
 `Symbol!("...")` expands to the `Symbol` type wrapping a `Chars` chain that spells out the string one character at a time. The string `"abc"` desugars as follows:

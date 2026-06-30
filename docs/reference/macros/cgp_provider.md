@@ -42,6 +42,18 @@ where
 }
 ```
 
+## Syntax Grammar
+
+The attribute argument of `#[cgp_provider]` is a single optional component type:
+
+```ebnf
+CgpProviderArgs -> ComponentType?
+
+ComponentType   -> Type
+```
+
+When the argument is omitted the component defaults to the provider trait's name with a `Component` suffix; when present, that `Type` is substituted into the first position of the generated `IsProviderFor` impl. `Type` is the Rust type production.
+
 ## Expansion
 
 `#[cgp_provider]` emits two items: the provider impl, passed through unchanged, and an `IsProviderFor` impl derived from it. Starting from:

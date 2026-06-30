@@ -21,6 +21,16 @@ Sum![]   // the empty sum
 
 Each listed type is one possible variant of the sum; a value of the sum type carries exactly one of them.
 
+## Syntax Grammar
+
+The input to `Sum!` is a possibly-empty, comma-separated list of types:
+
+```ebnf
+SumInput -> ( Type ( `,` Type )* `,`? )?
+```
+
+`Type` is the Rust grammar's type production, and the list may be empty (`Sum![]`) or carry a trailing comma. The macro is used in type position, and each listed type is one possible variant of the sum.
+
 ## Expansion
 
 `Sum!` expands to a right-nested chain of `Either`, terminated by `Void`. The three-element sum desugars as follows:

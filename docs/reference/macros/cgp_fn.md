@@ -62,6 +62,18 @@ One restriction is intentional: `#[cgp_fn]` does not support generics on the des
 
 Several companion attributes refine the generated code and are documented separately. [`#[uses(...)]`](../attributes/uses.md) adds trait bounds on `Self` as impl-side dependencies; [`#[use_type(...)]`](../attributes/use_type.md) imports an abstract type and rewrites its occurrences to fully-qualified form; [`#[use_provider(...)]`](../attributes/use_provider.md) supports higher-order providers; [`#[extend(...)]`](../attributes/extend.md) adds supertrait bounds to the generated trait; and [`#[extend_where(...)]`](../attributes/extend_where.md) adds `where` predicates to the generated trait definition.
 
+## Syntax Grammar
+
+The attribute argument of `#[cgp_fn]` is a single optional trait name:
+
+```ebnf
+CgpFnArgs -> TraitName?
+
+TraitName -> IDENTIFIER
+```
+
+When the argument is omitted, the trait name defaults to the function name converted to PascalCase. The `#[implicit]` markers on parameters and the companion attributes (`#[uses]`, `#[use_type]`, `#[extend]`, and the rest) are separate attributes with their own grammars, documented on their own pages.
+
 ## Expansion
 
 `#[cgp_fn]` emits exactly two items: the trait carrying the method, and a blanket impl of that trait for a generic context. Starting from the basic form:

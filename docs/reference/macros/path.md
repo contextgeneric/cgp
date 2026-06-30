@@ -22,6 +22,18 @@ Each segment is parsed as a type, and its first character decides how it is enco
 
 This is the same convention namespaces describe for their `@`-paths: dotted lowercase segments are field-name-style symbols and capitalized segments are named types. Mixing the two is normal — a path like `@my_app.ShowImplComponent` interleaves a symbol segment and a component segment.
 
+## Syntax Grammar
+
+The input to `Path!` is a leading `@` followed by one or more dot-separated segments:
+
+```ebnf
+PathInput   -> `@` PathSegment ( `.` PathSegment )*
+
+PathSegment -> Type
+```
+
+The leading `` `@` `` is required and at least one segment must follow. Each `PathSegment` is parsed as a Rust `Type`, but its encoding is decided semantically (see Expansion): a single lowercase identifier that is not a primitive type name becomes a `Symbol` type-level string, while every other segment — a capitalized name or a primitive — is kept as the named type. This same `@`-path grammar is what [`#[cgp_namespace]`](cgp_namespace.md) entries and `#[prefix(...)]` attributes embed, where it appears as the `Path` production.
+
 ## Expansion
 
 `Path!` expands to a right-nested chain of [`PathCons`](../types/path_cons.md) terminated by `Nil`, with each segment encoded by the lowercase/capitalized rule. A three-segment path with one lowercase symbol and two named types desugars as follows:

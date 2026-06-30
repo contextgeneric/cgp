@@ -26,6 +26,18 @@ fn magic_number() -> u64 {
 
 When the argument is omitted the provider struct takes the function name in PascalCase — `magic_number` becomes `MagicNumber` — and when given it is used verbatim. The function's return type becomes the producer's output. The macro constrains the function tightly to match what a producer can be: it must have no parameters (a producer takes no input and no `self` receiver), it must not be `async` (the producer trait is synchronous), and it must have no generic parameters. Violating any of these is a compile error pointing at the offending part of the signature.
 
+## Syntax Grammar
+
+The attribute argument of `#[cgp_producer]` is a single optional provider name:
+
+```ebnf
+CgpProducerArgs -> ProviderName?
+
+ProviderName    -> IDENTIFIER
+```
+
+When the argument is omitted, the generated provider struct takes the function name converted to PascalCase; a given `IDENTIFIER` is used verbatim. The annotated function is plain Rust, but the macro constrains it to a producer's shape — no parameters, no `async`, and no generic parameters — as described in Syntax above.
+
 ## Expansion
 
 The macro emits three items: the original function unchanged, a `#[cgp_new_provider]` impl of the [`Producer`](../components/producer.md) trait that calls the function, and a `delegate_components!` block wiring the whole handler family to the [`PromoteProducer`](../providers/handler_combinators.md) bundle. Given

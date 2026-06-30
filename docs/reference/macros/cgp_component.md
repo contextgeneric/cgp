@@ -36,6 +36,25 @@ The three keys correspond to the three names the macro needs, and each has a def
 
 Two companion attributes extend the macro for special cases and are documented separately. Adding [`#[derive_delegate(...)]`](../attributes/derive_delegate.md) generates `UseDelegate` providers that dispatch on a generic parameter, and adding [`#[extend(...)]`](../attributes/extend.md) adds supertrait bounds to the generated consumer trait. The related macros [`#[cgp_type]`](cgp_type.md) and [`#[cgp_getter]`](cgp_getter.md) build on `#[cgp_component]` to derive additional constructs for abstract-type and getter components respectively.
 
+## Syntax Grammar
+
+The attribute argument of `#[cgp_component]` is either a bare provider name or a comma-separated set of keyed values:
+
+```ebnf
+CgpComponentArgs -> ProviderName
+                  | KeyValueArg ( `,` KeyValueArg )* `,`?
+
+ProviderName     -> IDENTIFIER
+
+KeyValueArg      -> `name` `:` ComponentName
+                  | `provider` `:` IDENTIFIER
+                  | `context` `:` IDENTIFIER
+
+ComponentName    -> IDENTIFIER GenericArgs?
+```
+
+`ProviderName` is the bare-identifier form and is shorthand for setting `provider` alone. In the key/value form each of the three keys may appear at most once and in any order, and `provider` is required — the other two have defaults (`context` is `__Context__`, `name` is the provider name with a `Component` suffix). `IDENTIFIER` is a Rust identifier token, and `GenericArgs` is the Rust grammar's `< … >` argument list (so the component name may carry generic parameters while the provider name may not). The attribute delimiter shown in Syntax — `(...)` for the bare form and `{...}` for the key/value form — is ordinary Rust attribute syntax; the argument tokens inside follow this grammar regardless of which delimiter is used.
+
 ## Expansion
 
 `#[cgp_component]` replaces the annotated trait with five top-level items plus a set of standard provider impls. Starting from this input:

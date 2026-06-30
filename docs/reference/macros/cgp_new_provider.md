@@ -26,6 +26,18 @@ where
 
 As with `#[cgp_provider]`, the impl uses the native provider-trait shape — an explicit leading `Context` type parameter, the provider struct in the `Self` position, and methods taking `context: &Context` rather than `&self`. An optional argument overrides the component type used in the `IsProviderFor` impl, defaulting otherwise to the provider trait's name plus a `Component` suffix.
 
+## Syntax Grammar
+
+The attribute argument of `#[cgp_new_provider]` is the same single optional component type as [`#[cgp_provider]`](cgp_provider.md):
+
+```ebnf
+CgpNewProviderArgs -> ComponentType?
+
+ComponentType      -> Type
+```
+
+The argument behaves exactly as it does for `#[cgp_provider]` — omitted means the component defaults to the provider trait's name plus a `Component` suffix, and a given `Type` overrides it. The struct declaration that distinguishes this macro is implied by the macro name and is not written in the argument.
+
 ## Expansion
 
 `#[cgp_new_provider]` is implemented as `#[cgp_provider]` with the `new` keyword forced on; its expansion is therefore the `#[cgp_provider]` expansion plus a struct declaration. The example above produces:

@@ -42,6 +42,36 @@ Here `ExtendedNamespace` inherits every entry of `DefaultNamespace` and addition
 
 Defining a namespace is only half of the pattern; a context joins a namespace through `delegate_components!` using a `namespace` header line, and individual components attach to a namespace through the [`#[prefix(...)]`](cgp_component.md) attribute on their trait. Those two constructs are where namespaces are consumed, and they are described under Examples and Related constructs.
 
+## Syntax Grammar
+
+The body of `cgp_namespace!` is an optional generic list and `new` keyword, a namespace name, an optional parent namespace, and a brace-delimited table:
+
+```ebnf
+CgpNamespace    -> Generics? `new`? NamespaceName ( `:` ParentNamespace )? `{` NamespaceBody `}`
+
+NamespaceName   -> IDENTIFIER GenericArgs?
+ParentNamespace -> TypePath GenericArgs?
+
+NamespaceBody   -> Statement* ( Mapping ( `,` Mapping )* `,`? )?
+```
+
+The mappings in `NamespaceBody` are the same `Mapping` production as [`delegate_components!`](delegate_components.md) — most often the `` `=>` `` redirect to an `@`-`Path` or a `` `:` `` direct provider. The `` `:` `` between `NamespaceName` and `ParentNamespace` is the inheritance colon, distinct from a mapping's `:`. `NamespaceName` is an identifier with optional generic arguments (it becomes both a trait and, with `new`, a struct); `ParentNamespace` is a type path that may itself be parameterized.
+
+This macro also owns the two namespace statement forms that a context's [`delegate_components!`](delegate_components.md) table uses to join a namespace:
+
+```ebnf
+Statement     -> NamespaceStmt | ForStmt
+
+NamespaceStmt -> `namespace` IDENTIFIER `;`
+
+ForStmt       -> `for` `<` IDENTIFIER `,` IDENTIFIER `>` `in` TypePath WhereClause?
+                 `{` ( NormalMapping ( `,` NormalMapping )* `,`? )? `}`
+
+NormalMapping -> Key `:` ProviderValue
+```
+
+A `NamespaceStmt` forwards every lookup on the table through the named namespace. A `ForStmt` binds a key variable and a provider variable, reads each entry of the table named after `in`, and emits one mapping per entry — its body holds only `` `:` `` mappings (`NormalMapping`), whose `Key` and `ProviderValue` are the shared productions from [`delegate_components!`](delegate_components.md). `TypePath` and `WhereClause` are Rust grammar productions.
+
 ## Expansion
 
 `cgp_namespace!` emits, in order, an optional marker struct, an optional lookup trait, and one `impl` of that trait per entry (plus one inheritance `impl` when a parent is named). Take the `new` namespace with a single redirect entry:

@@ -22,6 +22,18 @@ Product![]   // the empty list type
 
 The element lists line up positionally, so the value built by `product!` has the type built by `Product!` over the corresponding element types.
 
+## Syntax Grammar
+
+The two macros take a possibly-empty, comma-separated list — of types for `Product!` and of expressions for `product!`:
+
+```ebnf
+ProductInput -> ( Type ( `,` Type )* `,`? )?
+
+ProductExpr  -> ( Expression ( `,` Expression )* `,`? )?
+```
+
+`ProductInput` is the grammar of the type macro `Product!`, used in type position; `ProductExpr` is the grammar of the value macro `product!`, used in expression position. `Type` and `Expression` are the Rust grammar's productions, and both lists may be empty (`Product![]`, `product![]`) or carry a trailing comma. The element lists line up positionally, so a `product!` value has the type the corresponding `Product!` builds.
+
 ## Expansion
 
 `Product!` expands to a right-nested chain of `Cons`, terminated by `Nil`. The three-element list desugars as follows:

@@ -49,6 +49,35 @@ The check trait's name can be set with `#[check_trait(Name)]` on the table. The 
 
 A `#[check_providers(...)]` attribute changes what is checked: instead of verifying the context, it verifies that each listed provider is a provider for the context. This is the form to reach for when a higher-order provider needs each layer checked separately, since each provider in the list is asserted independently.
 
+## Syntax Grammar
+
+The input to `check_components!` is one or more check tables, each an optional attribute set and generic list, a context type, an optional `where` clause, and a brace-delimited list of check entries:
+
+```ebnf
+CheckComponents -> CheckTable+
+
+CheckTable      -> TableAttr* Generics? ContextType WhereClause? `{` CheckEntries `}`
+
+TableAttr       -> `#` `[` `check_trait` `(` IDENTIFIER `)` `]`
+                 | `#` `[` `check_providers` `(` Type ( `,` Type )* `,`? `)` `]`
+
+ContextType     -> Type
+
+CheckEntries    -> ( CheckEntry ( `,` CheckEntry )* `,`? )?
+
+CheckEntry      -> CheckKey ( `:` CheckValue )?
+
+CheckKey        -> Type
+                 | `[` Type ( `,` Type )* `,`? `]`
+
+CheckValue      -> CheckParam
+                 | `[` CheckParam ( `,` CheckParam )* `,`? `]`
+
+CheckParam      -> Generics? Type
+```
+
+A single invocation may carry several `CheckTable`s, each with its own context type. The optional `#[check_trait(...)]` overrides the derived `__Check{Context}` trait name, and `#[check_providers(...)]` switches the check to verify the listed providers instead of the context. The `where` clause and a leading `Generics` list introduce and constrain generics used by the checked parameters. A `CheckEntry`'s value is omitted for a component with no generic parameters; when present, a bracketed `CheckKey` or `CheckValue` expands to the cartesian product, so a set of components is checked against a set of parameters. `WhereClause`, `Generics`, and `Type` are Rust grammar productions.
+
 ## Expansion
 
 A check table expands to one marker trait plus one impl per checked entry. The marker trait is an alias whose supertrait is the check being asserted; each impl is an empty body that compiles only if that supertrait holds for the entry. Starting from:

@@ -26,6 +26,18 @@ fn add(a: u64, b: u64) -> u64 {
 
 When the argument is omitted, the generated provider struct takes the function name converted to PascalCase — `add` becomes `Add`. When an argument is given, it is used verbatim as the provider name. The function's parameters become the handler's input, its return type becomes the handler's output, and its generic parameters and `where` clause carry over to the generated impl. The function may not have a `self` receiver, since a handler provider has no receiver — the context is supplied separately by the handler machinery. The function may be `async`, which selects the asynchronous base trait described below.
 
+## Syntax Grammar
+
+The attribute argument of `#[cgp_computer]` is a single optional provider name:
+
+```ebnf
+CgpComputerArgs -> ProviderName?
+
+ProviderName    -> IDENTIFIER
+```
+
+When the argument is omitted, the generated provider struct takes the function name converted to PascalCase; a given `IDENTIFIER` is used verbatim. The shape of the annotated function — its parameters, return type, `async`-ness, generics, and `where` clause — is plain Rust and is read by the macro to choose the base trait and promotion bundle, as described in Expansion.
+
 ## Expansion
 
 The macro emits three items: the original function unchanged, a `#[cgp_new_provider]` impl of a base handler trait that calls the function, and a `delegate_components!` block that wires the remaining handler components to a promotion bundle. The base trait and the bundle are chosen from two independent axes — sync versus async, and value-returning versus `Result`-returning.

@@ -45,6 +45,19 @@ impl<InnerCalculator> AreaCalculator {
 
 Several companion attributes are supported on a `#[cgp_impl]` block and are processed before the provider-trait rewrite. Method parameters marked [`#[implicit]`](../attributes/implicit.md) are extracted from the signature and turned into `HasField` reads on the context. [`#[uses(...)]`](../attributes/uses.md) adds simple trait bounds on `Self`, [`#[use_type(Trait::Type)]`](../attributes/use_type.md) imports an abstract type and rewrites its occurrences to fully qualified form, and [`#[use_provider(...)]`](../attributes/use_provider.md) supports higher-order providers by adding the `Self` parameter to an inner provider bound and by dispatching method calls to a named provider.
 
+## Syntax Grammar
+
+The attribute argument of `#[cgp_impl]` names the provider, optionally preceded by `new` and optionally followed by a component-type override:
+
+```ebnf
+CgpImplArgs   -> `new`? ProviderType ( `:` ComponentType )?
+
+ProviderType  -> Type
+ComponentType -> Type
+```
+
+The optional `new` keyword makes the macro also emit `pub struct <ProviderType>;`. `ProviderType` is the type that takes the `Self` position of the generated provider impl: a plain provider name, a generic provider such as `ScaledAreaCalculator<InnerCalculator>`, or the literal `Self` for the bare-impl passthrough described in Expansion. The optional `: ComponentType` overrides the component used in the generated `IsProviderFor` impl, defaulting otherwise to the provider trait's name with a `Component` suffix. Both `ProviderType` and `ComponentType` are Rust `Type` productions.
+
 ## Expansion
 
 `#[cgp_impl]` desugars to [`#[cgp_provider]`](cgp_provider.md): it moves the context type back to the leading position of the provider trait, swaps the provider name into the `Self` position, and rewrites every `self`/`Self` reference, then hands the result to the same machinery `#[cgp_provider]` uses. The clearest way to see this is a minimal example with the context named explicitly. Starting from:

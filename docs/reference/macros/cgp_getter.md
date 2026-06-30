@@ -32,6 +32,16 @@ pub trait HasName {
 
 Here the provider trait is named `GetName` and the component `GetNameComponent`. The defaulting rule means `#[cgp_getter]` is at its most ergonomic when getter traits follow the `Has{Field}` naming convention.
 
+## Syntax Grammar
+
+The attribute argument of `#[cgp_getter]` is the same grammar as [`#[cgp_component]`](cgp_component.md)'s `CgpComponentArgs` — a bare provider name or the keyed `name`/`provider`/`context` form:
+
+```ebnf
+CgpGetterArgs -> CgpComponentArgs    // see #[cgp_component]
+```
+
+The only difference from `#[cgp_component]` is the default applied when `provider` is omitted: the macro derives the provider name from the trait name by stripping a leading `Has` and appending `Getter` (so `HasName` yields `NameGetter`). All other keys and their defaults behave exactly as documented for `#[cgp_component]`.
+
 ## Expansion
 
 `#[cgp_getter]` expands to everything `#[cgp_component]` emits, plus a set of getter-specific provider impls. The component part is identical to a `#[cgp_component(NameGetter)]` definition — the consumer trait, the provider trait, the consumer and provider blanket impls, the `NameGetterComponent` marker, and the standard `UseContext` and `RedirectLookup` provider impls (see [`#[cgp_component]`](cgp_component.md) for that core expansion). On top of those, the macro adds the getter providers described below. A `UseFields` provider is always emitted; the `UseField` and `WithProvider` providers are emitted only when the getter trait has exactly one method, since both presuppose a single field to read.
