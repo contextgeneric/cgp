@@ -166,9 +166,14 @@ Two **blanket impls** connect the sides: one makes any context that implements t
 *for itself* automatically implement the consumer trait; the other lets a context that delegates
 this component (via `DelegateComponent`) inherit the provider trait from whatever provider it
 delegates to. You never write these blanket impls; they are the routing machinery, and it is enough
-to think of wiring as a table lookup. In real generated code the context parameter is named
-`__Context__` and the provider parameter `__Provider__` (reserved identifiers chosen so they never
-clash with your types); the names `Context`/`Provider` here are for readability.
+to think of wiring as a table lookup. Crucially, that lookup is resolved **entirely at compile
+time**: the table is a set of trait impls, so the compiler picks the provider during type
+resolution and monomorphizes the call to a direct, statically-dispatched one. CGP wiring is
+therefore zero-cost — there is no runtime table, no dynamic dispatch, and no `vtable` in the
+generated code, even though "table lookup" is a useful mental model. In real generated code the
+context parameter is named `__Context__` and the provider parameter `__Provider__` (reserved
+identifiers chosen so they never clash with your types); the names `Context`/`Provider` here are
+for readability.
 
 ## `IsProviderFor` and error messages
 
@@ -711,10 +716,14 @@ Assume by default that the user has only basic Rust experience and is new to CGP
 over-explain: when code merely uses CGP concepts, write or modify it without lecturing, and add
 explanation only when asked. When you do explain, assume unfamiliarity with advanced Rust (generics,
 traits, blanket impls, coherence) and with functional/type-level programming — describe type-level
-tables, lists, and strings through familiar analogies such as a vtable lookup or a map, and expand on
+tables, lists, and strings through familiar analogies such as a map or a lookup table, and expand on
 advanced Rust as needed. Keep the simplified picture front and center: present wiring as choosing a
 table entry, and keep `IsProviderFor`, `DelegateComponent`, and generated blanket impls out of the
-explanation unless the user is asking specifically about the internals.
+explanation unless the user is asking specifically about the internals. One caveat when you reach
+for an analogy: the "table lookup" is resolved at compile time and compiles down to direct static
+calls, so if you use a runtime-flavored analogy like a vtable, say explicitly that — unlike a real
+vtable — CGP's resolution is static and zero-cost, with no runtime table or dynamic dispatch. Never
+leave a reader thinking CGP wiring has runtime lookup overhead.
 
 When asked to explain a specific piece of code, look up the definitions it depends on before
 answering. To explain a `delegate_components!` entry, find the consumer and provider traits behind
