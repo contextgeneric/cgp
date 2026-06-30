@@ -197,7 +197,7 @@ pub struct MessagesArchive {
 
 ## Wiring an application context
 
-A context turns this pile of overlapping providers into one coherent scheme by choosing, per value type, which provider runs. The `open` statement in [`delegate_components!`](../reference/macros/delegate_components.md) opens the serialization component for per-type wiring directly in the context's own table; after it, an `@ValueSerializerComponent.<Type>: <Provider>` entry assigns a provider to each value type the archive touches, the type written as a [`@`-path key](../reference/concepts/namespaces.md):
+A context turns this pile of overlapping providers into one coherent scheme by choosing, per value type, which provider runs. The `open` statement in [`delegate_components!`](../reference/macros/delegate_components.md) opens the serialization component for per-type wiring directly in the context's own table; after it, an `@ValueSerializerComponent.<Type>: <Provider>` entry assigns a provider to each value type the archive touches, the type written as a [`@`-path key](../reference/concepts/namespaces.md). `open` is the lightweight wiring form that suits a self-contained application like this one; a large code base with many components instead shares wiring through named [namespaces](../reference/concepts/namespaces.md) that contexts join and selectively override:
 
 ```rust
 pub struct AppA;
