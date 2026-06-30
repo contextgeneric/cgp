@@ -67,7 +67,7 @@ The call is equivalent to `Shape::Circle(circle)`, but because the variant is se
 
 ## Related constructs
 
-The derive that generates the per-variant impls is [`#[derive(FromVariant)]`](../derives/derive_from_variant.md), whose doc shows the exact expanded code; it is also folded into [`#[derive(CgpVariant)]`](../derives/derive_cgp_variant.md) and [`#[derive(CgpData)]`](../derives/derive_cgp_data.md). The reverse operation is [`ExtractField`](extract_field.md), which deconstructs an enum variant by variant rather than constructing one. The variant tag is a [`Symbol!`](../macros/symbol.md) type-level string, the same kind of tag that keys the field traits. For structs, the analogous field-setting building block is the builder family in [`has_builder`](has_builder.md).
+The derive that generates the per-variant impls is [`#[derive(FromVariant)]`](../derives/derive_from_variant.md), whose doc shows the exact expanded code; it is also folded into [`#[derive(CgpVariant)]`](../derives/derive_cgp_variant.md) and [`#[derive(CgpData)]`](../derives/derive_cgp_data.md). The reverse operation is [`ExtractField`](extract_field.md), which deconstructs an enum variant by variant rather than constructing one. The variant tag is a [`Symbol!`](../macros/symbol.md) type-level string, the same kind of tag that keys the field traits. For structs, the analogous field-setting building block is the builder family in [`has_builder`](has_builder.md). The conceptual overview that frames variant construction is [extensible variants](../concepts/extensible-variants.md), worked through in the [expression interpreter](../../examples/expression-interpreter.md) example, where upcasting a small local enum relies on `FromVariant` to rebuild each variant into the target.
 
 ## Source
 

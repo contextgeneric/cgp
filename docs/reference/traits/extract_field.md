@@ -116,7 +116,7 @@ After the second extraction the remainder has both markers `IsVoid`, so its type
 
 ## Related constructs
 
-The enum-side derive that generates the partial enums and all these impls is [`#[derive(ExtractField)]`](../derives/derive_extract_field.md), whose doc shows the exact expanded code. The presence markers `IsPresent` and `IsVoid` are [`MapType`](map_type.md) implementations, and the empty remainder bottoms out in the [`Void`](../types/either.md) type that anchors the sum spine. The construction counterpart, which puts a variant *into* an enum rather than taking one out, is [`FromVariant`](from_variant.md). The struct analogue of the whole family is the builder family in [`has_builder`](has_builder.md), which assembles a record field by field instead of deconstructing a variant.
+The enum-side derive that generates the partial enums and all these impls is [`#[derive(ExtractField)]`](../derives/derive_extract_field.md), whose doc shows the exact expanded code. The presence markers `IsPresent` and `IsVoid` are [`MapType`](map_type.md) implementations, and the empty remainder bottoms out in the [`Void`](../types/either.md) type that anchors the sum spine. The construction counterpart, which puts a variant *into* an enum rather than taking one out, is [`FromVariant`](from_variant.md). The struct analogue of the whole family is the builder family in [`has_builder`](has_builder.md), which assembles a record field by field instead of deconstructing a variant. The conceptual overview that frames this family is [extensible variants](../concepts/extensible-variants.md), worked through in the [expression interpreter](../../examples/expression-interpreter.md) example.
 
 ## Source
 

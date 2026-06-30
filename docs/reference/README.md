@@ -26,6 +26,8 @@ These documents explain the ideas that connect the constructs, each linking down
 - [Abstract types](concepts/abstract-types.md) — abstract associated types shared and swapped across contexts.
 - [Namespaces](concepts/namespaces.md) — reusable, inheritable wiring tables and preset-style configuration.
 - [Handlers](concepts/handlers.md) — the Computer/Producer/Handler family of computation components and their sync/async/fallible/by-reference variants.
+- [Extensible records](concepts/extensible-records.md) — building and reading a struct by its named fields, and the extensible builder pattern.
+- [Extensible variants](concepts/extensible-variants.md) — constructing and deconstructing an enum by its named variants, and the extensible visitor pattern.
 - [Dispatching](concepts/dispatching.md) — routing extensible-data inputs to per-field and per-variant handlers.
 - [Monadic handlers](concepts/monadic-handlers.md) — composing handlers through the identity/ok/err monads.
 - [Type-level DSLs](concepts/type-level-dsls.md) — encoding a small language as types and interpreting it at compile time through CGP wiring.
@@ -158,5 +160,3 @@ These are the type-level building-block types the macros and traits operate on.
 - [`PathCons`](types/path_cons.md) — the type-level path list behind `Path!`.
 - [`Life`](types/life.md) — a lifetime lifted into a type.
 - [`MRef`](types/mref.md) — an owned-or-borrowed value.
-</content>
-</invoke>

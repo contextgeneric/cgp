@@ -113,7 +113,7 @@ Each line changes the partial type, and the `finalize_build` on the last line ty
 
 ## Related constructs
 
-The struct-side derive that generates the partial type and all these impls is [`#[derive(BuildField)]`](../derives/derive_build_field.md), whose doc shows the exact expanded code. The presence markers `IsPresent`, `IsNothing`, and `IsVoid` are [`MapType`](map_type.md) implementations, and the partial type's `MapType` parameters are what record per-field state. Fields already set on a partial value are read back through [`HasField`](has_field.md). The enum counterparts to this family are the extractor traits in [`extract_field`](extract_field.md), which deconstruct a value variant by variant, and [`FromVariant`](from_variant.md), which constructs an enum from a single variant.
+The struct-side derive that generates the partial type and all these impls is [`#[derive(BuildField)]`](../derives/derive_build_field.md), whose doc shows the exact expanded code. The presence markers `IsPresent`, `IsNothing`, and `IsVoid` are [`MapType`](map_type.md) implementations, and the partial type's `MapType` parameters are what record per-field state. Fields already set on a partial value are read back through [`HasField`](has_field.md). The enum counterparts to this family are the extractor traits in [`extract_field`](extract_field.md), which deconstruct a value variant by variant, and [`FromVariant`](from_variant.md), which constructs an enum from a single variant. The conceptual overview that ties this family into the [extensible builder pattern](../concepts/extensible-records.md) is in [extensible records](../concepts/extensible-records.md), worked through in the [application builder](../../examples/application-builder.md) example.
 
 ## Source
 
