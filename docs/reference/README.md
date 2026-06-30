@@ -76,7 +76,7 @@ These attributes refine what the definition macros generate and are used inside 
 - [`#[implicit]`](attributes/implicit.md) — extract a function argument from a context field automatically.
 - [`#[uses]`](attributes/uses.md) — import other CGP capabilities as `Self` bounds.
 - [`#[use_type]`](attributes/use_type.md) — import an abstract associated type with fully-qualified rewriting.
-- [`#[use_provider]`](attributes/use_provider.md) — dispatch a call to a named provider in higher-order providers.
+- [`#[use_provider]`](attributes/use_provider.md) — complete an inner provider's bound in higher-order providers.
 - [`#[extend]`](attributes/extend.md) — add supertrait bounds to a generated trait.
 - [`#[extend_where]`](attributes/extend_where.md) — add `where` clauses to a generated trait definition.
 - [`#[derive_delegate]`](attributes/derive_delegate.md) — generate `UseDelegate` providers that dispatch on a generic parameter.

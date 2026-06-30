@@ -132,15 +132,14 @@ assert_eq!(PlainCircle { radius: 4.0 }.area(), 16.0 * core::f64::consts::PI);
 
 ## Composing providers
 
-Scaling applies to every shape the same way, so writing a separate scaled provider per shape would duplicate the same logic. A [higher-order provider](../reference/concepts/higher-order-providers.md) captures the transformation once and takes the base calculation as a provider parameter. The [`#[use_provider]`](../reference/attributes/use_provider.md) attribute imports the inner provider and dispatches the inner `area` call to it:
+Scaling applies to every shape the same way, so writing a separate scaled provider per shape would duplicate the same logic. A [higher-order provider](../reference/concepts/higher-order-providers.md) captures the transformation once and takes the base calculation as a provider parameter — `InnerCalculator`, declared as an impl generic. The [`#[use_provider]`](../reference/attributes/use_provider.md) attribute supplies that inner provider's bound, filling in the leading context argument a provider trait carries, while the body invokes it as an associated function:
 
 ```rust
 #[cgp_impl(new ScaledAreaCalculator<InnerCalculator>)]
 #[use_provider(InnerCalculator: AreaCalculator)]
-impl AreaCalculator {
+impl<InnerCalculator> AreaCalculator {
     fn area(&self, #[implicit] scale_factor: f64) -> f64 {
-        #[use_provider(InnerCalculator)]
-        self.area() * scale_factor * scale_factor
+        InnerCalculator::area(self) * scale_factor * scale_factor
     }
 }
 ```

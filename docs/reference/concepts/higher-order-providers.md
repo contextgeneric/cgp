@@ -30,7 +30,7 @@ The `<Self>` in `InnerCalculator: AreaCalculator<Self>` is exactly the leading c
 
 ## Hiding the friction with `#[use_provider]`
 
-The [`#[use_provider]`](../attributes/use_provider.md) attribute exists to erase both of those surprises, and is the idiomatic way to write higher-order providers. In its outer form, written alongside `#[cgp_impl]`, it takes the inner bound without the context argument and fills the `<Self>` back in for you:
+The [`#[use_provider]`](../attributes/use_provider.md) attribute exists to erase the bound surprise, and is the idiomatic way to write higher-order providers. Written alongside `#[cgp_impl]`, it takes the inner bound without the context argument and fills the `<Self>` back in for you:
 
 ```rust
 #[cgp_impl(new ScaledArea<InnerCalculator>)]
@@ -43,7 +43,7 @@ impl<InnerCalculator> AreaCalculator {
 }
 ```
 
-The author writes `InnerCalculator: AreaCalculator` and the macro emits `InnerCalculator: AreaCalculator<Self>` into the `where` clause, so the source reads as if the provider trait had the same shape as the consumer trait. The inner form of `#[use_provider]` addresses the call site symmetrically: annotating a method-call expression with `#[use_provider(InnerCalculator)] self.area()` rewrites it to `InnerCalculator::area(self)`, letting the body keep the method-chain reading. Between the two forms, a higher-order provider can be written so that nothing in its source betrays that an inner provider's bound carries a hidden context argument. See [`#[use_provider]`](../attributes/use_provider.md) for the exact rewrite rules.
+The author writes `InnerCalculator: AreaCalculator` and the macro emits `InnerCalculator: AreaCalculator<Self>` into the `where` clause, so the bound reads as if the provider trait had the same shape as the consumer trait. The call-site asymmetry remains, by contrast: `#[use_provider]` completes the bound only and does not rewrite the body, so the inner provider is still invoked as the associated function `InnerCalculator::area(self)`, passing the context explicitly. That spelled-out call is the one piece of source that still reflects the provider trait's leading context argument. See [`#[use_provider]`](../attributes/use_provider.md) for the exact rules.
 
 ## `UseContext` as a default inner provider
 
@@ -75,7 +75,7 @@ Here `Tag` is a type-level field name, used only as a `HasField` key, with no pr
 
 ## Related constructs
 
-Higher-order providers are written with [`#[cgp_impl]`](../macros/cgp_impl.md) (or `#[cgp_fn]`), giving the inner provider as a generic parameter in the provider's `Self` position. The [`#[use_provider]`](../attributes/use_provider.md) attribute is the idiomatic tool for them: its outer form supplies the hidden `<Self>` on the inner bound, and its inner form rewrites a method call into the associated-function call the provider trait actually requires. [`UseContext`](../providers/use_context.md) serves as the default inner provider when the higher-order provider is given an explicit struct with a defaulted parameter, letting it fall back to the context's own wiring. For dispatching to different inner providers based on a generic type rather than naming one statically, [`UseDelegate`](../providers/use_delegate.md) pairs naturally with higher-order providers — a nested delegation table can map each shape to a different `ScaledArea<...>`. Each layer of a nested provider can be verified independently with the `#[check_providers]` form of [`check_components!`](../macros/check_components.md), which is what makes higher-order wiring debuggable.
+Higher-order providers are written with [`#[cgp_impl]`](../macros/cgp_impl.md) (or `#[cgp_fn]`), giving the inner provider as a generic parameter in the provider's `Self` position. The [`#[use_provider]`](../attributes/use_provider.md) attribute is the idiomatic tool for them: it supplies the hidden `<Self>` on the inner bound, leaving the body to invoke the inner provider as the associated-function call the provider trait actually requires. [`UseContext`](../providers/use_context.md) serves as the default inner provider when the higher-order provider is given an explicit struct with a defaulted parameter, letting it fall back to the context's own wiring. For dispatching to different inner providers based on a generic type rather than naming one statically, [`UseDelegate`](../providers/use_delegate.md) pairs naturally with higher-order providers — a nested delegation table can map each shape to a different `ScaledArea<...>`. Each layer of a nested provider can be verified independently with the `#[check_providers]` form of [`check_components!`](../macros/check_components.md), which is what makes higher-order wiring debuggable.
 
 ## Source
 
