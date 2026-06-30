@@ -4,11 +4,11 @@ This example rebuilds Serde's `Serialize` and `Deserialize` as CGP components, s
 
 The concepts each step demonstrates are documented in full in the reference; this example notes which one is in play and links to it:
 
-- splitting a trait so overlapping and orphan implementations are legal — [consumer and provider traits](../reference/concepts/consumer-and-provider-traits.md) and the [coherence](../reference/concepts/coherence.md) strategy behind it
+- splitting a trait so overlapping and orphan implementations are legal — [consumer and provider traits](../concepts/consumer-and-provider-traits.md) and the [coherence](../concepts/coherence.md) strategy behind it
 - defining the components — [`#[cgp_component]`](../reference/macros/cgp_component.md)
 - writing the providers — [`#[cgp_impl]`](../reference/macros/cgp_impl.md), with [`#[uses]`](../reference/attributes/uses.md) for the capabilities they look up through the context
-- serializing a struct with no serialization-specific derive — [extensible records](../reference/concepts/extensible-records.md) via [`#[derive(CgpData)]`](../reference/derives/derive_cgp_data.md)
-- selecting a provider per value type, inline in the context's own table — the `open` statement of [`delegate_components!`](../reference/macros/delegate_components.md) with [`@`-path keys](../reference/concepts/namespaces.md)
+- serializing a struct with no serialization-specific derive — [extensible records](../concepts/extensible-records.md) via [`#[derive(CgpData)]`](../reference/derives/derive_cgp_data.md)
+- selecting a provider per value type, inline in the context's own table — the `open` statement of [`delegate_components!`](../reference/macros/delegate_components.md) with [`@`-path keys](../concepts/namespaces.md)
 - verifying a context's wiring — [`check_components!`](../reference/macros/check_components.md)
 - pulling a capability from the context during deserialization — [`#[cgp_auto_getter]`](../reference/macros/cgp_auto_getter.md) over [`HasField`](../reference/traits/has_field.md), with the [`HasErrorType`](../reference/components/has_error_type.md) and [`CanRaiseError`](../reference/components/can_raise_error.md) error components
 
@@ -34,11 +34,11 @@ pub trait CanDeserializeValue<'de, Value> {
 }
 ```
 
-`CanSerializeValue` and `CanDeserializeValue` are the [consumer traits](../reference/concepts/consumer-and-provider-traits.md) callers use as `context.serialize(value, s)`; `ValueSerializer` and `ValueDeserializer` are the provider traits implementations are written against. The extra `&self` is the whole point — it gives every implementation access to the context, both to look up how to serialize nested values and, for deserialization, to pull runtime dependencies out of it. Because `Value` is a generic parameter rather than the `Self` type, a context can later wire a different provider for each concrete value type, which is the per-type dispatch set up when the contexts are wired below.
+`CanSerializeValue` and `CanDeserializeValue` are the [consumer traits](../concepts/consumer-and-provider-traits.md) callers use as `context.serialize(value, s)`; `ValueSerializer` and `ValueDeserializer` are the provider traits implementations are written against. The extra `&self` is the whole point — it gives every implementation access to the context, both to look up how to serialize nested values and, for deserialization, to pull runtime dependencies out of it. Because `Value` is a generic parameter rather than the `Self` type, a context can later wire a different provider for each concrete value type, which is the per-type dispatch set up when the contexts are wired below.
 
 ## Overlapping providers
 
-With the type moved off `Self`, several implementations of the same component can coexist even though they overlap — each is written for its own zero-sized provider struct, which the defining crate owns, so the [coherence](../reference/concepts/coherence.md) rules never apply. The simplest provider stays compatible with the existing Serde ecosystem by deferring to Serde's own `Serialize`:
+With the type moved off `Self`, several implementations of the same component can coexist even though they overlap — each is written for its own zero-sized provider struct, which the defining crate owns, so the [coherence](../concepts/coherence.md) rules never apply. The simplest provider stays compatible with the existing Serde ecosystem by deferring to Serde's own `Serialize`:
 
 ```rust
 pub struct UseSerde;
@@ -80,7 +80,7 @@ In vanilla Rust these two blanket implementations could not both exist; as named
 
 ## Looking serialization up through the context
 
-A provider needs more than its own logic when it serializes by delegating to another encoding — and it gets that by asking the context. `SerializeWithDisplay` formats any `Display` value to a string and then serializes *that string through the context*, so the eventual byte-level representation of the string is itself a wiring choice rather than fixed here. The capability it depends on is declared with [`#[uses]`](../reference/attributes/uses.md), which adds the bound `Self: CanSerializeValue<String>` as an [impl-side dependency](../reference/concepts/impl-side-dependencies.md):
+A provider needs more than its own logic when it serializes by delegating to another encoding — and it gets that by asking the context. `SerializeWithDisplay` formats any `Display` value to a string and then serializes *that string through the context*, so the eventual byte-level representation of the string is itself a wiring choice rather than fixed here. The capability it depends on is declared with [`#[uses]`](../reference/attributes/uses.md), which adds the bound `Self: CanSerializeValue<String>` as an [impl-side dependency](../concepts/impl-side-dependencies.md):
 
 ```rust
 #[cgp_impl(new SerializeWithDisplay)]
@@ -165,7 +165,7 @@ where
 }
 ```
 
-This is the payoff for the orphan rule: a data type needs no serialization-specific derive and no dependency on this crate at all. Deriving the general-purpose `CgpData` is enough for `SerializeFields` to serialize it generically — see [extensible records](../reference/concepts/extensible-records.md) for what that derive exposes — so a library never has to implement a serialization trait on types it owns just because a downstream application wants to encode them.
+This is the payoff for the orphan rule: a data type needs no serialization-specific derive and no dependency on this crate at all. Deriving the general-purpose `CgpData` is enough for `SerializeFields` to serialize it generically — see [extensible records](../concepts/extensible-records.md) for what that derive exposes — so a library never has to implement a serialization trait on types it owns just because a downstream application wants to encode them.
 
 ## The data types
 
@@ -197,7 +197,7 @@ pub struct MessagesArchive {
 
 ## Wiring an application context
 
-A context turns this pile of overlapping providers into one coherent scheme by choosing, per value type, which provider runs. The `open` statement in [`delegate_components!`](../reference/macros/delegate_components.md) opens the serialization component for per-type wiring directly in the context's own table; after it, an `@ValueSerializerComponent.<Type>: <Provider>` entry assigns a provider to each value type the archive touches, the type written as a [`@`-path key](../reference/concepts/namespaces.md). `open` is the lightweight wiring form that suits a self-contained application like this one; a large code base with many components instead shares wiring through named [namespaces](../reference/concepts/namespaces.md) that contexts join and selectively override:
+A context turns this pile of overlapping providers into one coherent scheme by choosing, per value type, which provider runs. The `open` statement in [`delegate_components!`](../reference/macros/delegate_components.md) opens the serialization component for per-type wiring directly in the context's own table; after it, an `@ValueSerializerComponent.<Type>: <Provider>` entry assigns a provider to each value type the archive touches, the type written as a [`@`-path key](../concepts/namespaces.md). `open` is the lightweight wiring form that suits a self-contained application like this one; a large code base with many components instead shares wiring through named [namespaces](../concepts/namespaces.md) that contexts join and selectively override:
 
 ```rust
 pub struct AppA;
@@ -268,7 +268,7 @@ delegate_components! {
 }
 ```
 
-The two contexts resolve `Vec<u8>` to overlapping providers — `SerializeHex` and `SerializeBase64` — with no conflict, because each choice is coherent only within its own context. CGP wiring is [checked lazily](../reference/concepts/check-traits.md), so a [`check_components!`](../reference/macros/check_components.md) block asserts at compile time that each context can actually serialize every value type, listing them as the `Value` parameters of `ValueSerializerComponent`:
+The two contexts resolve `Vec<u8>` to overlapping providers — `SerializeHex` and `SerializeBase64` — with no conflict, because each choice is coherent only within its own context. CGP wiring is [checked lazily](../concepts/check-traits.md), so a [`check_components!`](../reference/macros/check_components.md) block asserts at compile time that each context can actually serialize every value type, listing them as the `Value` parameters of `ValueSerializerComponent`:
 
 ```rust
 check_components! {
@@ -400,4 +400,4 @@ let app = App { arena: &arena };
 let cluster: Cluster<'_> = app.deserialize_json_string(serialized).unwrap();
 ```
 
-The arena was never an argument to a deserialize function — Serde's `from_str` has no slot for one. It reached `DeserializeAndAllocate` through the context, which is how CGP supplies a capability to code nested arbitrarily deep without threading it explicitly, the [dependency-injection](../reference/concepts/impl-side-dependencies.md) idea applied to deserialization.
+The arena was never an argument to a deserialize function — Serde's `from_str` has no slot for one. It reached `DeserializeAndAllocate` through the context, which is how CGP supplies a capability to code nested arbitrarily deep without threading it explicitly, the [dependency-injection](../concepts/impl-side-dependencies.md) idea applied to deserialization.

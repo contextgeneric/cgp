@@ -1,6 +1,6 @@
 # `Producer`
 
-`Producer` is the no-input member of the [handler family](../concepts/handlers.md): a synchronous, infallible component that produces an `Output` from the context and a phantom `Code` tag alone, with no `Input`.
+`Producer` is the no-input member of the [handler family](../../concepts/handlers.md): a synchronous, infallible component that produces an `Output` from the context and a phantom `Code` tag alone, with no `Input`.
 
 ## Purpose
 
@@ -76,7 +76,7 @@ Here `MagicNumber` produces `42` from the `Code` tag alone, and `App` delegates 
 
 ## Related constructs
 
-`Producer` is the no-input member of the [handler family](../concepts/handlers.md), where the broader `Code`/`Input`/`Output` model and its axes are explained. Its input-taking counterparts are [`Computer`](computer.md) for the synchronous infallible case, [`TryComputer`](try_computer.md) for the fallible case, and [`Handler`](handler.md) for the general async-and-fallible case; a producer promotes into any of them by ignoring the supplied input. The combinators that perform those promotions, including the `Promote` provider and the `PromoteProducer` table, are documented in [handler combinators](../providers/handler_combinators.md). The macro that generates a producer from a zero-argument function is [`#[cgp_producer]`](../macros/cgp_producer.md), and dispatching a producer on its `Code` tag uses [`UseDelegate`](../providers/use_delegate.md), per [dispatching](../concepts/dispatching.md).
+`Producer` is the no-input member of the [handler family](../../concepts/handlers.md), where the broader `Code`/`Input`/`Output` model and its axes are explained. Its input-taking counterparts are [`Computer`](computer.md) for the synchronous infallible case, [`TryComputer`](try_computer.md) for the fallible case, and [`Handler`](handler.md) for the general async-and-fallible case; a producer promotes into any of them by ignoring the supplied input. The combinators that perform those promotions, including the `Promote` provider and the `PromoteProducer` table, are documented in [handler combinators](../providers/handler_combinators.md). The macro that generates a producer from a zero-argument function is [`#[cgp_producer]`](../macros/cgp_producer.md), and dispatching a producer on its `Code` tag uses [`UseDelegate`](../providers/use_delegate.md), per [dispatching](../../concepts/dispatching.md).
 
 ## Source
 

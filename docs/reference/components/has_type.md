@@ -4,7 +4,7 @@
 
 ## Purpose
 
-`HasType` exists to let generic code refer to a type that is chosen per context without committing to a concrete one. An abstract type in CGP is a trait with a single associated type, and `HasType<Tag>` is the foundational, tag-indexed instance of that pattern: a context can carry many distinct abstract types — one per `Tag` — and resolve each to a concrete type through wiring. Generic code names `Self::Type` (or `TypeOf<Context, Tag>`), the concrete type stays hidden behind the tag, and any context that wires the tag to a type satisfies the bound. See [abstract types](../concepts/abstract-types.md) for how this generalizes across a codebase.
+`HasType` exists to let generic code refer to a type that is chosen per context without committing to a concrete one. An abstract type in CGP is a trait with a single associated type, and `HasType<Tag>` is the foundational, tag-indexed instance of that pattern: a context can carry many distinct abstract types — one per `Tag` — and resolve each to a concrete type through wiring. Generic code names `Self::Type` (or `TypeOf<Context, Tag>`), the concrete type stays hidden behind the tag, and any context that wires the tag to a type satisfies the bound. See [abstract types](../../concepts/abstract-types.md) for how this generalizes across a codebase.
 
 What makes `HasType` special is that it is the *only* abstract-type component built into CGP, and it is the machinery that [`#[cgp_type]`](../macros/cgp_type.md) defers to. Every named abstract-type component a user defines with `#[cgp_type]` is wired on top of this one through a generated `WithProvider` impl, so the same [`UseType<T>`](../providers/use_type.md) marker that resolves `HasType` also resolves any `#[cgp_type]` component. `HasType` is the common substrate; `#[cgp_type]` is the ergonomic layer that gives each abstract type its own named trait.
 
@@ -68,7 +68,7 @@ where
 
 ## Related constructs
 
-`HasType` is the foundation that [`#[cgp_type]`](../macros/cgp_type.md) builds every named abstract-type component on, via a generated `WithProvider` impl that adapts a `TypeProvider`. Its ergonomic provider is [`UseType`](../providers/use_type.md), the zero-sized marker that supplies a concrete type to the abstract one — not to be confused with the [`#[use_type]`](../attributes/use_type.md) attribute, which rewrites type names in definitions. The general idea of context-chosen types is covered in [abstract types](../concepts/abstract-types.md). [`HasErrorType`](has_error_type.md) is a concrete abstract-type component defined with `#[cgp_type]` on top of this machinery.
+`HasType` is the foundation that [`#[cgp_type]`](../macros/cgp_type.md) builds every named abstract-type component on, via a generated `WithProvider` impl that adapts a `TypeProvider`. Its ergonomic provider is [`UseType`](../providers/use_type.md), the zero-sized marker that supplies a concrete type to the abstract one — not to be confused with the [`#[use_type]`](../attributes/use_type.md) attribute, which rewrites type names in definitions. The general idea of context-chosen types is covered in [abstract types](../../concepts/abstract-types.md). [`HasErrorType`](has_error_type.md) is a concrete abstract-type component defined with `#[cgp_type]` on top of this machinery.
 
 ## Source
 

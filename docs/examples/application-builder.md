@@ -4,9 +4,9 @@ This example assembles an application context — a struct holding a database po
 
 The concepts each step demonstrates are documented in full in the reference; this example only notes which one is in play and links to it:
 
-- assembling a struct from independent contributions — [extensible records](../reference/concepts/extensible-records.md) and the [extensible builder pattern](../reference/concepts/dispatching.md)
+- assembling a struct from independent contributions — [extensible records](../concepts/extensible-records.md) and the [extensible builder pattern](../concepts/dispatching.md)
 - a struct that can be built field by field and merged — [`#[derive(BuildField)]`](../reference/derives/derive_build_field.md) with [`#[derive(HasFields)]`](../reference/derives/derive_has_fields.md), and `build_from` from [casting](../reference/traits/cast.md)
-- each subsystem builder is a handler — [`Handler` / `CanHandle`](../reference/components/handler.md) in the [handler family](../reference/concepts/handlers.md)
+- each subsystem builder is a handler — [`Handler` / `CanHandle`](../reference/components/handler.md) in the [handler family](../concepts/handlers.md)
 - writing a builder provider — [`#[cgp_impl]`](../reference/macros/cgp_impl.md) reading config through [`#[cgp_auto_getter]`](../reference/macros/cgp_auto_getter.md)
 - the abstract error and raising into it — [`HasErrorType`](../reference/components/has_error_type.md) and [`CanRaiseError`](../reference/components/can_raise_error.md)
 - merging builder outputs into the target — [`BuildAndMergeOutputs`](../reference/providers/dispatch_combinators.md)
@@ -54,7 +54,7 @@ impl App {
 }
 ```
 
-Every subsystem's setup lives in one function, so each new field widens the parameter list and every team touches the same constructor. The deriving line is the first move away from that: `App` derives [`#[derive(HasFields)]`](../reference/derives/derive_has_fields.md) and [`#[derive(BuildField)]`](../reference/derives/derive_build_field.md), which expose it as a [product of named fields](../reference/concepts/extensible-records.md) and generate a partial-record builder, so the struct can be filled in field by field instead of all at once.
+Every subsystem's setup lives in one function, so each new field widens the parameter list and every team touches the same constructor. The deriving line is the first move away from that: `App` derives [`#[derive(HasFields)]`](../reference/derives/derive_has_fields.md) and [`#[derive(BuildField)]`](../reference/derives/derive_build_field.md), which expose it as a [product of named fields](../concepts/extensible-records.md) and generate a partial-record builder, so the struct can be filled in field by field instead of all at once.
 
 ## A builder provider for one subsystem
 
@@ -165,7 +165,7 @@ where
 }
 ```
 
-Each provider states exactly what it needs from the context in its `where` clause as an [impl-side dependency](../reference/concepts/impl-side-dependencies.md), and nothing more. A builder whose construction cannot fail — like `BuildOpenAiClient` — only requires [`HasErrorType`](../reference/components/has_error_type.md) so its output type aligns with the others, while a fallible one adds the `CanRaiseError` it needs.
+Each provider states exactly what it needs from the context in its `where` clause as an [impl-side dependency](../concepts/impl-side-dependencies.md), and nothing more. A builder whose construction cannot fail — like `BuildOpenAiClient` — only requires [`HasErrorType`](../reference/components/has_error_type.md) so its output type aligns with the others, while a fallible one adds the `CanRaiseError` it needs.
 
 ## Merging the outputs into the application
 
@@ -206,7 +206,7 @@ check_components! {
 }
 ```
 
-`BuildAndMergeOutputs<App, Product![...]>` is the heart of the [extensible builder pattern](../reference/concepts/extensible-records.md): it starts an empty `App` builder, runs each provider in the list, merges each output struct into the builder with `build_from` from [casting](../reference/traits/cast.md), and finalizes the complete `App`. The merge is name-driven, so `SqliteClient`'s `sqlite_pool` field lands in `App`'s `sqlite_pool` field with no conversion written. The error wiring picks `anyhow::Error` as the abstract error through `UseAnyhowError` and lets the source errors raise into it through `RaiseAnyhowError`, satisfying the `CanRaiseError` bounds the providers declared. The [`check_components!`](../reference/macros/check_components.md) block asserts at compile time that the handler is wired for the unit `Code` and `Input` the build is invoked with — if any provider's required field were missing from `FullAppBuilder`, this would fail to compile rather than at runtime.
+`BuildAndMergeOutputs<App, Product![...]>` is the heart of the [extensible builder pattern](../concepts/extensible-records.md): it starts an empty `App` builder, runs each provider in the list, merges each output struct into the builder with `build_from` from [casting](../reference/traits/cast.md), and finalizes the complete `App`. The merge is name-driven, so `SqliteClient`'s `sqlite_pool` field lands in `App`'s `sqlite_pool` field with no conversion written. The error wiring picks `anyhow::Error` as the abstract error through `UseAnyhowError` and lets the source errors raise into it through `RaiseAnyhowError`, satisfying the `CanRaiseError` bounds the providers declared. The [`check_components!`](../reference/macros/check_components.md) block asserts at compile time that the handler is wired for the unit `Code` and `Input` the build is invoked with — if any provider's required field were missing from `FullAppBuilder`, this would fail to compile rather than at runtime.
 
 Building the `App` is then one call. The builder is constructed from its config fields — or deserialized from a file, since it derives `Deserialize` — and `handle` runs the whole pipeline:
 

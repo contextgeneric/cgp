@@ -114,7 +114,7 @@ The computer and handler forms accept an input argument and ignore it, since the
 
 ## Related constructs
 
-`#[cgp_producer]` defines a provider for the [`Producer`](../components/producer.md) component, part of the handler family described in [handlers](../concepts/handlers.md). It is the input-less counterpart of [`#[cgp_computer]`](cgp_computer.md), which defines a [`Computer`](../components/computer.md) from a function with parameters, and both are handler-world analogues of [`#[cgp_fn]`](cgp_fn.md). The generated impl is emitted through [`#[cgp_new_provider]`](cgp_new_provider.md), and the producer is lifted into the full handler family by the [`PromoteProducer`](../providers/handler_combinators.md) bundle wired through [`delegate_components!`](delegate_components.md).
+`#[cgp_producer]` defines a provider for the [`Producer`](../components/producer.md) component, part of the handler family described in [handlers](../../concepts/handlers.md). It is the input-less counterpart of [`#[cgp_computer]`](cgp_computer.md), which defines a [`Computer`](../components/computer.md) from a function with parameters, and both are handler-world analogues of [`#[cgp_fn]`](cgp_fn.md). The generated impl is emitted through [`#[cgp_new_provider]`](cgp_new_provider.md), and the producer is lifted into the full handler family by the [`PromoteProducer`](../providers/handler_combinators.md) bundle wired through [`delegate_components!`](delegate_components.md).
 
 ## Source
 

@@ -4,12 +4,12 @@ This example builds the CRUD backend for a small social media service — managi
 
 The concepts each step demonstrates are documented in full in the reference; this example only notes which one is in play and links to it:
 
-- consumer/provider trait pairs — [`#[cgp_component]`](../reference/macros/cgp_component.md) and [consumer and provider traits](../reference/concepts/consumer-and-provider-traits.md)
+- consumer/provider trait pairs — [`#[cgp_component]`](../reference/macros/cgp_component.md) and [consumer and provider traits](../concepts/consumer-and-provider-traits.md)
 - providers that read context fields as method arguments — [`#[cgp_impl]`](../reference/macros/cgp_impl.md) with [`#[implicit]`](../reference/attributes/implicit.md) arguments backed by [`#[derive(HasField)]`](../reference/derives/derive_has_field.md)
-- importing a capability a provider depends on — [`#[uses]`](../reference/attributes/uses.md), an [impl-side dependency](../reference/concepts/impl-side-dependencies.md)
-- a provider that wraps another provider — [higher-order providers](../reference/concepts/higher-order-providers.md) and [`#[use_provider]`](../reference/attributes/use_provider.md)
+- importing a capability a provider depends on — [`#[uses]`](../reference/attributes/uses.md), an [impl-side dependency](../concepts/impl-side-dependencies.md)
+- a provider that wraps another provider — [higher-order providers](../concepts/higher-order-providers.md) and [`#[use_provider]`](../reference/attributes/use_provider.md)
 - wiring a context and bundling providers into reusable groups — [`delegate_components!`](../reference/macros/delegate_components.md)
-- grouping component keys so a context inherits a whole bundle at once — [namespaces](../reference/concepts/namespaces.md), the [`#[prefix(...)]`](../reference/macros/cgp_component.md) attribute, and [`cgp_namespace!`](../reference/macros/cgp_namespace.md)
+- grouping component keys so a context inherits a whole bundle at once — [namespaces](../concepts/namespaces.md), the [`#[prefix(...)]`](../reference/macros/cgp_component.md) attribute, and [`cgp_namespace!`](../reference/macros/cgp_namespace.md)
 - checking that a wiring is complete — [`check_components!`](../reference/macros/check_components.md)
 
 All snippets assume `use cgp::prelude::*;` and share a small set of domain types — the entities the service manipulates and the database handle the providers read:
@@ -185,7 +185,7 @@ Splitting the traits also makes capability isolation possible: because deleting 
 
 ## Lifting the filter into a higher-order provider
 
-With creation isolated in its own trait, the username check no longer belongs inside the database provider — it can become a separate provider that wraps any user creator. `FilterCensoredUsername` is a [higher-order provider](../reference/concepts/higher-order-providers.md): it takes an inner `UserCreator` as a type parameter, runs the censor check, and forwards to the inner provider only if the name is allowed:
+With creation isolated in its own trait, the username check no longer belongs inside the database provider — it can become a separate provider that wraps any user creator. `FilterCensoredUsername` is a [higher-order provider](../concepts/higher-order-providers.md): it takes an inner `UserCreator` as a type parameter, runs the censor check, and forwards to the inner provider only if the name is allowed:
 
 ```rust
 #[cgp_impl(new FilterCensoredUsername<InnerCreator>)]
@@ -274,7 +274,7 @@ The bundles read cleanly on their own, but the top-level table still has to spel
 
 ## Grouping component keys with namespaces
 
-A [namespace](../reference/concepts/namespaces.md) gives a group of components a shared key, so a context can route the whole group with one entry instead of listing each name. A component joins a namespace under a dotted path with the [`#[prefix(...)]`](../reference/macros/cgp_component.md) attribute on its trait; here the three user components all register under `@app.core.user` in the built-in `DefaultNamespace`:
+A [namespace](../concepts/namespaces.md) gives a group of components a shared key, so a context can route the whole group with one entry instead of listing each name. A component joins a namespace under a dotted path with the [`#[prefix(...)]`](../reference/macros/cgp_component.md) attribute on its trait; here the three user components all register under `@app.core.user` in the built-in `DefaultNamespace`:
 
 ```rust
 #[cgp_component(UserCreator)]

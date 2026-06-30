@@ -1,6 +1,6 @@
 # Monad traits
 
-The monad traits — `MonadicTrans`, `MonadicBind`, `LiftValue`, and `ContainsValue` — are the type-level interface that defines what a monad is for [monadic handler composition](../concepts/monadic-handlers.md): which branch of an output value continues a pipeline, which branch short-circuits, and how values move between those branches.
+The monad traits — `MonadicTrans`, `MonadicBind`, `LiftValue`, and `ContainsValue` — are the type-level interface that defines what a monad is for [monadic handler composition](../../concepts/monadic-handlers.md): which branch of an output value continues a pipeline, which branch short-circuits, and how values move between those branches.
 
 ## Purpose
 
@@ -64,7 +64,7 @@ The transformer forms `OkMonadicTrans<M>` and `ErrMonadicTrans<M>` implement the
 
 ## Related constructs
 
-These traits are consumed by the monad providers in [monad providers](../providers/monad_providers.md): `PipeMonadic` uses `MonadicTrans` and `MonadicBind` to fold a handler list into a single pipeline provider, while `BindOk` and `BindErr` use `ContainsValue` and `LiftValue` in their `Computer` and `AsyncComputer` implementations to split and re-lift each step's output. The high-level picture of how the pieces fit — why a pipeline short-circuits and how the monads compose — is in [monadic handlers](../concepts/monadic-handlers.md). The pipelines built from these traits implement the [`Computer`](../components/computer.md) family, so they slot into the same wiring as the [handler combinators](../providers/handler_combinators.md) `ComposeHandlers` and `PipeHandlers`, which compose handlers without the short-circuiting branch.
+These traits are consumed by the monad providers in [monad providers](../providers/monad_providers.md): `PipeMonadic` uses `MonadicTrans` and `MonadicBind` to fold a handler list into a single pipeline provider, while `BindOk` and `BindErr` use `ContainsValue` and `LiftValue` in their `Computer` and `AsyncComputer` implementations to split and re-lift each step's output. The high-level picture of how the pieces fit — why a pipeline short-circuits and how the monads compose — is in [monadic handlers](../../concepts/monadic-handlers.md). The pipelines built from these traits implement the [`Computer`](../components/computer.md) family, so they slot into the same wiring as the [handler combinators](../providers/handler_combinators.md) `ComposeHandlers` and `PipeHandlers`, which compose handlers without the short-circuiting branch.
 
 ## Source
 

@@ -4,11 +4,11 @@ This example computes properties of geometric shapes — area, scaling — model
 
 The concepts each step demonstrates are documented in full in the reference; this example only notes which one is in play and links to it:
 
-- shapes as the variants of an enum — [extensible variants](../reference/concepts/extensible-variants.md) via [`#[derive(CgpData)]`](../reference/derives/derive_cgp_data.md)
+- shapes as the variants of an enum — [extensible variants](../concepts/extensible-variants.md) via [`#[derive(CgpData)]`](../reference/derives/derive_cgp_data.md)
 - dispatching an operation to per-variant implementations — [`#[cgp_auto_dispatch]`](../reference/macros/cgp_auto_dispatch.md)
 - per-variant handlers as computers — [`#[cgp_computer]`](../reference/macros/cgp_computer.md) producing [`Computer`](../reference/components/computer.md) providers
 - widening and narrowing the variant set — [upcasting and downcasting](../reference/traits/cast.md)
-- the dispatch machinery underneath — the [dispatch combinators](../reference/providers/dispatch_combinators.md) and [dispatching](../reference/concepts/dispatching.md)
+- the dispatch machinery underneath — the [dispatch combinators](../reference/providers/dispatch_combinators.md) and [dispatching](../concepts/dispatching.md)
 - wiring dispatch into a context — [`delegate_components!`](../reference/macros/delegate_components.md) with [`UseInputDelegate`](../reference/providers/use_delegate.md) and a [`check_components!`](../reference/macros/check_components.md) assertion
 
 All snippets assume `use cgp::prelude::*;`; the dispatch combinators come from `cgp::extra::dispatch`, `UseInputDelegate` from `cgp::extra::handler`, and the cast helpers from `cgp::core::field::impls`. Each shape is its own payload struct:
@@ -65,7 +65,7 @@ impl HasArea for Triangle {
 
 ## An enum of shapes
 
-A concrete shape is one enum over the payload types, made [extensible](../reference/concepts/extensible-variants.md) with [`#[derive(CgpData)]`](../reference/derives/derive_cgp_data.md) so it can be taken apart by the variant name generically. Each variant holds exactly one payload — the single-field tuple form the derive requires:
+A concrete shape is one enum over the payload types, made [extensible](../concepts/extensible-variants.md) with [`#[derive(CgpData)]`](../reference/derives/derive_cgp_data.md) so it can be taken apart by the variant name generically. Each variant holds exactly one payload — the single-field tuple form the derive requires:
 
 ```rust
 #[derive(Debug, PartialEq, CgpData)]
@@ -212,7 +212,7 @@ A `Circle` input resolves to `ComputeArea` directly. A `Shape` or `ShapePlus` in
 
 Routing through the context is what makes individual variants overridable. Swapping the handler for one shape — wiring `Circle` to an optimized provider, say — is a one-line change to the table that leaves the matcher and every other variant untouched, precisely because the matcher never names `ComputeArea` itself. Pinning the matcher to a concrete provider as `MatchWithValueHandlers<ComputeArea>` is the other option, used when the dispatch should bypass the context entirely, as in the unit-context calls earlier.
 
-Because shape handlers are leaves — `ComputeArea` never calls back into the dispatcher — the enums can wire `MatchWithValueHandlers` directly. A *recursive* visitor cannot: the [expression interpreter](expression-interpreter.md) routes its enum through a thin wrapper provider instead, to break the trait-resolution cycle that its self-recursive handlers would otherwise create. Because CGP wiring is [checked lazily](../reference/concepts/check-traits.md), a [`check_components!`](../reference/macros/check_components.md) block asserts at compile time that both enums are fully dispatchable, listing each as a `(Code, Input)` pair for the generic `Computer` component:
+Because shape handlers are leaves — `ComputeArea` never calls back into the dispatcher — the enums can wire `MatchWithValueHandlers` directly. A *recursive* visitor cannot: the [expression interpreter](expression-interpreter.md) routes its enum through a thin wrapper provider instead, to break the trait-resolution cycle that its self-recursive handlers would otherwise create. Because CGP wiring is [checked lazily](../concepts/check-traits.md), a [`check_components!`](../reference/macros/check_components.md) block asserts at compile time that both enums are fully dispatchable, listing each as a `(Code, Input)` pair for the generic `Computer` component:
 
 ```rust
 check_components! {

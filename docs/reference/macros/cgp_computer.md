@@ -141,7 +141,7 @@ Because the function returns a plain `u64`, the `try_compute` and `handle` forms
 
 ## Related constructs
 
-`#[cgp_computer]` defines a provider for the [`Computer`](../components/computer.md) component (or `AsyncComputer` for async functions), part of the handler family described in [handlers](../concepts/handlers.md). It is the handler-world analogue of [`#[cgp_fn]`](cgp_fn.md), which defines a blanket-impl trait from a function; and the input-less counterpart [`#[cgp_producer]`](cgp_producer.md) defines a [`Producer`](../components/producer.md) the same way. The generated impl is emitted through [`#[cgp_new_provider]`](cgp_new_provider.md), and the rest of the handler family is filled in by the [promotion bundles](../providers/handler_combinators.md) (`PromoteComputer`, `PromoteTryComputer`, `PromoteAsyncComputer`, `PromoteHandler`) wired through [`delegate_components!`](delegate_components.md).
+`#[cgp_computer]` defines a provider for the [`Computer`](../components/computer.md) component (or `AsyncComputer` for async functions), part of the handler family described in [handlers](../../concepts/handlers.md). It is the handler-world analogue of [`#[cgp_fn]`](cgp_fn.md), which defines a blanket-impl trait from a function; and the input-less counterpart [`#[cgp_producer]`](cgp_producer.md) defines a [`Producer`](../components/producer.md) the same way. The generated impl is emitted through [`#[cgp_new_provider]`](cgp_new_provider.md), and the rest of the handler family is filled in by the [promotion bundles](../providers/handler_combinators.md) (`PromoteComputer`, `PromoteTryComputer`, `PromoteAsyncComputer`, `PromoteHandler`) wired through [`delegate_components!`](delegate_components.md).
 
 ## Source
 

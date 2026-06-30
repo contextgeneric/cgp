@@ -4,7 +4,7 @@ Recovering a `Send` bound is the pattern of restoring the "the returned future i
 
 ## Why async trait methods lose their `Send` bound
 
-An async CGP method advertises a future whose auto-traits the caller cannot name. The standard way to declare an asynchronous component is to write an `async fn` in the consumer trait and let [`#[async_trait]`](../macros/async_trait.md) rewrite it into a return-position `impl Future`:
+An async CGP method advertises a future whose auto-traits the caller cannot name. The standard way to declare an asynchronous component is to write an `async fn` in the consumer trait and let [`#[async_trait]`](../reference/macros/async_trait.md) rewrite it into a return-position `impl Future`:
 
 ```rust
 #[cgp_component(ApiHandler)]
@@ -58,7 +58,7 @@ pub trait CanHandleApiSend<Api>:
 }
 ```
 
-`CanHandleApiSend` is a plain trait, not a [component](../macros/cgp_component.md) — it adds nothing to the wiring and exists only to carry stronger bounds. It inherits the full capability from `CanHandleApi` as a supertrait, additionally requiring the request and response to be `Send` and the context itself to be `Send + Sync`, and it spells out `+ Send` on the future explicitly rather than through a clause on `handle_api`. A caller that holds `App: CanHandleApiSend<Api>` therefore knows the future is `Send` from the signature alone, with no RTN in sight. This is the bound a spawning handler can finally name:
+`CanHandleApiSend` is a plain trait, not a [component](../reference/macros/cgp_component.md) — it adds nothing to the wiring and exists only to carry stronger bounds. It inherits the full capability from `CanHandleApi` as a supertrait, additionally requiring the request and response to be `Send` and the context itself to be `Send + Sync`, and it spells out `+ Send` on the future explicitly rather than through a clause on `handle_api`. A caller that holds `App: CanHandleApiSend<Api>` therefore knows the future is `Send` from the signature alone, with no RTN in sight. This is the bound a spawning handler can finally name:
 
 ```rust
 where
@@ -111,12 +111,12 @@ impl CanHandleApiSend<TransferApi> for MockApp {
 }
 ```
 
-Each impl is mechanical — it forwards to `handle_api` and awaits — yet each is also a proof, accepted only because at this concrete instantiation the future really is `Send`. The repetition is the cost of the missing notation: one concrete impl per API per context replaces the single generic impl RTN would have allowed. The [money-transfer API example](../../examples/money-transfer-api.md) shows the pattern in its place, with `MockApp` recovering the bound so its handlers can be served by Axum.
+Each impl is mechanical — it forwards to `handle_api` and awaits — yet each is also a proof, accepted only because at this concrete instantiation the future really is `Send`. The repetition is the cost of the missing notation: one concrete impl per API per context replaces the single generic impl RTN would have allowed. The [money-transfer API example](../examples/money-transfer-api.md) shows the pattern in its place, with `MockApp` recovering the bound so its handlers can be served by Axum.
 
 ## Related constructs
 
-The dropped bound originates with [`#[async_trait]`](../macros/async_trait.md), whose Known issues section records the same `Send`-less future from the macro's side. The recovered trait sits atop a [component](../macros/cgp_component.md) defined the usual way and consumed through the [consumer/provider duality](consumer-and-provider-traits.md); the [`Handler`](../components/handler.md) family is the built-in async component most likely to need this treatment when its futures are spawned. The concrete impls forward through whatever provider stack the context wires with [`delegate_components!`](../macros/delegate_components.md), and the [higher-order providers](higher-order-providers.md) in that stack are part of what makes the resolved future a concrete, checkable type.
+The dropped bound originates with [`#[async_trait]`](../reference/macros/async_trait.md), whose Known issues section records the same `Send`-less future from the macro's side. The recovered trait sits atop a [component](../reference/macros/cgp_component.md) defined the usual way and consumed through the [consumer/provider duality](consumer-and-provider-traits.md); the [`Handler`](../reference/components/handler.md) family is the built-in async component most likely to need this treatment when its futures are spawned. The concrete impls forward through whatever provider stack the context wires with [`delegate_components!`](../reference/macros/delegate_components.md), and the [higher-order providers](higher-order-providers.md) in that stack are part of what makes the resolved future a concrete, checkable type.
 
 ## Source
 
-The behavior this pattern compensates for lives in the `#[async_trait]` rewrite at [crates/macros/cgp-async-macro/src/impl_async.rs](../../../crates/macros/cgp-async-macro/src/impl_async.rs), which produces a bare `-> impl Future` with no auto-trait bounds. The recovery itself is application-level rather than a CGP construct: it is an ordinary trait whose method declares `+ Send` on its return type and whose impls are written for concrete contexts, so there is no macro or core trait that implements it — only the language feature, Return Type Notation, that would make it unnecessary.
+The behavior this pattern compensates for lives in the `#[async_trait]` rewrite at [crates/macros/cgp-async-macro/src/impl_async.rs](../../crates/macros/cgp-async-macro/src/impl_async.rs), which produces a bare `-> impl Future` with no auto-trait bounds. The recovery itself is application-level rather than a CGP construct: it is an ordinary trait whose method declares `+ Send` on its return type and whose impls are written for concrete contexts, so there is no macro or core trait that implements it — only the language feature, Return Type Notation, that would make it unnecessary.

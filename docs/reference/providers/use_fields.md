@@ -46,7 +46,7 @@ where
 }
 ```
 
-Each method becomes a `HasField` bound keyed on the method name as a `Symbol!`, and the body reads that field. The same return-type shorthands the getter macros support apply here: the `&str` return makes the field `Value` a `String` and appends `.as_str()`, just as `#[cgp_auto_getter]` does. When a getter trait has several methods, the `UseFields` impl carries one `HasField` bound and one method body per getter, each keyed by its own method name. The impl is paired with a matching `IsProviderFor` impl carrying the same bounds, so the [check traits](../concepts/check-traits.md) can report a missing field precisely.
+Each method becomes a `HasField` bound keyed on the method name as a `Symbol!`, and the body reads that field. The same return-type shorthands the getter macros support apply here: the `&str` return makes the field `Value` a `String` and appends `.as_str()`, just as `#[cgp_auto_getter]` does. When a getter trait has several methods, the `UseFields` impl carries one `HasField` bound and one method body per getter, each keyed by its own method name. The impl is paired with a matching `IsProviderFor` impl carrying the same bounds, so the [check traits](../../concepts/check-traits.md) can report a missing field precisely.
 
 This is one of three provider impls `#[cgp_getter]` generates for a getter component, the other two being [`UseField`](use_field.md) for a wiring-chosen field name and [`WithProvider`](with_provider.md) for adapting a foundational field getter. A context picks among them at wiring time: `UseFields` when method and field names coincide, `UseField<Symbol!("...")>` when they differ.
 

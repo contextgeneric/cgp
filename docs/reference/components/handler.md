@@ -1,6 +1,6 @@
 # `Handler`
 
-`Handler` and `HandlerRef` are the most general members of the [handler family](../concepts/handlers.md): asynchronous, fallible components that transform an `Input` into an `Output` under a phantom `Code` tag, returning a `Result` against the context's abstract error type.
+`Handler` and `HandlerRef` are the most general members of the [handler family](../../concepts/handlers.md): asynchronous, fallible components that transform an `Input` into an `Output` under a phantom `Code` tag, returning a `Result` against the context's abstract error type.
 
 ## Purpose
 
@@ -79,7 +79,7 @@ The function `run_with` works for any context that wires a handler for the given
 
 ## Related constructs
 
-`Handler` is the general corner of the [handler family](../concepts/handlers.md), generalizing [`Computer`](computer.md) (drop fallibility and asynchrony), [`AsyncComputer`](computer.md) (drop fallibility), and [`TryComputer`](try_computer.md) (drop asynchrony). It supertraits [`HasErrorType`](has_error_type.md), which supplies the `Self::Error` it returns. The combinators that promote the simpler variants up to `Handler`, and that bridge `Handler` with `HandlerRef`, are documented in [handler combinators](../providers/handler_combinators.md), and chaining handlers into pipelines is covered in [monadic handlers](../concepts/monadic-handlers.md). The no-input member of the family is [`Producer`](producer.md). Dispatching a handler on its `Code` or `Input` uses [`UseDelegate`](../providers/use_delegate.md) and the family's `UseInputDelegate`, per [dispatching](../concepts/dispatching.md).
+`Handler` is the general corner of the [handler family](../../concepts/handlers.md), generalizing [`Computer`](computer.md) (drop fallibility and asynchrony), [`AsyncComputer`](computer.md) (drop fallibility), and [`TryComputer`](try_computer.md) (drop asynchrony). It supertraits [`HasErrorType`](has_error_type.md), which supplies the `Self::Error` it returns. The combinators that promote the simpler variants up to `Handler`, and that bridge `Handler` with `HandlerRef`, are documented in [handler combinators](../providers/handler_combinators.md), and chaining handlers into pipelines is covered in [monadic handlers](../../concepts/monadic-handlers.md). The no-input member of the family is [`Producer`](producer.md). Dispatching a handler on its `Code` or `Input` uses [`UseDelegate`](../providers/use_delegate.md) and the family's `UseInputDelegate`, per [dispatching](../../concepts/dispatching.md).
 
 ## Source
 

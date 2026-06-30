@@ -1,6 +1,6 @@
 # `TryComputer`
 
-`TryComputer` and `TryComputerRef` are the fallible synchronous corner of the [handler family](../concepts/handlers.md): components that transform an `Input` into an `Output` under a phantom `Code` tag, returning a `Result` against the context's abstract error type.
+`TryComputer` and `TryComputerRef` are the fallible synchronous corner of the [handler family](../../concepts/handlers.md): components that transform an `Input` into an `Output` under a phantom `Code` tag, returning a `Result` against the context's abstract error type.
 
 ## Purpose
 
@@ -90,7 +90,7 @@ The provider `ParseU64` returns `Result<u64, Context::Error>`, converting the co
 
 ## Related constructs
 
-`TryComputer` is the fallible synchronous corner of the [handler family](../concepts/handlers.md); its infallible counterpart is [`Computer`](computer.md), and its async-and-fallible generalization is [`Handler`](handler.md). It supertraits [`HasErrorType`](has_error_type.md), which supplies the `Self::Error` it returns, and a fallible provider typically uses [`CanRaiseError`](can_raise_error.md) to convert a concrete source error into that abstract error. The combinators that promote a `Computer` into a `TryComputer` (`Promote`, `TryPromote`) and a `TryComputer` into a `Handler` are documented in [handler combinators](../providers/handler_combinators.md). The macro that builds a `TryComputer` provider from a fallible function is [`#[cgp_computer]`](../macros/cgp_computer.md), and dispatching on `Code` or `Input` uses [`UseDelegate`](../providers/use_delegate.md) and the family's `UseInputDelegate`, per [dispatching](../concepts/dispatching.md).
+`TryComputer` is the fallible synchronous corner of the [handler family](../../concepts/handlers.md); its infallible counterpart is [`Computer`](computer.md), and its async-and-fallible generalization is [`Handler`](handler.md). It supertraits [`HasErrorType`](has_error_type.md), which supplies the `Self::Error` it returns, and a fallible provider typically uses [`CanRaiseError`](can_raise_error.md) to convert a concrete source error into that abstract error. The combinators that promote a `Computer` into a `TryComputer` (`Promote`, `TryPromote`) and a `TryComputer` into a `Handler` are documented in [handler combinators](../providers/handler_combinators.md). The macro that builds a `TryComputer` provider from a fallible function is [`#[cgp_computer]`](../macros/cgp_computer.md), and dispatching on `Code` or `Input` uses [`UseDelegate`](../providers/use_delegate.md) and the family's `UseInputDelegate`, per [dispatching](../../concepts/dispatching.md).
 
 ## Source
 

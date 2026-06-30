@@ -1,38 +1,18 @@
 # CGP Construct Reference
 
-This directory documents every CGP construct — one self-contained document per construct, each explaining its purpose, syntax or definition, expansion or behavior, examples, related constructs, and source. The documents are written for agents who need precise per-construct semantics. The high-level conceptual framing that connects the constructs now lives alongside them in [concepts/](concepts/); the `/cgp` skill remains a complementary teaching aid. The authoring rules, document template, and the requirement to keep these documents in sync with the code live in [../CLAUDE.md](../CLAUDE.md).
+This directory documents every CGP construct — one self-contained document per construct, each explaining its purpose, syntax or definition, expansion or behavior, examples, related constructs, and source. The documents are written for agents who need precise per-construct semantics. The high-level conceptual framing that connects the constructs lives in the sibling [concepts/](../concepts/README.md) directory; the `/cgp` skill remains a complementary teaching aid. The authoring rules, document template, and the requirement to keep these documents in sync with the code live in [../CLAUDE.md](../CLAUDE.md).
 
 ## Directory layout
 
-The documents are grouped into subdirectories by the *kind* of construct, so a reader looking for "the macro I invoke", "the trait the macro generates", "the provider I wire", or "the idea behind it all" each has an obvious place to start. A new document goes in the subdirectory that matches what the construct is; when you add one, place it accordingly and register it in the matching section below.
+The documents are grouped into subdirectories by the *kind* of construct, so a reader looking for "the macro I invoke", "the trait the macro generates", or "the provider I wire" each has an obvious place to start. A new document goes in the subdirectory that matches what the construct is; when you add one, place it accordingly and register it in the matching section below. The high-level conceptual overviews that tie multiple constructs together — the consumer/provider duality, dependency injection, namespaces, handlers, and so on — live in the sibling [concepts/](../concepts/README.md) directory rather than here, each pointing into these per-construct documents for the mechanics.
 
-The [concepts/](concepts/) directory holds the high-level conceptual overviews that tie multiple constructs together — the consumer/provider duality, dependency injection, namespaces, handlers, and so on — each pointing into the per-construct documents for the mechanics. The [macros/](macros/) directory holds the procedural macros a programmer invokes directly: the attribute macros that define components and providers, the function-like macros that wire and check them, and the type-level construction macros (`Symbol!`, `Product!`, `Sum!`, `Path!`). The [derives/](derives/) directory holds the `#[derive(...)]` macros, a distinct family large enough to warrant its own space. The [attributes/](attributes/) directory holds the modifier attributes that refine what the definition macros generate — they are not standalone macros but options consumed by a host macro such as `#[cgp_fn]` or `#[cgp_impl]`.
+The [macros/](macros/) directory holds the procedural macros a programmer invokes directly: the attribute macros that define components and providers, the function-like macros that wire and check them, and the type-level construction macros (`Symbol!`, `Product!`, `Sum!`, `Path!`). The [derives/](derives/) directory holds the `#[derive(...)]` macros, a distinct family large enough to warrant its own space. The [attributes/](attributes/) directory holds the modifier attributes that refine what the definition macros generate — they are not standalone macros but options consumed by a host macro such as `#[cgp_fn]` or `#[cgp_impl]`.
 
 The remaining directories hold the runtime library constructs the macros expand into. The [components/](components/) directory documents the built-in CGP components CGP ships with — full consumer/provider trait pairs such as `HasType`, `HasErrorType`, and the handler family — that an application consumes and wires like any component it defines itself. The [providers/](providers/) directory documents the zero-sized provider structs that appear in wiring — `UseField`, `UseType`, `UseDelegate`, `UseContext`, and the rest — the values a context delegates a component to. The [traits/](traits/) directory documents the capability and mechanism traits that are *not* themselves components: the wiring traits (`DelegateComponent`, `IsProviderFor`, `CanUseComponent`), the field and type capabilities (`HasField`, `HasFields`), the extensible-data builder and extractor families, and the type-level operations. The [types/](types/) directory documents the type-level building-block types the rest of CGP is constructed from (`Field`, `Index`, the `Cons`/`Nil` product spine, the `Either`/`Void` sum spine, and the `Chars`/`PathCons` lists).
 
 The distinction between [components/](components/) and [traits/](traits/) is whether the trait is a CGP component: a document belongs in `components/` when its trait is defined with `#[cgp_component]`, `#[cgp_type]`, or `#[cgp_getter]` and therefore has a generated provider trait and `…Component` marker that contexts wire; it belongs in `traits/` when it is an ordinary capability or mechanism trait that the machinery uses but no one delegates.
 
 This index is the catalog of constructs. When you add, remove, or rename a construct, update both its document and this index in the same change. Because documents live in different subdirectories, a cross-link between two of them is a relative path — a sibling in the same directory is `name.md`, and a document in another directory is `../that-dir/name.md`.
-
-## High-level concepts — [concepts/](concepts/)
-
-These documents explain the ideas that connect the constructs, each linking down to the per-construct references for the detail.
-
-- [Bypassing coherence](concepts/coherence.md) — what Rust's coherence rules forbid, and the incoherent-impl-plus-local-wiring strategy CGP uses to work around them.
-- [Consumer and provider traits](concepts/consumer-and-provider-traits.md) — the trait duality at the heart of CGP and how it sidesteps coherence.
-- [Impl-side dependencies](concepts/impl-side-dependencies.md) — dependency injection through the `where` clause of blanket impls.
-- [Implicit arguments](concepts/implicit-arguments.md) — writing providers as ordinary functions whose arguments come from context fields.
-- [Higher-order providers](concepts/higher-order-providers.md) — providers parameterized by other providers.
-- [Check traits](concepts/check-traits.md) — why wiring is lazy and how to verify it at compile time.
-- [Abstract types](concepts/abstract-types.md) — abstract associated types shared and swapped across contexts.
-- [Namespaces](concepts/namespaces.md) — reusable, inheritable wiring tables and preset-style configuration.
-- [Handlers](concepts/handlers.md) — the Computer/Producer/Handler family of computation components and their sync/async/fallible/by-reference variants.
-- [Extensible records](concepts/extensible-records.md) — building and reading a struct by its named fields, and the extensible builder pattern.
-- [Extensible variants](concepts/extensible-variants.md) — constructing and deconstructing an enum by its named variants, and the extensible visitor pattern.
-- [Dispatching](concepts/dispatching.md) — routing extensible-data inputs to per-field and per-variant handlers.
-- [Monadic handlers](concepts/monadic-handlers.md) — composing handlers through the identity/ok/err monads.
-- [Type-level DSLs](concepts/type-level-dsls.md) — encoding a small language as types and interpreting it at compile time through CGP wiring.
-- [Recovering `Send` bounds](concepts/send-bounds.md) — restoring the `Send` guarantee an async trait method drops, as a stand-in for the Return Type Notation stable Rust lacks.
 
 ## Component definition macros — [macros/](macros/)
 

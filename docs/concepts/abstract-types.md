@@ -10,7 +10,7 @@ The reason this matters is the same reason behavior is made swappable in CGP. A 
 
 ## Making a type swappable with `#[cgp_type]`
 
-The [`#[cgp_type]`](../macros/cgp_type.md) macro turns an abstract-type trait into a full CGP component, so the concrete type can be chosen through wiring rather than a hand-written impl. Applied to a trait with exactly one associated type, it produces everything [`#[cgp_component]`](../macros/cgp_component.md) would — the consumer trait, the provider trait, the blanket impls, the component marker — but specialized to forward an associated type rather than a method:
+The [`#[cgp_type]`](../reference/macros/cgp_type.md) macro turns an abstract-type trait into a full CGP component, so the concrete type can be chosen through wiring rather than a hand-written impl. Applied to a trait with exactly one associated type, it produces everything [`#[cgp_component]`](../reference/macros/cgp_component.md) would — the consumer trait, the provider trait, the blanket impls, the component marker — but specialized to forward an associated type rather than a method:
 
 ```rust
 #[cgp_type]
@@ -23,7 +23,7 @@ The default provider name is keyed off the *associated type* name, not the trait
 
 ## Wiring a concrete type with `UseType`
 
-A context binds an abstract type to a concrete one by wiring its provider component to [`UseType<T>`](../providers/use_type.md). Because every abstract-type provider has the same trivial shape — "the associated type *is* this concrete type" — `#[cgp_type]` generates that shape once as a blanket impl of the provider trait for `UseType<Scalar>`, setting the associated type to the generic parameter. A context then names the concrete type directly in its delegation table:
+A context binds an abstract type to a concrete one by wiring its provider component to [`UseType<T>`](../reference/providers/use_type.md). Because every abstract-type provider has the same trivial shape — "the associated type *is* this concrete type" — `#[cgp_type]` generates that shape once as a blanket impl of the provider trait for `UseType<Scalar>`, setting the associated type to the generic parameter. A context then names the concrete type directly in its delegation table:
 
 ```rust
 use cgp::prelude::*;
@@ -42,7 +42,7 @@ delegate_components! {
 }
 ```
 
-Wiring `ScalarTypeProviderComponent` to `UseType<f64>` makes `App` implement `HasScalarType` with `Scalar = f64`, with no bespoke provider, and the `Copy` bound is checked against `f64` at the wiring site. This is the type-level mirror of how `UseField` supplies a value-level getter. The `UseType` *provider struct* should not be confused with the [`#[use_type]`](../attributes/use_type.md) *attribute*: the provider, covered here, wires a concrete type into a context; the attribute imports an abstract type into a definition and rewrites bare mentions of it into fully-qualified form. They are complementary but different things.
+Wiring `ScalarTypeProviderComponent` to `UseType<f64>` makes `App` implement `HasScalarType` with `Scalar = f64`, with no bespoke provider, and the `Copy` bound is checked against `f64` at the wiring site. This is the type-level mirror of how `UseField` supplies a value-level getter. The `UseType` *provider struct* should not be confused with the [`#[use_type]`](../reference/attributes/use_type.md) *attribute*: the provider, covered here, wires a concrete type into a context; the attribute imports an abstract type into a definition and rewrites bare mentions of it into fully-qualified form. They are complementary but different things.
 
 ## Sharing a type across contexts
 
@@ -64,7 +64,7 @@ Here `Rectangle` and `Circle` carry no scalar type of their own; the context tha
 
 ## The canonical example: `HasErrorType`
 
-CGP's most-used abstract type is [`HasErrorType`](../components/has_error_type.md), which supplies one `Error` type that an entire context's code agrees on. It is defined with `#[cgp_type]` exactly as above:
+CGP's most-used abstract type is [`HasErrorType`](../reference/components/has_error_type.md), which supplies one `Error` type that an entire context's code agrees on. It is defined with `#[cgp_type]` exactly as above:
 
 ```rust
 #[cgp_type]
@@ -77,8 +77,8 @@ A context wires `ErrorTypeProviderComponent` to `UseType<anyhow::Error>` (or any
 
 ## Related constructs
 
-Abstract types are defined with [`#[cgp_type]`](../macros/cgp_type.md), the abstract-type specialization of [`#[cgp_component]`](../macros/cgp_component.md). They are built on CGP's foundational [`HasType`/`TypeProvider`](../components/has_type.md) component, the built-in abstract-type machinery that `#[cgp_type]` adapts. A context binds a concrete type through the [`UseType` provider](../providers/use_type.md), and other definitions import an abstract type and rewrite bare mentions of it with the [`#[use_type]` attribute](../attributes/use_type.md) — a different construct from the provider despite the shared name. [`HasErrorType`](../components/has_error_type.md) is the canonical abstract type, supplying a shared `Error` type across a context's code. Abstract-type components are wired with [`delegate_components!`](../macros/delegate_components.md) and verified with [`check_components!`](../macros/check_components.md) like any other component.
+Abstract types are defined with [`#[cgp_type]`](../reference/macros/cgp_type.md), the abstract-type specialization of [`#[cgp_component]`](../reference/macros/cgp_component.md). They are built on CGP's foundational [`HasType`/`TypeProvider`](../reference/components/has_type.md) component, the built-in abstract-type machinery that `#[cgp_type]` adapts. A context binds a concrete type through the [`UseType` provider](../reference/providers/use_type.md), and other definitions import an abstract type and rewrite bare mentions of it with the [`#[use_type]` attribute](../reference/attributes/use_type.md) — a different construct from the provider despite the shared name. [`HasErrorType`](../reference/components/has_error_type.md) is the canonical abstract type, supplying a shared `Error` type across a context's code. Abstract-type components are wired with [`delegate_components!`](../reference/macros/delegate_components.md) and verified with [`check_components!`](../reference/macros/check_components.md) like any other component.
 
 ## Source
 
-The runtime `HasType`, `TypeProvider`, and `UseType` definitions are in [crates/core/cgp-type/src/](../../../crates/core/cgp-type/src/); `HasErrorType` is in [crates/core/cgp-error/src/traits/has_error_type.rs](../../../crates/core/cgp-error/src/traits/has_error_type.rs); the `#[cgp_type]` codegen is in [crates/macros/cgp-macro-core/src/types/cgp_type/](../../../crates/macros/cgp-macro-core/src/types/cgp_type/).
+The runtime `HasType`, `TypeProvider`, and `UseType` definitions are in [crates/core/cgp-type/src/](../../crates/core/cgp-type/src/); `HasErrorType` is in [crates/core/cgp-error/src/traits/has_error_type.rs](../../crates/core/cgp-error/src/traits/has_error_type.rs); the `#[cgp_type]` codegen is in [crates/macros/cgp-macro-core/src/types/cgp_type/](../../crates/macros/cgp-macro-core/src/types/cgp_type/).

@@ -4,18 +4,18 @@ This example builds the backend for a small money-transfer web service — query
 
 The concepts each step demonstrates are documented in full in the reference; this example only notes which one is in play and links to it:
 
-- abstract domain types — [`#[cgp_type]`](../reference/macros/cgp_type.md) and the [abstract-types concept](../reference/concepts/abstract-types.md)
+- abstract domain types — [`#[cgp_type]`](../reference/macros/cgp_type.md) and the [abstract-types concept](../concepts/abstract-types.md)
 - an async, per-endpoint-dispatched component — [`#[cgp_component]`](../reference/macros/cgp_component.md), [`#[async_trait]`](../reference/macros/async_trait.md), [`#[derive_delegate]`](../reference/attributes/derive_delegate.md)
-- handlers that wrap other handlers — [higher-order providers](../reference/concepts/higher-order-providers.md) written with [`#[cgp_impl]`](../reference/macros/cgp_impl.md)
-- backend providers reading context fields — [implicit field access](../reference/concepts/implicit-arguments.md) via [`#[cgp_auto_getter]`](../reference/macros/cgp_auto_getter.md)
+- handlers that wrap other handlers — [higher-order providers](../concepts/higher-order-providers.md) written with [`#[cgp_impl]`](../reference/macros/cgp_impl.md)
+- backend providers reading context fields — [implicit field access](../concepts/implicit-arguments.md) via [`#[cgp_auto_getter]`](../reference/macros/cgp_auto_getter.md)
 - per-endpoint wiring — [`delegate_components!`](../reference/macros/delegate_components.md) with [`UseDelegate`](../reference/providers/use_delegate.md) and a [`check_components!`](../reference/macros/check_components.md) assertion
-- restoring a `Send` bound for the HTTP server — the [recovering `Send` bounds concept](../reference/concepts/send-bounds.md)
+- restoring a `Send` bound for the HTTP server — the [recovering `Send` bounds concept](../concepts/send-bounds.md)
 
 All snippets assume `use cgp::prelude::*;`. The service speaks in terms of a handful of domain types that are kept abstract so the same handlers work whatever concrete types a deployment chooses.
 
 ## Abstract domain types
 
-The service never names a concrete user id, currency, or amount; it names abstract types a context supplies. Each is a one-line [abstract-type component](../reference/concepts/abstract-types.md) defined with [`#[cgp_type]`](../reference/macros/cgp_type.md), carrying only the bound the rest of the code needs — here, that every domain value can be displayed in an error message:
+The service never names a concrete user id, currency, or amount; it names abstract types a context supplies. Each is a one-line [abstract-type component](../concepts/abstract-types.md) defined with [`#[cgp_type]`](../reference/macros/cgp_type.md), carrying only the bound the rest of the code needs — here, that every domain value can be displayed in an error message:
 
 ```rust
 #[cgp_type]
@@ -111,11 +111,11 @@ where
 }
 ```
 
-The endpoint is generic over its request shape. `HandleTransfer<Request>` works for any `Request` type that exposes a logged-in user and the transfer fields through the [getter traits](../reference/macros/cgp_auto_getter.md) named in its `where` clause, so the same handler logic serves whatever request struct a deployment decodes from the wire. The `Self: ...` bounds are [impl-side dependencies](../reference/concepts/impl-side-dependencies.md): they hold the context to providing money-transfer and HTTP-error capabilities without those leaking into the consumer trait.
+The endpoint is generic over its request shape. `HandleTransfer<Request>` works for any `Request` type that exposes a logged-in user and the transfer fields through the [getter traits](../reference/macros/cgp_auto_getter.md) named in its `where` clause, so the same handler logic serves whatever request struct a deployment decodes from the wire. The `Self: ...` bounds are [impl-side dependencies](../concepts/impl-side-dependencies.md): they hold the context to providing money-transfer and HTTP-error capabilities without those leaking into the consumer trait.
 
 ## Reusable handler wrappers
 
-Cross-cutting concerns are handlers that wrap another handler, which makes them [higher-order providers](../reference/concepts/higher-order-providers.md). Each takes an inner handler as a type parameter, implements `ApiHandler` itself, and threads the call through — transforming the request or response on the way. Three small wrappers cover decoding, authentication, and JSON encoding.
+Cross-cutting concerns are handlers that wrap another handler, which makes them [higher-order providers](../concepts/higher-order-providers.md). Each takes an inner handler as a type parameter, implements `ApiHandler` itself, and threads the call through — transforming the request or response on the way. Three small wrappers cover decoding, authentication, and JSON encoding.
 
 `HandleFromRequest` adapts the request type, letting an endpoint that wants a clean domain request sit behind a handler whose request is the raw type the HTTP layer produces:
 
@@ -285,7 +285,7 @@ delegate_components! {
 
 The two endpoints assemble different pipelines from the same parts. Both decode an Axum request and authenticate, but the balance query also JSON-encodes its response while the transfer returns nothing, so only the query wraps in `ResponseToJson`. The nested `UseDelegate<new MockAppApiHandlers { ... }>` builds the per-`Api` lookup table inline, so a call to `handle_api` with the `TransferApi` marker resolves to the transfer pipeline and one with `QueryBalanceApi` to the balance pipeline.
 
-Because CGP wiring is [checked lazily](../reference/concepts/check-traits.md), a companion [`check_components!`](../reference/macros/check_components.md) block proves at compile time that every endpoint is fully satisfied, listing the API markers to verify for the generic `ApiHandler` component:
+Because CGP wiring is [checked lazily](../concepts/check-traits.md), a companion [`check_components!`](../reference/macros/check_components.md) block proves at compile time that every endpoint is fully satisfied, listing the API markers to verify for the generic `ApiHandler` component:
 
 ```rust
 check_components! {
@@ -336,4 +336,4 @@ impl CanHandleApiSend<TransferApi> for MockApp {
 }
 ```
 
-Each impl just forwards to `handle_api`, but at a concrete context and API the awaited future is a concrete type whose `Send`-ness the compiler can confirm — which is exactly why the impls cannot be folded into one generic blanket impl. The full reasoning, and why this is a stand-in for the Return Type Notation stable Rust lacks, is in [recovering `Send` bounds](../reference/concepts/send-bounds.md). With `CanHandleApiSend` in hand, an Axum route handler can bound `App: CanHandleApiSend<Api>` and spawn the handler safely, completing the path from a request on the wire to one of the wired endpoint pipelines.
+Each impl just forwards to `handle_api`, but at a concrete context and API the awaited future is a concrete type whose `Send`-ness the compiler can confirm — which is exactly why the impls cannot be folded into one generic blanket impl. The full reasoning, and why this is a stand-in for the Return Type Notation stable Rust lacks, is in [recovering `Send` bounds](../concepts/send-bounds.md). With `CanHandleApiSend` in hand, an Axum route handler can bound `App: CanHandleApiSend<Api>` and spawn the handler safely, completing the path from a request on the wire to one of the wired endpoint pipelines.

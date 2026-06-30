@@ -4,12 +4,12 @@ This example computes the area of several shapes, progressing from a single fiel
 
 The concepts each step demonstrates are documented in full in the reference; this example only notes which one is in play and links to it:
 
-- context-generic functions — [`#[cgp_fn]`](../reference/macros/cgp_fn.md) with [implicit arguments](../reference/concepts/implicit-arguments.md)
+- context-generic functions — [`#[cgp_fn]`](../reference/macros/cgp_fn.md) with [implicit arguments](../concepts/implicit-arguments.md)
 - importing capabilities — [`#[uses]`](../reference/attributes/uses.md)
 - field access on contexts — [`#[derive(HasField)]`](../reference/derives/derive_has_field.md)
-- components and named providers — [`#[cgp_component]`](../reference/macros/cgp_component.md), [`#[cgp_impl]`](../reference/macros/cgp_impl.md), and the [consumer/provider trait duality](../reference/concepts/consumer-and-provider-traits.md)
+- components and named providers — [`#[cgp_component]`](../reference/macros/cgp_component.md), [`#[cgp_impl]`](../reference/macros/cgp_impl.md), and the [consumer/provider trait duality](../concepts/consumer-and-provider-traits.md)
 - wiring a context to providers — [`delegate_components!`](../reference/macros/delegate_components.md)
-- composing providers — [higher-order providers](../reference/concepts/higher-order-providers.md) with [`#[use_provider]`](../reference/attributes/use_provider.md)
+- composing providers — [higher-order providers](../concepts/higher-order-providers.md) with [`#[use_provider]`](../reference/attributes/use_provider.md)
 
 All snippets assume `use cgp::prelude::*;`.
 
@@ -73,7 +73,7 @@ assert_eq!(r.scaled_rectangle_area(), 48.0);
 
 ## A unified interface across shapes
 
-A single `#[cgp_fn]` defines exactly one implementation, so it cannot serve as a common interface that different shapes implement differently. For that, define a [component](../reference/concepts/consumer-and-provider-traits.md) with [`#[cgp_component]`](../reference/macros/cgp_component.md). The annotated `CanCalculateArea` trait is the *consumer trait* callers use; the `AreaCalculator` argument names the generated *provider trait* that implementations target:
+A single `#[cgp_fn]` defines exactly one implementation, so it cannot serve as a common interface that different shapes implement differently. For that, define a [component](../concepts/consumer-and-provider-traits.md) with [`#[cgp_component]`](../reference/macros/cgp_component.md). The annotated `CanCalculateArea` trait is the *consumer trait* callers use; the `AreaCalculator` argument names the generated *provider trait* that implementations target:
 
 ```rust
 #[cgp_component(AreaCalculator)]
@@ -132,7 +132,7 @@ assert_eq!(PlainCircle { radius: 4.0 }.area(), 16.0 * core::f64::consts::PI);
 
 ## Composing providers
 
-Scaling applies to every shape the same way, so writing a separate scaled provider per shape would duplicate the same logic. A [higher-order provider](../reference/concepts/higher-order-providers.md) captures the transformation once and takes the base calculation as a provider parameter — `InnerCalculator`, declared as an impl generic. The [`#[use_provider]`](../reference/attributes/use_provider.md) attribute supplies that inner provider's bound, filling in the leading context argument a provider trait carries, while the body invokes it as an associated function:
+Scaling applies to every shape the same way, so writing a separate scaled provider per shape would duplicate the same logic. A [higher-order provider](../concepts/higher-order-providers.md) captures the transformation once and takes the base calculation as a provider parameter — `InnerCalculator`, declared as an impl generic. The [`#[use_provider]`](../reference/attributes/use_provider.md) attribute supplies that inner provider's bound, filling in the leading context argument a provider trait carries, while the body invokes it as an associated function:
 
 ```rust
 #[cgp_impl(new ScaledAreaCalculator<InnerCalculator>)]

@@ -1,14 +1,14 @@
 # Shell-scripting DSL
 
-This example builds a type-level shell-scripting DSL whose programs are ordinary Rust *types*, interpreted at compile time by whichever context runs them. It progresses from a fixed CLI program, through the component that interprets a program and the namespace that wires the interpreters, to a custom context that supplies runtime values and a language extension that adds new syntax — and is a template for any embedded DSL where the program's *syntax* should be decoupled from its *semantics* so that each can vary independently. The general pattern it instantiates is described in [type-level DSLs](../reference/concepts/type-level-dsls.md).
+This example builds a type-level shell-scripting DSL whose programs are ordinary Rust *types*, interpreted at compile time by whichever context runs them. It progresses from a fixed CLI program, through the component that interprets a program and the namespace that wires the interpreters, to a custom context that supplies runtime values and a language extension that adds new syntax — and is a template for any embedded DSL where the program's *syntax* should be decoupled from its *semantics* so that each can vary independently. The general pattern it instantiates is described in [type-level DSLs](../concepts/type-level-dsls.md).
 
 The concepts each step demonstrates are documented in full in the reference; this example only notes which one is in play and links to it:
 
-- the computation component the DSL is built on — [`Handler` / `CanHandle`](../reference/components/handler.md) in the [handler family](../reference/concepts/handlers.md)
+- the computation component the DSL is built on — [`Handler` / `CanHandle`](../reference/components/handler.md) in the [handler family](../concepts/handlers.md)
 - writing a provider that interprets one syntax — [`#[cgp_impl]`](../reference/macros/cgp_impl.md) with a pattern-matched `Code` parameter
 - raising source errors into the context's abstract error — [`CanRaiseError`](../reference/components/can_raise_error.md)
-- dispatching on the program type — [`UseDelegate`](../reference/providers/use_delegate.md) and [dispatching](../reference/concepts/dispatching.md)
-- bundling and inheriting wiring — [namespaces](../reference/concepts/namespaces.md) with [`cgp_namespace!`](../reference/macros/cgp_namespace.md)
+- dispatching on the program type — [`UseDelegate`](../reference/providers/use_delegate.md) and [dispatching](../concepts/dispatching.md)
+- bundling and inheriting wiring — [namespaces](../concepts/namespaces.md) with [`cgp_namespace!`](../reference/macros/cgp_namespace.md)
 - joining a namespace from a context — [`delegate_components!`](../reference/macros/delegate_components.md) and [`#[derive(HasField)]`](../reference/derives/derive_has_field.md)
 - composing handlers into a pipeline provider — [`PipeHandlers`](../reference/providers/handler_combinators.md)
 
@@ -59,7 +59,7 @@ The `Vec::new()` is the program's standard input, which `echo` ignores. Running 
 
 ## The component that interprets a program
 
-Every step of a program is interpreted by one component: the [`Handler`](../reference/components/handler.md) component, the async, fallible corner of the [handler family](../reference/concepts/handlers.md). Its consumer trait `CanHandle` is what `handle` above resolves to:
+Every step of a program is interpreted by one component: the [`Handler`](../reference/components/handler.md) component, the async, fallible corner of the [handler family](../concepts/handlers.md). Its consumer trait `CanHandle` is what `handle` above resolves to:
 
 ```rust
 #[async_trait]
@@ -122,11 +122,11 @@ where
 }
 ```
 
-Two things make this provider reusable across contexts. It matches `Handler<Checksum<Hasher>, …>` for *any* `Hasher` that implements `Digest`, so the one provider covers every hash algorithm. And it never names a concrete error type: the `CanRaiseError<Input::Error>` bound lets it convert a stream error into the context's own abstract error via [`CanRaiseError`](../reference/components/can_raise_error.md), so a context using `anyhow`, `eyre`, or a bespoke error type all reuse the same code. The `where` clause states everything the provider needs from the context as an [impl-side dependency](../reference/concepts/impl-side-dependencies.md); a context that cannot meet it simply cannot wire this provider.
+Two things make this provider reusable across contexts. It matches `Handler<Checksum<Hasher>, …>` for *any* `Hasher` that implements `Digest`, so the one provider covers every hash algorithm. And it never names a concrete error type: the `CanRaiseError<Input::Error>` bound lets it convert a stream error into the context's own abstract error via [`CanRaiseError`](../reference/components/can_raise_error.md), so a context using `anyhow`, `eyre`, or a bespoke error type all reuse the same code. The `where` clause states everything the provider needs from the context as an [impl-side dependency](../concepts/impl-side-dependencies.md); a context that cannot meet it simply cannot wire this provider.
 
 ## Dispatching on the program
 
-A single provider only interprets one syntax, so something must route each `Code` to its interpreter. That is the job of [`UseDelegate`](../reference/providers/use_delegate.md): because the `Handler` component is declared `#[derive_delegate(UseDelegate<Code>)]`, the `HandlerComponent` lookup can be keyed on the `Code` type through an inner type-level table, as described in [dispatching](../reference/concepts/dispatching.md). A wiring entry therefore reaches *past* the component name to the `Code` it handles — written as a dotted path under `HandlerComponent`, with the syntax's generic parameters bound by a leading `<…>`:
+A single provider only interprets one syntax, so something must route each `Code` to its interpreter. That is the job of [`UseDelegate`](../reference/providers/use_delegate.md): because the `Handler` component is declared `#[derive_delegate(UseDelegate<Code>)]`, the `HandlerComponent` lookup can be keyed on the `Code` type through an inner type-level table, as described in [dispatching](../concepts/dispatching.md). A wiring entry therefore reaches *past* the component name to the `Code` it handles — written as a dotted path under `HandlerComponent`, with the syntax's generic parameters bound by a leading `<…>`:
 
 ```rust
 @HandlerComponent.<Path, Args> SimpleExec<Path, Args>:
@@ -139,7 +139,7 @@ The keys are *types*, not values, which is what lets a lookup capture generic pa
 
 ## Bundling the wiring into a namespace
 
-A real DSL has many syntaxes wired to many providers, and several contexts that should share that wiring. A [namespace](../reference/concepts/namespaces.md) captures the whole table once and lets contexts inherit it. `HypershellNamespace` is defined with [`cgp_namespace!`](../reference/macros/cgp_namespace.md), inheriting CGP's built-in `DefaultNamespace` and adding entries that map groups of syntaxes to their interpreters under the `HandlerComponent` path:
+A real DSL has many syntaxes wired to many providers, and several contexts that should share that wiring. A [namespace](../concepts/namespaces.md) captures the whole table once and lets contexts inherit it. `HypershellNamespace` is defined with [`cgp_namespace!`](../reference/macros/cgp_namespace.md), inheriting CGP's built-in `DefaultNamespace` and adding entries that map groups of syntaxes to their interpreters under the `HandlerComponent` path:
 
 ```rust
 cgp_namespace! {

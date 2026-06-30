@@ -94,7 +94,7 @@ Pointing a `for <T, Provider> in DefaultShowComponents { … }` loop at this nam
 
 ## Related constructs
 
-`DefaultNamespace`, `DefaultImpls1`, and `DefaultImpls2` are the lookup traits the [`#[cgp_namespace]`](../macros/cgp_namespace.md) macro builds on, and they are consumed by the `namespace` header and `for … in` loop of [`delegate_components!`](../macros/delegate_components.md). Their `Delegate` entries are commonly a [`RedirectLookup`](../providers/redirect_lookup.md), which re-routes a lookup along a type-level path rather than naming a provider outright. A context's `namespace` header forwards through these traits into a blanket [`DelegateComponent`](delegate_component.md) impl, with the matching [`IsProviderFor`](is_provider_for.md) forwarding so dependency errors stay readable. For the broader picture of how namespaces and presets fit together, see [namespaces](../concepts/namespaces.md).
+`DefaultNamespace`, `DefaultImpls1`, and `DefaultImpls2` are the lookup traits the [`#[cgp_namespace]`](../macros/cgp_namespace.md) macro builds on, and they are consumed by the `namespace` header and `for … in` loop of [`delegate_components!`](../macros/delegate_components.md). Their `Delegate` entries are commonly a [`RedirectLookup`](../providers/redirect_lookup.md), which re-routes a lookup along a type-level path rather than naming a provider outright. A context's `namespace` header forwards through these traits into a blanket [`DelegateComponent`](delegate_component.md) impl, with the matching [`IsProviderFor`](is_provider_for.md) forwarding so dependency errors stay readable. For the broader picture of how namespaces and presets fit together, see [namespaces](../../concepts/namespaces.md).
 
 ## Source
 

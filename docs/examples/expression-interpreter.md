@@ -4,11 +4,11 @@ This example builds a modular interpreter for a small arithmetic language, where
 
 The concepts each step demonstrates are documented in full in the reference; this example only notes which one is in play and links to it:
 
-- handling each variant of an enum independently — [extensible variants](../reference/concepts/extensible-variants.md) and the [extensible visitor pattern](../reference/concepts/dispatching.md)
+- handling each variant of an enum independently — [extensible variants](../concepts/extensible-variants.md) and the [extensible visitor pattern](../concepts/dispatching.md)
 - exposing an enum as a sum of named variants — [`#[derive(HasFields)]`](../reference/derives/derive_has_fields.md), [`#[derive(FromVariant)]`](../reference/derives/derive_from_variant.md), [`#[derive(ExtractField)]`](../reference/derives/derive_extract_field.md)
 - the computation components — [`Computer` / `CanCompute`](../reference/components/computer.md) and its by-reference variant `ComputerRef`
 - writing a per-variant provider — [`#[cgp_impl]`](../reference/macros/cgp_impl.md)
-- routing on the input variant and on the operation — [`UseDelegate`](../reference/providers/use_delegate.md) and [dispatching](../reference/concepts/dispatching.md)
+- routing on the input variant and on the operation — [`UseDelegate`](../reference/providers/use_delegate.md) and [dispatching](../concepts/dispatching.md)
 - the variant dispatcher — [`MatchWithValueHandlers`](../reference/providers/dispatch_combinators.md)
 - constructing part of a target enum — [`CanUpcast`](../reference/traits/cast.md)
 - abstract output types per context — [`#[cgp_type]`](../reference/macros/cgp_type.md) and [`UseType`](../reference/providers/use_type.md)
@@ -98,7 +98,7 @@ Each provider lives on its own and could be defined in a separate crate; nothing
 
 ## Assembling the evaluator
 
-The concrete enum wraps the standalone operator types and derives the [extensible-variant](../reference/concepts/extensible-variants.md) machinery so it can be taken apart generically:
+The concrete enum wraps the standalone operator types and derives the [extensible-variant](../concepts/extensible-variants.md) machinery so it can be taken apart generically:
 
 ```rust
 pub type Value = u64;
@@ -138,7 +138,7 @@ impl<Code> Computer<Code, MathExpr> for Interpreter {
 }
 ```
 
-The whole `MathExpr` enum is handled by `DispatchEval`, a context-specific provider that defers to [`MatchWithValueHandlers`](../reference/providers/dispatch_combinators.md) — the variant dispatcher that derives one handler per variant from the enum's own variant list and runs them as a match, described in [dispatching](../reference/concepts/dispatching.md). The thin `DispatchEval` wrapper is needed to break a trait-resolution cycle: wiring `MatchWithValueHandlers` directly for `MathExpr` would require the compiler to resolve the per-variant providers, which themselves route back through the dispatcher. Marking the trait implemented in the wrapper's body breaks the cycle.
+The whole `MathExpr` enum is handled by `DispatchEval`, a context-specific provider that defers to [`MatchWithValueHandlers`](../reference/providers/dispatch_combinators.md) — the variant dispatcher that derives one handler per variant from the enum's own variant list and runs them as a match, described in [dispatching](../concepts/dispatching.md). The thin `DispatchEval` wrapper is needed to break a trait-resolution cycle: wiring `MatchWithValueHandlers` directly for `MathExpr` would require the compiler to resolve the per-variant providers, which themselves route back through the dispatcher. Marking the trait implemented in the wrapper's body breaks the cycle.
 
 ## A second operation over the same language
 

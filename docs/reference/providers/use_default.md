@@ -52,7 +52,7 @@ impl<Context> NameGetter for Context {}
 impl<Context: HasName> Greeter for Context {}
 ```
 
-The first impl makes `UseDefault` a `NameGetter` provider whose `name` is the trait default `"John"`; the second makes it a `Greeter` provider whose `greet` is the trait default that formats around `self.name()`. The `Greeter` impl restates the consumer-side dependency `HasName` in its bound, because the default body of `greet` calls `name`. Each `#[cgp_impl]` also generates the matching [`IsProviderFor`](../traits/is_provider_for.md) impl, so the dependency propagates to the [check traits](../concepts/check-traits.md) exactly as for any other provider.
+The first impl makes `UseDefault` a `NameGetter` provider whose `name` is the trait default `"John"`; the second makes it a `Greeter` provider whose `greet` is the trait default that formats around `self.name()`. The `Greeter` impl restates the consumer-side dependency `HasName` in its bound, because the default body of `greet` calls `name`. Each `#[cgp_impl]` also generates the matching [`IsProviderFor`](../traits/is_provider_for.md) impl, so the dependency propagates to the [check traits](../../concepts/check-traits.md) exactly as for any other provider.
 
 Because `UseDefault` has no generated impls, the author controls precisely which components it serves. A type that has not had a provider impl written for a given component is simply not a provider for it; there is no automatic fallback, and the empty-body `#[cgp_impl]` is the explicit opt-in.
 

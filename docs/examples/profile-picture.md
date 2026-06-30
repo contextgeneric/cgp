@@ -4,12 +4,12 @@ This example fetches a user's profile picture — a real-world operation that qu
 
 The concepts each step demonstrates are documented in full in the reference; this example only notes which one is in play and links to it:
 
-- context-generic functions — [`#[cgp_fn]`](../reference/macros/cgp_fn.md) with [implicit arguments](../reference/concepts/implicit-arguments.md)
+- context-generic functions — [`#[cgp_fn]`](../reference/macros/cgp_fn.md) with [implicit arguments](../concepts/implicit-arguments.md)
 - async methods in traits — [`#[async_trait]`](../reference/macros/async_trait.md)
 - composing capabilities — [`#[uses]`](../reference/attributes/uses.md)
 - field access on contexts — [`#[derive(HasField)]`](../reference/derives/derive_has_field.md)
 - impl-only generic parameters — [`#[impl_generics]`](../reference/macros/cgp_fn.md)
-- components and named providers — [`#[cgp_component]`](../reference/macros/cgp_component.md), [`#[cgp_impl]`](../reference/macros/cgp_impl.md), and the [consumer/provider trait duality](../reference/concepts/consumer-and-provider-traits.md)
+- components and named providers — [`#[cgp_component]`](../reference/macros/cgp_component.md), [`#[cgp_impl]`](../reference/macros/cgp_impl.md), and the [consumer/provider trait duality](../concepts/consumer-and-provider-traits.md)
 - wiring a context to providers — [`delegate_components!`](../reference/macros/delegate_components.md)
 
 All snippets assume `use cgp::prelude::*;`. The operation works over two domain types — a `UserId` newtype and a `User` row that may carry the storage key of a profile picture:
@@ -156,7 +156,7 @@ pub struct EmbeddedApp {
 
 ## Varying the storage backend
 
-A single `#[cgp_fn]` defines exactly one implementation, so it cannot offer the storage fetch in more than one flavor. When a step needs interchangeable implementations — say Amazon S3 in one deployment and Google Cloud Storage in another — promote it to a [component](../reference/concepts/consumer-and-provider-traits.md) with [`#[cgp_component]`](../reference/macros/cgp_component.md). The annotated `CanFetchStorageObject` trait is the *consumer trait* callers use; the `StorageObjectFetcher` argument names the generated *provider trait* that implementations target:
+A single `#[cgp_fn]` defines exactly one implementation, so it cannot offer the storage fetch in more than one flavor. When a step needs interchangeable implementations — say Amazon S3 in one deployment and Google Cloud Storage in another — promote it to a [component](../concepts/consumer-and-provider-traits.md) with [`#[cgp_component]`](../reference/macros/cgp_component.md). The annotated `CanFetchStorageObject` trait is the *consumer trait* callers use; the `StorageObjectFetcher` argument names the generated *provider trait* that implementations target:
 
 ```rust
 #[async_trait]
