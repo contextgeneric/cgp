@@ -65,7 +65,7 @@ This direct form makes plain that `HasErrorType` is an ordinary trait with a `De
 
 ## Related constructs
 
-`HasErrorType` is defined with [`#[cgp_type]`](../macros/cgp_type.md), which makes it an abstract-type component and generates its `UseType` provider; it is therefore a concrete instance of the [`HasType`/`TypeProvider`](has_type.md) machinery that `#[cgp_type]` builds every abstract type on. The traits that give the abstract error its behavior are [`CanRaiseError`](can_raise_error.md), which raises a source error into `Self::Error`, and [`CanWrapError`](can_raise_error.md), which wraps additional detail onto it — both supertrait `HasErrorType`.
+`HasErrorType` is defined with [`#[cgp_type]`](../macros/cgp_type.md), which makes it an abstract-type component and generates its `UseType` provider; it is therefore a concrete instance of the [`HasType`/`TypeProvider`](has_type.md) machinery that `#[cgp_type]` builds every abstract type on. The traits that give the abstract error its behavior are [`CanRaiseError`](can_raise_error.md), which raises a source error into `Self::Error`, and [`CanWrapError`](can_raise_error.md), which wraps additional detail onto it — both supertrait `HasErrorType`. The [modular error handling](../../concepts/modular-error-handling.md) concept ties this trait together with those capabilities and the providers that satisfy them into the wider error-handling strategy.
 
 ## Source
 

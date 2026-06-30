@@ -8,6 +8,7 @@ The concepts each step demonstrates are documented in full in the reference; thi
 - an async, per-endpoint-dispatched component — [`#[cgp_component]`](../reference/macros/cgp_component.md), [`#[async_trait]`](../reference/macros/async_trait.md), [`#[derive_delegate]`](../reference/attributes/derive_delegate.md)
 - handlers that wrap other handlers — [higher-order providers](../concepts/higher-order-providers.md) written with [`#[cgp_impl]`](../reference/macros/cgp_impl.md)
 - backend providers reading context fields — [implicit field access](../concepts/implicit-arguments.md) via [`#[cgp_auto_getter]`](../reference/macros/cgp_auto_getter.md)
+- raising status-coded errors through an application-specific error component — [modular error handling](../concepts/modular-error-handling.md) over [`HasErrorType`](../reference/components/has_error_type.md)
 - per-endpoint wiring — [`delegate_components!`](../reference/macros/delegate_components.md) with [`UseDelegate`](../reference/providers/use_delegate.md) and a [`check_components!`](../reference/macros/check_components.md) assertion
 - restoring a `Send` bound for the HTTP server — the [recovering `Send` bounds concept](../concepts/send-bounds.md)
 

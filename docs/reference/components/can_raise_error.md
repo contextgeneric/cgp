@@ -73,7 +73,7 @@ The provider names neither the context nor its concrete error type. It requires 
 
 ## Related constructs
 
-`CanRaiseError` and `CanWrapError` both supertrait [`HasErrorType`](has_error_type.md), whose abstract `Self::Error` they produce and enrich. Their delegation is configured by [`#[derive_delegate(UseDelegate<...>)]`](../attributes/derive_delegate.md), so a context dispatches per source-error or detail type through a delegation table. Both are ordinary `#[cgp_component]` components, wired with `delegate_components!` and checked with `check_components!`.
+`CanRaiseError` and `CanWrapError` both supertrait [`HasErrorType`](has_error_type.md), whose abstract `Self::Error` they produce and enrich. Their delegation is configured by [`#[derive_delegate(UseDelegate<...>)]`](../attributes/derive_delegate.md), so a context dispatches per source-error or detail type through a delegation table. Both are ordinary `#[cgp_component]` components, wired with `delegate_components!` and checked with `check_components!`. The [modular error handling](../../concepts/modular-error-handling.md) concept frames how these capabilities, the abstract error type, and the strategy providers combine into wiring-time error-handling decisions.
 
 ## Source
 

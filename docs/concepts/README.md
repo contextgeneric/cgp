@@ -11,12 +11,14 @@ A concept document explains an *idea that spans several constructs*, whereas a [
 The authoring rules for concept documents, including when a cross-cutting idea earns its own page, live in [../CLAUDE.md](../CLAUDE.md). These documents explain the ideas that connect the constructs, each linking down to the per-construct references for the detail.
 
 - [Bypassing coherence](coherence.md) — what Rust's coherence rules forbid, and the incoherent-impl-plus-local-wiring strategy CGP uses to work around them.
+- [Modularity hierarchy](modularity-hierarchy.md) — the ladder from a single blanket impl to per-type-per-provider wiring, and how to pick the lowest rung a use case needs.
 - [Consumer and provider traits](consumer-and-provider-traits.md) — the trait duality at the heart of CGP and how it sidesteps coherence.
 - [Impl-side dependencies](impl-side-dependencies.md) — dependency injection through the `where` clause of blanket impls.
 - [Implicit arguments](implicit-arguments.md) — writing providers as ordinary functions whose arguments come from context fields.
 - [Higher-order providers](higher-order-providers.md) — providers parameterized by other providers.
 - [Check traits](check-traits.md) — why wiring is lazy and how to verify it at compile time.
 - [Abstract types](abstract-types.md) — abstract associated types shared and swapped across contexts.
+- [Modular error handling](modular-error-handling.md) — an abstract error type plus raising and wrapping capabilities, with the error type and construction strategy chosen by wiring.
 - [Namespaces](namespaces.md) — reusable, inheritable wiring tables and preset-style configuration.
 - [Handlers](handlers.md) — the Computer/Producer/Handler family of computation components and their sync/async/fallible/by-reference variants.
 - [Extensible records](extensible-records.md) — building and reading a struct by its named fields, and the extensible builder pattern.

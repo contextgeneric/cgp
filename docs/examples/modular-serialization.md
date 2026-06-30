@@ -10,7 +10,7 @@ The concepts each step demonstrates are documented in full in the reference; thi
 - serializing a struct with no serialization-specific derive — [extensible records](../concepts/extensible-records.md) via [`#[derive(CgpData)]`](../reference/derives/derive_cgp_data.md)
 - selecting a provider per value type, inline in the context's own table — the `open` statement of [`delegate_components!`](../reference/macros/delegate_components.md) with [`@`-path keys](../concepts/namespaces.md)
 - verifying a context's wiring — [`check_components!`](../reference/macros/check_components.md)
-- pulling a capability from the context during deserialization — [`#[cgp_auto_getter]`](../reference/macros/cgp_auto_getter.md) over [`HasField`](../reference/traits/has_field.md), with the [`HasErrorType`](../reference/components/has_error_type.md) and [`CanRaiseError`](../reference/components/can_raise_error.md) error components
+- pulling a capability from the context during deserialization — [`#[cgp_auto_getter]`](../reference/macros/cgp_auto_getter.md) over [`HasField`](../reference/traits/has_field.md), with the [`HasErrorType`](../reference/components/has_error_type.md) and [`CanRaiseError`](../reference/components/can_raise_error.md) error components wired through [modular error handling](../concepts/modular-error-handling.md)
 
 All snippets assume `use cgp::prelude::*;` and use Serde's `Serializer`/`Deserializer` traits directly. The providers shown here serialize and deserialize, but the example builds up the serialization side first and then mirrors it for deserialization.
 
