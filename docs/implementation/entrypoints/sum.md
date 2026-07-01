@@ -41,4 +41,7 @@ The only structural difference from `Product!` is the terminator: a sum folds on
 
 ## Source
 
-The entry point is `Sum` in [cgp-macro-lib/src/sum.rs](../../../crates/macros/cgp-macro-lib/src/sum.rs); the `SumType` AST type lives in [cgp-macro-core/src/types/sum.rs](../../../crates/macros/cgp-macro-core/src/types/sum.rs) and is documented in [asts/sum.md](../asts/sum.md). The fold re-parses through [parse_internal!](../macros/parse_internal.md). The runtime types `Either<Head, Tail>` and the uninhabited `Void` are defined in [cgp-field](../../../crates/core/cgp-field/src/types/sum.rs).
+- Entry point: `Sum` in [cgp-macro-lib/src/sum.rs](../../../crates/macros/cgp-macro-lib/src/sum.rs).
+- `SumType` AST type: [cgp-macro-core/src/types/sum.rs](../../../crates/macros/cgp-macro-core/src/types/sum.rs), documented in [asts/sum.md](../asts/sum.md).
+- The fold re-parses through [parse_internal!](../macros/parse_internal.md).
+- Runtime types `Either<Head, Tail>` and the uninhabited `Void`: defined in [cgp-field](../../../crates/core/cgp-field/src/types/sum.rs).

@@ -58,4 +58,6 @@ The receiver identifier and the context type these visitors substitute are the o
 
 ## Source
 
-The stack lives in [cgp-macro-core/src/types/cgp_impl/](../../../crates/macros/cgp-macro-core/src/types/cgp_impl/): `ImplArgs` in `args.rs`, `ItemCgpImpl` in `item.rs`, `LoweredCgpImpl` and `to_raw_item_impl` in `lowered.rs`, and `CgpProviderOrBareImpl` in `provider_or_bare.rs`. The companion-attribute parsing is in [cgp-macro-core/src/types/attributes/cgp_impl_attributes.rs](../../../crates/macros/cgp-macro-core/src/types/attributes/cgp_impl_attributes.rs), and the `self`/`Self` rewriting in [cgp-macro-core/src/visitors/replace_self/](../../../crates/macros/cgp-macro-core/src/visitors/replace_self/). The provider stage this stack hands off to is documented in [asts/cgp_provider.md](cgp_provider.md).
+- The stack lives in [cgp-macro-core/src/types/cgp_impl/](../../../crates/macros/cgp-macro-core/src/types/cgp_impl/): `ImplArgs` in `args.rs`, `ItemCgpImpl` in `item.rs`, `LoweredCgpImpl` and `to_raw_item_impl` in `lowered.rs`, and `CgpProviderOrBareImpl` in `provider_or_bare.rs`.
+- The companion-attribute parsing is in [cgp-macro-core/src/types/attributes/cgp_impl_attributes.rs](../../../crates/macros/cgp-macro-core/src/types/attributes/cgp_impl_attributes.rs), and the `self`/`Self` rewriting in [cgp-macro-core/src/visitors/replace_self/](../../../crates/macros/cgp-macro-core/src/visitors/replace_self/).
+- The provider stage this stack hands off to is documented in [asts/cgp_provider.md](cgp_provider.md).

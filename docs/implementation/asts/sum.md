@@ -22,4 +22,5 @@ The only thing that distinguishes this from `ProductType` is the terminator: a s
 
 ## Source
 
-The type lives in [cgp-macro-core/src/types/sum.rs](../../../crates/macros/cgp-macro-core/src/types/sum.rs), re-parsing its fold through [parse_internal!](../macros/parse_internal.md). The runtime types `Either<Head, Tail>` and the uninhabited `Void` are defined in [cgp-field](../../../crates/core/cgp-field/src/types/sum.rs).
+- The type lives in [cgp-macro-core/src/types/sum.rs](../../../crates/macros/cgp-macro-core/src/types/sum.rs), re-parsing its fold through [parse_internal!](../macros/parse_internal.md).
+- The runtime types `Either<Head, Tail>` and the uninhabited `Void` are defined in [cgp-field](../../../crates/core/cgp-field/src/types/sum.rs).

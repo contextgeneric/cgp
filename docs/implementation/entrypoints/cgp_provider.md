@@ -70,4 +70,8 @@ A **const argument in the provider trait's arguments** is rejected with a spanne
 
 ## Source
 
-The entry points are `cgp_provider` in [cgp-macro-lib/src/cgp_provider.rs](../../../crates/macros/cgp-macro-lib/src/cgp_provider.rs) and `cgp_new_provider` in [cgp-macro-lib/src/cgp_new_provider.rs](../../../crates/macros/cgp-macro-lib/src/cgp_new_provider.rs). The shared lowering and its AST types live in [cgp-macro-core/src/types/cgp_provider/](../../../crates/macros/cgp-macro-core/src/types/cgp_provider/) and are documented in [asts/cgp_provider.md](../asts/cgp_provider.md); the `IsProviderFor` derivation itself is in [cgp-macro-core/src/types/provider_impl.rs](../../../crates/macros/cgp-macro-core/src/types/provider_impl.rs), and the provider-name-to-`IsProviderFor` rewrite in the [`replace_provider` visitor](../../../crates/macros/cgp-macro-core/src/visitors/replace_provider.rs). This macro is the handoff target of [`#[cgp_impl]`](cgp_impl.md).
+- Entry points: `cgp_provider` in [cgp-macro-lib/src/cgp_provider.rs](../../../crates/macros/cgp-macro-lib/src/cgp_provider.rs) and `cgp_new_provider` in [cgp-macro-lib/src/cgp_new_provider.rs](../../../crates/macros/cgp-macro-lib/src/cgp_new_provider.rs).
+- Shared lowering and its AST types: [cgp-macro-core/src/types/cgp_provider/](../../../crates/macros/cgp-macro-core/src/types/cgp_provider/), documented in [asts/cgp_provider.md](../asts/cgp_provider.md).
+- `IsProviderFor` derivation: [cgp-macro-core/src/types/provider_impl.rs](../../../crates/macros/cgp-macro-core/src/types/provider_impl.rs).
+- Provider-name-to-`IsProviderFor` rewrite: the [`replace_provider` visitor](../../../crates/macros/cgp-macro-core/src/visitors/replace_provider.rs).
+- This macro is the handoff target of [`#[cgp_impl]`](cgp_impl.md).

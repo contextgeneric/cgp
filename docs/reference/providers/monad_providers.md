@@ -101,4 +101,5 @@ PipeMonadic::<OkMonadic, Product![ReturnOkErr, ReturnOkOk, ReturnOkErr]>::try_co
 
 ## Source
 
-The pipeline provider, `TryPromoteProviders`, and the internal `BindProviders` fold are in [crates/extra/cgp-monad/src/providers/pipe_monadic.rs](../../../crates/extra/cgp-monad/src/providers/pipe_monadic.rs). The monad markers and bind providers are in [crates/extra/cgp-monad/src/monadic/](../../../crates/extra/cgp-monad/src/monadic/) — `ident.rs` for `IdentMonadic`, `ok.rs` for `OkMonadic` / `OkMonadicTrans` / `BindOk`, and `err.rs` for `ErrMonadic` / `ErrMonadicTrans` / `BindErr`.
+- The pipeline provider, `TryPromoteProviders`, and the internal `BindProviders` fold are in [crates/extra/cgp-monad/src/providers/pipe_monadic.rs](../../../crates/extra/cgp-monad/src/providers/pipe_monadic.rs).
+- The monad markers and bind providers are in [crates/extra/cgp-monad/src/monadic/](../../../crates/extra/cgp-monad/src/monadic/) — `ident.rs` for `IdentMonadic`, `ok.rs` for `OkMonadic` / `OkMonadicTrans` / `BindOk`, and `err.rs` for `ErrMonadic` / `ErrMonadicTrans` / `BindErr`.

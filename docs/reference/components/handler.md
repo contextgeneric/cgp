@@ -84,4 +84,6 @@ The function `run_with` works for any context that wires a handler for the given
 
 ## Source
 
-`Handler` and `HandlerRef` are defined in [crates/extra/cgp-handler/src/components/handler.rs](../../../crates/extra/cgp-handler/src/components/handler.rs). The `ReturnInput` provider is in [crates/extra/cgp-handler/src/providers/return_input.rs](../../../crates/extra/cgp-handler/src/providers/return_input.rs), and the promotion combinators that lift simpler providers into `Handler` are in [crates/extra/cgp-handler/src/providers/](../../../crates/extra/cgp-handler/src/). The components are re-exported through `cgp::extra::handler`.
+- `Handler` and `HandlerRef` are defined in [crates/extra/cgp-handler/src/components/handler.rs](../../../crates/extra/cgp-handler/src/components/handler.rs).
+- The `ReturnInput` provider is in [crates/extra/cgp-handler/src/providers/return_input.rs](../../../crates/extra/cgp-handler/src/providers/return_input.rs), and the promotion combinators that lift simpler providers into `Handler` are in [crates/extra/cgp-handler/src/providers/](../../../crates/extra/cgp-handler/src/).
+- The components are re-exported through `cgp::extra::handler`.

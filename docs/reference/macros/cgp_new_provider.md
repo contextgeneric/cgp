@@ -115,6 +115,6 @@ This is equivalent to writing `pub struct RectangleArea;` followed by the same i
 
 ## Source
 
-The macro entry point is `cgp_new_provider` in [crates/macros/cgp-macro-lib/src/cgp_new_provider.rs](../../../crates/macros/cgp-macro-lib/src/cgp_new_provider.rs); it parses the same `ProviderArgs`, sets `new` to enabled, and then runs the identical lowering as [`#[cgp_provider]`](cgp_provider.md). All of the generation logic — including the struct declaration emitted when `new` is set — lives in [crates/macros/cgp-macro-core/src/types/cgp_provider/](../../../crates/macros/cgp-macro-core/src/types/cgp_provider/); the struct shape is built in `item.rs` (`to_provider_struct`).
-
-For the internal walkthrough — pipeline, generated items, corner cases, and the index of tests and snapshots — see [implementation/entrypoints/cgp_new_provider.md](../../implementation/entrypoints/cgp_new_provider.md).
+- Entry point: `cgp_new_provider` in [crates/macros/cgp-macro-lib/src/cgp_new_provider.rs](../../../crates/macros/cgp-macro-lib/src/cgp_new_provider.rs); it parses the same `ProviderArgs`, sets `new` to enabled, and then runs the identical lowering as [`#[cgp_provider]`](cgp_provider.md).
+- Generation logic (including the struct declaration emitted when `new` is set): [crates/macros/cgp-macro-core/src/types/cgp_provider/](../../../crates/macros/cgp-macro-core/src/types/cgp_provider/); the struct shape is built in `item.rs` (`to_provider_struct`).
+- Internal walkthrough (pipeline, generated items, corner cases, and the index of tests and snapshots): [implementation/entrypoints/cgp_new_provider.md](../../implementation/entrypoints/cgp_new_provider.md).

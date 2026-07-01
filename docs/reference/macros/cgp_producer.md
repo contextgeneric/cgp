@@ -118,6 +118,6 @@ The computer and handler forms accept an input argument and ignore it, since the
 
 ## Source
 
-The macro entrypoint is [crates/macros/cgp-extra-macro/src/lib.rs](../../../crates/macros/cgp-extra-macro/src/lib.rs), forwarding to the implementation in [crates/macros/cgp-extra-macro-lib/src/entrypoints/cgp_producer.rs](../../../crates/macros/cgp-extra-macro-lib/src/entrypoints/cgp_producer.rs). The `Producer` trait is defined in [crates/extra/cgp-handler/src/components/produce.rs](../../../crates/extra/cgp-handler/src/components/produce.rs), and the `PromoteProducer` bundle in [crates/extra/cgp-handler/src/providers/promote_all.rs](../../../crates/extra/cgp-handler/src/providers/promote_all.rs).
-
-For the internal walkthrough — the signature validation, the generated items, and the index of behavioral tests — see the implementation document [implementation/entrypoints/cgp_producer.md](../../implementation/entrypoints/cgp_producer.md).
+- Entrypoint: [crates/macros/cgp-extra-macro/src/lib.rs](../../../crates/macros/cgp-extra-macro/src/lib.rs), forwarding to the implementation in [crates/macros/cgp-extra-macro-lib/src/entrypoints/cgp_producer.rs](../../../crates/macros/cgp-extra-macro-lib/src/entrypoints/cgp_producer.rs).
+- `Producer` trait: [crates/extra/cgp-handler/src/components/produce.rs](../../../crates/extra/cgp-handler/src/components/produce.rs); the `PromoteProducer` bundle in [crates/extra/cgp-handler/src/providers/promote_all.rs](../../../crates/extra/cgp-handler/src/providers/promote_all.rs).
+- Internal walkthrough (the signature validation, the generated items, and the index of behavioral tests): [implementation/entrypoints/cgp_producer.md](../../implementation/entrypoints/cgp_producer.md).

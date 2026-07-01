@@ -50,8 +50,17 @@ Every `snapshot_derive_cgp_data!` invocation across the suite is indexed here, s
 
 ## Tests
 
-The snapshot tests above also carry runtime assertions that exercise the composed machinery: `person_record.rs` builds an `Employee` from a `Person` via the builder, `optional_builder.rs` drives the optional builder (`set`/`finalize_optional`/`finalize_with_default`), `point_cast.rs` casts a smaller record up into a larger one, and the `derive_cgp_data*` variant snapshots run the extractor and the upcast/downcast casts. The neighboring [record_build_from.rs](../../../crates/tests/cgp-tests/tests/extensible_records/record_build_from.rs), [record_build_with_handlers.rs](../../../crates/tests/cgp-tests/tests/extensible_records/record_build_with_handlers.rs), [shape_dispatch.rs](../../../crates/tests/cgp-tests/tests/extensible_variants/shape_dispatch.rs), [shape_dispatch_ref.rs](../../../crates/tests/cgp-tests/tests/extensible_variants/shape_dispatch_ref.rs), and [variant_dispatch.rs](../../../crates/tests/cgp-tests/tests/extensible_variants/variant_dispatch.rs) exercise the builder and dispatch behaviors on `CgpData` types without pinning a snapshot.
+The snapshot tests above also carry runtime assertions that exercise the composed machinery:
+
+- `person_record.rs` builds an `Employee` from a `Person` via the builder.
+- `optional_builder.rs` drives the optional builder (`set`/`finalize_optional`/`finalize_with_default`).
+- `point_cast.rs` casts a smaller record up into a larger one.
+- The `derive_cgp_data*` variant snapshots run the extractor and the upcast/downcast casts.
+- The neighboring [record_build_from.rs](../../../crates/tests/cgp-tests/tests/extensible_records/record_build_from.rs), [record_build_with_handlers.rs](../../../crates/tests/cgp-tests/tests/extensible_records/record_build_with_handlers.rs), [shape_dispatch.rs](../../../crates/tests/cgp-tests/tests/extensible_variants/shape_dispatch.rs), [shape_dispatch_ref.rs](../../../crates/tests/cgp-tests/tests/extensible_variants/shape_dispatch_ref.rs), and [variant_dispatch.rs](../../../crates/tests/cgp-tests/tests/extensible_variants/variant_dispatch.rs) exercise the builder and dispatch behaviors on `CgpData` types without pinning a snapshot.
 
 ## Source
 
-The entry point is `derive_cgp_data` in [cgp-macro-lib/src/cgp_data.rs](../../../crates/macros/cgp-macro-lib/src/cgp_data.rs); the shape dispatch is `ItemCgpData` in [cgp-macro-core/src/types/cgp_data/item.rs](../../../crates/macros/cgp-macro-core/src/types/cgp_data/item.rs), documented in [asts/cgp_data.md](../asts/cgp_data.md). The record path is `ItemCgpRecord::to_items` in `record.rs` (see [`derive_cgp_record`](derive_cgp_record.md)) and the variant path `ItemCgpVariant::to_items` in `variant.rs` (see [`derive_cgp_variant`](derive_cgp_variant.md)), both under [cgp-macro-core/src/types/cgp_data/](../../../crates/macros/cgp-macro-core/src/types/cgp_data/). The runtime traits live in [crates/core/cgp-field/src/](../../../crates/core/cgp-field/src/).
+- Entry point: `derive_cgp_data` in [cgp-macro-lib/src/cgp_data.rs](../../../crates/macros/cgp-macro-lib/src/cgp_data.rs).
+- Shape dispatch: `ItemCgpData` in [cgp-macro-core/src/types/cgp_data/item.rs](../../../crates/macros/cgp-macro-core/src/types/cgp_data/item.rs), documented in [asts/cgp_data.md](../asts/cgp_data.md).
+- The record path is `ItemCgpRecord::to_items` in `record.rs` (see [`derive_cgp_record`](derive_cgp_record.md)) and the variant path `ItemCgpVariant::to_items` in `variant.rs` (see [`derive_cgp_variant`](derive_cgp_variant.md)), both under [cgp-macro-core/src/types/cgp_data/](../../../crates/macros/cgp-macro-core/src/types/cgp_data/).
+- The runtime traits live in [crates/core/cgp-field/src/](../../../crates/core/cgp-field/src/).

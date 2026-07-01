@@ -50,4 +50,6 @@ There is no dedicated `snapshot_cgp_producer!` macro; the macro's expansion is n
 
 ## Source
 
-The entry point is `cgp_producer` in [cgp-extra-macro-lib/src/entrypoints/cgp_producer.rs](../../../crates/macros/cgp-extra-macro-lib/src/entrypoints/cgp_producer.rs), forwarded from the proc-macro shim in [cgp-extra-macro/src/lib.rs](../../../crates/macros/cgp-extra-macro/src/lib.rs). The emitted items lean on [`#[cgp_new_provider]`](cgp_new_provider.md) for the base impl and [`delegate_components!`](delegate_components.md) for the wiring; the input-carrying sibling macro is [`#[cgp_computer]`](cgp_computer.md).
+- Entry point: `cgp_producer` in [cgp-extra-macro-lib/src/entrypoints/cgp_producer.rs](../../../crates/macros/cgp-extra-macro-lib/src/entrypoints/cgp_producer.rs), forwarded from the proc-macro shim in [cgp-extra-macro/src/lib.rs](../../../crates/macros/cgp-extra-macro/src/lib.rs).
+- The emitted items lean on [`#[cgp_new_provider]`](cgp_new_provider.md) for the base impl and [`delegate_components!`](delegate_components.md) for the wiring.
+- The input-carrying sibling macro is [`#[cgp_computer]`](cgp_computer.md).

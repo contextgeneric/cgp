@@ -34,4 +34,5 @@ The attribute argument is parsed in two steps so that parsing and defaulting sta
 
 ## Source
 
-The stack lives in [cgp-macro-core/src/types/cgp_component/](../../../crates/macros/cgp-macro-core/src/types/cgp_component/): the argument types in `args/`, `ItemCgpComponent` in `item.rs`, `PreprocessedCgpComponent` in `preprocessed/`, and `EvaluatedCgpComponent` in `evaluated/`. The `self`/`Self` rewriting is done by the visitors in [cgp-macro-core/src/visitors/](../../../crates/macros/cgp-macro-core/src/visitors/).
+- The stack lives in [cgp-macro-core/src/types/cgp_component/](../../../crates/macros/cgp-macro-core/src/types/cgp_component/): the argument types in `args/`, `ItemCgpComponent` in `item.rs`, `PreprocessedCgpComponent` in `preprocessed/`, and `EvaluatedCgpComponent` in `evaluated/`.
+- The `self`/`Self` rewriting is done by the visitors in [cgp-macro-core/src/visitors/](../../../crates/macros/cgp-macro-core/src/visitors/).

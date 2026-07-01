@@ -31,8 +31,11 @@ let name: &str = self.get_field(PhantomData::<Symbol!("name")>).as_str();
 
 ## Tests
 
-The stage transforms are exercised end-to-end by the expansion snapshots indexed in the [entrypoint document's Snapshots section](../entrypoints/cgp_fn.md); there is no separate parser-rejection test file for `#[cgp_fn]` in `cgp-macro-tests`. The `&mut self`-with-multiple-implicits rejection and the mutable-pattern rejection enforced during extraction are currently unpinned by any test.
+- The stage transforms are exercised end-to-end by the expansion snapshots indexed in the [entrypoint document's Snapshots section](../entrypoints/cgp_fn.md); there is no separate parser-rejection test file for `#[cgp_fn]` in `cgp-macro-tests`.
+- The `&mut self`-with-multiple-implicits rejection and the mutable-pattern rejection enforced during extraction are currently unpinned by any test.
 
 ## Source
 
-The stack lives in [cgp-macro-core/src/types/cgp_fn/](../../../crates/macros/cgp-macro-core/src/types/cgp_fn/): `ItemCgpFn` and its `preprocess` in `item.rs`, `PreprocessedItemCgpFn` and its `to_item_trait`/`to_item_impl` in `preprocessed.rs`. The implicit-argument types are in [cgp-macro-core/src/types/implicits/](../../../crates/macros/cgp-macro-core/src/types/implicits/) and their extraction in [cgp-macro-core/src/functions/implicits/](../../../crates/macros/cgp-macro-core/src/functions/implicits/); the field-mode conversion (`parse_field_type`) is in [cgp-macro-core/src/functions/field/parse.rs](../../../crates/macros/cgp-macro-core/src/functions/field/parse.rs), shared with the getter stack in [asts/cgp_getter.md](cgp_getter.md). Companion-attribute parsing is in [cgp-macro-core/src/types/attributes/function.rs](../../../crates/macros/cgp-macro-core/src/types/attributes/function.rs).
+- The stack lives in [cgp-macro-core/src/types/cgp_fn/](../../../crates/macros/cgp-macro-core/src/types/cgp_fn/): `ItemCgpFn` and its `preprocess` in `item.rs`, `PreprocessedItemCgpFn` and its `to_item_trait`/`to_item_impl` in `preprocessed.rs`.
+- The implicit-argument types are in [cgp-macro-core/src/types/implicits/](../../../crates/macros/cgp-macro-core/src/types/implicits/) and their extraction in [cgp-macro-core/src/functions/implicits/](../../../crates/macros/cgp-macro-core/src/functions/implicits/); the field-mode conversion (`parse_field_type`) is in [cgp-macro-core/src/functions/field/parse.rs](../../../crates/macros/cgp-macro-core/src/functions/field/parse.rs), shared with the getter stack in [asts/cgp_getter.md](cgp_getter.md).
+- Companion-attribute parsing is in [cgp-macro-core/src/types/attributes/function.rs](../../../crates/macros/cgp-macro-core/src/types/attributes/function.rs).

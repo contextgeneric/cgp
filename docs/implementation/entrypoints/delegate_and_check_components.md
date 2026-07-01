@@ -70,8 +70,12 @@ One variant has no snapshot: a `#[skip_check]` entry alongside checked entries, 
 
 ## Tests
 
-The snapshot files above are compile-only tests, so a successful build is the passing assertion for both the wiring and the derived check. There are no separate behavioral or `cgp-macro-tests` failure cases for this macro.
+- The snapshot files above are compile-only tests, so a successful build is the passing assertion for both the wiring and the derived check.
+- There are no separate behavioral or `cgp-macro-tests` failure cases for this macro.
 
 ## Source
 
-The entry point is `delegate_and_check_components` in [cgp-macro-lib/src/delegate_and_check_components.rs](../../../crates/macros/cgp-macro-lib/src/delegate_and_check_components.rs); the wrapper item, key-to-check conversion, and attribute types live in [cgp-macro-core/src/types/delegate_and_check_components/](../../../crates/macros/cgp-macro-core/src/types/delegate_and_check_components/) and are documented with the `check_components!` stack in [asts/check_components.md](../asts/check_components.md). The `__CanUse{Context}` default name and `#[check_trait]` handling are in `item.rs`, the `#[check_params]`/`#[skip_check]` parsing and mutual exclusion in `check_params.rs`, the per-key conversion in `key_with_check_params.rs`, and the walk over delegation entries in `to_keys_with_check_params.rs`. It reuses the [`DelegateTable`](../asts/delegate_component.md) for the wiring half and the [`CheckComponentsTable`](../asts/check_components.md) for the checking half.
+- Entry point: `delegate_and_check_components` in [cgp-macro-lib/src/delegate_and_check_components.rs](../../../crates/macros/cgp-macro-lib/src/delegate_and_check_components.rs).
+- Wrapper item, key-to-check conversion, and attribute types: [cgp-macro-core/src/types/delegate_and_check_components/](../../../crates/macros/cgp-macro-core/src/types/delegate_and_check_components/), documented with the `check_components!` stack in [asts/check_components.md](../asts/check_components.md).
+- The `__CanUse{Context}` default name and `#[check_trait]` handling are in `item.rs`, the `#[check_params]`/`#[skip_check]` parsing and mutual exclusion in `check_params.rs`, the per-key conversion in `key_with_check_params.rs`, and the walk over delegation entries in `to_keys_with_check_params.rs`.
+- Reuses the [`DelegateTable`](../asts/delegate_component.md) for the wiring half and the [`CheckComponentsTable`](../asts/check_components.md) for the checking half.

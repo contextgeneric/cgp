@@ -86,4 +86,6 @@ Because `App` wires `FooGetterComponent` to `UseFields`, the generated impl read
 
 ## Source
 
-The struct is defined in [crates/core/cgp-component/src/providers/use_fields.rs](../../../crates/core/cgp-component/src/providers/use_fields.rs). The `UseFields` impl is built by `to_use_fields_impl` in [crates/macros/cgp-macro-core/src/types/cgp_getter/to_use_fields_impl.rs](../../../crates/macros/cgp-macro-core/src/types/cgp_getter/to_use_fields_impl.rs), which keys each method on its name via `Symbol::from_ident` and emits a matching `HasField` bound. For how it is generated and the index of tests, see the implementation document [implementation/entrypoints/cgp_getter](../../implementation/entrypoints/cgp_getter.md).
+- The struct is defined in [crates/core/cgp-component/src/providers/use_fields.rs](../../../crates/core/cgp-component/src/providers/use_fields.rs).
+- The `UseFields` impl is built by `to_use_fields_impl` in [crates/macros/cgp-macro-core/src/types/cgp_getter/to_use_fields_impl.rs](../../../crates/macros/cgp-macro-core/src/types/cgp_getter/to_use_fields_impl.rs), which keys each method on its name via `Symbol::from_ident` and emits a matching `HasField` bound.
+- For how it is generated and the index of tests, see the implementation document [implementation/entrypoints/cgp_getter](../../implementation/entrypoints/cgp_getter.md).

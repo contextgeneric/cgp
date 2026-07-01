@@ -42,4 +42,6 @@ Its only behavior is a `ToTokens` impl that renders the items in a fixed order â
 
 ## Source
 
-The stack lives in [cgp-macro-core/src/types/namespace/](../../../crates/macros/cgp-macro-core/src/types/namespace/): `NamespaceTable` and its `build_*`/`eval` methods in `table.rs`, `InheritNamespaceStatement` in `inherit.rs`, and `EvaluatedNamespaceTable` in `eval.rs`. The entry table and the for-entry machinery it reuses live in [cgp-macro-core/src/types/delegate_component/](../../../crates/macros/cgp-macro-core/src/types/delegate_component/). The entrypoint that drives the stack is documented in [entrypoints/cgp_namespace.md](../entrypoints/cgp_namespace.md).
+- The stack lives in [cgp-macro-core/src/types/namespace/](../../../crates/macros/cgp-macro-core/src/types/namespace/): `NamespaceTable` and its `build_*`/`eval` methods in `table.rs`, `InheritNamespaceStatement` in `inherit.rs`, and `EvaluatedNamespaceTable` in `eval.rs`.
+- The entry table and the for-entry machinery it reuses live in [cgp-macro-core/src/types/delegate_component/](../../../crates/macros/cgp-macro-core/src/types/delegate_component/).
+- The entrypoint that drives the stack is documented in [entrypoints/cgp_namespace.md](../entrypoints/cgp_namespace.md).

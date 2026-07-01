@@ -40,8 +40,13 @@ Like the extractor derive, `#[derive(FromVariant)]` requires every variant to be
 
 ## Tests
 
-`#[derive(FromVariant)]` has no snapshot macro of its own; the constructor impls it emits are part of the variant expansion pinned by the `snapshot_derive_cgp_data!` snapshots indexed in [derive_cgp_data.md's Snapshots section](derive_cgp_data.md#snapshots). The behavioral variant tests in [crates/tests/cgp-tests/tests/extensible_variants/](../../../crates/tests/cgp-tests/tests/extensible_variants/) — notably [variant_dispatch.rs](../../../crates/tests/cgp-tests/tests/extensible_variants/variant_dispatch.rs) — construct enums through the generated `from_variant`. The single-unnamed-field requirement has no dedicated failure case in `cgp-macro-tests` and is a candidate for one.
+`#[derive(FromVariant)]` has no snapshot macro of its own; the constructor impls it emits are part of the variant expansion pinned by the `snapshot_derive_cgp_data!` snapshots indexed in [derive_cgp_data.md's Snapshots section](derive_cgp_data.md#snapshots).
+
+- The behavioral variant tests in [crates/tests/cgp-tests/tests/extensible_variants/](../../../crates/tests/cgp-tests/tests/extensible_variants/) — notably [variant_dispatch.rs](../../../crates/tests/cgp-tests/tests/extensible_variants/variant_dispatch.rs) — construct enums through the generated `from_variant`.
+- The single-unnamed-field requirement has no dedicated failure case in `cgp-macro-tests` and is a candidate for one.
 
 ## Source
 
-The entry point is `derive_from_variant` in [cgp-macro-lib/src/derive_from_variant.rs](../../../crates/macros/cgp-macro-lib/src/derive_from_variant.rs). The codegen is `ItemCgpVariant::to_from_variant_impls` in [cgp-macro-core/src/types/cgp_data/variant.rs](../../../crates/macros/cgp-macro-core/src/types/cgp_data/variant.rs), which delegates to `derive_from_variant_from_enum` in [cgp-macro-core/src/types/cgp_data/derive_from_variant.rs](../../../crates/macros/cgp-macro-core/src/types/cgp_data/derive_from_variant.rs); the AST types are documented in [asts/cgp_data.md](../asts/cgp_data.md). The `FromVariant` trait is defined in [crates/core/cgp-field/src/traits/from_variant.rs](../../../crates/core/cgp-field/src/traits/from_variant.rs).
+- Entry point: `derive_from_variant` in [cgp-macro-lib/src/derive_from_variant.rs](../../../crates/macros/cgp-macro-lib/src/derive_from_variant.rs).
+- Codegen: `ItemCgpVariant::to_from_variant_impls` in [cgp-macro-core/src/types/cgp_data/variant.rs](../../../crates/macros/cgp-macro-core/src/types/cgp_data/variant.rs), which delegates to `derive_from_variant_from_enum` in [cgp-macro-core/src/types/cgp_data/derive_from_variant.rs](../../../crates/macros/cgp-macro-core/src/types/cgp_data/derive_from_variant.rs); the AST types are documented in [asts/cgp_data.md](../asts/cgp_data.md).
+- The `FromVariant` trait is defined in [crates/core/cgp-field/src/traits/from_variant.rs](../../../crates/core/cgp-field/src/traits/from_variant.rs).

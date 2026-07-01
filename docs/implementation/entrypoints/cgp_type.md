@@ -82,4 +82,9 @@ The behavioral tests confirm the generated wiring and the `UseType` route work:
 
 ## Source
 
-The entry point is `cgp_type` in [cgp-macro-lib/src/cgp_type.rs](../../../crates/macros/cgp-macro-lib/src/cgp_type.rs). The extra codegen lives in [cgp-macro-core/src/types/cgp_type/item.rs](../../../crates/macros/cgp-macro-core/src/types/cgp_type/item.rs) and is documented in [asts/cgp_type.md](../asts/cgp_type.md); the shared component pipeline it wraps is in [cgp-macro-core/src/types/cgp_component/](../../../crates/macros/cgp-macro-core/src/types/cgp_component/), documented in [entrypoints/cgp_component.md](cgp_component.md). The associated-type-bound rewriting comes from [`get_bounds_and_replace_self_assoc_type`](../../../crates/macros/cgp-macro-core/src/visitors/self_assoc_type.rs), and the paired provider/`IsProviderFor` impls from `ItemProviderImpl` in [cgp-macro-core/src/types/provider_impl.rs](../../../crates/macros/cgp-macro-core/src/types/provider_impl.rs). All generated fragments are built with [parse_internal!](../macros/parse_internal.md).
+- Entry point: `cgp_type` in [cgp-macro-lib/src/cgp_type.rs](../../../crates/macros/cgp-macro-lib/src/cgp_type.rs).
+- Extra codegen: [cgp-macro-core/src/types/cgp_type/item.rs](../../../crates/macros/cgp-macro-core/src/types/cgp_type/item.rs), documented in [asts/cgp_type.md](../asts/cgp_type.md).
+- Shared component pipeline it wraps: [cgp-macro-core/src/types/cgp_component/](../../../crates/macros/cgp-macro-core/src/types/cgp_component/), documented in [entrypoints/cgp_component.md](cgp_component.md).
+- Associated-type-bound rewriting: [`get_bounds_and_replace_self_assoc_type`](../../../crates/macros/cgp-macro-core/src/visitors/self_assoc_type.rs).
+- Paired provider/`IsProviderFor` impls: `ItemProviderImpl` in [cgp-macro-core/src/types/provider_impl.rs](../../../crates/macros/cgp-macro-core/src/types/provider_impl.rs).
+- Fragment construction: [parse_internal!](../macros/parse_internal.md).

@@ -64,4 +64,7 @@ There is no dedicated `snapshot_cgp_computer!` macro; the macro's expansion is n
 
 ## Source
 
-The entry point is `cgp_computer` in [cgp-extra-macro-lib/src/entrypoints/cgp_computer.rs](../../../crates/macros/cgp-extra-macro-lib/src/entrypoints/cgp_computer.rs), forwarded from the proc-macro shim in [cgp-extra-macro/src/lib.rs](../../../crates/macros/cgp-extra-macro/src/lib.rs). The `Result`-versus-value split is [`MaybeResultType`](../../../crates/macros/cgp-extra-macro-lib/src/parse/maybe_result.rs). The emitted items lean on constructs documented separately — the base impl on [`#[cgp_new_provider]`](cgp_new_provider.md), the wiring on [`delegate_components!`](delegate_components.md) — and the input-less sibling macro is [`#[cgp_producer]`](cgp_producer.md).
+- Entry point: `cgp_computer` in [cgp-extra-macro-lib/src/entrypoints/cgp_computer.rs](../../../crates/macros/cgp-extra-macro-lib/src/entrypoints/cgp_computer.rs), forwarded from the proc-macro shim in [cgp-extra-macro/src/lib.rs](../../../crates/macros/cgp-extra-macro/src/lib.rs).
+- The `Result`-versus-value split: [`MaybeResultType`](../../../crates/macros/cgp-extra-macro-lib/src/parse/maybe_result.rs).
+- The emitted items lean on the base impl from [`#[cgp_new_provider]`](cgp_new_provider.md) and the wiring from [`delegate_components!`](delegate_components.md).
+- The input-less sibling macro is [`#[cgp_producer]`](cgp_producer.md).

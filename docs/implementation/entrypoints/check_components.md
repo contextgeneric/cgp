@@ -56,8 +56,15 @@ No snapshot pins the plainest single-block, single-bare-component case on its ow
 
 ## Tests
 
-The behavioral coverage for `check_components!` is the compile-time assertion itself: the files listed under Snapshots are compile-only tests, so a successful build is the passing check. Each pins both the expansion (via the snapshot) and the fact that the asserted wiring resolves. There are no `cgp-macro-tests` failure cases for the check family.
+The behavioral coverage for `check_components!` is the compile-time assertion itself:
+
+- The files listed under Snapshots are compile-only tests, so a successful build is the passing check. Each pins both the expansion (via the snapshot) and the fact that the asserted wiring resolves.
+- There are no `cgp-macro-tests` failure cases for the check family.
 
 ## Source
 
-The entry point is `check_components` in [cgp-macro-lib/src/check_components.rs](../../../crates/macros/cgp-macro-lib/src/check_components.rs); the tables, entries, keys, and values live in [cgp-macro-core/src/types/check_components/](../../../crates/macros/cgp-macro-core/src/types/check_components/) and are documented together with the `delegate_and_check_components!` stack in [asts/check_components.md](../asts/check_components.md). The check trait, the `#[check_trait]`/`#[check_providers]` attributes, the `__Check{Context}` name derivation, the supertrait choice, and the span override are all in `table.rs`; the cartesian-product expansion is in `entry.rs`. All generated fragments are built with [parse_internal!](../macros/parse_internal.md). The `delegate_and_check_components!` macro reuses this stack; see its [entrypoint document](delegate_and_check_components.md).
+- Entry point: `check_components` in [cgp-macro-lib/src/check_components.rs](../../../crates/macros/cgp-macro-lib/src/check_components.rs).
+- Tables, entries, keys, and values: [cgp-macro-core/src/types/check_components/](../../../crates/macros/cgp-macro-core/src/types/check_components/), documented together with the `delegate_and_check_components!` stack in [asts/check_components.md](../asts/check_components.md).
+- The check trait, the `#[check_trait]`/`#[check_providers]` attributes, the `__Check{Context}` name derivation, the supertrait choice, and the span override are all in `table.rs`; the cartesian-product expansion is in `entry.rs`.
+- Fragment construction: [parse_internal!](../macros/parse_internal.md).
+- The `delegate_and_check_components!` macro reuses this stack; see its [entrypoint document](delegate_and_check_components.md).

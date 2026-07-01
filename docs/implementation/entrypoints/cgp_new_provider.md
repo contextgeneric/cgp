@@ -39,4 +39,6 @@ None beyond those inherited from [`#[cgp_provider]`](cgp_provider.md#known-issue
 
 ## Source
 
-The entry point is `cgp_new_provider` in [cgp-macro-lib/src/cgp_new_provider.rs](../../../crates/macros/cgp-macro-lib/src/cgp_new_provider.rs). All of the generation logic — including the struct declaration built by `to_provider_struct` when `new` is set — is shared with `#[cgp_provider]` in [cgp-macro-core/src/types/cgp_provider/](../../../crates/macros/cgp-macro-core/src/types/cgp_provider/), documented in [asts/cgp_provider.md](../asts/cgp_provider.md). The struct-declaring sugar [`#[cgp_impl(new …)]`](cgp_impl.md) desugars to this macro.
+- Entry point: `cgp_new_provider` in [cgp-macro-lib/src/cgp_new_provider.rs](../../../crates/macros/cgp-macro-lib/src/cgp_new_provider.rs).
+- Generation logic — including the struct declaration built by `to_provider_struct` when `new` is set — shared with `#[cgp_provider]`: [cgp-macro-core/src/types/cgp_provider/](../../../crates/macros/cgp-macro-core/src/types/cgp_provider/), documented in [asts/cgp_provider.md](../asts/cgp_provider.md).
+- The struct-declaring sugar [`#[cgp_impl(new …)]`](cgp_impl.md) desugars to this macro.

@@ -6,8 +6,8 @@ The merge is a straightforward concatenation: the parameters of the first `Gener
 
 ## Tests
 
-The helper has no dedicated test; it is covered indirectly through the expansion snapshots of the macros that assemble multi-source impls.
+- The helper has no dedicated test; it is covered indirectly through the expansion snapshots of the macros that assemble multi-source impls.
 
 ## Source
 
-The function lives in [cgp-macro-core/src/functions/generics/merge_generics.rs](../../../../crates/macros/cgp-macro-core/src/functions/generics/merge_generics.rs).
+- The function lives in [cgp-macro-core/src/functions/generics/merge_generics.rs](../../../../crates/macros/cgp-macro-core/src/functions/generics/merge_generics.rs).

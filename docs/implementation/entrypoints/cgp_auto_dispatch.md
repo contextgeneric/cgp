@@ -74,4 +74,6 @@ There is no dedicated `snapshot_cgp_auto_dispatch!` macro; the macro's expansion
 
 ## Source
 
-The entry point is `cgp_auto_dispatch` in [cgp-extra-macro-lib/src/entrypoints/cgp_auto_dispatch.rs](../../../crates/macros/cgp-extra-macro-lib/src/entrypoints/cgp_auto_dispatch.rs), forwarded from the proc-macro shim in [cgp-extra-macro/src/lib.rs](../../../crates/macros/cgp-extra-macro/src/lib.rs). The per-variant handlers are emitted through [`#[cgp_computer]`](cgp_computer.md), and the value-handler matchers it wires live in [crates/extra/cgp-dispatch/src/providers/matchers/](../../../crates/extra/cgp-dispatch/src/providers/matchers/).
+- Entry point: `cgp_auto_dispatch` in [cgp-extra-macro-lib/src/entrypoints/cgp_auto_dispatch.rs](../../../crates/macros/cgp-extra-macro-lib/src/entrypoints/cgp_auto_dispatch.rs), forwarded from the proc-macro shim in [cgp-extra-macro/src/lib.rs](../../../crates/macros/cgp-extra-macro/src/lib.rs).
+- The per-variant handlers are emitted through [`#[cgp_computer]`](cgp_computer.md).
+- The value-handler matchers it wires: [crates/extra/cgp-dispatch/src/providers/matchers/](../../../crates/extra/cgp-dispatch/src/providers/matchers/).

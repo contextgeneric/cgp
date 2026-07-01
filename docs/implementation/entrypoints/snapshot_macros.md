@@ -73,4 +73,9 @@ The per-macro Snapshots sections — for example [cgp_component.md](cgp_componen
 
 ## Source
 
-The proc-macro shims are in [cgp-macro-test-util/src/lib.rs](../../../crates/macros/cgp-macro-test-util/src/lib.rs); the per-macro entrypoints are in [cgp-macro-test-util-lib/src/entrypoints/](../../../crates/macros/cgp-macro-test-util-lib/src/entrypoints/), the snapshot wrapper types in [src/types/](../../../crates/macros/cgp-macro-test-util-lib/src/types/), the pretty-printer in [src/functions/pretty_format.rs](../../../crates/macros/cgp-macro-test-util-lib/src/functions/pretty_format.rs), and the keyword markers in [src/keywords.rs](../../../crates/macros/cgp-macro-test-util-lib/src/keywords.rs). Each snapshot calls the matching production entry function in [cgp-macro-lib](../../../crates/macros/cgp-macro-lib/).
+- Proc-macro shims: [cgp-macro-test-util/src/lib.rs](../../../crates/macros/cgp-macro-test-util/src/lib.rs).
+- Per-macro entrypoints: [cgp-macro-test-util-lib/src/entrypoints/](../../../crates/macros/cgp-macro-test-util-lib/src/entrypoints/).
+- Snapshot wrapper types: [src/types/](../../../crates/macros/cgp-macro-test-util-lib/src/types/).
+- Pretty-printer: [src/functions/pretty_format.rs](../../../crates/macros/cgp-macro-test-util-lib/src/functions/pretty_format.rs).
+- Keyword markers: [src/keywords.rs](../../../crates/macros/cgp-macro-test-util-lib/src/keywords.rs).
+- Each snapshot calls the matching production entry function in [cgp-macro-lib](../../../crates/macros/cgp-macro-lib/).

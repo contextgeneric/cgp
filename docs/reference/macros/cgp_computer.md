@@ -145,6 +145,7 @@ Because the function returns a plain `u64`, the `try_compute` and `handle` forms
 
 ## Source
 
-The macro entrypoint is [crates/macros/cgp-extra-macro/src/lib.rs](../../../crates/macros/cgp-extra-macro/src/lib.rs), forwarding to the implementation in [crates/macros/cgp-extra-macro-lib/src/entrypoints/cgp_computer.rs](../../../crates/macros/cgp-extra-macro-lib/src/entrypoints/cgp_computer.rs); the `Result`-versus-value detection is the `MaybeResultType` parser in [crates/macros/cgp-extra-macro-lib/src/parse/maybe_result.rs](../../../crates/macros/cgp-extra-macro-lib/src/parse/maybe_result.rs). The base `Computer`/`AsyncComputer` traits are defined in [crates/extra/cgp-handler/src/components/](../../../crates/extra/cgp-handler/src/components/), and the promotion bundles in [crates/extra/cgp-handler/src/providers/promote_all.rs](../../../crates/extra/cgp-handler/src/providers/promote_all.rs).
-
-For the internal walkthrough — the sync/async and value/`Result` branching, the generated items, and the index of behavioral tests — see the implementation document [implementation/entrypoints/cgp_computer.md](../../implementation/entrypoints/cgp_computer.md).
+- Entrypoint: [crates/macros/cgp-extra-macro/src/lib.rs](../../../crates/macros/cgp-extra-macro/src/lib.rs), forwarding to the implementation in [crates/macros/cgp-extra-macro-lib/src/entrypoints/cgp_computer.rs](../../../crates/macros/cgp-extra-macro-lib/src/entrypoints/cgp_computer.rs).
+- `Result`-versus-value detection: the `MaybeResultType` parser in [crates/macros/cgp-extra-macro-lib/src/parse/maybe_result.rs](../../../crates/macros/cgp-extra-macro-lib/src/parse/maybe_result.rs).
+- Base `Computer`/`AsyncComputer` traits: [crates/extra/cgp-handler/src/components/](../../../crates/extra/cgp-handler/src/components/); the promotion bundles in [crates/extra/cgp-handler/src/providers/promote_all.rs](../../../crates/extra/cgp-handler/src/providers/promote_all.rs).
+- Internal walkthrough (the sync/async and value/`Result` branching, the generated items, and the index of behavioral tests): [implementation/entrypoints/cgp_computer.md](../../implementation/entrypoints/cgp_computer.md).

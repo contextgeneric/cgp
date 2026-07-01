@@ -135,6 +135,6 @@ The macro rejects trait methods with non-lifetime generic parameters, so a dispa
 
 ## Source
 
-The macro is the `cgp_auto_dispatch` entry point in [crates/macros/cgp-extra-macro-lib/src/entrypoints/cgp_auto_dispatch.rs](../../../crates/macros/cgp-extra-macro-lib/src/entrypoints/cgp_auto_dispatch.rs), forwarded from the proc-macro shim in [crates/macros/cgp-extra-macro/src/lib.rs](../../../crates/macros/cgp-extra-macro/src/lib.rs) and re-exported through [crates/main/cgp-extra/src/prelude.rs](../../../crates/main/cgp-extra/src/prelude.rs). The matchers it generates live in [crates/extra/cgp-dispatch/src/providers/matchers/](../../../crates/extra/cgp-dispatch/src/providers/matchers/).
-
-For the internal walkthrough — the blanket-impl and per-variant-computer helpers, the matcher selection, the lifetime elaboration, and the index of behavioral tests — see the implementation document [implementation/entrypoints/cgp_auto_dispatch.md](../../implementation/entrypoints/cgp_auto_dispatch.md).
+- Entry point: `cgp_auto_dispatch` in [crates/macros/cgp-extra-macro-lib/src/entrypoints/cgp_auto_dispatch.rs](../../../crates/macros/cgp-extra-macro-lib/src/entrypoints/cgp_auto_dispatch.rs), forwarded from the proc-macro shim in [crates/macros/cgp-extra-macro/src/lib.rs](../../../crates/macros/cgp-extra-macro/src/lib.rs) and re-exported through [crates/main/cgp-extra/src/prelude.rs](../../../crates/main/cgp-extra/src/prelude.rs).
+- Matchers it generates: [crates/extra/cgp-dispatch/src/providers/matchers/](../../../crates/extra/cgp-dispatch/src/providers/matchers/).
+- Internal walkthrough (the blanket-impl and per-variant-computer helpers, the matcher selection, the lifetime elaboration, and the index of behavioral tests): [implementation/entrypoints/cgp_auto_dispatch.md](../../implementation/entrypoints/cgp_auto_dispatch.md).

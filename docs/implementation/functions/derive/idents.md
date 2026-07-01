@@ -8,8 +8,8 @@ The one non-obvious helper is `to_snake_case_ident`, which additionally wraps it
 
 ## Tests
 
-These helpers have no dedicated test; they are covered through the expansion snapshots, where the derived names appear in the generated code.
+- These helpers have no dedicated test; they are covered through the expansion snapshots, where the derived names appear in the generated code.
 
 ## Source
 
-The functions live in [cgp-macro-core/src/functions/camel_case.rs](../../../../crates/macros/cgp-macro-core/src/functions/camel_case.rs) and [cgp-macro-core/src/functions/snake_case.rs](../../../../crates/macros/cgp-macro-core/src/functions/snake_case.rs).
+- The functions live in [cgp-macro-core/src/functions/camel_case.rs](../../../../crates/macros/cgp-macro-core/src/functions/camel_case.rs) and [cgp-macro-core/src/functions/snake_case.rs](../../../../crates/macros/cgp-macro-core/src/functions/snake_case.rs).

@@ -98,4 +98,6 @@ delegate_components! {
 
 ## Source
 
-The `ChainGetters` struct and its two `FieldGetter` impls (the `Cons` recursion step and the `Nil` base case) are in [crates/core/cgp-field/src/impls/chain.rs](../../../crates/core/cgp-field/src/impls/chain.rs). The `FieldGetter` and `FieldMapper` traits it builds on are in [crates/core/cgp-field/src/traits/has_field.rs](../../../crates/core/cgp-field/src/traits/has_field.rs) and [crates/core/cgp-field/src/traits/map_field.rs](../../../crates/core/cgp-field/src/traits/map_field.rs), and the `Cons`/`Nil` spine it recurses over is defined in [crates/core/cgp-base-types/src/types/](../../../crates/core/cgp-base-types/src/types/) (`cons.rs` and `nil.rs`).
+- The `ChainGetters` struct and its two `FieldGetter` impls (the `Cons` recursion step and the `Nil` base case) are in [crates/core/cgp-field/src/impls/chain.rs](../../../crates/core/cgp-field/src/impls/chain.rs).
+- The `FieldGetter` and `FieldMapper` traits it builds on are in [crates/core/cgp-field/src/traits/has_field.rs](../../../crates/core/cgp-field/src/traits/has_field.rs) and [crates/core/cgp-field/src/traits/map_field.rs](../../../crates/core/cgp-field/src/traits/map_field.rs).
+- The `Cons`/`Nil` spine it recurses over is defined in [crates/core/cgp-base-types/src/types/](../../../crates/core/cgp-base-types/src/types/) (`cons.rs` and `nil.rs`).

@@ -134,6 +134,7 @@ If a field were left unset before `finalize_build`, the call would not compile �
 
 ## Source
 
-The derive entry point is `derive_cgp_record` in [crates/macros/cgp-macro-lib/src/cgp_record.rs](../../../crates/macros/cgp-macro-lib/src/cgp_record.rs), which parses an `ItemCgpRecord` and calls `to_items()`. The record codegen is in [crates/macros/cgp-macro-core/src/types/cgp_data/record.rs](../../../crates/macros/cgp-macro-core/src/types/cgp_data/record.rs), which composes `derive_has_field_impls_from_struct`, `derive_has_fields_impls_from_struct`, and the builder helpers in the `derive_builder/` submodule. The runtime traits (`HasBuilder`, `IntoBuilder`, `PartialData`, `FinalizeBuild`, `UpdateField`, `BuildField`, `HasFields`, `FromFields`, `ToFields`) live in [crates/core/cgp-field/src/traits/](../../../crates/core/cgp-field/src/traits/).
-
-For the full internal walkthrough — the codegen it composes, the corner-case handling, and the index of tests and expansion snapshots — see the implementation document [implementation/entrypoints/derive_cgp_record.md](../../implementation/entrypoints/derive_cgp_record.md).
+- Entry point: `derive_cgp_record` in [crates/macros/cgp-macro-lib/src/cgp_record.rs](../../../crates/macros/cgp-macro-lib/src/cgp_record.rs), which parses an `ItemCgpRecord` and calls `to_items()`.
+- Record codegen: [crates/macros/cgp-macro-core/src/types/cgp_data/record.rs](../../../crates/macros/cgp-macro-core/src/types/cgp_data/record.rs), which composes `derive_has_field_impls_from_struct`, `derive_has_fields_impls_from_struct`, and the builder helpers in the `derive_builder/` submodule.
+- Runtime traits: `HasBuilder`, `IntoBuilder`, `PartialData`, `FinalizeBuild`, `UpdateField`, `BuildField`, `HasFields`, `FromFields`, `ToFields` in [crates/core/cgp-field/src/traits/](../../../crates/core/cgp-field/src/traits/).
+- Internal walkthrough (the codegen it composes, the corner-case handling, and the index of tests and expansion snapshots): [implementation/entrypoints/derive_cgp_record.md](../../implementation/entrypoints/derive_cgp_record.md).

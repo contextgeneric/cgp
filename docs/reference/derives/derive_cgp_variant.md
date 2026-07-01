@@ -120,6 +120,7 @@ Because each `extract_field` narrows the remainder type, the compiler knows afte
 
 ## Source
 
-The derive entry point is `derive_cgp_variant` in [crates/macros/cgp-macro-lib/src/cgp_variant.rs](../../../crates/macros/cgp-macro-lib/src/cgp_variant.rs), which parses an `ItemCgpVariant` and calls `to_items()`. The variant codegen is in [crates/macros/cgp-macro-core/src/types/cgp_data/variant.rs](../../../crates/macros/cgp-macro-core/src/types/cgp_data/variant.rs), which composes `derive_has_fields_impls_from_enum`, `derive_from_variant_from_enum`, and the extractor helpers in the `derive_extractor/` submodule. The runtime traits (`HasExtractor`, `HasExtractorRef`, `HasExtractorMut`, `ExtractField`, `FinalizeExtract`, `FromVariant`, `HasFields`, `FromFields`, `ToFields`) live in [crates/core/cgp-field/src/traits/](../../../crates/core/cgp-field/src/traits/).
-
-For the full internal walkthrough — the codegen it composes, the corner-case handling, and the index of tests and expansion snapshots — see the implementation document [implementation/entrypoints/derive_cgp_variant.md](../../implementation/entrypoints/derive_cgp_variant.md).
+- Entry point: `derive_cgp_variant` in [crates/macros/cgp-macro-lib/src/cgp_variant.rs](../../../crates/macros/cgp-macro-lib/src/cgp_variant.rs), which parses an `ItemCgpVariant` and calls `to_items()`.
+- Variant codegen: [crates/macros/cgp-macro-core/src/types/cgp_data/variant.rs](../../../crates/macros/cgp-macro-core/src/types/cgp_data/variant.rs), which composes `derive_has_fields_impls_from_enum`, `derive_from_variant_from_enum`, and the extractor helpers in the `derive_extractor/` submodule.
+- Runtime traits: `HasExtractor`, `HasExtractorRef`, `HasExtractorMut`, `ExtractField`, `FinalizeExtract`, `FromVariant`, `HasFields`, `FromFields`, `ToFields` in [crates/core/cgp-field/src/traits/](../../../crates/core/cgp-field/src/traits/).
+- Internal walkthrough (the codegen it composes, the corner-case handling, and the index of tests and expansion snapshots): [implementation/entrypoints/derive_cgp_variant.md](../../implementation/entrypoints/derive_cgp_variant.md).

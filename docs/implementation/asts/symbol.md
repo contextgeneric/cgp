@@ -26,4 +26,5 @@ Beyond parsing a literal, `Symbol` is also constructed from a bare identifier th
 
 ## Source
 
-The type lives in [cgp-macro-core/src/types/field/symbol.rs](../../../crates/macros/cgp-macro-core/src/types/field/symbol.rs). The runtime types `Symbol<const LEN: usize, Chars>`, `Chars<const CHAR: char, Tail>`, and `Nil` are defined in [cgp-base-types](../../../crates/core/cgp-base-types/src/types/).
+- The type lives in [cgp-macro-core/src/types/field/symbol.rs](../../../crates/macros/cgp-macro-core/src/types/field/symbol.rs).
+- The runtime types `Symbol<const LEN: usize, Chars>`, `Chars<const CHAR: char, Tail>`, and `Nil` are defined in [cgp-base-types](../../../crates/core/cgp-base-types/src/types/).

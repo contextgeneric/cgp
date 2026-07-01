@@ -84,4 +84,5 @@ delegate_components! {
 
 ## Source
 
-The `UseFieldRef` struct, its `WithFieldRef` alias, and the `FieldGetter` and `MutFieldGetter` impls are in [crates/core/cgp-field/src/impls/use_ref.rs](../../../crates/core/cgp-field/src/impls/use_ref.rs). The `HasField` and `FieldGetter` traits are in [crates/core/cgp-field/src/traits/has_field.rs](../../../crates/core/cgp-field/src/traits/has_field.rs), and `HasFieldMut`/`MutFieldGetter` are in [crates/core/cgp-field/src/traits/has_field_mut.rs](../../../crates/core/cgp-field/src/traits/has_field_mut.rs).
+- The `UseFieldRef` struct, its `WithFieldRef` alias, and the `FieldGetter` and `MutFieldGetter` impls are in [crates/core/cgp-field/src/impls/use_ref.rs](../../../crates/core/cgp-field/src/impls/use_ref.rs).
+- The `HasField` and `FieldGetter` traits are in [crates/core/cgp-field/src/traits/has_field.rs](../../../crates/core/cgp-field/src/traits/has_field.rs), and `HasFieldMut`/`MutFieldGetter` are in [crates/core/cgp-field/src/traits/has_field_mut.rs](../../../crates/core/cgp-field/src/traits/has_field_mut.rs).

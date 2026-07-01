@@ -183,6 +183,7 @@ The call `rect.area()` resolves through the consumer blanket impl to `Rectangle:
 
 ## Source
 
-The macro entry point is `cgp_component` in [crates/macros/cgp-macro-lib/src/cgp_component.rs](../../../crates/macros/cgp-macro-lib/src/cgp_component.rs), which drives the `preprocess → eval → to_items` pipeline. The logic lives in [crates/macros/cgp-macro-core/src/types/cgp_component/](../../../crates/macros/cgp-macro-core/src/types/cgp_component/): argument parsing in `args/`, the provider trait and blanket impls in `preprocessed/`, and the standard provider impls (`UseContext`, `RedirectLookup`, `UseDelegate`) in `evaluated/`. The default identifiers `__Context__` and `{Provider}Component` are set in `args/component_args.rs`.
-
-For the full internal walkthrough — the pipeline stages, the function that synthesizes each generated item, the corner-case handling, and the index of tests and expansion snapshots — see the implementation document [implementation/entrypoints/cgp_component.md](../../implementation/entrypoints/cgp_component.md).
+- Entry point: `cgp_component` in [crates/macros/cgp-macro-lib/src/cgp_component.rs](../../../crates/macros/cgp-macro-lib/src/cgp_component.rs), which drives the `preprocess → eval → to_items` pipeline.
+- Logic: [crates/macros/cgp-macro-core/src/types/cgp_component/](../../../crates/macros/cgp-macro-core/src/types/cgp_component/) — argument parsing in `args/`, the provider trait and blanket impls in `preprocessed/`, the standard provider impls (`UseContext`, `RedirectLookup`, `UseDelegate`) in `evaluated/`.
+- Default identifiers `__Context__` and `{Provider}Component`: set in `args/component_args.rs`.
+- Internal walkthrough (pipeline stages, synthesizing functions, corner cases, and the index of tests and snapshots): [implementation/entrypoints/cgp_component.md](../../implementation/entrypoints/cgp_component.md).

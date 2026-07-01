@@ -8,8 +8,9 @@ The point of the indirection is hygiene. Generated code interpolates the marker 
 
 ## Tests
 
-These macros have no dedicated test; they are exercised by every expansion snapshot in the suite, since the fully-qualified paths in generated code all originate from these markers.
+- These macros have no dedicated test; they are exercised by every expansion snapshot in the suite, since the fully-qualified paths in generated code all originate from these markers.
 
 ## Source
 
-The macros are defined in [cgp-macro-core/src/macros/export.rs](../../../crates/macros/cgp-macro-core/src/macros/export.rs); the marker set they generate lives in [cgp-macro-core/src/exports.rs](../../../crates/macros/cgp-macro-core/src/exports.rs), and the `::cgp::macro_prelude` re-export surface is what makes the emitted paths resolve. The convention that all CGP items are referenced through these markers is recorded in [cgp-macro-core/CLAUDE.md](../../../crates/macros/cgp-macro-core/CLAUDE.md).
+- The macros are defined in [cgp-macro-core/src/macros/export.rs](../../../crates/macros/cgp-macro-core/src/macros/export.rs); the marker set they generate lives in [cgp-macro-core/src/exports.rs](../../../crates/macros/cgp-macro-core/src/exports.rs), and the `::cgp::macro_prelude` re-export surface is what makes the emitted paths resolve.
+- The convention that all CGP items are referenced through these markers is recorded in [cgp-macro-core/CLAUDE.md](../../../crates/macros/cgp-macro-core/CLAUDE.md).

@@ -105,6 +105,7 @@ The `#[uses(CanCalculateArea)]` attribute adds `Self: CanCalculateArea` to the g
 
 ## Source
 
-`#[uses(...)]` parsing lives in [crates/macros/cgp-macro-core/src/types/attributes/uses.rs](../../../crates/macros/cgp-macro-core/src/types/attributes/uses.rs) (the `UsesAttributes` type and its `to_type_param_bounds`), with the attribute dispatch in [crates/macros/cgp-macro-core/src/types/attributes/function.rs](../../../crates/macros/cgp-macro-core/src/types/attributes/function.rs) for `#[cgp_fn]` and [crates/macros/cgp-macro-core/src/types/attributes/cgp_impl_attributes.rs](../../../crates/macros/cgp-macro-core/src/types/attributes/cgp_impl_attributes.rs) for `#[cgp_impl]`. The bounds are added to the impl `where` clause in [crates/macros/cgp-macro-core/src/types/cgp_fn/preprocessed.rs](../../../crates/macros/cgp-macro-core/src/types/cgp_fn/preprocessed.rs).
-
-For the internal AST type, what the attribute injects into each host, and the index of tests and snapshots, see the implementation document [implementation/asts/attributes.md](../../implementation/asts/attributes.md).
+- Parsing: `#[uses(...)]` parsing lives in [crates/macros/cgp-macro-core/src/types/attributes/uses.rs](../../../crates/macros/cgp-macro-core/src/types/attributes/uses.rs) (the `UsesAttributes` type and its `to_type_param_bounds`).
+- Dispatch: the attribute dispatch is in [crates/macros/cgp-macro-core/src/types/attributes/function.rs](../../../crates/macros/cgp-macro-core/src/types/attributes/function.rs) for `#[cgp_fn]` and [crates/macros/cgp-macro-core/src/types/attributes/cgp_impl_attributes.rs](../../../crates/macros/cgp-macro-core/src/types/attributes/cgp_impl_attributes.rs) for `#[cgp_impl]`.
+- Injection: the bounds are added to the impl `where` clause in [crates/macros/cgp-macro-core/src/types/cgp_fn/preprocessed.rs](../../../crates/macros/cgp-macro-core/src/types/cgp_fn/preprocessed.rs).
+- Implementation document (the internal AST type, what the attribute injects into each host, and the index of tests and snapshots): [implementation/asts/attributes.md](../../implementation/asts/attributes.md).

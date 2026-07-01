@@ -20,8 +20,13 @@ The forwarding qualifies associated types and consts through the supplied trait 
 
 ## Tests
 
-These functions have no dedicated unit test; they are covered through the `#[cgp_component]` expansion snapshots, which pin the forwarding bodies of all four impls. The plain case in [basic_delegation/component_macro.rs](../../../../crates/tests/cgp-tests/tests/basic_delegation/component_macro.rs) shows method forwarding through `<__Provider__ as DelegateComponent<…>>::Delegate::foo(…)` and through `UseContext`/`RedirectLookup`; the default-method case in [basic_delegation/default_methods.rs](../../../../crates/tests/cgp-tests/tests/basic_delegation/default_methods.rs) confirms a forwarded call resolves to a default body. Associated-type and const forwarding are pinned by the `#[cgp_type]` snapshots in the `abstract_types` target.
+These functions have no dedicated unit test; they are covered through the `#[cgp_component]` expansion snapshots, which pin the forwarding bodies of all four impls.
+
+- The plain case in [basic_delegation/component_macro.rs](../../../../crates/tests/cgp-tests/tests/basic_delegation/component_macro.rs) shows method forwarding through `<__Provider__ as DelegateComponent<…>>::Delegate::foo(…)` and through `UseContext`/`RedirectLookup`.
+- The default-method case in [basic_delegation/default_methods.rs](../../../../crates/tests/cgp-tests/tests/basic_delegation/default_methods.rs) confirms a forwarded call resolves to a default body.
+- Associated-type and const forwarding are pinned by the `#[cgp_type]` snapshots in the `abstract_types` target.
 
 ## Source
 
-The functions live in [cgp-macro-core/src/functions/delegated_impls/](../../../../crates/macros/cgp-macro-core/src/functions/delegated_impls/): `trait_items.rs` holds `trait_items_to_delegated_impl_items` and the per-item dispatch, `provider_trait.rs` holds `provider_trait_to_impl_items`, `signature.rs` holds the method-forwarding builder `signature_to_delegated_impl_item_fn`, and `item_type.rs` holds `trait_to_impl_item_type`. The callers are documented in [entrypoints/cgp_component.md](../../entrypoints/cgp_component.md) and the [cgp_component AST stack](../../asts/cgp_component.md).
+- The functions live in [cgp-macro-core/src/functions/delegated_impls/](../../../../crates/macros/cgp-macro-core/src/functions/delegated_impls/): `trait_items.rs` holds `trait_items_to_delegated_impl_items` and the per-item dispatch, `provider_trait.rs` holds `provider_trait_to_impl_items`, `signature.rs` holds the method-forwarding builder `signature_to_delegated_impl_item_fn`, and `item_type.rs` holds `trait_to_impl_item_type`.
+- The callers are documented in [entrypoints/cgp_component.md](../../entrypoints/cgp_component.md) and the [cgp_component AST stack](../../asts/cgp_component.md).

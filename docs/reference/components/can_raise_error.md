@@ -79,4 +79,6 @@ The provider names neither the context nor its concrete error type. It requires 
 
 ## Source
 
-`CanRaiseError` is defined in [crates/core/cgp-error/src/traits/can_raise_error.rs](../../../crates/core/cgp-error/src/traits/can_raise_error.rs) and `CanWrapError` in [crates/core/cgp-error/src/traits/can_wrap_error.rs](../../../crates/core/cgp-error/src/traits/can_wrap_error.rs). Both build on `HasErrorType` from [crates/core/cgp-error/src/traits/has_error_type.rs](../../../crates/core/cgp-error/src/traits/has_error_type.rs). The pluggable providers that implement them live in [crates/standalone/error/](../../../crates/standalone/error/).
+- `CanRaiseError` is defined in [crates/core/cgp-error/src/traits/can_raise_error.rs](../../../crates/core/cgp-error/src/traits/can_raise_error.rs) and `CanWrapError` in [crates/core/cgp-error/src/traits/can_wrap_error.rs](../../../crates/core/cgp-error/src/traits/can_wrap_error.rs).
+- Both build on `HasErrorType` from [crates/core/cgp-error/src/traits/has_error_type.rs](../../../crates/core/cgp-error/src/traits/has_error_type.rs).
+- The pluggable providers that implement them live in [crates/standalone/error/](../../../crates/standalone/error/).

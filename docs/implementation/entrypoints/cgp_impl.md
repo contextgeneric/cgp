@@ -79,4 +79,7 @@ The behavioral tests confirm the lowered wiring works:
 
 ## Source
 
-The entry point is `cgp_impl` in [cgp-macro-lib/src/cgp_impl.rs](../../../crates/macros/cgp-macro-lib/src/cgp_impl.rs); the two lowering stages and their AST types live in [cgp-macro-core/src/types/cgp_impl/](../../../crates/macros/cgp-macro-core/src/types/cgp_impl/) and are documented in [asts/cgp_impl.md](../asts/cgp_impl.md). The `self`/`Self` rewriting is done by the `replace_self` visitors in [cgp-macro-core/src/visitors/replace_self/](../../../crates/macros/cgp-macro-core/src/visitors/replace_self/). The handoff target — the provider impl and its `IsProviderFor` derivation — is documented in [entrypoints/cgp_provider.md](cgp_provider.md) and [asts/cgp_provider.md](../asts/cgp_provider.md).
+- Entry point: `cgp_impl` in [cgp-macro-lib/src/cgp_impl.rs](../../../crates/macros/cgp-macro-lib/src/cgp_impl.rs).
+- Lowering stages and their AST types: [cgp-macro-core/src/types/cgp_impl/](../../../crates/macros/cgp-macro-core/src/types/cgp_impl/), documented in [asts/cgp_impl.md](../asts/cgp_impl.md).
+- `self`/`Self` rewriting: the `replace_self` visitors in [cgp-macro-core/src/visitors/replace_self/](../../../crates/macros/cgp-macro-core/src/visitors/replace_self/).
+- Handoff target — the provider impl and its `IsProviderFor` derivation: documented in [entrypoints/cgp_provider.md](cgp_provider.md) and [asts/cgp_provider.md](../asts/cgp_provider.md).

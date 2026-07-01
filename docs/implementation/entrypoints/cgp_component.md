@@ -85,4 +85,8 @@ The behavioral tests confirm the generated wiring works:
 
 ## Source
 
-The entry point is `cgp_component` in [cgp-macro-lib/src/cgp_component.rs](../../../crates/macros/cgp-macro-lib/src/cgp_component.rs); the pipeline and its AST types live in [cgp-macro-core/src/types/cgp_component/](../../../crates/macros/cgp-macro-core/src/types/cgp_component/) and are documented in [asts/cgp_component.md](../asts/cgp_component.md). The forwarding bodies come from the [delegated-impl helpers](../functions/derive/delegated_impls.md), the params tuple from [parse_is_provider_params](../functions/parse/is_provider_params.md), and all generated fragments are built with [parse_internal!](../macros/parse_internal.md).
+- Entry point: `cgp_component` in [cgp-macro-lib/src/cgp_component.rs](../../../crates/macros/cgp-macro-lib/src/cgp_component.rs).
+- Pipeline and AST types: [cgp-macro-core/src/types/cgp_component/](../../../crates/macros/cgp-macro-core/src/types/cgp_component/), documented in [asts/cgp_component.md](../asts/cgp_component.md).
+- Forwarding method bodies: the [delegated-impl helpers](../functions/derive/delegated_impls.md).
+- `IsProviderFor` params tuple: [parse_is_provider_params](../functions/parse/is_provider_params.md).
+- Fragment construction: [parse_internal!](../macros/parse_internal.md).

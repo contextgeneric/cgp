@@ -105,4 +105,6 @@ The casting traits sit on top of the extensible-data primitives: variant casts r
 
 ## Source
 
-`CanUpcast`, `CanDowncast`, and `CanDowncastFields`, together with the internal `FieldsExtractor` recursion that drives them, are defined in [crates/core/cgp-field/src/impls/cast.rs](../../../crates/core/cgp-field/src/impls/cast.rs). `CanBuildFrom` and its internal `FieldsBuilder` recursion are in [crates/core/cgp-field/src/impls/build_from.rs](../../../crates/core/cgp-field/src/impls/build_from.rs). The underlying extractor and builder traits are under [crates/core/cgp-field/src/traits/](../../../crates/core/cgp-field/src/traits/) (`extract_field.rs`, `from_variant.rs`, `has_builder.rs`).
+- `CanUpcast`, `CanDowncast`, and `CanDowncastFields`, together with the internal `FieldsExtractor` recursion that drives them, are defined in [crates/core/cgp-field/src/impls/cast.rs](../../../crates/core/cgp-field/src/impls/cast.rs).
+- `CanBuildFrom` and its internal `FieldsBuilder` recursion are in [crates/core/cgp-field/src/impls/build_from.rs](../../../crates/core/cgp-field/src/impls/build_from.rs).
+- The underlying extractor and builder traits are under [crates/core/cgp-field/src/traits/](../../../crates/core/cgp-field/src/traits/) (`extract_field.rs`, `from_variant.rs`, `has_builder.rs`).

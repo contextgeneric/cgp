@@ -50,6 +50,8 @@ Use code snippets to make specific behavior concrete. When you describe how inpu
 
 When a section lists many items one at a time — the tests, the snapshots, a set of accepted keys — use a bullet list rather than framed prose. The dual-reader topic-sentence style governs the explanatory prose, not these enumerations: introduce the list with a short sentence and let the bullets carry the items.
 
+The **Tests** and **Source** sections are always bullet lists, never flowing paragraphs — one test (or snapshot) per bullet, and one source pointer per bullet. A short lead-in sentence before the bullets is allowed (and is the norm for Tests), but the items themselves must be bullets so a reader can scan a construct's coverage and its code locations at a glance.
+
 ## The Tests and Snapshots sections
 
 Every document links its related tests in a **Tests** section, stating the behavior each test pins in the document's own words. List the behavioral tests in [crates/tests/cgp-tests](../../crates/tests/cgp-tests) and the failure cases in [crates/tests/cgp-macro-tests](../../crates/tests/cgp-macro-tests) that exercise the construct, each as a link to the file with a one-line description of what it verifies. Because the reference documents no longer point at tests, this section is the canonical index of a construct's coverage — write it so an agent can see at a glance what behavior is guarded and, by omission, what is not.

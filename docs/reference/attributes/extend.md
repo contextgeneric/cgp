@@ -121,6 +121,7 @@ Because `HasScalarType` is a supertrait of `RectangleArea`, the abstract `Self::
 
 ## Source
 
-`#[extend(...)]` is parsed in [crates/macros/cgp-macro-core/src/types/attributes/function.rs](../../../crates/macros/cgp-macro-core/src/types/attributes/function.rs) (the `extend` field of `FunctionAttributes`). For `#[cgp_fn]`, the bounds are added to the trait's supertraits and to the impl `where` clause in [crates/macros/cgp-macro-core/src/types/cgp_fn/preprocessed.rs](../../../crates/macros/cgp-macro-core/src/types/cgp_fn/preprocessed.rs). For `#[cgp_component]`, the attribute is parsed by `CgpComponentAttributes::parse` and its bounds appended to the consumer trait's supertraits in [crates/macros/cgp-macro-core/src/types/attributes/cgp_component_attributes.rs](../../../crates/macros/cgp-macro-core/src/types/attributes/cgp_component_attributes.rs).
-
-For what the attribute injects into each host and the index of tests and snapshots, see the implementation document [implementation/asts/attributes.md](../../implementation/asts/attributes.md).
+- Parsing: `#[extend(...)]` is parsed in [crates/macros/cgp-macro-core/src/types/attributes/function.rs](../../../crates/macros/cgp-macro-core/src/types/attributes/function.rs) (the `extend` field of `FunctionAttributes`).
+- For `#[cgp_fn]`: the bounds are added to the trait's supertraits and to the impl `where` clause in [crates/macros/cgp-macro-core/src/types/cgp_fn/preprocessed.rs](../../../crates/macros/cgp-macro-core/src/types/cgp_fn/preprocessed.rs).
+- For `#[cgp_component]`: the attribute is parsed by `CgpComponentAttributes::parse` and its bounds appended to the consumer trait's supertraits in [crates/macros/cgp-macro-core/src/types/attributes/cgp_component_attributes.rs](../../../crates/macros/cgp-macro-core/src/types/attributes/cgp_component_attributes.rs).
+- Implementation document (what the attribute injects into each host and the index of tests and snapshots): [implementation/asts/attributes.md](../../implementation/asts/attributes.md).

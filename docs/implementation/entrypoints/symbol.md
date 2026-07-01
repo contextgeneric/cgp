@@ -49,4 +49,6 @@ The `Symbol!` expansion has no snapshot macro of its own; its behavior is exerci
 
 ## Source
 
-The entry point is `Symbol` in [cgp-macro-lib/src/symbol.rs](../../../crates/macros/cgp-macro-lib/src/symbol.rs); the `Symbol` AST type lives in [cgp-macro-core/src/types/field/symbol.rs](../../../crates/macros/cgp-macro-core/src/types/field/symbol.rs) and is documented in [asts/symbol.md](../asts/symbol.md). The runtime types `Symbol<const LEN: usize, Chars>`, `Chars<const CHAR: char, Tail>`, and `Nil` are defined in [cgp-base-types](../../../crates/core/cgp-base-types/src/types/).
+- Entry point: `Symbol` in [cgp-macro-lib/src/symbol.rs](../../../crates/macros/cgp-macro-lib/src/symbol.rs).
+- `Symbol` AST type: [cgp-macro-core/src/types/field/symbol.rs](../../../crates/macros/cgp-macro-core/src/types/field/symbol.rs), documented in [asts/symbol.md](../asts/symbol.md).
+- Runtime types `Symbol<const LEN: usize, Chars>`, `Chars<const CHAR: char, Tail>`, and `Nil`: defined in [cgp-base-types](../../../crates/core/cgp-base-types/src/types/).

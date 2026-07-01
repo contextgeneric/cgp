@@ -46,4 +46,7 @@ There is no dedicated `snapshot_async_trait!` macro; the rewrite is only pinned 
 
 ## Source
 
-The macro entry point is `async_trait` in [cgp-async-macro/src/lib.rs](../../../crates/macros/cgp-async-macro/src/lib.rs), and the rewrite is `impl_async` in [cgp-async-macro/src/impl_async.rs](../../../crates/macros/cgp-async-macro/src/impl_async.rs). It is re-exported into the prelude from [crates/main/cgp-core/src/prelude.rs](../../../crates/main/cgp-core/src/prelude.rs). It is most often stacked with [`#[cgp_component]`](cgp_component.md) and [`#[cgp_fn]`](cgp_fn.md).
+- Entry point: `async_trait` in [cgp-async-macro/src/lib.rs](../../../crates/macros/cgp-async-macro/src/lib.rs).
+- The rewrite: `impl_async` in [cgp-async-macro/src/impl_async.rs](../../../crates/macros/cgp-async-macro/src/impl_async.rs).
+- Re-exported into the prelude from [crates/main/cgp-core/src/prelude.rs](../../../crates/main/cgp-core/src/prelude.rs).
+- It is most often stacked with [`#[cgp_component]`](cgp_component.md) and [`#[cgp_fn]`](cgp_fn.md).

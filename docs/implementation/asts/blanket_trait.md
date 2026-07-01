@@ -21,4 +21,5 @@ It then assembles the impl generics — the trait's own generics, plus the conte
 
 ## Source
 
-`ItemBlanketTrait` lives in [cgp-macro-core/src/types/blanket_trait.rs](../../../crates/macros/cgp-macro-core/src/types/blanket_trait.rs). The `Self::<AssocType>`-to-parameter rewriting is done by `RemoveSelfPathVisitor` in [cgp-macro-core/src/visitors/remove_self_path.rs](../../../crates/macros/cgp-macro-core/src/visitors/remove_self_path.rs).
+- `ItemBlanketTrait` lives in [cgp-macro-core/src/types/blanket_trait.rs](../../../crates/macros/cgp-macro-core/src/types/blanket_trait.rs).
+- The `Self::<AssocType>`-to-parameter rewriting is done by `RemoveSelfPathVisitor` in [cgp-macro-core/src/visitors/remove_self_path.rs](../../../crates/macros/cgp-macro-core/src/visitors/remove_self_path.rs).

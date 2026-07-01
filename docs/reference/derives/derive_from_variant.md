@@ -86,6 +86,7 @@ The derive only accepts enums whose every variant is a single-field tuple varian
 
 ## Source
 
-The derive entry point is `derive_from_variant` in [crates/macros/cgp-macro-lib/src/derive_from_variant.rs](../../../crates/macros/cgp-macro-lib/src/derive_from_variant.rs), which builds an `ItemCgpVariant` and calls `to_from_variant_impls()`. That method, in [crates/macros/cgp-macro-core/src/types/cgp_data/variant.rs](../../../crates/macros/cgp-macro-core/src/types/cgp_data/variant.rs), delegates to `derive_from_variant_from_enum` in [crates/macros/cgp-macro-core/src/types/cgp_data/derive_from_variant.rs](../../../crates/macros/cgp-macro-core/src/types/cgp_data/derive_from_variant.rs). The `FromVariant` trait is in [crates/core/cgp-field/src/traits/from_variant.rs](../../../crates/core/cgp-field/src/traits/from_variant.rs).
-
-For the full internal walkthrough — the per-variant codegen, the corner-case handling, and the index of tests and expansion snapshots — see the implementation document [implementation/entrypoints/derive_from_variant.md](../../implementation/entrypoints/derive_from_variant.md).
+- Entry point: `derive_from_variant` in [crates/macros/cgp-macro-lib/src/derive_from_variant.rs](../../../crates/macros/cgp-macro-lib/src/derive_from_variant.rs), which builds an `ItemCgpVariant` and calls `to_from_variant_impls()`.
+- Codegen: that method, in [crates/macros/cgp-macro-core/src/types/cgp_data/variant.rs](../../../crates/macros/cgp-macro-core/src/types/cgp_data/variant.rs), delegates to `derive_from_variant_from_enum` in [crates/macros/cgp-macro-core/src/types/cgp_data/derive_from_variant.rs](../../../crates/macros/cgp-macro-core/src/types/cgp_data/derive_from_variant.rs).
+- `FromVariant` trait: [crates/core/cgp-field/src/traits/from_variant.rs](../../../crates/core/cgp-field/src/traits/from_variant.rs).
+- Internal walkthrough (the per-variant codegen, the corner-case handling, and the index of tests and expansion snapshots): [implementation/entrypoints/derive_from_variant.md](../../implementation/entrypoints/derive_from_variant.md).

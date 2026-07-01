@@ -66,4 +66,6 @@ The behavioral tests confirm the generated getters read the right fields:
 
 ## Source
 
-The entry point is `derive_has_field` in [cgp-macro-lib/src/derive_has_field.rs](../../../crates/macros/cgp-macro-lib/src/derive_has_field.rs). It calls `ItemCgpRecord::to_has_field_impls` in [cgp-macro-core/src/types/cgp_data/record.rs](../../../crates/macros/cgp-macro-core/src/types/cgp_data/record.rs), whose codegen is `derive_has_field_impls_from_struct` in [cgp-macro-core/src/types/cgp_data/derive_has_field.rs](../../../crates/macros/cgp-macro-core/src/types/cgp_data/derive_has_field.rs); the AST types are documented in [asts/cgp_data.md](../asts/cgp_data.md). The `HasField`/`HasFieldMut` traits are defined in [crates/core/cgp-field/src/traits/](../../../crates/core/cgp-field/src/traits/).
+- Entry point: `derive_has_field` in [cgp-macro-lib/src/derive_has_field.rs](../../../crates/macros/cgp-macro-lib/src/derive_has_field.rs).
+- It calls `ItemCgpRecord::to_has_field_impls` in [cgp-macro-core/src/types/cgp_data/record.rs](../../../crates/macros/cgp-macro-core/src/types/cgp_data/record.rs), whose codegen is `derive_has_field_impls_from_struct` in [cgp-macro-core/src/types/cgp_data/derive_has_field.rs](../../../crates/macros/cgp-macro-core/src/types/cgp_data/derive_has_field.rs); the AST types are documented in [asts/cgp_data.md](../asts/cgp_data.md).
+- The `HasField`/`HasFieldMut` traits are defined in [crates/core/cgp-field/src/traits/](../../../crates/core/cgp-field/src/traits/).

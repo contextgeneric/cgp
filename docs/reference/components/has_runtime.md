@@ -89,4 +89,6 @@ The function names neither `TokioRuntime` nor any field; it works for any contex
 
 ## Source
 
-`HasRuntimeType`, the `RuntimeTypeProvider` provider trait, and the `RuntimeOf` alias are defined in [crates/extra/cgp-runtime/src/traits/has_runtime_type.rs](../../../crates/extra/cgp-runtime/src/traits/has_runtime_type.rs). `HasRuntime` and its `RuntimeGetter` provider trait are in [crates/extra/cgp-runtime/src/traits/has_runtime.rs](../../../crates/extra/cgp-runtime/src/traits/has_runtime.rs), re-exported through [crates/extra/cgp-runtime/src/lib.rs](../../../crates/extra/cgp-runtime/src/lib.rs) and reached from the facade as `cgp::extra::runtime`. The `#[cgp_type]` and `#[cgp_getter]` expansions these rely on live under [crates/macros/cgp-macro-core/src/types/](../../../crates/macros/cgp-macro-core/src/types/).
+- `HasRuntimeType`, the `RuntimeTypeProvider` provider trait, and the `RuntimeOf` alias are defined in [crates/extra/cgp-runtime/src/traits/has_runtime_type.rs](../../../crates/extra/cgp-runtime/src/traits/has_runtime_type.rs).
+- `HasRuntime` and its `RuntimeGetter` provider trait are in [crates/extra/cgp-runtime/src/traits/has_runtime.rs](../../../crates/extra/cgp-runtime/src/traits/has_runtime.rs), re-exported through [crates/extra/cgp-runtime/src/lib.rs](../../../crates/extra/cgp-runtime/src/lib.rs) and reached from the facade as `cgp::extra::runtime`.
+- The `#[cgp_type]` and `#[cgp_getter]` expansions these rely on live under [crates/macros/cgp-macro-core/src/types/](../../../crates/macros/cgp-macro-core/src/types/).

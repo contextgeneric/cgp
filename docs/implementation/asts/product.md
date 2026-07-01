@@ -33,4 +33,5 @@ Note that its field is still named and typed as a list of `Type`, not `Expr` —
 
 ## Source
 
-The stack lives in [cgp-macro-core/src/types/product/](../../../crates/macros/cgp-macro-core/src/types/product/): `ProductType` in `product_type.rs` and `ProductExpr` in `product_expr.rs`, both re-parsing their fold through [parse_internal!](../macros/parse_internal.md). The runtime types `Cons<Head, Tail>` and `Nil` are defined in [cgp-base-types](../../../crates/core/cgp-base-types/src/types/).
+- The stack lives in [cgp-macro-core/src/types/product/](../../../crates/macros/cgp-macro-core/src/types/product/): `ProductType` in `product_type.rs` and `ProductExpr` in `product_expr.rs`, both re-parsing their fold through [parse_internal!](../macros/parse_internal.md).
+- The runtime types `Cons<Head, Tail>` and `Nil` are defined in [cgp-base-types](../../../crates/core/cgp-base-types/src/types/).

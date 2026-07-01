@@ -18,4 +18,6 @@ The extra impls are built by `to_item_provider_impls`, which reads the component
 
 ## Source
 
-`ItemCgpType` and `extract_item_type_from_trait` live in [cgp-macro-core/src/types/cgp_type/item.rs](../../../crates/macros/cgp-macro-core/src/types/cgp_type/item.rs). The `ItemProviderImpl`/`ItemProviderImpls` helpers are in [cgp-macro-core/src/types/provider_impl.rs](../../../crates/macros/cgp-macro-core/src/types/provider_impl.rs). The associated-type-bound rewriting is done by [`get_bounds_and_replace_self_assoc_type`](../../../crates/macros/cgp-macro-core/src/visitors/self_assoc_type.rs), and the shared component types are in [cgp-macro-core/src/types/cgp_component/](../../../crates/macros/cgp-macro-core/src/types/cgp_component/), documented in [asts/cgp_component.md](cgp_component.md).
+- `ItemCgpType` and `extract_item_type_from_trait` live in [cgp-macro-core/src/types/cgp_type/item.rs](../../../crates/macros/cgp-macro-core/src/types/cgp_type/item.rs).
+- The `ItemProviderImpl`/`ItemProviderImpls` helpers are in [cgp-macro-core/src/types/provider_impl.rs](../../../crates/macros/cgp-macro-core/src/types/provider_impl.rs).
+- The associated-type-bound rewriting is done by [`get_bounds_and_replace_self_assoc_type`](../../../crates/macros/cgp-macro-core/src/visitors/self_assoc_type.rs), and the shared component types are in [cgp-macro-core/src/types/cgp_component/](../../../crates/macros/cgp-macro-core/src/types/cgp_component/), documented in [asts/cgp_component.md](cgp_component.md).

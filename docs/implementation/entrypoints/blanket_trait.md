@@ -77,8 +77,14 @@ Two variants have no snapshot yet: an associated *constant* forwarded from its d
 
 ## Tests
 
-The snapshot files double as behavioral tests — [blanket_traits/basic.rs](../../../crates/tests/cgp-tests/tests/blanket_traits/basic.rs) and the others each wire a concrete `Context` and assert through a `CanUse…` check trait that the generated blanket impl applies. No `cgp-macro-tests` failure case pins the "missing default body" error path, which is a candidate to add.
+The snapshot files double as behavioral tests:
+
+- [blanket_traits/basic.rs](../../../crates/tests/cgp-tests/tests/blanket_traits/basic.rs) and the others each wire a concrete `Context` and assert through a `CanUse…` check trait that the generated blanket impl applies.
+- No `cgp-macro-tests` failure case pins the "missing default body" error path, which is a candidate to add.
 
 ## Source
 
-The entry point is `blanket_trait` in [cgp-macro-lib/src/blanket_trait.rs](../../../crates/macros/cgp-macro-lib/src/blanket_trait.rs); the logic lives in [cgp-macro-core/src/types/blanket_trait.rs](../../../crates/macros/cgp-macro-core/src/types/blanket_trait.rs) and is documented in [asts/blanket_trait.md](../asts/blanket_trait.md). The `Self::AssocType`-to-parameter rewriting is done by `RemoveSelfPathVisitor` in [cgp-macro-core/src/visitors/remove_self_path.rs](../../../crates/macros/cgp-macro-core/src/visitors/remove_self_path.rs), and all generated fragments are built with [parse_internal!](../macros/parse_internal.md).
+- Entry point: `blanket_trait` in [cgp-macro-lib/src/blanket_trait.rs](../../../crates/macros/cgp-macro-lib/src/blanket_trait.rs).
+- Logic: [cgp-macro-core/src/types/blanket_trait.rs](../../../crates/macros/cgp-macro-core/src/types/blanket_trait.rs), documented in [asts/blanket_trait.md](../asts/blanket_trait.md).
+- `Self::AssocType`-to-parameter rewriting: `RemoveSelfPathVisitor` in [cgp-macro-core/src/visitors/remove_self_path.rs](../../../crates/macros/cgp-macro-core/src/visitors/remove_self_path.rs).
+- Fragment construction: [parse_internal!](../macros/parse_internal.md).

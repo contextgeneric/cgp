@@ -103,4 +103,5 @@ The `Runner` family is most often paired with [`HasRuntime`](has_runtime.md): a 
 
 ## Source
 
-`CanRun` / `Runner` and `CanSendRun` / `SendRunner` are defined together in [crates/extra/cgp-run/src/lib.rs](../../../crates/extra/cgp-run/src/lib.rs), reached from the facade as `cgp::extra::run`. The `#[cgp_component]` and `#[derive_delegate]` expansions they rely on live under [crates/macros/cgp-macro-core/src/](../../../crates/macros/cgp-macro-core/src/).
+- `CanRun` / `Runner` and `CanSendRun` / `SendRunner` are defined together in [crates/extra/cgp-run/src/lib.rs](../../../crates/extra/cgp-run/src/lib.rs), reached from the facade as `cgp::extra::run`.
+- The `#[cgp_component]` and `#[derive_delegate]` expansions they rely on live under [crates/macros/cgp-macro-core/src/](../../../crates/macros/cgp-macro-core/src/).

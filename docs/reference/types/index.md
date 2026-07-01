@@ -68,4 +68,5 @@ assert_eq!(Index::<2>.to_string(), "2");
 
 ## Source
 
-`Index<const I: usize>` and its `Display` and `Debug` impls are defined in [crates/core/cgp-field/src/types/index.rs](../../../crates/core/cgp-field/src/types/index.rs). The `#[derive(HasField)]` codegen that tags tuple-struct fields with `Index<N>` lives under [crates/macros/cgp-macro-core/src/types/cgp_data/](../../../crates/macros/cgp-macro-core/src/types/cgp_data/), and the `HasField` trait it targets is in [crates/core/cgp-field/src/traits/has_field.rs](../../../crates/core/cgp-field/src/traits/has_field.rs).
+- `Index<const I: usize>` and its `Display` and `Debug` impls are defined in [crates/core/cgp-field/src/types/index.rs](../../../crates/core/cgp-field/src/types/index.rs).
+- The `#[derive(HasField)]` codegen that tags tuple-struct fields with `Index<N>` lives under [crates/macros/cgp-macro-core/src/types/cgp_data/](../../../crates/macros/cgp-macro-core/src/types/cgp_data/), and the `HasField` trait it targets is in [crates/core/cgp-field/src/traits/has_field.rs](../../../crates/core/cgp-field/src/traits/has_field.rs).

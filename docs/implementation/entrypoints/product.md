@@ -55,4 +55,7 @@ Because `eval` re-parses its output through `parse_internal!`, a fold that produ
 
 ## Source
 
-The entry points are `Product` and `product` in [cgp-macro-lib/src/product.rs](../../../crates/macros/cgp-macro-lib/src/product.rs); the `ProductType` and `ProductExpr` AST types live in [cgp-macro-core/src/types/product/](../../../crates/macros/cgp-macro-core/src/types/product/) and are documented in [asts/product.md](../asts/product.md). The fold re-parses through [parse_internal!](../macros/parse_internal.md). The runtime types `Cons<Head, Tail>` and `Nil` are defined in [cgp-base-types](../../../crates/core/cgp-base-types/src/types/).
+- Entry points: `Product` and `product` in [cgp-macro-lib/src/product.rs](../../../crates/macros/cgp-macro-lib/src/product.rs).
+- `ProductType` and `ProductExpr` AST types: [cgp-macro-core/src/types/product/](../../../crates/macros/cgp-macro-core/src/types/product/), documented in [asts/product.md](../asts/product.md).
+- The fold re-parses through [parse_internal!](../macros/parse_internal.md).
+- Runtime types `Cons<Head, Tail>` and `Nil`: defined in [cgp-base-types](../../../crates/core/cgp-base-types/src/types/).

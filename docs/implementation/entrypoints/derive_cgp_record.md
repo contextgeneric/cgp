@@ -21,8 +21,12 @@ The record's corner cases — `Symbol!` versus `Index<N>` tagging, the newtype `
 
 ## Tests
 
-`#[derive(CgpRecord)]` has no snapshot macro of its own; its expansion is identical to the record path of `#[derive(CgpData)]` and is pinned by the `snapshot_derive_cgp_data!` snapshots indexed in [derive_cgp_data.md's Snapshots section](derive_cgp_data.md#snapshots). The behavioral record tests in [crates/tests/cgp-tests/tests/extensible_records/](../../../crates/tests/cgp-tests/tests/extensible_records/) — notably [record_build_from.rs](../../../crates/tests/cgp-tests/tests/extensible_records/record_build_from.rs) and [record_build_with_handlers.rs](../../../crates/tests/cgp-tests/tests/extensible_records/record_build_with_handlers.rs) — exercise the builder that this derive produces.
+`#[derive(CgpRecord)]` has no snapshot macro of its own; its expansion is identical to the record path of `#[derive(CgpData)]` and is pinned by the `snapshot_derive_cgp_data!` snapshots indexed in [derive_cgp_data.md's Snapshots section](derive_cgp_data.md#snapshots).
+
+- The behavioral record tests in [crates/tests/cgp-tests/tests/extensible_records/](../../../crates/tests/cgp-tests/tests/extensible_records/) — notably [record_build_from.rs](../../../crates/tests/cgp-tests/tests/extensible_records/record_build_from.rs) and [record_build_with_handlers.rs](../../../crates/tests/cgp-tests/tests/extensible_records/record_build_with_handlers.rs) — exercise the builder that this derive produces.
 
 ## Source
 
-The entry point is `derive_cgp_record` in [cgp-macro-lib/src/cgp_record.rs](../../../crates/macros/cgp-macro-lib/src/cgp_record.rs). The codegen is `ItemCgpRecord::to_items` in [cgp-macro-core/src/types/cgp_data/record.rs](../../../crates/macros/cgp-macro-core/src/types/cgp_data/record.rs), which composes `derive_has_field_impls_from_struct`, `derive_has_fields_impls_from_struct`, and the [derive_builder/](../../../crates/macros/cgp-macro-core/src/types/cgp_data/derive_builder/) helpers; the AST types are documented in [asts/cgp_data.md](../asts/cgp_data.md). The runtime traits live in [crates/core/cgp-field/src/traits/](../../../crates/core/cgp-field/src/traits/).
+- Entry point: `derive_cgp_record` in [cgp-macro-lib/src/cgp_record.rs](../../../crates/macros/cgp-macro-lib/src/cgp_record.rs).
+- Codegen: `ItemCgpRecord::to_items` in [cgp-macro-core/src/types/cgp_data/record.rs](../../../crates/macros/cgp-macro-core/src/types/cgp_data/record.rs), which composes `derive_has_field_impls_from_struct`, `derive_has_fields_impls_from_struct`, and the [derive_builder/](../../../crates/macros/cgp-macro-core/src/types/cgp_data/derive_builder/) helpers; the AST types are documented in [asts/cgp_data.md](../asts/cgp_data.md).
+- The runtime traits live in [crates/core/cgp-field/src/traits/](../../../crates/core/cgp-field/src/traits/).

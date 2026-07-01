@@ -62,8 +62,14 @@ Every `snapshot_derive_has_fields!` invocation across the suite is indexed here,
 
 ## Tests
 
-The snapshot tests above double as the coverage: each pins one field-shape and, where paired with runtime assertions, round-trips a value through `to_fields`/`from_fields`. The `struct_single_unnamed_field` snapshot is the guard on the newtype special case, and `struct_generic`/`struct_generic_lifetime` and `has_fields_enum_generic` guard the generic-threading behavior.
+The snapshot tests above double as the coverage:
+
+- Each pins one field-shape and, where paired with runtime assertions, round-trips a value through `to_fields`/`from_fields`.
+- The `struct_single_unnamed_field` snapshot is the guard on the newtype special case.
+- `struct_generic`/`struct_generic_lifetime` and `has_fields_enum_generic` guard the generic-threading behavior.
 
 ## Source
 
-The entry point is `derive_has_fields` in [cgp-macro-lib/src/derive_has_fields.rs](../../../crates/macros/cgp-macro-lib/src/derive_has_fields.rs). The struct path calls `ItemCgpRecord::to_has_fields_impls` in [cgp-macro-core/src/types/cgp_data/record.rs](../../../crates/macros/cgp-macro-core/src/types/cgp_data/record.rs); both paths land in the [derive_has_fields/](../../../crates/macros/cgp-macro-core/src/types/cgp_data/derive_has_fields/) submodule, where `derive_struct.rs`/`derive_enum.rs` drive the five impls, `product.rs` (`item_fields_to_product_type`) builds the struct product, `sum.rs` (`variants_to_sum_type`) builds the enum sum, and the `from_fields_*`/`to_fields_*`/`to_fields_ref_*` files build the conversions. The AST types are documented in [asts/cgp_data.md](../asts/cgp_data.md). The `HasFields`, `HasFieldsRef`, `FromFields`, `ToFields`, and `ToFieldsRef` traits and the `Field`/`Either`/`Void` building blocks live under [crates/core/cgp-field/src/](../../../crates/core/cgp-field/src/).
+- Entry point: `derive_has_fields` in [cgp-macro-lib/src/derive_has_fields.rs](../../../crates/macros/cgp-macro-lib/src/derive_has_fields.rs).
+- The struct path calls `ItemCgpRecord::to_has_fields_impls` in [cgp-macro-core/src/types/cgp_data/record.rs](../../../crates/macros/cgp-macro-core/src/types/cgp_data/record.rs); both paths land in the [derive_has_fields/](../../../crates/macros/cgp-macro-core/src/types/cgp_data/derive_has_fields/) submodule, where `derive_struct.rs`/`derive_enum.rs` drive the five impls, `product.rs` (`item_fields_to_product_type`) builds the struct product, `sum.rs` (`variants_to_sum_type`) builds the enum sum, and the `from_fields_*`/`to_fields_*`/`to_fields_ref_*` files build the conversions. The AST types are documented in [asts/cgp_data.md](../asts/cgp_data.md).
+- The `HasFields`, `HasFieldsRef`, `FromFields`, `ToFields`, and `ToFieldsRef` traits and the `Field`/`Either`/`Void` building blocks live under [crates/core/cgp-field/src/](../../../crates/core/cgp-field/src/).

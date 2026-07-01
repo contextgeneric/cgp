@@ -88,4 +88,5 @@ This is what makes `UseDelegatedType` valuable for bundling: the set of concrete
 
 ## Source
 
-The `UseDelegatedType` struct, its `WithDelegatedType` alias, and the `TypeProvider` impl are in [crates/core/cgp-type/src/impls/use_delegated_type.rs](../../../crates/core/cgp-type/src/impls/use_delegated_type.rs). The `HasType` consumer trait and `TypeProvider` provider trait are in [crates/core/cgp-type/src/traits/has_type.rs](../../../crates/core/cgp-type/src/traits/has_type.rs), and `DelegateComponent` is in [crates/core/cgp-component/src/traits/delegate_component.rs](../../../crates/core/cgp-component/src/traits/delegate_component.rs).
+- The `UseDelegatedType` struct, its `WithDelegatedType` alias, and the `TypeProvider` impl are in [crates/core/cgp-type/src/impls/use_delegated_type.rs](../../../crates/core/cgp-type/src/impls/use_delegated_type.rs).
+- The `HasType` consumer trait and `TypeProvider` provider trait are in [crates/core/cgp-type/src/traits/has_type.rs](../../../crates/core/cgp-type/src/traits/has_type.rs), and `DelegateComponent` is in [crates/core/cgp-component/src/traits/delegate_component.rs](../../../crates/core/cgp-component/src/traits/delegate_component.rs).

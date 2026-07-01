@@ -95,4 +95,9 @@ Because `#[cgp_fn]` emits a blanket impl, its snapshot tests double as behaviora
 
 ## Source
 
-The entry point is `cgp_fn` in [cgp-macro-lib/src/cgp_fn.rs](../../../crates/macros/cgp-macro-lib/src/cgp_fn.rs); the pipeline and its AST types live in [cgp-macro-core/src/types/cgp_fn/](../../../crates/macros/cgp-macro-core/src/types/cgp_fn/) and are documented in [asts/cgp_fn.md](../asts/cgp_fn.md). Implicit-argument extraction and the field-reading bindings come from [cgp-macro-core/src/functions/implicits/](../../../crates/macros/cgp-macro-core/src/functions/implicits/) and the field-mode helpers under [cgp-macro-core/src/functions/field/](../../../crates/macros/cgp-macro-core/src/functions/field/), companion-attribute parsing from [cgp-macro-core/src/types/attributes/function.rs](../../../crates/macros/cgp-macro-core/src/types/attributes/function.rs), and all generated fragments are built with [parse_internal!](../macros/parse_internal.md).
+- Entry point: `cgp_fn` in [cgp-macro-lib/src/cgp_fn.rs](../../../crates/macros/cgp-macro-lib/src/cgp_fn.rs).
+- Pipeline and its AST types: [cgp-macro-core/src/types/cgp_fn/](../../../crates/macros/cgp-macro-core/src/types/cgp_fn/), documented in [asts/cgp_fn.md](../asts/cgp_fn.md).
+- Implicit-argument extraction and field-reading bindings: [cgp-macro-core/src/functions/implicits/](../../../crates/macros/cgp-macro-core/src/functions/implicits/).
+- Field-mode helpers: [cgp-macro-core/src/functions/field/](../../../crates/macros/cgp-macro-core/src/functions/field/).
+- Companion-attribute parsing: [cgp-macro-core/src/types/attributes/function.rs](../../../crates/macros/cgp-macro-core/src/types/attributes/function.rs).
+- Fragment construction: [parse_internal!](../macros/parse_internal.md).

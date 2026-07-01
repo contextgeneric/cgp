@@ -10,8 +10,9 @@ The keyword string and the struct name are independent, so the marker can be nam
 
 ## Tests
 
-`define_keyword!` has no dedicated test; the keywords it defines are exercised through the parser tests and expansion snapshots of the macros that use them — for example the `new`-prefixed forms pinned in the `basic_delegation` snapshots and the `open` statement pinned in the `namespaces` and `dispatching` targets.
+- `define_keyword!` has no dedicated test; the keywords it defines are exercised through the parser tests and expansion snapshots of the macros that use them — for example the `new`-prefixed forms pinned in the `basic_delegation` snapshots and the `open` statement pinned in the `namespaces` and `dispatching` targets.
 
 ## Source
 
-The macro is defined in [cgp-macro-core/src/macros/keyword.rs](../../../crates/macros/cgp-macro-core/src/macros/keyword.rs); the `IsKeyword` trait it implements lives in `cgp-macro-core/src/traits/`, and the keyword marker types that use it live in `cgp-macro-core/src/types/keyword*.rs`. The convention that custom keywords go through this macro is recorded in [cgp-macro-core/CLAUDE.md](../../../crates/macros/cgp-macro-core/CLAUDE.md).
+- The macro is defined in [cgp-macro-core/src/macros/keyword.rs](../../../crates/macros/cgp-macro-core/src/macros/keyword.rs); the `IsKeyword` trait it implements lives in `cgp-macro-core/src/traits/`, and the keyword marker types that use it live in `cgp-macro-core/src/types/keyword*.rs`.
+- The convention that custom keywords go through this macro is recorded in [cgp-macro-core/CLAUDE.md](../../../crates/macros/cgp-macro-core/CLAUDE.md).

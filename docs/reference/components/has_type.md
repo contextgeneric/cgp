@@ -72,4 +72,7 @@ where
 
 ## Source
 
-The trait, the `TypeProvider` provider trait, and the `TypeOf` alias are defined in [crates/core/cgp-type/src/traits/has_type.rs](../../../crates/core/cgp-type/src/traits/has_type.rs). The `UseType` provider and its `TypeProvider` impl are in [crates/core/cgp-type/src/impls/use_type.rs](../../../crates/core/cgp-type/src/impls/use_type.rs). The `#[cgp_type]` macro that builds named components on this substrate lives in [crates/macros/cgp-macro-core/src/types/cgp_type/](../../../crates/macros/cgp-macro-core/src/types/cgp_type/). For how it is generated and the index of tests, see the implementation document [implementation/entrypoints/cgp_type](../../implementation/entrypoints/cgp_type.md).
+- The trait, the `TypeProvider` provider trait, and the `TypeOf` alias are defined in [crates/core/cgp-type/src/traits/has_type.rs](../../../crates/core/cgp-type/src/traits/has_type.rs).
+- The `UseType` provider and its `TypeProvider` impl are in [crates/core/cgp-type/src/impls/use_type.rs](../../../crates/core/cgp-type/src/impls/use_type.rs).
+- The `#[cgp_type]` macro that builds named components on this substrate lives in [crates/macros/cgp-macro-core/src/types/cgp_type/](../../../crates/macros/cgp-macro-core/src/types/cgp_type/).
+- For how it is generated and the index of tests, see the implementation document [implementation/entrypoints/cgp_type](../../implementation/entrypoints/cgp_type.md).

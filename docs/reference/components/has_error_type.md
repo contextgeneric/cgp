@@ -70,4 +70,6 @@ This direct form makes plain that `HasErrorType` is an ordinary trait with a `De
 
 ## Source
 
-The trait and the `ErrorOf` alias are defined in [crates/core/cgp-error/src/traits/has_error_type.rs](../../../crates/core/cgp-error/src/traits/has_error_type.rs). The `#[cgp_type]` machinery it relies on lives in [crates/macros/cgp-macro-core/src/types/cgp_type/](../../../crates/macros/cgp-macro-core/src/types/cgp_type/), and the underlying `HasType`/`TypeProvider`/`UseType` definitions are in [crates/core/cgp-type/src/](../../../crates/core/cgp-type/src/). The pluggable concrete error backends are in [crates/standalone/error/](../../../crates/standalone/error/).
+- The trait and the `ErrorOf` alias are defined in [crates/core/cgp-error/src/traits/has_error_type.rs](../../../crates/core/cgp-error/src/traits/has_error_type.rs).
+- The `#[cgp_type]` machinery it relies on lives in [crates/macros/cgp-macro-core/src/types/cgp_type/](../../../crates/macros/cgp-macro-core/src/types/cgp_type/), and the underlying `HasType`/`TypeProvider`/`UseType` definitions are in [crates/core/cgp-type/src/](../../../crates/core/cgp-type/src/).
+- The pluggable concrete error backends are in [crates/standalone/error/](../../../crates/standalone/error/).

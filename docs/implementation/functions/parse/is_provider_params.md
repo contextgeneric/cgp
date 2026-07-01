@@ -14,8 +14,13 @@ A const generic parameter triggers a panic. The `GenericParam::Const` arm is `un
 
 ## Tests
 
-The function is covered indirectly through the expansion snapshots that pin the `IsProviderFor` params tuple: the empty `()` case in [basic_delegation/component_macro.rs](../../../../crates/tests/cgp-tests/tests/basic_delegation/component_macro.rs) and the `(Life<'a>, T)` case in [generic_components/component_lifetime.rs](../../../../crates/tests/cgp-tests/tests/generic_components/component_lifetime.rs). The const-generic panic has no test yet and is a candidate failure case for `cgp-macro-tests`.
+The function is covered indirectly through the expansion snapshots that pin the `IsProviderFor` params tuple.
+
+- The empty `()` case in [basic_delegation/component_macro.rs](../../../../crates/tests/cgp-tests/tests/basic_delegation/component_macro.rs).
+- The `(Life<'a>, T)` case in [generic_components/component_lifetime.rs](../../../../crates/tests/cgp-tests/tests/generic_components/component_lifetime.rs).
+- The const-generic panic has no test yet and is a candidate failure case for `cgp-macro-tests`.
 
 ## Source
 
-The function lives in [cgp-macro-core/src/functions/is_provider_params.rs](../../../../crates/macros/cgp-macro-core/src/functions/is_provider_params.rs). It is called by the provider-trait and blanket-impl builders in [cgp-macro-core/src/types/cgp_component/preprocessed/](../../../../crates/macros/cgp-macro-core/src/types/cgp_component/preprocessed/); the `Life` wrapper it emits is documented in [reference/types/life.md](../../../reference/types/life.md).
+- The function lives in [cgp-macro-core/src/functions/is_provider_params.rs](../../../../crates/macros/cgp-macro-core/src/functions/is_provider_params.rs).
+- It is called by the provider-trait and blanket-impl builders in [cgp-macro-core/src/types/cgp_component/preprocessed/](../../../../crates/macros/cgp-macro-core/src/types/cgp_component/preprocessed/); the `Life` wrapper it emits is documented in [reference/types/life.md](../../../reference/types/life.md).

@@ -46,4 +46,7 @@ Each segment is first parsed as a full Rust `Type`, then reclassified: only a se
 
 ## Source
 
-The entry point is `Path` in [cgp-macro-lib/src/path.rs](../../../crates/macros/cgp-macro-lib/src/path.rs); the `UniPath`, `PathElement`, and the wider path stack live in [cgp-macro-core/src/types/path/](../../../crates/macros/cgp-macro-core/src/types/path/) and are documented in [asts/path.md](../asts/path.md). The runtime spine `PathCons` is defined in [cgp-base-types](../../../crates/core/cgp-base-types/src/types/path.rs), and the [`RedirectLookup`](../../reference/providers/redirect_lookup.md) provider that walks a path is in [cgp-component](../../../crates/core/cgp-component/src/providers/redirect_lookup.rs).
+- Entry point: `Path` in [cgp-macro-lib/src/path.rs](../../../crates/macros/cgp-macro-lib/src/path.rs).
+- The `UniPath`, `PathElement`, and the wider path stack: [cgp-macro-core/src/types/path/](../../../crates/macros/cgp-macro-core/src/types/path/), documented in [asts/path.md](../asts/path.md).
+- Runtime spine `PathCons`: defined in [cgp-base-types](../../../crates/core/cgp-base-types/src/types/path.rs).
+- The [`RedirectLookup`](../../reference/providers/redirect_lookup.md) provider that walks a path: [cgp-component](../../../crates/core/cgp-component/src/providers/redirect_lookup.rs).

@@ -57,4 +57,5 @@ Both `borrowed` and `made` have the same type and are consumed the same way; onl
 
 ## Source
 
-The type is defined in [crates/core/cgp-field/src/types/mref.rs](../../../crates/core/cgp-field/src/types/mref.rs), including its `Deref`, `AsRef`, the two `From` impls, and `get_or_clone`. The macro logic that recognizes an `MRef<'a, T>` getter return type and emits an `MRef::Ref(...)` body is in [crates/macros/cgp-macro-core/src/functions/field/parse.rs](../../../crates/macros/cgp-macro-core/src/functions/field/parse.rs) (the `MRef` field mode) and [crates/macros/cgp-macro-core/src/types/getter/get_field_with_mode_expr.rs](../../../crates/macros/cgp-macro-core/src/types/getter/get_field_with_mode_expr.rs).
+- The type is defined in [crates/core/cgp-field/src/types/mref.rs](../../../crates/core/cgp-field/src/types/mref.rs), including its `Deref`, `AsRef`, the two `From` impls, and `get_or_clone`.
+- The macro logic that recognizes an `MRef<'a, T>` getter return type and emits an `MRef::Ref(...)` body is in [crates/macros/cgp-macro-core/src/functions/field/parse.rs](../../../crates/macros/cgp-macro-core/src/functions/field/parse.rs) (the `MRef` field mode) and [crates/macros/cgp-macro-core/src/types/getter/get_field_with_mode_expr.rs](../../../crates/macros/cgp-macro-core/src/types/getter/get_field_with_mode_expr.rs).

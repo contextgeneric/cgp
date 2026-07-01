@@ -71,4 +71,5 @@ let row: Row = product![1, "hi".to_string(), true];
 
 ## Source
 
-`Cons<Head, Tail>` is defined in [crates/core/cgp-base-types/src/types/cons.rs](../../../crates/core/cgp-base-types/src/types/cons.rs) and `Nil` in [crates/core/cgp-base-types/src/types/nil.rs](../../../crates/core/cgp-base-types/src/types/nil.rs). The `Product!`/`product!` macros that fold elements onto this spine are driven by the constructs under [crates/macros/cgp-macro-core/src/types/product/](../../../crates/macros/cgp-macro-core/src/types/product/), and the `HasFields` machinery that recurses over it lives in [crates/core/cgp-field/src/traits/has_fields.rs](../../../crates/core/cgp-field/src/traits/has_fields.rs).
+- `Cons<Head, Tail>` is defined in [crates/core/cgp-base-types/src/types/cons.rs](../../../crates/core/cgp-base-types/src/types/cons.rs) and `Nil` in [crates/core/cgp-base-types/src/types/nil.rs](../../../crates/core/cgp-base-types/src/types/nil.rs).
+- The `Product!`/`product!` macros that fold elements onto this spine are driven by the constructs under [crates/macros/cgp-macro-core/src/types/product/](../../../crates/macros/cgp-macro-core/src/types/product/), and the `HasFields` machinery that recurses over it lives in [crates/core/cgp-field/src/traits/has_fields.rs](../../../crates/core/cgp-field/src/traits/has_fields.rs).

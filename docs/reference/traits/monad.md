@@ -68,4 +68,5 @@ These traits are consumed by the monad providers in [monad providers](../provide
 
 ## Source
 
-The traits are defined in [crates/extra/cgp-monad/src/traits/](../../../crates/extra/cgp-monad/src/traits/) — `monadic_trans.rs`, `bind.rs`, `lift.rs`, and `value.rs`. Their implementations for each monad marker are in [crates/extra/cgp-monad/src/monadic/](../../../crates/extra/cgp-monad/src/monadic/) (`ident.rs`, `ok.rs`, `err.rs`).
+- The traits are defined in [crates/extra/cgp-monad/src/traits/](../../../crates/extra/cgp-monad/src/traits/) — `monadic_trans.rs`, `bind.rs`, `lift.rs`, and `value.rs`.
+- Their implementations for each monad marker are in [crates/extra/cgp-monad/src/monadic/](../../../crates/extra/cgp-monad/src/monadic/) (`ident.rs`, `ok.rs`, `err.rs`).

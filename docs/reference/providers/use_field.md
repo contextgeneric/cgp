@@ -91,4 +91,7 @@ Both forms read `first_name`; `UseField` is the idiomatic choice for binding a g
 
 ## Source
 
-The `UseField` struct, its `WithField` alias, and the `FieldGetter`, `MutFieldGetter`, and `TypeProvider` impls are in [crates/core/cgp-field/src/impls/use_field.rs](../../../crates/core/cgp-field/src/impls/use_field.rs). The `HasField`, `FieldGetter`, and (in `has_field_mut.rs`) `HasFieldMut`, `MutFieldGetter` traits are in [crates/core/cgp-field/src/traits/](../../../crates/core/cgp-field/src/traits/). The `#[cgp_getter]`-generated `UseField` impl is built in [crates/macros/cgp-macro-core/src/types/cgp_getter/use_field.rs](../../../crates/macros/cgp-macro-core/src/types/cgp_getter/use_field.rs). For how it is generated and the index of tests, see the implementation document [implementation/entrypoints/cgp_getter](../../implementation/entrypoints/cgp_getter.md).
+- The `UseField` struct, its `WithField` alias, and the `FieldGetter`, `MutFieldGetter`, and `TypeProvider` impls are in [crates/core/cgp-field/src/impls/use_field.rs](../../../crates/core/cgp-field/src/impls/use_field.rs).
+- The `HasField`, `FieldGetter`, and (in `has_field_mut.rs`) `HasFieldMut`, `MutFieldGetter` traits are in [crates/core/cgp-field/src/traits/](../../../crates/core/cgp-field/src/traits/).
+- The `#[cgp_getter]`-generated `UseField` impl is built in [crates/macros/cgp-macro-core/src/types/cgp_getter/use_field.rs](../../../crates/macros/cgp-macro-core/src/types/cgp_getter/use_field.rs).
+- For how it is generated and the index of tests, see the implementation document [implementation/entrypoints/cgp_getter](../../implementation/entrypoints/cgp_getter.md).

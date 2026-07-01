@@ -89,4 +89,8 @@ The behavioral tests confirm the generated namespaces wire correctly:
 
 ## Source
 
-The entry point is `cgp_namespace` in [cgp-macro-lib/src/cgp_namespace.rs](../../../crates/macros/cgp-macro-lib/src/cgp_namespace.rs); the pipeline and its AST types live in [cgp-macro-core/src/types/namespace/](../../../crates/macros/cgp-macro-core/src/types/namespace/) and are documented in [asts/namespace.md](../asts/namespace.md). The entry table reuses the `DelegateEntries` grammar from [cgp-macro-core/src/types/delegate_component/](../../../crates/macros/cgp-macro-core/src/types/delegate_component/), the inheritance impl comes from `inherit.rs`, and the `RedirectLookup` marker and every generated fragment are built with [parse_internal!](../macros/parse_internal.md). The `#[prefix(...)]` attribute that attaches a component to a namespace is handled as part of `#[cgp_component]`; see [entrypoints/cgp_component.md](cgp_component.md).
+- Entry point: `cgp_namespace` in [cgp-macro-lib/src/cgp_namespace.rs](../../../crates/macros/cgp-macro-lib/src/cgp_namespace.rs).
+- Pipeline and its AST types: [cgp-macro-core/src/types/namespace/](../../../crates/macros/cgp-macro-core/src/types/namespace/), documented in [asts/namespace.md](../asts/namespace.md).
+- The entry table reuses the `DelegateEntries` grammar from [cgp-macro-core/src/types/delegate_component/](../../../crates/macros/cgp-macro-core/src/types/delegate_component/); the inheritance impl comes from `inherit.rs`.
+- The `RedirectLookup` marker and every generated fragment are built with [parse_internal!](../macros/parse_internal.md).
+- The `#[prefix(...)]` attribute that attaches a component to a namespace is handled as part of `#[cgp_component]`; see [entrypoints/cgp_component.md](cgp_component.md).

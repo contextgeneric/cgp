@@ -98,4 +98,8 @@ The behavioral tests confirm the generated wiring resolves and compiles:
 
 ## Source
 
-The entry point is `delegate_components` in [cgp-macro-lib/src/delegate_components.rs](../../../crates/macros/cgp-macro-lib/src/delegate_components.rs); the table, its entries, keys, values, and statements live in [cgp-macro-core/src/types/delegate_component/](../../../crates/macros/cgp-macro-core/src/types/delegate_component/) and are documented in [asts/delegate_component.md](../asts/delegate_component.md). Attribute rejection is in `validate_attributes.rs`, the impl pair is built in `mapping/eval.rs`, and all generated fragments are built with [parse_internal!](../macros/parse_internal.md). The `open` and `@`-path forms build on the [`RedirectLookup`](cgp_component.md) impl that `#[cgp_component]` generates.
+- Entry point: `delegate_components` in [cgp-macro-lib/src/delegate_components.rs](../../../crates/macros/cgp-macro-lib/src/delegate_components.rs).
+- The table, its entries, keys, values, and statements: [cgp-macro-core/src/types/delegate_component/](../../../crates/macros/cgp-macro-core/src/types/delegate_component/), documented in [asts/delegate_component.md](../asts/delegate_component.md).
+- Attribute rejection is in `validate_attributes.rs`; the impl pair is built in `mapping/eval.rs`.
+- Fragment construction: [parse_internal!](../macros/parse_internal.md).
+- The `open` and `@`-path forms build on the [`RedirectLookup`](cgp_component.md) impl that `#[cgp_component]` generates.
