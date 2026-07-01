@@ -1,0 +1,144 @@
+//! `#[cgp_computer]`: turning a plain function into a `Computer` provider.
+//!
+//! A synchronous, infallible function annotated with `#[cgp_computer]` becomes a
+//! provider usable across the whole computation family — the same definition is
+//! callable as `compute`, `try_compute`, `compute_async`, and `handle` (and the
+//! by-reference `compute_ref` / `try_compute_ref` / `compute_async_ref` /
+//! `handle_ref` variants), because CGP automatically promotes a `Computer` into
+//! the more capable `TryComputer`, `AsyncComputer`, and `Handler`. A fallible
+//! `Result`-returning body promotes so that its error path surfaces through
+//! `try_compute` / `handle`. A generic function parameter carries through to the
+//! generated provider.
+//!
+//! The error wiring on `App` is incidental scaffolding needed so the promoted
+//! `Handler` has an error type; it uses the plain `delegate_components!` (the
+//! error and wiring macros are owned by other concept targets).
+//!
+//! See docs/reference/components/computer.md.
+
+use core::fmt::Display;
+
+use cgp::core::error::{ErrorRaiserComponent, ErrorTypeProviderComponent};
+use cgp::extra::error::RaiseFrom;
+use cgp::extra::handler::{ComputerRef, HandlerRef, TryComputerRef};
+use cgp::prelude::*;
+use futures::executor::block_on;
+
+#[cgp_computer]
+fn add(a: u64, b: u64) -> u64 {
+    a + b
+}
+
+#[cgp_computer]
+fn add_with_error(a: u64, b: u64) -> Result<u64, String> {
+    a.checked_add(b).ok_or_else(|| "Overflow".to_string())
+}
+
+pub struct App;
+
+delegate_components! {
+    App {
+        ErrorTypeProviderComponent:
+            UseType<String>,
+        ErrorRaiserComponent:
+            RaiseFrom,
+    }
+}
+
+#[test]
+fn test_add() {
+    let app = App;
+
+    assert_eq!(Add::compute(&app, PhantomData::<()>, (1, 2)), 3);
+
+    assert_eq!(Add::try_compute(&app, PhantomData::<()>, (1, 2)), Ok(3));
+
+    assert_eq!(
+        block_on(Add::compute_async(&app, PhantomData::<()>, (1, 2))),
+        3,
+    );
+
+    assert_eq!(
+        block_on(Add::handle(&app, PhantomData::<()>, (1, 2))),
+        Ok(3),
+    );
+}
+
+#[test]
+fn test_add_with_error() {
+    let app = App;
+
+    assert_eq!(
+        AddWithError::compute(&app, PhantomData::<()>, (1, 2)),
+        Ok(3),
+    );
+
+    assert_eq!(
+        AddWithError::try_compute(&app, PhantomData::<()>, (1, 2)),
+        Ok(3),
+    );
+
+    assert_eq!(
+        AddWithError::try_compute(&app, PhantomData::<()>, (u64::MAX, 1)),
+        Err("Overflow".to_string()),
+    );
+
+    assert_eq!(
+        block_on(AddWithError::compute_async(&app, PhantomData::<()>, (1, 2))),
+        Ok(3),
+    );
+
+    assert_eq!(
+        block_on(AddWithError::handle(&app, PhantomData::<()>, (1, 2))),
+        Ok(3),
+    );
+
+    assert_eq!(
+        block_on(AddWithError::handle(&app, PhantomData::<()>, (u64::MAX, 1))),
+        Err("Overflow".to_string()),
+    );
+}
+
+#[cgp_computer]
+fn to_string_ref<Value: Display>(value: &Value) -> String {
+    value.to_string()
+}
+
+#[test]
+fn test_computer_ref() {
+    let app = App;
+    let code = PhantomData::<()>;
+
+    assert_eq!(ToStringRef::compute(&app, code, &1), "1");
+
+    assert_eq!(ToStringRef::compute_ref(&app, code, &1), "1");
+
+    assert_eq!(ToStringRef::try_compute(&app, code, &1), Ok("1".to_owned()));
+
+    assert_eq!(
+        ToStringRef::try_compute_ref(&app, code, &1),
+        Ok("1".to_owned())
+    );
+
+    assert_eq!(block_on(ToStringRef::compute_async(&app, code, &1)), "1");
+
+    assert_eq!(
+        block_on(ToStringRef::compute_async_ref(&app, code, &1)),
+        "1"
+    );
+
+    assert_eq!(
+        block_on(ToStringRef::handle(&app, code, &1)),
+        Ok("1".to_owned())
+    );
+
+    assert_eq!(
+        block_on(ToStringRef::handle_ref(&app, code, &1)),
+        Ok("1".to_owned())
+    );
+}
+
+#[cgp_computer]
+pub fn add_generic<T: core::ops::Add<Output = T>>(a: T, b: T) -> T {
+    a + b
+}

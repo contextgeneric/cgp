@@ -11,9 +11,11 @@ keywords     = { workspace = true }
 [dependencies]
 cgp                     = { workspace = true }
 cgp-macro-test-util     = { workspace = true }
+insta                   = { version = "1.48.0" }
 
 [dev-dependencies]
 cgp-macro-core          = { workspace = true }
+cgp-macro-lib           = { workspace = true }
 syn                     = { version = "2.0.95" }
 quote                   = { version = "1.0.38" }
 proc-macro2             = { version = "1.0.92" }

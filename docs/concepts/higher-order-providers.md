@@ -79,4 +79,4 @@ Higher-order providers are written with [`#[cgp_impl]`](../reference/macros/cgp_
 
 ## Source
 
-The higher-order pattern is exercised throughout [crates/tests/cgp-tests/tests/component_tests/cgp_impl/use_provider.rs](../../crates/tests/cgp-tests/tests/component_tests/cgp_impl/use_provider.rs) and [shape.rs](../../crates/tests/cgp-tests/tests/component_tests/cgp_impl/shape.rs); `UseContext` lives in [crates/core/cgp-component/src/providers/use_context.rs](../../crates/core/cgp-component/src/providers/use_context.rs).
+The higher-order pattern is exercised throughout [crates/tests/cgp-tests/tests/higher_order_providers/](../../crates/tests/cgp-tests/tests/higher_order_providers/), notably [use_provider_impl.rs](../../crates/tests/cgp-tests/tests/higher_order_providers/use_provider_impl.rs); `UseContext` lives in [crates/core/cgp-component/src/providers/use_context.rs](../../crates/core/cgp-component/src/providers/use_context.rs).

@@ -44,4 +44,4 @@ Monadic handlers build directly on the handler family: the pipelines they produc
 
 ## Source
 
-The monad layer lives in [crates/extra/cgp-monad/src/](../../crates/extra/cgp-monad/src/), re-exported as `cgp::extra::monad`. The pipeline provider is in `providers/pipe_monadic.rs`, the monad markers in `monadic/{ident,ok,err}.rs`, and the trait layer in `traits/`. The behavior described here is exercised by the tests in [crates/tests/cgp-tests/src/tests/monad/](../../crates/tests/cgp-tests/src/tests/monad/) (`ok.rs`, `err.rs`, `ok_err_trans.rs`).
+The monad layer lives in [crates/extra/cgp-monad/src/](../../crates/extra/cgp-monad/src/), re-exported as `cgp::extra::monad`. The pipeline provider is in `providers/pipe_monadic.rs`, the monad markers in `monadic/{ident,ok,err}.rs`, and the trait layer in `traits/`. The behavior described here is exercised by the tests in [crates/tests/cgp-tests/tests/monadic_handlers/](../../crates/tests/cgp-tests/tests/monadic_handlers/) (`ok_monadic.rs`, `err_monadic.rs`, `ok_err_monadic_trans.rs`).

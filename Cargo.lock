@@ -239,7 +239,9 @@ version = "0.7.0"
 dependencies = [
  "cgp",
  "cgp-macro-core",
+ "cgp-macro-lib",
  "cgp-macro-test-util",
+ "insta",
  "proc-macro2",
  "quote",
  "syn",
@@ -265,6 +267,21 @@ name = "cgp-runtime"
 version = "0.7.0"
 dependencies = [
  "cgp-core",
+]
+
+[[package]]
+name = "cgp-test-crate-a"
+version = "0.7.0"
+dependencies = [
+ "cgp",
+]
+
+[[package]]
+name = "cgp-test-crate-b"
+version = "0.7.0"
+dependencies = [
+ "cgp",
+ "cgp-test-crate-a",
 ]
 
 [[package]]
