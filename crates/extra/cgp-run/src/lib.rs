@@ -18,8 +18,5 @@ pub trait CanRun<Code> {
 #[derive_delegate(UseDelegate<Code>)]
 #[use_type(HasErrorType::Error)]
 pub trait CanSendRun<Code> {
-    fn send_run(
-        &self,
-        _code: PhantomData<Code>,
-    ) -> impl Future<Output = Result<(), Error>> + Send;
+    fn send_run(&self, _code: PhantomData<Code>) -> impl Future<Output = Result<(), Error>> + Send;
 }

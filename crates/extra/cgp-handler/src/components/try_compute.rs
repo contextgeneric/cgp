@@ -13,11 +13,7 @@ use crate::UseInputDelegate;
 pub trait CanTryCompute<Code, Input> {
     type Output;
 
-    fn try_compute(
-        &self,
-        _code: PhantomData<Code>,
-        input: Input,
-    ) -> Result<Self::Output, Error>;
+    fn try_compute(&self, _code: PhantomData<Code>, input: Input) -> Result<Self::Output, Error>;
 }
 
 #[cgp_component(TryComputerRef)]

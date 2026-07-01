@@ -14,11 +14,7 @@ use crate::UseInputDelegate;
 pub trait CanHandle<Code, Input> {
     type Output;
 
-    async fn handle(
-        &self,
-        _tag: PhantomData<Code>,
-        input: Input,
-    ) -> Result<Self::Output, Error>;
+    async fn handle(&self, _tag: PhantomData<Code>, input: Input) -> Result<Self::Output, Error>;
 }
 
 #[async_trait]
