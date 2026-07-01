@@ -12,38 +12,73 @@ The [entrypoints/](entrypoints/) directory holds one document per CGP macro — 
 
 ## Catalog
 
-The catalog is the index of implementation documents. The build-out is proceeding one construct at a time; this section registers what is documented and lists what is still pending, so the next agent can see both the shape of the finished tree and where to continue. When you add a document, move its entry from the pending list to the documented list in the same change.
+This section is the index of implementation documents. When you add a document, register it here in the same change.
 
 ### Entrypoints — [entrypoints/](entrypoints/)
 
-Documented so far:
+The component and provider macros:
 
 - [`#[cgp_component]`](entrypoints/cgp_component.md) — the foundational component-definition macro and its `preprocess → eval → to_items` pipeline.
+- [`#[cgp_impl]`](entrypoints/cgp_impl.md) — lowers consumer-style syntax into a provider impl and hands it to `#[cgp_provider]`.
+- [`#[cgp_provider]`](entrypoints/cgp_provider.md) — passes a provider-trait impl through and derives its `IsProviderFor` impl.
+- [`#[cgp_new_provider]`](entrypoints/cgp_new_provider.md) — `#[cgp_provider]` with the provider struct also declared.
 
-Pending, one document each — the remaining `cgp-macro-lib` macros (`#[cgp_impl]`, `#[cgp_provider]`, `#[cgp_new_provider]`, `#[cgp_fn]`, `#[cgp_type]`, `#[cgp_getter]`, `#[cgp_auto_getter]`, `#[blanket_trait]`, `delegate_components!`, `check_components!`, `delegate_and_check_components!`, `#[cgp_namespace]`, `Symbol!`, `Product!`, `Sum!`, `Path!`, and the data derives `#[derive(HasField)]`, `HasFields`, `CgpData`, `CgpRecord`, `CgpVariant`, `BuildField`, `ExtractField`, `FromVariant`), the `cgp-extra-macro-lib` macros (`#[cgp_computer]`, `#[cgp_producer]`, `#[cgp_auto_dispatch]`), `#[async_trait]` from `cgp-async-macro`, and the `snapshot_*!` family from [cgp-macro-test-util](../../crates/macros/cgp-macro-test-util).
+Functions and getters:
+
+- [`#[cgp_fn]`](entrypoints/cgp_fn.md) — a single-implementation capability as a blanket-impl trait, with `#[implicit]` argument lowering.
+- [`#[cgp_getter]`](entrypoints/cgp_getter.md) — a getter component wired through CGP, adding `UseField`/`UseFields` provider impls.
+- [`#[cgp_auto_getter]`](entrypoints/cgp_auto_getter.md) — a getter as a blanket impl over `HasField`.
+
+Abstract types and blanket traits:
+
+- [`#[cgp_type]`](entrypoints/cgp_type.md) — an abstract-type component, reusing the `#[cgp_component]` pipeline and adding `UseType`.
+- [`#[blanket_trait]`](entrypoints/blanket_trait.md) — a blanket impl generated from a trait with default methods.
+
+Wiring and checking:
+
+- [`delegate_components!`](entrypoints/delegate_components.md) — the context wiring table and its mapping/statement grammar.
+- [`check_components!`](entrypoints/check_components.md) — compile-time wiring assertions.
+- [`delegate_and_check_components!`](entrypoints/delegate_and_check_components.md) — wire and check in one macro.
+- [`cgp_namespace!`](entrypoints/cgp_namespace.md) — reusable, inheritable wiring tables via `RedirectLookup`.
+
+Type-level construction macros:
+
+- [`Symbol!`](entrypoints/symbol.md), [`Product!`](entrypoints/product.md), [`Sum!`](entrypoints/sum.md), [`Path!`](entrypoints/path.md) — the type-level string, list, sum, and path macros.
+
+Data derives:
+
+- [`#[derive(HasField)]`](entrypoints/derive_has_field.md), [`#[derive(HasFields)]`](entrypoints/derive_has_fields.md) — field-access derives.
+- [`#[derive(CgpData)]`](entrypoints/derive_cgp_data.md), [`#[derive(CgpRecord)]`](entrypoints/derive_cgp_record.md), [`#[derive(CgpVariant)]`](entrypoints/derive_cgp_variant.md) — the extensible-data derives.
+- [`#[derive(BuildField)]`](entrypoints/derive_build_field.md), [`#[derive(ExtractField)]`](entrypoints/derive_extract_field.md), [`#[derive(FromVariant)]`](entrypoints/derive_from_variant.md) — builder/extractor/variant support.
+
+Handlers and other extra macros:
+
+- [`#[cgp_computer]`](entrypoints/cgp_computer.md), [`#[cgp_producer]`](entrypoints/cgp_producer.md) — define `Computer`/`Producer` providers from functions.
+- [`#[cgp_auto_dispatch]`](entrypoints/cgp_auto_dispatch.md) — generate a dispatching handler.
+- [`#[async_trait]`](entrypoints/async_trait.md) — rewrite trait `async fn` to `-> impl Future`.
+- [The `snapshot_*!` family](entrypoints/snapshot_macros.md) — the `cgp-macro-test-util` macros that pin macro expansions as `insta` snapshots.
 
 ### AST stacks — [asts/](asts/)
 
-Documented so far:
+One document per evaluation stack, grouped by the macro that owns it:
 
-- [The `cgp_component` AST stack](asts/cgp_component.md) — `CgpComponentArgs`, `ItemCgpComponent`, `PreprocessedCgpComponent`, and `EvaluatedCgpComponent`.
-
-Pending — one document per remaining evaluation stack, grouped by the macro that owns it: the `cgp_impl`, `cgp_provider`, `cgp_fn`, `cgp_type`, `cgp_getter`, `delegate_component`, `check_components`, `namespace`, `cgp_data`, `product`, and `sum` stacks, plus the shared building-block AST types (`attributes/`, `generics/`, `field/`, `getter/`, `implicits/`, `ident/`, `path/`, `keyword`).
+- [cgp_component](asts/cgp_component.md), [cgp_impl](asts/cgp_impl.md), [cgp_provider](asts/cgp_provider.md), [cgp_type](asts/cgp_type.md), [cgp_fn](asts/cgp_fn.md), [cgp_getter](asts/cgp_getter.md), [blanket_trait](asts/blanket_trait.md).
+- [delegate_component](asts/delegate_component.md), [check_components](asts/check_components.md), [namespace](asts/namespace.md).
+- [cgp_data](asts/cgp_data.md) — the shared extensible-data derive stack.
+- [product](asts/product.md), [sum](asts/sum.md), [path](asts/path.md), [symbol](asts/symbol.md) — the type-level construction stacks.
+- [attributes](asts/attributes.md) — the modifier-attribute AST types (`#[uses]`, `#[use_type]`, `#[use_provider]`, `#[extend]`, `#[extend_where]`, `#[derive_delegate]`, `#[default_impl]`).
 
 ### Functions — [functions/](functions/)
 
-Documented so far:
+The cross-cutting helper functions; construct-specific parse/derive helpers are documented inside the owning macro's entrypoint or AST document.
 
-- [Delegated-impl synthesis](functions/derive/delegated_impls.md) — `trait_items_to_delegated_impl_items` and `provider_trait_to_impl_items`, the forwarding-impl machinery.
+- [Delegated-impl synthesis](functions/derive/delegated_impls.md) — the forwarding-impl machinery shared by the component impls.
 - [`parse_is_provider_params`](functions/parse/is_provider_params.md) — building the `IsProviderFor` params tuple from trait generics.
-
-Pending — the remaining helpers in `cgp-macro-core/src/functions`: identifier case conversion (`camel_case`/`snake_case`), generics merging, field/getter/implicit-argument parsing, and `strip`.
+- [`merge_generics`](functions/derive/generics.md) — combining two `Generics` into one.
+- [Identifier case conversion](functions/derive/idents.md) — the PascalCase/snake_case/reserved-name helpers.
 
 ### Internal macros — [macros/](macros/)
 
-Documented so far:
-
 - [`parse_internal!`](macros/parse_internal.md) — build a `syn` node from quoted tokens with a descriptive parse error.
 - [`define_keyword!`](macros/define_keyword.md) — declare a custom-keyword marker type implementing `IsKeyword`.
-
-Pending — the `export_construct(s)!` family in `cgp-macro-core/src/macros` that backs the hygienic `exports.rs` markers.
+- [`export_construct!` / `export_constructs!`](macros/export_constructs.md) — declare the hygienic markers backing `exports.rs`.

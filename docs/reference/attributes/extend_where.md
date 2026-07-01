@@ -62,4 +62,6 @@ The `Scalar: Mul<Output = Scalar>` bound, written in the function body, stays as
 
 ## Source
 
-`#[extend_where(...)]` is parsed in [crates/macros/cgp-macro-core/src/types/attributes/function.rs](../../../crates/macros/cgp-macro-core/src/types/attributes/function.rs) (the `extend_where` field of `FunctionAttributes`), and its predicates are added to both the trait and impl `where` clauses in [crates/macros/cgp-macro-core/src/types/cgp_fn/preprocessed.rs](../../../crates/macros/cgp-macro-core/src/types/cgp_fn/preprocessed.rs). An expansion snapshot that exercises `#[extend_where(...)]` alongside `#[use_type]` lives in [crates/tests/cgp-tests/tests/abstract_types/use_type_fn_nested_foreign.rs](../../../crates/tests/cgp-tests/tests/abstract_types/use_type_fn_nested_foreign.rs), among the other `#[use_type]` `#[cgp_fn]` tests in [crates/tests/cgp-tests/tests/abstract_types/](../../../crates/tests/cgp-tests/tests/abstract_types/).
+`#[extend_where(...)]` is parsed in [crates/macros/cgp-macro-core/src/types/attributes/function.rs](../../../crates/macros/cgp-macro-core/src/types/attributes/function.rs) (the `extend_where` field of `FunctionAttributes`), and its predicates are added to both the trait and impl `where` clauses in [crates/macros/cgp-macro-core/src/types/cgp_fn/preprocessed.rs](../../../crates/macros/cgp-macro-core/src/types/cgp_fn/preprocessed.rs).
+
+For what the attribute injects into its host and the index of tests and snapshots, see the implementation document [implementation/asts/attributes.md](../../implementation/asts/attributes.md).

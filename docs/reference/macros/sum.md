@@ -89,3 +89,5 @@ type Token = Sum![u32, String, bool];
 ## Source
 
 The macro entry point is `Sum` in [crates/macros/cgp-macro-lib/src/sum.rs](../../../crates/macros/cgp-macro-lib/src/sum.rs), forwarding to the `SumType` construct in [crates/macros/cgp-macro-core/src/types/sum.rs](../../../crates/macros/cgp-macro-core/src/types/sum.rs), whose `eval` right-folds the element types with `Either` onto `Void`. The runtime types `Either<Head, Tail>` and the uninhabited `Void` are both defined in [crates/core/cgp-field/src/types/sum.rs](../../../crates/core/cgp-field/src/types/sum.rs). The enum `HasFields` derive that emits a `Sum!` of `Field<Symbol!("..."), _>` branches lives in [crates/macros/cgp-macro-core/src/types/cgp_data/derive_has_fields/sum.rs](../../../crates/macros/cgp-macro-core/src/types/cgp_data/derive_has_fields/sum.rs).
+
+For the full internal walkthrough — the parse-and-`eval` pipeline, the right-fold onto `Void`, and the index of tests — see the implementation document [implementation/entrypoints/sum.md](../../implementation/entrypoints/sum.md).

@@ -107,4 +107,4 @@ delegate_components! {
 
 ## Source
 
-The struct is defined in [crates/core/cgp-component/src/providers/use_default.rs](../../../crates/core/cgp-component/src/providers/use_default.rs) and re-exported in [crates/core/cgp-component/src/providers/mod.rs](../../../crates/core/cgp-component/src/providers/mod.rs); the file contains only the bare struct, with no macro-generated impls. The empty-body `#[cgp_impl]` pattern that wires components to a default-only marker is exercised in [crates/tests/cgp-tests/tests/basic_delegation/](../../../crates/tests/cgp-tests/tests/basic_delegation/).
+The struct is defined in [crates/core/cgp-component/src/providers/use_default.rs](../../../crates/core/cgp-component/src/providers/use_default.rs) and re-exported in [crates/core/cgp-component/src/providers/mod.rs](../../../crates/core/cgp-component/src/providers/mod.rs); the file contains only the bare struct, with no macro-generated impls. For how it is generated and the index of tests, see the implementation document [implementation/asts/attributes](../../implementation/asts/attributes.md).
