@@ -111,7 +111,7 @@ fn print_area(rect: &Rectangle) {
 
 ## Related constructs
 
-`#[implicit]` is most often used inside [`#[cgp_fn]`](../macros/cgp_fn.md), which turns a function into a single-implementation capability, and inside [`#[cgp_impl]`](../macros/cgp_impl.md), which writes a provider for an existing component. It relies on [`#[derive(HasField)]`](../derives/derive_has_field.md) on the context to supply the field accessors that the generated bounds require. Its access rules — `.clone()` for owned values, `.as_str()` for `&str` — are shared with [`#[cgp_auto_getter]`](../macros/cgp_auto_getter.md), which is the better tool when the same fields are accessed across many methods or in the middle of a body. To bring in other CGP capabilities alongside implicit arguments, combine `#[implicit]` with [`#[uses]`](uses.md).
+`#[implicit]` is most often used inside [`#[cgp_fn]`](../macros/cgp_fn.md), which turns a function into a single-implementation capability, and inside [`#[cgp_impl]`](../macros/cgp_impl.md), which writes a provider for an existing component. It relies on [`#[derive(HasField)]`](../derives/derive_has_field.md) on the context to supply the field accessors that the generated bounds require. Its access rules — `.clone()` for owned values, `.as_str()` for `&str` — are shared with [`#[cgp_auto_getter]`](../macros/cgp_auto_getter.md), which defines a reusable getter *capability* trait; prefer an implicit argument for reading a field as a provider's own input, and reserve `#[cgp_auto_getter]` for the case where the field should be published as a `self.name()` accessor other providers depend on. To bring in other CGP capabilities alongside implicit arguments, combine `#[implicit]` with [`#[uses]`](uses.md).
 
 ## Source
 

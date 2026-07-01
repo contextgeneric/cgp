@@ -142,7 +142,7 @@ This adds `Self: RectangleArea` to the generated impl's `where` clause, alongsid
 
 ## Adding supertraits and trait bounds: `#[extend]` and `#[extend_where]`
 
-In `#[cgp_fn]`, the function's own `where` clauses are impl-side dependencies kept off the trait, so there is no place to write a supertrait by hand — `#[extend(...)]` is the only way to add one. Where `#[uses]` adds a hidden impl-side bound (the `use` equivalent), `#[extend]` promotes its bound to a *supertrait* of the generated trait — a public requirement every implementor satisfies and every caller may rely on (the `pub use` equivalent). The bound appears in two places: as a supertrait on the trait, so an associated type like `Self::Scalar` resolves and callers know the bound holds, and in the impl's `where` clause so the body can use it. A `#[cgp_fn]` over an abstract scalar type:
+In `#[cgp_fn]`, the function's own `where` clauses are impl-side dependencies kept off the trait, so there is no place to write a supertrait by hand — `#[extend(...)]` is the only way to add one. Where `#[uses]` adds a hidden impl-side bound (the `use` equivalent), `#[extend]` promotes its bound to a *supertrait* of the generated trait — a public requirement every implementor satisfies and every caller may rely on (the `pub use` equivalent). The bound appears in two places: as a supertrait on the trait, so an associated type like `Self::Scalar` resolves and callers know the bound holds, and in the impl's `where` clause so the body can use it. The example below uses the abstract-type trait `HasScalarType` to make that two-placement behavior visible in one signature, but for an abstract-type supertrait like this, `#[use_type]` is the production form (see the note after it) and `#[extend]` is reserved for a non-type capability supertrait. A `#[cgp_fn]` over an abstract scalar type:
 
 ```rust
 pub trait HasScalarType {
@@ -161,7 +161,7 @@ pub fn rectangle_area(
 // → pub trait RectangleArea: HasScalarType { fn rectangle_area(&self) -> Self::Scalar; }
 ```
 
-`#[extend]` accepts the same simplified `TraitIdent<Params>` syntax as `#[uses]`, and is also usable on `#[cgp_component]` (where it simply duplicates the native `pub trait Foo: Bar` supertrait syntax for stylistic consistency). Its sibling `#[extend_where(...)]` adds *`where`-clause* predicates to the generated trait definition rather than supertraits, and is `#[cgp_fn]`-only. Unlike `#[uses]` and `#[extend]`, it accepts arbitrary predicates — including associated-type equality — so a generic parameter can carry a publicly visible bound:
+`#[extend]` accepts the same simplified `TraitIdent<Params>` syntax as `#[uses]`, and is also usable on `#[cgp_component]`, where it is the preferred way to add a *non-type capability* supertrait: writing `#[extend(HasName)]` reads as importing a capability, whereas the native `pub trait CanGreet: HasName` syntax reads as OOP-style inheritance from a parent class, which a CGP supertrait is not. (For an abstract-type component whose associated type the signatures name, prefer `#[use_type]` instead, which adds the supertrait *and* rewrites the type — the recommended form for abstract-type components.) Its sibling `#[extend_where(...)]` adds *`where`-clause* predicates to the generated trait definition rather than supertraits, and is `#[cgp_fn]`-only. Unlike `#[uses]` and `#[extend]`, it accepts arbitrary predicates — including associated-type equality — so a generic parameter can carry a publicly visible bound:
 
 ```rust
 #[cgp_fn]
@@ -177,7 +177,7 @@ The `Scalar: Mul` bound from the body stays an impl-side dependency, while `Scal
 
 ## Getter traits: `#[cgp_auto_getter]`
 
-A getter trait exposes a context field as a reusable `self.name()` accessor, and `#[cgp_auto_getter]` generates its single blanket impl by reading the field whose name matches the method name. Where an [implicit argument](#field-access-dressed-as-a-function-argument-implicit) injects a value once at the start of one method, a getter is the better tool when the same field is read across many methods or part-way through a body. The macro takes no arguments and re-emits the trait verbatim, adding a blanket impl over `__Context__` keyed by the method name as a `Symbol!`:
+A getter trait exposes a context field as a reusable `self.name()` accessor, and `#[cgp_auto_getter]` generates its single blanket impl by reading the field whose name matches the method name. Reserve it for the case where the field is a *published capability* — an accessor other providers depend on through `#[uses(HasName)]`, or one carrying an associated type inferred from the field — not for a provider reading a value for its own use. For that common case, prefer an [implicit argument](#field-access-dressed-as-a-function-argument-implicit): it injects the value as an ordinary-looking parameter with no separate trait to declare, and a value used throughout a body is simply bound once at the top. The macro takes no arguments and re-emits the trait verbatim, adding a blanket impl over `__Context__` keyed by the method name as a `Symbol!`:
 
 ```rust
 #[cgp_auto_getter]
@@ -211,11 +211,11 @@ pub trait HasName {
 //   { type Name = Name; … }
 ```
 
-A context gains the getter just by deriving `HasField` with a matching field — `person.name()` resolves through the blanket impl with no wiring. The cost of that simplicity is rigidity: the field name *must* equal the method name, and there is no way to swap the implementation. When you need either, reach for `#[cgp_getter]`.
+A context gains the getter just by deriving `HasField` with a matching field — `person.name()` resolves through the blanket impl with no wiring. The cost of that simplicity is rigidity: the field name *must* equal the method name, and there is no way to swap the implementation. When you need either, `#[cgp_getter]` provides it — but that is an advanced tool, not a routine next step.
 
 ## Wireable getters: `#[cgp_getter]` and `UseField`
 
-`#[cgp_getter]` defines a getter as a full CGP [component](components.md) instead of a blanket impl, so the field name can differ from the method name and the getter can be swapped per context through [wiring](wiring.md). It accepts the same getter-method forms as `#[cgp_auto_getter]`, but because it is an extension of `#[cgp_component]` it needs a provider trait name. The default derives one from the trait name by stripping a leading `Has` and appending `Getter`, so `HasName` yields the provider `NameGetter` and the component marker `NameGetterComponent`; pass an argument like `#[cgp_getter(GetName)]` to override it.
+`#[cgp_getter]` defines a getter as a full CGP [component](components.md) instead of a blanket impl, so the field name can differ from the method name and the getter can be swapped per context through [wiring](wiring.md). It is a specialized, advanced tool: reserve it for when a context genuinely needs full control over which field a getter reads from, and prefer an implicit argument or `#[cgp_auto_getter]` for the ordinary case of a same-named field. It accepts the same getter-method forms as `#[cgp_auto_getter]`, but because it is an extension of `#[cgp_component]` it needs a provider trait name. The default derives one from the trait name by stripping a leading `Has` and appending `Getter`, so `HasName` yields the provider `NameGetter` and the component marker `NameGetterComponent`; pass an argument like `#[cgp_getter(GetName)]` to override it.
 
 The decoupling is delivered by an automatically generated `UseField<Tag>` provider impl. `UseField<Tag>` is a zero-sized provider (a `PhantomData`-only marker named in wiring, carrying no runtime value) that implements the getter by reading the field named `Tag` from the context — and crucially, `Tag` need not be the method name:
 
@@ -262,7 +262,7 @@ The explicit form is more verbose but requires no understanding of `HasField` or
 
 ## Choosing between the constructs
 
-The constructs here divide along two axes: how the value is read, and how flexible the implementation is. For a value consumed once at the start of a method, an `#[implicit]` argument keeps the access local and the code reading like a plain function. For a field read across several methods or mid-body, a getter trait exposes it as a reusable accessor; pick `#[cgp_auto_getter]` when the field name always matches the method name and no alternative is needed, and `#[cgp_getter]` (with `UseField`) when the field name must differ or the getter must be swappable per context. For a whole capability rather than a single field, `#[cgp_fn]` defines one with no wiring when a single implementation suffices, and a full [component](components.md) when many providers must coexist. All of them rest on the same `HasField` machinery and the same access rules, so mixing them carries no conceptual overhead.
+The constructs here divide along two axes: whether the value is a private input or a published capability, and how much control the implementation needs. For reading a field into a provider — the common case — an `#[implicit]` argument is the default: it keeps the access local and the code reading like a plain function, whether the value is used once or throughout the body. Promote a field to a getter trait only when it is a shared capability: `#[cgp_auto_getter]` when the field name matches the method name (the usual getter), and `#[cgp_getter]` (with `UseField`) as the advanced tool reserved for when the source field name must be chosen per context at wiring time. For a whole capability rather than a single field, `#[cgp_fn]` defines one with no wiring when a single implementation suffices, and a full [component](components.md) when many providers must coexist. All of them rest on the same `HasField` machinery and the same access rules, so mixing them carries no conceptual overhead.
 
 ## Further reference
 

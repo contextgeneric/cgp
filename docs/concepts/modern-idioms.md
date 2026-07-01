@@ -4,7 +4,7 @@ CGP offers a set of newer, higher-level idioms for writing components, providers
 
 The explicit forms came first. Early CGP exposed the machinery directly: a provider was an inside-out `impl` of a provider trait, dependencies were spelled as `where` clauses, abstract types were pulled from supertraits and written in fully-qualified `<Self as Trait>::Type` form, and per-type dispatch went through a `UseDelegate` table. Those forms still work and are exactly what the macros desugar to, so you will keep reading them in generated code, in expansion documentation, and in existing codebases. The newer idioms exist to lower the barrier to entry: they let a provider look like an ordinary trait `impl`, a dependency look like a `use` import, and an abstract type look like a plain generic, so that a reader who knows Rust but not CGP can follow the code. **Prefer the modern idioms in all new code, and reach for an explicit form only when a construct genuinely cannot express the case.**
 
-This guide is organized by the shift each idiom makes. The concepts it draws on are documented in full elsewhere: writing providers in [consumer and provider traits](consumer-and-provider-traits.md), dependency injection in [impl-side dependencies](impl-side-dependencies.md), abstract types in [abstract types](abstract-types.md), the provider-parameterized pattern in [higher-order providers](higher-order-providers.md), and per-type dispatch in [dispatching](dispatching.md) and [namespaces](namespaces.md). Each section below links to the reference document that owns the construct.
+This guide is organized by the shift each idiom makes. The concepts it draws on are documented in full elsewhere: writing providers in [consumer and provider traits](consumer-and-provider-traits.md), dependency injection in [impl-side dependencies](impl-side-dependencies.md), field injection in [implicit arguments](implicit-arguments.md), abstract types in [abstract types](abstract-types.md), the provider-parameterized pattern in [higher-order providers](higher-order-providers.md), and per-type dispatch in [dispatching](dispatching.md) and [namespaces](namespaces.md). Each section below links to the reference document that owns the construct.
 
 ## Write providers with `#[cgp_impl]`, not the raw provider forms
 
@@ -92,6 +92,41 @@ impl<InnerCalculator> AreaCalculator {
 
 `#[uses(...)]` accepts only the simple `Trait<Params>` form, so a bound with associated-type equality such as `Iterator<Item = u8>` must still be written as an explicit `where` clause. Both attributes desugar to the same `where` predicates they replace.
 
+## Read context fields with implicit arguments, not getter traits
+
+Read a value from a context field with an [`#[implicit]`](../reference/attributes/implicit.md) argument — in a [`#[cgp_impl]`](../reference/macros/cgp_impl.md) provider method just as in a [`#[cgp_fn]`](../reference/macros/cgp_fn.md) — rather than declaring a getter trait with [`#[cgp_auto_getter]`](../reference/macros/cgp_auto_getter.md). An implicit argument names both a local variable and the field it is read from, so the field access reads like an ordinary parameter and the `HasField` machinery stays out of sight — the same shift the provider idioms make, applied to values. This is the default way to pull a field into a provider, and it covers the great majority of field reads: a value used throughout a body is bound once at the top and used freely thereafter, and a value shared across several methods is simply declared as an implicit argument on each. The getter-trait version pairs a `#[cgp_auto_getter]` declaration with a `#[uses(...)]` import:
+
+```rust
+#[cgp_auto_getter]
+pub trait HasDimensions {
+    fn width(&self) -> &f64;
+    fn height(&self) -> &f64;
+}
+
+#[cgp_impl(new RectangleArea)]
+#[uses(HasDimensions)]
+impl AreaCalculator {
+    fn area(&self) -> f64 {
+        self.width() * self.height()
+    }
+}
+```
+
+collapses to a provider that reads the two fields directly:
+
+```rust
+#[cgp_impl(new RectangleArea)]
+impl AreaCalculator {
+    fn area(&self, #[implicit] width: f64, #[implicit] height: f64) -> f64 {
+        width * height
+    }
+}
+```
+
+Reserve `#[cgp_auto_getter]` for when you genuinely want to publish a reusable getter *capability* rather than read a field for your own use — a named `self.name()` accessor that other providers depend on through `#[uses(HasName)]`, or a getter whose associated type is inferred from the field (`type Name; fn name(&self) -> &Self::Name;`). Both idioms desugar to the same `HasField` bounds and share the same access rules — `.clone()` for an owned value, `.as_str()` for a `&str` — so choosing between them is about whether the value is a private input or a published capability, not about mechanics.
+
+Avoid [`#[cgp_getter]`](../reference/macros/cgp_getter.md) in ordinary code. It builds a full wireable component so the source field name can be chosen at wiring time through a [`UseField`](../reference/providers/use_field.md) provider, and that flexibility is reserved for the advanced case where you want full control over the context implementation — deciding per context which field a getter reads from, or supplying the value by means other than a same-named field. For the common case of reading a field, an implicit argument (or, for a published accessor, `#[cgp_auto_getter]`) is the form to write.
+
 ## Import abstract types with `#[use_type]`
 
 Bring an abstract type into a definition with [`#[use_type]`](../reference/attributes/use_type.md) and write it as a bare alias, rather than declaring the owning trait as a supertrait and qualifying every use as `Self::Type`. The attribute does both jobs at once: `#[use_type(HasScalarType::Scalar)]` adds the trait as a supertrait (on a `#[cgp_component]`) or a `where` bound (on a `#[cgp_impl]`/`#[cgp_fn]`), and rewrites each bare `Scalar` to `<Self as HasScalarType>::Scalar`. This is the preferred form even for the built-in error type: the legacy component definition
@@ -113,7 +148,30 @@ pub trait CanLoad {
 }
 ```
 
-One rule bounds the rewrite: it fires only on the bare identifier of an *imported* type. A construct's own **local associated type always stays qualified as `Self::Assoc`** — a handler that declares `type Output` writes `Self::Output`, never a bare `Output`, because `Output` is the trait's own type rather than one imported from another trait. A mixed signature such as `Result<Self::Output, Error>` is therefore exactly right: the local `Self::Output` stays qualified while the imported foreign `Error` is written bare. Reserve an explicit supertrait or [`#[extend]`](../reference/attributes/extend.md) for a capability supertrait that has no associated type to import.
+One rule bounds the rewrite: it fires only on the bare identifier of an *imported* type. A construct's own **local associated type always stays qualified as `Self::Assoc`** — a handler that declares `type Output` writes `Self::Output`, never a bare `Output`, because `Output` is the trait's own type rather than one imported from another trait. A mixed signature such as `Result<Self::Output, Error>` is therefore exactly right: the local `Self::Output` stays qualified while the imported foreign `Error` is written bare. When a capability supertrait has no associated type to import, add it with [`#[extend]`](../reference/attributes/extend.md) rather than `#[use_type]`, as the next section describes.
+
+## Add supertraits with `#[extend]`, not native `:` syntax
+
+Add a non-type capability supertrait to a [`#[cgp_component]`](../reference/macros/cgp_component.md) trait with [`#[extend(...)]`](../reference/attributes/extend.md), rather than writing the native `pub trait CanDoX: Supertrait` form. Both produce the same trait with the same supertrait, but the attribute reads as an import — a capability the trait re-exports — which matches how CGP actually uses supertraits: as declared dependencies, not as a base class. Native `:` supertrait syntax tends to read as inheritance to programmers coming from object-oriented languages, suggesting an is-a relationship to a parent that a CGP component does not have. `#[extend(...)]` avoids that misreading and pairs symmetrically with [`#[uses(...)]`](../reference/attributes/uses.md): `#[uses]` imports a capability for the implementation's private use, `#[extend]` re-exports one as part of the trait's public contract. The native form:
+
+```rust
+#[cgp_component(Greeter)]
+pub trait CanGreet: HasName {
+    fn greet(&self) -> String;
+}
+```
+
+becomes:
+
+```rust
+#[cgp_component(Greeter)]
+#[extend(HasName)]
+pub trait CanGreet {
+    fn greet(&self) -> String;
+}
+```
+
+`#[extend]` is the tool for a supertrait that contributes only a *capability* — like `HasName` here, which `CanGreet` depends on but whose value it reads through the getter rather than naming an abstract type in the signature. When the supertrait is instead an **abstract-type component** whose associated type the signature does name, use [`#[use_type]`](../reference/attributes/use_type.md) instead, exactly as the previous section showed with `HasErrorType`: `#[use_type]` adds the supertrait *and* rewrites the bare type, which `#[extend]` does not, so it is the recommended form for abstract-type components. In [`#[cgp_fn]`](../reference/macros/cgp_fn.md), whose `where` clauses are impl-side dependencies, `#[extend]` is the only way to declare a supertrait at all.
 
 ## Dispatch per type with `open` and namespaces, not `UseDelegate`
 
@@ -148,6 +206,6 @@ Because `open` and namespaces ride `RedirectLookup`, **a new component you inten
 
 ## When the explicit forms are still right
 
-A handful of cases genuinely need an explicit form, and reaching for one there is not a regression. Keep an explicit `where` clause for a bound `#[uses]` cannot express — anything with associated-type equality. Name the context explicitly, as `impl<Context> Trait for Context`, when you must attach a lifetime or higher-ranked bound the sugar cannot carry. Keep a hand-written supertrait for a capability that supplies no associated type to import. Write a raw provider-trait `impl` when you need the inside-out shape directly, for instance a provider whose `Self` is a concrete context rather than a generic one. And keep a local associated type qualified as `Self::Output` always — it is never a `#[use_type]` import. In every other case, the modern idiom is the one to write.
+A handful of cases genuinely need an explicit form, and reaching for one there is not a regression. Keep an explicit `where` clause for a bound `#[uses]` cannot express — anything with associated-type equality. Name the context explicitly, as `impl<Context> Trait for Context`, when you must attach a lifetime or higher-ranked bound the sugar cannot carry. Reach for [`#[cgp_getter]`](../reference/macros/cgp_getter.md) when you specifically want full control over which field a getter reads from, chosen per context at wiring time. Write a raw provider-trait `impl` when you need the inside-out shape directly, for instance a provider whose `Self` is a concrete context rather than a generic one. And keep a local associated type qualified as `Self::Output` always — it is never a `#[use_type]` import. In every other case, the modern idiom is the one to write.
 
 Further reference: the per-construct mechanics live in the reference documents linked above; [modularity hierarchy](modularity-hierarchy.md) frames how much CGP a problem needs, and [consumer and provider traits](consumer-and-provider-traits.md) explains the duality the provider idioms rest on.

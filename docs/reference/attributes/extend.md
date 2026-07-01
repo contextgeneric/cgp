@@ -8,7 +8,7 @@
 
 The distinction from [`#[uses]`](uses.md) is the whole point. Both attributes accept the same simplified trait-path syntax and both feel like imports, but they import into different places. `#[uses(...)]` adds a hidden `Self` bound to the impl only — a private dependency that callers never see. `#[extend(...)]` adds a supertrait to the trait — a public requirement that becomes part of the contract. The natural way to describe the pair is that `#[extend(...)]` is the `pub use` equivalent of `#[uses(...)]`: where `#[uses(...)]` imports a capability for the implementation's own use, `#[extend(...)]` re-exports it as part of what the trait guarantees.
 
-This framing also explains when to reach for it. `#[extend(...)]` exists to make supertraits approachable for programmers who are not yet comfortable with Rust's supertrait syntax, by presenting them as imports. Authors who are comfortable writing `pub trait Foo: Bar` directly can do so in [`#[cgp_component]`](../macros/cgp_component.md); the choice there is stylistic. In `#[cgp_fn]`, where direct supertrait syntax is unavailable, `#[extend(...)]` is the mechanism.
+This framing also explains which supertraits `#[extend(...)]` is for and why it is the preferred way to declare them. `#[extend(...)]` is the tool for a **non-type capability supertrait** — a trait like `HasName` or `CanCalculateArea` that a component depends on but whose associated types it does not name in its own signatures. In [`#[cgp_component]`](../macros/cgp_component.md), prefer `#[extend(HasName)]` over the native `pub trait CanGreet: HasName` form: the native `:` syntax reads as inheritance to programmers coming from object-oriented languages, suggesting an is-a relationship to a parent class that a CGP component does not have, whereas `#[extend(...)]` reads as importing a capability the trait re-exports — which is what a CGP supertrait actually is. When the supertrait is instead an **abstract-type component** whose associated type the signatures reference — such as [`HasErrorType`](../components/has_error_type.md) through its `Error` — prefer [`#[use_type]`](use_type.md), which adds the supertrait *and* rewrites the bare type; `#[use_type]` is the recommended form for abstract-type components. In [`#[cgp_fn]`](../macros/cgp_fn.md), where direct supertrait syntax is unavailable because the body's `where` clauses are impl-side dependencies, `#[extend(...)]` is the only mechanism for a plain capability supertrait.
 
 ## Syntax
 
@@ -24,7 +24,7 @@ Each entry names a trait that becomes a supertrait of the generated trait, optio
 
 ## Expansion
 
-`#[extend(...)]` adds each listed bound as a supertrait of the generated trait, and the same bound also appears in the impl's `where` clause so the implementation may rely on it. Starting from a `#[cgp_fn]` definition that depends on an abstract `Scalar` type:
+`#[extend(...)]` adds each listed bound as a supertrait of the generated trait, and the same bound also appears in the impl's `where` clause so the implementation may rely on it. The example below uses the abstract-type trait `HasScalarType` to make the two-placement behavior visible in one signature; in production, an abstract-type supertrait like this is better declared with [`#[use_type]`](use_type.md), and `#[extend(...)]` is reserved for a non-type capability supertrait. Starting from a `#[cgp_fn]` definition that depends on an abstract `Scalar` type:
 
 ```rust
 pub trait HasScalarType {
@@ -78,7 +78,7 @@ pub trait CanCalculateArea {
 }
 ```
 
-is the same as `pub trait CanCalculateArea: HasScalarType`. Here `#[extend(...)]` buys nothing the language does not already offer — it is available only so that the `use`/`pub use` pairing with `#[uses(...)]` reads consistently across both macros.
+is the same as `pub trait CanCalculateArea: HasScalarType`. Although `#[extend(...)]` generates nothing the language cannot already spell here, it is still the preferred way to write the supertrait: it presents the bound as an import rather than as OOP-style inheritance, and it keeps the `use`/`pub use` pairing with `#[uses(...)]` reading consistently across both macros.
 
 ## Examples
 
@@ -117,7 +117,7 @@ Because `HasScalarType` is a supertrait of `RectangleArea`, the abstract `Self::
 
 ## Related constructs
 
-`#[extend(...)]` is the `pub use` counterpart to [`#[uses]`](uses.md): the two share syntax but differ in placement, with `#[extend(...)]` adding public supertraits and `#[uses(...)]` adding hidden impl-side bounds. It is used in [`#[cgp_fn]`](../macros/cgp_fn.md), where it is the only way to declare supertraits, and in [`#[cgp_component]`](../macros/cgp_component.md), where it duplicates the native supertrait syntax for stylistic consistency. When the supertrait is an abstract-type trait whose associated type is referenced throughout the signature, prefer [`#[use_type]`](use_type.md), which adds the supertrait *and* rewrites bare type names into fully-qualified form. To add `where` clauses (not supertraits) to a `#[cgp_fn]` trait definition, use [`#[extend_where]`](extend_where.md).
+`#[extend(...)]` is the `pub use` counterpart to [`#[uses]`](uses.md): the two share syntax but differ in placement, with `#[extend(...)]` adding public supertraits and `#[uses(...)]` adding hidden impl-side bounds. It is used in [`#[cgp_fn]`](../macros/cgp_fn.md), where it is the only way to declare supertraits, and in [`#[cgp_component]`](../macros/cgp_component.md), where it is the preferred alternative to native supertrait syntax because it reads as an import rather than as OOP-style inheritance. When the supertrait is an abstract-type trait whose associated type is referenced throughout the signature, prefer [`#[use_type]`](use_type.md), which adds the supertrait *and* rewrites bare type names into fully-qualified form. To add `where` clauses (not supertraits) to a `#[cgp_fn]` trait definition, use [`#[extend_where]`](extend_where.md).
 
 ## Source
 
