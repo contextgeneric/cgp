@@ -78,3 +78,13 @@ into the existing stage rather than collapsing the pipeline.
 
 **5. Custom keywords go through `define_keyword!` + `IsKeyword`** (see
 [src/macros/keyword.rs](src/macros/keyword.rs) and `types/keyword*.rs`).
+
+**6. Keep inline docs brief and current as you go.** When you review a file — whether to change it
+or to write its [implementation document](../../../docs/implementation/README.md) — improve the
+inline docs in the same pass. Add a one-line `///` to any public struct, trait, or function that
+lacks one, saying what it is or does (for a pipeline stage, its role in the sequence); prefer naming
+the *why* or a corner case over restating the signature. Fix a doc that no longer matches the code,
+and clarify genuinely confusing code (for example, why `generic_params_to_path` keeps only type
+parameters) with a short comment. Keep them terse: delete a comment that only restates obvious code,
+and do not narrate line by line. Deep mechanics belong in the implementation document, not in a wall
+of inline prose — link to it rather than duplicating it.

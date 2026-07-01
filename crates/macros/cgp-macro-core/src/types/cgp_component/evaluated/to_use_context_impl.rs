@@ -6,6 +6,8 @@ use crate::types::cgp_component::EvaluatedCgpComponent;
 use crate::types::provider_impl::ItemProviderImpl;
 
 impl EvaluatedCgpComponent {
+    /// Build the `UseContext` provider impl, which satisfies the provider trait by
+    /// routing back through the context's own consumer-trait impl.
     pub fn to_use_context_impl(&self) -> syn::Result<ItemProviderImpl> {
         let component_name = &self.args.component_name;
         let context_type_ident = &self.args.context_ident;

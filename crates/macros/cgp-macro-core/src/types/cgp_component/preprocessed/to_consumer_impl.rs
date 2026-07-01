@@ -6,6 +6,8 @@ use crate::types::cgp_component::PreprocessedCgpComponent;
 use crate::types::generics::TypeGenerics;
 
 impl PreprocessedCgpComponent {
+    /// Build the consumer blanket impl: any context implementing the provider
+    /// trait for itself gets the consumer trait, forwarding each method to it.
     pub fn to_consumer_item_impl(&self) -> syn::Result<ItemImpl> {
         let consumer_trait = &self.item_trait;
         let provider_ident = &self.args.provider_ident;

@@ -8,6 +8,8 @@ use crate::types::path::{PathElement, UniPath};
 use crate::types::provider_impl::ItemProviderImpl;
 
 impl EvaluatedCgpComponent {
+    /// Build the `RedirectLookup` provider impl used by namespaces and `open`. A
+    /// component's type parameters extend the lookup path via `ConcatPath`.
     pub fn to_redirect_lookup_impl(&self) -> syn::Result<ItemProviderImpl> {
         let consumer_trait = &self.consumer_trait;
         let provider_trait = &self.provider_trait;
@@ -76,6 +78,9 @@ impl EvaluatedCgpComponent {
     }
 }
 
+/// Collect the component's *type* parameters into a lookup path. Lifetimes and
+/// const params are deliberately excluded (only types key the redirect path),
+/// so this returns `None` when the component has no type parameters.
 fn generic_params_to_path(generics: &Generics) -> syn::Result<Option<UniPath>> {
     let type_params = generics
         .params

@@ -1,0 +1,73 @@
+# `#[cgp_component]` — implementation
+
+`#[cgp_component]` turns one consumer trait into a full component by running a three-stage transform pipeline that parses the trait, derives the provider trait and blanket impls, and emits the standard provider impls. This document covers how that pipeline is built; for what the macro accepts and the expansion a user sees, read the reference document [reference/macros/cgp_component.md](../../reference/macros/cgp_component.md).
+
+## Entry point
+
+The macro is driven by the thin `cgp_component` function in [cgp-macro-lib/src/cgp_component.rs](../../../crates/macros/cgp-macro-lib/src/cgp_component.rs), which follows the canonical entry-point shape: it parses the attribute tokens into a [`CgpComponentArgs`](../asts/cgp_component.md) and the item tokens into a `syn::ItemTrait`, assembles them into an `ItemCgpComponent`, and runs the pipeline in one expression, wrapping the resulting items in a `quote!`:
+
+```rust
+let item_cgp_component = ItemCgpComponent { args, item_trait };
+let derived = item_cgp_component.preprocess()?.eval()?.to_items()?;
+```
+
+All real logic lives in `cgp-macro-core`; the entry function contains no codegen of its own. The `syn::parse2` of the attribute is where the argument grammar is enforced, so a malformed attribute fails here through [`CgpComponentArgs`](../asts/cgp_component.md)'s `Parse` impl, and applying the macro to a non-trait item fails at the `syn::parse2::<ItemTrait>` call.
+
+## Pipeline
+
+The macro moves through three explicit stages, each a method on the AST type produced by the previous one; the [`cgp_component` AST stack](../asts/cgp_component.md) documents these types in full, and this section only names what each stage contributes.
+
+The **preprocess** stage (`ItemCgpComponent::preprocess`) strips the CGP-specific attributes off the trait through `CgpComponentAttributes::preprocess`, separating the modifier attributes (`#[derive_delegate]`, `#[prefix]`, and the rest) from the plain trait, and produces a `PreprocessedCgpComponent` holding the args, the cleaned `ItemTrait`, and the parsed attributes. No code is generated yet; this stage only normalizes the input.
+
+The **eval** stage (`PreprocessedCgpComponent::eval`) is where the core derivation happens. It builds the component marker struct, the provider trait, the provider blanket impl, and the consumer blanket impl, and packages them with the original consumer trait and the attributes into an `EvaluatedCgpComponent`. Each derived item is produced by a dedicated method — `to_component_struct`, `to_provider_trait_and_blanket_impl`, and `to_consumer_item_impl` — described under Generated items.
+
+The **to_items** stage (`EvaluatedCgpComponent::to_items`) collects the five core items in emission order and appends the standard provider impls — the `UseContext` impl, the `RedirectLookup` impl, one `UseDelegate` impl per `#[derive_delegate]` attribute, and one prefix impl per `#[prefix]` attribute — returning the `Vec<syn::Item>` the entry function emits.
+
+## Generated items
+
+The macro emits five core items followed by the standard provider impls, and the emission order is fixed by `EvaluatedCgpComponent::to_items`: consumer trait, consumer blanket impl, provider trait, provider blanket impl, component struct, then the provider impls. This order is what the canonical snapshot in `component_macro.rs` pins, so it is a contract, not an incidental detail.
+
+The **consumer trait** is emitted unchanged from the preprocessed `ItemTrait` — the macro clones it into the output verbatim, minus the CGP attributes stripped during preprocess.
+
+The **provider trait** is built by `PreprocessedCgpComponent::to_provider_trait` (in `preprocessed/to_provider_trait.rs`). It clones the consumer trait, renames it to the provider identifier, inserts the context type parameter (`__Context__` by default) at the front of the generics, and moves the consumer trait's supertraits into a `__Context__: <supertraits>` predicate in the `where` clause. It then replaces the trait's sole supertrait with the `IsProviderFor<Component, __Context__, (Params)>` bound, where the `Params` tuple comes from [`parse_is_provider_params`](../functions/parse/is_provider_params.md) over the consumer generics. Finally it rewrites every `self`/`Self` in the signatures to the context value and type using the `ReplaceSelfType`, `ReplaceSelfReceiver`, and `ReplaceSelfValue` visitors, so a method that took `&self` now takes `__context__: &__Context__`. Local associated types declared by the trait are collected first and passed to the type visitor as `skip_assoc_types`, so a reference to one of the trait's own associated types is left qualified rather than being rewritten onto the context.
+
+The **provider blanket impl** is built alongside the provider trait by `to_provider_trait_and_blanket_impl` (in `preprocessed/to_provider_blanket_impl.rs`), which returns both so they share one construction of the provider trait. It implements the provider trait for a fresh `__Provider__` parameter under two `where` predicates: `__Provider__: DelegateComponent<Component> + IsProviderFor<Component, __Context__, (Params)>`, and `<__Provider__ as DelegateComponent<Component>>::Delegate: <ProviderTrait>`. The method bodies forward each call to the delegate through [`provider_trait_to_impl_items`](../functions/derive/delegated_impls.md). The `IsProviderFor` bound sits on `__Provider__` itself, beside `DelegateComponent`, which is what threads a component's dependencies down the delegation chain.
+
+The **consumer blanket impl** is built by `to_consumer_item_impl` (in `preprocessed/to_consumer_impl.rs`). It implements the consumer trait for `__Context__` under the predicate `__Context__: <ProviderTrait><__Context__, …>` (plus a `__Context__: <supertraits>` predicate when the consumer trait has supertraits), and forwards each consumer method to the provider through the same delegated-impl helper. This is the bridge that makes `context.method()` resolve once a context implements the provider trait for itself.
+
+The **component struct** is built by `to_component_struct` as an `EmptyStruct` from the component name and its generics, emitting `pub struct <Name>Component;` (carrying `PhantomData` generics when the component name has type parameters).
+
+Beyond the five core items, `to_items` appends the standard provider impls. The **`UseContext` impl** (`evaluated/to_use_context_impl.rs`) implements the provider trait for `UseContext` by routing each method back through the context's own consumer-trait impl, under `__Context__: <ConsumerTrait>`. The **`RedirectLookup` impl** (`evaluated/to_redirect_lookup_impl.rs`) implements the provider trait for `RedirectLookup<__Components__, __Path__>`, the mechanism behind namespaces and the `open` statement; when the component has type parameters it appends them to the lookup path through `ConcatPath` (so a parameter `T` extends the path by `PathCons<T, Nil>`), and when it has none it looks up `__Path__` directly. Each `#[derive_delegate]` attribute adds a **`UseDelegate` impl** via `to_use_delegate_impls`, and each `#[prefix]` attribute (from a `#[cgp_namespace]`) adds a **prefix impl** via `to_prefix_impls`.
+
+## Behavior and corner cases
+
+A supertrait on the consumer trait is not kept as a supertrait on the provider trait; it becomes a `where` predicate on the context. `to_provider_trait` moves the consumer supertraits into `__Context__: <supertraits>` and replaces the provider trait's supertrait list with the single `IsProviderFor` bound, so `pub trait CanGreet: HasName` yields a provider trait whose only supertrait is `IsProviderFor<…>` and whose `where` clause carries `__Context__: HasName`. The same `__Context__: HasName` predicate is threaded onto the consumer blanket impl, the `UseContext` impl, and the `RedirectLookup` impl, so every generated impl repeats the supertrait as a context bound.
+
+A default method body is preserved into the provider trait. Because `to_provider_trait` clones the whole consumer trait including method bodies and only rewrites `self`/`Self`, a consumer method with a default body becomes a provider-trait method with the same body rewritten onto `__context__`; a provider written as an empty `#[cgp_impl]` then inherits that default. This is why an empty provider impl can satisfy a component whose methods all have defaults.
+
+Generic parameters on the component are appended after the context in the provider trait and grouped into the `IsProviderFor` params tuple. A lifetime parameter is kept ahead of `__Context__` (lifetimes must precede type parameters in Rust generics) and is lifted into `Life<'a>` inside the params tuple by `parse_is_provider_params`, so `HasReference<'a, T>` produces `IsProviderFor<…, (Life<'a>, T)>`. In the `RedirectLookup` impl only *type* parameters extend the lookup path — `generic_params_to_path` filters to `GenericParam::Type`, so lifetimes and const parameters are excluded from the `ConcatPath` path even though the lifetime still appears in the params tuple.
+
+The reserved identifiers are emitted literally. The context parameter is `__Context__` unless the `context` key overrides it, the provider parameter in the provider blanket impl is the hardcoded `__Provider__`, and the `RedirectLookup` impl introduces `__Components__` and `__Path__`. These names are chosen to avoid clashing with a user's own type parameters and appear verbatim in the generated code and every snapshot.
+
+## Known issues
+
+A const generic parameter on the component causes a panic rather than a clean error. `parse_is_provider_params` reaches `unimplemented!("const generic parameters are not yet supported in CGP traits")` for a `GenericParam::Const`, so `#[cgp_component]` on a trait with a const generic aborts macro expansion with a panic instead of returning a `syn::Error` pointing at the offending parameter. The correct behavior would be to reject the input with a spanned error, or to support const parameters in the params tuple; until then, components cannot carry const generics. This limitation has no expansion snapshot (the macro cannot produce output) and is a candidate for a failure case in `cgp-macro-tests`.
+
+## Snapshots
+
+The canonical full-expansion snapshot and the macro's distinct variants live in the concept targets that own the corresponding feature, per [crates/tests/CLAUDE.md](../../../crates/tests/CLAUDE.md); this section is the central index of which `#[cgp_component]` expansions are pinned and which are not.
+
+- The plain, no-parameter expansion is pinned in [basic_delegation/component_macro.rs](../../../crates/tests/cgp-tests/tests/basic_delegation/component_macro.rs) — a simple consumer trait with one method, the reference expansion other concepts reuse without re-snapshotting.
+- The supertrait-plus-default-method variant is pinned in [basic_delegation/default_methods.rs](../../../crates/tests/cgp-tests/tests/basic_delegation/default_methods.rs) — shows the supertrait lowered to a `__Context__` `where` predicate and a default body copied into the provider trait.
+- The lifetime-and-type-parameter variant is pinned in [generic_components/component_lifetime.rs](../../../crates/tests/cgp-tests/tests/generic_components/component_lifetime.rs) — shows the lifetime kept ahead of `__Context__`, lifted to `Life<'a>` in the params tuple, and the type parameter appended to the `RedirectLookup` path via `ConcatPath`.
+- The namespace and prefix variants — the prefix impls `to_prefix_impls` emits — are pinned across the `namespaces` target, including [namespaces/namespace_basic.rs](../../../crates/tests/cgp-tests/tests/namespaces/namespace_basic.rs), [namespaces/namespace_symbol_path.rs](../../../crates/tests/cgp-tests/tests/namespaces/namespace_symbol_path.rs), [namespaces/namespace_type_path.rs](../../../crates/tests/cgp-tests/tests/namespaces/namespace_type_path.rs), [namespaces/namespace_multi.rs](../../../crates/tests/cgp-tests/tests/namespaces/namespace_multi.rs), [namespaces/redirect_lookup.rs](../../../crates/tests/cgp-tests/tests/namespaces/redirect_lookup.rs), [namespaces/default_impls.rs](../../../crates/tests/cgp-tests/tests/namespaces/default_impls.rs), and [namespaces/prefix_default_namespace.rs](../../../crates/tests/cgp-tests/tests/namespaces/prefix_default_namespace.rs).
+
+Two variants have no snapshot yet. There is no snapshot of the `UseDelegate` impl that a `#[derive_delegate]` attribute adds to a `#[cgp_component]` definition — that attribute's output is exercised through the error and handler families rather than pinned on a bare component here (see [reference/attributes/derive_delegate.md](../../reference/attributes/derive_delegate.md)). And there is no snapshot of a component carrying a type parameter but no lifetime, distinct from the combined lifetime-and-type case above; the type-only path through `generic_params_to_path` is therefore only covered incidentally.
+
+## Tests
+
+Beyond the snapshots above, the behavioral tests in [crates/tests/cgp-tests](../../../crates/tests/cgp-tests) verify that the generated wiring actually works: [basic_delegation/default_methods.rs](../../../crates/tests/cgp-tests/tests/basic_delegation/default_methods.rs) confirms at run time that an empty provider impl picks up the default method bodies and that `App.greet()` returns the expected string, and [generic_components/component_lifetime.rs](../../../crates/tests/cgp-tests/tests/generic_components/component_lifetime.rs) checks the lifetime-carrying component wires and passes `check_components!`. The failure case in [cgp-macro-tests/tests/parser_rejections/cgp_component.rs](../../../crates/tests/cgp-macro-tests/tests/parser_rejections/cgp_component.rs) asserts that applying the macro to a non-trait item (a struct) is rejected at parse time rather than producing garbage output.
+
+## Source
+
+The entry point is `cgp_component` in [cgp-macro-lib/src/cgp_component.rs](../../../crates/macros/cgp-macro-lib/src/cgp_component.rs). The pipeline and its AST types live in [cgp-macro-core/src/types/cgp_component/](../../../crates/macros/cgp-macro-core/src/types/cgp_component/): argument parsing in `args/`, the provider trait and both blanket impls in `preprocessed/`, and the standard provider impls in `evaluated/`. The AST stack is documented in [asts/cgp_component.md](../asts/cgp_component.md); the shared codegen helpers it calls are documented in [functions/derive/delegated_impls.md](../functions/derive/delegated_impls.md) and [functions/parse/is_provider_params.md](../functions/parse/is_provider_params.md); the `parse_internal!` macro used throughout is documented in [macros/parse_internal.md](../macros/parse_internal.md).

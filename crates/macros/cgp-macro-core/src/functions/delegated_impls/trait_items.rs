@@ -7,6 +7,8 @@ use crate::functions::{
     parse_internal, signature_to_delegated_impl_item_fn, trait_to_impl_item_type,
 };
 
+/// Build impl items that forward each trait item (method, associated type, or
+/// const) to `delegate_type`, projecting types/consts through `provider_trait_path`.
 pub fn trait_items_to_delegated_impl_items(
     trait_items: &[TraitItem],
     delegate_type: &Type,

@@ -9,6 +9,9 @@ use crate::functions::{parse_internal, parse_is_provider_params, provider_trait_
 use crate::types::cgp_component::PreprocessedCgpComponent;
 
 impl PreprocessedCgpComponent {
+    /// Build the provider trait together with its blanket impl for `__Provider__`,
+    /// which inherits the provider trait from whatever `DelegateComponent` names.
+    /// Returns both so they share one construction of the provider trait.
     pub fn to_provider_trait_and_blanket_impl(&self) -> syn::Result<(ItemTrait, ItemImpl)> {
         let consumer_trait = &self.item_trait;
         let context_type = &self.args.context_ident;

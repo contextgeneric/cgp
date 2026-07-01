@@ -8,6 +8,9 @@ use syn::{Error, parse2};
 use crate::functions::strip_macro_prelude;
 pub use crate::macros::parse_internal;
 
+/// Parse a token stream into a `syn` type `T`, attaching an error that names both
+/// `T` and the offending tokens (prelude prefix stripped) on failure. Usually
+/// invoked through the `parse_internal!` macro.
 pub fn parse_internal<T>(body: TokenStream) -> Result<T, Error>
 where
     T: Parse,

@@ -66,10 +66,13 @@ that test exercises.
 ## Explain what each test covers
 
 Open every test file with a brief comment stating **what behavior it exercises**,
-and annotate individual tricky cases inline. Where it helps a reader, link to the
-owning reference document (for example `// see docs/reference/macros/cgp_impl.md`).
-Tests link **to** the documentation; the documentation never links back to a test
-(per `docs/CLAUDE.md`).
+and annotate individual tricky cases inline. Link to the owning **implementation
+document** — the one under `docs/implementation/` whose Tests and Snapshots
+sections index this test (for example `// see docs/implementation/entrypoints/cgp_impl.md`);
+that document is where test pointers live, since a reference document never links
+to a test (per `docs/CLAUDE.md`). You may additionally link to a reference
+document when a reader needs the user-facing semantics. Tests link **to** the
+documentation; the reference documents never link back to a test.
 
 ## Use macro snapshots sparingly
 
@@ -117,19 +120,27 @@ failure-case target:
   would not), and add a code comment explaining **why** the output is wrong and
   **what the correct output should be**.
 
-Every failure case must also be recorded in the reference document that owns the
-construct, under its `## Known issues` section (the heading `docs/CLAUDE.md`
-mandates), describing the behavior without referring to the test. Put a link from
-the test's comment to that reference document.
+Every failure case must also be recorded in the construct's **implementation
+document** under `docs/implementation/`, in its `## Known issues` section and
+indexed from its `## Tests` section, describing the behavior without referring to
+the test. When the failure has a user-visible consequence, note that in the
+reference document's `## Known issues` section too and cross-link the two. Put a
+link from the test's comment to the implementation document.
 
 ## Keep the docs in sync
 
-This suite is one of the four views of CGP's truth, alongside the macro
-implementation in `cgp-macro-core`, the reference documents in `docs/reference`, and
-the `/cgp` skill (see `docs/CLAUDE.md`). When a test reveals or pins a behavior
-worth documenting, update the reference document to explain that behavior directly —
-without referring to the test. When you move a test that a reference document's
-`## Source` section links to, update the link in the same change.
+This suite is one of the views of CGP's truth, alongside the macro implementation
+in `cgp-macro-core`, the reference documents in `docs/reference`, the
+implementation documents in `docs/implementation`, and the `/cgp` skill (see
+`docs/CLAUDE.md`). The implementation documents are the ones tightly coupled to
+this suite: each macro's implementation document has a `## Tests` section linking
+every behavioral test and failure case that exercises it, and every entrypoint
+document a `## Snapshots` section indexing the expansion snapshots and calling out
+which variants are still missing. When a test reveals or pins a behavior worth
+documenting, update the implementation document to explain that behavior directly —
+and the reference document when the behavior is user-facing — without referring to
+the test. When you add, move, or rename a test, update the implementation
+document's Tests or Snapshots section in the same change.
 
 ## Running the suite
 

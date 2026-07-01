@@ -10,6 +10,9 @@ use crate::visitors::{
 };
 
 impl PreprocessedCgpComponent {
+    /// Derive the provider trait from the consumer trait: insert the leading
+    /// `Context` parameter, lower supertraits to a `Context` where-bound, set the
+    /// `IsProviderFor` supertrait, and rewrite `self`/`Self` to the context.
     pub fn to_provider_trait(&self) -> syn::Result<ItemTrait> {
         let component_name = &self.args.component_name;
         let provider_name = &self.args.provider_ident;

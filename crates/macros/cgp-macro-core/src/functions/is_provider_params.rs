@@ -6,6 +6,11 @@ use crate::exports::Life;
 use crate::parse_internal;
 use crate::types::generics::TypeGenerics;
 
+/// Convert a trait's generics into the `Params` tuple types of an `IsProviderFor`
+/// bound: type params pass through, lifetimes are lifted into `Life<'a>`.
+///
+/// Panics on a const generic parameter — see the const-generic limitation in
+/// docs/implementation/entrypoints/cgp_component.md.
 pub fn parse_is_provider_params(generics: &Generics) -> syn::Result<Punctuated<Type, Comma>> {
     let params = TypeGenerics::try_from(generics)?.generics.params;
 

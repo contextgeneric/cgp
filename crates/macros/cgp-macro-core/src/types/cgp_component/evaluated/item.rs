@@ -5,6 +5,9 @@ use crate::types::cgp_component::CgpComponentArgs;
 use crate::types::empty_struct::EmptyStruct;
 use crate::types::provider_impl::{ItemProviderImpl, ItemProviderImpls};
 
+/// Final pipeline stage: all derived items, plus the args and attributes needed
+/// to render the standard provider impls (`UseContext`, `RedirectLookup`, and the
+/// per-attribute `UseDelegate`/prefix impls).
 pub struct EvaluatedCgpComponent {
     pub component_struct: EmptyStruct,
     pub consumer_trait: ItemTrait,
@@ -16,6 +19,8 @@ pub struct EvaluatedCgpComponent {
 }
 
 impl EvaluatedCgpComponent {
+    /// Emit the five core items in fixed order (consumer trait, consumer impl,
+    /// provider trait, provider impl, marker struct), then the provider impls.
     pub fn to_items(&self) -> syn::Result<Vec<Item>> {
         let mut items = vec![
             Item::Trait(self.consumer_trait.clone()),
@@ -55,6 +60,7 @@ impl EvaluatedCgpComponent {
         Ok(provider_impls)
     }
 
+    /// One `UseDelegate` provider impl per `#[derive_delegate]` attribute.
     pub fn to_use_delegate_impls(&self) -> syn::Result<ItemProviderImpls> {
         let provider_trait = &self.provider_trait;
         let component_type = self.args.component_name.to_type();
@@ -71,6 +77,7 @@ impl EvaluatedCgpComponent {
         Ok(provider_impls)
     }
 
+    /// One namespace prefix impl per `#[prefix]` attribute (from `#[cgp_namespace]`).
     pub fn to_prefix_impls(&self) -> syn::Result<Vec<ItemImpl>> {
         let component_name = &self.args.component_name;
         let mut provider_impls = Vec::new();

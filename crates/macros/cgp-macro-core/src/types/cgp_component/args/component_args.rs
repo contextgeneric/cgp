@@ -5,6 +5,9 @@ use syn::{Error, Ident};
 use crate::types::cgp_component::CgpComponentRawArgs;
 use crate::types::ident::IdentWithTypeGenerics;
 
+/// The `#[cgp_component]` attribute args with defaults applied: the context type
+/// identifier (`__Context__` by default), the required provider trait name, and
+/// the component marker name (`{Provider}Component` by default).
 #[derive(Clone)]
 pub struct CgpComponentArgs {
     pub context_ident: Ident,

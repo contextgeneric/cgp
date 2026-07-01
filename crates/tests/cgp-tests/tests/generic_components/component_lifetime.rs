@@ -9,7 +9,9 @@
 //! `delegate_components!`, and `check_components!` wiring below is written plainly
 //! (its expansion is owned by the `basic_delegation` and `checking` concepts).
 //!
-//! See docs/reference/macros/cgp_component.md and docs/reference/types/life.md.
+//! See docs/implementation/entrypoints/cgp_component.md (Snapshots) for this
+//! lifetime-and-type-parameter variant, and docs/reference/macros/cgp_component.md
+//! and docs/reference/types/life.md for the user-facing semantics.
 
 use cgp::prelude::*;
 use cgp_macro_test_util::{snapshot_cgp_component, snapshot_cgp_provider};

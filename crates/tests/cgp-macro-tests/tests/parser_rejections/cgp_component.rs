@@ -1,7 +1,8 @@
 //! `#[cgp_component]` must be applied to a trait; applying it to another item
 //! is rejected at parse time.
 //!
-//! See docs/reference/macros/cgp_component.md.
+//! See docs/implementation/entrypoints/cgp_component.md (Tests) for this failure
+//! case, and docs/reference/macros/cgp_component.md for the user-facing semantics.
 
 use quote::quote;
 
