@@ -10,7 +10,8 @@ An async CGP method advertises a future whose auto-traits the caller cannot name
 #[cgp_component(ApiHandler)]
 #[async_trait]
 #[derive_delegate(UseDelegate<Api>)]
-pub trait CanHandleApi<Api>: HasErrorType {
+#[use_type(HasErrorType::Error)]
+pub trait CanHandleApi<Api> {
     type Request;
     type Response;
 
@@ -18,7 +19,7 @@ pub trait CanHandleApi<Api>: HasErrorType {
         &self,
         _api: PhantomData<Api>,
         request: Self::Request,
-    ) -> Result<Self::Response, Self::Error>;
+    ) -> Result<Self::Response, Error>;
 }
 ```
 

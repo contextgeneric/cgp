@@ -73,17 +73,16 @@ pub struct SqliteClient {
 }
 
 #[cgp_impl(new BuildSqliteClient)]
-impl<Code, Input> Handler<Code, Input>
-where
-    Self: HasSqliteOptions + CanRaiseError<sqlx::Error>,
-{
+#[uses(HasSqliteOptions, CanRaiseError<sqlx::Error>)]
+#[use_type(HasErrorType::Error)]
+impl<Code, Input> Handler<Code, Input> {
     type Output = SqliteClient;
 
     async fn handle(
         &self,
         _code: PhantomData<Code>,
         _input: Input,
-    ) -> Result<Self::Output, Self::Error> {
+    ) -> Result<Self::Output, Error> {
         let journal_mode =
             SqliteJournalMode::from_str(self.db_journal_mode()).map_err(Self::raise_error)?;
         let db_options = SqliteConnectOptions::from_str(self.db_options())
@@ -114,13 +113,12 @@ pub struct HttpClient {
 }
 
 #[cgp_impl(new BuildHttpClient)]
-impl<Code, Input> Handler<Code, Input>
-where
-    Self: HasHttpClientConfig + CanRaiseError<reqwest::Error>,
-{
+#[uses(HasHttpClientConfig, CanRaiseError<reqwest::Error>)]
+#[use_type(HasErrorType::Error)]
+impl<Code, Input> Handler<Code, Input> {
     type Output = HttpClient;
 
-    async fn handle(&self, _code: PhantomData<Code>, _input: Input) -> Result<Self::Output, Self::Error> {
+    async fn handle(&self, _code: PhantomData<Code>, _input: Input) -> Result<Self::Output, Error> {
         let http_client = Client::builder()
             .user_agent(self.http_user_agent())
             .connect_timeout(Duration::from_secs(5))
@@ -147,13 +145,12 @@ pub struct OpenAiClient {
 }
 
 #[cgp_impl(new BuildOpenAiClient)]
-impl<Code, Input> Handler<Code, Input>
-where
-    Self: HasOpenAiConfig + HasErrorType,
-{
+#[uses(HasOpenAiConfig)]
+#[use_type(HasErrorType::Error)]
+impl<Code, Input> Handler<Code, Input> {
     type Output = OpenAiClient;
 
-    async fn handle(&self, _code: PhantomData<Code>, _input: Input) -> Result<Self::Output, Self::Error> {
+    async fn handle(&self, _code: PhantomData<Code>, _input: Input) -> Result<Self::Output, Error> {
         let open_ai_client = openai::Client::new(self.open_ai_key());
         let open_ai_agent = open_ai_client
             .agent(self.open_ai_model())
@@ -165,7 +162,7 @@ where
 }
 ```
 
-Each provider states exactly what it needs from the context in its `where` clause as an [impl-side dependency](../concepts/impl-side-dependencies.md), and nothing more. A builder whose construction cannot fail — like `BuildOpenAiClient` — only requires [`HasErrorType`](../reference/components/has_error_type.md) so its output type aligns with the others, while a fallible one adds the `CanRaiseError` it needs.
+Each provider states exactly what it needs from the context through [`#[uses(...)]`](../reference/attributes/uses.md) as an [impl-side dependency](../concepts/impl-side-dependencies.md), and nothing more. A builder whose construction cannot fail — like `BuildOpenAiClient` — only imports the abstract error type with [`#[use_type(HasErrorType::Error)]`](../reference/attributes/use_type.md) so its output type aligns with the others, while a fallible one also lists the `CanRaiseError` it needs.
 
 ## Merging the outputs into the application
 
@@ -245,13 +242,12 @@ pub struct PostgresClient {
 }
 
 #[cgp_impl(new BuildPostgresClient)]
-impl<Code, Input> Handler<Code, Input>
-where
-    Self: HasPostgresUrl + CanRaiseError<sqlx::Error>,
-{
+#[uses(HasPostgresUrl, CanRaiseError<sqlx::Error>)]
+#[use_type(HasErrorType::Error)]
+impl<Code, Input> Handler<Code, Input> {
     type Output = PostgresClient;
 
-    async fn handle(&self, _code: PhantomData<Code>, _input: Input) -> Result<Self::Output, Self::Error> {
+    async fn handle(&self, _code: PhantomData<Code>, _input: Input) -> Result<Self::Output, Error> {
         let postgres_pool = PgPool::connect(self.postgres_url()).await.map_err(Self::raise_error)?;
         Ok(PostgresClient { postgres_pool })
     }

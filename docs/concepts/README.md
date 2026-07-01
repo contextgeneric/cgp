@@ -12,6 +12,7 @@ The authoring rules for concept documents, including when a cross-cutting idea e
 
 - [Bypassing coherence](coherence.md) — what Rust's coherence rules forbid, and the incoherent-impl-plus-local-wiring strategy CGP uses to work around them.
 - [Modularity hierarchy](modularity-hierarchy.md) — the ladder from a single blanket impl to per-type-per-provider wiring, and how to pick the lowest rung a use case needs.
+- [Modern idioms: a migration guide](modern-idioms.md) — the preferred higher-level forms for providers, dependencies, abstract types, and dispatch, mapped from the explicit forms they replace.
 - [Consumer and provider traits](consumer-and-provider-traits.md) — the trait duality at the heart of CGP and how it sidesteps coherence.
 - [Impl-side dependencies](impl-side-dependencies.md) — dependency injection through the `where` clause of blanket impls.
 - [Implicit arguments](implicit-arguments.md) — writing providers as ordinary functions whose arguments come from context fields.

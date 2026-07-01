@@ -29,14 +29,15 @@ The interpreter is a single CGP component whose `Code` type parameter is the pro
 #[cgp_component(Handler)]
 #[derive_delegate(UseDelegate<Code>)]
 #[derive_delegate(UseInputDelegate<Input>)]
-pub trait CanHandle<Code, Input>: HasErrorType {
+#[use_type(HasErrorType::Error)]
+pub trait CanHandle<Code, Input> {
     type Output;
 
     async fn handle(
         &self,
         _tag: PhantomData<Code>,
         input: Input,
-    ) -> Result<Self::Output, Self::Error>;
+    ) -> Result<Self::Output, Error>;
 }
 ```
 
@@ -44,20 +45,21 @@ Running a program is then one call to the consumer method, passing the program t
 
 ## Providers as interpreters
 
-A provider interprets one fragment by pattern-matching on the `Code` parameter through its generic arguments. Written with [`#[cgp_impl]`](../reference/macros/cgp_impl.md), an interpreter reads like an ordinary method body while the context stays generic, and its `where` clause states — as [impl-side dependencies](impl-side-dependencies.md) — everything the fragment needs from the context:
+A provider interprets one fragment by pattern-matching on the `Code` parameter through its generic arguments. Written with [`#[cgp_impl]`](../reference/macros/cgp_impl.md), an interpreter reads like an ordinary method body while the context stays generic, and it states everything the fragment needs from the context as [impl-side dependencies](impl-side-dependencies.md) — capability bounds through [`#[uses(...)]`](../reference/attributes/uses.md) and the remaining structural bounds in the `where` clause:
 
 ```rust
 #[cgp_impl(new HandleStreamChecksum)]
-impl<Context, Input, Hasher> Handler<Checksum<Hasher>, Input> for Context
+#[uses(CanRaiseError<Input::Error>)]
+#[use_type(HasErrorType::Error)]
+impl<Input, Hasher> Handler<Checksum<Hasher>, Input>
 where
-    Context: CanRaiseError<Input::Error>,
     Input: Unpin + TryStream,
     Hasher: Digest,
     Input::Ok: AsRef<[u8]>,
 {
     type Output = GenericArray<u8, Hasher::OutputSize>;
 
-    async fn handle(/* ... */) -> Result<Self::Output, Context::Error> {
+    async fn handle(/* ... */) -> Result<Self::Output, Error> {
         /* fold the stream into a digest */
     }
 }

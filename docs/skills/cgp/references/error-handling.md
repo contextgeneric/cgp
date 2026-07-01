@@ -21,14 +21,15 @@ pub type ErrorOf<Context> = <Context as HasErrorType>::Error;
 
 The `Debug` bound lets `Self::Error` flow into `.unwrap()` and straightforward logging without an extra constraint, and it is enforced on whatever concrete type a context chooses. `ErrorOf<Context>` is the convenient spelling of the associated-type path. Generic code that may fail returns `Result<T, Self::Error>` (or `Result<T, ErrorOf<Context>>`) and never names a concrete error.
 
-Centralizing the error type on one trait is what lets errors compose. A context trait that may fail supertraits `HasErrorType`, so every such trait refers to the *same* `Self::Error`; if each declared its own associated `Error`, a context bounded by several of them would face several incompatible error types with no way to unify them. `HasErrorType` carries no methods — it only declares the type. The behavior of producing errors lives in the traits that supertrait it.
+Centralizing the error type on one trait is what lets errors compose. A context trait that may fail depends on `HasErrorType`, so every such trait refers to the *same* error; if each declared its own associated `Error`, a context bounded by several of them would face several incompatible error types with no way to unify them. `HasErrorType` carries no methods — it only declares the type. The behavior of producing errors lives in the traits that build on it. The preferred way to author such a trait is [`#[use_type(HasErrorType::Error)]`](abstract-types.md), which adds `HasErrorType` as a supertrait *and* rewrites a bare `Error` in the signatures to `<Self as HasErrorType>::Error` — so you write neither `: HasErrorType` nor `Self::Error` by hand.
 
 Because `#[cgp_type]` generates a `UseType` blanket impl, a context fixes its error type by wiring the error-type component to `UseType<E>`, exactly as for any abstract type:
 
 ```rust
 #[cgp_component(Validator)]
-pub trait CanValidate: HasErrorType {
-    fn validate(&self) -> Result<(), Self::Error>;
+#[use_type(HasErrorType::Error)]
+pub trait CanValidate {
+    fn validate(&self) -> Result<(), Error>;
 }
 
 pub struct App;
@@ -40,23 +41,25 @@ delegate_components! {
 }
 ```
 
-Here `CanValidate` supertraits `HasErrorType`, so its `Self::Error` is the context's shared abstract error, and `App` fixes that error to `String`. The standalone backends (`cgp-error-anyhow`, `cgp-error-eyre`, `cgp-error-std`) supply ready-made providers that set `Error` to their respective library types instead. A context can equally implement the trait directly — `impl HasErrorType for App { type Error = String; }` — which makes plain that it is an ordinary trait with a `Debug`-bounded associated type.
+Here `#[use_type(HasErrorType::Error)]` makes `CanValidate` depend on the shared abstract error and lets `validate` name it as the bare `Error`, and `App` fixes that error to `String`. The standalone backends (`cgp-error-anyhow`, `cgp-error-eyre`, `cgp-error-std`) supply ready-made providers that set `Error` to their respective library types instead. A context can equally implement the trait directly — `impl HasErrorType for App { type Error = String; }` — which makes plain that it is an ordinary trait with a `Debug`-bounded associated type.
 
 ## `CanRaiseError` and `CanWrapError`: producing and enriching the error
 
-`CanRaiseError<SourceError>` is the consumer trait for turning a concrete source error into the context's abstract `Self::Error`, and `CanWrapError<Detail>` is the companion that attaches detail to an existing one. Both supertrait `HasErrorType`, and both are `#[cgp_component]`s that delegate per type so a context can handle each source error or detail with a different provider:
+`CanRaiseError<SourceError>` is the consumer trait for turning a concrete source error into the context's abstract error, and `CanWrapError<Detail>` is the companion that attaches detail to an existing one. Both import the error type with `#[use_type(HasErrorType::Error)]` — so they name it as the bare `Error` and gain `HasErrorType` as a supertrait — and both are `#[cgp_component]`s that delegate per type so a context can handle each source error or detail with a different provider:
 
 ```rust
 #[cgp_component(ErrorRaiser)]
 #[derive_delegate(UseDelegate<SourceError>)]
-pub trait CanRaiseError<SourceError>: HasErrorType {
-    fn raise_error(error: SourceError) -> Self::Error;
+#[use_type(HasErrorType::Error)]
+pub trait CanRaiseError<SourceError> {
+    fn raise_error(error: SourceError) -> Error;
 }
 
 #[cgp_component(ErrorWrapper)]
 #[derive_delegate(UseDelegate<Detail>)]
-pub trait CanWrapError<Detail>: HasErrorType {
-    fn wrap_error(error: Self::Error, detail: Detail) -> Self::Error;
+#[use_type(HasErrorType::Error)]
+pub trait CanWrapError<Detail> {
+    fn wrap_error(error: Error, detail: Detail) -> Error;
 }
 ```
 
@@ -66,19 +69,19 @@ A provider written against these bounds names neither the context nor its concre
 
 ```rust
 #[cgp_component(Loader)]
-pub trait CanLoad: HasErrorType {
-    fn load(&self, path: &str) -> Result<String, Self::Error>;
+#[use_type(HasErrorType::Error)]
+pub trait CanLoad {
+    fn load(&self, path: &str) -> Result<String, Error>;
 }
 
 #[cgp_impl(new LoadOrFail)]
-impl Loader for Context
-where
-    Context: CanRaiseError<String> + CanWrapError<String>,
-{
-    fn load(&self, path: &str) -> Result<String, Self::Error> {
+#[uses(CanRaiseError<String>, CanWrapError<String>)]
+#[use_type(HasErrorType::Error)]
+impl Loader {
+    fn load(&self, path: &str) -> Result<String, Error> {
         if path.is_empty() {
-            let err = Context::raise_error("empty path".to_owned());
-            return Err(Context::wrap_error(err, format!("while loading {path}")));
+            let err = Self::raise_error("empty path".to_owned());
+            return Err(Self::wrap_error(err, format!("while loading {path}")));
         }
         Ok(format!("contents of {path}"))
     }

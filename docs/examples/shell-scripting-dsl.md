@@ -66,14 +66,15 @@ Every step of a program is interpreted by one component: the [`Handler`](../refe
 #[cgp_component(Handler)]
 #[derive_delegate(UseDelegate<Code>)]
 #[derive_delegate(UseInputDelegate<Input>)]
-pub trait CanHandle<Code, Input>: HasErrorType {
+#[use_type(HasErrorType::Error)]
+pub trait CanHandle<Code, Input> {
     type Output;
 
     async fn handle(
         &self,
         _tag: PhantomData<Code>,
         input: Input,
-    ) -> Result<Self::Output, Self::Error>;
+    ) -> Result<Self::Output, Error>;
 }
 ```
 
@@ -91,15 +92,16 @@ This is the whole point of the design: how a program is *written* is completely 
 
 ## Interpreting one syntax with a provider
 
-An interpreter is a `Handler` provider that pattern-matches on a single syntax type through its `Code` parameter. Written with [`#[cgp_impl]`](../reference/macros/cgp_impl.md), it reads like an ordinary method implementation while `Context` stays generic. This provider interprets a `Checksum<Hasher>` syntax by consuming a stream of bytes and producing their digest:
+An interpreter is a `Handler` provider that pattern-matches on a single syntax type through its `Code` parameter. Written with [`#[cgp_impl]`](../reference/macros/cgp_impl.md), it reads like an ordinary method implementation — `self` is the context — while the context stays generic. This provider interprets a `Checksum<Hasher>` syntax by consuming a stream of bytes and producing their digest:
 
 ```rust
 pub struct Checksum<Hasher>(pub PhantomData<Hasher>);
 
 #[cgp_impl(new HandleStreamChecksum)]
-impl<Context, Input, Hasher> Handler<Checksum<Hasher>, Input> for Context
+#[uses(CanRaiseError<Input::Error>)]
+#[use_type(HasErrorType::Error)]
+impl<Input, Hasher> Handler<Checksum<Hasher>, Input>
 where
-    Context: CanRaiseError<Input::Error>,
     Input: Unpin + TryStream,
     Hasher: Digest,
     Input::Ok: AsRef<[u8]>,
@@ -107,13 +109,13 @@ where
     type Output = GenericArray<u8, Hasher::OutputSize>;
 
     async fn handle(
-        _context: &Context,
+        &self,
         _tag: PhantomData<Checksum<Hasher>>,
         mut input: Input,
-    ) -> Result<Self::Output, Context::Error> {
+    ) -> Result<Self::Output, Error> {
         let mut hasher = Hasher::new();
 
-        while let Some(bytes) = input.try_next().await.map_err(Context::raise_error)? {
+        while let Some(bytes) = input.try_next().await.map_err(Self::raise_error)? {
             hasher.update(bytes);
         }
 
@@ -122,7 +124,7 @@ where
 }
 ```
 
-Two things make this provider reusable across contexts. It matches `Handler<Checksum<Hasher>, …>` for *any* `Hasher` that implements `Digest`, so the one provider covers every hash algorithm. And it never names a concrete error type: the `CanRaiseError<Input::Error>` bound lets it convert a stream error into the context's own abstract error via [`CanRaiseError`](../reference/components/can_raise_error.md), so a context using `anyhow`, `eyre`, or a bespoke error type all reuse the same code. The `where` clause states everything the provider needs from the context as an [impl-side dependency](../concepts/impl-side-dependencies.md); a context that cannot meet it simply cannot wire this provider.
+Two things make this provider reusable across contexts. It matches `Handler<Checksum<Hasher>, …>` for *any* `Hasher` that implements `Digest`, so the one provider covers every hash algorithm. And it never names a concrete error type: the `CanRaiseError<Input::Error>` bound lets it convert a stream error into the context's own abstract error via [`CanRaiseError`](../reference/components/can_raise_error.md), so a context using `anyhow`, `eyre`, or a bespoke error type all reuse the same code. The [`#[uses(...)]`](../reference/attributes/uses.md) import and the `where` clause together state everything the provider needs from the context as [impl-side dependencies](../concepts/impl-side-dependencies.md); a context that cannot meet them simply cannot wire this provider.
 
 ## Dispatching on the program
 
@@ -203,18 +205,18 @@ A language extension adds new syntax and its interpreters without forking the co
 pub struct BytesToHex;
 
 #[cgp_impl(new HandleBytesToHex)]
-impl<Context, Code, Input> Handler<Code, Input> for Context
+#[use_type(HasErrorType::Error)]
+impl<Code, Input> Handler<Code, Input>
 where
-    Context: HasErrorType,
     Input: AsRef<[u8]>,
 {
     type Output = String;
 
     async fn handle(
-        _context: &Context,
+        &self,
         _tag: PhantomData<Code>,
         input: Input,
-    ) -> Result<String, Context::Error> {
+    ) -> Result<Self::Output, Error> {
         Ok(hex::encode(input))
     }
 }

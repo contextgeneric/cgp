@@ -25,22 +25,23 @@ pub type RuntimeOf<Context> = <Context as HasRuntimeType>::Runtime;
 
 Because the trait carries no provider-name argument, `#[cgp_type]` derives the provider name from the associated type: `Runtime` yields the provider trait `RuntimeTypeProvider` and the component marker `RuntimeTypeProviderComponent`. The `Runtime` associated type carries no bound, so any concrete type may be plugged in. The `RuntimeOf<Context>` alias is the convenient spelling of the resolved runtime type, used wherever writing `<Context as HasRuntimeType>::Runtime` in full would be noise.
 
-`HasRuntime` is a getter component defined with [`#[cgp_getter]`](../macros/cgp_getter.md), and it supertraits `HasRuntimeType` so the runtime type is available as the getter's return type:
+`HasRuntime` is a getter component defined with [`#[cgp_getter]`](../macros/cgp_getter.md), and it imports the runtime type with [`#[use_type(HasRuntimeType::Runtime)]`](../attributes/use_type.md) so the runtime type is available as the getter's return type under the bare name `Runtime`:
 
 ```rust
 #[cgp_getter]
-pub trait HasRuntime: HasRuntimeType {
-    fn runtime(&self) -> &Self::Runtime;
+#[use_type(HasRuntimeType::Runtime)]
+pub trait HasRuntime {
+    fn runtime(&self) -> &Runtime;
 }
 ```
 
-`#[cgp_getter]` derives the provider name from the trait name by stripping the `Has` prefix and appending `Getter`, so `HasRuntime` yields the provider trait `RuntimeGetter` and the component marker `RuntimeGetterComponent`. The `runtime` method borrows the runtime value out of a borrow of the context, returning `&Self::Runtime` — the abstract type supplied by `HasRuntimeType`.
+`#[cgp_getter]` derives the provider name from the trait name by stripping the `Has` prefix and appending `Getter`, so `HasRuntime` yields the provider trait `RuntimeGetter` and the component marker `RuntimeGetterComponent`. `#[use_type(HasRuntimeType::Runtime)]` adds `HasRuntimeType` as a supertrait and rewrites the bare `Runtime` to `<Self as HasRuntimeType>::Runtime`, so the `runtime` method borrows the runtime value out of a borrow of the context, returning `&Runtime` — the abstract type supplied by `HasRuntimeType` — without writing `Self::Runtime` by hand.
 
 ## Behavior
 
 `HasRuntimeType` behaves like any `#[cgp_type]` abstract-type component, so a context supplies its runtime *type* either by implementing `HasRuntimeType` directly or — far more commonly — by wiring `RuntimeTypeProviderComponent` to [`UseType<R>`](../providers/use_type.md) in `delegate_components!`. Wiring `RuntimeTypeProviderComponent: UseType<TokioRuntime>` makes the context resolve `HasRuntimeType` with `Runtime = TokioRuntime`, and from then on `RuntimeOf<Context>` is `TokioRuntime`. The full set of generated constructs — the consumer and provider blanket impls, the `UseContext` and `RedirectLookup` provider impls, and the `UseType`/`WithProvider` impls that make `UseType<R>` resolve the type — is exactly the `#[cgp_type]` expansion described in [`#[cgp_type]`](../macros/cgp_type.md).
 
-`HasRuntime` behaves like any `#[cgp_getter]` getter component, so a context supplies its runtime *value* either by implementing `HasRuntime` directly or by wiring `RuntimeGetterComponent` to a [`UseField`](../providers/use_field.md) provider that names the field holding the runtime. Because `#[cgp_getter]` generates a `UseField` provider impl, a context that stores its runtime in a `runtime` field wires `RuntimeGetterComponent: UseField<Symbol!("runtime")>`, and the getter reads that field. The supertrait bound on `HasRuntimeType` means a context cannot satisfy `HasRuntime` without also having declared its runtime type, which keeps `&Self::Runtime` well-defined.
+`HasRuntime` behaves like any `#[cgp_getter]` getter component, so a context supplies its runtime *value* either by implementing `HasRuntime` directly or by wiring `RuntimeGetterComponent` to a [`UseField`](../providers/use_field.md) provider that names the field holding the runtime. Because `#[cgp_getter]` generates a `UseField` provider impl, a context that stores its runtime in a `runtime` field wires `RuntimeGetterComponent: UseField<Symbol!("runtime")>`, and the getter reads that field. The `HasRuntimeType` supertrait that `#[use_type]` adds means a context cannot satisfy `HasRuntime` without also having declared its runtime type, which keeps the returned `&Runtime` well-defined.
 
 Together the two components let a context fully describe its runtime: one wiring entry fixes the abstract type, another fixes where the value lives. Context-generic providers then write `where Self: HasRuntime` and call `self.runtime()` to obtain a `&RuntimeOf<Self>`, never naming the concrete runtime. This is what makes the same task-running and effect-performing code reusable across a Tokio context, a mock context, and a test context with no changes beyond the wiring.
 

@@ -71,6 +71,8 @@ where
 
 The substitution is purely textual at the type level: it matches single-segment type paths with no arguments whose identifier equals the imported name (or its alias), and replaces them with `<Self as HasScalarType>::Scalar`. A bare `Scalar` anywhere — return type, implicit-argument annotation, or a `let` binding inside the body — is rewritten the same way, which is what makes nested uses work without the author writing any path.
 
+Because the rewrite fires only on the bare identifier of an *imported* type, a construct's own **local associated types must always stay qualified as `Self::Assoc`** and are left untouched. A `#[cgp_component]` trait or a `#[cgp_impl]` provider that declares its own `type Output` refers to it as `Self::Output`, never as a bare `Output`, precisely because `Output` is the construct's own type rather than one imported from another trait — `#[use_type]` neither imports it nor rewrites it, and it should not be listed in a `#[use_type]` attribute. This is why a mixed signature such as `Result<Self::Output, Error>` is correct and idiomatic: the local `Self::Output` stays qualified while the imported foreign type `Error` (from `#[use_type(HasErrorType::Error)]`) is written bare. Attempting to write the local type bare would leave a `Output` identifier that resolves to nothing, since the substitution pass has no entry for it.
+
 For `#[cgp_component]`, the trait is added as a supertrait rather than a `where` bound, and the rewrite touches the trait's own signatures. Starting from:
 
 ```rust

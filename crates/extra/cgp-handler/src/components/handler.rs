@@ -10,14 +10,15 @@ use crate::UseInputDelegate;
 #[prefix(@cgp.extra.handler in DefaultNamespace)]
 #[derive_delegate(UseDelegate<Code>)]
 #[derive_delegate(UseInputDelegate<Input>)]
-pub trait CanHandle<Code, Input>: HasErrorType {
+#[use_type(HasErrorType::Error)]
+pub trait CanHandle<Code, Input> {
     type Output;
 
     async fn handle(
         &self,
         _tag: PhantomData<Code>,
         input: Input,
-    ) -> Result<Self::Output, Self::Error>;
+    ) -> Result<Self::Output, Error>;
 }
 
 #[async_trait]
@@ -25,12 +26,13 @@ pub trait CanHandle<Code, Input>: HasErrorType {
 #[prefix(@cgp.extra.handler in DefaultNamespace)]
 #[derive_delegate(UseDelegate<Code>)]
 #[derive_delegate(UseInputDelegate<Input>)]
-pub trait CanHandleRef<Code, Input>: HasErrorType {
+#[use_type(HasErrorType::Error)]
+pub trait CanHandleRef<Code, Input> {
     type Output;
 
     async fn handle_ref(
         &self,
         _tag: PhantomData<Code>,
         input: &Input,
-    ) -> Result<Self::Output, Self::Error>;
+    ) -> Result<Self::Output, Error>;
 }

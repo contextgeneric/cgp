@@ -45,7 +45,8 @@ Every endpoint is one case of a single component that dispatches on a marker typ
 #[cgp_component(ApiHandler)]
 #[async_trait]
 #[derive_delegate(UseDelegate<Api>)]
-pub trait CanHandleApi<Api>: HasErrorType {
+#[use_type(HasErrorType::Error)]
+pub trait CanHandleApi<Api> {
     type Request;
     type Response;
 
@@ -53,7 +54,7 @@ pub trait CanHandleApi<Api>: HasErrorType {
         &self,
         _api: PhantomData<Api>,
         request: Self::Request,
-    ) -> Result<Self::Response, Self::Error>;
+    ) -> Result<Self::Response, Error>;
 }
 
 pub struct TransferApi;
@@ -69,22 +70,22 @@ Each endpoint is a provider for `ApiHandler` that depends on business capabiliti
 ```rust
 #[cgp_component(MoneyTransferrer)]
 #[async_trait]
-pub trait CanTransferMoney:
-    HasUserIdType + HasCurrencyType + HasQuantityType + HasErrorType
-{
+#[use_type(HasUserIdType::UserId, HasCurrencyType::Currency, HasQuantityType::Quantity, HasErrorType::Error)]
+pub trait CanTransferMoney {
     async fn transfer_money(
         &self,
-        sender: &Self::UserId,
-        recipient: &Self::UserId,
-        currency: &Self::Currency,
-        quantity: &Self::Quantity,
-    ) -> Result<(), Self::Error>;
+        sender: &UserId,
+        recipient: &UserId,
+        currency: &Currency,
+        quantity: &Quantity,
+    ) -> Result<(), Error>;
 }
 
 #[cgp_impl(new HandleTransfer<Request>)]
+#[uses(CanTransferMoney, CanRaiseHttpError<ErrUnauthorized, String>)]
+#[use_type(HasErrorType::Error)]
 impl<Api, Request> ApiHandler<Api>
 where
-    Self: CanTransferMoney + CanRaiseHttpError<ErrUnauthorized, String>,
     Request: HasLoggedInUser<Self> + HasTransferMoneyFields<Self>,
 {
     type Request = Request;
@@ -94,7 +95,7 @@ where
         &self,
         _api: PhantomData<Api>,
         request: Request,
-    ) -> Result<(), Self::Error> {
+    ) -> Result<(), Error> {
         let sender = request.logged_in_user().as_ref().ok_or_else(|| {
             Self::raise_http_error(ErrUnauthorized, "you must first login".into())
         })?;
@@ -122,9 +123,9 @@ Cross-cutting concerns are handlers that wrap another handler, which makes them 
 
 ```rust
 #[cgp_impl(new HandleFromRequest<Request, InHandler>)]
+#[use_type(HasErrorType::Error)]
 impl<Api, Request, InHandler> ApiHandler<Api>
 where
-    Self: HasErrorType,
     InHandler: ApiHandler<Self, Api>,
     Request: Into<InHandler::Request>,
 {
@@ -135,7 +136,7 @@ where
         &self,
         api: PhantomData<Api>,
         request: Self::Request,
-    ) -> Result<Self::Response, Self::Error> {
+    ) -> Result<Self::Response, Error> {
         InHandler::handle_api(self, api, request.into()).await
     }
 }
@@ -145,12 +146,13 @@ where
 
 ```rust
 #[cgp_impl(new UseBasicAuth<InHandler>)]
+#[uses(CanQueryUserHashedPassword, CanCheckPassword)]
+#[use_type(HasUserIdType::UserId, HasErrorType::Error)]
 impl<Api, InHandler> ApiHandler<Api>
 where
-    Self: CanQueryUserHashedPassword + CanCheckPassword,
     InHandler: ApiHandler<Self, Api>,
     InHandler::Request: HasLoggedInUserMut<Self> + HasBasicAuthHeader<Self>,
-    Self::UserId: Clone,
+    UserId: Clone,
 {
     type Request = InHandler::Request;
     type Response = InHandler::Response;
@@ -159,7 +161,7 @@ where
         &self,
         api: PhantomData<Api>,
         mut request: Self::Request,
-    ) -> Result<Self::Response, Self::Error> {
+    ) -> Result<Self::Response, Error> {
         if request.logged_in_user().is_none()
             && let Some((user_id, password)) = request.basic_auth_header()
         {
@@ -179,9 +181,9 @@ where
 
 ```rust
 #[cgp_impl(ResponseToJson<InHandler>)]
+#[use_type(HasErrorType::Error)]
 impl<Api, InHandler> ApiHandler<Api>
 where
-    Self: HasErrorType,
     InHandler: ApiHandler<Self, Api>,
 {
     type Request = InHandler::Request;
@@ -191,7 +193,7 @@ where
         &self,
         api: PhantomData<Api>,
         request: Self::Request,
-    ) -> Result<Self::Response, Self::Error> {
+    ) -> Result<Self::Response, Error> {
         let response = InHandler::handle_api(self, api, request).await?;
         Ok(Json(response))
     }
@@ -206,29 +208,33 @@ The business capabilities are satisfied by a provider that reads its data from c
 
 ```rust
 #[cgp_auto_getter]
-pub trait HasMockedUserBalances: HasUserIdType + HasCurrencyType + HasQuantityType {
+#[use_type(HasUserIdType::UserId, HasCurrencyType::Currency, HasQuantityType::Quantity)]
+pub trait HasMockedUserBalances {
     fn user_balances(
         &self,
-    ) -> &Arc<Mutex<BTreeMap<(Self::UserId, Self::Currency), Self::Quantity>>>;
+    ) -> &Arc<Mutex<BTreeMap<(UserId, Currency), Quantity>>>;
 }
 
 #[cgp_impl(UseMockedApp)]
+#[uses(
+    HasMockedUserBalances,
+    CanRaiseHttpError<ErrNotFound, String>,
+    CanRaiseHttpError<ErrBadRequest, String>,
+)]
+#[use_type(HasUserIdType::UserId, HasCurrencyType::Currency, HasQuantityType::Quantity, HasErrorType::Error)]
 impl MoneyTransferrer
 where
-    Self: HasMockedUserBalances
-        + CanRaiseHttpError<ErrNotFound, String>
-        + CanRaiseHttpError<ErrBadRequest, String>,
-    Self::Quantity: CheckedAdd + CheckedSub,
-    Self::UserId: Ord + Clone,
-    Self::Currency: Ord + Clone,
+    Quantity: CheckedAdd + CheckedSub,
+    UserId: Ord + Clone,
+    Currency: Ord + Clone,
 {
     async fn transfer_money(
         &self,
-        sender: &Self::UserId,
-        recipient: &Self::UserId,
-        currency: &Self::Currency,
-        quantity: &Self::Quantity,
-    ) -> Result<(), Self::Error> {
+        sender: &UserId,
+        recipient: &UserId,
+        currency: &Currency,
+        quantity: &Quantity,
+    ) -> Result<(), Error> {
         let mut balances = self.user_balances().lock().await;
         /* debit the sender, credit the recipient, raising on overflow or missing accounts */
         Ok(())

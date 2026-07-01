@@ -10,18 +10,19 @@
 
 ## Definition
 
-Both traits supertrait [`HasErrorType`](has_error_type.md), so `Self::Error` refers to the context's shared abstract error type. Each is a `#[cgp_component]`, making it a full component with a generated provider trait. `CanRaiseError` converts a source error into the abstract error:
+Both traits import the context's shared abstract error type with [`#[use_type(HasErrorType::Error)]`](../attributes/use_type.md), so a bare `Error` in either signature stands for the context's error rather than being written as `Self::Error`. Each is a `#[cgp_component]`, making it a full component with a generated provider trait. `CanRaiseError` converts a source error into the abstract error:
 
 ```rust
 #[cgp_component(ErrorRaiser)]
 #[prefix(@cgp.core.error in DefaultNamespace)]
 #[derive_delegate(UseDelegate<SourceError>)]
-pub trait CanRaiseError<SourceError>: HasErrorType {
-    fn raise_error(error: SourceError) -> Self::Error;
+#[use_type(HasErrorType::Error)]
+pub trait CanRaiseError<SourceError> {
+    fn raise_error(error: SourceError) -> Error;
 }
 ```
 
-The `SourceError` parameter is the concrete error being raised, and `raise_error` is an associated function — it takes the source error by value and returns `Self::Error`, without needing a `self` receiver, because raising an error is a property of the context type rather than of any particular value. The `#[cgp_component(ErrorRaiser)]` attribute names the provider trait `ErrorRaiser`, and [`#[derive_delegate(UseDelegate<SourceError>)]`](../attributes/derive_delegate.md) wires `UseDelegate` so the raise behavior can be dispatched per source-error type through a delegation table — a context can handle each `SourceError` with a different provider.
+The `SourceError` parameter is the concrete error being raised, and `raise_error` is an associated function — it takes the source error by value and returns the abstract `Error`, without needing a `self` receiver, because raising an error is a property of the context type rather than of any particular value. `#[use_type(HasErrorType::Error)]` adds `HasErrorType` as a supertrait and rewrites the bare `Error` to `<Self as HasErrorType>::Error`. The `#[cgp_component(ErrorRaiser)]` attribute names the provider trait `ErrorRaiser`, and [`#[derive_delegate(UseDelegate<SourceError>)]`](../attributes/derive_delegate.md) wires `UseDelegate` so the raise behavior can be dispatched per source-error type through a delegation table — a context can handle each `SourceError` with a different provider.
 
 `CanWrapError` has the same shape but takes an existing error plus a detail:
 
@@ -29,12 +30,13 @@ The `SourceError` parameter is the concrete error being raised, and `raise_error
 #[cgp_component(ErrorWrapper)]
 #[prefix(@cgp.core.error in DefaultNamespace)]
 #[derive_delegate(UseDelegate<Detail>)]
-pub trait CanWrapError<Detail>: HasErrorType {
-    fn wrap_error(error: Self::Error, detail: Detail) -> Self::Error;
+#[use_type(HasErrorType::Error)]
+pub trait CanWrapError<Detail> {
+    fn wrap_error(error: Error, detail: Detail) -> Error;
 }
 ```
 
-Here `wrap_error` takes the context's current `Self::Error` and a `Detail` value and returns a new `Self::Error` with the detail folded in. Its provider trait is `ErrorWrapper`, and it delegates per `Detail` type, so wrapping a string message and wrapping a structured detail can be handled by different providers.
+Here `wrap_error` takes the context's current `Error` and a `Detail` value and returns a new `Error` with the detail folded in. Its provider trait is `ErrorWrapper`, and it delegates per `Detail` type, so wrapping a string message and wrapping a structured detail can be handled by different providers.
 
 ## Behavior
 
@@ -50,19 +52,19 @@ A provider raises a concrete error into the abstract one and wraps a message ont
 use cgp::prelude::*;
 
 #[cgp_component(Loader)]
-pub trait CanLoad: HasErrorType {
-    fn load(&self, path: &str) -> Result<String, Self::Error>;
+#[use_type(HasErrorType::Error)]
+pub trait CanLoad {
+    fn load(&self, path: &str) -> Result<String, Error>;
 }
 
 #[cgp_impl(new LoadOrFail)]
-impl Loader for Context
-where
-    Context: CanRaiseError<String> + CanWrapError<String>,
-{
-    fn load(&self, path: &str) -> Result<String, Self::Error> {
+#[uses(CanRaiseError<String>, CanWrapError<String>)]
+#[use_type(HasErrorType::Error)]
+impl Loader {
+    fn load(&self, path: &str) -> Result<String, Error> {
         if path.is_empty() {
-            let err = Context::raise_error("empty path".to_owned());
-            return Err(Context::wrap_error(err, format!("while loading {path}")));
+            let err = Self::raise_error("empty path".to_owned());
+            return Err(Self::wrap_error(err, format!("while loading {path}")));
         }
         Ok(format!("contents of {path}"))
     }

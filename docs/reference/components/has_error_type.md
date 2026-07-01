@@ -40,8 +40,9 @@ A context declares its abstract error and generic code returns it without naming
 use cgp::prelude::*;
 
 #[cgp_component(Validator)]
-pub trait CanValidate: HasErrorType {
-    fn validate(&self) -> Result<(), Self::Error>;
+#[use_type(HasErrorType::Error)]
+pub trait CanValidate {
+    fn validate(&self) -> Result<(), Error>;
 }
 
 pub struct App;
@@ -53,7 +54,7 @@ delegate_components! {
 }
 ```
 
-Here `CanValidate` supertraits `HasErrorType`, so its `Result<(), Self::Error>` refers to the context's shared abstract error. `App` wires its error-type component to `UseType<String>`, fixing `Self::Error` to `String` (which satisfies the `Debug` bound). The same abstract error can equally be implemented directly:
+Here [`#[use_type(HasErrorType::Error)]`](../attributes/use_type.md) adds `HasErrorType` as a supertrait of `CanValidate` and rewrites the bare `Error` to `<Self as HasErrorType>::Error`, so `validate` returns the context's shared abstract error without writing `Self::Error`. `App` wires its error-type component to `UseType<String>`, fixing that error to `String` (which satisfies the `Debug` bound). The same abstract error can equally be implemented directly:
 
 ```rust
 impl HasErrorType for App {

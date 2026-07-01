@@ -130,10 +130,10 @@ The finest grain overrides wiring *inside* a provider rather than at the context
 pub struct SerializeIteratorWith<Provider = UseContext>(pub PhantomData<Provider>);
 
 #[cgp_impl(SerializeIteratorWith<Provider>)]
-impl<Context, Value, Provider> ValueSerializer<Value> for Context
+impl<Value, Provider> ValueSerializer<Value>
 where
     for<'a> &'a Value: IntoIterator,
-    Provider: for<'a> ValueSerializer<Context, <&'a Value as IntoIterator>::Item>,
+    Provider: for<'a> ValueSerializer<Self, <&'a Value as IntoIterator>::Item>,
 {
     fn serialize<S>(&self, value: &Value, serializer: S) -> Result<S::Ok, S::Error>
     where

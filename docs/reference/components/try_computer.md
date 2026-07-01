@@ -10,26 +10,27 @@ Returning the *context's* abstract error rather than a concrete one is what keep
 
 ## Definition
 
-`TryComputer` is a CGP component defined with `#[cgp_component]`, and its consumer trait `CanTryCompute` supertraits `HasErrorType` so that its method can return the context's abstract error:
+`TryComputer` is a CGP component defined with `#[cgp_component]`, and it imports the context's abstract error type through [`#[use_type(HasErrorType::Error)]`](../attributes/use_type.md) so that its method can return that error by the bare name `Error`:
 
 ```rust
 #[cgp_component(TryComputer)]
 #[derive_delegate(UseDelegate<Code>)]
 #[derive_delegate(UseInputDelegate<Input>)]
-pub trait CanTryCompute<Code, Input>: HasErrorType {
+#[use_type(HasErrorType::Error)]
+pub trait CanTryCompute<Code, Input> {
     type Output;
 
     fn try_compute(
         &self,
         _code: PhantomData<Code>,
         input: Input,
-    ) -> Result<Self::Output, Self::Error>;
+    ) -> Result<Self::Output, Error>;
 }
 ```
 
-The consumer trait `CanTryCompute<Code, Input>` mirrors `CanCompute` but for the fallible case. Its `try_compute` method takes `&self`, a `PhantomData<Code>` naming the computation, and the `Input` by value, returning `Result<Self::Output, Self::Error>` — the associated `Output` on success and the context's abstract `Error` (supplied by the `HasErrorType` supertrait) on failure. The component is wired through the generated `TryComputerComponent` marker, and the macro generates the provider trait `TryComputer<Context, Code, Input>` with the context moved into an explicit first parameter. The two `#[derive_delegate(...)]` attributes generate dispatching providers keyed on `Code` and on `Input`.
+The consumer trait `CanTryCompute<Code, Input>` mirrors `CanCompute` but for the fallible case. Its `try_compute` method takes `&self`, a `PhantomData<Code>` naming the computation, and the `Input` by value, returning `Result<Self::Output, Error>` — the associated `Output` on success and the context's abstract error on failure. `#[use_type(HasErrorType::Error)]` adds `HasErrorType` as a supertrait and rewrites the bare `Error` to `<Self as HasErrorType>::Error`, so the definition writes neither `HasErrorType` nor `Self::Error` by hand; the local associated type `Output` stays qualified as `Self::Output`, since it is the trait's own type. The component is wired through the generated `TryComputerComponent` marker, and the macro generates the provider trait `TryComputer<Context, Code, Input>` with the context moved into an explicit first parameter. The two `#[derive_delegate(...)]` attributes generate dispatching providers keyed on `Code` and on `Input`.
 
-The by-reference sibling `TryComputerRef` is identical except that it borrows its input. Its consumer trait `CanTryComputeRef` also supertraits `HasErrorType` and declares `fn try_compute_ref(&self, _code: PhantomData<Code>, input: &Input) -> Result<Self::Output, Self::Error>`, taking `&Input` where `CanTryCompute` takes `Input`. Both components are synchronous; their async-and-fallible counterpart is `Handler`.
+The by-reference sibling `TryComputerRef` is identical except that it borrows its input. Its consumer trait `CanTryComputeRef` also imports the error type with `#[use_type(HasErrorType::Error)]` and declares `fn try_compute_ref(&self, _code: PhantomData<Code>, input: &Input) -> Result<Self::Output, Error>`, taking `&Input` where `CanTryCompute` takes `Input`. Both components are synchronous; their async-and-fallible counterpart is `Handler`.
 
 ## Implementations
 
@@ -63,19 +64,18 @@ use core::marker::PhantomData;
 use cgp::prelude::*;
 use cgp::extra::handler::{CanTryCompute, TryComputer, TryComputerComponent};
 
-#[cgp_new_provider]
-impl<Context, Code> TryComputer<Context, Code, String> for ParseU64
-where
-    Context: CanRaiseError<core::num::ParseIntError>,
-{
+#[cgp_impl(new ParseU64)]
+#[uses(CanRaiseError<core::num::ParseIntError>)]
+#[use_type(HasErrorType::Error)]
+impl<Code> TryComputer<Code, String> {
     type Output = u64;
 
     fn try_compute(
-        context: &Context,
+        &self,
         _code: PhantomData<Code>,
         input: String,
-    ) -> Result<u64, Context::Error> {
-        input.parse().map_err(|e| Context::raise_error(e))
+    ) -> Result<Self::Output, Error> {
+        input.parse().map_err(|e| Self::raise_error(e))
     }
 }
 
@@ -86,7 +86,7 @@ delegate_components! {
 }
 ```
 
-The provider `ParseU64` returns `Result<u64, Context::Error>`, converting the concrete `ParseIntError` into the context's abstract error with `CanRaiseError`. Because the consumer trait supertraits `HasErrorType`, the context must have an error type wired before it can call `try_compute` — `App` would delegate its `ErrorTypeProviderComponent` (and an error raiser) as well as `TryComputerComponent`. In everyday use the [`#[cgp_computer]`](../macros/cgp_computer.md) macro generates this kind of provider from a function returning `Result<u64, String>`, and wires the promotion table so the same function also answers `CanCompute` (returning the `Result` as its output), `CanHandle`, and the `Ref` variants.
+The provider `ParseU64` returns its `u64` output or the context's abstract error, converting the concrete `ParseIntError` into that error with `CanRaiseError`. Because the consumer trait supertraits `HasErrorType`, the context must have an error type wired before it can call `try_compute` — `App` would delegate its `ErrorTypeProviderComponent` (and an error raiser) as well as `TryComputerComponent`. In everyday use the [`#[cgp_computer]`](../macros/cgp_computer.md) macro generates this kind of provider from a function returning `Result<u64, String>`, and wires the promotion table so the same function also answers `CanCompute` (returning the `Result` as its output), `CanHandle`, and the `Ref` variants.
 
 ## Related constructs
 

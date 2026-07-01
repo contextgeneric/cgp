@@ -34,10 +34,11 @@ The provider trait `Computer<Context, Code, Input>` moves the context into an ex
 #[cgp_component(TryComputer)]
 #[derive_delegate(UseDelegate<Code>)]
 #[derive_delegate(UseInputDelegate<Input>)]
-pub trait CanTryCompute<Code, Input>: HasErrorType {
+#[use_type(HasErrorType::Error)]
+pub trait CanTryCompute<Code, Input> {
     type Output;
     fn try_compute(&self, _code: PhantomData<Code>, input: Input)
-        -> Result<Self::Output, Self::Error>;
+        -> Result<Self::Output, Error>;
 }
 ```
 
@@ -50,10 +51,11 @@ A `TryComputer` provider carries a `Context: HasErrorType` bound and typically c
 #[cgp_component(Handler)]
 #[derive_delegate(UseDelegate<Code>)]
 #[derive_delegate(UseInputDelegate<Input>)]
-pub trait CanHandle<Code, Input>: HasErrorType {
+#[use_type(HasErrorType::Error)]
+pub trait CanHandle<Code, Input> {
     type Output;
     async fn handle(&self, _tag: PhantomData<Code>, input: Input)
-        -> Result<Self::Output, Self::Error>;
+        -> Result<Self::Output, Error>;
 }
 ```
 
@@ -82,16 +84,18 @@ The runner pair executes a unit of work selected by a `Code` tag rather than tra
 #[cgp_component(Runner)]
 #[async_trait]
 #[derive_delegate(UseDelegate<Code>)]
-pub trait CanRun<Code>: HasErrorType {
-    async fn run(&self, _code: PhantomData<Code>) -> Result<(), Self::Error>;
+#[use_type(HasErrorType::Error)]
+pub trait CanRun<Code> {
+    async fn run(&self, _code: PhantomData<Code>) -> Result<(), Error>;
 }
 
 #[cgp_component(SendRunner)]
 #[async_trait]
 #[derive_delegate(UseDelegate<Code>)]
-pub trait CanSendRun<Code>: HasErrorType {
+#[use_type(HasErrorType::Error)]
+pub trait CanSendRun<Code> {
     fn send_run(&self, _code: PhantomData<Code>)
-        -> impl Future<Output = Result<(), Self::Error>> + Send;
+        -> impl Future<Output = Result<(), Error>> + Send;
 }
 ```
 

@@ -3,6 +3,7 @@ use cgp::prelude::*;
 use crate::HasRuntimeType;
 
 #[cgp_getter]
-pub trait HasRuntime: HasRuntimeType {
-    fn runtime(&self) -> &Self::Runtime;
+#[use_type(HasRuntimeType::Runtime)]
+pub trait HasRuntime {
+    fn runtime(&self) -> &Runtime;
 }
