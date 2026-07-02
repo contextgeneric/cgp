@@ -29,7 +29,7 @@ pub struct AppA;
 snapshot_delegate_components! {
     delegate_components! {
         AppA {
-            open {FooProviderComponent};
+            open FooProviderComponent;
 
             @FooProviderComponent.String.u32:
                 DummyFoo,

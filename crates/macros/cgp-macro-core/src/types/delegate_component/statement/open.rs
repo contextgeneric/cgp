@@ -1,6 +1,6 @@
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
-use syn::token::{Comma, Semi};
+use syn::token::{Brace, Comma, Semi};
 use syn::{Type, braced};
 
 use crate::exports::{Nil, PathCons, RedirectLookup};
@@ -23,11 +23,14 @@ impl Parse for OpenDelegateStatement {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let open = input.parse()?;
 
-        let components: Punctuated<Type, Comma> = {
+        let components: Punctuated<Type, Comma> = if input.peek(Brace) {
             let body;
             braced!(body in input);
 
             Punctuated::parse_terminated(&body)?
+        } else {
+            let component: Type = input.parse()?;
+            Punctuated::from_iter([component])
         };
 
         let semi = input.parse()?;
