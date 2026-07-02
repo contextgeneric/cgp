@@ -12,7 +12,7 @@ let items = tables.to_items()?;
 Ok(quote! { #( #items )* })
 ```
 
-All real logic lives in `cgp-macro-core`. A malformed table fails while parsing, and an unknown table-level attribute (anything other than `#[check_trait]` or `#[check_providers]`) fails with a spanned error during parsing.
+All real logic lives in `cgp-macro-core`. A malformed table fails while parsing. Attribute validation also happens during parsing: an unknown table-level attribute (anything other than `#[check_trait]` or `#[check_providers]`) fails with a spanned error, as do a repeated `#[check_trait]`, a repeated `#[check_providers]`, and an empty `#[check_providers()]` (which would otherwise emit a check trait with no impls that verifies nothing).
 
 ## Pipeline
 
@@ -44,6 +44,8 @@ A component with parameters places them in the `__Params__` slot — a single pa
 
 **A component with no value** emits a single unit-params entry; a bracketed value that is empty is treated the same way.
 
+**The check trait name is derived from the context type's final path segment.** `derive_check_trait_ident` parses the context type through `PathWithTypeArgs` and prepends `__Check` to the last segment's identifier, so a path-qualified context such as `some_mod::Context` yields `__CheckContext` and is accepted rather than rejected — matching `delegate_components!`, which uses the context type verbatim.
+
 ## Snapshots
 
 Every `snapshot_check_components!` invocation across the suite is indexed here, since these snapshots belong to this entrypoint:
@@ -51,6 +53,7 @@ Every `snapshot_check_components!` invocation across the suite is indexed here, 
 - [checking/check_trait.rs](../../../crates/tests/cgp-tests/tests/checking/check_trait.rs) — the standalone check form: multiple check blocks in one invocation, each renamed with `#[check_trait(...)]`, per-entry parameter lists for generic-parameter components, and an array key checked against a parameter list.
 - [checking/check_generic.rs](../../../crates/tests/cgp-tests/tests/checking/check_generic.rs) — a generic context (`<'a, I>` plus `where I: Clone`) whose generics and clause are carried onto each impl, a check parameter that uses a generic (`Component: &'a I`), and a component that is itself generic (`BarGetterAtComponent<I>`).
 - [checking/check_providers.rs](../../../crates/tests/cgp-tests/tests/checking/check_providers.rs) — the `#[check_providers(...)]` form: the trait supertraits `IsProviderFor` and is implemented for each listed provider rather than for the context.
+- [checking/check_path_context.rs](../../../crates/tests/cgp-tests/tests/checking/check_path_context.rs) — a path-qualified context (`inner::Context`): the derived trait name (`__CheckContext`) comes from the final path segment, and the impl targets the context by its full path.
 
 No snapshot pins the plainest single-block, single-bare-component case on its own; it is covered implicitly by the richer `check_trait` block above.
 
@@ -59,7 +62,7 @@ No snapshot pins the plainest single-block, single-bare-component case on its ow
 The behavioral coverage for `check_components!` is the compile-time assertion itself:
 
 - The files listed under Snapshots are compile-only tests, so a successful build is the passing check. Each pins both the expansion (via the snapshot) and the fact that the asserted wiring resolves.
-- There are no `cgp-macro-tests` failure cases for the check family.
+- [parser_rejections/check_components.rs](../../../crates/tests/cgp-macro-tests/tests/parser_rejections/check_components.rs) — the table-level attribute rejections: an empty `#[check_providers()]`, a repeated `#[check_providers]`, a repeated `#[check_trait]`, and an unknown attribute each fail to parse.
 
 ## Source
 

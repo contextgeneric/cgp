@@ -11,7 +11,7 @@ use crate::functions::merge_generics;
 use crate::parse_internal;
 use crate::types::check_components::{CheckEntries, EvaluatedCheckEntry, TypeWithGenerics};
 use crate::types::generics::ImplGenerics;
-use crate::types::ident::IdentWithTypeArgs;
+use crate::types::ident::PathWithTypeArgs;
 
 pub struct CheckComponentsTable {
     pub check_providers: Option<Punctuated<Type, Comma>>,
@@ -108,9 +108,21 @@ impl Parse for CheckComponentsTable {
                     let provider_types: Punctuated<Type, Comma> =
                         attribute.parse_args_with(Punctuated::parse_terminated)?;
 
-                    check_providers
-                        .get_or_insert_default()
-                        .extend(provider_types);
+                    if provider_types.is_empty() {
+                        return Err(syn::Error::new(
+                            attribute.span(),
+                            "`#[check_providers(...)]` requires at least one provider type.",
+                        ));
+                    }
+
+                    if check_providers.is_some() {
+                        return Err(syn::Error::new(
+                            attribute.span(),
+                            "Multiple `#[check_providers]` attributes found. Expected at most one.",
+                        ));
+                    }
+
+                    check_providers = Some(provider_types);
                 } else if attribute.path().is_ident("check_trait") {
                     let check_trait_name: Ident = attribute.parse_args()?;
 
@@ -168,15 +180,18 @@ impl Parse for CheckComponentsTable {
 }
 
 /// Derive a check trait identifier from a context type by prepending `prefix`
-/// to the context type's leading identifier, e.g. `__CheckPerson` or
-/// `__CanUsePerson` for the context type `Person`.
+/// to the identifier of the context type's final path segment, e.g. `__CheckPerson`
+/// or `__CanUsePerson` for `Person`, and `__CheckPerson` for `some_mod::Person`.
+///
+/// The context type is parsed through [`PathWithTypeArgs`] rather than a bare
+/// identifier so that a path-qualified context (`some_mod::Person`) — which
+/// [`delegate_components!`](crate::types::delegate_component) accepts and uses
+/// verbatim — is accepted here too, instead of failing at parse time.
 pub fn derive_check_trait_ident(context_type: &Type, prefix: &str) -> syn::Result<Ident> {
-    let context_type: IdentWithTypeArgs = parse2(context_type.to_token_stream())?;
+    let context_path: PathWithTypeArgs = parse2(context_type.to_token_stream())?;
+    let ident = context_path.ident();
 
-    Ok(Ident::new(
-        &format!("{prefix}{}", context_type.ident),
-        context_type.span(),
-    ))
+    Ok(Ident::new(&format!("{prefix}{ident}"), ident.span()))
 }
 
 fn override_span<T>(span: &Span, body: &T) -> syn::Result<T>

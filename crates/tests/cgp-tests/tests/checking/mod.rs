@@ -11,7 +11,9 @@ pub mod delegate_and_check_params;
 
 // `check_components!` snapshots (this concept owns the macro's expansion): the
 // standalone check with `#[check_trait(...)]` overrides and per-entry parameter
-// lists, the `#[check_providers(...)]` form, and the generic-context/lifetime form.
+// lists, the `#[check_providers(...)]` form, the generic-context/lifetime form, and
+// the path-qualified-context form.
 pub mod check_generic;
+pub mod check_path_context;
 pub mod check_providers;
 pub mod check_trait;

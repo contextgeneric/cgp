@@ -45,9 +45,9 @@ check_components! {
 }
 ```
 
-The check trait's name can be set with `#[check_trait(Name)]` on the table. The macro otherwise derives a name of the form `__Check{Context}` (for example `__CheckPerson`), so the override is needed when two `check_components!` tables in the same module would otherwise collide. A leading `<...>` generic list and a trailing `where` clause may also be attached to a table to introduce and constrain generics used by the checked parameters.
+The check trait's name can be set with `#[check_trait(Name)]` on the table. The macro otherwise derives a name of the form `__Check{Context}` (for example `__CheckPerson`) from the final segment of the context type's path, so a path-qualified context such as `some_mod::Person` also yields `__CheckPerson`; the override is needed when two `check_components!` tables in the same module would otherwise collide. A leading `<...>` generic list and a trailing `where` clause may also be attached to a table to introduce and constrain generics used by the checked parameters.
 
-A `#[check_providers(...)]` attribute changes what is checked: instead of verifying the context, it verifies that each listed provider is a provider for the context. This is the form to reach for when a higher-order provider needs each layer checked separately, since each provider in the list is asserted independently.
+A `#[check_providers(...)]` attribute changes what is checked: instead of verifying the context, it verifies that each listed provider is a provider for the context. This is the form to reach for when a higher-order provider needs each layer checked separately, since each provider in the list is asserted independently. It must list at least one provider and may appear at most once on a table; an empty list or a repeated attribute is a compile error.
 
 ## Syntax Grammar
 

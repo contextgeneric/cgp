@@ -140,6 +140,52 @@ readability edit introduce a behavioral change.
   explaining or clarifying; add a brief `///` to any public struct, trait, or function that lacks
   one; and simplify existing inline docs, removing facts that are obvious from reading the code.
 
+### Scrutinize the macro codegen
+
+A CGP macro is only as correct as the code it emits, so review the implementation against the ways
+its input can be parsed and its output expanded, not just the happy path its tests exercise. Cover
+every one of these concerns, since a gap in any of them is a latent miscompilation waiting for the
+right input:
+
+- **Review every supported attribute.** Enumerate the attributes the macro accepts and confirm each
+  is parsed, validated, mutually constrained, and rejected-when-unknown exactly as documented — an
+  unrecognized attribute should fail with a spanned error, a mutually exclusive pair should error
+  when both appear, and a duplicate should not be silently accepted (or silently accepted for one
+  attribute while rejected for another).
+- **Prefer `parse_internal!`/`parse_internal` over `parse2` or `parse_quote!`.** When constructing a
+  `syn` node from quasi-quoted tokens, build it with `parse_internal!` so a malformed fragment fails
+  with an error naming the target type and the offending tokens (prelude prefix stripped) rather than
+  a bare parse error. Reserve `parse2` for re-parsing tokens already known to be valid (a span
+  override, say), and treat every `parse_quote!` as an assertion that parsing can never fail.
+- **Return `syn::Result` wherever parsing can fail.** A function that parses anything should thread
+  `syn::Result` and propagate the error, rather than `parse_quote!`-ing and risking a panic that
+  aborts the compiler with no usable diagnostic. Use the panicking `parse_quote!` only when it is
+  trivially obvious — from the surrounding, fully-controlled tokens — that the parse cannot fail.
+- **Enumerate every way the input can be parsed.** For each parser and `parse_internal!` call, think
+  through the full range of inputs a user could write — path-qualified types, generic and lifetime
+  parameters, arrays, tuples, empty lists, turbofish, associated-type bindings — and confirm none
+  reaches a parser that fails with a confusing internal error. Reject malformed or unsupported input
+  early, at the macro's own parse stage with a clear spanned message, rather than letting the failure
+  surface deep inside internal fragment parsing or in the expanded code.
+- **Enumerate every way the output can expand.** Walk the shapes the expansion can take across the
+  whole input space and confirm none can produce invalid Rust — no duplicate or conflicting `impl`
+  blocks from a cartesian expansion, no unbound or doubly-declared generic parameter, no empty
+  expansion that silently checks nothing, and no clash on a generated identifier.
+- **Scrutinize generics with care.** Generic parameters take many forms — lifetimes, types, consts,
+  and the distinction between *impl* generics (`impl<T>`) and *type* generics (the `<T>` in
+  `Foo<T>`) — and mixing them produces subtly wrong output. Confirm the macro keeps the kinds
+  separate, renders each in the right position, merges parameters from different sources without
+  colliding, and binds every parameter that appears in the generated header so nothing is left free.
+- **Fully qualify every CGP construct in the expansion.** Any CGP item the expansion references must
+  be emitted through the `crate::exports` markers so it resolves as `::cgp::macro_prelude::<Name>`,
+  never as a bare or hand-written path — this is what lets a user with only `cgp` in scope compile
+  the output. Grep the codegen for any CGP name that is not interpolated from an `exports` marker.
+
+Beyond these, weigh the concerns that recur across the macro suite: the hygiene of the reserved
+identifiers the expansion introduces (`__Component__`, `__Context__`, and the like), the span
+attached to each generated item so a downstream type error points at the token the user actually
+wrote, and the idempotency of the expansion when the same entry is listed more than once.
+
 ### Keep every view in sync and verify
 
 Every change propagates to all four views in the same change, per the synchronization rule. When
