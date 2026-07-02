@@ -50,7 +50,7 @@ where
 }
 ```
 
-The conversion applied to each binding is chosen by the argument's type, following the same field-mode rules the getter macros use: a `&str` argument reads a `String` field and appends `.as_str()`, an owned value appends `.clone()`, an `Option<&T>` reads an `Option<T>` field and appends `.as_ref()`, an `&[T]` reads an `AsRef<[T]>` field and appends `.as_ref()`, and a plain `&T` is taken by reference with no conversion. A `&mut self` receiver switches the reads to `HasFieldMut`/`get_field_mut`. These modes are shared with `#[cgp_auto_getter]` and `#[cgp_getter]` through the [field-parsing helpers](../asts/cgp_getter.md); the difference is only where the read lands — a prepended `let` in the body here, a getter-method body there.
+The conversion applied to each binding is chosen by the argument's type, following the same field-mode rules the getter macros use: a `&str` argument reads a `String` field and appends `.as_str()`, an owned value appends `.clone()`, an `Option<&T>` reads an `Option<T>` field and appends `.as_ref()`, an `&[T]` reads an `AsRef<[T]>` field and appends `.as_ref()`, and a plain `&T` is taken by reference with no conversion. A `&mut T` argument reads through `HasFieldMut`/`get_field_mut` and requires a `&mut self` receiver; every immutable argument reads through `HasField`/`get_field` regardless of the receiver. These modes are shared with `#[cgp_auto_getter]` and `#[cgp_getter]` through the [field-parsing helpers](../asts/cgp_getter.md); the difference is only where the read lands — a prepended `let` in the body here, a getter-method body there.
 
 ## Behavior and corner cases
 
@@ -60,7 +60,7 @@ The conversion applied to each binding is chosen by the argument's type, followi
 
 **The visibility is moved, not copied.** `preprocess` takes the function's visibility off the inner `ItemFn` and re-applies it to the generated trait, so the emitted method inside the trait is always inherited-visibility while the trait itself carries the `pub` the user wrote.
 
-**A `&mut self` receiver constrains the implicit arguments.** At most one mutable implicit argument is allowed when the receiver is `&mut self`, and a mutable field reference requires the `&mut self` receiver; a mutable *pattern* on an implicit argument is rejected outright. These checks are enforced during implicit-argument extraction.
+**A `&mut` implicit argument must be the only implicit argument.** The `field_mut` of each argument follows the argument's own type — set from the `&mut` in `&mut T`, not from the receiver — so a `&mut T` argument reads through `get_field_mut` while every immutable argument reads through `get_field`, even under a `&mut self` receiver. Because a `get_field_mut` read borrows the whole context exclusively for the rest of the body, a `&mut` implicit cannot coexist with any other implicit read; extraction rejects the combination (`has_mutable && count > 1`) rather than emit a blanket impl that fails to borrow-check. Any number of purely immutable implicits, by contrast, are shared borrows and combine freely. A `&mut T` argument additionally requires the `&mut self` receiver, and a `mut` *pattern* on any implicit argument is rejected outright. These checks are enforced during implicit-argument extraction.
 
 ## Known issues
 
@@ -73,8 +73,9 @@ Every `snapshot_cgp_fn!` invocation across the suite is indexed here, since thes
 - [implicit_arguments/cgp_fn_greet.rs](../../../crates/tests/cgp-tests/tests/implicit_arguments/cgp_fn_greet.rs) — the canonical plain case: one `#[implicit]` `&str` argument dropped from the signature and read via `HasField` with `.as_str()` applied.
 - [implicit_arguments/cgp_fn_custom_trait_name.rs](../../../crates/tests/cgp-tests/tests/implicit_arguments/cgp_fn_custom_trait_name.rs) — `#[cgp_fn(CanCalculateRectangleArea)]` overrides the generated trait name; two owned `f64` implicits each `.clone()`d.
 - [implicit_arguments/cgp_fn_mutable.rs](../../../crates/tests/cgp-tests/tests/implicit_arguments/cgp_fn_mutable.rs) — `&mut self` with a mutable implicit argument, reading through `HasFieldMut`/`get_field_mut`.
+- [implicit_arguments/cgp_fn_mut_self_immutable.rs](../../../crates/tests/cgp-tests/tests/implicit_arguments/cgp_fn_mut_self_immutable.rs) — a `&mut self` receiver with two *immutable* implicit arguments, showing they read through `HasField`/`get_field` (the access mode follows the argument, not the receiver) and that several immutable implicits may share a `&mut self` receiver.
 - [implicit_arguments/cgp_fn_calling_fn.rs](../../../crates/tests/cgp-tests/tests/implicit_arguments/cgp_fn_calling_fn.rs) — one `#[cgp_fn]` capability depending on another through an explicit `where Self:` bound.
-- [implicit_arguments/cgp_fn_multi_and_use_type.rs](../../../crates/tests/cgp-tests/tests/implicit_arguments/cgp_fn_multi_and_use_type.rs) — explicit and implicit arguments mixed, generic method parameters, `#[async_trait]` preserved as a raw attribute, and `#[use_type]` importing and renaming abstract types.
+- [implicit_arguments/cgp_fn_multi_and_use_type.rs](../../../crates/tests/cgp-tests/tests/implicit_arguments/cgp_fn_multi_and_use_type.rs) — explicit and implicit arguments mixed, generic type parameters lifted onto the trait, `#[async_trait]` preserved as a raw attribute, and `#[use_type]` importing and renaming abstract types.
 - [async_and_send/cgp_fn_async.rs](../../../crates/tests/cgp-tests/tests/async_and_send/cgp_fn_async.rs) — the canonical async expansion, an `async fn` combined with `#[async_trait]`.
 - [generic_components/fn_generic_param.rs](../../../crates/tests/cgp-tests/tests/generic_components/fn_generic_param.rs) — a function generic over a type parameter, showing the parameter moved onto both trait and impl.
 - [generic_components/fn_impl_generics.rs](../../../crates/tests/cgp-tests/tests/generic_components/fn_impl_generics.rs) — `#[impl_generics(...)]` adding a generic parameter to the impl only, not the trait.
@@ -92,6 +93,10 @@ Because `#[cgp_fn]` emits a blanket impl, its snapshot tests double as behaviora
 - [implicit_arguments/cgp_fn_greet.rs](../../../crates/tests/cgp-tests/tests/implicit_arguments/cgp_fn_greet.rs) proves any context with a `name: String` field implements the generated `Greet` trait via a `CheckPerson` bound.
 - [implicit_arguments/cgp_fn_calling_fn.rs](../../../crates/tests/cgp-tests/tests/implicit_arguments/cgp_fn_calling_fn.rs) confirms one capability calling another resolves through both blanket impls at run time.
 - [impl_side_dependencies/fn_uses.rs](../../../crates/tests/cgp-tests/tests/impl_side_dependencies/fn_uses.rs) and [impl_side_dependencies/fn_extend.rs](../../../crates/tests/cgp-tests/tests/impl_side_dependencies/fn_extend.rs) exercise the two ways of stating a dependency and confirm the resulting bounds are satisfiable.
+
+The failure cases pin the inputs `#[cgp_fn]` refuses during expansion, each asserting the entrypoint returns `Err`:
+
+- [parser_rejections/cgp_fn.rs](../../../crates/tests/cgp-macro-tests/tests/parser_rejections/cgp_fn.rs) covers an implicit argument on a function with no `self` receiver, a `mut` binding pattern on an implicit argument, and a `&mut` implicit argument that is not the sole implicit (which would borrow the context mutably and again at once).
 
 ## Source
 

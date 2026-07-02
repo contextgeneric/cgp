@@ -124,7 +124,7 @@ pub fn greet(&self, #[implicit] name: &str) {
 // binding: let name: &str = self.get_field(PhantomData::<Symbol!("name")>).as_str();
 ```
 
-Three rules constrain where `#[implicit]` may appear. The function must take `self` as its first argument, since the field is read from it; the argument pattern must be a bare identifier, not a destructuring or `mut` pattern (clone inside the body for a mutable local); and a `&mut self` receiver allows at most one implicit argument, since each borrows from the same context. `#[implicit]` is usable in both `#[cgp_fn]` and the methods of a `#[cgp_impl]` provider, with the same desugaring in each — inside `#[cgp_impl]` the `HasField` bounds simply join the provider impl's `where` clause.
+Three rules constrain where `#[implicit]` may appear. The function must take `self` as its first argument, since the field is read from it; the argument pattern must be a bare identifier, not a destructuring or `mut` pattern (clone inside the body for a mutable local); and a `&mut T` implicit argument must be the *only* implicit argument (and needs a `&mut self` receiver), since it reads through `get_field_mut` and borrows the whole context exclusively — immutable implicits are shared borrows and combine freely in any number. The access mode follows the argument's own type, not the receiver's: only a `&mut T` argument reads through `get_field_mut`. `#[implicit]` is usable in both `#[cgp_fn]` and the methods of a `#[cgp_impl]` provider, with the same desugaring in each — inside `#[cgp_impl]` the `HasField` bounds simply join the provider impl's `where` clause.
 
 ## Importing capabilities: `#[uses]`
 

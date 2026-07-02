@@ -5,7 +5,7 @@ moving, or refactoring any test here. Invoke the `/cgp` skill first — every te
 in this tree is CGP code, and the skill is the authoritative source for CGP
 semantics and vocabulary.
 
-The test suite has three jobs, split across crates:
+The test suite has four jobs, split across crates:
 
 - **`cgp-tests`** is the main suite: realistic example code that must **compile and
   run**. A passing test is often just successful compilation, because much of CGP
@@ -13,8 +13,11 @@ The test suite has three jobs, split across crates:
   user-facing macros are exercised end-to-end.
 - **`cgp-macro-tests`** tests the **internals** of the CGP macros by calling the
   functions in `cgp-macro-core` directly (parsers, AST types), and is the home for
-  **failure cases** — inputs CGP should reject, and cases where a macro currently
-  emits invalid or wrong code.
+  **inputs a macro rejects** (via `assert_macro_rejects`) and for **pinning the exact
+  invalid tokens** a macro emits (`invalid_expansion` string snapshots).
+- **`cgp-compile-fail-tests`** holds the **`compile_fail` doctests**: input a macro
+  *accepts* but whose *expansion* then fails to compile. It is a library crate
+  because doctests run only for a library target; see "Adding a failure case" below.
 - **`cgp-test-crate-a` / `cgp-test-crate-b`** are auxiliary packages for
   **cross-crate** behavior: whether a downstream crate can extend a namespace or
   provide a provider for a component defined elsewhere, under Rust's coherence and
@@ -107,18 +110,50 @@ plain macro, not the snapshot form. The expansion is already pinned in the ownin
 target, and a redundant snapshot only adds golden output that breaks on unrelated
 macro changes.
 
-## Adding a failure case (in `cgp-macro-tests`)
+## Adding a failure case
 
 CGP will have corner cases it does not yet handle. Do **not** try to fix them inline
-while refactoring; capture them as failing-behavior tests instead, in a dedicated
-failure-case target:
+while refactoring; capture them as failing-behavior tests instead. The mechanism
+depends on *where* the failure lands — whether the macro refuses the input, or
+accepts it and emits Rust that then fails to compile.
 
-- **Input that should be rejected** — assert the `cgp-macro-core` parser rejects it,
-  using the `assert_rejects` helper pattern (see `ident_with_type_params`).
-- **A macro that emits invalid Rust** — capture the expanded code as an `insta`
-  inline snapshot (the snapshot is a *string*, so it compiles even though the code
-  would not), and add a code comment explaining **why** the output is wrong and
-  **what the correct output should be**.
+**Input a macro rejects — test the entrypoint in `cgp-macro-tests`.** When a macro
+itself refuses the input by returning `Err` during expansion, assert it with the
+`assert_macro_rejects` helper in `cgp-macro-tests` (see `parser_rejections`). This
+drives the `cgp-macro-lib` entrypoint directly and checks the internal `Result`,
+which is enough to pin a rejection and gives a precise check of the macro's own
+diagnostic. This is the right tool for a structural error the macro is expected to
+catch, and such a case does **not** also need a compile-fail test.
+
+**Input a macro accepts whose expansion fails to compile — a `compile_fail` doctest
+in `cgp-compile-fail-tests`.** Reserve `compile_fail` tests for input a CGP macro
+*accepts* but whose *expansion* then fails to type- or borrow-check — the failure
+lands on the emitted Rust, not inside the macro. This is the tool for a documented
+bug or known limitation, and for the cases a macro cannot reject because it lacks the
+whole-program view the check needs: two separate `delegate_components!` blocks that
+delegate the same key, or generic `delegate_components!` entries that expand to
+overlapping impls, both of which the macro defers to the Rust compiler. Write each as
+a ```` ```rust,compile_fail ```` doctest containing the real macro invocation;
+rustdoc compiles it and the test passes only if it fails to compile. Pair it with a
+companion ```` ```rust ```` block that compiles once the offending element is
+removed, so the probe proves *which* element causes the failure, and comment on why
+it must not compile.
+
+These doctests live in the dedicated **`cgp-compile-fail-tests`** crate, not in
+`cgp-tests` — doctests are collected only from a *library* target, never from an
+integration (`tests/`) target, so an integration-test file's doctests would silently
+never run. Inside that crate, group cases by CGP concept exactly as the main suite
+does: one subdirectory per concept under `src/` (`basic_delegation/`, `dispatching/`,
+…), one module file per category of case within it, registered with `pub mod`. Run
+them with `cargo test --doc -p cgp-compile-fail-tests`; `cargo nextest` does not run
+doctests.
+
+**Pinning the exact invalid output** is a separate, rarer need: only when you must
+*inspect* the wrong tokens a macro emits (not merely assert they fail to compile),
+capture the expanded code as an `insta` inline string snapshot in the
+`invalid_expansion` target of `cgp-macro-tests` (the snapshot is a *string*, so it
+compiles even though the code would not), with a comment explaining **why** the
+output is wrong and **what the correct output should be**.
 
 Every failure case must also be recorded in the construct's **implementation
 document** under `docs/implementation/`, in its `## Known issues` section and
@@ -145,13 +180,19 @@ document's Tests or Snapshots section in the same change.
 ## Running the suite
 
 ```
-cargo nextest run -p cgp-tests            # the main suite
-cargo nextest run -p cgp-macro-tests      # macro internals + failures
-cargo nextest run --workspace             # everything
+cargo nextest run -p cgp-tests               # the main suite
+cargo nextest run -p cgp-macro-tests         # macro internals + rejection/invalid-expansion cases
+cargo nextest run --workspace                # everything
 
-cargo insta test -p cgp-tests --review    # review snapshot diffs
-cargo insta test -p cgp-tests --accept    # accept intended snapshot changes
+cargo test --doc -p cgp-compile-fail-tests   # compile_fail doctests — NOT run by nextest
+
+cargo insta test -p cgp-tests --review       # review snapshot diffs
+cargo insta test -p cgp-tests --accept       # accept intended snapshot changes
 ```
+
+`cargo nextest` does not run doctests, so the `compile_fail` cases in
+`cgp-compile-fail-tests` must be run with `cargo test --doc`; include it when
+verifying a change that touches a macro's accepted input or its expansion.
 
 A snapshot test that fails prints a diff of the generated code; accept it with
 `cargo insta` only after confirming the change is intended.

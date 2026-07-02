@@ -1,6 +1,6 @@
-//! `#[cgp_fn]` combining explicit and `#[implicit]` arguments, generic method
-//! parameters, `#[async_trait]`, and `#[use_type]` importing abstract types with
-//! renaming.
+//! `#[cgp_fn]` combining explicit and `#[implicit]` arguments, generic type
+//! parameters lifted onto the trait, `#[async_trait]`, and `#[use_type]`
+//! importing abstract types with renaming.
 //!
 //! The implicit args here have abstract-type values (`FooX`, `Bar`) imported via
 //! `#[use_type(<HasFooType<X>>::{Foo as FooX}, …)]`, showing how implicit reads

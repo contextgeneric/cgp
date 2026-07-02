@@ -38,6 +38,7 @@ members = [
 
     "crates/tests/cgp-tests",
     "crates/tests/cgp-macro-tests",
+    "crates/tests/cgp-compile-fail-tests",
     "crates/tests/cgp-test-crate-a",
     "crates/tests/cgp-test-crate-b",
 ]

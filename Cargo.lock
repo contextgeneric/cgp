@@ -59,6 +59,13 @@ name = "cgp-base-types"
 version = "0.7.0"
 
 [[package]]
+name = "cgp-compile-fail-tests"
+version = "0.7.0"
+dependencies = [
+ "cgp",
+]
+
+[[package]]
 name = "cgp-component"
 version = "0.7.0"
 

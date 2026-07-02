@@ -22,7 +22,7 @@ fn area(&self, #[implicit] width: f64, #[implicit] height: f64) -> f64 {
 
 The argument name doubles as the field name. Here `width` and `height` name both the local variables used in the body and the context fields the values are read from, via `Symbol!("width")` and `Symbol!("height")`. The argument type is the type the body sees, and it determines how the field is accessed (described under Expansion).
 
-Three rules constrain where `#[implicit]` may appear. The function must take `self` as its first argument, because the field is read from `self`; a function with implicit arguments but no receiver is rejected. The argument pattern must be a bare identifier, not a destructuring or `mut` pattern — to get a mutable local, clone the injected value explicitly inside the body. And when the receiver is `&mut self`, at most one implicit argument is allowed, since each one borrows from the same context.
+Three rules constrain where `#[implicit]` may appear. The function must take `self` as its first argument, because the field is read from `self`; a function with implicit arguments but no receiver is rejected. The argument pattern must be a bare identifier, not a destructuring or `mut` pattern — to get a mutable local, clone the injected value explicitly inside the body. And a `&mut`-reference implicit argument (`&mut T`) must be the *only* implicit argument on its function, and requires a `&mut self` receiver: it is read through `get_field_mut`, which borrows the whole context exclusively, so it cannot coexist with any other field read. Immutable implicit arguments carry no such restriction — they are shared borrows and combine freely, in any number, on either a `&self` or a `&mut self` receiver.
 
 `#[implicit]` is usable wherever CGP rewrites function bodies into providers: inside [`#[cgp_fn]`](../macros/cgp_fn.md) and inside the methods of a [`#[cgp_impl]`](../macros/cgp_impl.md) block. It is not a standalone macro — it is only meaningful as an argument attribute consumed by those macros.
 
@@ -60,7 +60,7 @@ where
 
 The two `let` bindings are inserted at the top of the body in argument order, before any of the original statements, so the names are in scope for the rest of the function. The generated context type parameter is literally named `__Context__` in the emitted code; the examples here use `Context` for readability.
 
-The access expression depends on the argument type, following the same rules as [`#[cgp_auto_getter]`](../macros/cgp_auto_getter.md). For an owned type such as `f64` or `String`, the macro reads the field by reference and appends `.clone()`, so the body receives an owned value. The one special case worth knowing is `&str`: an argument typed `&str` is backed by a `String` field, and the access uses `.as_str()` rather than `.clone()`. Concretely:
+The access expression depends on the argument type, following the same rules as [`#[cgp_auto_getter]`](../macros/cgp_auto_getter.md). For an owned type such as `f64` or `String`, the macro reads the field by reference and appends `.clone()`, so the body receives an owned value. The one special case worth knowing is `&str`: an argument typed `&str` is backed by a `String` field, and the access uses `.as_str()` rather than `.clone()`. The mutability of the access follows the *argument's* own type, not the receiver's: only a `&mut T` argument reads through `HasFieldMut`/`get_field_mut`, while every immutable argument reads through `HasField`/`get_field` even on a `&mut self` receiver. Concretely:
 
 ```rust
 #[cgp_fn]
