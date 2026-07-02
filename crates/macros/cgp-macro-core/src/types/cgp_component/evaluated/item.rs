@@ -37,6 +37,8 @@ impl EvaluatedCgpComponent {
         Ok(items)
     }
 
+    /// The standard provider impls (`UseContext`, `RedirectLookup`, per-attribute
+    /// `UseDelegate`) followed by one namespace prefix impl per `#[prefix]`.
     pub fn to_item_impls(&self) -> syn::Result<Vec<ItemImpl>> {
         let mut item_impls = self.to_provider_impls()?.to_item_impls()?;
 
@@ -45,6 +47,8 @@ impl EvaluatedCgpComponent {
         Ok(item_impls)
     }
 
+    /// The `UseContext` and `RedirectLookup` impls always emitted for a component,
+    /// plus one `UseDelegate` impl per `#[derive_delegate]` attribute.
     pub fn to_provider_impls(&self) -> syn::Result<ItemProviderImpls> {
         let mut provider_impls = ItemProviderImpls::default();
 

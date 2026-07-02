@@ -85,3 +85,78 @@ inward (core/macros) when changing fundamentals, outward (main) only to adjust t
 - See [CHANGELOG.md](CHANGELOG.md) for the evolution of macro syntax — it is the most reliable
   record of which macro forms are current vs. removed (e.g. `#[cgp_context]` was removed,
   `ProvideType` → `TypeProvider`).
+
+## Macro review workflow
+
+This section defines the standing process for reviewing one CGP macro implementation at a time,
+hardening it until no further issue is found. Follow it verbatim for each macro so every reviewing
+agent runs the same loop; the current iteration reviews one macro (the first is `#[cgp_component]`)
+and the same steps apply to every macro that follows. The goal of an iteration is a macro whose
+implementation, tests, and documentation are correct, complete, mutually consistent, and as simple
+as the behavior allows.
+
+### Orient before touching anything
+
+Load the fundamentals first, every iteration. Invoke the `/cgp` skill to reload CGP's mental model
+and vocabulary, and the `/dual-reader-prose` skill to reload the writing convention the docs must
+follow. Re-invoke `/cgp` whenever the review moves into an unfamiliar construct — the macros and
+core traits are the ground truth the skill describes, so read the two together.
+
+Then read the documentation for the macro under review, in [docs/](docs). Read its reference
+document under [docs/reference/](docs/reference), its implementation documents under
+[docs/implementation/](docs/implementation) (the `entrypoints/` document, the `asts/` stack it
+drives, and any `functions/` helpers it relies on), and the governing `CLAUDE.md` files that define
+how those documents stay in sync with the code: [docs/CLAUDE.md](docs/CLAUDE.md),
+[docs/implementation/CLAUDE.md](docs/implementation/CLAUDE.md), and
+[crates/macros/cgp-macro-core/CLAUDE.md](crates/macros/cgp-macro-core/CLAUDE.md). These establish
+that the source is the single source of truth and that reference, implementation, snapshot, and
+skill are four views of it that must never drift.
+
+Next, study the implementation itself in [crates/macros/](crates/macros). Start from the
+`cgp-macro-lib` entry function, follow it into the `cgp-macro-core` `types/<construct>/` AST stack
+and the `functions/` helpers it calls, and read closely enough to reason about corner cases, not
+just the happy path. Finally, study the tests in [crates/tests/](crates/tests) — the behavioral
+tests in `cgp-tests` and the failure cases and expansion snapshots in `cgp-macro-tests` — and read
+[crates/tests/CLAUDE.md](crates/tests/CLAUDE.md) to learn how the suite is organized and how to run
+and update it.
+
+### Harden the implementation and its tests
+
+With the macro understood, work through the review in these areas. Each is a distinct concern;
+treat correctness as non-negotiable and simplification as a judgment call, and never let a
+readability edit introduce a behavioral change.
+
+- **Fix bugs and corner cases.** Identify potential bugs and unhandled corner cases in the
+  implementation and fix them. When a corner case cannot be fixed in this iteration, capture it as a
+  failure case in `cgp-macro-tests` and record it under the construct's Known issues, per
+  [crates/tests/CLAUDE.md](crates/tests/CLAUDE.md).
+- **Close test gaps.** Add tests for corner cases that are not yet covered, placing each in the
+  concept target that owns the behavior and snapshotting only in the macro's owning target.
+- **Verify existing tests.** Confirm each existing test really exercises the behavior it claims to,
+  that the corner case it checks makes sense, and that it makes appropriate assertions wherever an
+  assertion is possible rather than relying on compilation alone.
+- **Deduplicate and simplify tests.** Merge or remove tests that check the same or overlapping
+  behavior, and factor common boilerplate into shared test helpers.
+- **Improve the documentation and inline docs.** Update the reference document, the implementation
+  documents, and any README when they are inconsistent with the code or when something is worth
+  explaining or clarifying; add a brief `///` to any public struct, trait, or function that lacks
+  one; and simplify existing inline docs, removing facts that are obvious from reading the code.
+
+### Keep every view in sync and verify
+
+Every change propagates to all four views in the same change, per the synchronization rule. When
+you alter the macro's behavior, syntax, expansion, or defaults, update the reference document's
+Expansion, the implementation document's Pipeline and Generated items, the affected snapshots, and
+the `/cgp` skill. When you move or rename a test, update the implementation document's Tests or
+Snapshots section. Then verify the work: run `cargo +nightly fmt --all`, the clippy invocations, and
+`cargo nextest run` for the affected crates (and `cargo insta` to review any snapshot diffs) as
+described in the Commands section above, confirming a green suite before considering the iteration
+done.
+
+### Ask when in doubt
+
+During the review, ask the user for clarification whenever something should be settled before the
+next step is taken — an ambiguous intended behavior, a corner case whose correct outcome is unclear,
+or a design choice with more than one defensible answer. Surface the question rather than guessing,
+since a wrong assumption baked into the source, tests, and four documentation views is expensive to
+unwind.

@@ -6,6 +6,8 @@ use syn::{FnArg, Ident, ImplItemFn, Signature, Type, Visibility};
 
 use crate::functions::parse_internal;
 
+/// Build an impl method that keeps `signature` and forwards its arguments to the
+/// same method on `delegate_type`, adding `.await` when the signature is `async`.
 pub fn signature_to_delegated_impl_item_fn(
     signature: &Signature,
     delegate_type: &Type,

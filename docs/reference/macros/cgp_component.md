@@ -181,6 +181,10 @@ The call `rect.area()` resolves through the consumer blanket impl to `Rectangle:
 
 `#[cgp_component]` is the root that most other constructs attach to. [`#[cgp_impl]`](cgp_impl.md) and [`#[cgp_provider]`](cgp_provider.md) are the idiomatic ways to write providers for a component; [`#[cgp_fn]`](cgp_fn.md) is the lighter-weight alternative when only one implementation is ever needed. [`delegate_components!`](delegate_components.md) wires a component to a provider on a concrete context, and [`check_components!`](check_components.md) verifies at compile time that the wiring is complete. The specialized forms [`#[cgp_type]`](cgp_type.md) and [`#[cgp_getter]`](cgp_getter.md) extend `#[cgp_component]` for abstract types and getters. The attributes [`#[derive_delegate]`](../attributes/derive_delegate.md), [`#[extend]`](../attributes/extend.md), and [`#[use_type]`](../attributes/use_type.md) modify what the macro generates.
 
+## Known issues
+
+A const generic parameter on the trait is not supported and is rejected with a compile error. Because the provider trait records a component's extra parameters as a tuple of *types* in its `IsProviderFor` supertrait, and CGP's wiring dispatches on types rather than values, a const value has nowhere to live in that machinery. A const *item* on the trait is unaffected — writing `const CONSTANT: u64;` as a trait member is an associated const, not a generic parameter, and is supplied by a const-generic provider struct (for example `UseConstant<const CONSTANT: u64>`) in the usual way.
+
 ## Source
 
 - Entry point: `cgp_component` in [crates/macros/cgp-macro-lib/src/cgp_component.rs](../../../crates/macros/cgp-macro-lib/src/cgp_component.rs), which drives the `preprocess → eval → to_items` pipeline.

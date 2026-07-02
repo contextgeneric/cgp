@@ -1,8 +1,8 @@
-//! `#[cgp_component]` must be applied to a trait; applying it to another item
-//! is rejected at parse time.
+//! `#[cgp_component]` rejects inputs it cannot lower into a component: a
+//! non-trait item, and a trait carrying a const generic parameter.
 //!
-//! See docs/implementation/entrypoints/cgp_component.md (Tests) for this failure
-//! case, and docs/reference/macros/cgp_component.md for the user-facing semantics.
+//! See docs/implementation/entrypoints/cgp_component.md (Tests) for these failure
+//! cases, and docs/reference/macros/cgp_component.md for the user-facing semantics.
 
 use quote::quote;
 
@@ -16,6 +16,23 @@ fn rejects_non_trait_item() {
             quote!(FooProvider),
             quote!(
                 pub struct NotATrait;
+            ),
+        )
+    });
+}
+
+#[test]
+fn rejects_const_generic_parameter() {
+    // A const value has no place in the `IsProviderFor` params tuple (a tuple of
+    // types) and cannot key CGP's type-based wiring, so a const generic parameter
+    // on the component is rejected rather than lowered into non-compiling code.
+    assert_macro_rejects("cgp_component with a const generic parameter", || {
+        cgp_macro_lib::cgp_component(
+            quote!(Foo),
+            quote!(
+                pub trait CanFoo<const N: usize> {
+                    fn foo(&self) -> usize;
+                }
             ),
         )
     });

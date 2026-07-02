@@ -9,8 +9,10 @@ pub mod fn_generic_param;
 pub mod fn_impl_generics;
 
 // Generic-parameter variants of `#[cgp_component]` (this concept owns their
-// snapshots): a component with a lifetime and type parameter, and components
-// carrying const generics (a plain const and a const of an abstract type).
+// snapshots): a component with a single type parameter, one with a lifetime and
+// type parameter, and components carrying a const *item* provided by a
+// const-generic provider struct (a plain const and a const of an abstract type).
 pub mod component_const;
 pub mod component_generic_const;
 pub mod component_lifetime;
+pub mod component_type_param;

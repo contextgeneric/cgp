@@ -1,6 +1,8 @@
 use syn::token::Eq;
 use syn::{ImplItemType, TraitItemType, Type, Visibility};
 
+/// Build an associated-type impl item that keeps `trait_type`'s name, generics,
+/// and attributes but binds it to `delegated_type`.
 pub fn trait_to_impl_item_type(trait_type: &TraitItemType, delegated_type: Type) -> ImplItemType {
     ImplItemType {
         attrs: trait_type.attrs.clone(),

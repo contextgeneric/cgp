@@ -58,11 +58,9 @@ A **default method body** is preserved into the provider trait, because the prov
 
 **Generic parameters** on the component are appended after the context in the provider trait and collected into the `IsProviderFor` params tuple. A lifetime stays ahead of the context (lifetimes must precede type parameters) and is lifted into `Life<'a>` in that tuple, so `HasReference<'a, T>` yields `IsProviderFor<…, (Life<'a>, T)>`. Only *type* parameters, not lifetimes or const parameters, extend the `RedirectLookup` lookup path.
 
+A **const generic parameter** on the component is rejected with a spanned `syn::Error` while building the params tuple, since a const value has no representation in a tuple of types and cannot key CGP's type-based wiring (see [parse_is_provider_params](../functions/parse/is_provider_params.md)). This is the idiomatic way to reject it rather than emitting a provider trait that uses the const parameter in type position and fails to compile. A const *item* on the trait (`const CONSTANT: u64;`) is unaffected — that is an associated const, not a generic parameter, and is provided by a const-generic provider struct.
+
 The **reserved identifiers** appear literally in the output: the context parameter is `__Context__` (unless the `context` key overrides it), the provider parameter is `__Provider__`, and the `RedirectLookup` impl introduces `__Components__` and `__Path__`. These names are chosen so they never clash with a user's own type parameters.
-
-## Known issues
-
-A const generic parameter on the component causes a **panic** rather than a clean error: building the params tuple hits an `unimplemented!` for const parameters (see [parse_is_provider_params](../functions/parse/is_provider_params.md)). Applying `#[cgp_component]` to a trait with a const generic therefore aborts expansion with a panic instead of a spanned `syn::Error`; the correct behavior would be a clean rejection or genuine const support. Because the macro produces no output, this case has no expansion snapshot and is a candidate failure case for `cgp-macro-tests`.
 
 ## Snapshots
 
@@ -70,18 +68,20 @@ Every `snapshot_cgp_component!` invocation across the suite is indexed here, sin
 
 - [basic_delegation/component_macro.rs](../../../crates/tests/cgp-tests/tests/basic_delegation/component_macro.rs) — the canonical plain expansion (one method, no parameters).
 - [basic_delegation/default_methods.rs](../../../crates/tests/cgp-tests/tests/basic_delegation/default_methods.rs) — a supertrait lowered to a context `where`-bound plus a default method body copied into the provider trait.
+- [generic_components/component_type_param.rs](../../../crates/tests/cgp-tests/tests/generic_components/component_type_param.rs) — a single type parameter, appended after `__Context__`, placed in the params tuple as `(Shape)`, and extending the `RedirectLookup` path via `ConcatPath<PathCons<Shape, Nil>>`, with no lifetime present.
 - [generic_components/component_lifetime.rs](../../../crates/tests/cgp-tests/tests/generic_components/component_lifetime.rs) — a lifetime kept ahead of `__Context__`, lifted to `Life<'a>`, with a type parameter extending the `RedirectLookup` path via `ConcatPath`.
 - [namespaces/namespace_basic.rs](../../../crates/tests/cgp-tests/tests/namespaces/namespace_basic.rs), [namespaces/namespace_symbol_path.rs](../../../crates/tests/cgp-tests/tests/namespaces/namespace_symbol_path.rs), [namespaces/namespace_type_path.rs](../../../crates/tests/cgp-tests/tests/namespaces/namespace_type_path.rs), [namespaces/namespace_multi.rs](../../../crates/tests/cgp-tests/tests/namespaces/namespace_multi.rs), [namespaces/redirect_lookup.rs](../../../crates/tests/cgp-tests/tests/namespaces/redirect_lookup.rs), [namespaces/default_impls.rs](../../../crates/tests/cgp-tests/tests/namespaces/default_impls.rs), [namespaces/prefix_default_namespace.rs](../../../crates/tests/cgp-tests/tests/namespaces/prefix_default_namespace.rs) — the namespace and prefix-impl variants.
 
-Two variants have no snapshot yet: the `UseDelegate` impl a `#[derive_delegate]` attribute adds to a bare component (exercised through the error and handler families instead), and a component carrying a type parameter but no lifetime, distinct from the combined lifetime-and-type case above.
+One variant has no snapshot yet: the `UseDelegate` impl a `#[derive_delegate]` attribute adds to a bare component, exercised through the error and handler families instead.
 
 ## Tests
 
 The behavioral tests confirm the generated wiring works:
 
 - [basic_delegation/default_methods.rs](../../../crates/tests/cgp-tests/tests/basic_delegation/default_methods.rs) checks at run time that an empty provider impl inherits the default bodies and `App.greet()` returns the expected string.
+- [generic_components/component_type_param.rs](../../../crates/tests/cgp-tests/tests/generic_components/component_type_param.rs) wires a single-type-parameter component to one provider, passes `check_components!` for a concrete type argument, and computes an area at run time.
 - [generic_components/component_lifetime.rs](../../../crates/tests/cgp-tests/tests/generic_components/component_lifetime.rs) wires the lifetime-carrying component and passes `check_components!`.
-- [cgp-macro-tests/tests/parser_rejections/cgp_component.rs](../../../crates/tests/cgp-macro-tests/tests/parser_rejections/cgp_component.rs) asserts the macro rejects a non-trait item at parse time.
+- [cgp-macro-tests/tests/parser_rejections/cgp_component.rs](../../../crates/tests/cgp-macro-tests/tests/parser_rejections/cgp_component.rs) asserts the macro rejects a non-trait item and a trait carrying a const generic parameter.
 
 ## Source
 

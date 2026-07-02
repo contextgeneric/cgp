@@ -22,6 +22,9 @@ pub fn trait_items_to_delegated_impl_items(
         .collect()
 }
 
+/// Forward a single trait item (method, associated type, or const) to
+/// `delegate_type`, projecting associated types and consts through
+/// `provider_trait_path`. Other trait-item kinds are rejected.
 pub fn trait_item_to_delegated_impl_items(
     trait_item: &TraitItem,
     delegate_type: &Type,

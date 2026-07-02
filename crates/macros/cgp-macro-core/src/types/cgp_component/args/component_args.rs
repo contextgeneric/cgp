@@ -29,7 +29,7 @@ impl TryFrom<CgpComponentRawArgs> for CgpComponentArgs {
     fn try_from(raw_args: CgpComponentRawArgs) -> Result<Self, Self::Error> {
         let provider_ident = raw_args
             .provider_ident
-            .ok_or_else(|| Error::new(Span::call_site(), "`provider_ident` key must be given"))?;
+            .ok_or_else(|| Error::new(Span::call_site(), "the `provider` key must be given"))?;
 
         let context_ident = raw_args
             .context_ident
