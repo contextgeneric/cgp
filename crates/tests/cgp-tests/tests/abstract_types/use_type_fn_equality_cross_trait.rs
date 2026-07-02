@@ -1,5 +1,5 @@
 //! `#[use_type]` type-equality *across two traits* in `#[cgp_fn]`:
-//! `#[use_type(HasBarType::{Bar as Baz = Foo}, HasFooType::Foo)]`.
+//! `#[use_type(HasBarType.{Bar as Baz = Foo}, HasFooType.Foo)]`.
 //!
 //! The `{Bar as Baz = Foo}` form imports `HasBarType::Bar` under the alias `Baz`
 //! and equates it to the `Foo` alias imported from `HasFooType`, generating a
@@ -28,7 +28,7 @@ pub trait HasBarType {
 
 snapshot_cgp_fn! {
     #[cgp_fn]
-    #[use_type(HasFooType::Foo)]
+    #[use_type(HasFooType.Foo)]
     pub fn do_foo(&self) -> Foo {
         todo!()
     }
@@ -52,7 +52,7 @@ snapshot_cgp_fn! {
 
 snapshot_cgp_fn! {
     #[cgp_fn]
-    #[use_type(HasBarType::Bar)]
+    #[use_type(HasBarType.Bar)]
     pub fn do_bar(&self) -> Bar {
         todo!()
     }
@@ -76,7 +76,7 @@ snapshot_cgp_fn! {
 
 snapshot_cgp_fn! {
     #[cgp_fn]
-    #[use_type(HasBarType::{Bar as Baz = Foo}, HasFooType::Foo)]
+    #[use_type(HasBarType.{Bar as Baz = Foo}, HasFooType.Foo)]
     #[uses(DoFoo, DoBar)]
     fn return_foo_or_bar(&self, flag: bool, #[implicit] foo: &Foo, #[implicit] bar: &Baz) -> Foo {
         if flag {

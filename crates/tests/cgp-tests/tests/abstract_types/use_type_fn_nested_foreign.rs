@@ -1,5 +1,5 @@
 //! `#[use_type]` reaching a nested foreign type in `#[cgp_fn]` combined with
-//! `#[extend_where]`: `#[use_type(HasTypes::Types, @Types::HasScalarType::Scalar)]`
+//! `#[extend_where]`: `#[use_type(HasTypes.Types, @Types.HasScalarType.Scalar)]`
 //! plus `#[extend_where(Types: HasScalarType)]`.
 //!
 //! `HasTypes::Types` imports the abstract `Types`, then `@Types::HasScalarType::Scalar`
@@ -30,7 +30,7 @@ pub trait HasTypes {
 
 snapshot_cgp_fn! {
     #[cgp_fn]
-    #[use_type(HasTypes::Types, @Types::HasScalarType::Scalar)]
+    #[use_type(HasTypes.Types, @Types.HasScalarType.Scalar)]
     #[extend_where(Types: HasScalarType)]
     pub fn rectangle_area(&self, #[implicit] width: Scalar, #[implicit] height: Scalar) -> Scalar
     where

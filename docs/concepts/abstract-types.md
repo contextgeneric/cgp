@@ -55,7 +55,7 @@ pub trait HasScalarType {
 }
 
 #[cgp_component(AreaOfShapeCalculator)]
-#[use_type(HasScalarType::Scalar)]
+#[use_type(HasScalarType.Scalar)]
 pub trait CanCalculateAreaOfShape<Shape> {
     fn area(&self, shape: &Shape) -> Scalar;
 }

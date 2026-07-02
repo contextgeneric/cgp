@@ -12,13 +12,13 @@ The family is the execution layer that ties together the rest of a CGP applicati
 
 ## Definition
 
-Both components are declared in `cgp-run`, each with [`#[cgp_component]`](../macros/cgp_component.md), `#[async_trait]`, a [`#[derive_delegate(UseDelegate<Code>)]`](../attributes/derive_delegate.md) attribute, and [`#[use_type(HasErrorType::Error)]`](../attributes/use_type.md) so the task can fail with the context's abstract error, written as the bare `Error`:
+Both components are declared in `cgp-run`, each with [`#[cgp_component]`](../macros/cgp_component.md), `#[async_trait]`, a [`#[derive_delegate(UseDelegate<Code>)]`](../attributes/derive_delegate.md) attribute, and [`#[use_type(HasErrorType.Error)]`](../attributes/use_type.md) so the task can fail with the context's abstract error, written as the bare `Error`:
 
 ```rust
 #[cgp_component(Runner)]
 #[async_trait]
 #[derive_delegate(UseDelegate<Code>)]
-#[use_type(HasErrorType::Error)]
+#[use_type(HasErrorType.Error)]
 pub trait CanRun<Code> {
     async fn run(&self, _code: PhantomData<Code>) -> Result<(), Error>;
 }
@@ -26,7 +26,7 @@ pub trait CanRun<Code> {
 #[cgp_component(SendRunner)]
 #[async_trait]
 #[derive_delegate(UseDelegate<Code>)]
-#[use_type(HasErrorType::Error)]
+#[use_type(HasErrorType.Error)]
 pub trait CanSendRun<Code> {
     fn send_run(
         &self,
@@ -35,7 +35,7 @@ pub trait CanSendRun<Code> {
 }
 ```
 
-The `Code` parameter is the type-level name of the task to run; it is passed only as `PhantomData<Code>`, so it carries no data and exists purely to select an implementation. `#[use_type(HasErrorType::Error)]` adds `HasErrorType` as a supertrait and rewrites the bare `Error` to `<Self as HasErrorType>::Error`, so neither trait spells `HasErrorType` or `Self::Error` by hand. `#[cgp_component(Runner)]` names the provider trait `Runner` and the component marker `RunnerComponent`; `#[cgp_component(SendRunner)]` names them `SendRunner` and `SendRunnerComponent`. The [`#[derive_delegate(UseDelegate<Code>)]`](../attributes/derive_delegate.md) attribute generates a `UseDelegate` provider that dispatches on `Code`, so a context can route different `Code` tags to different runner providers through an inner delegation table.
+The `Code` parameter is the type-level name of the task to run; it is passed only as `PhantomData<Code>`, so it carries no data and exists purely to select an implementation. `#[use_type(HasErrorType.Error)]` adds `HasErrorType` as a supertrait and rewrites the bare `Error` to `<Self as HasErrorType>::Error`, so neither trait spells `HasErrorType` or `Self::Error` by hand. `#[cgp_component(Runner)]` names the provider trait `Runner` and the component marker `RunnerComponent`; `#[cgp_component(SendRunner)]` names them `SendRunner` and `SendRunnerComponent`. The [`#[derive_delegate(UseDelegate<Code>)]`](../attributes/derive_delegate.md) attribute generates a `UseDelegate` provider that dispatches on `Code`, so a context can route different `Code` tags to different runner providers through an inner delegation table.
 
 The two traits differ only in how they shape the asynchronous return. `CanRun::run` is an ordinary `async fn` returning `Result<(), Error>`, with no `Send` requirement on the future. `CanSendRun::send_run` instead returns an explicit `impl Future<Output = Result<(), Error>> + Send`, so callers may move the future across threads. Both produce `()` on success — the task's effect is observable elsewhere, not returned.
 
@@ -78,7 +78,7 @@ A complete flow defines tasks, wires runners, proxies the `Send` variant, and sp
 
 ```rust
 #[cgp_impl(new SpawnAndRun<InCode>: RunnerComponent)]
-#[use_type(HasErrorType::Error)]
+#[use_type(HasErrorType.Error)]
 impl<Code, InCode> Runner<Code>
 where
     Self: 'static + Send + Clone + CanSendRun<InCode>,

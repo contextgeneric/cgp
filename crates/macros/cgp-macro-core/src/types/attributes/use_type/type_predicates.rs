@@ -68,38 +68,21 @@ fn find_type_alias(specs: &[UseTypeAttribute], context_type: &Type) -> syn::Resu
     Ok(None)
 }
 
-fn find_type_equalities(
-    current_spec: &UseTypeAttribute,
-    specs: &[UseTypeAttribute],
-) -> syn::Result<Vec<(Ident, Type)>> {
-    let mut equalities = Vec::new();
+/// Reject two imports that resolve to the same bare identifier or alias, across
+/// every spec *and within a single braced list*. A shared alias would make the
+/// substitution silently pick the first match and drop the rest, so it is an
+/// error regardless of which host macro drives the import.
+pub fn forbid_duplicate_aliases(specs: &[UseTypeAttribute]) -> syn::Result<()> {
+    let idents: Vec<&UseTypeIdent> = specs
+        .iter()
+        .flat_map(|spec| spec.type_idents.iter())
+        .collect();
 
-    for current_type_ident in current_spec.type_idents.iter() {
-        forbid_same_alias(current_type_ident, current_spec, specs)?;
-
-        if let Some(equality) = find_type_equality(current_type_ident, current_spec, specs)? {
-            equalities.push(equality);
-        }
-    }
-
-    Ok(equalities)
-}
-
-fn forbid_same_alias(
-    current_ident: &UseTypeIdent,
-    current_spec: &UseTypeAttribute,
-    specs: &[UseTypeAttribute],
-) -> syn::Result<()> {
-    for spec in specs.iter() {
-        if core::ptr::eq(spec, current_spec) {
-            // Skip the current spec
-            continue;
-        }
-
-        for type_ident in spec.type_idents.iter() {
-            if current_ident.alias_ident() == type_ident.alias_ident() {
+    for (index, current) in idents.iter().enumerate() {
+        for other in idents.iter().skip(index + 1) {
+            if current.alias_ident() == other.alias_ident() {
                 return Err(syn::Error::new_spanned(
-                    &current_ident.type_ident,
+                    &other.type_ident,
                     "Multiple abstract types cannot share the same identifier or alias",
                 ));
             }
@@ -107,6 +90,21 @@ fn forbid_same_alias(
     }
 
     Ok(())
+}
+
+fn find_type_equalities(
+    current_spec: &UseTypeAttribute,
+    specs: &[UseTypeAttribute],
+) -> syn::Result<Vec<(Ident, Type)>> {
+    let mut equalities = Vec::new();
+
+    for current_type_ident in current_spec.type_idents.iter() {
+        if let Some(equality) = find_type_equality(current_type_ident, current_spec, specs)? {
+            equalities.push(equality);
+        }
+    }
+
+    Ok(equalities)
 }
 
 fn find_type_equality(

@@ -17,6 +17,7 @@ pub mod extend_component;
 pub mod use_type_component;
 pub mod use_type_foreign;
 pub mod use_type_generic_param;
+pub mod use_type_path_qualified;
 
 // The `#[use_type]` attribute rewriting abstract types inside `#[cgp_fn]`: the
 // bare alias, alias renaming, type-equality bounds, and foreign/nested type

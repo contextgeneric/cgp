@@ -1,7 +1,7 @@
 //! Importing abstract types into a `#[cgp_component]` and `#[cgp_impl]` with
 //! `#[use_type(...)]`, and fixing them on a context with `UseType<Concrete>`.
 //!
-//! `#[use_type(HasScalarType::Scalar, HasErrorType::Error)]` adds the two
+//! `#[use_type(HasScalarType.Scalar, HasErrorType.Error)]` adds the two
 //! abstract-type components as supertraits/dependencies and rewrites the bare
 //! aliases `Scalar` and `Error` to `<Self as HasScalarType>::Scalar` /
 //! `<Self as HasErrorType>::Error`, so the signatures read without any `Self::`
@@ -25,13 +25,13 @@ pub trait HasScalarType {
 }
 
 #[cgp_component(AreaCalculator)]
-#[use_type(HasScalarType::Scalar, HasErrorType::Error)]
+#[use_type(HasScalarType.Scalar, HasErrorType.Error)]
 pub trait CanCalculateArea {
     fn area(&self) -> Result<Scalar, Error>;
 }
 
 #[cgp_impl(new RectangleArea)]
-#[use_type(HasScalarType::Scalar, HasErrorType::Error)]
+#[use_type(HasScalarType.Scalar, HasErrorType.Error)]
 impl AreaCalculator
 where
     Scalar: Mul<Output = Scalar> + Copy,

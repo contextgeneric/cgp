@@ -1,5 +1,5 @@
 //! `#[use_type]` reaching through a *nested foreign* associated type across traits
-//! in `#[cgp_fn]`: `#[use_type(HasBarType::Bar, @Bar::HasFooType::Foo)]` and the
+//! in `#[cgp_fn]`: `#[use_type(HasBarType.Bar, @Bar.HasFooType.Foo)]` and the
 //! equality form `@Bar::HasFooType::{Foo as BarFoo = Foo}`.
 //!
 //! Here `HasBarType::Bar` itself implements `HasFooType`, so `@Bar::HasFooType::Foo`
@@ -25,7 +25,7 @@ pub trait HasBarType {
 
 snapshot_cgp_fn! {
     #[cgp_fn]
-    #[use_type(HasFooType::Foo)]
+    #[use_type(HasFooType.Foo)]
     pub fn do_foo(&self) -> Foo {
         todo!()
     }
@@ -49,7 +49,7 @@ snapshot_cgp_fn! {
 
 snapshot_cgp_fn! {
     #[cgp_fn]
-    #[use_type(HasBarType::Bar, @Bar::HasFooType::Foo)]
+    #[use_type(HasBarType.Bar, @Bar.HasFooType.Foo)]
     pub fn do_bar(&self) -> Foo {
         todo!()
     }
@@ -75,9 +75,9 @@ snapshot_cgp_fn! {
 snapshot_cgp_fn! {
     #[cgp_fn]
     #[use_type(
-        HasFooType::Foo,
-        HasBarType::Bar,
-        @Bar::HasFooType::{Foo as BarFoo = Foo},
+        HasFooType.Foo,
+        HasBarType.Bar,
+        @Bar.HasFooType.{Foo as BarFoo = Foo},
     )]
     #[uses(DoFoo, DoBar)]
     fn return_foo_or_bar(&self, flag: bool, #[implicit] foo: &Foo, #[implicit] bar: &BarFoo) -> Foo {

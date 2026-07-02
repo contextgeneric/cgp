@@ -45,7 +45,7 @@ Every endpoint is one case of a single component that dispatches on a marker typ
 #[cgp_component(ApiHandler)]
 #[async_trait]
 #[derive_delegate(UseDelegate<Api>)]
-#[use_type(HasErrorType::Error)]
+#[use_type(HasErrorType.Error)]
 pub trait CanHandleApi<Api> {
     type Request;
     type Response;
@@ -70,7 +70,7 @@ Each endpoint is a provider for `ApiHandler` that depends on business capabiliti
 ```rust
 #[cgp_component(MoneyTransferrer)]
 #[async_trait]
-#[use_type(HasUserIdType::UserId, HasCurrencyType::Currency, HasQuantityType::Quantity, HasErrorType::Error)]
+#[use_type(HasUserIdType.UserId, HasCurrencyType.Currency, HasQuantityType.Quantity, HasErrorType.Error)]
 pub trait CanTransferMoney {
     async fn transfer_money(
         &self,
@@ -83,7 +83,7 @@ pub trait CanTransferMoney {
 
 #[cgp_impl(new HandleTransfer<Request>)]
 #[uses(CanTransferMoney, CanRaiseHttpError<ErrUnauthorized, String>)]
-#[use_type(HasErrorType::Error)]
+#[use_type(HasErrorType.Error)]
 impl<Api, Request> ApiHandler<Api>
 where
     Request: HasLoggedInUser<Self> + HasTransferMoneyFields<Self>,
@@ -123,7 +123,7 @@ Cross-cutting concerns are handlers that wrap another handler, which makes them 
 
 ```rust
 #[cgp_impl(new HandleFromRequest<Request, InHandler>)]
-#[use_type(HasErrorType::Error)]
+#[use_type(HasErrorType.Error)]
 impl<Api, Request, InHandler> ApiHandler<Api>
 where
     InHandler: ApiHandler<Self, Api>,
@@ -147,7 +147,7 @@ where
 ```rust
 #[cgp_impl(new UseBasicAuth<InHandler>)]
 #[uses(CanQueryUserHashedPassword, CanCheckPassword)]
-#[use_type(HasUserIdType::UserId, HasErrorType::Error)]
+#[use_type(HasUserIdType.UserId, HasErrorType.Error)]
 impl<Api, InHandler> ApiHandler<Api>
 where
     InHandler: ApiHandler<Self, Api>,
@@ -181,7 +181,7 @@ where
 
 ```rust
 #[cgp_impl(ResponseToJson<InHandler>)]
-#[use_type(HasErrorType::Error)]
+#[use_type(HasErrorType.Error)]
 impl<Api, InHandler> ApiHandler<Api>
 where
     InHandler: ApiHandler<Self, Api>,
@@ -208,7 +208,7 @@ The business capabilities are satisfied by a provider that reads its data from c
 
 ```rust
 #[cgp_auto_getter]
-#[use_type(HasUserIdType::UserId, HasCurrencyType::Currency, HasQuantityType::Quantity)]
+#[use_type(HasUserIdType.UserId, HasCurrencyType.Currency, HasQuantityType.Quantity)]
 pub trait HasMockedUserBalances {
     fn user_balances(
         &self,
@@ -221,7 +221,7 @@ pub trait HasMockedUserBalances {
     CanRaiseHttpError<ErrNotFound, String>,
     CanRaiseHttpError<ErrBadRequest, String>,
 )]
-#[use_type(HasUserIdType::UserId, HasCurrencyType::Currency, HasQuantityType::Quantity, HasErrorType::Error)]
+#[use_type(HasUserIdType.UserId, HasCurrencyType.Currency, HasQuantityType.Quantity, HasErrorType.Error)]
 impl MoneyTransferrer
 where
     Quantity: CheckedAdd + CheckedSub,

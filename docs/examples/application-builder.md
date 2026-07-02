@@ -74,7 +74,7 @@ pub struct SqliteClient {
 
 #[cgp_impl(new BuildSqliteClient)]
 #[uses(HasSqliteOptions, CanRaiseError<sqlx::Error>)]
-#[use_type(HasErrorType::Error)]
+#[use_type(HasErrorType.Error)]
 impl<Code, Input> Handler<Code, Input> {
     type Output = SqliteClient;
 
@@ -114,7 +114,7 @@ pub struct HttpClient {
 
 #[cgp_impl(new BuildHttpClient)]
 #[uses(HasHttpClientConfig, CanRaiseError<reqwest::Error>)]
-#[use_type(HasErrorType::Error)]
+#[use_type(HasErrorType.Error)]
 impl<Code, Input> Handler<Code, Input> {
     type Output = HttpClient;
 
@@ -146,7 +146,7 @@ pub struct OpenAiClient {
 
 #[cgp_impl(new BuildOpenAiClient)]
 #[uses(HasOpenAiConfig)]
-#[use_type(HasErrorType::Error)]
+#[use_type(HasErrorType.Error)]
 impl<Code, Input> Handler<Code, Input> {
     type Output = OpenAiClient;
 
@@ -162,7 +162,7 @@ impl<Code, Input> Handler<Code, Input> {
 }
 ```
 
-Each provider states exactly what it needs from the context through [`#[uses(...)]`](../reference/attributes/uses.md) as an [impl-side dependency](../concepts/impl-side-dependencies.md), and nothing more. A builder whose construction cannot fail — like `BuildOpenAiClient` — only imports the abstract error type with [`#[use_type(HasErrorType::Error)]`](../reference/attributes/use_type.md) so its output type aligns with the others, while a fallible one also lists the `CanRaiseError` it needs.
+Each provider states exactly what it needs from the context through [`#[uses(...)]`](../reference/attributes/uses.md) as an [impl-side dependency](../concepts/impl-side-dependencies.md), and nothing more. A builder whose construction cannot fail — like `BuildOpenAiClient` — only imports the abstract error type with [`#[use_type(HasErrorType.Error)]`](../reference/attributes/use_type.md) so its output type aligns with the others, while a fallible one also lists the `CanRaiseError` it needs.
 
 ## Merging the outputs into the application
 
@@ -243,7 +243,7 @@ pub struct PostgresClient {
 
 #[cgp_impl(new BuildPostgresClient)]
 #[uses(HasPostgresUrl, CanRaiseError<sqlx::Error>)]
-#[use_type(HasErrorType::Error)]
+#[use_type(HasErrorType.Error)]
 impl<Code, Input> Handler<Code, Input> {
     type Output = PostgresClient;
 

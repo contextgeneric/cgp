@@ -1,5 +1,5 @@
 //! `#[use_type]` with a *type-equality* bound in a `#[cgp_fn]`:
-//! `#[use_type(HasScalarType::{Scalar = f64})]`.
+//! `#[use_type(HasScalarType.{Scalar = f64})]`.
 //!
 //! The `{Scalar = f64}` form both imports `Scalar` (rewriting the bare alias to
 //! `<Self as HasScalarType>::Scalar`) and pins it to a concrete type by adding
@@ -19,7 +19,7 @@ pub trait HasScalarType {
 
 snapshot_cgp_fn! {
     #[cgp_fn]
-    #[use_type(HasScalarType::{Scalar = f64})]
+    #[use_type(HasScalarType.{Scalar = f64})]
     pub fn rectangle_area(&self, #[implicit] width: Scalar, #[implicit] height: Scalar) -> Scalar {
         let res: f64 = width * height;
         res

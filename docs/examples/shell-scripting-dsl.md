@@ -66,7 +66,7 @@ Every step of a program is interpreted by one component: the [`Handler`](../refe
 #[cgp_component(Handler)]
 #[derive_delegate(UseDelegate<Code>)]
 #[derive_delegate(UseInputDelegate<Input>)]
-#[use_type(HasErrorType::Error)]
+#[use_type(HasErrorType.Error)]
 pub trait CanHandle<Code, Input> {
     type Output;
 
@@ -99,7 +99,7 @@ pub struct Checksum<Hasher>(pub PhantomData<Hasher>);
 
 #[cgp_impl(new HandleStreamChecksum)]
 #[uses(CanRaiseError<Input::Error>)]
-#[use_type(HasErrorType::Error)]
+#[use_type(HasErrorType.Error)]
 impl<Input, Hasher> Handler<Checksum<Hasher>, Input>
 where
     Input: Unpin + TryStream,
@@ -205,7 +205,7 @@ A language extension adds new syntax and its interpreters without forking the co
 pub struct BytesToHex;
 
 #[cgp_impl(new HandleBytesToHex)]
-#[use_type(HasErrorType::Error)]
+#[use_type(HasErrorType.Error)]
 impl<Code, Input> Handler<Code, Input>
 where
     Input: AsRef<[u8]>,

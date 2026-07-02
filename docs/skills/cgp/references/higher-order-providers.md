@@ -137,7 +137,7 @@ The real leverage of generic-parameter dispatch appears when the main target of 
 
 ```rust
 #[cgp_component(AreaCalculator)]
-#[use_type(HasScalarType::Scalar)]
+#[use_type(HasScalarType.Scalar)]
 pub trait CanCalculateAreaOfShape<Shape> {
     fn area_of_shape(&self, shape: &Shape) -> Scalar;
 }

@@ -1,8 +1,8 @@
 //! Importing an abstract type from a *foreign* type parameter with the
-//! `#[use_type(@Types::HasScalarType::Scalar)]` form on a generic component.
+//! `#[use_type(@Types.HasScalarType.Scalar)]` form on a generic component.
 //!
 //! When the abstract type lives on a generic parameter of the component rather
-//! than on `Self`, the `@Types::` prefix tells `#[use_type]` to resolve `Scalar`
+//! than on `Self`, the `@Types.` prefix tells `#[use_type]` to resolve `Scalar`
 //! against that parameter, rewriting the bare alias to
 //! `<Types as HasScalarType>::Scalar`. The `Error` type is still resolved against
 //! `Self` via `HasErrorType::Error`. `Types` is a standalone type that supplies
@@ -23,13 +23,13 @@ pub trait HasScalarType {
 }
 
 #[cgp_component(AreaCalculator)]
-#[use_type(@Types::HasScalarType::Scalar, HasErrorType::Error)]
+#[use_type(@Types.HasScalarType.Scalar, HasErrorType.Error)]
 pub trait CanCalculateArea<Types: HasScalarType> {
     fn area(&self) -> Result<Scalar, Error>;
 }
 
 #[cgp_impl(new RectangleArea)]
-#[use_type(@Types::HasScalarType::Scalar, HasErrorType::Error)]
+#[use_type(@Types.HasScalarType.Scalar, HasErrorType.Error)]
 impl<Types> AreaCalculator<Types>
 where
     Scalar: Mul<Output = Scalar> + Copy,

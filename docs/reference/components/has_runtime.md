@@ -25,17 +25,17 @@ pub type RuntimeOf<Context> = <Context as HasRuntimeType>::Runtime;
 
 Because the trait carries no provider-name argument, `#[cgp_type]` derives the provider name from the associated type: `Runtime` yields the provider trait `RuntimeTypeProvider` and the component marker `RuntimeTypeProviderComponent`. The `Runtime` associated type carries no bound, so any concrete type may be plugged in. The `RuntimeOf<Context>` alias is the convenient spelling of the resolved runtime type, used wherever writing `<Context as HasRuntimeType>::Runtime` in full would be noise.
 
-`HasRuntime` is a getter component defined with [`#[cgp_getter]`](../macros/cgp_getter.md), and it imports the runtime type with [`#[use_type(HasRuntimeType::Runtime)]`](../attributes/use_type.md) so the runtime type is available as the getter's return type under the bare name `Runtime`:
+`HasRuntime` is a getter component defined with [`#[cgp_getter]`](../macros/cgp_getter.md), and it imports the runtime type with [`#[use_type(HasRuntimeType.Runtime)]`](../attributes/use_type.md) so the runtime type is available as the getter's return type under the bare name `Runtime`:
 
 ```rust
 #[cgp_getter]
-#[use_type(HasRuntimeType::Runtime)]
+#[use_type(HasRuntimeType.Runtime)]
 pub trait HasRuntime {
     fn runtime(&self) -> &Runtime;
 }
 ```
 
-`#[cgp_getter]` derives the provider name from the trait name by stripping the `Has` prefix and appending `Getter`, so `HasRuntime` yields the provider trait `RuntimeGetter` and the component marker `RuntimeGetterComponent`. `#[use_type(HasRuntimeType::Runtime)]` adds `HasRuntimeType` as a supertrait and rewrites the bare `Runtime` to `<Self as HasRuntimeType>::Runtime`, so the `runtime` method borrows the runtime value out of a borrow of the context, returning `&Runtime` — the abstract type supplied by `HasRuntimeType` — without writing `Self::Runtime` by hand.
+`#[cgp_getter]` derives the provider name from the trait name by stripping the `Has` prefix and appending `Getter`, so `HasRuntime` yields the provider trait `RuntimeGetter` and the component marker `RuntimeGetterComponent`. `#[use_type(HasRuntimeType.Runtime)]` adds `HasRuntimeType` as a supertrait and rewrites the bare `Runtime` to `<Self as HasRuntimeType>::Runtime`, so the `runtime` method borrows the runtime value out of a borrow of the context, returning `&Runtime` — the abstract type supplied by `HasRuntimeType` — without writing `Self::Runtime` by hand.
 
 ## Behavior
 

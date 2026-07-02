@@ -1,5 +1,5 @@
 //! Getters whose return type is an abstract type imported from another component
-//! via `#[use_type(HasScalarType::Scalar)]`, so the signatures name it as the
+//! via `#[use_type(HasScalarType.Scalar)]`, so the signatures name it as the
 //! bare `Scalar` while the expansion rewrites it to
 //! `<Self as HasScalarType>::Scalar`. Both the auto getter and the full getter
 //! variant are pinned. The `#[cgp_type]` scaffolding is written plainly here —
@@ -18,7 +18,7 @@ pub trait HasScalarType {
 
 snapshot_cgp_auto_getter! {
     #[cgp_auto_getter]
-    #[use_type(HasScalarType::Scalar)]
+    #[use_type(HasScalarType.Scalar)]
     pub trait AutoRectangleFields {
         fn width(&self) -> Scalar;
 
@@ -81,7 +81,7 @@ snapshot_cgp_auto_getter! {
 
 snapshot_cgp_getter! {
     #[cgp_getter(RectangleFieldsGetter)]
-    #[use_type(HasScalarType::Scalar)]
+    #[use_type(HasScalarType.Scalar)]
     pub trait HasRectangleFields {
         fn width(&self) -> Scalar;
 

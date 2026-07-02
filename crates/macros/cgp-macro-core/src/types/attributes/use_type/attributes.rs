@@ -4,7 +4,9 @@ use syn::{ItemImpl, ItemTrait};
 
 use crate::functions::parse_internal;
 use crate::types::attributes::UseTypeAttribute;
-use crate::types::attributes::use_type::type_predicates::derive_use_type_predicates;
+use crate::types::attributes::use_type::type_predicates::{
+    derive_use_type_predicates, forbid_duplicate_aliases,
+};
 use crate::visitors::SubstituteAbstractType;
 
 #[derive(Default, Clone)]
@@ -30,6 +32,8 @@ impl UseTypeAttributes {
             return Ok(());
         }
 
+        forbid_duplicate_aliases(&self.attributes)?;
+
         self.substitute_abstract_types_in_item_trait(item_trait);
 
         for use_type in self.attributes.iter() {
@@ -49,6 +53,8 @@ impl UseTypeAttributes {
         if self.attributes.is_empty() {
             return Ok(());
         }
+
+        forbid_duplicate_aliases(&self.attributes)?;
 
         self.substitute_abstract_types_in_item_impl(item_impl);
 

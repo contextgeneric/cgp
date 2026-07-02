@@ -6,25 +6,47 @@
 
 `#[use_type]` removes the boilerplate of referring to an abstract type that lives on another CGP trait. A CGP trait often needs a type that is defined elsewhere — a `Scalar` from `HasScalarType`, an `Error` from `HasErrorType` — and Rust requires every reference to that type to be written in fully-qualified form, `<Self as HasScalarType>::Scalar`, because a bare `Scalar` is not a type the compiler knows about. Writing that prefix on every occurrence, in the return type, in each implicit argument, and in the body, is verbose and easy to get wrong.
 
-The attribute lets you write the bare identifier `Scalar` everywhere and have the macro expand it for you. You declare the type once in the attribute — `#[use_type(HasScalarType::Scalar)]` — and the macro replaces each standalone `Scalar` type with `<Self as HasScalarType>::Scalar`, while also adding `HasScalarType` as a supertrait of the generated trait (for `#[cgp_component]`) or as a `where`-clause bound on the impl (for `#[cgp_impl]` and `#[cgp_fn]`). The bare identifier reads like a normal generic, but resolves to the qualified associated type.
+The attribute lets you write the bare identifier `Scalar` everywhere and have the macro expand it for you. You declare the type once in the attribute — `#[use_type(HasScalarType.Scalar)]` — and the macro replaces each standalone `Scalar` type with `<Self as HasScalarType>::Scalar`, while also adding `HasScalarType` as a supertrait of the generated trait (for `#[cgp_component]`) or as a `where`-clause bound on the impl (for `#[cgp_impl]` and `#[cgp_fn]`). The bare identifier reads like a normal generic, but resolves to the qualified associated type.
 
 Beyond saving keystrokes, the fully-qualified rewrite removes ambiguity that the bare form cannot express. Because the macro always emits the `<Self as Trait>::Type` path, nested associated types compose without the author ever spelling out the path, foreign abstract types can be pulled from a type parameter rather than `Self`, and type-equality constraints between two imported types can be stated declaratively. These capabilities are why the `/cgp` skill recommends `#[use_type]` as the default way to import abstract types in all three macros.
 
 ## Syntax
 
-`#[use_type]` is applied as an outer attribute alongside the `#[cgp_fn]`, `#[cgp_impl]`, or `#[cgp_component]` attribute, and its argument names a trait and one or more of its associated types. The simplest form imports a single type from a trait by path:
+`#[use_type]` is applied as an outer attribute alongside the `#[cgp_fn]`, `#[cgp_impl]`, or `#[cgp_component]` attribute, and its argument names a trait and one or more of its associated types. A `.` separates the trait from the associated type — not `::` — which is what lets the trait itself be a full path or carry generic arguments without the parser confusing a path segment for the associated type. The simplest form imports a single type from a trait:
 
 ```rust
-#[use_type(HasScalarType::Scalar)]
+#[use_type(HasScalarType.Scalar)]
 ```
 
-The path before the final segment is the trait, and the final segment is the associated type to import. The rewrite target — the type the bare identifier expands into — defaults to `Self`, so the example above rewrites `Scalar` to `<Self as HasScalarType>::Scalar`.
+The part before the `.` is the trait and the identifier after it is the associated type to import. The rewrite target — the type the bare identifier expands into — defaults to `Self`, so the example above rewrites `Scalar` to `<Self as HasScalarType>::Scalar`.
 
-A leading `@` changes the rewrite target from `Self` to a named type, which is how foreign abstract types are imported. The form `#[use_type(@Types::HasScalarType::Scalar)]` treats the first segment, `Types`, as the context type and rewrites `Scalar` to `<Types as HasScalarType>::Scalar`. `Types` is typically a generic parameter of the function or impl rather than `Self`, which lets a trait pull an abstract type from a parameter instead of from the implementing context.
+Because the `.` is the only separator the macro looks for, the trait may be written as a full path or with generic arguments, both using ordinary `::`. `#[use_type(errors::HasErrorType.Error)]` imports from a trait named by path without bringing it into scope, and `#[use_type(HasFooType<X>.Foo)]` imports the associated type of a specific generic instantiation, rewriting `Foo` to `<Self as HasFooType<X>>::Foo`. This is what makes it possible to import the same associated type from two instantiations under different aliases, as in `#[use_type(HasFooType<X>.{Foo as FooX}, HasFooType<Y>.{Foo as FooY})]`.
 
-Several types from the same trait can be imported in one attribute using a braced list, and each entry may be renamed with `as` or constrained with `=`. The braced form `#[use_type(HasFooType::{Foo, Bar as Baz})]` imports `Foo` under its own name and `Bar` under the local alias `Baz`. The equality form `#[use_type(HasScalarType::{Scalar = f64})]` imports `Scalar` and additionally constrains it, emitting `Self: HasScalarType<Scalar = f64>` in the `where` clause. Multiple `#[use_type]` attributes may also be stacked, and several trait paths may be separated by commas inside one attribute, as in `#[use_type(HasBarType::{Bar as Baz = Foo}, HasFooType::Foo)]`.
+A leading `@` changes the rewrite target from `Self` to a named type, which is how foreign abstract types are imported. The form `#[use_type(@Types.HasScalarType.Scalar)]` treats the first segment, `Types`, as the context type and rewrites `Scalar` to `<Types as HasScalarType>::Scalar`. `Types` is typically a generic parameter of the function or impl rather than `Self`, which lets a trait pull an abstract type from a parameter instead of from the implementing context.
 
-One restriction applies to `#[cgp_component]` specifically: the `= ...` type-equality form is rejected there, because a trait definition cannot carry the impl-side equality constraint that the equality form produces. Equality constraints belong on `#[cgp_fn]` and `#[cgp_impl]`, where they become `where` bounds.
+Several types from the same trait can be imported in one attribute using a braced list, and each entry may be renamed with `as` or constrained with `=`. The braced form `#[use_type(HasFooType.{Foo, Bar as Baz})]` imports `Foo` under its own name and `Bar` under the local alias `Baz`. The equality form `#[use_type(HasScalarType.{Scalar = f64})]` imports `Scalar` and additionally constrains it, emitting `Self: HasScalarType<Scalar = f64>` in the `where` clause. Multiple `#[use_type]` attributes may also be stacked, and several trait paths may be separated by commas inside one attribute, as in `#[use_type(HasBarType.{Bar as Baz = Foo}, HasFooType.Foo)]`.
+
+Two restrictions guard against ambiguous imports. No two imports may resolve to the same bare identifier or alias — whether they appear in different specs or in the same braced list, and on `#[cgp_component]` as well as on `#[cgp_fn]` and `#[cgp_impl]` — because the substitution could then only pick one and would silently drop the rest; a collision is a compile error. And the `= ...` type-equality form is rejected on `#[cgp_component]` specifically, because a trait definition cannot carry the impl-side equality constraint the equality form produces; equality constraints belong on `#[cgp_fn]` and `#[cgp_impl]`, where they become `where` bounds.
+
+## Syntax Grammar
+
+The grammar below covers the tokens inside `#[use_type(...)]` — the comma-separated list of import specs, not the surrounding attribute delimiters.
+
+```ebnf
+UseTypeArgs -> UseTypeSpec (`,` UseTypeSpec)* `,`?
+
+UseTypeSpec -> (`@` ContextPath `.`)? TraitPath `.` TypeItems
+
+ContextPath -> TypePath
+TraitPath   -> TypePath
+
+TypeItems -> UseTypeIdent
+           | `{` UseTypeIdent (`,` UseTypeIdent)* `,`? `}`
+
+UseTypeIdent -> IDENTIFIER (`as` IDENTIFIER)? (`=` Type)?
+```
+
+`ContextPath` and `TraitPath` are ordinary Rust `TypePath`s (a path whose final segment may carry angle-bracketed generic arguments); their `::` segments belong to the path, while the `.` after them starts the associated-type list. An omitted `@ContextPath .` prefix defaults the rewrite target to `Self`. In each `UseTypeIdent`, the leading `IDENTIFIER` is the associated type's own name, an `as` clause gives it a local alias to write in the signature, and an `= Type` clause pins it with an equality bound (accepted on `#[cgp_fn]` and `#[cgp_impl]`, rejected on `#[cgp_component]`).
 
 ## Expansion
 
@@ -36,7 +58,7 @@ pub trait HasScalarType {
 }
 
 #[cgp_fn]
-#[use_type(HasScalarType::Scalar)]
+#[use_type(HasScalarType.Scalar)]
 fn rectangle_area(
     &self,
     #[implicit] width: Scalar,
@@ -71,13 +93,13 @@ where
 
 The substitution is purely textual at the type level: it matches single-segment type paths with no arguments whose identifier equals the imported name (or its alias), and replaces them with `<Self as HasScalarType>::Scalar`. A bare `Scalar` anywhere — return type, implicit-argument annotation, or a `let` binding inside the body — is rewritten the same way, which is what makes nested uses work without the author writing any path.
 
-Because the rewrite fires only on the bare identifier of an *imported* type, a construct's own **local associated types must always stay qualified as `Self::Assoc`** and are left untouched. A `#[cgp_component]` trait or a `#[cgp_impl]` provider that declares its own `type Output` refers to it as `Self::Output`, never as a bare `Output`, precisely because `Output` is the construct's own type rather than one imported from another trait — `#[use_type]` neither imports it nor rewrites it, and it should not be listed in a `#[use_type]` attribute. This is why a mixed signature such as `Result<Self::Output, Error>` is correct and idiomatic: the local `Self::Output` stays qualified while the imported foreign type `Error` (from `#[use_type(HasErrorType::Error)]`) is written bare. Attempting to write the local type bare would leave a `Output` identifier that resolves to nothing, since the substitution pass has no entry for it.
+Because the rewrite fires only on the bare identifier of an *imported* type, a construct's own **local associated types must always stay qualified as `Self::Assoc`** and are left untouched. A `#[cgp_component]` trait or a `#[cgp_impl]` provider that declares its own `type Output` refers to it as `Self::Output`, never as a bare `Output`, precisely because `Output` is the construct's own type rather than one imported from another trait — `#[use_type]` neither imports it nor rewrites it, and it should not be listed in a `#[use_type]` attribute. This is why a mixed signature such as `Result<Self::Output, Error>` is correct and idiomatic: the local `Self::Output` stays qualified while the imported foreign type `Error` (from `#[use_type(HasErrorType.Error)]`) is written bare. Attempting to write the local type bare would leave a `Output` identifier that resolves to nothing, since the substitution pass has no entry for it.
 
 For `#[cgp_component]`, the trait is added as a supertrait rather than a `where` bound, and the rewrite touches the trait's own signatures. Starting from:
 
 ```rust
 #[cgp_component(AreaCalculator)]
-#[use_type(HasScalarType::Scalar)]
+#[use_type(HasScalarType.Scalar)]
 pub trait CanCalculateArea {
     fn area(&self) -> Scalar;
 }
@@ -92,11 +114,11 @@ pub trait CanCalculateArea: HasScalarType {
 }
 ```
 
-The supertrait is added only when the rewrite target is `Self`. With the foreign-type `@` form the target is a named type, so no supertrait is added; instead the bound lands in the impl's `where` clause. This `#[cgp_fn]` imports `Scalar` from a generic parameter `Types`:
+The supertrait is added only when the rewrite target is `Self`. With the foreign-type `@` form the target is a named type, so on `#[cgp_fn]` and `#[cgp_impl]` the bound lands in the impl's `where` clause instead of as a supertrait; on `#[cgp_component]` no bound is added at all, so a component using the `@` form must declare the parameter's bound itself (for example `pub trait CanCalculateArea<Types: HasScalarType>`). This `#[cgp_fn]` imports `Scalar` from a generic parameter `Types`:
 
 ```rust
 #[cgp_fn]
-#[use_type(@Types::HasScalarType::Scalar)]
+#[use_type(@Types.HasScalarType.Scalar)]
 pub fn rectangle_area<Types: HasScalarType>(
     &self,
     #[implicit] width: Scalar,
@@ -136,7 +158,7 @@ where
 }
 ```
 
-The type-equality form adds a constrained bound on top of the substitution. Writing `#[use_type(HasScalarType::{Scalar = f64})]` substitutes `Scalar` to `<Self as HasScalarType>::Scalar` exactly as before, but emits `Self: HasScalarType<Scalar = f64>` in the `where` clause in place of the plain `Self: HasScalarType`, pinning the abstract type to `f64`. When one import's equality target names another import's alias — as in `#[use_type(HasBarType::{Bar as Baz = Foo}, HasFooType::Foo)]` — the macro resolves the target across specs and emits `Self: HasBarType<Bar = <Self as HasFooType>::Foo>`, tying the two abstract types together. Two imports may not share the same identifier or alias; doing so is a compile error.
+The type-equality form adds a constrained bound on top of the substitution. Writing `#[use_type(HasScalarType.{Scalar = f64})]` substitutes `Scalar` to `<Self as HasScalarType>::Scalar` exactly as before, but emits `Self: HasScalarType<Scalar = f64>` in the `where` clause in place of the plain `Self: HasScalarType`, pinning the abstract type to `f64`. When one import's equality target names another import's alias — as in `#[use_type(HasBarType.{Bar as Baz = Foo}, HasFooType.Foo)]` — the macro resolves the target across specs and emits `Self: HasBarType<Bar = <Self as HasFooType>::Foo>`, tying the two abstract types together. This cross-spec resolution relies on aliases being unique, which the duplicate check described in the Syntax section guarantees.
 
 ## Examples
 
@@ -152,7 +174,7 @@ pub trait HasScalarType {
 }
 
 #[cgp_component(AreaCalculator)]
-#[use_type(HasScalarType::Scalar)]
+#[use_type(HasScalarType.Scalar)]
 pub trait CanCalculateArea {
     fn area(&self) -> Scalar;
 }
@@ -162,7 +184,7 @@ pub trait CanCalculateArea {
 
 ```rust
 #[cgp_impl(new RectangleArea)]
-#[use_type(HasScalarType::Scalar)]
+#[use_type(HasScalarType.Scalar)]
 impl AreaCalculator {
     fn area(&self, #[implicit] width: Scalar, #[implicit] height: Scalar) -> Scalar {
         width * height
@@ -178,8 +200,8 @@ The provider's `#[use_type]` adds `Self: HasScalarType` to its `where` clause an
 
 ## Source
 
-- Parsing: the attribute is parsed by `UseTypeAttribute` in [crates/macros/cgp-macro-core/src/types/attributes/use_type/attribute.rs](../../../crates/macros/cgp-macro-core/src/types/attributes/use_type/attribute.rs), with per-type entries (`as` alias and `=` equality) in `ident.rs`.
-- Two-phase transform (substitute then add bounds): lives in `attributes.rs` as `transform_item_trait` (supertrait for `#[cgp_component]`) and `transform_item_impl` (`where` bound for impls); the type-equality and foreign-context resolution are in `type_predicates.rs`.
+- Parsing: the attribute is parsed by `UseTypeAttribute` in [crates/macros/cgp-macro-core/src/types/attributes/use_type/attribute.rs](../../../crates/macros/cgp-macro-core/src/types/attributes/use_type/attribute.rs), which reads the context and trait as `PathWithTypeArgs` separated by `.`; per-type entries (`as` alias and `=` equality) are in `ident.rs`.
+- Two-phase transform (substitute then add bounds): lives in `attributes.rs` as `transform_item_trait` (supertrait for `#[cgp_component]`) and `transform_item_impl` (`where` bound for impls); the type-equality and foreign-context resolution are in `type_predicates.rs`, whose `forbid_duplicate_aliases` both transforms call to reject a shared identifier or alias.
 - Identifier substitution: the `SubstituteAbstractType` `VisitMut` pass in [crates/macros/cgp-macro-core/src/visitors/substitute_abstract_type.rs](../../../crates/macros/cgp-macro-core/src/visitors/substitute_abstract_type.rs), which matches single-segment, argument-free type paths.
 - `= ...` rejection for component traits: enforced in `types/attributes/cgp_component_attributes.rs`.
 - Implementation document (the internal AST types, the two-phase transform, and the index of tests and snapshots): [implementation/asts/attributes.md](../../implementation/asts/attributes.md).

@@ -10,7 +10,7 @@ use crate::UseInputDelegate;
 #[prefix(@cgp.extra.handler in DefaultNamespace)]
 #[derive_delegate(UseDelegate<Code>)]
 #[derive_delegate(UseInputDelegate<Input>)]
-#[use_type(HasErrorType::Error)]
+#[use_type(HasErrorType.Error)]
 pub trait CanHandle<Code, Input> {
     type Output;
 
@@ -22,7 +22,7 @@ pub trait CanHandle<Code, Input> {
 #[prefix(@cgp.extra.handler in DefaultNamespace)]
 #[derive_delegate(UseDelegate<Code>)]
 #[derive_delegate(UseInputDelegate<Input>)]
-#[use_type(HasErrorType::Error)]
+#[use_type(HasErrorType.Error)]
 pub trait CanHandleRef<Code, Input> {
     type Output;
 

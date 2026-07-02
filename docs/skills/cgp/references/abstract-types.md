@@ -100,7 +100,7 @@ A context implementing this through its field wiring supplies both the concrete 
 
 The strongly recommended way to *refer to* an abstract type from another definition is the `#[use_type]` attribute. A provider or component often needs a type that lives on a different trait — a `Scalar` from `HasScalarType`, an `Error` from `HasErrorType` — and Rust requires every mention to be written in fully-qualified form, `<Self as HasScalarType>::Scalar`, because a bare `Scalar` is not a type the compiler knows. Writing that prefix on every occurrence is verbose and easy to get wrong.
 
-`#[use_type]` lets you write the bare identifier everywhere and have the macro expand it. You declare the import once alongside `#[cgp_fn]`, `#[cgp_impl]`, or `#[cgp_component]`, and the macro rewrites each standalone `Scalar` into `<Self as HasScalarType>::Scalar` while also adding `HasScalarType` as a supertrait (for `#[cgp_component]`) or a `where`-clause bound (for `#[cgp_impl]` and `#[cgp_fn]`). Consider a `rectangle_area` function that multiplies two implicit fields:
+`#[use_type]` lets you write the bare identifier everywhere and have the macro expand it. You declare the import once alongside `#[cgp_fn]`, `#[cgp_impl]`, or `#[cgp_component]` as `#[use_type(Trait.AssocType)]` — a `.` (not `::`) separates the trait from the associated type — and the macro rewrites each standalone `Scalar` into `<Self as HasScalarType>::Scalar` while also adding `HasScalarType` as a supertrait (for `#[cgp_component]`) or a `where`-clause bound (for `#[cgp_impl]` and `#[cgp_fn]`). The `.` separator keeps the trait unambiguous even when it is a full path or carries generic arguments (`errors::HasErrorType.Error`, `HasFooType<X>.Foo`). Consider a `rectangle_area` function that multiplies two implicit fields:
 
 ```rust
 pub trait HasScalarType {
@@ -108,7 +108,7 @@ pub trait HasScalarType {
 }
 
 #[cgp_fn]
-#[use_type(HasScalarType::Scalar)]
+#[use_type(HasScalarType.Scalar)]
 fn rectangle_area(
     &self,
     #[implicit] width: Scalar,
@@ -143,7 +143,7 @@ where
 
 The substitution is purely textual at the type level — it matches single-segment, argument-free type paths whose identifier equals the imported name — so a bare `Scalar` in the return type, an implicit-argument annotation, or a `let` binding inside the body is all rewritten the same way. Beyond saving keystrokes, the always-qualified rewrite removes the ambiguity the bare form cannot express, which is why this is the default way to import abstract types in all three macros.
 
-The attribute has a few richer forms worth knowing. A leading `@` changes the rewrite target from `Self` to a named type, which imports a *foreign* abstract type from a generic parameter: `#[use_type(@Types::HasScalarType::Scalar)]` rewrites `Scalar` to `<Types as HasScalarType>::Scalar` and adds `Types: HasScalarType` as a `where` bound rather than a supertrait. A braced list imports several types from one trait, each optionally renamed with `as` or constrained with `=`: `#[use_type(HasScalarType::{Scalar = f64})]` both imports `Scalar` and emits `Self: HasScalarType<Scalar = f64>`, pinning it. The `= ...` equality form is rejected on `#[cgp_component]`, since a trait definition cannot carry the impl-side equality constraint it produces; it belongs on `#[cgp_fn]` and `#[cgp_impl]`.
+The attribute has a few richer forms worth knowing. A leading `@` changes the rewrite target from `Self` to a named type, which imports a *foreign* abstract type from a generic parameter: `#[use_type(@Types.HasScalarType.Scalar)]` rewrites `Scalar` to `<Types as HasScalarType>::Scalar` and adds `Types: HasScalarType` as a `where` bound rather than a supertrait. A braced list imports several types from one trait, each optionally renamed with `as` or constrained with `=`: `#[use_type(HasScalarType.{Scalar = f64})]` both imports `Scalar` and emits `Self: HasScalarType<Scalar = f64>`, pinning it. The `= ...` equality form is rejected on `#[cgp_component]`, since a trait definition cannot carry the impl-side equality constraint it produces; it belongs on `#[cgp_fn]` and `#[cgp_impl]`. Two imports may not resolve to the same identifier or alias — across specs or within one braced list — since the substitution could then match only one; a collision is a compile error on every host macro.
 
 ## Sharing one type across contexts
 

@@ -1,5 +1,5 @@
 //! `#[use_type]` importing an abstract type from a *foreign generic parameter* in
-//! a `#[cgp_fn]`: `#[use_type(@Types::HasScalarType::Scalar)]`.
+//! a `#[cgp_fn]`: `#[use_type(@Types.HasScalarType.Scalar)]`.
 //!
 //! The function is generic over `Types: HasScalarType`, and the `@Types::` prefix
 //! resolves `Scalar` against that parameter, rewriting the bare alias to
@@ -22,7 +22,7 @@ pub trait HasScalarType {
 
 snapshot_cgp_fn! {
     #[cgp_fn]
-    #[use_type(@Types::HasScalarType::Scalar)]
+    #[use_type(@Types.HasScalarType.Scalar)]
     pub fn rectangle_area<Types: HasScalarType>(
         &self,
         #[implicit] width: Scalar,

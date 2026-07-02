@@ -1,6 +1,6 @@
 //! `#[use_type]` chaining an imported associated type into a *nested* foreign type
 //! source, with type-equality, in a `#[cgp_fn]`:
-//! `#[use_type(HasTypes::Types, @Types::HasScalarType::{Scalar = f64})]`.
+//! `#[use_type(HasTypes.Types, @Types.HasScalarType.{Scalar = f64})]`.
 //!
 //! `HasTypes::Types` imports the abstract `Types` from `Self`, then
 //! `@Types::HasScalarType::{Scalar = f64}` resolves `Scalar` against *that*
@@ -27,8 +27,8 @@ pub trait HasTypes {
 snapshot_cgp_fn! {
     #[cgp_fn]
     #[use_type(
-        HasTypes::Types,
-        @Types::HasScalarType::{Scalar = f64},
+        HasTypes.Types,
+        @Types.HasScalarType.{Scalar = f64},
     )]
     pub fn rectangle_area(&self, #[implicit] width: Scalar, #[implicit] height: Scalar) -> Scalar {
         let res: f64 = width * height;

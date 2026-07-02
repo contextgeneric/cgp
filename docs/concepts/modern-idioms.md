@@ -129,7 +129,7 @@ Avoid [`#[cgp_getter]`](../reference/macros/cgp_getter.md) in ordinary code. It 
 
 ## Import abstract types with `#[use_type]`
 
-Bring an abstract type into a definition with [`#[use_type]`](../reference/attributes/use_type.md) and write it as a bare alias, rather than declaring the owning trait as a supertrait and qualifying every use as `Self::Type`. The attribute does both jobs at once: `#[use_type(HasScalarType::Scalar)]` adds the trait as a supertrait (on a `#[cgp_component]`) or a `where` bound (on a `#[cgp_impl]`/`#[cgp_fn]`), and rewrites each bare `Scalar` to `<Self as HasScalarType>::Scalar`. This is the preferred form even for the built-in error type: the legacy component definition
+Bring an abstract type into a definition with [`#[use_type]`](../reference/attributes/use_type.md) and write it as a bare alias, rather than declaring the owning trait as a supertrait and qualifying every use as `Self::Type`. The attribute does both jobs at once: `#[use_type(HasScalarType.Scalar)]` adds the trait as a supertrait (on a `#[cgp_component]`) or a `where` bound (on a `#[cgp_impl]`/`#[cgp_fn]`), and rewrites each bare `Scalar` to `<Self as HasScalarType>::Scalar`. This is the preferred form even for the built-in error type: the legacy component definition
 
 ```rust
 #[cgp_component(Loader)]
@@ -142,7 +142,7 @@ becomes
 
 ```rust
 #[cgp_component(Loader)]
-#[use_type(HasErrorType::Error)]
+#[use_type(HasErrorType.Error)]
 pub trait CanLoad {
     fn load(&self, path: &str) -> Result<String, Error>;
 }

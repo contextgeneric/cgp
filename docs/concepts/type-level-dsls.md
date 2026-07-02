@@ -29,7 +29,7 @@ The interpreter is a single CGP component whose `Code` type parameter is the pro
 #[cgp_component(Handler)]
 #[derive_delegate(UseDelegate<Code>)]
 #[derive_delegate(UseInputDelegate<Input>)]
-#[use_type(HasErrorType::Error)]
+#[use_type(HasErrorType.Error)]
 pub trait CanHandle<Code, Input> {
     type Output;
 
@@ -50,7 +50,7 @@ A provider interprets one fragment by pattern-matching on the `Code` parameter t
 ```rust
 #[cgp_impl(new HandleStreamChecksum)]
 #[uses(CanRaiseError<Input::Error>)]
-#[use_type(HasErrorType::Error)]
+#[use_type(HasErrorType.Error)]
 impl<Input, Hasher> Handler<Checksum<Hasher>, Input>
 where
     Input: Unpin + TryStream,

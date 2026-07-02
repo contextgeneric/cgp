@@ -1,5 +1,5 @@
 //! `#[use_type]` with a *local alias* in a `#[cgp_fn]`:
-//! `#[use_type(HasScalarType::{Scalar as S})]`.
+//! `#[use_type(HasScalarType.{Scalar as S})]`.
 //!
 //! The `{Scalar as S}` form imports the abstract type under the short name `S`,
 //! which the function body and `where` clause then use freely; the expansion
@@ -22,7 +22,7 @@ pub trait HasScalarType {
 
 snapshot_cgp_fn! {
     #[cgp_fn]
-    #[use_type(HasScalarType::{Scalar as S})]
+    #[use_type(HasScalarType.{Scalar as S})]
     pub fn rectangle_area(&self, #[implicit] width: S, #[implicit] height: S) -> S
     where
         S: Mul<Output = S> + Copy,

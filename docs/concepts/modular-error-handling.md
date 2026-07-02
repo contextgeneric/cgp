@@ -23,19 +23,19 @@ Centralizing the error on one trait is what lets errors compose across component
 
 ## Raising and wrapping as capabilities
 
-Two further components give the abstract error its behavior, each parameterized so a context can handle many error shapes. [`CanRaiseError<SourceError>`](../reference/components/can_raise_error.md) converts a concrete source error into the context's abstract error, and its companion `CanWrapError<Detail>` attaches a piece of detail to an existing one. Both import the abstract error with `#[use_type(HasErrorType::Error)]`, which adds the `HasErrorType` supertrait and lets each signature name the error as the bare `Error`, so the error they produce and enrich is the context's shared error type:
+Two further components give the abstract error its behavior, each parameterized so a context can handle many error shapes. [`CanRaiseError<SourceError>`](../reference/components/can_raise_error.md) converts a concrete source error into the context's abstract error, and its companion `CanWrapError<Detail>` attaches a piece of detail to an existing one. Both import the abstract error with `#[use_type(HasErrorType.Error)]`, which adds the `HasErrorType` supertrait and lets each signature name the error as the bare `Error`, so the error they produce and enrich is the context's shared error type:
 
 ```rust
 #[cgp_component(ErrorRaiser)]
 #[derive_delegate(UseDelegate<SourceError>)]
-#[use_type(HasErrorType::Error)]
+#[use_type(HasErrorType.Error)]
 pub trait CanRaiseError<SourceError> {
     fn raise_error(error: SourceError) -> Error;
 }
 
 #[cgp_component(ErrorWrapper)]
 #[derive_delegate(UseDelegate<Detail>)]
-#[use_type(HasErrorType::Error)]
+#[use_type(HasErrorType.Error)]
 pub trait CanWrapError<Detail> {
     fn wrap_error(error: Error, detail: Detail) -> Error;
 }
@@ -95,7 +95,7 @@ Nothing about modular error handling is confined to the built-in components; an 
 
 ```rust
 #[cgp_component(HttpErrorRaiser)]
-#[use_type(HasErrorType::Error)]
+#[use_type(HasErrorType.Error)]
 pub trait CanRaiseHttpError<Code, Detail> {
     fn raise_http_error(_code: Code, detail: Detail) -> Error;
 }
