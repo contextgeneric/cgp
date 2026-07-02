@@ -12,6 +12,8 @@ use crate::types::ident::IdentWithTypeGenerics;
 use crate::types::keyword::Keyword;
 use crate::types::keywords::New;
 
+/// The whole parsed `delegate_components!` body: an optional generic list and
+/// `new` keyword, the target type, and its braced table of entries.
 pub struct DelegateTable {
     pub attributes: Vec<Attribute>,
     pub impl_generics: ImplGenerics,
@@ -20,6 +22,8 @@ pub struct DelegateTable {
     pub entries: DelegateEntries,
 }
 
+/// The lowered table: the generated impls and any structs (`new` target and
+/// lifted inner tables). Its `ToTokens` emits the structs first, then the impls.
 pub struct EvaluatedDelegateTable {
     pub item_impls: Vec<ItemImpl>,
     pub item_structs: Vec<EmptyStruct>,
@@ -53,6 +57,9 @@ impl Parse for DelegateTable {
 }
 
 impl DelegateTable {
+    /// Lower the table: emit the `new` struct if present, build every entry's
+    /// impl pair, and lift out each nested `UseDelegate` inner table as its own
+    /// struct and impls.
     pub fn eval(&self) -> syn::Result<EvaluatedDelegateTable> {
         let mut item_impls = Vec::new();
         let mut item_structs = Vec::new();

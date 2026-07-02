@@ -8,6 +8,9 @@ use crate::types::delegate_component::{EvalDelegateKey, EvaluatedDelegateKey};
 use crate::types::generics::ImplGenerics;
 use crate::types::path::PathHead;
 
+/// The `@`-prefixed open key. It lowers each path to a prefix type terminated by
+/// a `__Wildcard__` generic, into which the dispatch parameter slots at lookup
+/// time; a brace group in the path expands to one key per element.
 #[derive(Debug, Clone)]
 pub struct PathDelegateKey {
     pub attributes: Vec<Attribute>,

@@ -8,6 +8,9 @@ use crate::types::delegate_component::{
     InnerDelegateTable,
 };
 
+/// A table body: leading statements (`open`/`namespace`/`for`) followed by the
+/// comma-separated mappings. Statements must lead, which is why one written
+/// after a mapping fails to parse.
 #[derive(Debug, Clone)]
 pub struct DelegateEntries {
     pub statements: Vec<DelegateStatement>,
@@ -52,6 +55,8 @@ impl EvalDelegateEntries for DelegateEntries {
 }
 
 impl DelegateEntries {
+    /// Lower every statement and mapping to evaluated entries and render each
+    /// into its `DelegateComponent`/`IsProviderFor` impl pair.
     pub fn build_impls(
         &self,
         table_type: &Type,

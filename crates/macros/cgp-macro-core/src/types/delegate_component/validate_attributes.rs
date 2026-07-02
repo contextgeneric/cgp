@@ -3,8 +3,9 @@ use syn::spanned::Spanned;
 use syn::{Attribute, Error};
 
 use crate::types::delegate_component::{
-    DelegateEntries, DelegateKey, DelegateMapping, DelegateStatement, DelegateTable,
-    ForDelegateStatement, MultiDelegateKey, PathDelegateKey, SingleDelegateKey,
+    DelegateEntries, DelegateKey, DelegateMapping, DelegateStatement, DelegateTable, DelegateValue,
+    DelegateValueWithInnerTable, ForDelegateStatement, MultiDelegateKey, PathDelegateKey,
+    SingleDelegateKey,
 };
 
 /**
@@ -16,6 +17,8 @@ pub trait ValidateAttributes {
     fn validate_attributes(&self) -> syn::Result<()>;
 }
 
+/// Error with a spanned "unsupported attribute" message if any attribute is
+/// present, pointing at the first one.
 pub fn reject_non_empty_attributes(attributes: &[Attribute]) -> syn::Result<()> {
     if !attributes.is_empty() {
         let attribute = &attributes[0];
@@ -67,11 +70,37 @@ impl ValidateAttributes for DelegateKey {
     }
 }
 
+impl ValidateAttributes for DelegateValueWithInnerTable {
+    fn validate_attributes(&self) -> syn::Result<()> {
+        // The wrapper cannot carry attributes, but the inner table's keys can, so
+        // recurse into it rather than letting an attribute be silently dropped.
+        self.inner_table.entries.validate_attributes()
+    }
+}
+
+impl ValidateAttributes for DelegateValue {
+    fn validate_attributes(&self) -> syn::Result<()> {
+        match self {
+            DelegateValue::Type(_) => Ok(()),
+            DelegateValue::WithTable(value) => value.validate_attributes(),
+        }
+    }
+}
+
 impl ValidateAttributes for DelegateMapping {
     fn validate_attributes(&self) -> syn::Result<()> {
         match self {
-            DelegateMapping::Normal(mapping) => mapping.key.validate_attributes(),
-            DelegateMapping::Direct(mapping) => mapping.key.validate_attributes(),
+            // A Normal or Direct value may open a nested inner table whose keys
+            // can hold attributes, so validate the value as well as the key.
+            DelegateMapping::Normal(mapping) => {
+                mapping.key.validate_attributes()?;
+                mapping.value.validate_attributes()
+            }
+            DelegateMapping::Direct(mapping) => {
+                mapping.key.validate_attributes()?;
+                mapping.value.validate_attributes()
+            }
+            // A Redirect value is a bare `@`-path with no inner table.
             DelegateMapping::Redirect(mapping) => mapping.key.validate_attributes(),
         }
     }
@@ -81,6 +110,7 @@ impl ValidateAttributes for ForDelegateStatement {
     fn validate_attributes(&self) -> syn::Result<()> {
         for mapping in &self.mappings {
             mapping.key.validate_attributes()?;
+            mapping.value.validate_attributes()?;
         }
 
         Ok(())

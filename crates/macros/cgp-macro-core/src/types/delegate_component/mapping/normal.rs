@@ -7,6 +7,8 @@ use crate::types::delegate_component::{
     EvaluatedDelegateEntry, ExtractInnerDelegateTables, InnerDelegateTable,
 };
 
+/// A `Key: Value` mapping — the common form, whose evaluated `Delegate` is the
+/// value type directly.
 #[derive(Debug, Clone)]
 pub struct NormalDelegateMapping {
     pub key: DelegateKey,

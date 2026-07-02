@@ -5,6 +5,8 @@ use syn::{Attribute, bracketed};
 
 use crate::types::delegate_component::{EvalDelegateKey, EvaluatedDelegateKey, SingleDelegateKey};
 
+/// The array-key form `[A, B]`, evaluating to one key per bracketed element so
+/// several components share a single value.
 #[derive(Debug, Clone)]
 pub struct MultiDelegateKey {
     pub attributes: Vec<Attribute>,

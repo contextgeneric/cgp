@@ -9,6 +9,9 @@ use crate::types::delegate_component::{EvalDelegateEntries, EvaluatedDelegateEnt
 use crate::types::keyword::Keyword;
 use crate::types::keywords::Open;
 
+/// The `open { A, B };` header. Each listed component is wired to a
+/// `RedirectLookup` rooted at the component name in the context's own table, so
+/// the `@Component.Key` mappings that follow dispatch on the redirect path.
 #[derive(Debug, Clone)]
 pub struct OpenDelegateStatement {
     pub open: Keyword<Open>,

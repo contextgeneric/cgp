@@ -6,6 +6,8 @@ use crate::types::delegate_component::{
     DelegateValueWithInnerTable, EvalDelegateValue, ExtractInnerDelegateTables, InnerDelegateTable,
 };
 
+/// The right side of a Normal or Direct mapping: either a plain provider type or
+/// a legacy `Wrapper<new Inner { .. }>` value that opens a nested table.
 #[derive(Debug, Clone)]
 pub enum DelegateValue {
     Type(Type),

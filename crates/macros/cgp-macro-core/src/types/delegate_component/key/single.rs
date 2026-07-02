@@ -4,6 +4,8 @@ use syn::{Attribute, Type};
 use crate::types::delegate_component::{EvalDelegateKey, EvaluatedDelegateKey};
 use crate::types::generics::ImplGenerics;
 
+/// A single component key: optional generics and a type, evaluating to one
+/// keyed impl carrying those generics.
 #[derive(Debug, Clone)]
 pub struct SingleDelegateKey {
     pub attributes: Vec<Attribute>,

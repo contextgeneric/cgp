@@ -73,7 +73,7 @@ This wires `MyApp` to calculate the area of a `Rectangle` through `RectangleArea
 
 Beyond plain `Key: Value` entries and `open`, the table body also accepts the other namespace-oriented statement forms used to opt a context into a [`#[cgp_namespace]`](cgp_namespace.md): a leading `namespace SomeNamespace;` header that forwards every lookup through that namespace, `@`-path keys such as `@app.ErrorRaiserComponent` that target a route rather than a bare component name, and `for <T, Provider> in SomeTable { ... }` loops that pull entries out of another lookup table. These forms are described under [`#[cgp_namespace]`](cgp_namespace.md), where they are most often written.
 
-The macro accepts no attributes on the table or its keys and rejects any it finds. Attribute-driven variants such as `#[check_params(...)]` and `#[skip_check]` belong to [`delegate_and_check_components!`](delegate_and_check_components.md), not here.
+The macro accepts no attributes on the table or on any of its keys — including keys nested inside a `UseDelegate<new Inner { … }>` value — and rejects any it finds with a spanned "unsupported attribute" error rather than discarding it. Attribute-driven variants such as `#[check_params(...)]` and `#[skip_check]` belong to [`delegate_and_check_components!`](delegate_and_check_components.md), not here.
 
 ## Syntax Grammar
 

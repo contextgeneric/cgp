@@ -89,9 +89,7 @@ inward (core/macros) when changing fundamentals, outward (main) only to adjust t
 ## Macro review workflow
 
 This section defines the standing process for reviewing one CGP macro implementation at a time,
-hardening it until no further issue is found. Follow it verbatim for each macro so every reviewing
-agent runs the same loop; the current iteration reviews one macro (the first is `#[cgp_component]`)
-and the same steps apply to every macro that follows. The goal of an iteration is a macro whose
+hardening it until no further issue is found. The goal of an iteration is a macro whose
 implementation, tests, and documentation are correct, complete, mutually consistent, and as simple
 as the behavior allows.
 

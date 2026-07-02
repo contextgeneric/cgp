@@ -10,6 +10,9 @@ use crate::types::delegate_component::{
 };
 use crate::types::ident::PathWithTypeArgs;
 
+/// The `for <Key, Value> in SomeTable where .. { .. }` loop that pulls mappings
+/// out of another lookup table, reconstructing each entry's namespace-trait bound
+/// with the table type and a `Delegate =` binding appended.
 #[derive(Debug, Clone)]
 pub struct ForDelegateStatement {
     pub for_token: For,

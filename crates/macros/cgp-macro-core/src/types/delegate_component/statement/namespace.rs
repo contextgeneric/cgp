@@ -10,6 +10,9 @@ use crate::types::delegate_component::{
 use crate::types::keyword::Keyword;
 use crate::types::keywords::Namespace;
 
+/// The `namespace SomeNamespace;` header. It forwards every lookup through the
+/// named namespace trait via a blanket `DelegateComponent<__Key__>` impl bounded
+/// on `__Key__: SomeNamespace<TableType, Delegate = __Value__>`.
 #[derive(Debug, Clone)]
 pub struct NamespaceDelegateStatement {
     pub namespace: Keyword<Namespace>,

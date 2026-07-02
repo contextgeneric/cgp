@@ -6,10 +6,14 @@ use crate::types::delegate_component::DelegateEntries;
 use crate::types::empty_struct::EmptyStruct;
 use crate::types::generics::TypeGenerics;
 
+/// Collect every nested `UseDelegate<new Inner { .. }>` table reachable from a
+/// construct, so `DelegateTable::eval` can emit each inner table's own items.
 pub trait ExtractInnerDelegateTables {
     fn extract_inner_tables(&self) -> Vec<InnerDelegateTable>;
 }
 
+/// A nested table lifted out of a `UseDelegate<new Inner { .. }>` value; it is
+/// evaluated exactly like a top-level table, keyed on its own identifier.
 #[derive(Debug, Clone)]
 pub struct InnerDelegateTable {
     pub table_ident: Ident,

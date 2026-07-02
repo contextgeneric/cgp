@@ -56,7 +56,7 @@ Only Normal and Direct mappings can carry a nested inner table (their values are
 
 ## Tests
 
-- The stack is exercised end-to-end by the expansion snapshots and behavioral tests indexed in the [entrypoint document](../entrypoints/delegate_components.md); there are no `cgp-macro-tests` failure cases for the delegate family.
+- The stack is exercised end-to-end by the expansion snapshots and behavioral tests indexed in the [entrypoint document](../entrypoints/delegate_components.md), and its attribute rejection — including the recursion through mapping values into inner tables — is pinned by the failure cases in [parser_rejections/delegate_components.rs](../../../crates/tests/cgp-macro-tests/tests/parser_rejections/delegate_components.rs).
 
 ## Source
 

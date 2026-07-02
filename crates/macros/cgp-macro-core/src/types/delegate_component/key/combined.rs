@@ -7,6 +7,8 @@ use crate::types::delegate_component::{
 };
 use crate::types::generics::ImplGenerics;
 
+/// The left side of a mapping, dispatched on a fork: a leading `@` is a `Path`
+/// key, a leading `[` a `Multi` (array) key, otherwise a `Single` key.
 #[derive(Debug, Clone)]
 pub enum DelegateKey {
     Single(SingleDelegateKey),

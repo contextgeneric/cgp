@@ -3,6 +3,8 @@ use syn::{Generics, ItemImpl, Type};
 use crate::exports::{DelegateComponent, IsProviderFor};
 use crate::functions::{merge_generics, parse_internal};
 
+/// The flat form every key, value, and statement collapses to; it renders the
+/// impl pair for one wiring entry.
 pub struct EvaluatedDelegateEntry {
     pub table_type: Type,
     pub generics: Generics,
@@ -10,15 +12,19 @@ pub struct EvaluatedDelegateEntry {
     pub value: Type,
 }
 
+/// Lower a construct into a single evaluated entry.
 pub trait EvalDelegateEntry {
     fn eval_entry(&self, table_type: &Type) -> syn::Result<EvaluatedDelegateEntry>;
 }
 
+/// Lower a construct into a flat list of evaluated entries (a key or statement
+/// may expand to several).
 pub trait EvalDelegateEntries {
     fn eval_entries(&self, table_type: &Type) -> syn::Result<Vec<EvaluatedDelegateEntry>>;
 }
 
 impl EvaluatedDelegateEntry {
+    /// Emit `impl DelegateComponent<Key> for TableType { type Delegate = Value; }`.
     pub fn build_delegate_component_impl(
         &self,
         outer_generics: &Generics,
@@ -45,6 +51,9 @@ impl EvaluatedDelegateEntry {
         Ok(item_impl)
     }
 
+    /// Emit the forwarding `IsProviderFor<Key, __Context__, __Params__>` impl,
+    /// bounded on the value being a provider for the same key so a missing
+    /// transitive dependency stays diagnosable.
     pub fn build_is_provider_for_impl(&self, outer_generics: &Generics) -> syn::Result<ItemImpl> {
         let table_type = &self.table_type;
 
@@ -76,6 +85,8 @@ impl EvaluatedDelegateEntry {
         Ok(item_impl)
     }
 
+    /// Emit `impl namespace_trait for Key { type Delegate = Value; }`, used by
+    /// the namespace preset machinery instead of a direct `DelegateComponent` impl.
     pub fn build_namespace_impl(
         &self,
         namespace_trait: &Type,

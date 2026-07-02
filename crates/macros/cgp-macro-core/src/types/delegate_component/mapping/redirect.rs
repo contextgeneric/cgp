@@ -8,6 +8,8 @@ use crate::types::delegate_component::{
 };
 use crate::types::path::UniPath;
 
+/// A `Key => @path` mapping that redirects the lookup along an `@`-path:
+/// `Delegate` becomes `RedirectLookup<TableType, Path>`.
 #[derive(Debug, Clone)]
 pub struct RedirectDelegateMapping {
     pub key: DelegateKey,

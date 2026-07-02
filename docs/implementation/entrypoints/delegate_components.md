@@ -13,7 +13,7 @@ let evaluated_table = table.eval()?;
 Ok(evaluated_table.to_token_stream())
 ```
 
-All real logic lives in `cgp-macro-core`. A malformed body fails while parsing `DelegateTable`, and an attribute on the table or any key fails in `validate_attributes` with a spanned "unsupported attribute" error rather than being silently dropped.
+All real logic lives in `cgp-macro-core`. A malformed body fails while parsing `DelegateTable`, and an attribute on the table or any key fails in `validate_attributes` with a spanned "unsupported attribute" error rather than being silently dropped. The check recurses through mapping values, so an attribute on a key nested inside a `UseDelegate<new Inner { … }>` table is rejected too, not just one on a top-level key.
 
 ## Pipeline
 
@@ -60,7 +60,9 @@ An **`@`-path key** carries a leading `__Wildcard__` generic and lowers the path
 
 ## Known issues
 
-The macro's parser is permissive about the body shape and surfaces most mistakes as generic `syn` parse errors rather than tailored diagnostics — for example, an `open` header written after a plain mapping fails to parse because statements must lead the block, but the error points at the unexpected token rather than explaining the ordering rule. There is no failure-case coverage for the delegate family in `cgp-macro-tests`.
+The macro's parser is permissive about the body shape and surfaces most mistakes as generic `syn` parse errors rather than tailored diagnostics — for example, an `open` header written after a plain mapping fails to parse because statements must lead the block, but the error (`expected `:``) points at the unexpected token rather than explaining the ordering rule.
+
+A duplicate key — the same component mapped twice, whether by two plain entries or by an `open` header colliding with an explicit mapping — is not caught by the macro; it emits two conflicting `DelegateComponent` impls and surfaces as a coherence error (`E0119`) at compile time, the same as two hand-written impls would.
 
 ## Snapshots
 
@@ -95,6 +97,10 @@ The behavioral tests confirm the generated wiring resolves and compiles:
 - [basic_delegation/delegate_nested_use_delegate.rs](../../../crates/tests/cgp-tests/tests/basic_delegation/delegate_nested_use_delegate.rs) checks a two-level nested `UseDelegate` value builds an inline dispatch table.
 - [basic_delegation/delegate_generic_nested_value.rs](../../../crates/tests/cgp-tests/tests/basic_delegation/delegate_generic_nested_value.rs) checks a per-entry `<T>` list threads through both the outer key and the inner generated table struct.
 - [basic_delegation/consumer_delegate_getter.rs](../../../crates/tests/cgp-tests/tests/basic_delegation/consumer_delegate_getter.rs) and [basic_delegation/consumer_delegate_generic.rs](../../../crates/tests/cgp-tests/tests/basic_delegation/consumer_delegate_generic.rs) check that a context may satisfy some components by wiring and others by a direct trait impl, and that a generic component resolves independently per type argument.
+
+The failure cases in `cgp-macro-tests` pin the attribute rejection:
+
+- [parser_rejections/delegate_components.rs](../../../crates/tests/cgp-macro-tests/tests/parser_rejections/delegate_components.rs) asserts the macro rejects an attribute on the table, on a key, and on a key nested inside a `UseDelegate<new Inner { … }>` value (the last confirms the validator recurses through mapping values rather than dropping the attribute).
 
 ## Source
 

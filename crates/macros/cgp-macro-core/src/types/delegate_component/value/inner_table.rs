@@ -9,6 +9,9 @@ use crate::types::delegate_component::{
 use crate::types::keyword::Keyword;
 use crate::types::keywords::New;
 
+/// The legacy nested-dispatch value `Wrapper<new Inner { .. }>`: it evaluates to
+/// the type `Wrapper<Inner..>` (dropping `new`), and the inner table is lifted
+/// out to become its own struct and impls.
 #[derive(Debug, Clone)]
 pub struct DelegateValueWithInnerTable {
     pub new: Keyword<New>,

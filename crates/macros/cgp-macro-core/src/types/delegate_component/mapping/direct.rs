@@ -8,6 +8,9 @@ use crate::types::delegate_component::{
     EvaluatedDelegateEntry, ExtractInnerDelegateTables, InnerDelegateTable,
 };
 
+/// A `Key -> Value` mapping that forwards to the value's own entry for the key:
+/// `Delegate` becomes `<Value as DelegateComponent<Key>>::Delegate`, with a
+/// matching `Value: DelegateComponent<Key>` bound.
 #[derive(Debug, Clone)]
 pub struct DirectDelegateMapping {
     pub key: DelegateKey,

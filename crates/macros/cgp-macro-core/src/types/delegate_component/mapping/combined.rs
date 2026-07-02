@@ -6,6 +6,8 @@ use crate::types::delegate_component::{
     ExtractInnerDelegateTables, InnerDelegateTable, NormalDelegateMapping, RedirectDelegateMapping,
 };
 
+/// One `Key OP Value` entry, its variant chosen by the operator: `:` is Normal,
+/// `->` is Direct, `=>` is Redirect.
 #[derive(Debug, Clone)]
 pub enum DelegateMapping {
     Normal(NormalDelegateMapping),

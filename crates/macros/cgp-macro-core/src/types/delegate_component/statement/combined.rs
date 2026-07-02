@@ -9,6 +9,8 @@ use crate::types::delegate_component::{
 };
 use crate::types::keywords::{Namespace, Open};
 
+/// A leading table statement — `namespace`, `open`, or `for` — all of which
+/// lower into the same flat entry list as ordinary mappings.
 #[derive(Debug, Clone)]
 pub enum DelegateStatement {
     Namespace(NamespaceDelegateStatement),
@@ -17,6 +19,8 @@ pub enum DelegateStatement {
 }
 
 impl DelegateStatement {
+    /// Peek whether the input begins with a statement keyword, so all leading
+    /// statements are consumed before the mappings.
     pub fn peek_statement(input: ParseStream) -> bool {
         input.peek_keyword::<Namespace>() || input.peek_keyword::<Open>() || input.peek(For)
     }
