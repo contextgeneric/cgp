@@ -99,14 +99,14 @@ Two applications can thus serialize `Vec<u8>` as hexadecimal and as base64 respe
 ```rust
 delegate_components! {
     AppA {
-        open {ValueSerializerComponent};
+        open ValueSerializerComponent;
         @ValueSerializerComponent.Vec<u8>: SerializeHex,
     }
 }
 
 delegate_components! {
     AppB {
-        open {ValueSerializerComponent};
+        open ValueSerializerComponent;
         @ValueSerializerComponent.Vec<u8>: SerializeBase64,
     }
 }

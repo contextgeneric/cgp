@@ -40,7 +40,7 @@ Both `__Context__` and `__Params__` are the reserved identifiers that appear lit
 The `open` header and `@Component.Key` entries lower through the [`RedirectLookup`](cgp_component.md) impl that every `#[cgp_component]` already generates. The header wires each opened component to a redirect rooted at the component name in the context's own table, and each `@`-path entry stores its provider under the extended path key:
 
 ```rust
-// open { AreaCalculatorComponent };  →  the redirect entry
+// open AreaCalculatorComponent;  →  the redirect entry
 impl DelegateComponent<AreaCalculatorComponent> for MyApp {
     type Delegate = RedirectLookup<MyApp, PathCons<AreaCalculatorComponent, Nil>>;
 }
@@ -74,8 +74,8 @@ Every `snapshot_delegate_components!` invocation across the suite is indexed her
 
 The namespace snapshots pin the statement and `@`-path forms:
 
-- [namespaces/open_dispatch.rs](../../../crates/tests/cgp-tests/tests/namespaces/open_dispatch.rs) — the `open { … }` header plus `@Component.Key` per-value entries, including a brace group sharing one provider across several keys.
-- [namespaces/multi_param_open.rs](../../../crates/tests/cgp-tests/tests/namespaces/multi_param_open.rs) — an `open` dispatch on a multi-segment `@Component.A.B` path, one segment carrying an entry generic.
+- [namespaces/open_dispatch.rs](../../../crates/tests/cgp-tests/tests/namespaces/open_dispatch.rs) — the braced `open { A, B }` header opening two components at once, plus `@Component.Key` per-value entries, including a brace group sharing one provider across several keys.
+- [namespaces/multi_param_open.rs](../../../crates/tests/cgp-tests/tests/namespaces/multi_param_open.rs) — the braceless single-component `open Component;` form, dispatched on a multi-segment `@Component.A.B` path with one segment carrying an entry generic.
 - [namespaces/namespace_basic.rs](../../../crates/tests/cgp-tests/tests/namespaces/namespace_basic.rs), [namespaces/namespace_symbol_path.rs](../../../crates/tests/cgp-tests/tests/namespaces/namespace_symbol_path.rs), [namespaces/namespace_type_path.rs](../../../crates/tests/cgp-tests/tests/namespaces/namespace_type_path.rs) — the `namespace …;` header forwarding every lookup through a namespace trait, with bare, symbol-path, and type-path `@`-keys.
 - [namespaces/namespace_multi.rs](../../../crates/tests/cgp-tests/tests/namespaces/namespace_multi.rs), [namespaces/namespace_group.rs](../../../crates/tests/cgp-tests/tests/namespaces/namespace_group.rs) — brace-group and array-group `@`-keys expanding to the cartesian product of segments.
 - [namespaces/multi_param_namespace.rs](../../../crates/tests/cgp-tests/tests/namespaces/multi_param_namespace.rs) — multi-segment namespace paths with a per-segment generic.
@@ -100,7 +100,7 @@ The behavioral tests confirm the generated wiring resolves and compiles:
 
 The failure cases in `cgp-macro-tests` pin the attribute rejection:
 
-- [parser_rejections/delegate_components.rs](../../../crates/tests/cgp-macro-tests/tests/parser_rejections/delegate_components.rs) asserts the macro rejects an attribute on the table, on a key, and on a key nested inside a `UseDelegate<new Inner { … }>` value (the last confirms the validator recurses through mapping values rather than dropping the attribute).
+- [parser_rejections/delegate_components.rs](../../../crates/tests/cgp-macro-tests/tests/parser_rejections/delegate_components.rs) asserts the macro rejects an attribute on the table, on a key, and on a key nested inside a `UseDelegate<new Inner { … }>` value (the last confirms the validator recurses through mapping values rather than dropping the attribute), and that a braceless `open` header listing more than one component is rejected (the braceless form opens exactly one).
 
 ## Source
 

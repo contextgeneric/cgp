@@ -101,7 +101,7 @@ pub trait CanSerializeValue<Value: ?Sized> {
 
 delegate_components! {
     new MyAppA {
-        open { ValueSerializerComponent };
+        open ValueSerializerComponent;
 
         @ValueSerializerComponent.Vec<u8>: SerializeBytes,
         @ValueSerializerComponent.Vec<u64>: SerializeIterator,
@@ -110,7 +110,7 @@ delegate_components! {
 
 delegate_components! {
     new MyAppB {
-        open { ValueSerializerComponent };
+        open ValueSerializerComponent;
 
         @ValueSerializerComponent.Vec<u8>: SerializeHex,
         @ValueSerializerComponent.Vec<u64>: SerializeIterator,
@@ -118,7 +118,7 @@ delegate_components! {
 }
 ```
 
-The `open { ValueSerializerComponent };` header opens the component for per-value wiring, and each `@ValueSerializerComponent.Value: Provider` entry assigns a provider for one concrete value type. The gain is that `MyAppA` and `MyAppB` resolve `Vec<u8>` to different providers — bytes versus hex — with no conflict, because each choice is coherent only within its own context. The orphan rule no longer applies: a context can wire `Vec<u8>` even when its crate owns neither `CanSerializeValue` nor `Vec`, as long as it owns the context type, so you never commit to a global serialization for `Vec` up front. The costs are that the trait must be modified to add the context parameter, and that every value type a context touches must be wired explicitly, which grows tedious for a large type set.
+The `open ValueSerializerComponent;` header opens the component for per-value wiring, and each `@ValueSerializerComponent.Value: Provider` entry assigns a provider for one concrete value type. The gain is that `MyAppA` and `MyAppB` resolve `Vec<u8>` to different providers — bytes versus hex — with no conflict, because each choice is coherent only within its own context. The orphan rule no longer applies: a context can wire `Vec<u8>` even when its crate owns neither `CanSerializeValue` nor `Vec`, as long as it owns the context type, so you never commit to a global serialization for `Vec` up front. The costs are that the trait must be modified to add the context parameter, and that every value type a context touches must be wired explicitly, which grows tedious for a large type set.
 
 The `open` form rides the dispatch machinery that every `#[cgp_component]` already generates, so the trait needs no extra option. A legacy alternative writes the same dispatch with `derive_delegate: UseDelegate<Value>` on the trait and a `UseDelegate<new ValueSerializerComponents { Vec<u8>: SerializeBytes, ... }>` nested table in each context's wiring; it is retained for compatibility but `open` is preferred for new code, and the two forms appear side by side in [wiring](wiring.md).
 
@@ -143,7 +143,7 @@ where
 
 delegate_components! {
     new MyAppA {
-        open { ValueSerializerComponent };
+        open ValueSerializerComponent;
 
         @ValueSerializerComponent.Vec<u8>: SerializeBytes,
         @ValueSerializerComponent.Vec<Vec<u8>>: SerializeIteratorWith<SerializeHex>,

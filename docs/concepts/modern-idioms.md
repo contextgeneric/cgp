@@ -194,7 +194,7 @@ while the modern form dispatches inline with `open`:
 ```rust
 delegate_components! {
     MyApp {
-        open { AreaCalculatorComponent };
+        open AreaCalculatorComponent;
 
         @AreaCalculatorComponent.Rectangle: RectangleArea,
         @AreaCalculatorComponent.Circle: CircleArea,

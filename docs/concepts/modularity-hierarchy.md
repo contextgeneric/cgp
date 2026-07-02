@@ -97,14 +97,14 @@ Now two application contexts can serialize the *same* type differently, each coh
 ```rust
 delegate_components! {
     AppA {
-        open {ValueSerializerComponent};
+        open ValueSerializerComponent;
         @ValueSerializerComponent.Vec<u8>: SerializeHex,
     }
 }
 
 delegate_components! {
     AppB {
-        open {ValueSerializerComponent};
+        open ValueSerializerComponent;
         @ValueSerializerComponent.Vec<u8>: SerializeBase64,
     }
 }
@@ -137,7 +137,7 @@ With this in hand a context can fix the element encoding for one collection whil
 ```rust
 delegate_components! {
     AppA {
-        open {ValueSerializerComponent};
+        open ValueSerializerComponent;
         @ValueSerializerComponent.Vec<u8>: SerializeBytes,
         @ValueSerializerComponent.Vec<Vec<u8>>: SerializeIteratorWith<SerializeHex>,
         @ValueSerializerComponent.Vec<u64>: SerializeIteratorWith,

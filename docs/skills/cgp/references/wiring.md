@@ -139,7 +139,7 @@ When a provider trait carries an extra generic parameter and the right provider 
 ```rust
 delegate_components! {
     MyApp {
-        open { AreaCalculatorComponent };
+        open AreaCalculatorComponent;
 
         @AreaCalculatorComponent.Rectangle: RectangleArea,
         @AreaCalculatorComponent.Circle: CircleArea,
@@ -147,7 +147,7 @@ delegate_components! {
 }
 ```
 
-The leading `open { AreaCalculatorComponent };` header opens one or more components for per-value wiring — list several inside the braces to open them together. The header is a *leading* statement: when a single block mixes plain `Component: Provider` mappings with an `open` block, the `open { … };` header must come first, before any plain mappings, or the macro fails to parse. Each subsequent `@Component.Key: Provider` entry then assigns a provider for one value of that component's dispatch parameter: `@AreaCalculatorComponent.Rectangle: RectangleArea` says that when `Shape` is `Rectangle`, `MyApp` calculates area through `RectangleArea`, and the `Circle` line does the same for `Circle`. After this wiring, `MyApp` implements `CanCalculateArea<Rectangle>` via `RectangleArea` and `CanCalculateArea<Circle>` via `CircleArea`.
+The leading `open AreaCalculatorComponent;` header opens one or more components for per-value wiring. The braces are optional when opening a single component, so `open AreaCalculatorComponent;` and `open { AreaCalculatorComponent };` are equivalent; to open several components together, list them inside the braces (`open { A, B };`). The header is a *leading* statement: when a single block mixes plain `Component: Provider` mappings with an `open` block, the `open` header must come first, before any plain mappings, or the macro fails to parse. Each subsequent `@Component.Key: Provider` entry then assigns a provider for one value of that component's dispatch parameter: `@AreaCalculatorComponent.Rectangle: RectangleArea` says that when `Shape` is `Rectangle`, `MyApp` calculates area through `RectangleArea`, and the `Circle` line does the same for `Circle`. After this wiring, `MyApp` implements `CanCalculateArea<Rectangle>` via `RectangleArea` and `CanCalculateArea<Circle>` via `CircleArea`.
 
 Two shorthands keep the entries compact. When several values of the dispatch parameter share one provider, an array on the final path segment expands to one entry each — `@AreaCalculatorComponent.[Rectangle, Circle]: SomeProvider` wires both shapes to `SomeProvider`. When a dispatch value needs generic parameters of its own, they precede the value: `@SomeComponent.<'a, T> &'a T: SomeProvider` dispatches on the type `&'a T` for all `'a` and `T`.
 

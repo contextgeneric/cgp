@@ -89,7 +89,7 @@ When the right provider depends on *which* concrete type a generic parameter is 
 ```rust
 delegate_components! {
     MyApp {
-        open { AreaCalculatorComponent };
+        open AreaCalculatorComponent;
 
         @AreaCalculatorComponent.Rectangle: RectangleArea,
         @AreaCalculatorComponent.Circle: CircleArea,
@@ -97,7 +97,7 @@ delegate_components! {
 }
 ```
 
-The leading `open { AreaCalculatorComponent };` header opens the component for per-value wiring, and each `@AreaCalculatorComponent.Key: Provider` entry assigns a provider for one value of the dispatch parameter: when `Shape` is `Rectangle`, `MyApp` calculates area through `RectangleArea`, and `Circle` resolves to `CircleArea`. After this wiring, `MyApp` implements `CanCalculateArea<Rectangle>` through `RectangleArea` and `CanCalculateArea<Circle>` through `CircleArea`, with the dispatch parameter selecting between them. Adding a shape is one more entry; the providers stay untouched. The `open` form needs no extra macro on the component — it rides the `RedirectLookup` impl that every `#[cgp_component]` already generates, so dispatching a component per type requires no `#[derive_delegate]` on the trait. Two shorthands keep the entries compact: an array on the final path segment shares one provider across several values (`@AreaCalculatorComponent.[Rectangle, Circle]: SomeProvider`), and generic parameters precede the dispatch value when it needs them (`@AreaCalculatorComponent.<'a, T> &'a T: SomeProvider`). The [wiring](wiring.md) reference is the canonical home of the `open` statement and its grammar.
+The leading `open AreaCalculatorComponent;` header opens the component for per-value wiring, and each `@AreaCalculatorComponent.Key: Provider` entry assigns a provider for one value of the dispatch parameter: when `Shape` is `Rectangle`, `MyApp` calculates area through `RectangleArea`, and `Circle` resolves to `CircleArea`. After this wiring, `MyApp` implements `CanCalculateArea<Rectangle>` through `RectangleArea` and `CanCalculateArea<Circle>` through `CircleArea`, with the dispatch parameter selecting between them. Adding a shape is one more entry; the providers stay untouched. The `open` form needs no extra macro on the component — it rides the `RedirectLookup` impl that every `#[cgp_component]` already generates, so dispatching a component per type requires no `#[derive_delegate]` on the trait. Two shorthands keep the entries compact: an array on the final path segment shares one provider across several values (`@AreaCalculatorComponent.[Rectangle, Circle]: SomeProvider`), and generic parameters precede the dispatch value when it needs them (`@AreaCalculatorComponent.<'a, T> &'a T: SomeProvider`). The [wiring](wiring.md) reference is the canonical home of the `open` statement and its grammar.
 
 ### Legacy: `derive_delegate` and `UseDelegate` nested tables
 

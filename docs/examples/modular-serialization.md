@@ -204,7 +204,7 @@ pub struct AppA;
 
 delegate_components! {
     AppA {
-        open {ValueSerializerComponent};
+        open ValueSerializerComponent;
 
         @ValueSerializerComponent.<'a, T> &'a T:
             SerializeDeref,
@@ -239,7 +239,7 @@ pub struct AppB;
 
 delegate_components! {
     AppB {
-        open {ValueSerializerComponent};
+        open ValueSerializerComponent;
 
         @ValueSerializerComponent.<'a, T> &'a T:
             SerializeDeref,
@@ -359,7 +359,7 @@ use cgp_error_anyhow::{RaiseAnyhowError, UseAnyhowError};
 
 delegate_components! {
     <'s> App<'s> {
-        open {ValueDeserializerComponent};
+        open ValueDeserializerComponent;
 
         @ValueDeserializerComponent.u64:
             UseSerde,

@@ -9,7 +9,8 @@ use crate::types::delegate_component::{EvalDelegateEntries, EvaluatedDelegateEnt
 use crate::types::keyword::Keyword;
 use crate::types::keywords::Open;
 
-/// The `open { A, B };` header. Each listed component is wired to a
+/// The `open { A, B };` header — braces optional when opening a single
+/// component (`open A;`). Each listed component is wired to a
 /// `RedirectLookup` rooted at the component name in the context's own table, so
 /// the `@Component.Key` mappings that follow dispatch on the redirect path.
 #[derive(Debug, Clone)]
@@ -29,6 +30,8 @@ impl Parse for OpenDelegateStatement {
 
             Punctuated::parse_terminated(&body)?
         } else {
+            // Braceless single-component form `open A;`. Opening several
+            // components at once still requires the braced list.
             let component: Type = input.parse()?;
             Punctuated::from_iter([component])
         };

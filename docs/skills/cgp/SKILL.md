@@ -316,7 +316,7 @@ shape like this:
 ```rust
 delegate_components! {
     MyApp {
-        open { AreaCalculatorComponent };
+        open AreaCalculatorComponent;
 
         @AreaCalculatorComponent.Rectangle: RectangleArea,
         @AreaCalculatorComponent.Circle: CircleArea,
@@ -324,8 +324,10 @@ delegate_components! {
 }
 ```
 
-The `open { … };` header opens one or more components for per-value wiring and **must lead** the
-block (it comes before any plain `Component: Provider` mappings, or the macro fails to parse). Each
+The `open … ;` header opens one or more components for per-value wiring and **must lead** the
+block (it comes before any plain `Component: Provider` mappings, or the macro fails to parse). The
+braces are optional when opening a single component (`open AreaCalculatorComponent;`); use the
+braced list `open { A, B };` to open several at once. Each
 `@Component.Key: Provider` entry then assigns a provider for one value of the dispatch parameter; a
 brace group on the final segment shares one provider across several values
 (`@AreaCalculatorComponent.{u32, u64, bool}: SomeProvider`), and a key may carry generics
@@ -605,7 +607,7 @@ A context wires its error type and the raise/wrap behavior. The backend provider
 ```rust
 delegate_components! {
     App {
-        open { ErrorRaiserComponent };
+        open ErrorRaiserComponent;
 
         ErrorTypeProviderComponent: UseType<String>,
         @ErrorRaiserComponent.String: RaiseFrom,

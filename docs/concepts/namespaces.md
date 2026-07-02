@@ -27,12 +27,12 @@ This says that when `MyNamespace` is asked for `FooProviderComponent`, it should
 
 ## Per-component dispatch with `open`
 
-The most common place a path appears is the `open` statement, which uses path-based redirection to dispatch a single component on its generic parameter — inline, in a context's own table. Writing `open { ValueSerializerComponent };` at the head of a [`delegate_components!`](../reference/macros/delegate_components.md) block redirects that component's lookup along a path rooted at the component name into the context's own table; the per-value entries that follow are then ordinary `@`-path keys pointing into that route:
+The most common place a path appears is the `open` statement, which uses path-based redirection to dispatch a single component on its generic parameter — inline, in a context's own table. Writing `open ValueSerializerComponent;` at the head of a [`delegate_components!`](../reference/macros/delegate_components.md) block redirects that component's lookup along a path rooted at the component name into the context's own table; the per-value entries that follow are then ordinary `@`-path keys pointing into that route:
 
 ```rust
 delegate_components! {
     AppA {
-        open {ValueSerializerComponent};
+        open ValueSerializerComponent;
 
         @ValueSerializerComponent.Vec<u8>:
             SerializeHex,

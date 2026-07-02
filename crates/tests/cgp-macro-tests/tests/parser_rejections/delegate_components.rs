@@ -1,7 +1,8 @@
 //! `delegate_components!` supports no attributes, so it rejects any attribute it
 //! finds — on the table, on a key, and, crucially, on a key nested inside a
 //! `UseDelegate<new Inner { .. }>` value, which the validator must recurse into
-//! rather than silently drop.
+//! rather than silently drop. It also rejects a braceless `open` header that
+//! lists more than one component, since the braceless form opens exactly one.
 //!
 //! See docs/implementation/entrypoints/delegate_components.md (Tests) for these
 //! failure cases, and docs/reference/macros/delegate_components.md for the
@@ -29,6 +30,26 @@ fn rejects_attribute_on_key() {
             FooComponent: Bar,
         }))
     });
+}
+
+#[test]
+fn rejects_braceless_open_with_multiple_components() {
+    // The braceless `open` form opens a single component; listing several
+    // without braces is rejected. The parser reads one component type after
+    // `open`, then fails on the trailing `,` where it expects the `;`.
+    assert_macro_rejects(
+        "delegate_components with a braceless open listing multiple components",
+        || {
+            cgp_macro_lib::delegate_components(quote!(
+                Context {
+                    open FooComponent, BarComponent;
+
+                    @FooComponent.String: Foo,
+                    @BarComponent.u32: Bar,
+                }
+            ))
+        },
+    );
 }
 
 #[test]

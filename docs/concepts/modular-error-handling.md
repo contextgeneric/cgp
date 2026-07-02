@@ -79,7 +79,7 @@ The reason `CanRaiseError` and `CanWrapError` are parameterized rather than mono
 ```rust
 delegate_components! {
     App {
-        open {ErrorRaiserComponent};
+        open ErrorRaiserComponent;
 
         @ErrorRaiserComponent.String: RaiseFrom,
         @ErrorRaiserComponent.ParseIntError: DebugError,

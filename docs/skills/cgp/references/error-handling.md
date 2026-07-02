@@ -116,7 +116,7 @@ The string-formatting providers are designed to *compose* with the others rather
 ```rust
 delegate_components! {
     App {
-        open { ErrorRaiserComponent };
+        open ErrorRaiserComponent;
 
         @ErrorRaiserComponent.String: RaiseFrom,
         @ErrorRaiserComponent.ParseError: DebugError,
@@ -124,7 +124,7 @@ delegate_components! {
 }
 ```
 
-The `open { ErrorRaiserComponent };` header opens the component for per-type wiring, and each `@ErrorRaiserComponent.<SourceError>: Provider` entry assigns the provider for one source-error type, folded directly into `App`'s own table — `open` needs no `#[derive_delegate]` of its own because every `#[cgp_component]` already generates the `RedirectLookup` impl it dispatches through. The legacy equivalent writes the same per-type entries into a separate `UseDelegate<new AppErrorRaisers { String: RaiseFrom, ParseError: DebugError }>` nested table; that form is still common in existing code but is slated for deprecation, so prefer `open` for new wiring. See [wiring](wiring.md) for both forms.
+The `open ErrorRaiserComponent;` header opens the component for per-type wiring, and each `@ErrorRaiserComponent.<SourceError>: Provider` entry assigns the provider for one source-error type, folded directly into `App`'s own table — `open` needs no `#[derive_delegate]` of its own because every `#[cgp_component]` already generates the `RedirectLookup` impl it dispatches through. The legacy equivalent writes the same per-type entries into a separate `UseDelegate<new AppErrorRaisers { String: RaiseFrom, ParseError: DebugError }>` nested table; that form is still common in existing code but is slated for deprecation, so prefer `open` for new wiring. See [wiring](wiring.md) for both forms.
 
 A raised `String` is converted straight into the abstract error by `RaiseFrom`, while a raised `ParseError` is formatted with `Debug` by `DebugError` and then routed back through the `String` entry — which `RaiseFrom` handles — yielding one coherent error type from two unrelated sources. The choice of provider is therefore also a statement about which source errors the context accepts and how, and each wiring is verified with `check_components!` like any other.
 
