@@ -20,7 +20,7 @@ Both parse the body as a comma-separated list, so a malformed element fails at `
 
 ## Pipeline
 
-Each macro is a parse-then-`eval` step with no further stages. The `Parse` impl reads a `Punctuated<Type, Comma>`, and `eval` folds it into the chain and re-parses the result through [`parse_internal!`](../macros/parse_internal.md) so the emitted tokens are validated as a `syn::Type`. The [`product` AST document](../asts/product.md) covers both types.
+Each macro is a parse-then-`eval` step with no further stages. `Product!`'s `Parse` impl reads a `Punctuated<Type, Comma>` and `product!`'s reads a `Punctuated<Expr, Comma>`; each `eval` folds its list into the chain and re-parses the result through [`parse_internal!`](../macros/parse_internal.md), validating `Product!`'s output as a `syn::Type` and `product!`'s as a `syn::Expr`. The [`product` AST document](../asts/product.md) covers both types.
 
 ## Generated items
 
@@ -31,7 +31,7 @@ Each macro is a parse-then-`eval` step with no further stages. The `Parse` impl 
 Cons<A, Cons<B, Cons<C, Nil>>>
 ```
 
-`product!` emits a value of that type using the `Cons` tuple-struct constructor rather than the type form, so the value's type is exactly what `Product!` builds over the same elements:
+`product!` emits a value of that type using the `Cons` tuple-struct constructor rather than the type form, so the value's type is exactly what `Product!` builds over the corresponding element types:
 
 ```rust
 // product![a, b, c]
@@ -42,14 +42,15 @@ The chain is built by folding right-to-left onto `Nil`, so an empty `Product![]`
 
 ## Behavior and corner cases
 
-The parser is deliberately permissive: `product!` parses its elements as `Type`s exactly as `Product!` does, not as `Expr`s, and only the emission differs (`Cons<…>` versus `Cons(…)`). A trailing comma is accepted on both because the list is parsed with `parse_terminated`, and an empty body is valid and yields `Nil`.
+The two macros parse at the level they emit at: `Product!` reads its elements as types and `product!` reads them as expressions, so a `product!` element may be any expression — a literal, a method call, an arithmetic expression — and not just a path that also parses as a type. Parsing and re-parsing at the right level is what keeps each macro in its position: `product!`'s `syn::Expr` output is valid in expression context and `Product!`'s `syn::Type` output in type context. A trailing comma is accepted on both because the list is parsed with `parse_terminated`, and an empty body is valid and yields `Nil` (a value for `product!`, a type for `Product!`).
 
-Because `eval` re-parses its output through `parse_internal!`, a fold that produced malformed tokens would surface as a spanned `syn::Error` rather than raw token garbage — though with `Cons`/`Nil` and well-formed element types this path does not normally fail.
+Because `eval` re-parses its output through `parse_internal!`, a fold that produced malformed tokens would surface as a spanned `syn::Error` rather than raw token garbage — though with `Cons`/`Nil` and well-formed elements this path does not normally fail.
 
 ## Tests
 
-`Product!`/`product!` have no snapshot macro of their own; the chain they build is exercised wherever a struct's field list is derived, since `#[derive(HasFields)]` emits a `Product!` of `Field<Tag, Value>` entries.
+`Product!`/`product!` have no snapshot macro of their own; the type-level chain they build is exercised wherever a struct's field list is derived, since `#[derive(HasFields)]` emits a `Product!` of `Field<Tag, Value>` entries, and the value-level form has a dedicated behavioral test.
 
+- [extensible_records/product_value.rs](../../../crates/tests/cgp-tests/tests/extensible_records/product_value.rs) exercises the value-level `product!` directly: that expression items build the nested `Cons(..)`/`Nil` value, that its type is the matching `Product!`, and that the empty and trailing-comma forms work.
 - [extensible_records/person_record.rs](../../../crates/tests/cgp-tests/tests/extensible_records/person_record.rs) and [extensible_records/record_derive.rs](../../../crates/tests/cgp-tests/tests/extensible_records/record_derive.rs) pin, through `snapshot_derive_cgp_data!` goldens, the `Product!` field spine a record derives, so the `Cons`/`Nil` shape is checked as embedded output.
 - [handlers/pipe_handlers.rs](../../../crates/tests/cgp-tests/tests/handlers/pipe_handlers.rs) uses `Product![…]` to write a handler pipeline, exercising the type-level form as a list of provider types rather than fields.
 

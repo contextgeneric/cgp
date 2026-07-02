@@ -17,6 +17,10 @@ pub mod tuple_record;
 pub mod record_build_from;
 pub mod record_build_with_handlers;
 
+// The value-level `product!` macro: building a `Cons`/`Nil` value from expression
+// items, whose type is the matching `Product!`.
+pub mod product_value;
+
 // `#[derive(HasFields)]` on structs (this concept owns the derive's expansion):
 // deriving only the field list, across named/tuple/generic/lifetime shapes.
 pub mod struct_generic;
