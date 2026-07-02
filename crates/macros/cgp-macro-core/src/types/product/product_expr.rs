@@ -1,23 +1,23 @@
 use quote::quote;
-use syn::Type;
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
+use syn::{Expr, Type};
 
 use crate::exports::{Cons, Nil};
 use crate::functions::parse_internal;
 
 pub struct ProductExpr {
-    pub types: Punctuated<Type, Comma>,
+    pub exprs: Punctuated<Expr, Comma>,
 }
 
 impl ProductExpr {
     pub fn eval(&self) -> syn::Result<Type> {
         let mut out = quote!(#Nil);
 
-        for ty in self.types.iter().rev() {
+        for expr in self.exprs.iter().rev() {
             out = quote! {
-                #Cons(#ty, #out)
+                #Cons(#expr, #out)
             };
         }
 
@@ -27,8 +27,8 @@ impl ProductExpr {
 
 impl Parse for ProductExpr {
     fn parse(input: ParseStream) -> syn::Result<Self> {
-        let types = Punctuated::parse_terminated(input)?;
+        let exprs = Punctuated::parse_terminated(input)?;
 
-        Ok(Self { types })
+        Ok(Self { exprs })
     }
 }
