@@ -15,6 +15,8 @@ pub mod consumer_delegate_generic;
 pub mod consumer_delegate_getter;
 pub mod default_methods;
 pub mod impl_self;
+pub mod owned_receiver;
+pub mod self_in_macro;
 
 // `delegate_components!` shape variants (compile-time checks only).
 pub mod delegate_generic_nested_value;

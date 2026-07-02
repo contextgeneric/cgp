@@ -6,6 +6,8 @@ use crate::traits::ParseOptionalKeyword;
 use crate::types::keyword::Keyword;
 use crate::types::keywords::New;
 
+/// The parsed `#[cgp_impl(...)]` attribute argument: an optional `new` keyword,
+/// the provider type, and an optional `: ComponentType` override.
 #[derive(Clone)]
 pub struct ImplArgs {
     pub new: Option<Keyword<New>>,

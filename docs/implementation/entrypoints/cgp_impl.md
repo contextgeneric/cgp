@@ -46,6 +46,8 @@ When the `for Context` clause is omitted, the inserted parameter is `__Context__
 
 The **receiver identifier** is computed from the context type: if the context type is a bare identifier it is snake-cased and the result used as the parameter name, and any context type that is not a plain identifier falls back to the literal `__context__`. `Context` and `__Context__` both yield `__context__`. Every `self` in a body is rewritten to that identifier, every `Self` type to the context type, via the three `replace_self` visitors run in sequence.
 
+Inside a **macro body** the rewrite is token-level, because `VisitMut` cannot see through a `macro!( … )`. The type visitor still skips a local associated type (`Self::Output` where `Output` is declared in the block), and the value visitor still distinguishes the two meanings of `self`: a bare `self` value becomes the context, but a `self::` module path is left intact, since a value `self` is never followed by `::`. The token-level pass cannot reason about scope, so a nested `fn` written *inside* a macro invocation does not stop the `self` rewrite the way a nested `fn` at the AST level does.
+
 A **`for Context` clause is optional**, and omitting it is the idiomatic form. When present, the `Self` type of the block *is* the context and the trait path is the provider trait; when absent, `ItemCgpImpl::lower` treats the block's `Self` type as the provider trait path and inserts `__Context__` at the front of the impl generics.
 
 **Local associated types are preserved by name.** A `type Output = …` the block declares itself is collected before the rewrite so the `replace_self` type visitor leaves `Self::Output` alone rather than rewriting it to the context — only imported abstract types (`Self::Error` from `#[use_type]`) and receiver `self`/`Self` are rewritten.
@@ -56,7 +58,7 @@ The **`#[cgp_impl(Self)]` passthrough** bypasses the whole rewrite: when the pro
 
 ## Known issues
 
-The `#[cgp_impl(Self)]` form requires an explicit `for Context` clause and errors cleanly when it is missing; there are no other known limitations specific to this macro beyond those inherited from [`#[cgp_provider]`](cgp_provider.md) (see its Known issues).
+The `#[cgp_impl(Self)]` form requires an explicit `for Context` clause and errors cleanly when it is missing. In this form the `new` keyword and the `: ComponentType` override are silently ignored rather than rejected: the `Bare` branch returns the `impl` block untouched and never consults `args.new` or `args.component_type`, so `#[cgp_impl(new Self)]` and `#[cgp_impl(Self: SomeComponent)]` parse and compile but have the same effect as a plain `#[cgp_impl(Self)]`. This is harmless — neither option is meaningful for a direct consumer-trait impl — but a stricter parser would reject them. Beyond this, the macro has no known limitations specific to it apart from those inherited from [`#[cgp_provider]`](cgp_provider.md) (see its Known issues).
 
 ## Snapshots
 
@@ -76,6 +78,8 @@ The behavioral tests confirm the lowered wiring works:
 - [basic_delegation/provider_macro.rs](../../../crates/tests/cgp-tests/tests/basic_delegation/provider_macro.rs) wires `FooProviderComponent` to the generated `ValueToString` and checks the call resolves at run time.
 - [implicit_arguments/cgp_impl_implicit.rs](../../../crates/tests/cgp-tests/tests/implicit_arguments/cgp_impl_implicit.rs) wires the implicit-argument provider through `delegate_and_check_components!` and confirms the field reads compute the area.
 - [higher_order_providers/use_provider_impl.rs](../../../crates/tests/cgp-tests/tests/higher_order_providers/use_provider_impl.rs) wires the scaled higher-order provider onto a context and runs it.
+- [basic_delegation/impl_self.rs](../../../crates/tests/cgp-tests/tests/basic_delegation/impl_self.rs) exercises the `#[cgp_impl(Self)]` passthrough: a consumer trait implemented directly on a concrete context, forwarding to a provider via `#[use_provider]`.
+- [basic_delegation/self_in_macro.rs](../../../crates/tests/cgp-tests/tests/basic_delegation/self_in_macro.rs) confirms the token-level `self` rewrite inside a macro body distinguishes a bare `self` value (rewritten) from a `self::` module path (left intact).
 
 ## Source
 

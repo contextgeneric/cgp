@@ -43,7 +43,7 @@ impl<InnerCalculator> AreaCalculator {
 }
 ```
 
-Several companion attributes are supported on a `#[cgp_impl]` block and are processed before the provider-trait rewrite. Method parameters marked [`#[implicit]`](../attributes/implicit.md) are extracted from the signature and turned into `HasField` reads on the context. [`#[uses(...)]`](../attributes/uses.md) adds simple trait bounds on `Self`, [`#[use_type(Trait::Type)]`](../attributes/use_type.md) imports an abstract type and rewrites its occurrences to fully qualified form, and [`#[use_provider(...)]`](../attributes/use_provider.md) supports higher-order providers by adding the `Self` parameter to an inner provider bound.
+Several companion attributes are supported on a `#[cgp_impl]` block and are processed before the provider-trait rewrite. Method parameters marked [`#[implicit]`](../attributes/implicit.md) are extracted from the signature and turned into `HasField` reads on the context. [`#[uses(...)]`](../attributes/uses.md) adds simple trait bounds on `Self`, [`#[use_type(Trait::Type)]`](../attributes/use_type.md) imports an abstract type and rewrites its occurrences to fully qualified form, and [`#[use_provider(...)]`](../attributes/use_provider.md) supports higher-order providers by adding the `Self` parameter to an inner provider bound. Finally, [`#[default_impl(...)]`](../traits/default_namespace.md) registers the provider as a namespace's per-type default, emitting an extra delegation impl alongside the provider without changing the provider impl itself.
 
 ## Syntax Grammar
 
@@ -117,7 +117,7 @@ where
 
 The generated `IsProviderFor` impl is a copy of the provider impl's signature with its body removed and the same `where` clause retained, so the provider's dependencies are captured for error reporting. The first argument is the component name, the second is the context type, and the third is a tuple of any remaining provider-trait type parameters. For a provider trait with multiple parameters, such as `ComputerRef<Context, Code, Input>`, the trailing parameters are grouped into that tuple — the `IsProviderFor` impl reads `IsProviderFor<ComputerRefComponent, Context, (Code, Input)>`.
 
-One special case bypasses the provider rewrite entirely. Writing `#[cgp_impl(Self)]` — naming `Self` as the provider — emits the `impl` block unchanged as an ordinary consumer-trait implementation on the concrete context. This requires the `for Context` clause to be present, and it is useful when you want to implement a consumer trait directly while still applying companion attributes such as [`#[use_provider]`](../attributes/use_provider.md):
+One special case bypasses the provider rewrite entirely. Writing `#[cgp_impl(Self)]` — naming `Self` as the provider — emits the `impl` block unchanged as an ordinary consumer-trait implementation on the concrete context. This requires the `for Context` clause to be present, and it is useful when you want to implement a consumer trait directly while still applying companion attributes such as [`#[use_provider]`](../attributes/use_provider.md). Because no provider struct is generated in this form, the `new` keyword and the `: ComponentType` override have no effect when the provider is `Self`:
 
 ```rust
 #[cgp_impl(Self)]
@@ -173,7 +173,7 @@ The call `rect.area()` resolves through the consumer blanket impl to `Rectangle`
 
 ## Related constructs
 
-`#[cgp_impl]` is the recommended way to implement a component defined by [`#[cgp_component]`](cgp_component.md), and it is one layer of sugar above [`#[cgp_provider]`](cgp_provider.md), which it desugars to; [`#[cgp_new_provider]`](cgp_new_provider.md) is the `new`-keyword equivalent at that lower layer. For the common case where only a single implementation is ever needed and no wiring is desired, [`#[cgp_fn]`](cgp_fn.md) is the lighter alternative. The companion attributes [`#[implicit]`](../attributes/implicit.md), [`#[uses]`](../attributes/uses.md), [`#[use_type]`](../attributes/use_type.md), and [`#[use_provider]`](../attributes/use_provider.md) all apply inside a `#[cgp_impl]` block. Once a provider is written, [`delegate_components!`](delegate_components.md) wires it onto a context and [`check_components!`](check_components.md) verifies the wiring.
+`#[cgp_impl]` is the recommended way to implement a component defined by [`#[cgp_component]`](cgp_component.md), and it is one layer of sugar above [`#[cgp_provider]`](cgp_provider.md), which it desugars to; [`#[cgp_new_provider]`](cgp_new_provider.md) is the `new`-keyword equivalent at that lower layer. For the common case where only a single implementation is ever needed and no wiring is desired, [`#[cgp_fn]`](cgp_fn.md) is the lighter alternative. The companion attributes [`#[implicit]`](../attributes/implicit.md), [`#[uses]`](../attributes/uses.md), [`#[use_type]`](../attributes/use_type.md), [`#[use_provider]`](../attributes/use_provider.md), and [`#[default_impl]`](../traits/default_namespace.md) all apply inside a `#[cgp_impl]` block. Once a provider is written, [`delegate_components!`](delegate_components.md) wires it onto a context and [`check_components!`](check_components.md) verifies the wiring.
 
 ## Source
 

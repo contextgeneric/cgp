@@ -2,6 +2,9 @@ use proc_macro2::Ident;
 use syn::visit_mut::VisitMut;
 use syn::{FnArg, Receiver, Signature, Type, parse_quote};
 
+/// Rewrites a method's `self` receiver into an explicit context parameter,
+/// preserving the reference and mutability shape (`&self` → `ctx: &Context`,
+/// `&mut self` → `ctx: &mut Context`, `self` → `ctx: Context`).
 pub struct ReplaceSelfReceiverVisitor<'a> {
     pub replaced_ident: &'a Ident,
     pub replaced_type: &'a Type,
@@ -39,7 +42,9 @@ pub fn replace_self_receiver(
             parse_quote!(#replaced_ident : & #life mut #replaced_type)
         }
         (None, Some(_mut)) => {
-            parse_quote!(#replaced_ident : mut #replaced_type)
+            // Owned mutable receiver `mut self`: `mut` binds the parameter, not
+            // the type, so it must precede the identifier — `mut ctx: Context`.
+            parse_quote!(mut #replaced_ident : #replaced_type)
         }
     }
 }

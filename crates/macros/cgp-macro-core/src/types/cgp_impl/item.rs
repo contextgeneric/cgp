@@ -7,12 +7,17 @@ use crate::types::attributes::CgpImplAttributes;
 use crate::types::cgp_impl::{ImplArgs, LoweredCgpImpl};
 use crate::types::implicits::ImplicitArgFields;
 
+/// The raw input stage of `#[cgp_impl]`: the parsed attribute args and the
+/// `impl` block, before any lowering.
 pub struct ItemCgpImpl {
     pub args: ImplArgs,
     pub item_impl: ItemImpl,
 }
 
 impl ItemCgpImpl {
+    /// Processes the companion attributes and normalizes the impl header,
+    /// resolving the provider trait path and context type (inserting `__Context__`
+    /// when the `for` clause is omitted), and produces a [`LoweredCgpImpl`].
     pub fn lower(&self) -> syn::Result<LoweredCgpImpl> {
         let mut item_impl = self.item_impl.clone();
 

@@ -1,8 +1,12 @@
+use itertools::Itertools;
 use proc_macro2::{Group, TokenStream, TokenTree};
 use quote::format_ident;
 use syn::visit_mut::{self, VisitMut};
 use syn::{Expr, Ident, ItemFn, Macro, Path};
 
+/// Rewrites every `self` *value* expression to the context identifier, stopping
+/// at nested `fn` items (which do not capture the outer `self`) and leaving
+/// `self::` module paths inside macro bodies intact.
 pub struct ReplaceSelfValueVisitor<'a> {
     pub replaced_ident: &'a Ident,
 }
@@ -37,12 +41,19 @@ pub fn replace_self_value_in_token_stream(
 
     let mut result_stream: Vec<TokenTree> = Vec::new();
 
-    let token_iter = stream.into_iter();
+    let mut token_iter = stream.into_iter().multipeek();
 
-    for tree in token_iter {
+    while let Some(tree) = token_iter.next() {
         match tree {
             TokenTree::Ident(ident) => {
-                if ident == self_ident {
+                // Rewrite `self` as a value expression, but leave a `self::` module
+                // path intact — its leading `self` is the current module, not the
+                // receiver. A value `self` is never followed by `::`, so a trailing
+                // `::` unambiguously marks the path form.
+                let is_module_path = matches!(token_iter.peek(), Some(TokenTree::Punct(p)) if p.as_char() == ':')
+                    && matches!(token_iter.peek(), Some(TokenTree::Punct(p)) if p.as_char() == ':');
+
+                if ident == self_ident && !is_module_path {
                     result_stream.push(TokenTree::Ident(replaced_ident.clone()));
                 } else {
                     result_stream.push(TokenTree::Ident(ident));

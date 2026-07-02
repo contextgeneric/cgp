@@ -4,6 +4,9 @@ use quote::{ToTokens, format_ident};
 use syn::visit_mut::{self, VisitMut};
 use syn::{Macro, Path, Type};
 
+/// Rewrites the `Self` type (and `Self::Foo` paths) to the context type,
+/// skipping any `Self::Assoc` whose associated type is declared locally in the
+/// block so the trait's own associated types are left intact.
 pub struct ReplaceSelfTypeVisitor<'a> {
     pub replaced_type: &'a Type,
     pub skip_assoc_types: &'a Vec<Ident>,
