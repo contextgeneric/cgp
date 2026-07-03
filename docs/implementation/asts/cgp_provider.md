@@ -27,7 +27,7 @@ It packages the original `item_impl` (emitted verbatim), the derived `IsProvider
 
 ## `ItemProviderImpl` and the `IsProviderFor` derivation
 
-`ItemProviderImpl` pairs a component type with a provider impl and derives the `IsProviderFor` marker impl from it. `to_is_provider_for_impl` clones the provider impl, clears its body, associated types, attributes, `defaultness`, and `unsafety`, and swaps the trait for `IsProviderFor<Component, Context, (Params)>` — keeping the original generic parameters and `where` clause so the marker holds under exactly the same conditions:
+`ItemProviderImpl` pairs a component type with a provider impl and derives the `IsProviderFor` marker impl from it. `to_is_provider_for_impl` clones the provider impl, clears its body, associated types, attributes, `defaultness`, and `unsafety`, and swaps the trait for `IsProviderFor<Component, Context, (Params)>` — keeping the original generic parameters, `where` clause, and the provider impl's own `for` token so the marker holds under exactly the same conditions and none of its structural tokens fall back to the macro `call_site` span (the cloned `impl` keyword, generics, and self type already carry the user's spans; reusing the `for` token keeps the middle of the header from leaking too):
 
 ```rust
 // from  impl<Context, Code, Input> ComputerRef<Context, Code, Input> for FirstNameToString where …
@@ -47,11 +47,11 @@ The trait arguments come from `ProviderImplArgs::from_generic_args`, and the der
 
 ## `EmptyStruct`
 
-`EmptyStruct` is the provider struct, emitted only when `new` is set. `to_provider_struct` reads the shape from the impl's `Self` type: a plain name yields a unit `pub struct Name;`, while a generic provider yields a struct whose single `PhantomData` field binds every parameter — a lifetime parameter is bound as `Life<'a>` inside the `PhantomData` tuple so the struct stays covariant and `'static`-friendly.
+`EmptyStruct` is the provider struct, emitted only when `new` is set. `to_provider_struct` reads the shape from the impl's `Self` type: a plain name yields a unit `pub struct Name;`, while a generic provider yields a struct whose single `PhantomData` field binds every parameter — a lifetime parameter is bound as `Life<'a>` so the struct stays covariant and `'static`-friendly. Two or more parameters are grouped into a `PhantomData` tuple; a lone parameter is bound directly (`PhantomData<InCode>`, not `PhantomData<(InCode)>`) to avoid a single-element parenthesized type, and a const-only provider gets `PhantomData<()>`.
 
 ```rust
 // generic provider Self type SpawnAndRun<InCode>
-pub struct SpawnAndRun<InCode>(pub ::core::marker::PhantomData<(InCode)>);
+pub struct SpawnAndRun<InCode>(pub ::core::marker::PhantomData<InCode>);
 ```
 
 ## Tests

@@ -56,6 +56,20 @@ The **companion attributes** are applied in `ItemCgpImpl::lower` before the prov
 
 The **`#[cgp_impl(Self)]` passthrough** bypasses the whole rewrite: when the provider type is the literal `Self`, `LoweredCgpImpl::lower` returns the original `impl` block unchanged as an ordinary consumer-trait impl, so companion attributes still apply while the body keeps its `self` receiver. This form requires the `for Context` clause; omitting it is rejected with a spanned "Expected context type to be specified" error.
 
+## Error spans
+
+Because the macro starts from the user's own `syn::ItemImpl` and rewrites it in place, the provider impl and its derived `IsProviderFor` impl keep the user's spans on their `impl` keyword, generics, self type, and body — so a coherence conflict (`E0119`) between two providers already underlines the offending `#[cgp_impl]` block rather than the macro name, exactly as two hand-written impls would. Two tokens are synthesized rather than cloned, and both are aimed at what the user wrote so they cannot leak the `call_site` span: `to_raw_item_impl` gives the provider impl's `for` token the original `for` token's span (explicit `impl Trait for Context` form) or the provider trait path's span (bare `impl Trait` form), and the [`IsProviderFor` derivation](../asts/cgp_provider.md#itemproviderimpl-and-the-isproviderfor-derivation) reuses that same `for` token for its own header.
+
+The one wholly-synthesized item is each `#[default_impl]` delegation impl, built entirely from quasi-quoted tokens whose `impl`/`for` keywords carry `call_site`. `DefaultImplAttribute::to_item_impl` re-spans it onto the user-written key token — mirroring the `override_span` technique that [`delegate_components!`](delegate_components.md#error-spans) uses — while restoring the impl's generics afterward, so a conflict between two default impls for the same key points at the key inside `#[default_impl(Key in …)]` rather than at the whole `#[cgp_impl]` attribute.
+
+## Failure modes
+
+Both failures below are ones `#[cgp_impl]` **intentionally defers to the Rust compiler**: each block lowers independently with no view of any other, so a collision only a whole-program view could catch is left to `rustc`, exactly as two hand-written definitions would be. Each is pinned by a fixture under [acceptable/cgp_impl/](../../../crates/tests/cgp-compile-fail-tests/tests/acceptable/cgp_impl) in `cgp-compile-fail-tests`.
+
+A **duplicate provider name** — two `#[cgp_impl(new Foo)]` blocks — declares `pub struct Foo;` twice (`E0428`) and emits two conflicting provider impls (`E0119`). The `E0428` carets land on the `Foo` inside each `#[cgp_impl(new …)]` and the `E0119` carets on each provider `impl` block, per [Error spans](#error-spans). Pinned by [acceptable/cgp_impl/duplicate_provider_name.rs](../../../crates/tests/cgp-compile-fail-tests/tests/acceptable/cgp_impl/duplicate_provider_name.rs).
+
+A **duplicate `#[default_impl]` key** — two `#[cgp_impl]` blocks each registering the same key as a per-type default in the same namespace — emits two conflicting delegation impls and fails with `E0119`. The carets land on the `Key` inside each `#[default_impl(Key in …)]` per [Error spans](#error-spans). Pinned by [acceptable/cgp_impl/duplicate_default_impl.rs](../../../crates/tests/cgp-compile-fail-tests/tests/acceptable/cgp_impl/duplicate_default_impl.rs).
+
 ## Known issues
 
 The `#[cgp_impl(Self)]` form requires an explicit `for Context` clause and errors cleanly when it is missing. In this form the `new` keyword and the `: ComponentType` override are silently ignored rather than rejected: the `Bare` branch returns the `impl` block untouched and never consults `args.new` or `args.component_type`, so `#[cgp_impl(new Self)]` and `#[cgp_impl(Self: SomeComponent)]` parse and compile but have the same effect as a plain `#[cgp_impl(Self)]`. This is harmless — neither option is meaningful for a direct consumer-trait impl — but a stricter parser would reject them. Beyond this, the macro has no known limitations specific to it apart from those inherited from [`#[cgp_provider]`](cgp_provider.md) (see its Known issues).

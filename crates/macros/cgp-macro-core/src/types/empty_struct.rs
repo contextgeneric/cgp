@@ -1,4 +1,4 @@
-use quote::{ToTokens, quote};
+use quote::{ToTokens, quote_spanned};
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
 use syn::{GenericParam, Generics, Ident, ItemStruct, Type, parse_quote};
@@ -21,8 +21,15 @@ impl ToTokens for EmptyStruct {
         let struct_ident = &self.ident;
         let struct_generics = &self.generics;
 
+        // Stamp the synthesized `pub struct … ;` tokens with the struct ident's
+        // span rather than the macro `call_site`, so a redefinition error
+        // (`E0428`) when two providers share a name points at the offending name
+        // (e.g. the `Foo` in `#[cgp_impl(new Foo)]`) instead of the whole macro
+        // invocation.
+        let span = struct_ident.span();
+
         if struct_generics.params.is_empty() {
-            tokens.extend(quote! {
+            tokens.extend(quote_spanned! { span =>
                 pub struct #struct_ident;
             });
         } else {
@@ -49,9 +56,20 @@ impl ToTokens for EmptyStruct {
                 }
             }
 
-            tokens.extend(quote! {
+            // Emit `PhantomData<T>` for a single parameter and `PhantomData<()>`
+            // when none survive (all consts), reserving the tuple form for two or
+            // more. A single-element `PhantomData<(T)>` is a parenthesized type,
+            // not a tuple, and now that the struct carries the user's span (above)
+            // it would trip the `unused_parens` lint in the caller's crate.
+            let phantom_type: Type = if phantom_params.len() == 1 {
+                phantom_params.into_iter().next().unwrap()
+            } else {
+                parse_quote!( ( #phantom_params ) )
+            };
+
+            tokens.extend(quote_spanned! { span =>
                 pub struct #struct_ident < #generic_params > (
-                    pub ::core::marker::PhantomData<( #phantom_params )>
+                    pub ::core::marker::PhantomData< #phantom_type >
                 );
             })
         }

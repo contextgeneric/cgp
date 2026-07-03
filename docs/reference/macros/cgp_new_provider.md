@@ -75,7 +75,7 @@ where
 emits, in addition to the provider and `IsProviderFor` impls:
 
 ```rust
-pub struct SpawnAndRun<InCode>(pub ::core::marker::PhantomData<(InCode)>);
+pub struct SpawnAndRun<InCode>(pub ::core::marker::PhantomData<InCode>);
 ```
 
 ## Examples

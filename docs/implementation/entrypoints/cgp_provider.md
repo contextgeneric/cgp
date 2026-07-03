@@ -50,7 +50,7 @@ The **`new` keyword controls the struct**, whose shape is read from the impl's `
 
 ```rust
 // #[cgp_new_provider] impl<Context, Code, InCode> Runner<Context, Code> for SpawnAndRun<InCode>
-pub struct SpawnAndRun<InCode>(pub ::core::marker::PhantomData<(InCode)>);
+pub struct SpawnAndRun<InCode>(pub ::core::marker::PhantomData<InCode>);
 ```
 
 The **provider-name rewrite in the generics** keeps the `IsProviderFor` bounds honest: `replace_provider_in_generics` rewrites any `Provider: SomeTrait<Context, …>` bound in the `where` clause into an `IsProviderFor<SomeComponent, Context, (…)>` bound, so a higher-order provider's inner-provider dependency surfaces in error messages as an `IsProviderFor` obligation rather than a raw provider-trait bound.
