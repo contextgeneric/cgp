@@ -64,6 +64,7 @@ Every `snapshot_cgp_auto_getter!` invocation across the suite is indexed here, s
 - [getters/clone_auto.rs](../../../crates/tests/cgp-tests/tests/getters/clone_auto.rs) — an owned return `.clone()`d out by value.
 - [getters/mref_auto.rs](../../../crates/tests/cgp-tests/tests/getters/mref_auto.rs) — an `MRef<'_, String>` return wrapping the borrow in `MRef::Ref`.
 - [getters/option_auto.rs](../../../crates/tests/cgp-tests/tests/getters/option_auto.rs) — an `Option<&String>` return reading an `Option<String>` field via `.as_ref()`.
+- [getters/option_str_auto.rs](../../../crates/tests/cgp-tests/tests/getters/option_str_auto.rs) — an `Option<&str>` return reading an `Option<String>` field via `.as_deref()`, composing the `&str` and option cases.
 - [getters/slice_auto.rs](../../../crates/tests/cgp-tests/tests/getters/slice_auto.rs) — a `&[u8]` return reading an `AsRef<[u8]> + 'static` field via `.as_ref()`.
 - [getters/non_self_auto.rs](../../../crates/tests/cgp-tests/tests/getters/non_self_auto.rs) — a non-`self` getter reading a field out of another type (`&Self::Foo`).
 - [getters/auto_getter_generic.rs](../../../crates/tests/cgp-tests/tests/getters/auto_getter_generic.rs) — a trait generic over a type parameter, keyed by a `PhantomData<Foo>` tag.

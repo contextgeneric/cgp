@@ -12,7 +12,7 @@ The decoupling is delivered through the `UseField` pattern. `#[cgp_getter]` auto
 
 ## Syntax
 
-The macro is applied to a getter trait the same way `#[cgp_auto_getter]` is, and accepts the same getter-method forms — `&self`/`&mut self` receivers and the `&str`, `Option<&T>`, `&[T]`, owned, and associated-type return shorthands. The simplest form takes no argument:
+The macro is applied to a getter trait the same way `#[cgp_auto_getter]` is, and accepts the same getter-method forms — `&self`/`&mut self` receivers and the `&str`, `Option<&T>`, `Option<&str>`, `&[T]`, owned, and associated-type return shorthands. The simplest form takes no argument:
 
 ```rust
 #[cgp_getter]

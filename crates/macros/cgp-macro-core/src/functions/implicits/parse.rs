@@ -11,7 +11,7 @@ use crate::types::implicits::{ImplicitArgField, ImplicitArgFields};
 pub fn extract_and_parse_implicit_args(
     args: &mut Punctuated<FnArg, Comma>,
 ) -> syn::Result<ImplicitArgFields> {
-    let implicit_fn_args = extract_implicit_args(args);
+    let implicit_fn_args = extract_implicit_args(args)?;
 
     if implicit_fn_args.is_empty() {
         return Ok(ImplicitArgFields::default());
@@ -85,14 +85,14 @@ pub fn parse_implicit_arg(receiver: &Receiver, arg: &PatType) -> syn::Result<Imp
     Ok(spec)
 }
 
-pub fn extract_implicit_args(args: &mut Punctuated<FnArg, Comma>) -> Vec<PatType> {
+pub fn extract_implicit_args(args: &mut Punctuated<FnArg, Comma>) -> syn::Result<Vec<PatType>> {
     let mut implicit_args = Vec::new();
 
     let process_args = mem::take(args);
 
     for arg in process_args.into_iter() {
         if let FnArg::Typed(mut arg) = arg {
-            if is_implicit_arg(&mut arg) {
+            if is_implicit_arg(&mut arg)? {
                 implicit_args.push(arg);
             } else {
                 args.push(FnArg::Typed(arg));
@@ -102,10 +102,10 @@ pub fn extract_implicit_args(args: &mut Punctuated<FnArg, Comma>) -> Vec<PatType
         }
     }
 
-    implicit_args
+    Ok(implicit_args)
 }
 
-pub fn is_implicit_arg(arg: &mut PatType) -> bool {
+pub fn is_implicit_arg(arg: &mut PatType) -> syn::Result<bool> {
     let mut res = false;
 
     let attrs = mem::take(&mut arg.attrs);
@@ -113,12 +113,22 @@ pub fn is_implicit_arg(arg: &mut PatType) -> bool {
     for attr in attrs {
         if is_implicit_attr(&attr) {
             res = true;
+        } else if attr.path().is_ident("implicit") {
+            // `#[implicit]` is a bare marker; a list or name-value form such as
+            // `#[implicit(...)]` or `#[implicit = ...]` is a mistake. Reject it here
+            // rather than leaving the stray attribute on the parameter, where it
+            // would surface far downstream as an obscure "cannot find attribute
+            // `implicit`" error.
+            return Err(syn::Error::new_spanned(
+                &attr,
+                "`#[implicit]` does not take any arguments; write it as a bare `#[implicit]`",
+            ));
         } else {
             arg.attrs.push(attr);
         }
     }
 
-    res
+    Ok(res)
 }
 
 pub fn is_implicit_attr(attr: &Attribute) -> bool {

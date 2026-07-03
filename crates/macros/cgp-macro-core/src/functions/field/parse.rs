@@ -28,7 +28,14 @@ pub fn parse_field_type(
                 let field_type: Type = parse_internal! { String };
 
                 Ok((field_type, FieldMode::Str))
-            } else if let (Type::Slice(slice), None) = (type_ref.elem.as_ref(), receiver_mut) {
+            } else if let (Type::Slice(slice), None) =
+                (type_ref.elem.as_ref(), &type_ref.mutability)
+            {
+                // A shared `&[T]` reads any `AsRef<[T]>` field. Whether the read is
+                // mutable follows the reference's *own* mutability, not the
+                // receiver's — a `&self`/`&mut self` method may take an immutable
+                // slice either way, and there is no `AsMut<[T]>` counterpart, so a
+                // `&mut [T]` falls through to the plain reference case below.
                 let field_type = slice.elem.as_ref().clone();
 
                 Ok((field_type, FieldMode::Slice))
@@ -40,20 +47,28 @@ pub fn parse_field_type(
         }
         Type::Path(type_path) => {
             if let Some(field_type) = try_parse_option_ref(type_path) {
-                Ok((
-                    parse_internal! { Option< #field_type > },
-                    FieldMode::OptionRef,
-                ))
-            } else if let (Some(field_type), None) = (try_parse_mref(type_path), receiver_mut) {
+                if field_type == &parse_internal! { str } {
+                    // `Option<&str>` is backed by an `Option<String>` field and read
+                    // with `.as_deref()`, mirroring the `&str`/`String` special case
+                    // for a plain reference.
+                    Ok((parse_internal! { Option< String > }, FieldMode::OptionStr))
+                } else {
+                    Ok((
+                        parse_internal! { Option< #field_type > },
+                        FieldMode::OptionRef,
+                    ))
+                }
+            } else if let Some(field_type) = try_parse_mref(type_path) {
+                // `MRef` borrows the field as a shared value, so — unlike a `&mut`
+                // reference — its access mode never depends on the receiver.
                 Ok((field_type.clone(), FieldMode::MRef))
             } else {
                 Ok((return_type.clone(), FieldMode::Copy))
             }
         }
-        _ => Err(Error::new(
-            return_type.span(),
-            "return type must be a reference",
-        )),
+        // Any other owned type (a tuple, an array, and so on) is read by value and
+        // cloned, exactly like an owned path type.
+        _ => Ok((return_type.clone(), FieldMode::Copy)),
     }
 }
 

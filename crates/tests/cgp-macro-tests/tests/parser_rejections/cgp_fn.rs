@@ -1,9 +1,10 @@
 //! `#[cgp_fn]` rejects the implicit-argument shapes it cannot lower: an implicit
 //! argument on a function with no `self` receiver, a `mut` binding pattern on an
-//! implicit argument, and a `&mut` implicit argument that is not the sole implicit
+//! implicit argument, a `&mut` implicit argument that is not the sole implicit
 //! (its exclusive borrow of the context would conflict with reading any other
-//! field). Each is a rejection the macro makes during expansion, so it is pinned
-//! by driving the entrypoint directly here rather than by a `compile_fail` test.
+//! field), and a malformed `#[implicit]` attribute carrying arguments. Each is a
+//! rejection the macro makes during expansion, so it is pinned by driving the
+//! entrypoint directly here rather than by a `compile_fail` test.
 //!
 //! See docs/implementation/entrypoints/cgp_fn.md (Tests) for these failure cases,
 //! and docs/reference/attributes/implicit.md for the user-facing rules on where
@@ -71,4 +72,38 @@ fn rejects_mutable_implicit_with_other_implicit() {
             )
         },
     );
+}
+
+#[test]
+fn rejects_implicit_attr_with_arguments() {
+    // `#[implicit]` is a bare marker attribute; a list form such as
+    // `#[implicit(foo)]` is a mistake and is rejected with a spanned error, rather
+    // than left on the parameter to surface downstream as an obscure "cannot find
+    // attribute `implicit`" error.
+    assert_macro_rejects("cgp_fn with a `#[implicit(...)]` attribute", || {
+        cgp_macro_lib::cgp_fn(
+            quote!(),
+            quote!(
+                pub fn greet(&self, #[implicit(foo)] name: &str) {
+                    let _ = name;
+                }
+            ),
+        )
+    });
+}
+
+#[test]
+fn rejects_implicit_attr_name_value() {
+    // The name-value form `#[implicit = ...]` is likewise rejected: `#[implicit]`
+    // takes no arguments in any form.
+    assert_macro_rejects("cgp_fn with a `#[implicit = ...]` attribute", || {
+        cgp_macro_lib::cgp_fn(
+            quote!(),
+            quote!(
+                pub fn greet(&self, #[implicit = 1] name: &str) {
+                    let _ = name;
+                }
+            ),
+        )
+    });
 }

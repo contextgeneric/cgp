@@ -130,6 +130,17 @@ fn extend_call_expr(
                 }
             }
         }
+        FieldMode::OptionStr => {
+            if field_mut.is_none() {
+                quote! {
+                    #call_expr .as_deref()
+                }
+            } else {
+                quote! {
+                    #call_expr .as_deref_mut()
+                }
+            }
+        }
         FieldMode::MRef => {
             quote! {
                 MRef::Ref( #call_expr )

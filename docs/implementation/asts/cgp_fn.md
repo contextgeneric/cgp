@@ -20,7 +20,7 @@ The ordering here is the contract the snapshots pin: the implicit-argument bound
 
 The implicit-argument types are shared building blocks that `#[cgp_fn]` and `#[cgp_impl]` both use, so they live under `types/implicits/` rather than in the `cgp_fn` module. An `ImplicitArgField` records one extracted argument — its field name, the field type to require, the field mutability (set from the argument's own type: `Some` only for a `&mut T` argument), the field mode (the conversion to apply), and the original argument type — and `ImplicitArgFields` is the collected list.
 
-The extraction is driven by `extract_and_parse_implicit_args`, which pulls every `#[implicit]`-marked argument out of a signature's inputs, parses each into an `ImplicitArgField`, and rejects the combinations extraction cannot lower (a missing `self` receiver, a `mut` pattern, and a `&mut` implicit sharing the function with any other implicit). `ImplicitArgField` then contributes in two directions: `to_has_field_bound` produces the `HasField`/`HasFieldMut` bound the impl requires, and `to_statement` produces the `let #name: #arg_type = self.get_field(...) <conversion>;` binding that `prepend_to_block` splices onto the front of the body. The conversion is chosen by `parse_field_type`, the same field-mode logic the getter macros use; the receiver's mutability enters only to validate that a `&mut T` argument is paired with a `&mut self` receiver.
+The extraction is driven by `extract_and_parse_implicit_args`, which pulls every `#[implicit]`-marked argument out of a signature's inputs, parses each into an `ImplicitArgField`, and rejects the inputs extraction cannot lower (a missing `self` receiver, a `mut` pattern, a `&mut` implicit sharing the function with any other implicit, and a malformed `#[implicit(...)]`/`#[implicit = ...]` attribute that is not the bare marker form). `ImplicitArgField` then contributes in two directions: `to_has_field_bound` produces the `HasField`/`HasFieldMut` bound the impl requires, and `to_statement` produces the `let #name: #arg_type = self.get_field(...) <conversion>;` binding that `prepend_to_block` splices onto the front of the body. The conversion is chosen by `parse_field_type`, the same field-mode logic the getter macros use; the receiver's mutability enters only to validate that a `&mut T` argument is paired with a `&mut self` receiver.
 
 ```rust
 // for `#[implicit] name: &str` on `&self`, to_statement produces:
@@ -32,7 +32,7 @@ let name: &str = self.get_field(PhantomData::<Symbol!("name")>).as_str();
 ## Tests
 
 - The stage transforms are exercised end-to-end by the expansion snapshots indexed in the [entrypoint document's Snapshots section](../entrypoints/cgp_fn.md).
-- The rejections enforced during implicit-argument extraction — an implicit argument without a `self` receiver, a `mut` binding pattern on an implicit argument, and a `&mut` implicit combined with any other implicit — are pinned by [parser_rejections/cgp_fn.rs](../../../crates/tests/cgp-macro-tests/tests/parser_rejections/cgp_fn.rs).
+- The rejections enforced during implicit-argument extraction — an implicit argument without a `self` receiver, a `mut` binding pattern on an implicit argument, a `&mut` implicit combined with any other implicit, and a malformed `#[implicit]` attribute carrying arguments — are pinned by [parser_rejections/cgp_fn.rs](../../../crates/tests/cgp-macro-tests/tests/parser_rejections/cgp_fn.rs).
 
 ## Source
 

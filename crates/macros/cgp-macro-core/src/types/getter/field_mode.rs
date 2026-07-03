@@ -2,6 +2,7 @@
 pub enum FieldMode {
     Reference,
     OptionRef,
+    OptionStr,
     MRef,
     Str,
     Copy,

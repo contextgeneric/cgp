@@ -11,6 +11,7 @@ pub mod clone_auto;
 pub mod mref_auto;
 pub mod non_self_auto;
 pub mod option_auto;
+pub mod option_str_auto;
 pub mod slice_auto;
 pub mod string_auto;
 

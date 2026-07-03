@@ -12,7 +12,7 @@ This is why `#[implicit]` is the recommended starting point for basic CGP. It le
 
 ## Syntax
 
-`#[implicit]` is written as a bare attribute on a typed function argument, and the argument must have a plain identifier name:
+`#[implicit]` is written as a bare marker attribute on a typed function argument, and the argument must have a plain identifier name. It takes no arguments in any form — a list or name-value spelling such as `#[implicit(foo)]` or `#[implicit = "foo"]` is rejected with a spanned error rather than silently ignored:
 
 ```rust
 fn area(&self, #[implicit] width: f64, #[implicit] height: f64) -> f64 {
@@ -60,7 +60,7 @@ where
 
 The two `let` bindings are inserted at the top of the body in argument order, before any of the original statements, so the names are in scope for the rest of the function. The generated context type parameter is literally named `__Context__` in the emitted code; the examples here use `Context` for readability.
 
-The access expression depends on the argument type, following the same rules as [`#[cgp_auto_getter]`](../macros/cgp_auto_getter.md). For an owned type such as `f64` or `String`, the macro reads the field by reference and appends `.clone()`, so the body receives an owned value. The one special case worth knowing is `&str`: an argument typed `&str` is backed by a `String` field, and the access uses `.as_str()` rather than `.clone()`. The mutability of the access follows the *argument's* own type, not the receiver's: only a `&mut T` argument reads through `HasFieldMut`/`get_field_mut`, while every immutable argument reads through `HasField`/`get_field` even on a `&mut self` receiver. Concretely:
+The access expression depends on the argument type, following the same rules as [`#[cgp_auto_getter]`](../macros/cgp_auto_getter.md). An owned type — a path type such as `f64` or `String`, or a tuple or array — is read by reference and `.clone()`d, so the body receives an owned value; a plain `&T` is taken by reference with no conversion. Four forms are special: `&str` is backed by a `String` field and read with `.as_str()`; `&[T]` reads any field whose value implements `AsRef<[T]>` and calls `.as_ref()`; `Option<&T>` reads an `Option<T>` field via `.as_ref()`; and `Option<&str>` reads an `Option<String>` field via `.as_deref()`. The mutability of the access follows the *argument's* own type, not the receiver's: only a `&mut T` argument reads through `HasFieldMut`/`get_field_mut`, while every immutable argument — a `&[T]` slice included — reads through `HasField`/`get_field` even on a `&mut self` receiver. Concretely:
 
 ```rust
 #[cgp_fn]
@@ -113,9 +113,13 @@ fn print_area(rect: &Rectangle) {
 
 `#[implicit]` is most often used inside [`#[cgp_fn]`](../macros/cgp_fn.md), which turns a function into a single-implementation capability, and inside [`#[cgp_impl]`](../macros/cgp_impl.md), which writes a provider for an existing component. It relies on [`#[derive(HasField)]`](../derives/derive_has_field.md) on the context to supply the field accessors that the generated bounds require. Its access rules — `.clone()` for owned values, `.as_str()` for `&str` — are shared with [`#[cgp_auto_getter]`](../macros/cgp_auto_getter.md), which defines a reusable getter *capability* trait; prefer an implicit argument for reading a field as a provider's own input, and reserve `#[cgp_auto_getter]` for the case where the field should be published as a `self.name()` accessor other providers depend on. To bring in other CGP capabilities alongside implicit arguments, combine `#[implicit]` with [`#[uses]`](uses.md).
 
+## Known issues
+
+The mutable variants of the slice and option forms are not supported. A `&mut [T]` argument has no `AsMut<[T]>` counterpart and falls through to a plain-reference bound (`HasFieldMut<Value = [T]>`) that no context can satisfy, and an `Option<&mut T>` argument is read immutably and so produces a value that does not match its declared type. The macro accepts both, so the failure lands on the expanded code rather than as a spanned error; the mechanics are described in the [implementation document](../../implementation/entrypoints/cgp_fn.md). Use the immutable `&[T]` and `Option<&T>` forms, and clone into a mutable local inside the body when mutation is needed.
+
 ## Source
 
-- Parsing: implicit-argument parsing lives in [crates/macros/cgp-macro-core/src/functions/implicits/parse.rs](../../../crates/macros/cgp-macro-core/src/functions/implicits/parse.rs), which extracts `#[implicit]`-marked arguments and validates the `self`/`mut` rules.
+- Parsing: implicit-argument parsing lives in [crates/macros/cgp-macro-core/src/functions/implicits/parse.rs](../../../crates/macros/cgp-macro-core/src/functions/implicits/parse.rs), which extracts `#[implicit]`-marked arguments, validates the `self`/`mut` rules, and rejects a malformed (non-bare) `#[implicit]` attribute.
 - Per-argument model: [crates/macros/cgp-macro-core/src/types/implicits/](../../../crates/macros/cgp-macro-core/src/types/implicits/) — `arg_field.rs` builds the `HasField` bound and the `let` binding, and `arg_fields.rs` adds the bounds to the impl generics and prepends the bindings to the body.
-- Field-type-to-access-mode mapping (`.clone()`, `.as_str()`, and the reference/option/slice cases): [crates/macros/cgp-macro-core/src/functions/field/parse.rs](../../../crates/macros/cgp-macro-core/src/functions/field/parse.rs) and [crates/macros/cgp-macro-core/src/types/getter/get_field_with_mode_expr.rs](../../../crates/macros/cgp-macro-core/src/types/getter/get_field_with_mode_expr.rs).
+- Field-type-to-access-mode mapping (`.clone()`, `.as_str()`, `.as_deref()`, and the reference/option/slice cases): [crates/macros/cgp-macro-core/src/functions/field/parse.rs](../../../crates/macros/cgp-macro-core/src/functions/field/parse.rs) and [crates/macros/cgp-macro-core/src/types/getter/get_field_with_mode_expr.rs](../../../crates/macros/cgp-macro-core/src/types/getter/get_field_with_mode_expr.rs).
 - Implementation document (how `#[implicit]` arguments are parsed and lowered into `HasField` bounds and `let` bindings, and the index of tests): [implementation/entrypoints/cgp_fn.md](../../implementation/entrypoints/cgp_fn.md).

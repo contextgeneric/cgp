@@ -50,7 +50,7 @@ where
 }
 ```
 
-The conversion applied to each binding is chosen by the argument's type, following the same field-mode rules the getter macros use: a `&str` argument reads a `String` field and appends `.as_str()`, an owned value appends `.clone()`, an `Option<&T>` reads an `Option<T>` field and appends `.as_ref()`, an `&[T]` reads an `AsRef<[T]>` field and appends `.as_ref()`, and a plain `&T` is taken by reference with no conversion. A `&mut T` argument reads through `HasFieldMut`/`get_field_mut` and requires a `&mut self` receiver; every immutable argument reads through `HasField`/`get_field` regardless of the receiver. These modes are shared with `#[cgp_auto_getter]` and `#[cgp_getter]` through the [field-parsing helpers](../asts/cgp_getter.md); the difference is only where the read lands — a prepended `let` in the body here, a getter-method body there.
+The conversion applied to each binding is chosen by the argument's type, following the same field-mode rules the getter macros use: a `&str` argument reads a `String` field and appends `.as_str()`, an owned value — a path type, tuple, or array — appends `.clone()`, an `Option<&T>` reads an `Option<T>` field and appends `.as_ref()`, an `Option<&str>` reads an `Option<String>` field and appends `.as_deref()`, an `&[T]` reads an `AsRef<[T]>` field and appends `.as_ref()`, and a plain `&T` is taken by reference with no conversion. A `&mut T` argument reads through `HasFieldMut`/`get_field_mut` and requires a `&mut self` receiver; every immutable argument reads through `HasField`/`get_field` regardless of the receiver. The slice and option modes are keyed off the *argument's own* reference, not the receiver's, so an immutable `&[T]` keeps its `AsRef<[T]>` bound even under a `&mut self` receiver rather than collapsing into an unsatisfiable `Value = [T]`. These modes are shared with `#[cgp_auto_getter]` and `#[cgp_getter]` through the [field-parsing helpers](../asts/cgp_getter.md); the difference is only where the read lands — a prepended `let` in the body here, a getter-method body there.
 
 ## Behavior and corner cases
 
@@ -60,11 +60,15 @@ The conversion applied to each binding is chosen by the argument's type, followi
 
 **The visibility is moved, not copied.** `preprocess` takes the function's visibility off the inner `ItemFn` and re-applies it to the generated trait, so the emitted method inside the trait is always inherited-visibility while the trait itself carries the `pub` the user wrote.
 
+**A malformed `#[implicit]` attribute is rejected at extraction.** `#[implicit]` is recognized only as a bare `Meta::Path`; the extraction pass additionally checks for an `implicit`-named attribute in any other form (`#[implicit(...)]` or `#[implicit = ...]`) and returns a spanned error, rather than leaving the stray attribute on the parameter to surface downstream as an obscure `cannot find attribute 'implicit'` error.
+
 **A `&mut` implicit argument must be the only implicit argument.** The `field_mut` of each argument follows the argument's own type — set from the `&mut` in `&mut T`, not from the receiver — so a `&mut T` argument reads through `get_field_mut` while every immutable argument reads through `get_field`, even under a `&mut self` receiver. Because a `get_field_mut` read borrows the whole context exclusively for the rest of the body, a `&mut` implicit cannot coexist with any other implicit read; extraction rejects the combination (`has_mutable && count > 1`) rather than emit a blanket impl that fails to borrow-check. Any number of purely immutable implicits, by contrast, are shared borrows and combine freely. A `&mut T` argument additionally requires the `&mut self` receiver, and a `mut` *pattern* on any implicit argument is rejected outright. These checks are enforced during implicit-argument extraction.
 
 ## Known issues
 
 `#[cgp_fn]` does not support generics on the desugared *method* itself — generic parameters are only ever lifted onto the trait and impl. A method-level generic is silently treated as a trait/impl generic rather than rejected, which is the intended limitation rather than a bug: method-level generics are considered an advanced case better written as an explicit blanket impl or a [`#[cgp_component]`](../../reference/macros/cgp_component.md) provider.
+
+The *mutable* variants of the slice and option modes are not supported. A `&mut [T]` implicit falls through the slice case (there is no `AsMut<[T]>` counterpart) into the plain-reference mode, producing an unsatisfiable `HasFieldMut<Value = [T]>` bound; and an `Option<&mut T>` implicit reads immutably (the argument's outer type is a path, so `field_mut` is `None`), producing an `Option<&T>` value that then fails to coerce to the declared `Option<&mut T>`. Both are exotic shapes rather than a regression — the immutable `&[T]` and `Option<&T>` forms are the supported ones — and the macro accepts them, so the failure lands on the emitted code at the use site rather than as a spanned rejection.
 
 ## Snapshots
 
@@ -74,6 +78,9 @@ Every `snapshot_cgp_fn!` invocation across the suite is indexed here, since thes
 - [implicit_arguments/cgp_fn_custom_trait_name.rs](../../../crates/tests/cgp-tests/tests/implicit_arguments/cgp_fn_custom_trait_name.rs) — `#[cgp_fn(CanCalculateRectangleArea)]` overrides the generated trait name; two owned `f64` implicits each `.clone()`d.
 - [implicit_arguments/cgp_fn_mutable.rs](../../../crates/tests/cgp-tests/tests/implicit_arguments/cgp_fn_mutable.rs) — `&mut self` with a mutable implicit argument, reading through `HasFieldMut`/`get_field_mut`.
 - [implicit_arguments/cgp_fn_mut_self_immutable.rs](../../../crates/tests/cgp-tests/tests/implicit_arguments/cgp_fn_mut_self_immutable.rs) — a `&mut self` receiver with two *immutable* implicit arguments, showing they read through `HasField`/`get_field` (the access mode follows the argument, not the receiver) and that several immutable implicits may share a `&mut self` receiver.
+- [implicit_arguments/cgp_fn_slice.rs](../../../crates/tests/cgp-tests/tests/implicit_arguments/cgp_fn_slice.rs) — an immutable `&[u8]` implicit under a `&mut self` receiver, keeping its `Value: AsRef<[u8]> + 'static` bound and `.as_ref()` read because the slice mode follows the argument's own reference, not the receiver's; also mixes an implicit with a plain explicit argument.
+- [implicit_arguments/cgp_fn_owned_tuple.rs](../../../crates/tests/cgp-tests/tests/implicit_arguments/cgp_fn_owned_tuple.rs) — an owned, non-path implicit (a tuple) read by value with `.clone()` and a `Value = (f64, f64)` bound, showing owned types beyond path types are accepted.
+- [implicit_arguments/cgp_fn_option_str.rs](../../../crates/tests/cgp-tests/tests/implicit_arguments/cgp_fn_option_str.rs) — an `Option<&str>` implicit backed by an `Option<String>` field and read with `.as_deref()`, composing the `&str` and option modes.
 - [implicit_arguments/cgp_fn_calling_fn.rs](../../../crates/tests/cgp-tests/tests/implicit_arguments/cgp_fn_calling_fn.rs) — one `#[cgp_fn]` capability depending on another through an explicit `where Self:` bound.
 - [implicit_arguments/cgp_fn_multi_and_use_type.rs](../../../crates/tests/cgp-tests/tests/implicit_arguments/cgp_fn_multi_and_use_type.rs) — explicit and implicit arguments mixed, generic type parameters lifted onto the trait, `#[async_trait]` preserved as a raw attribute, and `#[use_type]` importing and renaming abstract types.
 - [async_and_send/cgp_fn_async.rs](../../../crates/tests/cgp-tests/tests/async_and_send/cgp_fn_async.rs) — the canonical async expansion, an `async fn` combined with `#[async_trait]`.
@@ -96,7 +103,7 @@ Because `#[cgp_fn]` emits a blanket impl, its snapshot tests double as behaviora
 
 The failure cases pin the inputs `#[cgp_fn]` refuses during expansion, each asserting the entrypoint returns `Err`:
 
-- [parser_rejections/cgp_fn.rs](../../../crates/tests/cgp-macro-tests/tests/parser_rejections/cgp_fn.rs) covers an implicit argument on a function with no `self` receiver, a `mut` binding pattern on an implicit argument, and a `&mut` implicit argument that is not the sole implicit (which would borrow the context mutably and again at once).
+- [parser_rejections/cgp_fn.rs](../../../crates/tests/cgp-macro-tests/tests/parser_rejections/cgp_fn.rs) covers an implicit argument on a function with no `self` receiver, a `mut` binding pattern on an implicit argument, a `&mut` implicit argument that is not the sole implicit (which would borrow the context mutably and again at once), and a malformed `#[implicit]` attribute carrying arguments (`#[implicit(...)]` or `#[implicit = ...]`).
 
 ## Source
 
