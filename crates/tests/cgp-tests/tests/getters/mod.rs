@@ -25,6 +25,7 @@ pub mod assoc_type_self_referential;
 pub mod clone;
 pub mod mref;
 pub mod mut_getter;
+pub mod mut_slice;
 pub mod non_self;
 pub mod option;
 pub mod slice;

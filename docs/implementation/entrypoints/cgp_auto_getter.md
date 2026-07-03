@@ -56,6 +56,8 @@ The conversions are exactly those `#[cgp_getter]` uses — `&str` reads a `Strin
 
 **A getter can read a field of another type.** A method with a typed receiver (`fn foo_bar(foo: &Self::Foo) -> &Self::Bar`) reads the field out of that receiver type; `Self` in the receiver is rewritten to the context, and the `HasField` bound lands on the receiver type rather than the context.
 
+**Unsupported field-type combinations are deferred to the compiler.** The `Option` and slice shorthands each cover a single field shape; a combination CGP provides no rule for — most notably `Option<&[T]>` — is lowered literally rather than given a bespoke rule, so it reaches the compiler as invalid Rust rather than a macro-time rejection. `parse_field_type` applies the `Option<&T>` rule to `Option<&[T]>` and emits a `HasField` bound over the unsized `Option<[T]>`, which `rustc` rejects. This is a deliberate boundary shared by `#[cgp_getter]` and `#[cgp_fn]` implicits (all three call `parse_field_type`), pinned as an acceptable failure by [acceptable/cgp_auto_getter/option_slice.rs](../../../crates/tests/cgp-compile-fail-tests/tests/acceptable/cgp_auto_getter/option_slice.rs).
+
 ## Snapshots
 
 Every `snapshot_cgp_auto_getter!` invocation across the suite is indexed here, since these snapshots all belong to this entrypoint:

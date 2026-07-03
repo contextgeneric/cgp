@@ -2,9 +2,9 @@
 //!
 //! Each fixture under `tests/acceptable/<construct>/` and
 //! `tests/problematic/<construct>/` is compiled as its own crate and its
-//! diagnostics compared against the sibling `.stderr` file. See the crate root
-//! docs (`src/lib.rs`) for what belongs in each category and how to regenerate
-//! the `.stderr` snapshots.
+//! diagnostics compared against the sibling `.stderr` file. See the crate
+//! [README](../README.md) for what belongs in each category and how to
+//! regenerate the `.stderr` snapshots.
 //!
 //! A single `TestCases` runs both globs so `trybuild` invokes `cargo` once;
 //! splitting the categories across two `#[test]` functions would race on the
