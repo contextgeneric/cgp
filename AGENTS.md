@@ -2,14 +2,29 @@
 
 This file provides guidance to LLM agents when working with code in this repository.
 
-## Understanding CGP first
+## Orient before any task
 
-This repository **is** the implementation of Context-Generic Programming (CGP). Before reading or
-writing any CGP code here, **always invoke the `/cgp` skill** to load the fundamentals (consumer vs.
-provider traits, `#[cgp_component]`/`#[cgp_impl]`/`#[cgp_fn]`, `delegate_components!`, `HasField`,
-`UseDelegate`, check traits, etc.). Re-invoke it whenever you navigate into unfamiliar parts of the
-codebase — the macros and core traits here are the ground truth that the skill describes, so the two
-should always be read together.
+This repository **is** the implementation of Context-Generic Programming (CGP), and its behavior is
+recorded as much in the knowledge base under [docs/](docs) as in the code. Before starting any task
+here — reading, writing, reviewing, debugging, or answering a question — load the CGP mental model
+and the documentation that covers what you are about to touch. The following steps are standing
+requirements: they apply to every task regardless of how small it looks, not just to the macro
+review workflow below.
+
+- **Always invoke the `/cgp` skill** to load the fundamentals (consumer vs. provider traits,
+  `#[cgp_component]`/`#[cgp_impl]`/`#[cgp_fn]`, `delegate_components!`, `HasField`, `UseDelegate`,
+  check traits, and so on). Re-invoke it whenever you move into an unfamiliar construct — the macros
+  and core traits here are the ground truth the skill describes, so read the two together.
+- **Always read [docs/README.md](docs/README.md)** to orient in the knowledge base, then follow it
+  into the README of whichever section covers your task.
+- **Read [docs/reference/README.md](docs/reference/README.md) and the relevant reference documents
+  whenever the task requires understanding a CGP construct** — what it means, what syntax it accepts,
+  and what code it expands to.
+- **Read [docs/implementation/README.md](docs/implementation/README.md) and the relevant
+  implementation documents whenever the task involves reading or modifying the CGP source code** —
+  they map each macro to its `cgp-macro-core`/`cgp-macro-lib` internals, corner cases, and tests.
+- **Load the `/dual-reader-prose` skill whenever the task involves editing markdown documentation or
+  inline code comments**, and follow its writing convention for any prose you add.
 
 The canonical export surface for users is `cgp::prelude` — see
 [crates/main/cgp/src/prelude.rs](crates/main/cgp/src/prelude.rs), which re-exports
@@ -100,13 +115,9 @@ as the behavior allows.
 
 ### Orient before touching anything
 
-Load the fundamentals first, every iteration. Invoke the `/cgp` skill to reload CGP's mental model
-and vocabulary, and the `/dual-reader-prose` skill to reload the writing convention the docs must
-follow. Re-invoke `/cgp` whenever the review moves into an unfamiliar construct — the macros and
-core traits are the ground truth the skill describes, so read the two together.
-
-Then read the documentation for the macro under review, in [docs/](docs). Read its reference
-document under [docs/reference/](docs/reference), its implementation documents under
+Perform the standing steps in [Orient before any task](#orient-before-any-task) first, every
+iteration. Then read the documentation specific to the macro under review, in [docs/](docs): its
+reference document under [docs/reference/](docs/reference), its implementation documents under
 [docs/implementation/](docs/implementation) (the `entrypoints/` document, the `asts/` stack it
 drives, and any `functions/` helpers it relies on), and the governing `AGENTS.md` files that define
 how those documents stay in sync with the code: [docs/AGENTS.md](docs/AGENTS.md),
