@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls skills/cgp/references/)",
+      "Bash(ls -la /home/soares/development/context-generic/.claude/skills/)",
+      "Bash(diff -q skills/cgp/SKILL.md /home/soares/development/context-generic/.claude/skills/cgp/SKILL.md)"
+    ]
+  }
+}
