@@ -10,7 +10,7 @@ This README is the map.
 
 ## The crates
 
-The suite is split into three kinds of crate, each with a distinct job.
+The suite is split into four kinds of crate, each with a distinct job.
 
 **`cgp-tests`** is the main suite: realistic example code that must compile and
 run. Because much of CGP is compile-time wiring, a test here often passes simply
@@ -18,8 +18,17 @@ by compiling. It is also where the user-facing macros are exercised end-to-end a
 where the canonical macro-expansion snapshots live.
 
 **`cgp-macro-tests`** tests the macro internals directly against `cgp-macro-core`
-(the parsers and AST types), and is the home for **failure cases** — inputs CGP
-should reject, and cases where a macro currently emits invalid code.
+(the parsers and AST types), and is the home for **rejection cases** — inputs CGP
+refuses during expansion — and for pinning the invalid tokens a macro currently
+emits.
+
+**`cgp-compile-fail-tests`** holds the **`trybuild` compile-fail tests**: input a
+macro *accepts* but whose *expansion* then fails to compile. Each case is a
+standalone `.rs` fixture with a committed `.stderr` snapshot of the expected
+compiler output, split into two categories — **acceptable** failures that CGP
+intentionally delegates to the Rust compiler (overlapping wiring, a lazily-wired
+missing dependency) and **problematic** failures that are a CGP defect (input a
+macro should have rejected, or an expansion that emits invalid Rust).
 
 **`cgp-test-crate-a`** and **`cgp-test-crate-b`** are auxiliary packages for
 **cross-crate** behavior. Crate A defines components, a provider, and a namespaced
@@ -48,6 +57,11 @@ accumulates too many cases to stay coherent, it is split into finer targets.
 for parser corner cases, and the failure-case targets `parser_rejections` and
 `invalid_expansion`.
 
+`cgp-compile-fail-tests` is laid out for `trybuild` instead: a single driver
+`tests/compile_fail_tests.rs` glob-compiles every fixture under `tests/acceptable/`
+and `tests/problematic/`, each a self-contained program paired with a committed
+`.stderr` snapshot of the compiler output it must produce.
+
 ## Snapshots
 
 Many tests assert the exact code a macro generates, using the `snapshot_*!` macros
@@ -60,13 +74,18 @@ everywhere else (see [AGENTS.md](AGENTS.md) for the ownership rules).
 ## Running the tests
 
 ```
-cargo nextest run -p cgp-tests            # the main suite
-cargo nextest run -p cgp-macro-tests      # macro internals + failure cases
-cargo nextest run --workspace             # everything, including the aux crates
+cargo nextest run -p cgp-tests                  # the main suite
+cargo nextest run -p cgp-macro-tests            # macro internals + rejection cases
+cargo nextest run -p cgp-compile-fail-tests     # trybuild compile-fail fixtures
+cargo nextest run --workspace                   # everything, including the aux crates
 
-cargo insta test -p cgp-tests --review    # review snapshot diffs interactively
-cargo insta test -p cgp-tests --accept    # accept intended snapshot changes
+cargo insta test -p cgp-tests --review          # review snapshot diffs interactively
+cargo insta test -p cgp-tests --accept          # accept intended snapshot changes
+
+TRYBUILD=overwrite cargo test -p cgp-compile-fail-tests   # regenerate .stderr snapshots
 ```
 
-When a snapshot test fails it prints a diff of the generated code; accept the new
-output with `cargo insta` only after confirming the change is intended.
+When a `snapshot_*!` test fails it prints a diff of the generated code; accept the
+new output with `cargo insta` only after confirming the change is intended. When a
+`trybuild` fixture fails it prints a diff against the committed `.stderr`; regenerate
+it with `TRYBUILD=overwrite` only after confirming the diagnostic change is intended.

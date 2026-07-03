@@ -1,39 +1,57 @@
-//! Compile-fail tests for the CGP macros.
+//! Compile-fail tests for the CGP macros, driven by [`trybuild`](https://docs.rs/trybuild).
 //!
-//! Every test here is a `compile_fail` doctest: a ```` ```rust,compile_fail ````
-//! block containing a real CGP macro invocation that must **not** compile.
-//! rustdoc compiles each block and the test passes only if compilation fails, so
-//! this crate exists as a library — doctests are collected only from a library
-//! target, never from an integration (`tests/`) target. Run the suite with
-//! `cargo test --doc -p cgp-compile-fail-tests` (note that `cargo nextest` does
-//! not run doctests).
+//! Each test is a standalone `.rs` fixture under `tests/` that a CGP macro
+//! **accepts** but whose **expansion** then fails to type- or borrow-check — the
+//! failure lands on the emitted Rust, not inside the macro. `trybuild` compiles
+//! each fixture as its own throwaway crate and compares the compiler's output
+//! against a committed `.stderr` file, so a test passes only when compilation
+//! fails *with the pinned diagnostic*. Because the driver is an ordinary
+//! integration test (`tests/compile_fail_tests.rs`), `cargo test` and
+//! `cargo nextest run` both execute it — unlike the `compile_fail` doctests this
+//! crate previously held, which `cargo nextest` silently skipped.
 //!
 //! # What belongs here
 //!
-//! A `compile_fail` doctest is reserved for input that a CGP macro **accepts** but
-//! whose **expansion** then fails to compile — the failure lands on the emitted
-//! Rust, not inside the macro. This is the right tool for a documented bug or
-//! known limitation, and for the cases a macro cannot reject because it lacks the
-//! whole-program view the borrow/coherence check needs: two separate
-//! `delegate_components!` blocks that delegate the same key, or generic
-//! `delegate_components!` entries that expand to overlapping impls, both of which
-//! the macro defers to the Rust compiler. Pair each probe with a companion
-//! ```` ```rust ```` block that compiles once the offending element is removed, so
-//! the test proves *which* element causes the failure, and comment on why it must
-//! not compile.
+//! A `trybuild` fixture is reserved for input that a CGP macro **accepts** but
+//! whose **expansion** fails to compile — the case a macro cannot reject because
+//! it lacks the whole-program view the borrow/coherence check needs, or a
+//! documented bug where the macro emits code it should not. Input that a macro
+//! **rejects** during expansion (it returns `Err`) does not belong here; test it
+//! by driving the entrypoint directly in `cgp-macro-tests` with the
+//! `assert_macro_rejects` helper, which pins the macro's own diagnostic.
 //!
-//! Input that a macro **rejects** during expansion (it returns `Err`) does not
-//! belong here — test it by driving the entrypoint function directly in
-//! `cgp-macro-tests` with the `assert_macro_rejects` helper, which is enough to
-//! pin a rejection and gives a precise check of the macro's own diagnostic.
+//! # Two categories of failure
+//!
+//! The fixtures are split by *whose fault the failure is*, because the two
+//! categories carry opposite messages about CGP's health:
+//!
+//! - **`tests/acceptable/`** — failures CGP **intentionally delegates to the Rust
+//!   compiler**. CGP is working as designed: it cannot see the whole program, so
+//!   it lowers the input faithfully and lets `rustc` reject it (overlapping
+//!   `delegate_components!` entries becoming conflicting impls, a lazily-wired
+//!   provider whose impl-side dependency the context does not meet). The pinned
+//!   `.stderr` documents that the failure is the compiler doing its job, and its
+//!   diagnostic is the one a user should expect.
+//! - **`tests/problematic/`** — failures that are a **CGP defect**: input a macro
+//!   should have rejected with a spanned error, or that a macro expanded into
+//!   invalid Rust. The pinned `.stderr` captures the confusing downstream error a
+//!   user currently hits; each fixture is cross-linked to the `## Known issues`
+//!   section of the owning macro's implementation document, and its `.stderr`
+//!   should improve (ideally become a clean macro-time rejection) when the defect
+//!   is fixed.
 //!
 //! # Organization
 //!
-//! Tests are grouped by CGP concept, mirroring the layout of the main `cgp-tests`
-//! suite: one subdirectory per concept under `src/` (`basic_delegation/`,
-//! `dispatching/`, …), and within each, one module file per category of
-//! compile-fail case. Register each concept as a `pub mod` below and each category
-//! as a `pub mod` in the concept's `mod.rs`.
+//! Within each category directory, one fixture file per case, named for the CGP
+//! concept and failure mode it probes (`duplicate_delegate_key.rs`,
+//! `cgp_fn_mut_slice_implicit.rs`). Register every fixture in the driver
+//! `tests/compile_fail_tests.rs` via its category glob — the two calls to
+//! `t.compile_fail(...)` pick up new fixtures automatically.
 //!
-//! No cases are enumerated yet; a future agent adds a concept subdirectory and its
-//! category modules alongside the first case it captures.
+//! # Regenerating the `.stderr` snapshots
+//!
+//! A fixture's committed `.stderr` is the golden output. After adding a fixture
+//! or when an intended change alters a diagnostic, regenerate the snapshots with
+//! `TRYBUILD=overwrite cargo test -p cgp-compile-fail-tests`, then review the diff
+//! before committing — an unexpected change to an `acceptable/` diagnostic, or a
+//! `problematic/` fixture that stops failing, is a signal worth reading closely.

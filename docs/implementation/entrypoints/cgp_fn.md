@@ -68,7 +68,7 @@ The conversion applied to each binding is chosen by the argument's type, followi
 
 `#[cgp_fn]` does not support generics on the desugared *method* itself — generic parameters are only ever lifted onto the trait and impl. A method-level generic is silently treated as a trait/impl generic rather than rejected, which is the intended limitation rather than a bug: method-level generics are considered an advanced case better written as an explicit blanket impl or a [`#[cgp_component]`](../../reference/macros/cgp_component.md) provider.
 
-The *mutable* variants of the slice and option modes are not supported. A `&mut [T]` implicit falls through the slice case (there is no `AsMut<[T]>` counterpart) into the plain-reference mode, producing an unsatisfiable `HasFieldMut<Value = [T]>` bound; and an `Option<&mut T>` implicit reads immutably (the argument's outer type is a path, so `field_mut` is `None`), producing an `Option<&T>` value that then fails to coerce to the declared `Option<&mut T>`. Both are exotic shapes rather than a regression — the immutable `&[T]` and `Option<&T>` forms are the supported ones — and the macro accepts them, so the failure lands on the emitted code at the use site rather than as a spanned rejection.
+The *mutable* variants of the slice and option modes are not supported, and both are **problematic** failures — the macro accepts the shape rather than rejecting it, so the failure lands on the emitted code instead of as a spanned message. Under a `&mut self` receiver, a `&mut [T]` implicit falls through the slice case (which matches only a shared `&[T]`, since there is no `AsMut<[T]>` counterpart) into the plain-reference mode, producing an unsatisfiable `HasFieldMut<Value = [T]>` bound that surfaces at the call site (`E0599`). Note the contrast with a `&self` receiver, where the same `&mut [T]` is instead rejected cleanly at macro time with "&mut self is required for mutable field reference" — that rejection is a returned `Err` covered in `parser_rejections`, not a compile-fail fixture. An `Option<&mut T>` implicit reads immutably (the argument's outer type is a path, so `field_mut` is `None`), producing an `Option<&T>` value that then fails to coerce to the declared `Option<&mut T>` inside the generated body (`E0308`). Both are exotic shapes rather than a regression — the immutable `&[T]` and `Option<&T>` forms are the supported ones — and the correct behavior would be either to support the mutable modes or to reject them at macro time with a clear message.
 
 ## Snapshots
 
@@ -104,6 +104,11 @@ Because `#[cgp_fn]` emits a blanket impl, its snapshot tests double as behaviora
 The failure cases pin the inputs `#[cgp_fn]` refuses during expansion, each asserting the entrypoint returns `Err`:
 
 - [parser_rejections/cgp_fn.rs](../../../crates/tests/cgp-macro-tests/tests/parser_rejections/cgp_fn.rs) covers an implicit argument on a function with no `self` receiver, a `mut` binding pattern on an implicit argument, a `&mut` implicit argument that is not the sole implicit (which would borrow the context mutably and again at once), and a malformed `#[implicit]` attribute carrying arguments (`#[implicit(...)]` or `#[implicit = ...]`).
+
+The compile-fail fixtures in `cgp-compile-fail-tests` pin the problematic mutable-mode expansions the macro accepts but should not:
+
+- [problematic/cgp_fn_mut_slice_implicit.rs](../../../crates/tests/cgp-compile-fail-tests/tests/problematic/cgp_fn_mut_slice_implicit.rs) — a `&mut [u8]` implicit under a `&mut self` receiver expands to an unsatisfiable `HasFieldMut<Value = [u8]>` bound (`E0599`).
+- [problematic/cgp_fn_option_mut_implicit.rs](../../../crates/tests/cgp-compile-fail-tests/tests/problematic/cgp_fn_option_mut_implicit.rs) — an `Option<&mut T>` implicit binds an `Option<&T>` value that fails to coerce to the declared `Option<&mut T>` (`E0308`).
 
 ## Source
 

@@ -1,0 +1,23 @@
+error[E0599]: the method `zero_all` exists for struct `Buffer`, but its trait bounds were not satisfied
+  --> tests/problematic/cgp_fn_mut_slice_implicit.rs:40:12
+   |
+32 | pub struct Buffer {
+   | ----------------- method `zero_all` not found for this struct because it doesn't satisfy `<_ as HasField<Symbol<5, Chars<'i', Chars<'t', Chars<'e', Chars<'m', Chars<'s', Nil>>>>>>>>::Value = [u8]` or `Buffer: ZeroAll`
+...
+40 |     buffer.zero_all();
+   |            ^^^^^^^^ method cannot be called on `Buffer` due to unsatisfied trait bounds
+   |
+note: trait bound `<Buffer as cgp::prelude::HasField<Symbol<5, cgp::prelude::Chars<'i', cgp::prelude::Chars<'t', cgp::prelude::Chars<'e', cgp::prelude::Chars<'m', cgp::prelude::Chars<'s', Nil>>>>>>>>::Value = [u8]` was not satisfied
+  --> tests/problematic/cgp_fn_mut_slice_implicit.rs:24:1
+   |
+24 | #[cgp_fn]
+   | ^^^^^^^^^
+25 | fn zero_all(&mut self, #[implicit] items: &mut [u8]) {
+   |    ^^^^^^^^
+   = help: items from traits can only be used if the trait is implemented and in scope
+note: `ZeroAll` defines an item `zero_all`, perhaps you need to implement it
+  --> tests/problematic/cgp_fn_mut_slice_implicit.rs:24:1
+   |
+24 | #[cgp_fn]
+   | ^^^^^^^^^
+   = note: this error originates in the attribute macro `cgp_fn` (in Nightly builds, run with -Z macro-backtrace for more info)

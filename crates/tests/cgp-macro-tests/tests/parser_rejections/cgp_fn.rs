@@ -3,8 +3,10 @@
 //! implicit argument, a `&mut` implicit argument that is not the sole implicit
 //! (its exclusive borrow of the context would conflict with reading any other
 //! field), and a malformed `#[implicit]` attribute carrying arguments. Each is a
-//! rejection the macro makes during expansion, so it is pinned by driving the
-//! entrypoint directly here rather than by a `compile_fail` test.
+//! rejection the macro makes during expansion (a returned `Err`), so it is pinned
+//! by driving the entrypoint directly here rather than by a `trybuild`
+//! compile-fail fixture, which is reserved for input the macro accepts but whose
+//! expansion then fails to compile.
 //!
 //! See docs/implementation/entrypoints/cgp_fn.md (Tests) for these failure cases,
 //! and docs/reference/attributes/implicit.md for the user-facing rules on where

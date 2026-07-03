@@ -27,9 +27,14 @@ do).
   `cargo +nightly fmt --all` (check: `cargo +nightly fmt --all -- --check`)
 - **Lint:** `cargo clippy --all-features --all-targets -- -D warnings`
   and `cargo clippy --no-default-features --all-targets -- -D warnings`
-- **Test** (uses `cargo-nextest`): `cargo nextest run --all-features --no-fail-fast --workspace`
+- **Test** (uses `cargo-nextest`): `cargo nextest run --all-features --no-fail-fast --workspace`.
+  This runs the whole suite, including the `trybuild` compile-fail fixtures in
+  `cgp-compile-fail-tests` (an ordinary integration test, so nextest picks it up).
 - **Single test crate / test:** `cargo nextest run -p cgp-tests` or target one file with the
   standard test harness, e.g. `cargo test -p cgp-tests --test component`
+- **Compile-fail fixtures:** `cargo nextest run -p cgp-compile-fail-tests` runs the `trybuild`
+  cases that check macro *expansions* fail to compile with a pinned `.stderr`; regenerate the
+  snapshots with `TRYBUILD=overwrite cargo test -p cgp-compile-fail-tests`.
 - Many "tests" are **compile-time wiring checks** (`check_components!` /
   `delegate_and_check_components!`) and **macro-expansion snapshots** — for these, a successful
   `cargo build`/`cargo test` compilation *is* the passing test. A wiring mistake surfaces as a
@@ -170,7 +175,13 @@ right input:
 - **Enumerate every way the output can expand.** Walk the shapes the expansion can take across the
   whole input space and confirm none can produce invalid Rust — no duplicate or conflicting `impl`
   blocks from a cartesian expansion, no unbound or doubly-declared generic parameter, no empty
-  expansion that silently checks nothing, and no clash on a generated identifier.
+  expansion that silently checks nothing, and no clash on a generated identifier. When you find a
+  case whose expansion fails to compile, capture it as a `trybuild` fixture in
+  `cgp-compile-fail-tests` — under `problematic/` when the macro should have rejected it or emitted
+  wrong code, or `acceptable/` when the failure is one CGP deliberately defers to the compiler — and
+  document it in the macro's implementation document, per
+  [crates/tests/AGENTS.md](crates/tests/AGENTS.md) and
+  [docs/implementation/AGENTS.md](docs/implementation/AGENTS.md).
 - **Scrutinize generics with care.** Generic parameters take many forms — lifetimes, types, consts,
   and the distinction between *impl* generics (`impl<T>`) and *type* generics (the `<T>` in
   `Foo<T>`) — and mixing them produces subtly wrong output. Confirm the macro keeps the kinds

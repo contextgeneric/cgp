@@ -1,0 +1,31 @@
+error[E0119]: conflicting implementations of trait `IsProviderFor<GreeterComponent, _, _>` for type `Person`
+  --> tests/acceptable/duplicate_delegate_key.rs:36:1
+   |
+29 | / delegate_components! {
+30 | |     Person {
+31 | |         GreeterComponent: GreetHello,
+32 | |     }
+33 | | }
+   | |_- first implementation here
+...
+36 | / delegate_components! {
+37 | |     Person {
+38 | |         GreeterComponent: GreetGoodbye,
+39 | |     }
+40 | | }
+   | |_^ conflicting implementation for `Person`
+   |
+   = note: this error originates in the macro `delegate_components` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0119]: conflicting implementations of trait `DelegateComponent<GreeterComponent>` for type `Person`
+  --> tests/acceptable/duplicate_delegate_key.rs:36:1
+   |
+29 | / delegate_components! {
+30 | |     Person {
+   | |__________- first implementation here
+...
+36 | / delegate_components! {
+37 | |     Person {
+   | |__________^ conflicting implementation for `Person`
+   |
+   = note: this error originates in the macro `delegate_components` (in Nightly builds, run with -Z macro-backtrace for more info)

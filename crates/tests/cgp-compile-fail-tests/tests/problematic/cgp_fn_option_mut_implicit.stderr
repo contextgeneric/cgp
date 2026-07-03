@@ -1,0 +1,11 @@
+error[E0308]: mismatched types
+  --> tests/problematic/cgp_fn_option_mut_implicit.rs:17:1
+   |
+17 | #[cgp_fn]
+   | ^^^^^^^^^ types differ in mutability
+18 | fn take_slot(&self, #[implicit] slot: Option<&mut u8>) -> Option<&mut u8> {
+   |                                       --------------- expected due to this
+   |
+   = note: expected enum `Option<&mut u8>`
+              found enum `Option<&u8>`
+   = note: this error originates in the attribute macro `cgp_fn` (in Nightly builds, run with -Z macro-backtrace for more info)

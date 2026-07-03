@@ -1,0 +1,5 @@
+error[E0207]: the type parameter `T` is not constrained by the impl trait, self type, or predicates
+  --> tests/problematic/delegate_unconstrained_generic.rs:41:10
+   |
+41 |         <T> GreeterComponent: GreetWith<T>,
+   |          ^ unconstrained type parameter

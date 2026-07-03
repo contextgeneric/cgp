@@ -62,7 +62,9 @@ An **`@`-path key** carries a leading `__Wildcard__` generic and lowers the path
 
 The macro's parser is permissive about the body shape and surfaces most mistakes as generic `syn` parse errors rather than tailored diagnostics — for example, an `open` header written after a plain mapping fails to parse because statements must lead the block, but the error (`expected `:``) points at the unexpected token rather than explaining the ordering rule.
 
-A duplicate key — the same component mapped twice, whether by two plain entries or by an `open` header colliding with an explicit mapping — is not caught by the macro; it emits two conflicting `DelegateComponent` impls and surfaces as a coherence error (`E0119`) at compile time, the same as two hand-written impls would.
+A duplicate key — the same component mapped twice, whether by two plain entries, two separate `delegate_components!` blocks, or an `open` header colliding with an explicit mapping — is not caught by the macro; it emits two conflicting `DelegateComponent` impls and surfaces as a coherence error (`E0119`) at compile time, the same as two hand-written impls would. The same holds for a generic entry that overlaps a more specific one (a `<T> Wrapper<T>` table and a `Wrapper<u64>` table wiring the same key): stable Rust has no specialization, so the two impls conflict at the overlapping type. Both are **acceptable** failures — the macro lowers each block independently and has no whole-program view, so it correctly defers the overlap check to the compiler. The lazy nature of wiring produces a related acceptable failure: a provider whose impl-side dependency the context does not satisfy is wired without complaint, and the unmet bound surfaces only when the consumer trait is used (or earlier, at a `check_components!` site).
+
+A per-entry generic list whose parameter appears only in the provider **value** and not in the **key** is a **problematic** failure: the macro lowers `<T> GreeterComponent: GreetWith<T>` into `impl<T> DelegateComponent<GreeterComponent> for Person { type Delegate = GreetWith<T>; }`, where `T` is unconstrained, so the compiler rejects it with `E0207`. A per-entry generic is only well-formed when it reaches the key (as in `<T2> BazKey<T1, T2>`, where `DelegateComponent<BazKey<..>>` binds it); the macro does not check that every declared generic appears in the key, so it accepts the nonsensical entry and emits a free-parameter impl instead of rejecting it with a spanned error. The correct behavior would be to reject a per-entry generic that does not appear in the key.
 
 ## Snapshots
 
@@ -101,6 +103,13 @@ The behavioral tests confirm the generated wiring resolves and compiles:
 The failure cases in `cgp-macro-tests` pin the attribute rejection:
 
 - [parser_rejections/delegate_components.rs](../../../crates/tests/cgp-macro-tests/tests/parser_rejections/delegate_components.rs) asserts the macro rejects an attribute on the table, on a key, and on a key nested inside a `UseDelegate<new Inner { … }>` value (the last confirms the validator recurses through mapping values rather than dropping the attribute), and that a braceless `open` header listing more than one component is rejected (the braceless form opens exactly one).
+
+The compile-fail fixtures in `cgp-compile-fail-tests` pin the expansions that fail to compile, split by whether the failure is intended:
+
+- [acceptable/duplicate_delegate_key.rs](../../../crates/tests/cgp-compile-fail-tests/tests/acceptable/duplicate_delegate_key.rs) — two blocks mapping the same key expand to conflicting `DelegateComponent` impls (`E0119`), a failure the macro deliberately defers to the compiler.
+- [acceptable/overlapping_generic_delegate.rs](../../../crates/tests/cgp-compile-fail-tests/tests/acceptable/overlapping_generic_delegate.rs) — a generic `<T> Wrapper<T>` entry overlaps a specific `Wrapper<u64>` entry at the same key (`E0119`), the generic form of the same deferred overlap.
+- [acceptable/missing_impl_side_dependency.rs](../../../crates/tests/cgp-compile-fail-tests/tests/acceptable/missing_impl_side_dependency.rs) — a lazily-wired provider whose `Self: HasName` dependency the context does not satisfy; the unmet bound surfaces at the call site, the intended consequence of lazy wiring.
+- [problematic/delegate_unconstrained_generic.rs](../../../crates/tests/cgp-compile-fail-tests/tests/problematic/delegate_unconstrained_generic.rs) — a per-entry generic that appears only in the value (`<T> GreeterComponent: GreetWith<T>`) expands to an impl with an unconstrained `T` (`E0207`) instead of being rejected at macro time.
 
 ## Source
 

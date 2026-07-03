@@ -15,9 +15,12 @@ The test suite has four jobs, split across crates:
   functions in `cgp-macro-core` directly (parsers, AST types), and is the home for
   **inputs a macro rejects** (via `assert_macro_rejects`) and for **pinning the exact
   invalid tokens** a macro emits (`invalid_expansion` string snapshots).
-- **`cgp-compile-fail-tests`** holds the **`compile_fail` doctests**: input a macro
-  *accepts* but whose *expansion* then fails to compile. It is a library crate
-  because doctests run only for a library target; see "Adding a failure case" below.
+- **`cgp-compile-fail-tests`** holds the **`trybuild` compile-fail tests**: input a
+  macro *accepts* but whose *expansion* then fails to compile. Each case is a
+  standalone `.rs` fixture whose expected compiler output is pinned in a committed
+  `.stderr` file, and the fixtures are split into **acceptable** and **problematic**
+  failures (see "Adding a failure case" below). Because the driver is an ordinary
+  integration test, `cargo nextest` runs it like any other test.
 - **`cgp-test-crate-a` / `cgp-test-crate-b`** are auxiliary packages for
   **cross-crate** behavior: whether a downstream crate can extend a namespace or
   provide a provider for a component defined elsewhere, under Rust's coherence and
@@ -125,28 +128,56 @@ which is enough to pin a rejection and gives a precise check of the macro's own
 diagnostic. This is the right tool for a structural error the macro is expected to
 catch, and such a case does **not** also need a compile-fail test.
 
-**Input a macro accepts whose expansion fails to compile — a `compile_fail` doctest
-in `cgp-compile-fail-tests`.** Reserve `compile_fail` tests for input a CGP macro
-*accepts* but whose *expansion* then fails to type- or borrow-check — the failure
-lands on the emitted Rust, not inside the macro. This is the tool for a documented
-bug or known limitation, and for the cases a macro cannot reject because it lacks the
-whole-program view the check needs: two separate `delegate_components!` blocks that
-delegate the same key, or generic `delegate_components!` entries that expand to
-overlapping impls, both of which the macro defers to the Rust compiler. Write each as
-a ```` ```rust,compile_fail ```` doctest containing the real macro invocation;
-rustdoc compiles it and the test passes only if it fails to compile. Pair it with a
-companion ```` ```rust ```` block that compiles once the offending element is
-removed, so the probe proves *which* element causes the failure, and comment on why
-it must not compile.
+**Input a macro accepts whose expansion fails to compile — a `trybuild` fixture in
+`cgp-compile-fail-tests`.** Reserve these tests for input a CGP macro *accepts* but
+whose *expansion* then fails to type- or borrow-check — the failure lands on the
+emitted Rust, not inside the macro. This is the tool for a documented bug or known
+limitation, and for the cases a macro cannot reject because it lacks the whole-program
+view the check needs. Each case is a standalone `.rs` fixture (a complete program with
+`fn main`) under the crate's `tests/` tree; `trybuild` compiles each as its own crate
+and compares the compiler's output against a committed sibling `.stderr` file, so the
+test passes only when compilation fails *with the pinned diagnostic*. The `.stderr`
+snapshot is what proves *which* element causes the failure and *why* — it names the
+exact error code and span — so it replaces the companion ```` ```rust ```` block the
+old doctest form paired with each probe. Because the toolchain is pinned
+([rust-toolchain.toml](../../rust-toolchain.toml)), the pinned diagnostics are stable
+across runs.
 
-These doctests live in the dedicated **`cgp-compile-fail-tests`** crate, not in
-`cgp-tests` — doctests are collected only from a *library* target, never from an
-integration (`tests/`) target, so an integration-test file's doctests would silently
-never run. Inside that crate, group cases by CGP concept exactly as the main suite
-does: one subdirectory per concept under `src/` (`basic_delegation/`, `dispatching/`,
-…), one module file per category of case within it, registered with `pub mod`. Run
-them with `cargo test --doc -p cgp-compile-fail-tests`; `cargo nextest` does not run
-doctests.
+**Split every fixture into acceptable and problematic.** A compile failure carries one
+of two opposite meanings, and the directory it lives in records which:
+
+- **`tests/acceptable/`** — the failure is one CGP **intentionally delegates to the
+  Rust compiler**. CGP is working as designed: it cannot see the whole program, so it
+  lowers the input faithfully and lets `rustc` reject it. Two separate
+  `delegate_components!` blocks that delegate the same key, generic
+  `delegate_components!` entries that expand to overlapping impls, and a lazily-wired
+  provider whose impl-side dependency the context does not satisfy all belong here. The
+  pinned `.stderr` documents that the diagnostic a user sees is the compiler doing its
+  job, and it is the diagnostic they should expect.
+- **`tests/problematic/`** — the failure is a **CGP defect**: input a macro should have
+  rejected with a spanned error, or that a macro expanded into invalid Rust. The pinned
+  `.stderr` captures the confusing downstream error a user currently hits. Every
+  problematic fixture must be cross-linked (in its header comment) to the `## Known
+  issues` section of the owning macro's implementation document, and its `.stderr`
+  should improve — ideally becoming a clean macro-time rejection — when the defect is
+  fixed. When it does, regenerate the snapshot and, if the failure moves into the macro
+  itself, migrate the case to an `assert_macro_rejects` test in `cgp-macro-tests`.
+
+Within each category directory, write one fixture file per case, named for the CGP
+concept and failure mode it probes (`duplicate_delegate_key.rs`,
+`cgp_fn_mut_slice_implicit.rs`), and open each with a comment stating what it exercises
+and why it must not compile — exactly as the main suite requires. Register each fixture
+in the driver [tests/compile_fail_tests.rs](cgp-compile-fail-tests/tests/compile_fail_tests.rs)
+through its category glob; the two `t.compile_fail(...)` calls pick up new fixtures
+automatically, so no per-file registration is needed. A single `trybuild::TestCases`
+runs both globs — do not split them across two `#[test]` functions, which would race on
+the shared build directory.
+
+Run the suite with `cargo test -p cgp-compile-fail-tests` or `cargo nextest run -p
+cgp-compile-fail-tests`; both work because the driver is an ordinary integration test.
+After adding a fixture, or when an intended change alters a diagnostic, regenerate the
+golden output with `TRYBUILD=overwrite cargo test -p cgp-compile-fail-tests` and review
+the diff before committing.
 
 **Pinning the exact invalid output** is a separate, rarer need: only when you must
 *inspect* the wrong tokens a macro emits (not merely assert they fail to compile),
@@ -155,12 +186,18 @@ capture the expanded code as an `insta` inline string snapshot in the
 compiles even though the code would not), with a comment explaining **why** the
 output is wrong and **what the correct output should be**.
 
-Every failure case must also be recorded in the construct's **implementation
-document** under `docs/implementation/`, in its `## Known issues` section and
-indexed from its `## Tests` section, describing the behavior without referring to
-the test. When the failure has a user-visible consequence, note that in the
-reference document's `## Known issues` section too and cross-link the two. Put a
-link from the test's comment to the implementation document.
+Every failure case must also be recorded in the owning construct's **implementation
+document** under `docs/implementation/`, and where it is recorded depends on the
+category. A **problematic** fixture (and every `invalid_expansion` snapshot) documents
+a defect, so describe it in that document's `## Known issues` section and index it from
+`## Tests`; when the defect has a user-visible consequence, note it in the reference
+document's `## Known issues` section too and cross-link the two. An **acceptable**
+fixture documents *intended* behavior — a failure CGP deliberately defers to the
+compiler — so it belongs in `## Tests` and in whatever section explains that behavior
+(often a Known issues note that already frames the deferral as intended, as
+`delegate_components!` does for overlapping impls), never as a fresh bug. In both cases
+describe the behavior in the document's own words without referring to the test, and
+put a link from the fixture's header comment back to the implementation document.
 
 ## Keep the docs in sync
 
@@ -180,19 +217,22 @@ document's Tests or Snapshots section in the same change.
 ## Running the suite
 
 ```
-cargo nextest run -p cgp-tests               # the main suite
-cargo nextest run -p cgp-macro-tests         # macro internals + rejection/invalid-expansion cases
-cargo nextest run --workspace                # everything
+cargo nextest run -p cgp-tests                  # the main suite
+cargo nextest run -p cgp-macro-tests            # macro internals + rejection/invalid-expansion cases
+cargo nextest run -p cgp-compile-fail-tests     # trybuild compile-fail fixtures
+cargo nextest run --workspace                   # everything
 
-cargo test --doc -p cgp-compile-fail-tests   # compile_fail doctests — NOT run by nextest
+TRYBUILD=overwrite cargo test -p cgp-compile-fail-tests   # regenerate .stderr snapshots
 
-cargo insta test -p cgp-tests --review       # review snapshot diffs
-cargo insta test -p cgp-tests --accept       # accept intended snapshot changes
+cargo insta test -p cgp-tests --review          # review snapshot diffs
+cargo insta test -p cgp-tests --accept          # accept intended snapshot changes
 ```
 
-`cargo nextest` does not run doctests, so the `compile_fail` cases in
-`cgp-compile-fail-tests` must be run with `cargo test --doc`; include it when
-verifying a change that touches a macro's accepted input or its expansion.
+The `cgp-compile-fail-tests` fixtures run under both `cargo test` and `cargo nextest`,
+because the `trybuild` driver is an ordinary integration test rather than a doctest.
+Include the crate when verifying a change that touches a macro's accepted input or its
+expansion, and regenerate its `.stderr` snapshots with `TRYBUILD=overwrite` whenever an
+intended change alters a pinned diagnostic — then review the diff before committing.
 
 A snapshot test that fails prints a diff of the generated code; accept it with
 `cargo insta` only after confirming the change is intended.
