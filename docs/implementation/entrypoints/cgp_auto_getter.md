@@ -44,7 +44,7 @@ where
 }
 ```
 
-The conversions are exactly those `#[cgp_getter]` uses — `&str` reads a `String` field and appends `.as_str()`, `Option<&T>` reads `Option<T>` and appends `.as_ref()`, `&[T]` reads an `AsRef<[T]>` field, `MRef<'_, T>` wraps the borrow in `MRef::Ref`, an owned return appends `.clone()`, and a plain `&T` is taken by reference — because both macros share the [getter-field parsing](../asts/cgp_getter.md). The difference is only that `#[cgp_auto_getter]` emits a blanket impl on `__Context__` while `#[cgp_getter]` emits provider impls.
+The conversions are exactly those `#[cgp_getter]` uses — `&str` reads a `String` field and appends `.as_str()`, `Option<&T>` reads `Option<T>` and appends `.as_ref()`, `&[T]` reads an `AsRef<[T]>` field, `MRef<'_, T>` wraps the borrow in `MRef::Ref`, an owned return appends `.clone()`, and a plain `&T` is taken by reference — plus the mutable mirrors selected by a `&mut self` receiver (`&mut [T]` reads an `AsMut<[T]>` field via `.as_mut()`, `Option<&mut T>` via `.as_mut()`, `Option<&mut str>` via `.as_deref_mut()`) — because both macros share the [getter-field parsing](../asts/cgp_getter.md). The difference is only that `#[cgp_auto_getter]` emits a blanket impl on `__Context__` while `#[cgp_getter]` emits provider impls.
 
 ## Behavior and corner cases
 

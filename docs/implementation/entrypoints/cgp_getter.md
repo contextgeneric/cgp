@@ -54,7 +54,7 @@ Every provider-trait impl is paired with a matching `IsProviderFor` impl carryin
 
 **A single associated return type is supported and inferred from the field.** A getter trait may declare one `type Name;` used as the return type; the associated type is added as an extra generic parameter to each provider impl, set to itself via `type Name = Name;`, and any bound on it (for example `Name: Display`) is carried onto the impl with `Self::Name` rewritten to the parameter. More than one associated type, or an associated type alongside more than one method, is rejected during field parsing.
 
-**The return-type shorthands are shared with the auto-getter.** The `&str`-reads-`String`, `Option<&T>`-reads-`Option<T>`, `&[T]`-reads-`AsRef<[T]>`, `MRef<'_, T>`, and owned-`.clone()` conversions all come from the shared field-mode parsing, so `#[cgp_getter]` and [`#[cgp_auto_getter]`](cgp_auto_getter.md) treat a given signature identically — they differ only in the items they emit around the shared getter-method body.
+**The return-type shorthands are shared with the auto-getter.** The `&str`-reads-`String`, `Option<&T>`-reads-`Option<T>`, `&[T]`-reads-`AsRef<[T]>`, `MRef<'_, T>`, and owned-`.clone()` conversions, along with their mutable mirrors under a `&mut self` receiver (`&mut [T]`-reads-`AsMut<[T]>`, `Option<&mut T>` via `.as_mut()`), all come from the shared field-mode parsing, so `#[cgp_getter]` and [`#[cgp_auto_getter]`](cgp_auto_getter.md) treat a given signature identically — they differ only in the items they emit around the shared getter-method body.
 
 ## Snapshots
 

@@ -89,6 +89,10 @@ impl ItemCgpGetter {
                     #FieldGetter< #receiver_type, #component_name , Value = #field_type >
                 }
             }
+        } else if let FieldMode::Slice = field.field_mode {
+            quote! {
+                #MutFieldGetter< #receiver_type, #component_name, Value: AsMut< [ #field_type ] > + 'static >
+            }
         } else {
             quote! {
                 #MutFieldGetter< #receiver_type, #component_name, Value = #field_type >

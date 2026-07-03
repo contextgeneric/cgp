@@ -165,13 +165,13 @@ of two opposite meanings, and the directory it lives in records which:
 
 Under each category directory, group fixtures into one subdirectory per **owning
 macro** — the macro whose expansion produces the failure and whose implementation
-document documents it (`acceptable/delegate_components/`, `problematic/cgp_fn/`). This
-is the one place the suite groups by construct rather than by concept, and
-deliberately so: a compile-fail case is defined by *which macro's expansion* fails,
-and each cross-links to that macro's per-entrypoint implementation document, so the
-fixture tree mirrors [docs/implementation/entrypoints/](../../docs/implementation/entrypoints).
+document documents it (`acceptable/delegate_components/`, or a `problematic/<macro>/`
+when a defect is pinned). This is the one place the suite groups by construct rather
+than by concept, and deliberately so: a compile-fail case is defined by *which
+macro's expansion* fails, and each cross-links to that macro's per-entrypoint
+implementation document, so the fixture tree mirrors [docs/implementation/entrypoints/](../../docs/implementation/entrypoints).
 Within a subdirectory, write one fixture file per case, named for the failure mode it
-probes (`duplicate_key.rs`, `mut_slice_implicit.rs`), and open each with a comment
+probes (`duplicate_key.rs`, `missing_dependency.rs`), and open each with a comment
 stating what it exercises and why it must not compile — exactly as the main suite
 requires. The driver [tests/compile_fail_tests.rs](cgp-compile-fail-tests/tests/compile_fail_tests.rs)
 globs both trees with `**`, so the two `t.compile_fail(...)` calls pick up a new

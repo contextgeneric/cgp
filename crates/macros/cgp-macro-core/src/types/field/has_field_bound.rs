@@ -32,6 +32,13 @@ impl ToTokens for HasFieldBound {
                     #HasField< #tag_type, Value = #field_type >
                 }
             }
+        } else if let FieldMode::Slice = field_mode {
+            // A mutable slice reads through `.as_mut()`, so the field's value must
+            // implement `AsMut<[T]>` — the mutable mirror of the shared slice's
+            // `AsRef<[T]>` bound.
+            quote! {
+                #HasFieldMut< #tag_type, Value: AsMut< [ #field_type ] > + 'static >
+            }
         } else {
             quote! {
                 #HasFieldMut< #tag_type, Value = #field_type >

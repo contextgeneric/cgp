@@ -60,8 +60,14 @@ impl ToTokens for GetFieldWithModeExpr {
                 }
             }
             FieldMode::Slice => {
-                quote! {
-                    #call_expr .as_ref()
+                if call_expr.field_mut.is_none() {
+                    quote! {
+                        #call_expr .as_ref()
+                    }
+                } else {
+                    quote! {
+                        #call_expr .as_mut()
+                    }
                 }
             }
         };

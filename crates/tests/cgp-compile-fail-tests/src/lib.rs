@@ -46,11 +46,11 @@
 //!
 //! Under each category directory, fixtures are grouped into one subdirectory per
 //! **owning macro** — the macro whose expansion produces the failure and whose
-//! implementation document documents it (`acceptable/delegate_components/`,
-//! `problematic/cgp_fn/`). This mirrors the per-entrypoint layout of the
-//! implementation docs, so a fixture and the document that indexes it share a
-//! name. Within a subdirectory, write one fixture file per case, named for the
-//! failure mode it probes (`duplicate_key.rs`, `mut_slice_implicit.rs`), and open
+//! implementation document documents it (`acceptable/delegate_components/`, or a
+//! `problematic/<macro>/` when a defect is pinned). This mirrors the per-entrypoint
+//! layout of the implementation docs, so a fixture and the document that indexes it
+//! share a name. Within a subdirectory, write one fixture file per case, named for
+//! the failure mode it probes (`duplicate_key.rs`, `missing_dependency.rs`), and open
 //! each with a comment stating what it exercises and why it must not compile. The
 //! driver `tests/compile_fail_tests.rs` globs both trees with `**`, so a new
 //! fixture is picked up with no registration.

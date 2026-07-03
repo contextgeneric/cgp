@@ -50,7 +50,7 @@ where
 }
 ```
 
-The conversion applied to each binding is chosen by the argument's type, following the same field-mode rules the getter macros use: a `&str` argument reads a `String` field and appends `.as_str()`, an owned value — a path type, tuple, or array — appends `.clone()`, an `Option<&T>` reads an `Option<T>` field and appends `.as_ref()`, an `Option<&str>` reads an `Option<String>` field and appends `.as_deref()`, an `&[T]` reads an `AsRef<[T]>` field and appends `.as_ref()`, and a plain `&T` is taken by reference with no conversion. A `&mut T` argument reads through `HasFieldMut`/`get_field_mut` and requires a `&mut self` receiver; every immutable argument reads through `HasField`/`get_field` regardless of the receiver. The slice and option modes are keyed off the *argument's own* reference, not the receiver's, so an immutable `&[T]` keeps its `AsRef<[T]>` bound even under a `&mut self` receiver rather than collapsing into an unsatisfiable `Value = [T]`. These modes are shared with `#[cgp_auto_getter]` and `#[cgp_getter]` through the [field-parsing helpers](../asts/cgp_getter.md); the difference is only where the read lands — a prepended `let` in the body here, a getter-method body there.
+The conversion applied to each binding is chosen by the argument's type, following the same field-mode rules the getter macros use: a `&str` argument reads a `String` field and appends `.as_str()`, an owned value — a path type, tuple, or array — appends `.clone()`, an `Option<&T>` reads an `Option<T>` field and appends `.as_ref()`, an `Option<&str>` reads an `Option<String>` field and appends `.as_deref()`, an `&[T]` reads an `AsRef<[T]>` field and appends `.as_ref()`, and a plain `&T` is taken by reference with no conversion. Each reference mode has a mutable mirror selected by a `&mut` in the argument's type: a `&mut T` reads through `HasFieldMut`/`get_field_mut`; a `&mut [T]` reads an `AsMut<[T]>` field and appends `.as_mut()`; an `Option<&mut T>` reads an `Option<T>` field and appends `.as_mut()`; an `Option<&mut str>` appends `.as_deref_mut()`. Every mutable read requires a `&mut self` receiver, while every immutable argument reads through `HasField`/`get_field` regardless of the receiver. The slice and option modes are keyed off the *argument's own* reference, not the receiver's, so an immutable `&[T]` keeps its shared `AsRef<[T]>` bound even under a `&mut self` receiver rather than being forced mutable. These modes are shared with `#[cgp_auto_getter]` and `#[cgp_getter]` through the [field-parsing helpers](../asts/cgp_getter.md); the difference is only where the read lands — a prepended `let` in the body here, a getter-method body there.
 
 ## Behavior and corner cases
 
@@ -62,29 +62,11 @@ The conversion applied to each binding is chosen by the argument's type, followi
 
 **A malformed `#[implicit]` attribute is rejected at extraction.** `#[implicit]` is recognized only as a bare `Meta::Path`; the extraction pass additionally checks for an `implicit`-named attribute in any other form (`#[implicit(...)]` or `#[implicit = ...]`) and returns a spanned error, rather than leaving the stray attribute on the parameter to surface downstream as an obscure `cannot find attribute 'implicit'` error.
 
-**A `&mut` implicit argument must be the only implicit argument.** The `field_mut` of each argument follows the argument's own type — set from the `&mut` in `&mut T`, not from the receiver — so a `&mut T` argument reads through `get_field_mut` while every immutable argument reads through `get_field`, even under a `&mut self` receiver. Because a `get_field_mut` read borrows the whole context exclusively for the rest of the body, a `&mut` implicit cannot coexist with any other implicit read; extraction rejects the combination (`has_mutable && count > 1`) rather than emit a blanket impl that fails to borrow-check. Any number of purely immutable implicits, by contrast, are shared borrows and combine freely. A `&mut T` argument additionally requires the `&mut self` receiver, and a `mut` *pattern* on any implicit argument is rejected outright. These checks are enforced during implicit-argument extraction.
+**A mutable implicit argument must be the only implicit argument.** The `field_mut` of each argument follows the argument's own type — set from a `&mut` in the type, whether the outer reference of a `&mut T`/`&mut [T]` or the inner reference of an `Option<&mut T>`, not from the receiver — so a mutable argument reads through `get_field_mut` while every immutable argument reads through `get_field`, even under a `&mut self` receiver. Because a `get_field_mut` read borrows the whole context exclusively for the rest of the body, a mutable implicit cannot coexist with any other implicit read; extraction rejects the combination (`has_mutable && count > 1`) rather than emit a blanket impl that fails to borrow-check. Any number of purely immutable implicits, by contrast, are shared borrows and combine freely. A mutable argument additionally requires the `&mut self` receiver (checked in `parse_field_type`), and a `mut` *pattern* on any implicit argument is rejected outright. These checks are enforced during implicit-argument extraction.
 
 ## Known issues
 
 `#[cgp_fn]` does not support generics on the desugared *method* itself — generic parameters are only ever lifted onto the trait and impl. A method-level generic is silently treated as a trait/impl generic rather than rejected, which is the intended limitation rather than a bug: method-level generics are considered an advanced case better written as an explicit blanket impl or a [`#[cgp_component]`](../../reference/macros/cgp_component.md) provider.
-
-The *mutable* variants of the slice and option modes are not supported, and both are **problematic** failures — the macro accepts the shape rather than rejecting it, so the failure lands on the emitted code instead of as a spanned message. Both are exotic shapes rather than a regression (the immutable `&[T]` and `Option<&T>` forms are the supported ones), and the correct behavior would be either to support the mutable modes or to reject them at macro time with a clear message. Each is pinned by a fixture under [problematic/cgp_fn/](../../../crates/tests/cgp-compile-fail-tests/tests/problematic/cgp_fn) in `cgp-compile-fail-tests`.
-
-Under a `&mut self` receiver, a `&mut [T]` implicit falls through the slice case (which matches only a shared `&[T]`, since there is no `AsMut<[T]>` counterpart) into the plain-reference mode, producing an unsatisfiable `HasFieldMut<Value = [T]>` bound that surfaces at the call site (`E0599`):
-
-```rust
-#[cgp_fn]
-fn zero_all(&mut self, #[implicit] items: &mut [u8]) { /* … */ } // E0599 when called
-```
-
-Note the contrast with a `&self` receiver, where the same `&mut [T]` is instead rejected cleanly at macro time with "&mut self is required for mutable field reference" — that rejection is a returned `Err` covered in `parser_rejections`, not a compile-fail fixture.
-
-An `Option<&mut T>` implicit reads immutably (the argument's outer type is a path, so `field_mut` is `None`), producing an `Option<&T>` value that then fails to coerce to the declared `Option<&mut T>` inside the generated body (`E0308`):
-
-```rust
-#[cgp_fn]
-fn take_slot(&self, #[implicit] slot: Option<&mut u8>) -> Option<&mut u8> { slot } // E0308
-```
 
 ## Snapshots
 
@@ -95,6 +77,8 @@ Every `snapshot_cgp_fn!` invocation across the suite is indexed here, since thes
 - [implicit_arguments/cgp_fn_mutable.rs](../../../crates/tests/cgp-tests/tests/implicit_arguments/cgp_fn_mutable.rs) — `&mut self` with a mutable implicit argument, reading through `HasFieldMut`/`get_field_mut`.
 - [implicit_arguments/cgp_fn_mut_self_immutable.rs](../../../crates/tests/cgp-tests/tests/implicit_arguments/cgp_fn_mut_self_immutable.rs) — a `&mut self` receiver with two *immutable* implicit arguments, showing they read through `HasField`/`get_field` (the access mode follows the argument, not the receiver) and that several immutable implicits may share a `&mut self` receiver.
 - [implicit_arguments/cgp_fn_slice.rs](../../../crates/tests/cgp-tests/tests/implicit_arguments/cgp_fn_slice.rs) — an immutable `&[u8]` implicit under a `&mut self` receiver, keeping its `Value: AsRef<[u8]> + 'static` bound and `.as_ref()` read because the slice mode follows the argument's own reference, not the receiver's; also mixes an implicit with a plain explicit argument.
+- [implicit_arguments/cgp_fn_mut_slice.rs](../../../crates/tests/cgp-tests/tests/implicit_arguments/cgp_fn_mut_slice.rs) — a mutable `&mut [u8]` implicit, reading through `HasFieldMut` with a `Value: AsMut<[u8]> + 'static` bound and a `get_field_mut(...).as_mut()` read, the mutable mirror of the shared-slice case.
+- [implicit_arguments/cgp_fn_option_mut.rs](../../../crates/tests/cgp-tests/tests/implicit_arguments/cgp_fn_option_mut.rs) — a mutable `Option<&mut u8>` implicit, reading an `Option<u8>` field through `HasFieldMut` with a `get_field_mut(...).as_mut()` read that yields `Option<&mut u8>`.
 - [implicit_arguments/cgp_fn_owned_tuple.rs](../../../crates/tests/cgp-tests/tests/implicit_arguments/cgp_fn_owned_tuple.rs) — an owned, non-path implicit (a tuple) read by value with `.clone()` and a `Value = (f64, f64)` bound, showing owned types beyond path types are accepted.
 - [implicit_arguments/cgp_fn_option_str.rs](../../../crates/tests/cgp-tests/tests/implicit_arguments/cgp_fn_option_str.rs) — an `Option<&str>` implicit backed by an `Option<String>` field and read with `.as_deref()`, composing the `&str` and option modes.
 - [implicit_arguments/cgp_fn_calling_fn.rs](../../../crates/tests/cgp-tests/tests/implicit_arguments/cgp_fn_calling_fn.rs) — one `#[cgp_fn]` capability depending on another through an explicit `where Self:` bound.
@@ -119,12 +103,7 @@ Because `#[cgp_fn]` emits a blanket impl, its snapshot tests double as behaviora
 
 The failure cases pin the inputs `#[cgp_fn]` refuses during expansion, each asserting the entrypoint returns `Err`:
 
-- [parser_rejections/cgp_fn.rs](../../../crates/tests/cgp-macro-tests/tests/parser_rejections/cgp_fn.rs) covers an implicit argument on a function with no `self` receiver, a `mut` binding pattern on an implicit argument, a `&mut` implicit argument that is not the sole implicit (which would borrow the context mutably and again at once), and a malformed `#[implicit]` attribute carrying arguments (`#[implicit(...)]` or `#[implicit = ...]`).
-
-The compile-fail fixtures in `cgp-compile-fail-tests` pin the problematic mutable-mode expansions the macro accepts but should not:
-
-- [problematic/cgp_fn/mut_slice_implicit.rs](../../../crates/tests/cgp-compile-fail-tests/tests/problematic/cgp_fn/mut_slice_implicit.rs) — a `&mut [u8]` implicit under a `&mut self` receiver expands to an unsatisfiable `HasFieldMut<Value = [u8]>` bound (`E0599`).
-- [problematic/cgp_fn/option_mut_implicit.rs](../../../crates/tests/cgp-compile-fail-tests/tests/problematic/cgp_fn/option_mut_implicit.rs) — an `Option<&mut T>` implicit binds an `Option<&T>` value that fails to coerce to the declared `Option<&mut T>` (`E0308`).
+- [parser_rejections/cgp_fn.rs](../../../crates/tests/cgp-macro-tests/tests/parser_rejections/cgp_fn.rs) covers an implicit argument on a function with no `self` receiver, a `mut` binding pattern on an implicit argument, a `&mut` implicit argument that is not the sole implicit (which would borrow the context mutably and again at once), a malformed `#[implicit]` attribute carrying arguments (`#[implicit(...)]` or `#[implicit = ...]`), and the two mutable-reference forms under a `&self` receiver — a `&mut [T]` slice and an `Option<&mut T>` — each of which reads through `get_field_mut` and so requires `&mut self`.
 
 ## Source
 

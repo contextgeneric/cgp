@@ -3,7 +3,7 @@ use std::mem;
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
 use syn::visit::{self, Visit};
-use syn::{Attribute, FnArg, Meta, Pat, PatIdent, PatType, Receiver, Type};
+use syn::{Attribute, FnArg, Meta, Pat, PatIdent, PatType, Receiver};
 
 use crate::functions::parse_field_type;
 use crate::types::implicits::{ImplicitArgField, ImplicitArgFields};
@@ -63,16 +63,12 @@ pub fn parse_implicit_arg(receiver: &Receiver, arg: &PatType) -> syn::Result<Imp
 
     let arg_type = arg.ty.as_ref().clone();
 
-    let (field_type, field_mode) = parse_field_type(&arg_type, &receiver.mutability)?;
-
-    // The field is read mutably only when the argument itself is a `&mut`
-    // reference. The receiver's mutability gates *whether* a `&mut` argument is
-    // allowed (checked in `parse_field_type`), but a `&mut self` receiver does not
-    // by itself force a mutable read of an immutably-typed argument.
-    let field_mut = match &arg_type {
-        Type::Reference(type_ref) => type_ref.mutability,
-        _ => None,
-    };
+    // `parse_field_type` derives the field-access mutability from the reference in
+    // the argument type — the outer `&mut` of a `&mut T`/`&mut [T]`, or the inner
+    // `&mut` of an `Option<&mut T>` — and rejects a mutable read without a `&mut
+    // self` receiver. The receiver's own mutability never forces a mutable read of
+    // an immutably-typed argument.
+    let (field_type, field_mode, field_mut) = parse_field_type(&arg_type, &receiver.mutability)?;
 
     let spec = ImplicitArgField {
         field_name: pat_ident.ident.clone(),

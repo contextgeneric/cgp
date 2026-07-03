@@ -106,7 +106,10 @@ fn parse_getter_method(
 
     let return_type = parse_return_type(context_type, &signature.output, field_assoc_type)?;
 
-    let (field_type, field_mode) = parse_field_type(&return_type, &receiver_mut)?;
+    // A getter keys its access mutability off the receiver (`&self` vs `&mut
+    // self`), not off the field type, so the mutability `parse_field_type` derives
+    // from the return type is discarded here in favor of `receiver_mut`.
+    let (field_type, field_mode, _) = parse_field_type(&return_type, &receiver_mut)?;
 
     Ok(GetterField {
         receiver_mode,

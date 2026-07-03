@@ -163,8 +163,14 @@ fn extend_call_expr(
             }
         }
         FieldMode::Slice => {
-            quote! {
-                #call_expr .as_ref()
+            if field_mut.is_none() {
+                quote! {
+                    #call_expr .as_ref()
+                }
+            } else {
+                quote! {
+                    #call_expr .as_mut()
+                }
             }
         }
     }

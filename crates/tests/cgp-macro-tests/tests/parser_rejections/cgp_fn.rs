@@ -2,11 +2,12 @@
 //! argument on a function with no `self` receiver, a `mut` binding pattern on an
 //! implicit argument, a `&mut` implicit argument that is not the sole implicit
 //! (its exclusive borrow of the context would conflict with reading any other
-//! field), and a malformed `#[implicit]` attribute carrying arguments. Each is a
-//! rejection the macro makes during expansion (a returned `Err`), so it is pinned
-//! by driving the entrypoint directly here rather than by a `trybuild`
-//! compile-fail fixture, which is reserved for input the macro accepts but whose
-//! expansion then fails to compile.
+//! field), a `&mut`-reference implicit under a `&self` receiver (a mutable field
+//! read requires `&mut self`), and a malformed `#[implicit]` attribute carrying
+//! arguments. Each is a rejection the macro makes during expansion (a returned
+//! `Err`), so it is pinned by driving the entrypoint directly here rather than by a
+//! `trybuild` compile-fail fixture, which is reserved for input the macro accepts
+//! but whose expansion then fails to compile.
 //!
 //! See docs/implementation/entrypoints/cgp_fn.md (Tests) for these failure cases,
 //! and docs/reference/attributes/implicit.md for the user-facing rules on where
@@ -69,6 +70,45 @@ fn rejects_mutable_implicit_with_other_implicit() {
                         #[implicit] note: &str,
                     ) {
                         buffer.push_str(note);
+                    }
+                ),
+            )
+        },
+    );
+}
+
+#[test]
+fn rejects_mut_slice_implicit_without_mut_self() {
+    // A `&mut [T]` implicit reads the field through `get_field_mut`, which requires a
+    // `&mut self` receiver. Under a plain `&self` receiver the mutable slice is
+    // rejected, mirroring the `&mut T` case. (With `&mut self` the same argument is
+    // accepted and reads through an `AsMut<[T]>` bound.)
+    assert_macro_rejects("cgp_fn with a `&mut [T]` implicit under `&self`", || {
+        cgp_macro_lib::cgp_fn(
+            quote!(),
+            quote!(
+                fn zero_all(&self, #[implicit] items: &mut [u8]) {
+                    let _ = items;
+                }
+            ),
+        )
+    });
+}
+
+#[test]
+fn rejects_mut_option_implicit_without_mut_self() {
+    // An `Option<&mut T>` implicit reads the field mutably through `get_field_mut`
+    // and `.as_mut()`, so — like any mutable field read — it requires a `&mut self`
+    // receiver and is rejected under a plain `&self` receiver. (With `&mut self` the
+    // same argument is accepted.)
+    assert_macro_rejects(
+        "cgp_fn with an `Option<&mut T>` implicit under `&self`",
+        || {
+            cgp_macro_lib::cgp_fn(
+                quote!(),
+                quote!(
+                    fn take_slot(&self, #[implicit] slot: Option<&mut u8>) {
+                        let _ = slot;
                     }
                 ),
             )
