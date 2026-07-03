@@ -191,11 +191,30 @@ right input:
   be emitted through the `crate::exports` markers so it resolves as `::cgp::macro_prelude::<Name>`,
   never as a bare or hand-written path — this is what lets a user with only `cgp` in scope compile
   the output. Grep the codegen for any CGP name that is not interpolated from an `exports` marker.
+- **Aim every generated item's span at the token the user wrote (watch for `call_site` leaks).** A
+  macro builds its output with `parse_internal!`/`quote!`, which stamp the structural tokens — the
+  `impl` keyword, the trait reference, the self type — with the macro's `call_site` span (the whole
+  invocation), while only the interpolated user fragments keep a narrower span. A compiler error that
+  reports on an item's header then underlines the *entire macro block* instead of the entry,
+  attribute, or impl the user actually wrote: a coherence conflict (`E0119`) between two generated
+  impls, an unsatisfied bound, or a name-resolution failure all read as "somewhere in this macro."
+  Re-span each generated item onto its originating token, following the
+  `delegate_components!`/`check_components!` pattern — the shared
+  [`override_span`](crates/macros/cgp-macro-core/src/functions/override_span.rs) helper re-spans an
+  item's tokens (restore the generics afterward so a per-entry generic's `E0207` keeps pointing at the
+  `<T>` the user wrote), and where the originating token is *synthesized* and has lost its span (a
+  `PathCons<..>` nest, a `Symbol`'s `Chars` encoding), carry an explicit span field through the
+  evaluated form as `EvaluatedCheckEntry.span` and `EvaluatedDelegateEntry.span` do — mirroring
+  `Symbol`, which keeps its parse-time span and stamps its output with `quote_spanned!`. The same leak
+  lurks in the provider macros (`#[cgp_impl]`, `#[cgp_provider]`, `#[cgp_new_provider]`) and every
+  other expansion, so confirm a duplicated or conflicting generated item points at the impl or
+  attribute the user wrote, not the macro name. These spans are testable: a `trybuild` `.stderr`
+  fixture records the exact line and column of each caret, so a span regression changes the snapshot
+  (see the `acceptable/delegate_components/duplicate_*` fixtures).
 
 Beyond these, weigh the concerns that recur across the macro suite: the hygiene of the reserved
-identifiers the expansion introduces (`__Component__`, `__Context__`, and the like), the span
-attached to each generated item so a downstream type error points at the token the user actually
-wrote, and the idempotency of the expansion when the same entry is listed more than once.
+identifiers the expansion introduces (`__Component__`, `__Context__`, and the like) and the
+idempotency of the expansion when the same entry is listed more than once.
 
 ### Keep every view in sync and verify
 
