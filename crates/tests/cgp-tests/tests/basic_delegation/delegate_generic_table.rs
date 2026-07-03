@@ -7,6 +7,11 @@
 //!
 //! See docs/reference/macros/delegate_components.md.
 
+// The header lifts `'a` onto every generated impl, but only the `BarKey<'a, T1>`
+// entry uses it, so the `FooKey`/`BazKey` impls carry an intentionally-unused
+// lifetime.
+#![allow(clippy::extra_unused_lifetimes)]
+
 use core::marker::PhantomData;
 
 use cgp::prelude::DelegateComponent;
