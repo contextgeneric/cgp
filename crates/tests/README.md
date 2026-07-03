@@ -28,7 +28,10 @@ standalone `.rs` fixture with a committed `.stderr` snapshot of the expected
 compiler output, split into two categories — **acceptable** failures that CGP
 intentionally delegates to the Rust compiler (overlapping wiring, a lazily-wired
 missing dependency) and **problematic** failures that are a CGP defect (input a
-macro should have rejected, or an expansion that emits invalid Rust).
+macro should have rejected, or an expansion that emits invalid Rust). See
+[cgp-compile-fail-tests/README.md](cgp-compile-fail-tests/README.md) for what
+belongs in each category, the fixture layout, and how to regenerate the
+`.stderr` snapshots.
 
 **`cgp-test-crate-a`** and **`cgp-test-crate-b`** are auxiliary packages for
 **cross-crate** behavior. Crate A defines components, a provider, and a namespaced
@@ -63,7 +66,8 @@ for parser corner cases, and the failure-case targets `parser_rejections` and
 subdirectory per owning macro (`acceptable/delegate_components/`, or a
 `problematic/<macro>/` when a defect is pinned). Each fixture is a self-contained
 program paired with a committed `.stderr` snapshot of the compiler output it must
-produce.
+produce. Its own [README](cgp-compile-fail-tests/README.md) is the authoritative
+guide to this crate.
 
 ## Snapshots
 
