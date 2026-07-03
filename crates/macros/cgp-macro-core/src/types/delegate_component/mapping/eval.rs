@@ -1,7 +1,8 @@
+use syn::spanned::Spanned;
 use syn::{Generics, ItemImpl, Type};
 
 use crate::exports::{DelegateComponent, IsProviderFor};
-use crate::functions::{merge_generics, parse_internal};
+use crate::functions::{merge_generics, override_span, parse_internal};
 
 /// The flat form every key, value, and statement collapses to; it renders the
 /// impl pair for one wiring entry.
@@ -48,7 +49,7 @@ impl EvaluatedDelegateEntry {
             }
         };
 
-        Ok(item_impl)
+        self.respan_impl(item_impl)
     }
 
     /// Emit the forwarding `IsProviderFor<Key, __Context__, __Params__>` impl,
@@ -81,6 +82,23 @@ impl EvaluatedDelegateEntry {
             #where_clause
             {}
         };
+
+        self.respan_impl(item_impl)
+    }
+
+    /// Re-span a generated impl onto the entry's key so a coherence conflict
+    /// (`E0119`) between two entries mapping the same key is reported on the
+    /// offending entry rather than on the whole `delegate_components!` block —
+    /// the impl's `impl`/trait-ref/self-type tokens otherwise carry the macro's
+    /// `call_site` span, which spans the entire invocation.
+    ///
+    /// The impl's generics keep their original spans, restored after re-spanning,
+    /// so a diagnostic about a per-entry generic (an unconstrained parameter's
+    /// `E0207`, say) still points at the generic the user wrote rather than the key.
+    fn respan_impl(&self, item_impl: ItemImpl) -> syn::Result<ItemImpl> {
+        let generics = item_impl.generics.clone();
+        let mut item_impl = override_span(self.key.span(), &item_impl)?;
+        item_impl.generics = generics;
 
         Ok(item_impl)
     }

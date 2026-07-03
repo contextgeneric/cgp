@@ -68,6 +68,6 @@ The behavioral coverage for `check_components!` is the compile-time assertion it
 
 - Entry point: `check_components` in [cgp-macro-lib/src/check_components.rs](../../../crates/macros/cgp-macro-lib/src/check_components.rs).
 - Tables, entries, keys, and values: [cgp-macro-core/src/types/check_components/](../../../crates/macros/cgp-macro-core/src/types/check_components/), documented together with the `delegate_and_check_components!` stack in [asts/check_components.md](../asts/check_components.md).
-- The check trait, the `#[check_trait]`/`#[check_providers]` attributes, the `__Check{Context}` name derivation, the supertrait choice, and the span override are all in `table.rs`; the cartesian-product expansion is in `entry.rs`.
+- The check trait, the `#[check_trait]`/`#[check_providers]` attributes, the `__Check{Context}` name derivation, the supertrait choice, and the span override are all in `table.rs`; the cartesian-product expansion is in `entry.rs`. The span override applies the shared [`override_span`](../../../crates/macros/cgp-macro-core/src/functions/override_span.rs) helper (also used by `delegate_components!`).
 - Fragment construction: [parse_internal!](../macros/parse_internal.md).
 - The `delegate_and_check_components!` macro reuses this stack; see its [entrypoint document](delegate_and_check_components.md).

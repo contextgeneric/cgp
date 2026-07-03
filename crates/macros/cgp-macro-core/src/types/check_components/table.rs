@@ -1,4 +1,3 @@
-use proc_macro2::Span;
 use quote::ToTokens;
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
@@ -7,7 +6,7 @@ use syn::token::{Comma, Lt, Pound, Where};
 use syn::{Attribute, Ident, Item, ItemImpl, ItemTrait, Type, WhereClause, braced, parse2};
 
 use crate::exports::{CanUseComponent, IsProviderFor};
-use crate::functions::merge_generics;
+use crate::functions::{merge_generics, override_span};
 use crate::parse_internal;
 use crate::types::check_components::{CheckEntries, EvaluatedCheckEntry, TypeWithGenerics};
 use crate::types::generics::ImplGenerics;
@@ -65,7 +64,7 @@ impl CheckComponentsTable {
             } else {
                 // Override the span of the context type so that any unsatisfied constraint
                 // error is highlighted on the component type instead
-                let context_type = override_span(&span, context_type)?;
+                let context_type = override_span(span, context_type)?;
                 vec![context_type]
             };
 
@@ -192,19 +191,4 @@ pub fn derive_check_trait_ident(context_type: &Type, prefix: &str) -> syn::Resul
     let ident = context_path.ident();
 
     Ok(Ident::new(&format!("{prefix}{ident}"), ident.span()))
-}
-
-fn override_span<T>(span: &Span, body: &T) -> syn::Result<T>
-where
-    T: Parse + ToTokens,
-{
-    parse2(
-        body.to_token_stream()
-            .into_iter()
-            .map(|mut tree| {
-                tree.set_span(*span);
-                tree
-            })
-            .collect(),
-    )
 }
