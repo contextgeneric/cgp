@@ -1,4 +1,4 @@
-# CLAUDE.md
+# AGENTS.md
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
@@ -7,7 +7,7 @@ skill before working here** — every type in this crate exists to generate one 
 the skill describes (`#[cgp_component]`, `#[cgp_impl]`, `#[cgp_fn]`, `delegate_components!`,
 `check_components!`, `#[derive(HasField)]`, …). You cannot correctly change the *output* of a macro
 without knowing the *expansion* it is supposed to produce, and that expansion is documented by
-`/cgp`. The workspace-level [../../../CLAUDE.md](../../../CLAUDE.md) covers build/test/lint commands
+`/cgp`. The workspace-level [../../../AGENTS.md](../../../AGENTS.md) covers build/test/lint commands
 and the crate hierarchy.
 
 ## What this crate is (and isn't)

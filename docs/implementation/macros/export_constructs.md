@@ -13,4 +13,4 @@ The point of the indirection is hygiene. Generated code interpolates the marker 
 ## Source
 
 - The macros are defined in [cgp-macro-core/src/macros/export.rs](../../../crates/macros/cgp-macro-core/src/macros/export.rs); the marker set they generate lives in [cgp-macro-core/src/exports.rs](../../../crates/macros/cgp-macro-core/src/exports.rs), and the `::cgp::macro_prelude` re-export surface is what makes the emitted paths resolve.
-- The convention that all CGP items are referenced through these markers is recorded in [cgp-macro-core/CLAUDE.md](../../../crates/macros/cgp-macro-core/CLAUDE.md).
+- The convention that all CGP items are referenced through these markers is recorded in [cgp-macro-core/AGENTS.md](../../../crates/macros/cgp-macro-core/AGENTS.md).

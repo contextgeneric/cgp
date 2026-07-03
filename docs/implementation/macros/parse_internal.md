@@ -20,4 +20,4 @@ A subtle interaction with the `?` expansion is that `parse_internal!` cannot be 
 
 - The macro is defined in [cgp-macro-core/src/macros/parse.rs](../../../crates/macros/cgp-macro-core/src/macros/parse.rs) and the backing function in [cgp-macro-core/src/functions/parse_internal.rs](../../../crates/macros/cgp-macro-core/src/functions/parse_internal.rs).
 - The `quote!` re-export it depends on is in `cgp-macro-core/src/vendor.rs`, and the prefix-stripping helper is `strip_macro_prelude` in `cgp-macro-core/src/functions/strip.rs`.
-- The convention that all AST nodes are built through this macro is recorded in [cgp-macro-core/CLAUDE.md](../../../crates/macros/cgp-macro-core/CLAUDE.md).
+- The convention that all AST nodes are built through this macro is recorded in [cgp-macro-core/AGENTS.md](../../../crates/macros/cgp-macro-core/AGENTS.md).

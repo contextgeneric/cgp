@@ -1,4 +1,4 @@
-# CLAUDE.md — maintaining the CGP test suite
+# AGENTS.md — maintaining the CGP test suite
 
 This file governs the test crates under `crates/tests`. Read it before adding,
 moving, or refactoring any test here. Invoke the `/cgp` skill first — every test
@@ -73,7 +73,7 @@ and annotate individual tricky cases inline. Link to the owning **implementation
 document** — the one under `docs/implementation/` whose Tests and Snapshots
 sections index this test (for example `// see docs/implementation/entrypoints/cgp_impl.md`);
 that document is where test pointers live, since a reference document never links
-to a test (per `docs/CLAUDE.md`). You may additionally link to a reference
+to a test (per `docs/AGENTS.md`). You may additionally link to a reference
 document when a reader needs the user-facing semantics. Tests link **to** the
 documentation; the reference documents never link back to a test.
 
@@ -167,7 +167,7 @@ link from the test's comment to the implementation document.
 This suite is one of the views of CGP's truth, alongside the macro implementation
 in `cgp-macro-core`, the reference documents in `docs/reference`, the
 implementation documents in `docs/implementation`, and the `/cgp` skill (see
-`docs/CLAUDE.md`). The implementation documents are the ones tightly coupled to
+`docs/AGENTS.md`). The implementation documents are the ones tightly coupled to
 this suite: each macro's implementation document has a `## Tests` section linking
 every behavioral test and failure case that exercises it, and every entrypoint
 document a `## Snapshots` section indexing the expansion snapshots and calling out

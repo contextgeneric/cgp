@@ -9,7 +9,7 @@
 //!    because the provider struct is local) and wiring a context to it;
 //! 3. participating in a namespace declared upstream.
 //!
-//! See crates/tests/CLAUDE.md and docs/concepts/coherence.md.
+//! See crates/tests/AGENTS.md and docs/concepts/coherence.md.
 
 use cgp::prelude::*;
 use cgp_test_crate_a::{AnnounceLoudly, AnnouncerComponent, GreetHello, Greeter, GreeterComponent};

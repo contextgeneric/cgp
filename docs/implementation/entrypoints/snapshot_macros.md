@@ -59,11 +59,11 @@ The snapshot **runs the production macro**, not a copy: any change to a `cgp-mac
 
 The **derive members re-emit the annotated item themselves**. Because a derive macro produces only the *added* code and not the struct or enum it decorates, an entrypoint like `snapshot_derive_has_field` prepends the original item to the output so the generated impls have a type to attach to.
 
-The **assertion is inline by convention**, following [crates/tests/CLAUDE.md](../../../crates/tests/CLAUDE.md): the snapshot string is written as an `insta` inline snapshot (`@"…"`) in the test file, so the golden output lives beside the invocation rather than in a separate `.snap` file.
+The **assertion is inline by convention**, following [crates/tests/AGENTS.md](../../../crates/tests/AGENTS.md): the snapshot string is written as an `insta` inline snapshot (`@"…"`) in the test file, so the golden output lives beside the invocation rather than in a separate `.snap` file.
 
 ## Tests
 
-The snapshot macros are the test harness rather than the thing under test, so their coverage is the set of snapshot invocations across the suite. Per [crates/tests/CLAUDE.md](../../../crates/tests/CLAUDE.md), each CGP macro's expansion is snapshotted only in the concept target that owns its feature, and each owning target's snapshots are indexed by that macro's own implementation document. Representative usages:
+The snapshot macros are the test harness rather than the thing under test, so their coverage is the set of snapshot invocations across the suite. Per [crates/tests/AGENTS.md](../../../crates/tests/AGENTS.md), each CGP macro's expansion is snapshotted only in the concept target that owns its feature, and each owning target's snapshots are indexed by that macro's own implementation document. Representative usages:
 
 - [basic_delegation/component_macro.rs](../../../crates/tests/cgp-tests/tests/basic_delegation/component_macro.rs) — the canonical `snapshot_cgp_component!` invocation, using the `AttributeMacroSnapshot` shape.
 - [async_and_send/cgp_fn_async.rs](../../../crates/tests/cgp-tests/tests/async_and_send/cgp_fn_async.rs) — a `snapshot_cgp_fn!` over a stacked `#[cgp_fn]` / `#[async_trait]`.

@@ -8,7 +8,7 @@ A concept document explains an *idea that spans several constructs*, whereas a [
 
 ## The catalog
 
-The authoring rules for concept documents, including when a cross-cutting idea earns its own page, live in [../CLAUDE.md](../CLAUDE.md). These documents explain the ideas that connect the constructs, each linking down to the per-construct references for the detail.
+The authoring rules for concept documents, including when a cross-cutting idea earns its own page, live in [../AGENTS.md](../AGENTS.md). These documents explain the ideas that connect the constructs, each linking down to the per-construct references for the detail.
 
 - [Bypassing coherence](coherence.md) — what Rust's coherence rules forbid, and the incoherent-impl-plus-local-wiring strategy CGP uses to work around them.
 - [Modularity hierarchy](modularity-hierarchy.md) — the ladder from a single blanket impl to per-type-per-provider wiring, and how to pick the lowest rung a use case needs.

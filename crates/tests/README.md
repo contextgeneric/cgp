@@ -5,7 +5,7 @@ are organized **by CGP concept** — basic delegation, abstract types, implicit
 arguments, namespaces, and so on — rather than by the macro that implements each
 concept, because a single macro (for example `delegate_components!`) serves many
 concepts at once. If you are maintaining or extending the suite, read
-[CLAUDE.md](CLAUDE.md) first; it is the authoritative guide to the conventions.
+[AGENTS.md](AGENTS.md) first; it is the authoritative guide to the conventions.
 This README is the map.
 
 ## The crates
@@ -55,7 +55,7 @@ from `cgp-macro-test-util`. Each such macro emits the real generated code into t
 module **and** generates a `#[test]` asserting a pretty-printed inline `insta`
 snapshot of it. Snapshots are used deliberately: a macro's expansion is snapshotted
 only in the concept target that owns that macro's feature, and written plainly
-everywhere else (see [CLAUDE.md](CLAUDE.md) for the ownership rules).
+everywhere else (see [AGENTS.md](AGENTS.md) for the ownership rules).
 
 ## Running the tests
 

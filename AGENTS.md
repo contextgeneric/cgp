@@ -1,4 +1,4 @@
-# CLAUDE.md
+# AGENTS.md
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
@@ -103,10 +103,10 @@ core traits are the ground truth the skill describes, so read the two together.
 Then read the documentation for the macro under review, in [docs/](docs). Read its reference
 document under [docs/reference/](docs/reference), its implementation documents under
 [docs/implementation/](docs/implementation) (the `entrypoints/` document, the `asts/` stack it
-drives, and any `functions/` helpers it relies on), and the governing `CLAUDE.md` files that define
-how those documents stay in sync with the code: [docs/CLAUDE.md](docs/CLAUDE.md),
-[docs/implementation/CLAUDE.md](docs/implementation/CLAUDE.md), and
-[crates/macros/cgp-macro-core/CLAUDE.md](crates/macros/cgp-macro-core/CLAUDE.md). These establish
+drives, and any `functions/` helpers it relies on), and the governing `AGENTS.md` files that define
+how those documents stay in sync with the code: [docs/AGENTS.md](docs/AGENTS.md),
+[docs/implementation/AGENTS.md](docs/implementation/AGENTS.md), and
+[crates/macros/cgp-macro-core/AGENTS.md](crates/macros/cgp-macro-core/AGENTS.md). These establish
 that the source is the single source of truth and that reference, implementation, snapshot, and
 skill are four views of it that must never drift.
 
@@ -115,7 +115,7 @@ Next, study the implementation itself in [crates/macros/](crates/macros). Start 
 and the `functions/` helpers it calls, and read closely enough to reason about corner cases, not
 just the happy path. Finally, study the tests in [crates/tests/](crates/tests) — the behavioral
 tests in `cgp-tests` and the failure cases and expansion snapshots in `cgp-macro-tests` — and read
-[crates/tests/CLAUDE.md](crates/tests/CLAUDE.md) to learn how the suite is organized and how to run
+[crates/tests/AGENTS.md](crates/tests/AGENTS.md) to learn how the suite is organized and how to run
 and update it.
 
 ### Harden the implementation and its tests
@@ -127,7 +127,7 @@ readability edit introduce a behavioral change.
 - **Fix bugs and corner cases.** Identify potential bugs and unhandled corner cases in the
   implementation and fix them. When a corner case cannot be fixed in this iteration, capture it as a
   failure case in `cgp-macro-tests` and record it under the construct's Known issues, per
-  [crates/tests/CLAUDE.md](crates/tests/CLAUDE.md).
+  [crates/tests/AGENTS.md](crates/tests/AGENTS.md).
 - **Close test gaps.** Add tests for corner cases that are not yet covered, placing each in the
   concept target that owns the behavior and snapshotting only in the macro's owning target.
 - **Verify existing tests.** Confirm each existing test really exercises the behavior it claims to,

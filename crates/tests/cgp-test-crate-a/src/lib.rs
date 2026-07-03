@@ -7,7 +7,7 @@
 //! namespace — exercising that CGP's two-trait split stays within Rust's
 //! coherence and orphan rules across crate boundaries.
 //!
-//! See crates/tests/CLAUDE.md and docs/concepts/coherence.md.
+//! See crates/tests/AGENTS.md and docs/concepts/coherence.md.
 
 use cgp::prelude::*;
 

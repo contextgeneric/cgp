@@ -15,4 +15,4 @@ The keyword string and the struct name are independent, so the marker can be nam
 ## Source
 
 - The macro is defined in [cgp-macro-core/src/macros/keyword.rs](../../../crates/macros/cgp-macro-core/src/macros/keyword.rs); the `IsKeyword` trait it implements lives in `cgp-macro-core/src/traits/`, and the keyword marker types that use it live in `cgp-macro-core/src/types/keyword*.rs`.
-- The convention that custom keywords go through this macro is recorded in [cgp-macro-core/CLAUDE.md](../../../crates/macros/cgp-macro-core/CLAUDE.md).
+- The convention that custom keywords go through this macro is recorded in [cgp-macro-core/AGENTS.md](../../../crates/macros/cgp-macro-core/AGENTS.md).

@@ -10,7 +10,7 @@ The audience for these examples is an agent writing expanded documentation — a
 
 ## The catalog
 
-The authoring rules for examples, including how to add a new one, live in [../CLAUDE.md](../CLAUDE.md).
+The authoring rules for examples, including how to add a new one, live in [../AGENTS.md](../AGENTS.md).
 
 - [Area calculation](area-calculation.md) — computing the area of several shapes, progressing from field-driven functions to a wireable area component with composable higher-order providers.
 - [Shell-scripting DSL](shell-scripting-dsl.md) — a type-level DSL whose programs are types interpreted at compile time, progressing from a fixed CLI program through the handler component and its namespace wiring to a custom context and a language extension.
