@@ -188,7 +188,12 @@ fn parse_fixed_size_args<const I: usize>(
     args.iter()
         .collect::<Vec<&FnArg>>()
         .try_into()
-        .map_err(|_| Error::new(args.span(), "expect getter method to contain {I} arguments"))
+        .map_err(|_| {
+            Error::new(
+                args.span(),
+                format!("expect getter method to contain {I} arguments"),
+            )
+        })
 }
 
 fn parse_phantom_arg_type(phantom_arg: &FnArg) -> syn::Result<Type> {

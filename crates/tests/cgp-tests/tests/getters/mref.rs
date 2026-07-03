@@ -4,7 +4,6 @@
 //!
 //! See docs/reference/macros/cgp_getter.md and docs/reference/providers/use_field.md.
 
-use cgp::core::field::types::MRef;
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_cgp_getter;
 

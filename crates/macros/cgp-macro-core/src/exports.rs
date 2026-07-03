@@ -22,6 +22,7 @@ export_constructs! {
     UseFields,
     UseField,
     Life,
+    MRef,
 
     HasField,
     HasFields,

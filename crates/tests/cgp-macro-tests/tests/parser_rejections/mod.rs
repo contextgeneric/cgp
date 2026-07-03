@@ -26,4 +26,5 @@ pub mod cgp_component;
 pub mod cgp_fn;
 pub mod check_components;
 pub mod delegate_components;
+pub mod getters;
 pub mod use_type;

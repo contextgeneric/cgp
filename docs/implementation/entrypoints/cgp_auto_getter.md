@@ -66,13 +66,16 @@ Every `snapshot_cgp_auto_getter!` invocation across the suite is indexed here, s
 - [getters/option_auto.rs](../../../crates/tests/cgp-tests/tests/getters/option_auto.rs) — an `Option<&String>` return reading an `Option<String>` field via `.as_ref()`.
 - [getters/option_str_auto.rs](../../../crates/tests/cgp-tests/tests/getters/option_str_auto.rs) — an `Option<&str>` return reading an `Option<String>` field via `.as_deref()`, composing the `&str` and option cases.
 - [getters/slice_auto.rs](../../../crates/tests/cgp-tests/tests/getters/slice_auto.rs) — a `&[u8]` return reading an `AsRef<[u8]> + 'static` field via `.as_ref()`.
+- [getters/mut_str_auto.rs](../../../crates/tests/cgp-tests/tests/getters/mut_str_auto.rs) — a `&mut self` getter returning `&mut str`, reading the `String` field through `HasFieldMut`/`get_field_mut` and calling `.as_mut_str()`.
+- [getters/mut_slice_auto.rs](../../../crates/tests/cgp-tests/tests/getters/mut_slice_auto.rs) — a `&mut self` getter returning `&mut [u32]`, bounding the field by `AsMut<[u32]> + 'static` and calling `.as_mut()`.
+- [getters/mut_option_auto.rs](../../../crates/tests/cgp-tests/tests/getters/mut_option_auto.rs) — a `&mut self` getter returning `Option<&mut u32>`, reading the `Option<u32>` field via `.as_mut()`.
 - [getters/non_self_auto.rs](../../../crates/tests/cgp-tests/tests/getters/non_self_auto.rs) — a non-`self` getter reading a field out of another type (`&Self::Foo`).
 - [getters/auto_getter_generic.rs](../../../crates/tests/cgp-tests/tests/getters/auto_getter_generic.rs) — a trait generic over a type parameter, keyed by a `PhantomData<Foo>` tag.
 - [getters/assoc_type_auto_getter.rs](../../../crates/tests/cgp-tests/tests/getters/assoc_type_auto_getter.rs) — a local associated return type inferred from the field, with a `Display` bound carried onto the impl.
 - [getters/assoc_type_self_referential_auto.rs](../../../crates/tests/cgp-tests/tests/getters/assoc_type_self_referential_auto.rs) — a self-referential associated-type bound surviving onto the impl with `Self::Scalar` rewritten to the parameter.
 - [getters/abstract_type_extend.rs](../../../crates/tests/cgp-tests/tests/getters/abstract_type_extend.rs), [getters/abstract_type_use_type.rs](../../../crates/tests/cgp-tests/tests/getters/abstract_type_use_type.rs) — getters whose return type is an abstract type imported via `#[extend]` and `#[use_type]`; each file pins both the auto and the full getter variant.
 
-Coverage is broad; no distinct expansion variant is currently missing a snapshot.
+Coverage is broad across return shapes and both receiver mutabilities. The two mutable conversions with no dedicated snapshot yet are a plain `&mut T` return (a bare `get_field_mut` with no conversion) and an `Option<&mut str>` return (read via `.as_deref_mut()`, the mutable mirror of `option_str_auto.rs`).
 
 ## Tests
 

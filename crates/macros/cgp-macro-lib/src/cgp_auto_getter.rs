@@ -7,7 +7,7 @@ pub fn cgp_auto_getter(attr: TokenStream, body: TokenStream) -> syn::Result<Toke
     if !attr.is_empty() {
         return Err(Error::new(
             Span::call_site(),
-            "#[derive_auto_getter] does not accept any attribute argument",
+            "#[cgp_auto_getter] does not accept any attribute argument",
         ));
     }
 

@@ -1,5 +1,5 @@
 use proc_macro2::TokenStream;
-use quote::{ToTokens, quote};
+use quote::ToTokens;
 
 use crate::types::getter::{FieldMode, GetFieldExpr};
 
@@ -10,67 +10,10 @@ pub struct GetFieldWithModeExpr {
 
 impl ToTokens for GetFieldWithModeExpr {
     fn to_tokens(&self, tokens: &mut TokenStream) {
-        let call_expr = &self.get_field;
-
-        let expr = match self.field_mode {
-            FieldMode::Reference => {
-                quote!(#call_expr)
-            }
-            FieldMode::OptionRef => {
-                if call_expr.field_mut.is_none() {
-                    quote! {
-                        #call_expr .as_ref()
-                    }
-                } else {
-                    quote! {
-                        #call_expr .as_mut()
-                    }
-                }
-            }
-            FieldMode::OptionStr => {
-                if call_expr.field_mut.is_none() {
-                    quote! {
-                        #call_expr .as_deref()
-                    }
-                } else {
-                    quote! {
-                        #call_expr .as_deref_mut()
-                    }
-                }
-            }
-            FieldMode::MRef => {
-                quote! {
-                    MRef::Ref( #call_expr )
-                }
-            }
-            FieldMode::Str => {
-                if call_expr.field_mut.is_none() {
-                    quote! {
-                        #call_expr .as_str()
-                    }
-                } else {
-                    quote! {
-                        #call_expr .as_mut_str()
-                    }
-                }
-            }
-            FieldMode::Copy => {
-                quote! {
-                    #call_expr .clone()
-                }
-            }
-            FieldMode::Slice => {
-                if call_expr.field_mut.is_none() {
-                    quote! {
-                        #call_expr .as_ref()
-                    }
-                } else {
-                    quote! {
-                        #call_expr .as_mut()
-                    }
-                }
-            }
-        };
+        let field_mut = self.get_field.field_mut;
+        let expr = self
+            .field_mode
+            .apply(self.get_field.to_token_stream(), &field_mut);
 
         tokens.extend(expr);
     }

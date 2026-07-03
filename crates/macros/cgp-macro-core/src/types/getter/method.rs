@@ -1,11 +1,10 @@
 use proc_macro2::TokenStream;
 use quote::quote;
-use syn::token::Mut;
 use syn::{Ident, ImplItemFn, Type};
 
 use crate::functions::parse_internal;
 use crate::types::cgp_getter::GetterField;
-use crate::types::getter::{ContextArg, FieldMode};
+use crate::types::getter::ContextArg;
 
 pub fn derive_getter_method(
     context_arg: &ContextArg,
@@ -94,11 +93,9 @@ impl GetterMethod {
             }
         };
 
-        let call_expr = extend_call_expr(
-            call_expr,
-            &getter_field.field_mode,
-            &getter_field.receiver_mut,
-        );
+        let call_expr = getter_field
+            .field_mode
+            .apply(call_expr, &getter_field.receiver_mut);
 
         let return_type = &getter_field.return_type;
 
@@ -109,69 +106,5 @@ impl GetterMethod {
         };
 
         Ok(item_fn)
-    }
-}
-
-fn extend_call_expr(
-    call_expr: TokenStream,
-    field_mode: &FieldMode,
-    field_mut: &Option<Mut>,
-) -> TokenStream {
-    match field_mode {
-        FieldMode::Reference => call_expr,
-        FieldMode::OptionRef => {
-            if field_mut.is_none() {
-                quote! {
-                    #call_expr .as_ref()
-                }
-            } else {
-                quote! {
-                    #call_expr .as_mut()
-                }
-            }
-        }
-        FieldMode::OptionStr => {
-            if field_mut.is_none() {
-                quote! {
-                    #call_expr .as_deref()
-                }
-            } else {
-                quote! {
-                    #call_expr .as_deref_mut()
-                }
-            }
-        }
-        FieldMode::MRef => {
-            quote! {
-                MRef::Ref( #call_expr )
-            }
-        }
-        FieldMode::Str => {
-            if field_mut.is_none() {
-                quote! {
-                    #call_expr .as_str()
-                }
-            } else {
-                quote! {
-                    #call_expr .as_mut_str()
-                }
-            }
-        }
-        FieldMode::Copy => {
-            quote! {
-                #call_expr .clone()
-            }
-        }
-        FieldMode::Slice => {
-            if field_mut.is_none() {
-                quote! {
-                    #call_expr .as_ref()
-                }
-            } else {
-                quote! {
-                    #call_expr .as_mut()
-                }
-            }
-        }
     }
 }
