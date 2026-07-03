@@ -33,7 +33,7 @@ prelude re-exports in [crates/main/cgp-core/src/prelude.rs](crates/main/cgp-core
 
 ## Commands
 
-This is a Cargo workspace (edition 2024, resolver 3). Toolchain is pinned to **1.93** via
+This is a Cargo workspace (edition 2024, resolver 3). Toolchain is pinned to **1.96** via
 [rust-toolchain.toml](rust-toolchain.toml). Nearly every crate is `#![no_std]` — keep new code
 `no_std`-compatible (use `core`/`alloc`, gate `std`/`alloc` usage behind features as existing crates
 do).

@@ -1,75 +1,62 @@
-name: Rust Unit Tests
+name: Tests
+
 on:
   pull_request: {}
   push:
-    branches: main
+    branches: [main]
 
 env:
   CARGO_INCREMENTAL: 0
-  CARGO_PROFILE_DEV_DEBUG: 1
-  CARGO_PROFILE_RELEASE_DEBUG: 1
+  CARGO_TERM_COLOR: always
   RUST_BACKTRACE: short
   CARGO_NET_RETRY: 10
   RUSTUP_MAX_RETRIES: 10
 
-# Cancel previous runs of this workflow when a new commit is added to the PR, branch or tag
+# Cancel in-progress runs when a new commit is pushed to the same PR, branch, or tag.
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
+# To minimize supply-chain exposure this workflow uses only GitHub's own
+# first-party checkout action; every toolchain and tool is installed with the
+# rustup/cargo already present on the runner.
 jobs:
   fmt:
+    name: Rustfmt (nightly)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: nightly
-          override: true
-          components: rustfmt
-      - uses: actions-rs/cargo@v1
-        with:
-          command: fmt
-          args: --all -- --check
+      - name: Install nightly rustfmt
+        run: rustup toolchain install nightly --profile minimal --component rustfmt
+      - run: cargo +nightly fmt --all -- --check
 
   clippy:
+    name: Clippy
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          components: clippy
-          override: true
-      - uses: Swatinem/rust-cache@v2
-      - uses: actions-rs/clippy-check@v1
-        with:
-          name: clippy-all-features
-          token: ${{ secrets.GITHUB_TOKEN }}
-          args: --all-features --all-targets -- -D warnings
-      - uses: actions-rs/clippy-check@v1
-        with:
-          name: clippy-no-default-features
-          token: ${{ secrets.GITHUB_TOKEN }}
-          args: --no-default-features --all-targets -- -D warnings
+      - name: Install pinned toolchain
+        run: rustup toolchain install
+      - name: Clippy (all features)
+        run: cargo clippy --all-features --all-targets -- -D warnings
+      - name: Clippy (no default features)
+        run: cargo clippy --no-default-features --all-targets -- -D warnings
 
   test:
+    name: Test (nextest)
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          override: true
-      - uses: Swatinem/rust-cache@v2
+      - name: Install pinned toolchain
+        run: rustup toolchain install
+      # Prebuilt binary from the official nextest distribution.
       - name: Install cargo-nextest
         run: curl -LsSf https://get.nexte.st/latest/linux | tar zxf - -C ${CARGO_HOME:-~/.cargo}/bin
-      - uses: actions-rs/cargo@v1
-        with:
-          command: test
-          args: --all-features --no-fail-fast --no-run
-      - uses: actions-rs/cargo@v1
-        with:
-          command: nextest
-          args: run --all-features --no-fail-fast --workspace --no-capture
+      # Runs the whole workspace, including the trybuild compile-fail fixtures in
+      # cgp-compile-fail-tests (an ordinary integration test nextest picks up).
+      - name: Run tests
+        run: cargo nextest run --all-features --no-fail-fast --workspace

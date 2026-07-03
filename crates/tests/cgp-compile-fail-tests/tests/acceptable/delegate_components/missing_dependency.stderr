@@ -5,10 +5,7 @@ error[E0599]: the method `greet` exists for struct `Person`, but its trait bound
    | ----------------- method `greet` not found for this struct because it doesn't satisfy `Person: CanGreet` or `Person: Greeter<Person>`
 ...
 50 |     Person { age: 0 }.greet();
-   |     ------------------^^^^^--
-   |     |                 |
-   |     |                 this is an associated function, not a method
-   |     help: use associated function syntax instead: `Person::greet()`
+   |                       ^^^^^ this is an associated function, not a method
    |
    = note: found the following associated functions; to be used as methods, functions must have a `self` parameter
 note: the candidate is defined in the trait `Greeter`
@@ -37,3 +34,8 @@ note: `CanGreet` defines an item `greet`, perhaps you need to implement it
 17 | pub trait CanGreet {
    | ^^^^^^^^^^^^^^^^^^
    = note: this error originates in the attribute macro `cgp_component` (in Nightly builds, run with -Z macro-backtrace for more info)
+help: use associated function syntax instead
+   |
+50 -     Person { age: 0 }.greet();
+50 +     Person::greet();
+   |
