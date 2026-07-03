@@ -8,7 +8,7 @@
 //! site; deferring it to the use site is the intended lazy behavior, not a
 //! macro defect.
 //!
-//! See docs/implementation/entrypoints/delegate_components.md and
+//! See docs/implementation/entrypoints/delegate_components.md (Failure modes) and
 //! docs/implementation/entrypoints/check_components.md.
 
 use cgp::prelude::*;

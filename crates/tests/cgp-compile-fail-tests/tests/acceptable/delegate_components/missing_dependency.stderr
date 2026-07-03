@@ -1,5 +1,5 @@
 error[E0599]: the method `greet` exists for struct `Person`, but its trait bounds were not satisfied
-  --> tests/acceptable/missing_impl_side_dependency.rs:50:23
+  --> tests/acceptable/delegate_components/missing_dependency.rs:50:23
    |
 37 | pub struct Person {
    | ----------------- method `greet` not found for this struct because it doesn't satisfy `Person: CanGreet` or `Person: Greeter<Person>`
@@ -12,19 +12,19 @@ error[E0599]: the method `greet` exists for struct `Person`, but its trait bound
    |
    = note: found the following associated functions; to be used as methods, functions must have a `self` parameter
 note: the candidate is defined in the trait `Greeter`
-  --> tests/acceptable/missing_impl_side_dependency.rs:18:5
+  --> tests/acceptable/delegate_components/missing_dependency.rs:18:5
    |
 18 |     fn greet(&self);
    |     ^^^^^^^^^^^^^^^^
 note: trait bound `Person: Greeter<Person>` was not satisfied
-  --> tests/acceptable/missing_impl_side_dependency.rs:16:1
+  --> tests/acceptable/delegate_components/missing_dependency.rs:16:1
    |
 16 | #[cgp_component(Greeter)]
    | ^^^^^^^^^^^^^^^^^^^^^^^^^
 17 | pub trait CanGreet {
    |           ^^^^^^^^
 note: the trait `Greeter` must be implemented
-  --> tests/acceptable/missing_impl_side_dependency.rs:17:1
+  --> tests/acceptable/delegate_components/missing_dependency.rs:17:1
    |
 17 | / pub trait CanGreet {
 18 | |     fn greet(&self);
@@ -32,7 +32,7 @@ note: the trait `Greeter` must be implemented
    | |_^
    = help: items from traits can only be used if the trait is implemented and in scope
 note: `CanGreet` defines an item `greet`, perhaps you need to implement it
-  --> tests/acceptable/missing_impl_side_dependency.rs:17:1
+  --> tests/acceptable/delegate_components/missing_dependency.rs:17:1
    |
 17 | pub trait CanGreet {
    | ^^^^^^^^^^^^^^^^^^

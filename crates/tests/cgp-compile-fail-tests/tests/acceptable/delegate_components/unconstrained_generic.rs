@@ -1,4 +1,4 @@
-//! Problematic failure: a per-entry generic list on a `delegate_components!`
+//! Acceptable failure: a per-entry generic list on a `delegate_components!`
 //! mapping whose parameter appears only in the *provider value* and not in the
 //! *key*. The macro faithfully lowers `<T> GreeterComponent: GreetWith<T>` into
 //! `impl<T> DelegateComponent<GreeterComponent> for Person { type Delegate =
@@ -7,15 +7,13 @@
 //!
 //! A per-entry generic is only well-formed when it appears in the key (as in
 //! `<T2> BazKey<T1, T2>: BarValue<T1>`, where `DelegateComponent<BazKey<..>>`
-//! binds it). The macro does not check that every declared generic reaches the
-//! key, so it accepts this nonsensical entry and emits an impl with a free
-//! parameter instead of rejecting it with a spanned error at macro time.
+//! binds it). Writing one that never reaches the key is ill-formed input, and
+//! the macro lowers it faithfully rather than second-guessing it — so `rustc`
+//! rejects the unconstrained parameter with exactly the E0207 it would give a
+//! hand-written `impl<T>` with an unused parameter. Deferring this to the
+//! compiler is the intended behavior, not a macro defect.
 //!
-//! The correct behavior would be to reject a per-entry generic that does not
-//! appear in the key. This fixture pins the current behavior; its `.stderr`
-//! should improve when the defect is fixed.
-//!
-//! See docs/implementation/entrypoints/delegate_components.md (Known issues).
+//! See docs/implementation/entrypoints/delegate_components.md (Failure modes).
 
 use core::marker::PhantomData;
 

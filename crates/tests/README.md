@@ -58,9 +58,11 @@ for parser corner cases, and the failure-case targets `parser_rejections` and
 `invalid_expansion`.
 
 `cgp-compile-fail-tests` is laid out for `trybuild` instead: a single driver
-`tests/compile_fail_tests.rs` glob-compiles every fixture under `tests/acceptable/`
-and `tests/problematic/`, each a self-contained program paired with a committed
-`.stderr` snapshot of the compiler output it must produce.
+`tests/compile_fail_tests.rs` recursively glob-compiles every fixture under
+`tests/acceptable/` and `tests/problematic/`, which are further grouped into one
+subdirectory per owning macro (`acceptable/delegate_components/`,
+`problematic/cgp_fn/`). Each fixture is a self-contained program paired with a
+committed `.stderr` snapshot of the compiler output it must produce.
 
 ## Snapshots
 

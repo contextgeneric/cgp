@@ -29,9 +29,11 @@
 //!   compiler**. CGP is working as designed: it cannot see the whole program, so
 //!   it lowers the input faithfully and lets `rustc` reject it (overlapping
 //!   `delegate_components!` entries becoming conflicting impls, a lazily-wired
-//!   provider whose impl-side dependency the context does not meet). The pinned
+//!   provider whose impl-side dependency the context does not meet, an ill-formed
+//!   per-entry generic the compiler rejects as unconstrained). The pinned
 //!   `.stderr` documents that the failure is the compiler doing its job, and its
-//!   diagnostic is the one a user should expect.
+//!   diagnostic is the one a user should expect. Each fixture is cross-linked to
+//!   the `## Failure modes` section of the owning macro's implementation document.
 //! - **`tests/problematic/`** — failures that are a **CGP defect**: input a macro
 //!   should have rejected with a spanned error, or that a macro expanded into
 //!   invalid Rust. The pinned `.stderr` captures the confusing downstream error a
@@ -42,11 +44,16 @@
 //!
 //! # Organization
 //!
-//! Within each category directory, one fixture file per case, named for the CGP
-//! concept and failure mode it probes (`duplicate_delegate_key.rs`,
-//! `cgp_fn_mut_slice_implicit.rs`). Register every fixture in the driver
-//! `tests/compile_fail_tests.rs` via its category glob — the two calls to
-//! `t.compile_fail(...)` pick up new fixtures automatically.
+//! Under each category directory, fixtures are grouped into one subdirectory per
+//! **owning macro** — the macro whose expansion produces the failure and whose
+//! implementation document documents it (`acceptable/delegate_components/`,
+//! `problematic/cgp_fn/`). This mirrors the per-entrypoint layout of the
+//! implementation docs, so a fixture and the document that indexes it share a
+//! name. Within a subdirectory, write one fixture file per case, named for the
+//! failure mode it probes (`duplicate_key.rs`, `mut_slice_implicit.rs`), and open
+//! each with a comment stating what it exercises and why it must not compile. The
+//! driver `tests/compile_fail_tests.rs` globs both trees with `**`, so a new
+//! fixture is picked up with no registration.
 //!
 //! # Regenerating the `.stderr` snapshots
 //!

@@ -163,15 +163,21 @@ of two opposite meanings, and the directory it lives in records which:
   fixed. When it does, regenerate the snapshot and, if the failure moves into the macro
   itself, migrate the case to an `assert_macro_rejects` test in `cgp-macro-tests`.
 
-Within each category directory, write one fixture file per case, named for the CGP
-concept and failure mode it probes (`duplicate_delegate_key.rs`,
-`cgp_fn_mut_slice_implicit.rs`), and open each with a comment stating what it exercises
-and why it must not compile — exactly as the main suite requires. Register each fixture
-in the driver [tests/compile_fail_tests.rs](cgp-compile-fail-tests/tests/compile_fail_tests.rs)
-through its category glob; the two `t.compile_fail(...)` calls pick up new fixtures
-automatically, so no per-file registration is needed. A single `trybuild::TestCases`
-runs both globs — do not split them across two `#[test]` functions, which would race on
-the shared build directory.
+Under each category directory, group fixtures into one subdirectory per **owning
+macro** — the macro whose expansion produces the failure and whose implementation
+document documents it (`acceptable/delegate_components/`, `problematic/cgp_fn/`). This
+is the one place the suite groups by construct rather than by concept, and
+deliberately so: a compile-fail case is defined by *which macro's expansion* fails,
+and each cross-links to that macro's per-entrypoint implementation document, so the
+fixture tree mirrors [docs/implementation/entrypoints/](../../docs/implementation/entrypoints).
+Within a subdirectory, write one fixture file per case, named for the failure mode it
+probes (`duplicate_key.rs`, `mut_slice_implicit.rs`), and open each with a comment
+stating what it exercises and why it must not compile — exactly as the main suite
+requires. The driver [tests/compile_fail_tests.rs](cgp-compile-fail-tests/tests/compile_fail_tests.rs)
+globs both trees with `**`, so the two `t.compile_fail(...)` calls pick up a new
+fixture with no per-file registration. A single `trybuild::TestCases` runs both globs
+— do not split them across two `#[test]` functions, which would race on the shared
+build directory.
 
 Run the suite with `cargo test -p cgp-compile-fail-tests` or `cargo nextest run -p
 cgp-compile-fail-tests`; both work because the driver is an ordinary integration test.
@@ -186,18 +192,20 @@ capture the expanded code as an `insta` inline string snapshot in the
 compiles even though the code would not), with a comment explaining **why** the
 output is wrong and **what the correct output should be**.
 
-Every failure case must also be recorded in the owning construct's **implementation
-document** under `docs/implementation/`, and where it is recorded depends on the
-category. A **problematic** fixture (and every `invalid_expansion` snapshot) documents
-a defect, so describe it in that document's `## Known issues` section and index it from
-`## Tests`; when the defect has a user-visible consequence, note it in the reference
-document's `## Known issues` section too and cross-link the two. An **acceptable**
-fixture documents *intended* behavior — a failure CGP deliberately defers to the
-compiler — so it belongs in `## Tests` and in whatever section explains that behavior
-(often a Known issues note that already frames the deferral as intended, as
-`delegate_components!` does for overlapping impls), never as a fresh bug. In both cases
-describe the behavior in the document's own words without referring to the test, and
-put a link from the fixture's header comment back to the implementation document.
+Every failure case must also be recorded in the owning macro's **implementation
+document** under `docs/implementation/`, and *which section* holds it is what the
+acceptable/problematic split decides. An **acceptable** fixture documents *intended*
+behavior — a failure CGP deliberately defers to the compiler — so it belongs in that
+document's `## Failure modes` section (a dedicated section, kept out of Known issues so
+it is not mistaken for a bug), with a short code snippet of the failing input, and is
+indexed from `## Tests`. A **problematic** fixture (and every `invalid_expansion`
+snapshot) documents a defect, so describe it in `## Known issues` alongside the
+construct's other bugs, again with a snippet, and index it from `## Tests`; when the
+defect has a user-visible consequence, note it in the reference document's `## Known
+issues` section too and cross-link the two. In both cases describe the behavior in the
+document's own words without referring to the test, and put a link from the fixture's
+header comment back to the implementation document — to its Failure modes section for an
+acceptable case, its Known issues section for a problematic one.
 
 ## Keep the docs in sync
 
