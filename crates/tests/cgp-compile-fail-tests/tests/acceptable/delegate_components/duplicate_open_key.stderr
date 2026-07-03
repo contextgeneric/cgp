@@ -1,0 +1,19 @@
+error[E0119]: conflicting implementations of trait `IsProviderFor<GreeterComponent, _, _>` for type `Person`
+  --> tests/acceptable/delegate_components/duplicate_open_key.rs:35:9
+   |
+33 |         open GreeterComponent;
+   |              ---------------- first implementation here
+34 |
+35 |         GreeterComponent: GreetHello,
+   |         ^^^^^^^^^^^^^^^^ conflicting implementation for `Person`
+   |
+   = note: downstream crates may implement trait `cgp::prelude::IsProviderFor<GreeterComponent, _, _>` for type `cgp::prelude::RedirectLookup<Person, cgp::prelude::PathCons<GreeterComponent, cgp::prelude::Nil>>`
+
+error[E0119]: conflicting implementations of trait `DelegateComponent<GreeterComponent>` for type `Person`
+  --> tests/acceptable/delegate_components/duplicate_open_key.rs:35:9
+   |
+33 |         open GreeterComponent;
+   |              ---------------- first implementation here
+34 |
+35 |         GreeterComponent: GreetHello,
+   |         ^^^^^^^^^^^^^^^^ conflicting implementation for `Person`
