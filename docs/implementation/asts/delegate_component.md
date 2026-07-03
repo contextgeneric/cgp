@@ -24,7 +24,7 @@ The `delegate_component` stack is the set of AST types that `delegate_components
 - **`NamespaceDelegateStatement`** (`namespace SomeNamespace;`) — forwards every lookup through a namespace trait. It lowers via the shared "for-entry" path to a blanket `DelegateComponent<__Key__>` impl bounded on `__Key__: SomeNamespace<TableType, Delegate = __Value__>`, so any key the namespace defines is inherited.
 - **`ForDelegateStatement`** (`for <Key, Provider> in SomeTable where … { … }`) — a loop that pulls mappings out of another lookup table. Each inner mapping produces a for-entry whose namespace-trait bound is reconstructed with the table type and a `Delegate = value` binding appended to the namespace path's arguments.
 
-The namespace and `for` forms share `EvaluatedForEntry` and `eval_delegate_entries_via_for`, which build the `Namespace<…, Delegate = …>` bound and the `__Key__`/`__Value__` generics before producing the final `EvaluatedDelegateEntry`.
+The namespace and `for` forms share `EvaluatedForEntry` and `eval_delegate_entries_via_for`, which build the `Namespace<…, Delegate = …>` bound and the `__Key__`/`__Value__` generics before producing the final `EvaluatedDelegateEntry`. `EvaluatedForEntry` carries its own diagnostic `span` (the namespace name, or a `for` mapping's key) since its `mapping_key` is a synthesized `__Key__`; it passes that span to the entry.
 
 ## `DelegateMapping`
 
@@ -38,7 +38,7 @@ Only Normal and Direct mappings can carry a nested inner table (their values are
 
 ## A key: `DelegateKey`
 
-`DelegateKey` is the left side of a mapping, an enum over three shapes selected by a lookahead on a fork (after skipping any attributes and generics): a leading `@` gives a `PathDelegateKey`, a leading bracket gives a `MultiDelegateKey`, otherwise a `SingleDelegateKey`. `EvalDelegateKey::eval` returns a `Vec<EvaluatedDelegateKey>` (a type plus its generics), so a single mapping can expand to several keyed impls.
+`DelegateKey` is the left side of a mapping, an enum over three shapes selected by a lookahead on a fork (after skipping any attributes and generics): a leading `@` gives a `PathDelegateKey`, a leading bracket gives a `MultiDelegateKey`, otherwise a `SingleDelegateKey`. `EvalDelegateKey::eval` returns a `Vec<EvaluatedDelegateKey>` (a type, its generics, and a diagnostic `span`), so a single mapping can expand to several keyed impls. The `span` is the source token the key was written as, carried separately because a `@`-path key lowers to a synthesized `PathCons<..>` type whose own span points at the macro `call_site`; it flows into the entry and drives the [error-span re-spanning](../entrypoints/delegate_components.md#error-spans).
 
 - **`SingleDelegateKey`** — attributes, an optional generic list, and a type; evaluates to one key carrying its generics.
 - **`MultiDelegateKey`** — a bracketed, comma-separated list of `SingleDelegateKey`; the array-key form, evaluating to one key per element so `[A, B]: P` becomes two impls.
@@ -52,7 +52,7 @@ Only Normal and Direct mappings can carry a nested inner table (their values are
 
 ## `EvaluatedDelegateEntry`
 
-`EvaluatedDelegateEntry` is the lowered form every key/value/statement collapses to: the target type, the merged generics, the key type, and the value (`Delegate`) type. It owns the rendering: `build_delegate_component_impl` emits the `DelegateComponent<Key> for TableType { type Delegate = Value; }` impl, and `build_is_provider_for_impl` emits the forwarding `IsProviderFor<Key, __Context__, __Params__>` impl bounded on `Value: IsProviderFor<Key, __Context__, __Params__>`, appending the reserved `__Context__` and `__Params__` generics. (`build_namespace_impl`, on the same type, is used by the namespace preset machinery to emit a `Namespace for Key` impl instead.)
+`EvaluatedDelegateEntry` is the lowered form every key/value/statement collapses to: the target type, the merged generics, the key type, the value (`Delegate`) type, and the diagnostic `span`. It owns the rendering: `build_delegate_component_impl` emits the `DelegateComponent<Key> for TableType { type Delegate = Value; }` impl, and `build_is_provider_for_impl` emits the forwarding `IsProviderFor<Key, __Context__, __Params__>` impl bounded on `Value: IsProviderFor<Key, __Context__, __Params__>`, appending the reserved `__Context__` and `__Params__` generics. Both then pass through `respan_impl`, which re-spans the finished impl onto the entry's `span` (restoring the generics) so a coherence conflict points at the entry rather than the whole block — see [Error spans](../entrypoints/delegate_components.md#error-spans). (`build_namespace_impl`, on the same type, is used by the namespace preset machinery to emit a `Namespace for Key` impl instead.)
 
 ## Tests
 

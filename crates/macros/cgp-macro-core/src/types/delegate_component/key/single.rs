@@ -1,4 +1,5 @@
 use syn::parse::{Parse, ParseStream};
+use syn::spanned::Spanned;
 use syn::{Attribute, Type};
 
 use crate::types::delegate_component::{EvalDelegateKey, EvaluatedDelegateKey};
@@ -31,6 +32,7 @@ impl EvalDelegateKey for SingleDelegateKey {
     fn eval(&self) -> syn::Result<Vec<EvaluatedDelegateKey>> {
         let key = EvaluatedDelegateKey {
             generics: self.generics.generics.clone(),
+            span: self.ty.span(),
             key: self.ty.clone(),
         };
 

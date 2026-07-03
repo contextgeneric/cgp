@@ -1,3 +1,4 @@
+use proc_macro2::Span;
 use syn::{Generics, Ident, Type};
 
 use crate::parse_internal;
@@ -25,6 +26,10 @@ pub struct EvaluatedForEntry {
     pub namespace: PathWithTypeArgs,
     pub mapping_key: Type,
     pub mapping_value: Type,
+    /// The diagnostic span carried through to the entry's impls; sourced from the
+    /// user token behind the statement (the `namespace` name, or a `for` mapping's
+    /// key) since `mapping_key` may be a synthesized `__Key__`.
+    pub span: Span,
 }
 
 /// Lower every for-entry a `namespace`/`for` statement produces into evaluated
@@ -82,6 +87,7 @@ impl EvalDelegateEntry for EvaluatedForEntry {
             generics,
             key: self.mapping_key.clone(),
             value: self.mapping_value.clone(),
+            span: self.span,
         };
 
         Ok(entry)

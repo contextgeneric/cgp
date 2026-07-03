@@ -27,6 +27,7 @@ impl EvalDelegateEntries for DirectDelegateMapping {
 
         for key in keys {
             let key_type = key.key;
+            let span = key.span;
             let mut generics = key.generics;
 
             let where_predicate = parse_internal! {
@@ -47,6 +48,7 @@ impl EvalDelegateEntries for DirectDelegateMapping {
                 generics,
                 key: key_type,
                 value: direct_value_type,
+                span,
             });
         }
 

@@ -1,0 +1,17 @@
+error[E0119]: conflicting implementations of trait `DelegateComponent<PathCons<Symbol<3, cgp::prelude::Chars<'c', cgp::prelude::Chars<'g', cgp::prelude::Chars<'p', Nil>>>>, PathCons<Symbol<4, cgp::prelude::Chars<'c', cgp::prelude::Chars<'o', cgp::prelude::Chars<'r', cgp::prelude::Chars<'e', Nil>>>>>, PathCons<Symbol<5, cgp::prelude::Chars<'e', cgp::prelude::Chars<'r', cgp::prelude::Chars<'r', cgp::prelude::Chars<'o', cgp::prelude::Chars<'r', Nil>>>>>>, PathCons<ErrorTypeProviderComponent, _>>>>>` for type `App`
+  --> tests/acceptable/delegate_components/duplicate_path_key.rs:26:25
+   |
+25 |         @cgp.core.error.ErrorTypeProviderComponent: UseType<String>,
+   |                         -------------------------- first implementation here
+26 |         @cgp.core.error.ErrorTypeProviderComponent: UseType<String>,
+   |                         ^^^^^^^^^^^^^^^^^^^^^^^^^^ conflicting implementation for `App`
+
+error[E0119]: conflicting implementations of trait `IsProviderFor<PathCons<Symbol<3, cgp::prelude::Chars<'c', cgp::prelude::Chars<'g', cgp::prelude::Chars<'p', Nil>>>>, PathCons<Symbol<4, cgp::prelude::Chars<'c', cgp::prelude::Chars<'o', cgp::prelude::Chars<'r', cgp::prelude::Chars<'e', Nil>>>>>, PathCons<Symbol<5, cgp::prelude::Chars<'e', cgp::prelude::Chars<'r', cgp::prelude::Chars<'r', cgp::prelude::Chars<'o', cgp::prelude::Chars<'r', Nil>>>>>>, PathCons<ErrorTypeProviderComponent, _>>>>, _, _>` for type `App`
+  --> tests/acceptable/delegate_components/duplicate_path_key.rs:26:25
+   |
+25 |         @cgp.core.error.ErrorTypeProviderComponent: UseType<String>,
+   |                         -------------------------- first implementation here
+26 |         @cgp.core.error.ErrorTypeProviderComponent: UseType<String>,
+   |                         ^^^^^^^^^^^^^^^^^^^^^^^^^^ conflicting implementation for `App`
+   |
+   = note: downstream crates may implement trait `cgp::prelude::IsProviderFor<cgp::prelude::PathCons<cgp::prelude::Symbol<3, cgp::prelude::Chars<'c', cgp::prelude::Chars<'g', cgp::prelude::Chars<'p', cgp::prelude::Nil>>>>, cgp::prelude::PathCons<cgp::prelude::Symbol<4, cgp::prelude::Chars<'c', cgp::prelude::Chars<'o', cgp::prelude::Chars<'r', cgp::prelude::Chars<'e', cgp::prelude::Nil>>>>>, cgp::prelude::PathCons<cgp::prelude::Symbol<5, cgp::prelude::Chars<'e', cgp::prelude::Chars<'r', cgp::prelude::Chars<'r', cgp::prelude::Chars<'o', cgp::prelude::Chars<'r', cgp::prelude::Nil>>>>>>, cgp::prelude::PathCons<cgp::cgp_core::cgp_error::ErrorTypeProviderComponent, _>>>>, _, _>` for type `cgp::prelude::UseType<std::string::String>`

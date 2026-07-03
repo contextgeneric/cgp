@@ -12,7 +12,7 @@ ErrorRaiserComponent // -> Type (capitalized)
 u32                 // -> Type (lowercase but primitive)
 ```
 
-The primitive check recognizes the `iN`/`uN`/`fN` numeric families plus `char`, `bool`, `usize`, `isize`, and `str`. `PathElement` emits itself through `ToTokens` (delegating to the symbol or the type) and also implements the internal `ToType` trait for callers that need a `syn::Type`.
+The primitive check recognizes the `iN`/`uN`/`fN` numeric families plus `char`, `bool`, `usize`, `isize`, and `str`. `PathElement` emits itself through `ToTokens` (delegating to the symbol or the type) and also implements the internal `ToType` trait for callers that need a `syn::Type`. Its `span()` accessor returns the segment's source span — the type's own span, or the `Symbol`'s stored parse-time span — which `delegate_components!` joins across a path to point an [error span](../entrypoints/delegate_components.md#error-spans) at an `@`-path key.
 
 ## `UniPath`
 

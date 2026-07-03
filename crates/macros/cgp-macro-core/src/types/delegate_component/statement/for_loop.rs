@@ -77,6 +77,7 @@ impl EvalForEntries for ForDelegateStatement {
                     namespace: self.namespace.clone(),
                     mapping_key: key.key,
                     mapping_value: value_type.clone(),
+                    span: key.span,
                 };
 
                 entries.push(entry);

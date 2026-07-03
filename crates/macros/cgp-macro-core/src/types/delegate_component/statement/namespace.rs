@@ -44,6 +44,7 @@ impl EvalForEntry for NamespaceDelegateStatement {
             mapping_key: parse_internal!(__Key__),
             mapping_value: parse_internal!(__Value__),
             namespace: self.ident.clone().into(),
+            span: self.ident.span(),
         };
 
         Ok(entry)

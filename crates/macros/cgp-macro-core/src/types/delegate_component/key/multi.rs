@@ -1,5 +1,6 @@
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
+use syn::spanned::Spanned;
 use syn::token::Comma;
 use syn::{Attribute, bracketed};
 
@@ -32,6 +33,7 @@ impl EvalDelegateKey for MultiDelegateKey {
         for key in &self.keys {
             let key = EvaluatedDelegateKey {
                 generics: key.generics.generics.clone(),
+                span: key.ty.span(),
                 key: key.ty.clone(),
             };
 

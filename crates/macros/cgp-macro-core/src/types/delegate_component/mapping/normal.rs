@@ -39,6 +39,7 @@ impl EvalDelegateEntries for NormalDelegateMapping {
                 generics: key.generics,
                 key: key.key,
                 value: value_type.clone(),
+                span: key.span,
             })
         }
 

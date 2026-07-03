@@ -1,5 +1,6 @@
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
+use syn::spanned::Spanned;
 use syn::token::{Brace, Comma, Semi};
 use syn::{Type, braced};
 
@@ -63,6 +64,7 @@ impl EvalDelegateEntries for OpenDelegateStatement {
             entries.push(EvaluatedDelegateEntry {
                 table_type: table_type.clone(),
                 generics: Default::default(),
+                span: component.span(),
                 key,
                 value,
             })

@@ -1,6 +1,7 @@
-use proc_macro2::TokenStream;
+use proc_macro2::{Span, TokenStream};
 use quote::ToTokens;
 use syn::parse::{Parse, ParseStream};
+use syn::spanned::Spanned;
 use syn::{Ident, Type};
 
 use crate::functions::parse_internal;
@@ -33,6 +34,19 @@ impl Parse for PathElement {
         };
 
         Ok(parsed)
+    }
+}
+
+impl PathElement {
+    /// The element's original source span. A `Symbol` keeps its parse-time span
+    /// explicitly (its `ToTokens` synthesizes new `Chars`/`Symbol` tokens that
+    /// would otherwise be `call_site`); a `Type` element carries its span in its
+    /// own tokens. Used to point a diagnostic at the path segment the user wrote.
+    pub fn span(&self) -> Span {
+        match self {
+            Self::Type(ty) => ty.span(),
+            Self::Symbol(symbol) => symbol.span,
+        }
     }
 }
 

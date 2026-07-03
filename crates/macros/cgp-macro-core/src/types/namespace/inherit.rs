@@ -35,6 +35,7 @@ impl EvalForEntry for InheritNamespaceStatement {
             for_value: parse_internal!(__Value__),
             mapping_key: parse_internal!(__Key__),
             mapping_value: parse_internal!(__Value__),
+            span: self.namespace.ident().span(),
             namespace: self.namespace.clone(),
         };
 
