@@ -70,7 +70,9 @@ ForStmt       -> `for` `<` IDENTIFIER `,` IDENTIFIER `>` `in` TypePath WhereClau
 NormalMapping -> Key `:` ProviderValue
 ```
 
-A `NamespaceStmt` forwards every lookup on the table through the named namespace. A `ForStmt` binds a key variable and a provider variable, reads each entry of the table named after `in`, and emits one mapping per entry — its body holds only `` `:` `` mappings (`NormalMapping`), whose `Key` and `ProviderValue` are the shared productions from [`delegate_components!`](delegate_components.md). `TypePath` and `WhereClause` are Rust grammar productions.
+A `NamespaceStmt` forwards every lookup on the table through the named namespace. A `ForStmt` binds a key variable and a provider variable, reads each entry of the table named after `in`, and emits one mapping per entry — its body holds only `` `:` `` mappings (`NormalMapping`), whose `Key` and `ProviderValue` are the shared productions from [`delegate_components!`](delegate_components.md). Its optional `WhereClause` is merged into every impl the loop generates, so a bound written there (`for <T, P> in Table where T: Clone { … }`) constrains which keys the loop wires, alongside the namespace bound the loop reconstructs. `TypePath` and `WhereClause` are Rust grammar productions.
+
+Like [`delegate_components!`](delegate_components.md), the body accepts no attributes on any entry — on a mapping key, a `=>` redirect key, or a key inside a `for` loop — and rejects any it finds with a spanned "unsupported attribute" error rather than silently discarding it.
 
 ## Expansion
 

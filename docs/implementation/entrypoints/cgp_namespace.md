@@ -65,6 +65,29 @@ The **reserved identifiers** appear literally in the output. The lookup trait's 
 
 The body **reuses the `delegate_components!` grammar wholesale** — array keys, the leading `open { … }` header, `namespace`/`for` statements, and both `:` and `=>` mappings all parse, because the entries are a `DelegateEntries`. Anything `delegate_components!` accepts in a table, a namespace body accepts too.
 
+**Attributes are rejected**, matching `delegate_components!`. The entry grammar parses `#[..]` attributes on keys (a `DelegateEntries` reuses the same key parsers), but no attribute is supported, so the entry point calls `entries.validate_attributes()` after parsing to fail with a spanned "unsupported attribute" error rather than silently dropping one. The check recurses through the statement forms, so an attribute on a key inside a `for` loop is rejected too.
+
+A **`for` loop's optional `where` clause** is applied. `ForDelegateStatement` parses a `WhereClause?` after the `in` table, and `eval_for_entries` merges its predicates into every generated impl alongside the reconstructed `__Key__: Namespace<…, Delegate = __Value__>` bound, so a bound written on the loop constrains which keys it wires. This applies wherever a `for` loop appears — a namespace body or a context's `delegate_components!` table.
+
+## Error spans
+
+Each generated namespace impl is re-spanned onto the entry that produced it, so a coherence conflict (`E0119`) between two entries mapping the same key points at the offending entry rather than at the whole `cgp_namespace!` block. The impls are built with `parse_internal!`, whose structural tokens carry the macro's `call_site` span; `build_namespace_impl` therefore re-spans each finished impl onto the entry's `span` (restoring the generics afterward), the same `respan_impl` technique the `DelegateComponent`/`IsProviderFor` impls use — see [delegate_components.md](delegate_components.md#error-spans). This matters most for a `=>` prefix-rewrite entry, whose key type is a synthesized `PathCons<..>` nest at `call_site`; the entry instead sources its span from the path segments the user wrote, so the caret lands on the duplicated path leaf. The `#[prefix(...)]` attribute impl is built separately (`PrefixAttribute::to_namespace_impl`) and keyed on the component name, which already carries the trait's own span.
+
+## Failure modes
+
+Some namespace input is accepted by the macro but then fails to compile, and these failures are ones the macro **intentionally defers to the Rust compiler** because it lacks the whole-program view the check needs. Each is intended behavior, not a bug, and is pinned by a fixture under [acceptable/cgp_namespace/](../../../crates/tests/cgp-compile-fail-tests/tests/acceptable/cgp_namespace) in `cgp-compile-fail-tests`.
+
+A **duplicate key** — the same key mapped twice in one namespace block — emits two conflicting impls of the namespace lookup trait for that key and fails with `E0119`, exactly as two hand-written impls would. The error points at each offending entry rather than the whole block, per [Error spans](#error-spans):
+
+```rust
+cgp_namespace! {
+    new MyNamespace {
+        @foo.bar => @baz,
+        @foo.bar => @qux, // E0119: conflicting `MyNamespace<_>` impl for the same path
+    }
+}
+```
+
 ## Snapshots
 
 Every `snapshot_cgp_namespace!` invocation across the suite is indexed here, since these snapshots all belong to this entrypoint:
@@ -86,6 +109,15 @@ The behavioral tests confirm the generated namespaces wire correctly:
 - [namespaces/extended_namespace_wiring.rs](../../../crates/tests/cgp-tests/tests/namespaces/extended_namespace_wiring.rs) checks that an extended namespace inherits its parent's entries and that the child's prefix rewrite takes effect.
 - [namespaces/default_impls_wiring.rs](../../../crates/tests/cgp-tests/tests/namespaces/default_impls_wiring.rs) checks that a `DefaultNamespace`-based namespace supplies defaults a context can override.
 - [namespaces/multi_param_namespace.rs](../../../crates/tests/cgp-tests/tests/namespaces/multi_param_namespace.rs) and [namespaces/prefix_default_namespace.rs](../../../crates/tests/cgp-tests/tests/namespaces/prefix_default_namespace.rs) exercise parameterized namespaces and the `#[prefix(...)]` join that attaches a component to one.
+- [namespaces/for_where_clause.rs](../../../crates/tests/cgp-tests/tests/namespaces/for_where_clause.rs) pins the `for <..> in .. where ..` loop's `where` clause landing on each generated impl (a `snapshot_delegate_components!`, since `delegate_components!` owns the `for`-loop form).
+
+The rejection cases in `cgp-macro-tests` pin the attribute rejection:
+
+- [parser_rejections/cgp_namespace.rs](../../../crates/tests/cgp-macro-tests/tests/parser_rejections/cgp_namespace.rs) asserts the macro rejects an attribute on a `:` mapping key, on a `=>` redirect key, and on a key inside a `for` loop.
+
+The compile-fail fixture in `cgp-compile-fail-tests` pins an accepted expansion that fails to compile — an **acceptable** failure deferred to the compiler, described under [Failure modes](#failure-modes):
+
+- [acceptable/cgp_namespace/duplicate_path_key.rs](../../../crates/tests/cgp-compile-fail-tests/tests/acceptable/cgp_namespace/duplicate_path_key.rs) — two identical `@`-path prefix-rewrite entries conflict (`E0119`); its `.stderr` pins the [error span](#error-spans) landing on the duplicated path leaf rather than the whole block, even though the key lowers to a synthesized `PathCons<..>` type.
 
 ## Source
 

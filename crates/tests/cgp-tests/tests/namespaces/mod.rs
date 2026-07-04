@@ -30,3 +30,4 @@ pub mod default_impls;
 pub mod default_impls_wiring;
 pub mod extended;
 pub mod extended_namespace_wiring;
+pub mod for_where_clause;

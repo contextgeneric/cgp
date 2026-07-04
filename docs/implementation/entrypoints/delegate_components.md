@@ -56,7 +56,7 @@ A **mapping operator** selects which value lowering applies. `:` (Normal) maps t
 
 An **array key** `[A, B]: Provider` expands to one impl pair per bracketed key, all pointing at the same value, because the key evaluates to a vector of evaluated keys that the mapping iterates. A **per-key or per-table generic list** is merged onto every generated impl: a table-level `<'a, T>` is threaded through each impl's generics, and a key may introduce its own extra generics (`<T2> BazKey<T1, T2>`) that merge with the table's.
 
-An **`@`-path key** carries a leading `__Wildcard__` generic and lowers the path to a prefix type ending in that wildcard, which is how a dispatch parameter slots in at lookup time. A **brace group on a path segment** (`@Component.{u32, u64}: P`) expands to one key per element, and the `namespace`/`for` statement forms lower through a shared "for-entry" path that builds a `Namespace<…, Delegate = …>` bound rather than a direct `DelegateComponent` impl; these are the namespace machinery and are detailed in the AST document.
+An **`@`-path key** carries a leading `__Wildcard__` generic and lowers the path to a prefix type ending in that wildcard, which is how a dispatch parameter slots in at lookup time. A **brace group on a path segment** (`@Component.{u32, u64}: P`) expands to one key per element, and the `namespace`/`for` statement forms lower through a shared "for-entry" path that builds a `Namespace<…, Delegate = …>` bound rather than a direct `DelegateComponent` impl; these are the namespace machinery and are detailed in the AST document. A **`for` loop's optional `where` clause** is merged into every impl the loop generates, alongside that reconstructed bound, so a bound written on the loop constrains which keys it wires.
 
 ## Error spans
 
@@ -132,6 +132,7 @@ The namespace snapshots pin the statement and `@`-path forms:
 - [namespaces/extended_namespace_wiring.rs](../../../crates/tests/cgp-tests/tests/namespaces/extended_namespace_wiring.rs) — a namespace table mixing plain and nested-group `@`-paths across several crates' components.
 - [namespaces/prefix_default_namespace.rs](../../../crates/tests/cgp-tests/tests/namespaces/prefix_default_namespace.rs) — a `DefaultNamespace` header with fully-qualified `@cgp.core.error.…` paths.
 - [namespaces/default_impls_wiring.rs](../../../crates/tests/cgp-tests/tests/namespaces/default_impls_wiring.rs) — the `for <T, Provider> in SomeTable { … }` loop form pulling entries from another lookup table.
+- [namespaces/for_where_clause.rs](../../../crates/tests/cgp-tests/tests/namespaces/for_where_clause.rs) — the `for <..> in .. where ..` loop with a `where` clause, pinning the clause merged onto each generated impl beside the reconstructed namespace bound.
 - [namespaces/redirect_lookup.rs](../../../crates/tests/cgp-tests/tests/namespaces/redirect_lookup.rs) — a `namespace` header producing the `RedirectLookup`-style blanket `DelegateComponent` impl.
 - [dispatching/use_delegate_getter.rs](../../../crates/tests/cgp-tests/tests/dispatching/use_delegate_getter.rs) — the legacy `UseDelegate<new … { … }>` nested-table value, including a custom `UseDelegate2` wrapper over tuple keys.
 

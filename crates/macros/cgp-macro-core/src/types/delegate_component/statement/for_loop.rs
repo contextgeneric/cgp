@@ -69,8 +69,21 @@ impl EvalForEntries for ForDelegateStatement {
             let value_type = mapping.value.eval()?;
 
             for key in keys {
+                let mut generics = key.generics;
+
+                // Apply the loop's optional `where` clause to every generated
+                // impl, merging its predicates alongside those the key
+                // introduced so a bound written on the loop constrains the
+                // blanket impls it emits.
+                if let Some(where_clause) = &self.where_clause {
+                    generics
+                        .make_where_clause()
+                        .predicates
+                        .extend(where_clause.predicates.iter().cloned());
+                }
+
                 let entry = EvaluatedForEntry {
-                    generics: key.generics,
+                    generics,
                     table_type: table_type.clone(),
                     for_key: self.key.clone(),
                     for_value: self.value.clone(),

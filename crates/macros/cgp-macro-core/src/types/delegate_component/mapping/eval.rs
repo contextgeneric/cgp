@@ -134,6 +134,11 @@ impl EvaluatedDelegateEntry {
             }
         };
 
-        Ok(item_impl)
+        // Re-span like the `DelegateComponent`/`IsProviderFor` impls, so a
+        // coherence conflict between two namespace entries mapping the same key
+        // is reported on the offending entry rather than the whole
+        // `cgp_namespace!` block — critical for a path key, whose synthesized
+        // `PathCons<..>` key type otherwise carries the macro's `call_site` span.
+        self.respan_impl(item_impl)
     }
 }

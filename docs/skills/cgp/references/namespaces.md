@@ -152,7 +152,7 @@ delegate_components! {
 }
 ```
 
-The `for <T, Provider> in DefaultImpls1<ShowImplComponent>` loop wires each type `T` by reading `T: DefaultImpls1<ShowImplComponent, App, Delegate = Provider>`, and the direct `u64` line shadows whatever the namespace would otherwise supply for that type. The loop target can equally be a whole namespace defined with `cgp_namespace!`, such as the `DefaultShowComponents` namespace shown earlier — `for <T, Provider> in DefaultShowComponents { … }` wires its listed types through the same projection.
+The `for <T, Provider> in DefaultImpls1<ShowImplComponent>` loop wires each type `T` by reading `T: DefaultImpls1<ShowImplComponent, App, Delegate = Provider>`, and the direct `u64` line shadows whatever the namespace would otherwise supply for that type. The loop target can equally be a whole namespace defined with `cgp_namespace!`, such as the `DefaultShowComponents` namespace shown earlier — `for <T, Provider> in DefaultShowComponents { … }` wires its listed types through the same projection. An optional `where` clause after the loop target (`for <T, Provider> in Table where T: Clone { … }`) adds its bounds to every impl the loop emits, narrowing which types it wires.
 
 ## Defining a preset once, reusing it across contexts
 

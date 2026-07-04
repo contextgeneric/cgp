@@ -1,0 +1,7 @@
+error[E0119]: conflicting implementations of trait `MyNamespace<_>` for type `PathCons<Symbol<3, cgp::prelude::Chars<'f', cgp::prelude::Chars<'o', cgp::prelude::Chars<'o', Nil>>>>, PathCons<Symbol<3, cgp::prelude::Chars<'b', cgp::prelude::Chars<'a', cgp::prelude::Chars<'r', Nil>>>>, _>>`
+  --> tests/acceptable/cgp_namespace/duplicate_path_key.rs:22:14
+   |
+21 |         @foo.bar => @baz,
+   |              --- first implementation here
+22 |         @foo.bar => @qux,
+   |              ^^^ conflicting implementation for `PathCons<Symbol<3, cgp::prelude::Chars<'f', cgp::prelude::Chars<'o', cgp::prelude::Chars<'o', Nil>>>>, PathCons<Symbol<3, cgp::prelude::Chars<'b', cgp::prelude::Chars<'a', cgp::prelude::Chars<'r', Nil>>>>, _>>`
