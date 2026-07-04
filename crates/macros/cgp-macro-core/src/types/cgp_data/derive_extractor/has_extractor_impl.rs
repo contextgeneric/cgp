@@ -75,20 +75,29 @@ pub fn derive_has_extractor_ref_impl(
 
     let context_ident = &context_enum.ident;
 
-    let mut extractor_generics = to_generic_args(&context_enum.generics)?;
-    extractor_generics.args.insert(
-        0,
-        parse2(quote! {
-            '__a__
-        })?,
-    );
+    let is_empty = context_enum.variants.is_empty();
 
-    extractor_generics.args.insert(
-        1,
-        parse2(quote! {
-            #IsRef
-        })?,
-    );
+    let mut extractor_generics = to_generic_args(&context_enum.generics)?;
+
+    // A variantless enum drops the borrowed extractor's `'__a__`/`__R__`
+    // parameters (see `derive_extractor_enum_ref`), so pass no borrow arguments
+    // and match on the dereferenced uninhabited place — a bare `match self {}`
+    // over `&Self` is non-exhaustive because a reference is always inhabited.
+    if !is_empty {
+        extractor_generics.args.insert(
+            0,
+            parse2(quote! {
+                '__a__
+            })?,
+        );
+
+        extractor_generics.args.insert(
+            1,
+            parse2(quote! {
+                #IsRef
+            })?,
+        );
+    }
 
     let mut match_arms = Vec::<Arm>::new();
 
@@ -106,6 +115,12 @@ pub fn derive_has_extractor_ref_impl(
         })?);
     }
 
+    let body = if is_empty {
+        quote! { match *self {} }
+    } else {
+        quote! { match self { #(#match_arms)* } }
+    };
+
     let item_impl = parse2(quote! {
         impl #impl_generics #HasExtractorRef
             for #context_ident #ty_generics
@@ -116,9 +131,7 @@ pub fn derive_has_extractor_ref_impl(
                 Self: '__a__;
 
             fn extractor_ref<'__a__>(&'__a__ self) -> Self::ExtractorRef<'__a__> {
-                match self {
-                    #(#match_arms)*
-                }
+                #body
             }
         }
     })?;
@@ -136,20 +149,27 @@ pub fn derive_has_extractor_mut_impl(
 
     let context_ident = &context_enum.ident;
 
-    let mut extractor_generics = to_generic_args(&context_enum.generics)?;
-    extractor_generics.args.insert(
-        0,
-        parse2(quote! {
-            '__a__
-        })?,
-    );
+    let is_empty = context_enum.variants.is_empty();
 
-    extractor_generics.args.insert(
-        1,
-        parse2(quote! {
-            #IsMut
-        })?,
-    );
+    let mut extractor_generics = to_generic_args(&context_enum.generics)?;
+
+    // See `derive_has_extractor_ref_impl`: a variantless enum drops the borrowed
+    // extractor's `'__a__`/`__R__` parameters and matches the dereferenced place.
+    if !is_empty {
+        extractor_generics.args.insert(
+            0,
+            parse2(quote! {
+                '__a__
+            })?,
+        );
+
+        extractor_generics.args.insert(
+            1,
+            parse2(quote! {
+                #IsMut
+            })?,
+        );
+    }
 
     let mut match_arms = Vec::<Arm>::new();
 
@@ -167,6 +187,12 @@ pub fn derive_has_extractor_mut_impl(
         })?);
     }
 
+    let body = if is_empty {
+        quote! { match *self {} }
+    } else {
+        quote! { match self { #(#match_arms)* } }
+    };
+
     let item_impl = parse2(quote! {
         impl #impl_generics #HasExtractorMut
             for #context_ident #ty_generics
@@ -177,9 +203,7 @@ pub fn derive_has_extractor_mut_impl(
                 Self: '__a__;
 
             fn extractor_mut<'__a__>(&'__a__ mut self) -> Self::ExtractorMut<'__a__> {
-                match self {
-                    #(#match_arms)*
-                }
+                #body
             }
         }
     })?;

@@ -16,6 +16,7 @@ pub mod has_fields_enum_generic;
 // concrete enum, a generic enum, and an enum whose variants carry struct
 // payloads.
 pub mod derive_cgp_data;
+pub mod derive_cgp_data_empty;
 pub mod derive_cgp_data_generic;
 pub mod derive_cgp_data_shape;
 

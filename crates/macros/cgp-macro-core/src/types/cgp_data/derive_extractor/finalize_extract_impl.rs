@@ -15,7 +15,10 @@ pub fn derive_finalize_extract_impl(
     let generics = {
         let mut generics = context_enum.generics.clone();
 
-        if is_ref {
+        // The borrowed partial enum of a variantless enum carries no
+        // `'__a__`/`__R__` parameters (see `derive_extractor_enum_ref`), so this
+        // impl must not declare them either.
+        if is_ref && !context_enum.variants.is_empty() {
             generics.params.insert(
                 0,
                 parse2(quote! {

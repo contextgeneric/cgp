@@ -14,7 +14,11 @@ pub fn derive_partial_data_impl_from_enum(
 ) -> syn::Result<ItemImpl> {
     let mut generics = context_struct.generics.clone();
 
-    if is_ref {
+    // The borrowed partial enum of a variantless enum carries no `'__a__`/`__R__`
+    // parameters (see `derive_extractor_enum_ref`), so this impl must not declare
+    // them either, or its `type_generics` would over-apply arguments to a bare
+    // `__PartialRef{Name}`.
+    if is_ref && !context_struct.variants.is_empty() {
         generics.params.insert(
             0,
             parse2(quote! {

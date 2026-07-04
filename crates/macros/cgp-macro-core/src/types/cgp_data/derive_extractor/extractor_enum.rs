@@ -55,6 +55,14 @@ pub fn derive_extractor_enum_ref(
 
     extractor_enum.ident = extractor_ident.clone();
 
+    // A variantless enum borrows nothing, so the `'__a__` lifetime and the
+    // `__R__: MapTypeRef` selector would be unused parameters (`E0392`). Emit the
+    // borrowed partial enum as a bare empty enum instead, and the impls that
+    // reference it drop the same two parameters in lockstep.
+    if extractor_enum.variants.is_empty() {
+        return Ok(extractor_enum);
+    }
+
     let generics = &mut extractor_enum.generics;
 
     for param in generics.params.iter_mut() {

@@ -47,6 +47,7 @@ Every `snapshot_derive_cgp_data!` invocation across the suite is indexed here, s
 - [extensible_variants/derive_cgp_data.rs](../../../crates/tests/cgp-tests/tests/extensible_variants/derive_cgp_data.rs) — the canonical concrete-enum variant expansion (representation, `FromVariant`, extractor).
 - [extensible_variants/derive_cgp_data_generic.rs](../../../crates/tests/cgp-tests/tests/extensible_variants/derive_cgp_data_generic.rs) — a generic enum, generics lifted onto the `__Partial*` extractor enums, with upcast/downcast.
 - [extensible_variants/derive_cgp_data_shape.rs](../../../crates/tests/cgp-tests/tests/extensible_variants/derive_cgp_data_shape.rs) — an enum with struct payloads and multi-character variant names.
+- [extensible_variants/derive_cgp_data_empty.rs](../../../crates/tests/cgp-tests/tests/extensible_variants/derive_cgp_data_empty.rs) — a variantless enum, the degenerate special case: bare `__Partial*` enums with no parameters and `match *self {}` in the borrowed accessors.
 
 ## Tests
 
