@@ -62,6 +62,8 @@ A **const generic parameter** on the component is rejected with a spanned `syn::
 
 The **reserved identifiers** appear literally in the output: the context parameter is `__Context__` (unless the `context` key overrides it), the provider parameter is `__Provider__`, and the `RedirectLookup` impl introduces `__Components__` and `__Path__`. These names are chosen so they never clash with a user's own type parameters.
 
+The **marker struct's name span** is the provider identifier's span, not `Span::call_site()`. When the component name is not given explicitly, `CgpComponentArgs` derives it as `{Provider}Component` and spans that identifier on the provider identifier the user wrote in `#[cgp_component(Provider)]`. A `call_site` span would instead cover the whole `#[cgp_component(..)]` attribute, so the generated `struct {Provider}Component` would report its definition on a range that also contains the `cgp_component` macro path — and rust-analyzer go-to-definition on a delegate key naming the component would then offer both the component and the macro as targets. That misdirection appears only when navigating from another crate, where the editor relies on the recorded definition span rather than a live expansion; deriving the span from the provider identifier keeps the definition on a single user token, mirroring `derive_check_trait_ident`. See the [Spans note](../README.md#spans-aim-generated-items-at-the-token-the-user-wrote) for why span placement serves the editor as well as the compiler.
+
 ## Snapshots
 
 Every `snapshot_cgp_component!` invocation across the suite is indexed here, since these snapshots all belong to this entrypoint:
