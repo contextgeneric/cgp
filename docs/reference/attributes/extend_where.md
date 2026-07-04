@@ -16,7 +16,7 @@ It complements [`#[extend]`](extend.md). Where `#[extend(...)]` adds *supertrait
 #[extend_where(Scalar: Clone)]
 ```
 
-Unlike [`#[uses]`](uses.md) and [`#[extend]`](extend.md), which accept only the simplified trait-path form, `#[extend_where(...)]` accepts arbitrary predicates — the same things a Rust `where` clause allows, including associated-type-equality bounds. Each predicate is added verbatim to the generated trait's `where` clause.
+Unlike [`#[uses]`](uses.md), whose entries are bounds attached to `Self` on the generated impl, and [`#[extend]`](extend.md), whose entries become supertraits of the generated trait, `#[extend_where(...)]` accepts arbitrary `where` predicates — a bound on any type, not only `Self` — added verbatim to the generated trait's `where` clause. Each predicate can carry anything a Rust `where` clause allows, including associated-type-equality bounds.
 
 `#[extend_where(...)]` is supported only in [`#[cgp_fn]`](../macros/cgp_fn.md). It has no meaning in [`#[cgp_impl]`](../macros/cgp_impl.md) or [`#[cgp_component]`](../macros/cgp_component.md), because in those macros the `where` clause you write is already part of the trait definition — there is nothing to promote, so write the bound as a normal `where` clause directly.
 

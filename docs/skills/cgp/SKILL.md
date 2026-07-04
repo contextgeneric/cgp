@@ -325,9 +325,10 @@ visible machinery for syntax that reads like ordinary Rust:
 
 The explicit forms remain correct and are what you *read* in generated code and desugaring; the
 exceptions that still need them are narrow — an associated-type-equality bound on a **non-abstract-type**
-trait (`Iterator<Item = u8>`, `From<X>`) that neither `#[uses]` nor `#[use_type]` can spell, a lifetime
-or HRTB that forces a named context, or a **local** associated type such as `Self::Output`, which stays
-qualified because it is the trait's own type, not an imported abstract one. Do *not* leave an
+trait (`Iterator<Item = u8>`, `From<X>`), which `#[use_type]` cannot spell and which reads more clearly
+as an explicit `where` clause than crammed into an import-shaped `#[uses]` (which now accepts it), a
+lifetime or HRTB that forces a named context, or a **local** associated type such as `Self::Output`,
+which stays qualified because it is the trait's own type, not an imported abstract one. Do *not* leave an
 equality bound on an **abstract-type** trait (`Self: HasErrorType<Error = AppError>`) as a hand-written
 `where` clause — that is exactly what the `#[use_type]` equality form `#[use_type(HasErrorType.{Error = AppError})]`
 replaces; only equality on a trait you would never `#[use_type]` from stays an explicit `where`. For the full legacy-to-modern before/after mapping of each idiom — the
@@ -545,8 +546,9 @@ Prefer implicit arguments for basic code — they make CGP look like ordinary fu
 ## `#[uses]`, `#[extend]`, `#[extend_where]`
 
 `#[uses(TraitA, TraitB<Param>)]` (on `#[cgp_fn]` or `#[cgp_impl]`) imports `Self` trait bounds, read
-like a `use` statement — it accepts only the simple `Trait<Params>` form (no associated-type
-equality; write those as explicit `where` clauses):
+like a `use` statement. The simple `Trait<Params>` form is idiomatic, but any `where`-clause bound is
+accepted, including associated-type equality (`HasErrorType<Error = AppError>`) — prefer `#[use_type]`'s
+equality form for abstract-type pins:
 
 ```rust
 #[cgp_fn]
