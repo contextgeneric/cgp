@@ -350,9 +350,17 @@ After this, `Person` implements `CanGreet` and `person.greet()` resolves through
 
 The macro has a few shorthands. An **array key** maps several components to one provider:
 `[FooComponent, BarComponent]: FooBarProvider`. A leading **`new`** keyword
-(`delegate_components! { new MyComponents { … } }`) also defines `struct MyComponents;`, which is
-handy for building reusable intermediary provider tables. A leading **generic list**
-(`delegate_components! { <T> MyContext<T> { … } }`) wires a whole family of contexts at once.
+(`delegate_components! { new MyComponents { … } }`) also defines `struct MyComponents;`, which is how
+you build an **aggregate provider** — a zero-sized provider that holds a table dispatching each
+component to a sub-provider, so other contexts can delegate a whole group of components to it as one
+reusable unit. A leading **generic list** (`delegate_components! { <T> MyContext<T> { … } }`) wires a
+whole family of contexts at once.
+
+The target of `delegate_components!` is therefore not always a context: it is either a concrete
+context (as `Person` is above) or an aggregate provider (as `MyComponents` is). This distinction
+governs checking — an aggregate provider is dispatched *to* by contexts and is never its own context,
+so it must be wired with plain `delegate_components!` and never `delegate_and_check_components!`; the
+next section explains why.
 
 To understand what wiring *does*, picture the explicit version: `delegate_components!` is equivalent
 to implementing the consumer trait by hand and forwarding to the provider —
@@ -454,9 +462,16 @@ more advanced codebases, keep `delegate_components!` and `check_components!` sep
 full control over what is checked: `#[check_providers(...)]` per provider layer, concrete parameters
 for generic keys, and checks over opened or namespaced wiring. The one non-negotiable is that a
 context's wiring *is* checked somehow; which macro you use to do it scales with the wiring's
-complexity. Use plain `delegate_components!` with no check only for intermediary provider tables that
-are not contexts in their own right. Finally, not every unsatisfied bound is a CGP component — some
-are ordinary or blanket traits that `check_components!` cannot verify.
+complexity.
+
+One case makes `delegate_and_check_components!` not just unnecessary but wrong: an **aggregate
+provider** (the `new MyComponents { … }` table above). That target is a provider other contexts
+delegate to, not a context itself — it has no fields and never implements a provider trait with
+itself in the context position — so the check's `CanUseComponent` assertion on it cannot hold and the
+macro would report spurious failures. Wire an aggregate provider with plain `delegate_components!`;
+it is verified indirectly when a real context that delegates to it is checked, or directly with a
+`#[check_providers(...)]` block that asserts `IsProviderFor` on it. Finally, not every unsatisfied
+bound is a CGP component — some are ordinary or blanket traits that `check_components!` cannot verify.
 
 For a nested [higher-order provider](references/higher-order-providers.md), checking the context
 tells you a layer is broken but not which one. The `#[check_providers(...)]` attribute on a

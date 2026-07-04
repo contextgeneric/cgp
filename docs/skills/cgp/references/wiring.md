@@ -54,7 +54,7 @@ delegate_components! {
 
 This is exactly equivalent to writing `AreaCalculatorComponent: RectangleGeometry` and `PerimeterCalculatorComponent: RectangleGeometry` on separate lines, plus the `GreeterComponent` entry — three entries in all.
 
-A `new` keyword in front of the target makes the macro define the target struct as well, saving a separate declaration. `new GeometryComponents { … }` emits `struct GeometryComponents;` alongside the table impls. This is the idiomatic way to declare a standalone provider bundle — a type whose only purpose is to hold a table that other contexts can then delegate to as a single unit:
+A `new` keyword in front of the target makes the macro define the target struct as well, saving a separate declaration. `new GeometryComponents { … }` emits `struct GeometryComponents;` alongside the table impls. This is the idiomatic way to declare an **aggregate provider** — a zero-sized provider whose only purpose is to hold a table that dispatches each component to a sub-provider, so that other contexts can delegate a whole group of components to it as a single unit:
 
 ```rust
 delegate_components! {
@@ -64,6 +64,8 @@ delegate_components! {
     }
 }
 ```
+
+An aggregate provider is a *provider*, not a context. `GeometryComponents` implements each component's provider trait by forwarding through its `DelegateComponent` table, and another context then delegates to it — `delegate_components! { App { [AreaCalculatorComponent, PerimeterCalculatorComponent]: GeometryComponents } }` — reusing the whole bundle in one line. Because it is never its own context, an aggregate provider is always wired with plain `delegate_components!`, never `delegate_and_check_components!`: the checked macro would assert that the aggregate can *use* each component as a context, but `GeometryComponents` has no fields and never implements a provider trait with itself as the context, so that assertion is meaningless and would fail. An aggregate provider is verified instead when a real context that delegates to it is checked; see [checking](checking.md).
 
 A leading generic list on the target makes the whole table generic, so one wiring applies across a family of contexts: `delegate_components! { <T> MyContext<T> { … } }` wires every `MyContext<T>` at once.
 
