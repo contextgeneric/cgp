@@ -2,7 +2,7 @@
 
 A namespace is a reusable, named lookup table of component wirings that a context inherits wholesale and then selectively overrides — CGP's preset mechanism, expressed entirely at the type level with no runtime cost.
 
-As the component count of an application grows, the [wiring](wiring.md) on each context grows with it: every context spells out its own `delegate_components!` table entry by entry, and two contexts that should share the same set of providers must repeat the whole block. A namespace lifts that block out of any single context, gives it a name, and lets other contexts say "use everything in this namespace" to pull in the entire group at once. This is exactly the preset pattern — a curated bundle of defaults you adopt and then customize — and CGP has no separate `cgp_preset!` construct because a preset *is* a namespace. This file covers `#[cgp_namespace]` (defining and inheriting a namespace), the `RedirectLookup` provider that makes the indirection work, the `Path!` macro that addresses entries, and the `DefaultNamespace` family of default-resolution traits.
+As the component count of an application grows, the [wiring](wiring.md) on each context grows with it: every context spells out its own `delegate_components!` table entry by entry, and two contexts that should share the same set of providers must repeat the whole block. A namespace lifts that block out of any single context, gives it a name, and lets other contexts say "use everything in this namespace" to pull in the entire group at once. This is exactly the preset pattern — a curated bundle of defaults you adopt and then customize — and CGP has no separate `cgp_preset!` construct because a preset *is* a namespace. This file covers `cgp_namespace!` (defining and inheriting a namespace), the `RedirectLookup` provider that makes the indirection work, the `Path!` macro that addresses entries, and the `DefaultNamespace` family of default-resolution traits.
 
 ## What a namespace is
 
@@ -10,7 +10,7 @@ A namespace is not a context — it is a trait, named after the namespace, that 
 
 The forwarding is keyed by a *path* rather than a bare component name, and that is what makes inheritance and selective override possible. A path is a type-level list of symbols and component names; keying on it lets one namespace inherit from another, lets a parent's whole subtree be rerouted at once, and lets a child context shadow a single inherited entry without disturbing the rest.
 
-## Defining a namespace with `#[cgp_namespace]`
+## Defining a namespace with `cgp_namespace!`
 
 `cgp_namespace!` defines a namespace from a body that resembles a `delegate_components!` table. The `new` keyword tells the macro to emit the namespace's marker struct and its lookup trait; the entries inside map keys to redirect paths or to providers:
 
@@ -98,7 +98,7 @@ type ErrorRoute = Path!(@app.error.ErrorRaiserComponent);
 //         PathCons<ErrorRaiserComponent, Nil>>>
 ```
 
-The encoding of each segment is decided by its first character: a single lowercase identifier that is not a primitive type name (like `app` or `error`) becomes a [`Symbol`](abstract-types.md) type-level string, while every capitalized segment (like `ErrorRaiserComponent`) is kept as the named type — typically a component key or namespace marker. The macro folds the segments right-to-left onto `Nil`, wrapping each in a `PathCons`. You rarely call `Path!` directly; the same `@`-path syntax is embedded inside `#[cgp_namespace]` entries and `#[prefix(...)]` attributes, which is where paths are most often written. These [type-level primitives](type-level-primitives.md) carry no runtime value.
+The encoding of each segment is decided by its first character: a single lowercase identifier that is not a primitive type name (like `app` or `error`) becomes a [`Symbol`](abstract-types.md) type-level string, while every capitalized segment (like `ErrorRaiserComponent`) is kept as the named type — typically a component key or namespace marker. The macro folds the segments right-to-left onto `Nil`, wrapping each in a `PathCons`. You rarely call `Path!` directly; the same `@`-path syntax is embedded inside `cgp_namespace!` entries and `#[prefix(...)]` attributes, which is where paths are most often written. These [type-level primitives](type-level-primitives.md) carry no runtime value.
 
 ## The `RedirectLookup` provider
 

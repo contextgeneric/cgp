@@ -101,13 +101,11 @@ The leading `open AreaCalculatorComponent;` header opens the component for per-v
 
 ### Legacy: `derive_delegate` and `UseDelegate` nested tables
 
-An older form generates a `UseDelegate<Components>` provider and wires the per-type entries into a separate table it points at. The `derive_delegate` option asks `#[cgp_component]` to generate that provider:
+An older form generates a `UseDelegate<Components>` provider and wires the per-type entries into a separate table it points at. The `#[derive_delegate(...)]` attribute asks `#[cgp_component]` to generate that provider:
 
 ```rust
-#[cgp_component {
-    provider: AreaCalculator,
-    derive_delegate: UseDelegate<Shape>,
-}]
+#[cgp_component(AreaCalculator)]
+#[derive_delegate(UseDelegate<Shape>)]
 pub trait CanCalculateArea<Shape> {
     fn area(&self, shape: &Shape) -> f64;
 }
@@ -129,7 +127,7 @@ delegate_components! {
 
 This reads in two layers: `MyApp` delegates `AreaCalculatorComponent` to `UseDelegate<AreaCalculatorComponents>`, and the inner table — defined inline by `new` — maps `Rectangle` to `RectangleArea` and `Circle` to `CircleArea`. The end effect matches the `open` example above, but the dispatch values live in a named side table reached through `UseDelegate` instead of in `MyApp`'s table directly. This is a legacy dispatch mechanism, retained for compatibility and expected to be deprecated; prefer `open` for new code, but expect to still encounter the `derive_delegate`/`UseDelegate` form when reading existing wiring (see [wiring](wiring.md) for both forms side by side).
 
-A component may dispatch on more than one parameter by listing several dispatchers. `derive_delegate: [ UseDelegate<Code>, UseInputDelegate<Input> ]` generates one impl per dispatcher — the default `UseDelegate` keying on `Code`, plus a user-defined `UseInputDelegate<Components>` (an ordinary struct of the same single-parameter shape) keying on `Input` — so each parameter is looked up through its own table. Only the parameter named in a dispatcher's angle brackets is used as the key; the others flow through. Per-type dispatch and higher-order providers compose either way: an `open` entry or a nested delegation table can map each shape to a different `ScaledArea<...>`.
+A component may dispatch on more than one parameter by stacking several `#[derive_delegate(...)]` attributes, one per dispatcher. Writing `#[derive_delegate(UseDelegate<Code>)]` and `#[derive_delegate(UseInputDelegate<Input>)]` generates one impl per dispatcher — the default `UseDelegate` keying on `Code`, plus a user-defined `UseInputDelegate<Components>` (an ordinary struct of the same single-parameter shape) keying on `Input` — so each parameter is looked up through its own table. Only the parameter named in a dispatcher's angle brackets is used as the key; the others flow through. Per-type dispatch and higher-order providers compose either way: an `open` entry or a nested delegation table can map each shape to a different `ScaledArea<...>`.
 
 ## Cross-context dependencies through a shared context
 
