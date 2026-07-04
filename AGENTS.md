@@ -246,9 +246,16 @@ right input:
   `Symbol`, which keeps its parse-time span and stamps its output with `quote_spanned!`. The same leak
   lurks in the provider macros (`#[cgp_impl]`, `#[cgp_provider]`, `#[cgp_new_provider]`) and every
   other expansion, so confirm a duplicated or conflicting generated item points at the impl or
-  attribute the user wrote, not the macro name. These spans are testable: a `trybuild` `.stderr`
-  fixture records the exact line and column of each caret, so a span regression changes the snapshot
-  (see the `acceptable/delegate_components/duplicate_*` fixtures).
+  attribute the user wrote, not the macro name. A **derived name** is the IDE-only variant of the
+  same leak: when the codegen builds an identifier with `Ident::new(&format!("{x}Suffix"), span)`,
+  span it on the user token `x` is derived from (as `derive_check_trait_ident` and the
+  `#[cgp_component]` marker struct do), never `Span::call_site()` — a `call_site` span makes the
+  generated item's *definition* cover the whole attribute, so go-to-definition on a reference to it
+  offers the defining macro alongside the item. That one is invisible to the compiler and to a
+  `trybuild` fixture, and shows only when navigating from another crate, so it must be checked by
+  hand. The error-caret spans, by contrast, are testable: a `trybuild` `.stderr` fixture records the
+  exact line and column of each caret, so a span regression changes the snapshot (see the
+  `acceptable/delegate_components/duplicate_*` fixtures).
 
 Beyond these, weigh the concerns that recur across the macro suite: the hygiene of the reserved
 identifiers the expansion introduces (`__Component__`, `__Context__`, and the like) and the

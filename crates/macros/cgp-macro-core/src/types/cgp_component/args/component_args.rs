@@ -35,10 +35,19 @@ impl TryFrom<CgpComponentRawArgs> for CgpComponentArgs {
             .context_ident
             .unwrap_or_else(|| Ident::new("__Context__", Span::call_site()));
 
+        // Span the derived marker on the provider identifier the user wrote, not
+        // `Span::call_site()`. A `call_site` span here covers the whole
+        // `#[cgp_component(..)]` attribute, so the generated `struct {Provider}Component`
+        // reports its definition on a range that also contains the `cgp_component`
+        // macro path — and an editor's go-to-definition on a delegate key naming
+        // this component then offers both the component and the macro as targets
+        // (visible cross-crate, where navigation relies on this span). Deriving the
+        // ident from `provider_ident.span()` points it at a single user token, the
+        // way `derive_check_trait_ident` spans its derived check trait.
         let component_name = raw_args.component_name.unwrap_or_else(|| {
             IdentWithTypeGenerics::from(Ident::new(
                 &format!("{provider_ident}Component"),
-                Span::call_site(),
+                provider_ident.span(),
             ))
         });
 
