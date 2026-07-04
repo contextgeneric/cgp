@@ -12,7 +12,7 @@ The reason a macro is worth having is that each entry expands to more than a sin
 
 ## Syntax
 
-The macro takes a target type followed by a brace-delimited list of `Key: Value` entries. The target is the context (or intermediary provider) whose table is being defined; each key is a component-name type and each value is the provider type to delegate that component to:
+The macro takes a target type followed by a brace-delimited list of `Key: Value` entries. The target is the context (or an [aggregate provider](../../concepts/aggregate-providers.md)) whose table is being defined; each key is a component-name type and each value is the provider type to delegate that component to:
 
 ```rust
 delegate_components! {
@@ -22,7 +22,7 @@ delegate_components! {
 }
 ```
 
-An optional `new` keyword in front of the target type makes the macro define the target struct as well, saving a separate declaration. `new MyComponents { ... }` emits `struct MyComponents;` (or a generic struct, if the target carries type parameters) in addition to the table impls. This is the idiomatic way to declare an **aggregate provider** — a zero-sized provider whose only purpose is to hold a table that dispatches each component to a sub-provider, so other contexts can delegate a whole group of components to it as one reusable unit. An aggregate provider is a *provider*, not a context: it forwards each component's provider trait through its `DelegateComponent` table and is delegated to by real contexts, but it never implements a provider trait with itself in the context position. Consequently it must be wired with plain `delegate_components!`, never [`delegate_and_check_components!`](delegate_and_check_components.md), whose derived `CanUseComponent` check assumes the target is a usable context and would fail spuriously on a provider that is not one.
+An optional `new` keyword in front of the target type makes the macro define the target struct as well, saving a separate declaration. `new MyComponents { ... }` emits `struct MyComponents;` (or a generic struct, if the target carries type parameters) in addition to the table impls. This is the idiomatic way to declare an **[aggregate provider](../../concepts/aggregate-providers.md)** — a zero-sized provider whose only purpose is to hold a table that dispatches each component to a sub-provider, so other contexts can delegate a whole group of components to it as one reusable unit. An aggregate provider is a *provider*, not a context: it forwards each component's provider trait through its `DelegateComponent` table and is delegated to by real contexts, but it never implements a provider trait with itself in the context position. Consequently it must be wired with plain `delegate_components!`, never [`delegate_and_check_components!`](delegate_and_check_components.md), whose derived `CanUseComponent` check assumes the target is a usable context and would fail spuriously on a provider that is not one.
 
 When several components share the same provider, the array syntax on the key side lets one value serve multiple keys. A bracketed list of component names before the colon expands to one entry per name, all pointing at the same value:
 
@@ -236,7 +236,7 @@ fn print_area(rect: &Rectangle) {
 }
 ```
 
-A standalone provider bundle uses `new` to define its own table type, which other contexts can then delegate to as a single unit:
+An [aggregate provider](../../concepts/aggregate-providers.md) uses `new` to define its own table type, which other contexts can then delegate to as a single unit:
 
 ```rust
 delegate_components! {
@@ -249,7 +249,7 @@ delegate_components! {
 
 ## Related constructs
 
-`delegate_components!` is the wiring step for components defined by [`#[cgp_component]`](cgp_component.md), and the providers it names are written with [`#[cgp_impl]`](cgp_impl.md), [`#[cgp_provider]`](cgp_provider.md), or [`#[cgp_fn]`](cgp_fn.md). Each entry expands to a [`DelegateComponent`](../traits/delegate_component.md) impl plus an [`IsProviderFor`](../traits/is_provider_for.md) impl. The `open` statement dispatches a component on its generic parameter through the [`RedirectLookup`](../providers/redirect_lookup.md) impl every component generates, and is the preferred alternative to the legacy nested-table values that rely on [`UseDelegate`](../providers/use_delegate.md); field-backed getters are commonly wired to [`UseField`](../providers/use_field.md). To verify a table is complete, pair it with a standalone [`check_components!`](check_components.md) — the form advanced codebases use, since it can check generic keys, opened or namespaced wiring, and per-provider layers — or, for basic wiring and while getting started, use [`delegate_and_check_components!`](delegate_and_check_components.md) to wire and check in one step so the check cannot be forgotten. Plain `delegate_components!` with no check is reserved for aggregate providers — the `new`-keyword bundles that other contexts delegate to but that are not contexts in their own right — since the fused check cannot apply to a target that is a provider rather than a context. When a component is defined inside a namespace, see [`#[cgp_namespace]`](cgp_namespace.md).
+`delegate_components!` is the wiring step for components defined by [`#[cgp_component]`](cgp_component.md), and the providers it names are written with [`#[cgp_impl]`](cgp_impl.md), [`#[cgp_provider]`](cgp_provider.md), or [`#[cgp_fn]`](cgp_fn.md). Each entry expands to a [`DelegateComponent`](../traits/delegate_component.md) impl plus an [`IsProviderFor`](../traits/is_provider_for.md) impl. The `open` statement dispatches a component on its generic parameter through the [`RedirectLookup`](../providers/redirect_lookup.md) impl every component generates, and is the preferred alternative to the legacy nested-table values that rely on [`UseDelegate`](../providers/use_delegate.md); field-backed getters are commonly wired to [`UseField`](../providers/use_field.md). To verify a table is complete, pair it with a standalone [`check_components!`](check_components.md) — the form advanced codebases use, since it can check generic keys, opened or namespaced wiring, and per-provider layers — or, for basic wiring and while getting started, use [`delegate_and_check_components!`](delegate_and_check_components.md) to wire and check in one step so the check cannot be forgotten. Plain `delegate_components!` with no check is reserved for [aggregate providers](../../concepts/aggregate-providers.md) — the `new`-keyword bundles that other contexts delegate to but that are not contexts in their own right — since the fused check cannot apply to a target that is a provider rather than a context. When a component is defined inside a namespace, see [`#[cgp_namespace]`](cgp_namespace.md).
 
 ## Source
 
