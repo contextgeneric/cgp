@@ -88,6 +88,12 @@ impl LoweredCgpImpl {
 
         out_impl.self_ty = Box::new(provider_type.clone());
 
+        // Insert the context as the provider trait's leading type argument.
+        // Position 0 places it ahead of any lifetime argument, which is invalid
+        // Rust ordering on its own — it is only safe because the path is
+        // re-parsed through `syn` below (`parse_internal(… .to_token_stream())`),
+        // and `syn` re-emits lifetimes first. See docs/implementation/README.md,
+        // "Generic-parameter insertion and lifetime ordering".
         provider_trait_path
             .type_args
             .args

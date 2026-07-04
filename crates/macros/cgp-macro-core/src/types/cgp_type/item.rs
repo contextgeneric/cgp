@@ -40,6 +40,10 @@ impl ItemCgpType {
         let type_bounds = get_bounds_and_replace_self_assoc_type(&item_type);
 
         let mut generics = provider_trait.generics.clone();
+        // Insert the abstract type as the leading generic. Position 0 is safe
+        // with a lifetime present because `syn::Generics::to_tokens` emits
+        // lifetimes first. See docs/implementation/README.md, "Generic-parameter
+        // insertion and lifetime ordering".
         generics.params.insert(0, parse_internal!(#type_name));
 
         if !type_bounds.is_empty() {
@@ -69,6 +73,8 @@ impl ItemCgpType {
             item_impl: use_type_impl,
         };
 
+        // Insert the provider as the new leading generic (again position 0, again
+        // lifetime-safe via `syn::Generics::to_tokens`; see the note above).
         generics.params.insert(0, parse_internal!(__Provider__));
         generics
             .make_where_clause()

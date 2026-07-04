@@ -22,6 +22,11 @@ impl UseProviderAttribute {
 
         for bound in &self.provider_trait_bounds {
             let mut bound = bound.clone();
+            // Insert the context as the inner provider bound's leading type
+            // argument. Position 0 sits ahead of any lifetime argument, which the
+            // `parse_internal(#bound)` re-parse below normalizes (`syn` re-emits
+            // lifetimes first). See docs/implementation/README.md,
+            // "Generic-parameter insertion and lifetime ordering".
             bound
                 .type_args
                 .args

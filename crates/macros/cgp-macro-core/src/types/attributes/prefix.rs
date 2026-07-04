@@ -29,6 +29,11 @@ impl PrefixAttribute {
         path.append_type(parse_internal!(#component_name));
 
         let mut type_generics = component_name.type_generics.clone();
+        // Insert the components table as the leading generic. Position 0 sits
+        // ahead of any lifetime, which the `parse_internal! { impl #type_generics
+        // … }` re-parse below normalizes (`syn` re-emits lifetimes first). See
+        // docs/implementation/README.md, "Generic-parameter insertion and
+        // lifetime ordering".
         type_generics
             .params
             .insert(0, parse_internal!(__Components__));

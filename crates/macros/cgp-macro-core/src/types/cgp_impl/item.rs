@@ -51,6 +51,11 @@ impl ItemCgpImpl {
                 let provider_trait_path = parse_internal(item_impl.self_ty.to_token_stream())?;
                 let context_type = parse_internal! { __Context__ };
 
+                // Insert the context as the leading impl generic. Position 0 is
+                // safe even when the impl already has a lifetime, because
+                // `syn::Generics::to_tokens` emits lifetimes ahead of type/const
+                // parameters. See docs/implementation/README.md,
+                // "Generic-parameter insertion and lifetime ordering".
                 item_impl
                     .generics
                     .params

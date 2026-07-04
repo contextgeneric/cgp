@@ -35,6 +35,10 @@ impl PreprocessedCgpComponent {
         let impl_generics = {
             let mut impl_generics = provider_trait.generics.clone();
 
+            // Insert the provider as the leading impl generic. Position 0 is safe
+            // with a lifetime present because `syn::Generics::to_tokens` emits
+            // lifetimes first. See docs/implementation/README.md,
+            // "Generic-parameter insertion and lifetime ordering".
             impl_generics
                 .params
                 .insert(0, parse_internal!(#provider_type));

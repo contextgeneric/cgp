@@ -25,13 +25,15 @@ impl PreprocessedCgpComponent {
 
         let context_type: Type = parse_internal!(#context_type_ident);
 
-        // Add generic parameter `Context` to the front of generics
-        {
-            provider_trait
-                .generics
-                .params
-                .insert(0, parse_internal!(#context_type_ident));
-        }
+        // Insert the context as the provider trait's leading generic parameter.
+        // Position 0 is safe even when the trait already has a lifetime, because
+        // `syn::Generics::to_tokens` emits lifetimes ahead of type/const
+        // parameters. See docs/implementation/README.md,
+        // "Generic-parameter insertion and lifetime ordering".
+        provider_trait
+            .generics
+            .params
+            .insert(0, parse_internal!(#context_type_ident));
 
         let local_assoc_types: Vec<Ident> = provider_trait
             .items

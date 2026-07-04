@@ -19,6 +19,11 @@ impl PreprocessedCgpComponent {
 
         let provider_trait_path: Type = {
             let mut provider_type_generics = consumer_type_generics.clone();
+            // Insert the context as the leading type argument. Position 0 sits
+            // ahead of any lifetime argument, which the `parse_internal` re-parse
+            // on the next line normalizes (`syn` re-emits lifetimes first). See
+            // docs/implementation/README.md, "Generic-parameter insertion and
+            // lifetime ordering".
             provider_type_generics
                 .generics
                 .params
@@ -30,6 +35,10 @@ impl PreprocessedCgpComponent {
         let generics_for_impl = {
             let mut generics = consumer_trait.generics.clone();
 
+            // Insert the context as the leading impl generic. Position 0 is safe
+            // with a lifetime present because `syn::Generics::to_tokens` emits
+            // lifetimes first. See docs/implementation/README.md,
+            // "Generic-parameter insertion and lifetime ordering".
             generics
                 .params
                 .insert(0, parse_internal!(#context_type_ident));
