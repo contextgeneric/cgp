@@ -109,10 +109,7 @@ impl PreprocessedItemCgpFn {
         {
             let mut bounds: Punctuated<TypeParamBound, Plus> = Punctuated::default();
             bounds.extend(attributes.extend.clone());
-
-            for import in attributes.uses.iter() {
-                bounds.push(parse_internal! { #import });
-            }
+            bounds.extend(attributes.uses.iter().cloned());
 
             if !bounds.is_empty() {
                 item_impl

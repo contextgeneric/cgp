@@ -1,13 +1,12 @@
-use syn::Attribute;
 use syn::parse::Parse;
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
+use syn::{Attribute, TypeParamBound};
 
 use crate::types::attributes::{
     DefaultImplAttribute, DefaultImplAttributes, UseProviderAttribute, UseProviderAttributes,
     UseTypeAttribute, UseTypeAttributes, UsesAttributes,
 };
-use crate::types::ident::PathWithTypeArgs;
 
 #[derive(Default)]
 pub struct CgpImplAttributes {
@@ -27,7 +26,7 @@ impl CgpImplAttributes {
                 match ident.to_string().as_ref() {
                     "uses" => {
                         let uses = attribute.parse_args_with(
-                            Punctuated::<PathWithTypeArgs, Comma>::parse_terminated,
+                            Punctuated::<TypeParamBound, Comma>::parse_terminated,
                         )?;
 
                         parsed_attributes.uses.imports.extend(uses);

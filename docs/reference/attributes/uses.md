@@ -12,7 +12,7 @@ This framing is the reason `#[uses(...)]` is recommended over hand-written `Self
 
 ## Syntax
 
-`#[uses(...)]` takes a comma-separated list of trait references, each in the simplified form `TraitIdent<ParamA, ParamB, ...>`:
+`#[uses(...)]` takes a comma-separated list of trait bounds, each of which becomes a `Self:` predicate on the generated impl:
 
 ```rust
 #[uses(RectangleArea, CanCalculateArea)]
@@ -20,7 +20,7 @@ This framing is the reason `#[uses(...)]` is recommended over hand-written `Self
 
 Each entry is the name of a capability, optionally with generic type arguments. A bare `RectangleArea` becomes `Self: RectangleArea`; a parameterized `CanCompute<Code, Input>` becomes `Self: CanCompute<Code, Input>`. When a provider depends on several capabilities, prefer listing them all in a single `#[uses(...)]` attribute — `#[uses(RectangleArea, CanCalculateArea)]` — since one combined import reads as a single dependency list. The entries may also be split across multiple `#[uses(...)]` attributes on the same item, and they accumulate, but stack a second attribute only when a genuine reason calls for it rather than as the default.
 
-The syntax deliberately supports only this simplified trait-path form. Because the attribute is meant to read like an import, it does not accept the more complex bound forms that Rust allows in a `where` clause — in particular, associated-type-equality bounds such as `Iterator<Item = u8>` are not expressible here. When a dependency genuinely needs such a bound, write it as an explicit `where` clause in the function body instead; `#[uses(...)]` is for the common, import-shaped case.
+The idiomatic entry is the simple `Trait<Params>` form, since the attribute is meant to read like an import. An entry may nonetheless be any bound a Rust `where` clause accepts, including an associated-type-equality binding (`HasErrorType<Error = anyhow::Error>`), a higher-ranked bound, or a lifetime bound; each lands on the impl's `where` clause verbatim. Use that generality sparingly. To pin an abstract type to a concrete one, prefer the [`#[use_type]`](use_type.md) equality form `#[use_type(HasErrorType.{Error = anyhow::Error})]`, which adds the bound and also rewrites bare mentions of the type; and to place a bound on the generated *trait* rather than only its impl, use [`#[extend_where]`](extend_where.md) (on `#[cgp_fn]`).
 
 `#[uses(...)]` is accepted in both [`#[cgp_fn]`](../macros/cgp_fn.md) and [`#[cgp_impl]`](../macros/cgp_impl.md). In either case it imports capabilities into the provider being defined, and those capabilities may themselves be defined with either [`#[cgp_fn]`](../macros/cgp_fn.md) or [`#[cgp_component]`](../macros/cgp_component.md) — the attribute does not care how the imported capability was produced, only that it is a trait the context can implement.
 
@@ -101,7 +101,7 @@ The `#[uses(CanCalculateArea)]` attribute adds `Self: CanCalculateArea` to the g
 
 ## Related constructs
 
-`#[uses(...)]` is the impl-side counterpart to [`#[extend]`](extend.md): both add trait bounds to a generated construct, but `#[uses(...)]` adds hidden impl-side `where` bounds while `#[extend]` adds public supertraits — the `use` versus `pub use` distinction. It is used inside [`#[cgp_fn]`](../macros/cgp_fn.md) and [`#[cgp_impl]`](../macros/cgp_impl.md), and the capabilities it imports are typically defined with [`#[cgp_fn]`](../macros/cgp_fn.md) or [`#[cgp_component]`](../macros/cgp_component.md). To import an abstract associated type rather than a method capability, use [`#[use_type]`](use_type.md); to bring in a context field as a function argument, use [`#[implicit]`](implicit.md). For bounds too complex for the simplified syntax — anything with associated-type equality — fall back to an explicit `where` clause in the body.
+`#[uses(...)]` is the impl-side counterpart to [`#[extend]`](extend.md): both add trait bounds to a generated construct, but `#[uses(...)]` adds hidden impl-side `where` bounds while `#[extend]` adds public supertraits — the `use` versus `pub use` distinction. It is used inside [`#[cgp_fn]`](../macros/cgp_fn.md) and [`#[cgp_impl]`](../macros/cgp_impl.md), and the capabilities it imports are typically defined with [`#[cgp_fn]`](../macros/cgp_fn.md) or [`#[cgp_component]`](../macros/cgp_component.md). To import an abstract associated type rather than a method capability, use [`#[use_type]`](use_type.md); to bring in a context field as a function argument, use [`#[implicit]`](implicit.md). To pin an abstract type, prefer the [`#[use_type]`](use_type.md) equality form over spelling the equality in `#[uses(...)]`; to make a bound part of the generated trait rather than only its impl, use [`#[extend_where]`](extend_where.md).
 
 ## Source
 
