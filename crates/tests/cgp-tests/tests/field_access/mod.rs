@@ -4,9 +4,11 @@
 
 // `#[derive(HasField)]` snapshots (this concept owns the derive's expansion):
 // the distinct field shapes the derive supports — named fields, tuple
-// (positional) fields, and lifetime-carrying fields.
+// (positional) fields, lifetime-carrying fields, and raw-identifier fields
+// (whose `r#` prefix is stripped from the generated `Symbol!` tag).
 pub mod index;
 pub mod lifetime_field;
+pub mod raw_ident;
 
 // Nested/chained field access: composing per-field `HasField` impls with
 // `ChainGetters` + `UseField` to reach a deeply nested value. The

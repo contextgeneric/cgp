@@ -1,5 +1,6 @@
 use proc_macro2::{Literal, Span, TokenStream};
 use quote::{ToTokens, quote_spanned};
+use syn::ext::IdentExt;
 use syn::parse::{Parse, ParseStream};
 use syn::{Ident, LitStr, Type, parse_quote};
 
@@ -14,7 +15,10 @@ pub struct Symbol {
 impl Symbol {
     pub fn from_ident(ident: Ident) -> Self {
         Self {
-            ident: ident.to_string(),
+            // `unraw` strips a raw identifier's `r#` prefix so a field written
+            // as `r#type` is tagged by its logical name `"type"`, matching what
+            // `Symbol!("type")` produces.
+            ident: ident.unraw().to_string(),
             span: ident.span(),
         }
     }

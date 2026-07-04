@@ -42,6 +42,8 @@ The struct's **generic parameters** are threaded onto every impl: the helper spl
 
 A **unit struct** has no fields, so the derive emits nothing rather than erroring. The helper only handles the named-field and tuple-field cases; there is no whole-struct output here — the aggregate `HasFields` view comes from [`#[derive(HasFields)]`](derive_has_fields.md) instead.
 
+A **raw-identifier field** such as `r#type` is tagged by its logical name: `Symbol::from_ident` calls `Ident::unraw`, so the field expands to `HasField<Symbol!("type")>`, not `HasField<Symbol!("r#type")>`. Without this, the tag would encode the literal string `r#type` (a length-6 symbol whose second character is `#`) and no `Symbol!("type")` bound could match it. The accessor body still borrows through the raw identifier (`&self.r#type`), since that is the field's real name. This is exercised by the [field_access/raw_ident.rs](../../../crates/tests/cgp-tests/tests/field_access/raw_ident.rs) snapshot.
+
 Field access through **smart pointers** is not the derive's doing: `HasField`/`HasFieldMut` have blanket impls over `Deref`/`DerefMut` targets defined in the field crate, so a `Box<Person>` resolves through to the inner struct without the derive generating anything for the pointer type.
 
 ## Snapshots
@@ -51,6 +53,7 @@ Every `snapshot_derive_has_field!` invocation across the suite is indexed here, 
 - [field_access/index.rs](../../../crates/tests/cgp-tests/tests/field_access/index.rs) — a tuple struct, each field keyed by `Index<0>`/`Index<1>` rather than a `Symbol!`.
 - [field_access/lifetime_field.rs](../../../crates/tests/cgp-tests/tests/field_access/lifetime_field.rs) — a struct lifetime lifted onto the impls, with a borrowed field type (`&'a str`) kept as `Value`.
 - [field_access/chain.rs](../../../crates/tests/cgp-tests/tests/field_access/chain.rs) — the canonical named-field expansion, over two owned structs.
+- [field_access/raw_ident.rs](../../../crates/tests/cgp-tests/tests/field_access/raw_ident.rs) — a raw-identifier field (`r#type`), pinning that the tag is the unrawed `Symbol!("type")` while the body borrows `&self.r#type`.
 - [field_access/chain_inner_life.rs](../../../crates/tests/cgp-tests/tests/field_access/chain_inner_life.rs) — the inner struct carries a lifetime, threaded onto its impls.
 - [field_access/chain_outer_life.rs](../../../crates/tests/cgp-tests/tests/field_access/chain_outer_life.rs) — the outer struct borrows the inner one, with the outer lifetime on its impls.
 - [field_access/chain_deeply_nested.rs](../../../crates/tests/cgp-tests/tests/field_access/chain_deeply_nested.rs) — five structs each deriving `HasField`, pinning the plain expansion repeated across a deep chain.
@@ -63,6 +66,7 @@ The behavioral tests confirm the generated getters read the right fields:
 - [field_access/lifetime_field.rs](../../../crates/tests/cgp-tests/tests/field_access/lifetime_field.rs) reads a lifetime-carrying field back out.
 - [field_access/chain.rs](../../../crates/tests/cgp-tests/tests/field_access/chain.rs), [chain_inner_life.rs](../../../crates/tests/cgp-tests/tests/field_access/chain_inner_life.rs), [chain_outer_life.rs](../../../crates/tests/cgp-tests/tests/field_access/chain_outer_life.rs), and [chain_deeply_nested.rs](../../../crates/tests/cgp-tests/tests/field_access/chain_deeply_nested.rs) compose the generated getters through `ChainGetters` to read a nested field in one hop.
 - [field_access/symbol.rs](../../../crates/tests/cgp-tests/tests/field_access/symbol.rs) and [field_access/index_display.rs](../../../crates/tests/cgp-tests/tests/field_access/index_display.rs) exercise the `Symbol!`/`Index<N>` tag types the derive emits.
+- [field_access/raw_ident.rs](../../../crates/tests/cgp-tests/tests/field_access/raw_ident.rs) reads a raw-identifier field back through `get_field` with the unrawed `Symbol!("type")` tag, confirming the `r#` prefix is dropped from the tag.
 
 ## Source
 
