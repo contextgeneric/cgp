@@ -2,7 +2,7 @@
 
 The handler family is a spectrum of CGP components that all transform an `Input` into an `Output` under a phantom `Code` tag, varying along three axes — synchronous vs. async, infallible vs. fallible, and input vs. no-input — together with the macros that build handlers from functions, the combinators that compose and lift them, the dispatchers that route over extensible data, and the monads that chain them.
 
-Assume `use cgp::prelude::*;` throughout; the CGP version is v0.7.0. Every handler is an ordinary [component](components.md) — a consumer trait the context calls, a provider trait a zero-sized provider implements, and a `…Component` marker that [wiring](wiring.md) maps to a provider — so nothing here needs machinery beyond what you already know.
+Assume `use cgp::prelude::*;` throughout; the CGP version is v0.8.0. Every handler is an ordinary [component](components.md) — a consumer trait the context calls, a provider trait a zero-sized provider implements, and a `…Component` marker that [wiring](wiring.md) maps to a provider — so nothing here needs machinery beyond what you already know.
 
 ## The shared shape and the three axes
 

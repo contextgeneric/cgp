@@ -1,6 +1,6 @@
 [package]
 name         = "cgp-error"
-version      = "0.7.0"
+version      = "0.8.0-alpha"
 edition      = { workspace = true }
 license      = { workspace = true }
 repository   = { workspace = true }
@@ -9,7 +9,7 @@ rust-version = { workspace = true }
 keywords     = { workspace = true }
 
 [dependencies]
-cgp                 = { version = "0.7.0", path = "../../main/cgp-base-extra", package = "cgp-base-extra" }
+cgp                 = { version = "0.8.0-alpha", path = "../../main/cgp-base-extra", package = "cgp-base-extra" }
 cgp-macro           = { workspace = true }
 cgp-type            = { workspace = true }
 cgp-field           = { workspace = true }

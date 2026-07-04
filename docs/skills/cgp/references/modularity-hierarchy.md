@@ -2,7 +2,7 @@
 
 A spectrum of how decoupled an implementation can be from the type it serves, from plain generic functions up to per-provider wiring, so you can pick how much CGP machinery a problem actually needs.
 
-CGP is not all-or-nothing. The same capability — here, serializing a value with Serde — can be expressed at several levels of modularity, each more decoupled than the last and each carrying more machinery in exchange. This page walks the spectrum on one running example so a reader can stop at the first level that solves the problem rather than reaching for the heaviest tool by reflex. Assume `use cgp::prelude::*;` throughout; the CGP version is v0.7.0.
+CGP is not all-or-nothing. The same capability — here, serializing a value with Serde — can be expressed at several levels of modularity, each more decoupled than the last and each carrying more machinery in exchange. This page walks the spectrum on one running example so a reader can stop at the first level that solves the problem rather than reaching for the heaviest tool by reflex. Assume `use cgp::prelude::*;` throughout; the CGP version is v0.8.0.
 
 ## The coherence problem the hierarchy escapes
 

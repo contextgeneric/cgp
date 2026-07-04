@@ -2,7 +2,7 @@
 
 The grammar every CGP macro parses, the code each one expands to, and how to read the compiler errors that result — the reference for writing CGP that parses, and for decoding what goes wrong when it does not.
 
-CGP is almost entirely procedural macros, so "valid CGP code" means two separate things: input the macro's own parser accepts, and output that expands to Rust the compiler accepts. This file covers both. It gives the formal grammar of each macro's custom syntax, states the invariant each expansion preserves, and closes with a decoder for the error messages the two layers produce. Read it to check a form you are unsure about, to predict what a macro emits, or to trace an error back to its cause. Assume `use cgp::prelude::*;` throughout; the CGP version is v0.7.0.
+CGP is almost entirely procedural macros, so "valid CGP code" means two separate things: input the macro's own parser accepts, and output that expands to Rust the compiler accepts. This file covers both. It gives the formal grammar of each macro's custom syntax, states the invariant each expansion preserves, and closes with a decoder for the error messages the two layers produce. Read it to check a form you are unsure about, to predict what a macro emits, or to trace an error back to its cause. Assume `use cgp::prelude::*;` throughout; the CGP version is v0.8.0.
 
 ## How to read the grammars
 

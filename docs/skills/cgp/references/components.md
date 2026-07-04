@@ -6,7 +6,7 @@ A CGP **component** is the bundle that `#[cgp_component]` generates from one tra
 
 A component is a single trait definition compiled into a small machine: a **consumer trait** that callers invoke, a **provider trait** that implementations target, a `…Component` marker key, and the blanket impls that connect them. An ordinary Rust trait conflates using a capability with implementing it — the type you call `.area()` on is the same type that supplies the `area` body — and Rust's coherence rules then allow only one implementation per type. A component breaks that conflation, which is what lets many independent implementations of the same capability coexist and lets you implement a capability for a type you do not own.
 
-The split is produced by `#[cgp_component]`, applied to an ordinary trait. Throughout this file the running examples are the greeting component (`CanGreet` / `Greeter` / `GreetHello`, on a `Person`) and the area component (`CanCalculateArea` / `AreaCalculator` / `RectangleArea`, on a `Rectangle`). Assume `use cgp::prelude::*;` in every snippet; the CGP version is v0.7.0.
+The split is produced by `#[cgp_component]`, applied to an ordinary trait. Throughout this file the running examples are the greeting component (`CanGreet` / `Greeter` / `GreetHello`, on a `Person`) and the area component (`CanCalculateArea` / `AreaCalculator` / `RectangleArea`, on a `Rectangle`). Assume `use cgp::prelude::*;` in every snippet; the CGP version is v0.8.0.
 
 ## What `#[cgp_component(Greeter)]` generates
 

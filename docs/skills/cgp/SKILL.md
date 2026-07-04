@@ -173,7 +173,7 @@ that uses CGP:
 use cgp::prelude::*;
 ```
 
-This skill describes CGP **v0.7.0**. A few names are intentionally *not* in the prelude and must be
+This skill describes CGP **v0.8.0**. A few names are intentionally *not* in the prelude and must be
 imported from their module — most notably the error-handling wiring keys and backends (see Error
 handling below). Inside documentation code blocks you may omit the prelude import for brevity.
 

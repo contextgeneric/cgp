@@ -1,6 +1,6 @@
 [package]
 name         = "cgp-monad"
-version      = "0.7.0"
+version      = "0.8.0-alpha"
 edition      = { workspace = true }
 license      = { workspace = true }
 repository   = { workspace = true }
@@ -10,5 +10,5 @@ keywords     = { workspace = true }
 description  = "Monadic constructs for CGP computation"
 
 [dependencies]
-cgp         = { version = "0.7.0", path = "../../main/cgp-core", package = "cgp-core" }
+cgp         = { version = "0.8.0-alpha", path = "../../main/cgp-core", package = "cgp-core" }
 cgp-handler = { workspace = true }

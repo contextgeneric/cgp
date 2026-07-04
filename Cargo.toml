@@ -52,34 +52,34 @@ authors         = ["Soares Chen <soares.chen@maybevoid.com>"]
 keywords        = ["cgp"]
 
 [workspace.dependencies]
-cgp                         = { version = "0.7.0", path = "./crates/main/cgp" }
-cgp-base                    = { version = "0.7.0", path = "./crates/main/cgp-base" }
-cgp-base-extra              = { version = "0.7.0", path = "./crates/main/cgp-base-extra" }
-cgp-core                    = { version = "0.7.0", path = "./crates/main/cgp-core" }
-cgp-extra                   = { version = "0.7.0", path = "./crates/main/cgp-extra" }
+cgp                         = { version = "0.8.0-alpha", path = "./crates/main/cgp" }
+cgp-base                    = { version = "0.8.0-alpha", path = "./crates/main/cgp-base" }
+cgp-base-extra              = { version = "0.8.0-alpha", path = "./crates/main/cgp-base-extra" }
+cgp-core                    = { version = "0.8.0-alpha", path = "./crates/main/cgp-core" }
+cgp-extra                   = { version = "0.8.0-alpha", path = "./crates/main/cgp-extra" }
 
-cgp-base-types              = { version = "0.7.0", path = "./crates/core/cgp-base-types" }
-cgp-component               = { version = "0.7.0", path = "./crates/core/cgp-component" }
-cgp-type                    = { version = "0.7.0", path = "./crates/core/cgp-type" }
-cgp-field                   = { version = "0.7.0", path = "./crates/core/cgp-field" }
-cgp-error                   = { version = "0.7.0", path = "./crates/core/cgp-error" }
+cgp-base-types              = { version = "0.8.0-alpha", path = "./crates/core/cgp-base-types" }
+cgp-component               = { version = "0.8.0-alpha", path = "./crates/core/cgp-component" }
+cgp-type                    = { version = "0.8.0-alpha", path = "./crates/core/cgp-type" }
+cgp-field                   = { version = "0.8.0-alpha", path = "./crates/core/cgp-field" }
+cgp-error                   = { version = "0.8.0-alpha", path = "./crates/core/cgp-error" }
 
-cgp-field-extra             = { version = "0.7.0", path = "./crates/extra/cgp-field-extra" }
-cgp-error-extra             = { version = "0.7.0", path = "./crates/extra/cgp-error-extra" }
-cgp-handler                 = { version = "0.7.0", path = "./crates/extra/cgp-handler" }
-cgp-monad                   = { version = "0.7.0", path = "./crates/extra/cgp-monad" }
-cgp-dispatch                = { version = "0.7.0", path = "./crates/extra/cgp-dispatch" }
-cgp-run                     = { version = "0.7.0", path = "./crates/extra/cgp-run" }
-cgp-runtime                 = { version = "0.7.0", path = "./crates/extra/cgp-runtime" }
+cgp-field-extra             = { version = "0.8.0-alpha", path = "./crates/extra/cgp-field-extra" }
+cgp-error-extra             = { version = "0.8.0-alpha", path = "./crates/extra/cgp-error-extra" }
+cgp-handler                 = { version = "0.8.0-alpha", path = "./crates/extra/cgp-handler" }
+cgp-monad                   = { version = "0.8.0-alpha", path = "./crates/extra/cgp-monad" }
+cgp-dispatch                = { version = "0.8.0-alpha", path = "./crates/extra/cgp-dispatch" }
+cgp-run                     = { version = "0.8.0-alpha", path = "./crates/extra/cgp-run" }
+cgp-runtime                 = { version = "0.8.0-alpha", path = "./crates/extra/cgp-runtime" }
 
-cgp-async-macro             = { version = "0.7.0", path = "./crates/macros/cgp-async-macro" }
-cgp-macro                   = { version = "0.7.0", path = "./crates/macros/cgp-macro" }
-cgp-macro-core              = { version = "0.7.0", path = "./crates/macros/cgp-macro-core" }
-cgp-macro-lib               = { version = "0.7.0", path = "./crates/macros/cgp-macro-lib" }
-cgp-macro-test-util         = { version = "0.7.0", path = "./crates/macros/cgp-macro-test-util" }
+cgp-async-macro             = { version = "0.8.0-alpha", path = "./crates/macros/cgp-async-macro" }
+cgp-macro                   = { version = "0.8.0-alpha", path = "./crates/macros/cgp-macro" }
+cgp-macro-core              = { version = "0.8.0-alpha", path = "./crates/macros/cgp-macro-core" }
+cgp-macro-lib               = { version = "0.8.0-alpha", path = "./crates/macros/cgp-macro-lib" }
+cgp-macro-test-util         = { version = "0.8.0-alpha", path = "./crates/macros/cgp-macro-test-util" }
 
-cgp-test-crate-a            = { version = "0.7.0", path = "./crates/tests/cgp-test-crate-a" }
-cgp-test-crate-b            = { version = "0.7.0", path = "./crates/tests/cgp-test-crate-b" }
-cgp-macro-test-util-lib     = { version = "0.7.0", path = "./crates/macros/cgp-macro-test-util-lib" }
-cgp-extra-macro             = { version = "0.7.0", path = "./crates/macros/cgp-extra-macro" }
-cgp-extra-macro-lib         = { version = "0.7.0", path = "./crates/macros/cgp-extra-macro-lib" }
+cgp-test-crate-a            = { version = "0.8.0-alpha", path = "./crates/tests/cgp-test-crate-a" }
+cgp-test-crate-b            = { version = "0.8.0-alpha", path = "./crates/tests/cgp-test-crate-b" }
+cgp-macro-test-util-lib     = { version = "0.8.0-alpha", path = "./crates/macros/cgp-macro-test-util-lib" }
+cgp-extra-macro             = { version = "0.8.0-alpha", path = "./crates/macros/cgp-extra-macro" }
+cgp-extra-macro-lib         = { version = "0.8.0-alpha", path = "./crates/macros/cgp-extra-macro-lib" }

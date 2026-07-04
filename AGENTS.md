@@ -2,6 +2,22 @@
 
 This file provides guidance to LLM agents when working with code in this repository.
 
+## Project status
+
+This working tree **is** the upcoming **v0.8.0** release. Every crate under [crates/](crates) is
+versioned `0.8.0-alpha` in its `Cargo.toml` — the pre-release of v0.8.0 — and the documentation
+under [docs/](docs) already refers to the current version as v0.8.0, so nothing needs a version edit
+when v0.8.0 ships.
+
+The stable release on crates.io is still **v0.7.0**, and it is not compatible with this tree. v0.7.0
+carries legacy features and syntax that v0.8.0 has removed or changed, so code or documentation
+written against v0.7.0 will not compile here. Treat crates.io v0.7.0 as a separate, older line and
+do not reconcile this tree's syntax against it.
+
+Only the library crates are published. The five crates under [crates/tests/](crates/tests) are
+marked `publish = false`, so `cargo publish --workspace` skips them and publishes just the real CGP
+crates.
+
 ## Orient before any task
 
 This repository **is** the implementation of Context-Generic Programming (CGP), and its behavior is
@@ -95,10 +111,11 @@ inward (core/macros) when changing fundamentals, outward (main) only to adjust t
 
 ## Conventions specific to this repo
 
-- All versions are kept in lockstep at the workspace level (currently **0.7.0**); inter-crate
+- All versions are kept in lockstep at the workspace level (currently **0.8.0-alpha**); inter-crate
   dependencies are declared once in the root [Cargo.toml](Cargo.toml) `[workspace.dependencies]`
   and referenced with `{ workspace = true }`. Add new crates to the `members` list and the
-  workspace dependency table together.
+  workspace dependency table together. A crate that exists only for testing also gets
+  `publish = false` so `cargo publish --workspace` excludes it from the published release.
 - The crate split is deliberate (coherence-friendly micro-crates). When adding functionality,
   place it in the lowest layer that makes sense and re-export upward through the facade crates,
   rather than adding cross-layer dependencies that skip the hierarchy.

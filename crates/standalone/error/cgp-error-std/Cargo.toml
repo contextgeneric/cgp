@@ -1,6 +1,6 @@
 [package]
 name         = "cgp-error-std"
-version      = "0.7.0"
+version      = "0.8.0-alpha"
 edition      = { workspace = true }
 license      = { workspace = true }
 repository   = { workspace = true }
@@ -12,4 +12,4 @@ description  = """
 """
 
 [dependencies]
-cgp         = { version = "0.7.0", path = "../../../main/cgp-core", package = "cgp-core" }
+cgp         = { version = "0.8.0-alpha", path = "../../../main/cgp-core", package = "cgp-core" }
