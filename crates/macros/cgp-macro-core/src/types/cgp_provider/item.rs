@@ -32,6 +32,14 @@ impl ItemCgpProvider {
     }
 
     pub fn component_type(&self) -> syn::Result<Type> {
+        // An explicit `#[cgp_provider(Component)]` / `#[cgp_impl(Provider: Component)]`
+        // override names the component directly; it is a user-written type, so it
+        // keeps its own span. Only fall back to the `{Provider}Component` default
+        // when no override is given.
+        if let Some(component_type) = &self.args.component_type {
+            return Ok(component_type.clone());
+        }
+
         let item_impl = &self.item_impl;
 
         let (_, provider_trait_path, _) = item_impl.trait_.as_ref().ok_or_else(|| {

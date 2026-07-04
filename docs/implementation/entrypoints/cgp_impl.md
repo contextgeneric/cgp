@@ -86,8 +86,9 @@ Every `snapshot_cgp_impl!` invocation across the suite is indexed here, since th
 - [implicit_arguments/cgp_impl_implicit.rs](../../../crates/tests/cgp-tests/tests/implicit_arguments/cgp_impl_implicit.rs) — `#[implicit]` arguments dropped from the signature and turned into `HasField` reads, with the implicit `__Context__` inserted (the `for` clause omitted).
 - [higher_order_providers/use_provider_impl.rs](../../../crates/tests/cgp-tests/tests/higher_order_providers/use_provider_impl.rs) — a generic higher-order provider `ScaledArea<Inner>` with `#[use_provider]` completing the inner provider's bound.
 - [namespaces/default_impls.rs](../../../crates/tests/cgp-tests/tests/namespaces/default_impls.rs) — several `#[cgp_impl]` blocks (`ShowString`, `ShowWithDisplay`, `ShowU32`) providing a generic component, exercising the `#[default_impl]` companion attribute alongside the provider rewrite.
+- [basic_delegation/provider_component_override.rs](../../../crates/tests/cgp-tests/tests/basic_delegation/provider_component_override.rs) — the `: ComponentType` override: `#[cgp_impl(new FortyTwo: HasFooComponent)]` targets a component whose marker name (`HasFooComponent`) is not the derived `FooProviderComponent`, so the `IsProviderFor` impl names the overriding component rather than the default.
 
-The `#[cgp_impl(Self)]` bare-impl passthrough has no snapshot yet, and neither does a `#[cgp_impl]` carrying an explicit `: ComponentType` override.
+The `#[cgp_impl(Self)]` bare-impl passthrough has no snapshot yet.
 
 ## Tests
 
@@ -99,6 +100,7 @@ The behavioral tests confirm the lowered wiring works:
 - [basic_delegation/impl_self.rs](../../../crates/tests/cgp-tests/tests/basic_delegation/impl_self.rs) exercises the `#[cgp_impl(Self)]` passthrough: a consumer trait implemented directly on a concrete context, forwarding to a provider via `#[use_provider]`.
 - [basic_delegation/self_in_macro.rs](../../../crates/tests/cgp-tests/tests/basic_delegation/self_in_macro.rs) confirms the token-level `self` rewrite inside a macro body distinguishes a bare `self` value (rewritten) from a `self::` module path (left intact).
 - [basic_delegation/self_in_nested_item.rs](../../../crates/tests/cgp-tests/tests/basic_delegation/self_in_nested_item.rs) confirms the rewrite stops at a nested item: a local `impl Display for Wrapper` inside a provider method keeps its own `&self` receiver and `self.0` access while the outer `self.name()` is still rewritten to the context.
+- [basic_delegation/provider_component_override.rs](../../../crates/tests/cgp-tests/tests/basic_delegation/provider_component_override.rs) wires the overriding component (`HasFooComponent`) to the generated `FortyTwo` and confirms `App` implements `CanDoFoo` — proving the `: ComponentType` override is honored rather than ignored in favor of the derived name.
 
 The rejection cases confirm the macro refuses malformed input:
 
