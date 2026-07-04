@@ -8,6 +8,7 @@ pub mod component_macro;
 pub mod delegate_array_key;
 pub mod delegate_components_macro;
 pub mod delegate_generic_table;
+pub mod provider_component_override;
 pub mod provider_macro;
 
 // Behavioral wiring: a consumer trait becomes usable once its component is wired.
