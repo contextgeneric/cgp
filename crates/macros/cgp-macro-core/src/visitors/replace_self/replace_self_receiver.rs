@@ -1,6 +1,6 @@
 use proc_macro2::Ident;
 use syn::visit_mut::VisitMut;
-use syn::{FnArg, Receiver, Signature, Type, parse_quote};
+use syn::{FnArg, Item, Receiver, Signature, Type, parse_quote};
 
 /// Rewrites a method's `self` receiver into an explicit context parameter,
 /// preserving the reference and mutability shape (`&self` → `ctx: &Context`,
@@ -17,6 +17,12 @@ impl<'a> VisitMut for ReplaceSelfReceiverVisitor<'a> {
         {
             *arg = replace_self_receiver(receiver, self.replaced_ident, self.replaced_type);
         }
+    }
+
+    fn visit_item_mut(&mut self, _item: &mut Item) {
+        // A block-nested item (`impl`, `trait`, `fn`, …) introduces its own
+        // `self`, so its receivers belong to that item, not the enclosing
+        // context. Stop before descending into it.
     }
 }
 

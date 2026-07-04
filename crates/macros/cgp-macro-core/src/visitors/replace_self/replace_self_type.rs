@@ -2,7 +2,7 @@ use itertools::Itertools;
 use proc_macro2::{Group, Ident, TokenStream, TokenTree};
 use quote::{ToTokens, format_ident};
 use syn::visit_mut::{self, VisitMut};
-use syn::{Macro, Path, Type};
+use syn::{Item, Macro, Path, Type};
 
 /// Rewrites the `Self` type (and `Self::Foo` paths) to the context type,
 /// skipping any `Self::Assoc` whose associated type is declared locally in the
@@ -62,6 +62,12 @@ impl VisitMut for ReplaceSelfTypeVisitor<'_> {
             self.replaced_type.to_token_stream(),
             self.skip_assoc_types,
         );
+    }
+
+    fn visit_item_mut(&mut self, _item: &mut Item) {
+        // A block-nested item (`impl`, `trait`, `fn`, …) does not inherit the
+        // enclosing impl's `Self`, so its `Self` references name that item's own
+        // type. Stop before descending into it.
     }
 }
 

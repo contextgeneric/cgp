@@ -4,7 +4,7 @@ The `cgp_provider` stack is the sequence of AST types that both [`#[cgp_provider
 
 ## `ProviderArgs`
 
-`ProviderArgs` is the parsed attribute argument, shared by both macros: an optional `new` keyword and an optional component-type override.
+`ProviderArgs` is the parsed attribute argument, shared by both macros: an optional `new` flag and an optional component-type override.
 
 ```rust
 pub struct ProviderArgs {
@@ -13,7 +13,7 @@ pub struct ProviderArgs {
 }
 ```
 
-`#[cgp_provider]` parses it as written; `#[cgp_new_provider]` parses it and then forces `new` to `Some`. When [`#[cgp_impl]`](cgp_impl.md#implargs) lowers to this stack, it constructs a `ProviderArgs` from its own `ImplArgs`, copying the `new` and `component_type` fields.
+The parser reads only the component type; it never parses the `new` flag from the attribute, so both macros' argument grammar is a bare `ComponentType?`. The `new` flag is set programmatically instead: `#[cgp_provider]` leaves it `None`, `#[cgp_new_provider]` forces it to `Some` after parsing, and when [`#[cgp_impl]`](cgp_impl.md#implargs) lowers to this stack it constructs a `ProviderArgs` from its own `ImplArgs`, copying the `new` and `component_type` fields. Keeping `new` out of the parser means a stray `#[cgp_provider(new Name)]` is not silently treated as a struct declaration — `Name` is left as an unexpected trailing token and rejected.
 
 ## `ItemCgpProvider`
 

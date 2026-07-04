@@ -87,6 +87,8 @@ pub struct ValueToString;
 
 Three transformations happened here. The trait `FooProvider` gained `Context` as its leading type argument; the `Self` type of the impl changed from `Context` to the provider `ValueToString`; and the method receiver `&self` became the explicit parameter `__context__: &Context`. The receiver identifier is the snake-cased form of the context type wrapped in double underscores: both `Context` and the default `__Context__` become `__context__`. Every use of `self` in the body is rewritten to that identifier, while every use of `Self` is rewritten to the context type.
 
+This rewrite is scoped to the block's own method bodies. An item nested *inside* a body — a local `struct` with its own `impl`, a helper `fn`, an inline `trait` — introduces a fresh `self`/`Self` that names that item rather than the context, exactly as it would in ordinary Rust, so the macro leaves it untouched: a local `impl Display for Wrapper { fn fmt(&self, …) { … self.0 … } }` inside a provider method keeps its own `&self` and `self.0`. Closures, by contrast, capture the enclosing `self` and are rewritten like any other expression. The one exception is a nested item written inside a `macro!( … )` invocation, whose `self`/`Self` the token-level rewrite cannot scope and so rewrites anyway.
+
 When the `for Context` clause is omitted, the only difference is that the inserted context parameter is `__Context__`. The earlier `RectangleArea` example is equivalent to writing the context out by hand:
 
 ```rust

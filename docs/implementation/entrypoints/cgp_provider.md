@@ -4,14 +4,16 @@
 
 ## Entry point
 
-The macro is driven by the `cgp_provider` function in [cgp-macro-lib/src/cgp_provider.rs](../../../crates/macros/cgp-macro-lib/src/cgp_provider.rs). It parses the item into a `syn::ItemImpl` and the attribute into a `ProviderArgs` (an optional `new` keyword and an optional component-type override), then lowers the impl and emits the result:
+The macro is driven by the `cgp_provider` function in [cgp-macro-lib/src/cgp_provider.rs](../../../crates/macros/cgp-macro-lib/src/cgp_provider.rs). It parses the item into a `syn::ItemImpl` and the attribute into a `ProviderArgs`, then lowers the impl and emits the result:
 
 ```rust
 let item = ItemCgpProvider { args, item_impl };
 let lowered = item.lower()?;
 ```
 
-The sibling [`#[cgp_new_provider]`](cgp_new_provider.md) shares this whole stack: its `cgp_new_provider` entry parses the same `ProviderArgs`, forces `args.new = Some(...)`, and then runs the identical `ItemCgpProvider::lower`. The two macros differ only in whether the provider struct is declared. A malformed attribute is rejected while parsing `ProviderArgs`, and a non-`impl` item fails at `syn::parse2::<ItemImpl>`.
+`ProviderArgs`'s parser reads only an optional component-type override, so `#[cgp_provider]`'s grammar is exactly `ComponentType?`. The `new` flag on `ProviderArgs` is never parsed from the attribute; whether the provider struct is declared is decided by which macro is invoked, not by a keyword. A stray `#[cgp_provider(new Name)]` is therefore not a struct declaration — the component-type parser consumes `new` as a (nonsensical) component type and then rejects the trailing `Name` as an unexpected token.
+
+The sibling [`#[cgp_new_provider]`](cgp_new_provider.md) shares this whole stack: its `cgp_new_provider` entry parses the same `ProviderArgs`, forces `args.new = Some(...)` *after* parsing, and then runs the identical `ItemCgpProvider::lower`. The two macros differ only in whether the provider struct is declared. A malformed attribute is rejected while parsing `ProviderArgs`, and a non-`impl` item fails at `syn::parse2::<ItemImpl>`.
 
 ## Pipeline
 
@@ -67,6 +69,7 @@ A **const argument in the provider trait's arguments** is rejected with a spanne
 - [generic_components/component_generic_const.rs](../../../crates/tests/cgp-tests/tests/generic_components/component_generic_const.rs) snapshots the same const-generic provider carrying an impl-side dependency that ties the const's type to the context's abstract `Unit`.
 - [generic_components/component_lifetime.rs](../../../crates/tests/cgp-tests/tests/generic_components/component_lifetime.rs) snapshots a lifetime-carrying `UseField` provider, showing the lifetime lifted into `Life<'a>` in the `Params` tuple.
 - [dispatching/compose.rs](../../../crates/tests/cgp-tests/tests/dispatching/compose.rs) and [async_and_send/spawn.rs](../../../crates/tests/cgp-tests/tests/async_and_send/spawn.rs) exercise `#[cgp_provider]` and `#[cgp_new_provider]` directly in real wiring.
+- [parser_rejections/cgp_provider.rs](../../../crates/tests/cgp-macro-tests/tests/parser_rejections/cgp_provider.rs) checks that an inherent `impl` (no trait), a provider trait with no context type argument, a const argument in the trait's argument list, the `new Name` struct-declaration form (which belongs to `#[cgp_new_provider]`), and a non-`impl` item are each rejected.
 
 ## Source
 

@@ -2,11 +2,11 @@ use itertools::Itertools;
 use proc_macro2::{Group, TokenStream, TokenTree};
 use quote::format_ident;
 use syn::visit_mut::{self, VisitMut};
-use syn::{Expr, Ident, ItemFn, Macro, Path};
+use syn::{Expr, Ident, Item, Macro, Path};
 
 /// Rewrites every `self` *value* expression to the context identifier, stopping
-/// at nested `fn` items (which do not capture the outer `self`) and leaving
-/// `self::` module paths inside macro bodies intact.
+/// at nested items (which introduce their own `self` and do not capture the
+/// outer one) and leaving `self::` module paths inside macro bodies intact.
 pub struct ReplaceSelfValueVisitor<'a> {
     pub replaced_ident: &'a Ident,
 }
@@ -28,8 +28,10 @@ impl VisitMut for ReplaceSelfValueVisitor<'_> {
         mac.tokens = replace_self_value_in_token_stream(mac.tokens.clone(), self.replaced_ident);
     }
 
-    fn visit_item_fn_mut(&mut self, _: &mut ItemFn) {
-        // Nested fn items don't capture `self` from the outer scope; stop recursion.
+    fn visit_item_mut(&mut self, _item: &mut Item) {
+        // A block-nested item (`fn`, `impl`, `trait`, …) does not capture `self`
+        // from the outer scope; a nested `impl`/`trait` introduces its own
+        // receiver. Stop before descending into it.
     }
 }
 

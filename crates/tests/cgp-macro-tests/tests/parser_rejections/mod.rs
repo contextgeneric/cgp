@@ -24,7 +24,9 @@ pub fn assert_macro_rejects(label: &str, run: impl FnOnce() -> syn::Result<Token
 
 pub mod cgp_component;
 pub mod cgp_fn;
+pub mod cgp_impl;
 pub mod cgp_namespace;
+pub mod cgp_provider;
 pub mod check_components;
 pub mod delegate_components;
 pub mod derive_cgp_data;

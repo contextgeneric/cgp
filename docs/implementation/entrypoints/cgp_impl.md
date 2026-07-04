@@ -46,7 +46,9 @@ When the `for Context` clause is omitted, the inserted parameter is `__Context__
 
 The **receiver identifier** is computed from the context type: if the context type is a bare identifier it is snake-cased and the result used as the parameter name, and any context type that is not a plain identifier falls back to the literal `__context__`. `Context` and `__Context__` both yield `__context__`. Every `self` in a body is rewritten to that identifier, every `Self` type to the context type, via the three `replace_self` visitors run in sequence.
 
-Inside a **macro body** the rewrite is token-level, because `VisitMut` cannot see through a `macro!( … )`. The type visitor still skips a local associated type (`Self::Output` where `Output` is declared in the block), and the value visitor still distinguishes the two meanings of `self`: a bare `self` value becomes the context, but a `self::` module path is left intact, since a value `self` is never followed by `::`. The token-level pass cannot reason about scope, so a nested `fn` written *inside* a macro invocation does not stop the `self` rewrite the way a nested `fn` at the AST level does.
+The rewrite is **scoped to the block's own methods and stops at any nested item.** A `struct`, `impl`, `trait`, or `fn` defined *inside* a method body introduces its own `self`/`Self` scope that names that nested item — a Rust nested item cannot see the enclosing impl's `Self` or receiver — so the visitors must not rewrite it. All three `replace_self` visitors override `visit_item_mut` to a no-op, leaving a nested item untouched while still descending into closures and other expressions, which *do* capture the outer `self`. A local `impl Display for Wrapper { fn fmt(&self, …) { … self.0 … } }` inside a provider method therefore keeps its own `&self` receiver and `self.0` access. (The `visit_item_mut` guard fires only for block-nested items, since a trait's or impl's associated items are `TraitItem`/`ImplItem`, not `Item`, so a provider method or associated type declared at the block level is still rewritten.)
+
+Inside a **macro body** the rewrite is token-level, because `VisitMut` cannot see through a `macro!( … )`. The type visitor still skips a local associated type (`Self::Output` where `Output` is declared in the block), and the value visitor still distinguishes the two meanings of `self`: a bare `self` value becomes the context, but a `self::` module path is left intact, since a value `self` is never followed by `::`. The token-level pass cannot reason about scope, so a nested item written *inside* a macro invocation does not stop the rewrite the way a nested item at the AST level does — its `self`/`Self` are still rewritten.
 
 A **`for Context` clause is optional**, and omitting it is the idiomatic form. When present, the `Self` type of the block *is* the context and the trait path is the provider trait; when absent, `ItemCgpImpl::lower` treats the block's `Self` type as the provider trait path and inserts `__Context__` at the front of the impl generics.
 
@@ -94,6 +96,11 @@ The behavioral tests confirm the lowered wiring works:
 - [higher_order_providers/use_provider_impl.rs](../../../crates/tests/cgp-tests/tests/higher_order_providers/use_provider_impl.rs) wires the scaled higher-order provider onto a context and runs it.
 - [basic_delegation/impl_self.rs](../../../crates/tests/cgp-tests/tests/basic_delegation/impl_self.rs) exercises the `#[cgp_impl(Self)]` passthrough: a consumer trait implemented directly on a concrete context, forwarding to a provider via `#[use_provider]`.
 - [basic_delegation/self_in_macro.rs](../../../crates/tests/cgp-tests/tests/basic_delegation/self_in_macro.rs) confirms the token-level `self` rewrite inside a macro body distinguishes a bare `self` value (rewritten) from a `self::` module path (left intact).
+- [basic_delegation/self_in_nested_item.rs](../../../crates/tests/cgp-tests/tests/basic_delegation/self_in_nested_item.rs) confirms the rewrite stops at a nested item: a local `impl Display for Wrapper` inside a provider method keeps its own `&self` receiver and `self.0` access while the outer `self.name()` is still rewritten to the context.
+
+The rejection cases confirm the macro refuses malformed input:
+
+- [parser_rejections/cgp_impl.rs](../../../crates/tests/cgp-macro-tests/tests/parser_rejections/cgp_impl.rs) checks that an empty attribute (no provider name), a `#[cgp_impl(Self)]` block missing its `for` clause, and application to a non-`impl` item are each rejected.
 
 ## Source
 
