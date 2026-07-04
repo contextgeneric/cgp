@@ -1,5 +1,5 @@
 //! Runtime behavior of the `Index<N>` type-level number tag: an `Index<N>`
-//! value `Display`s as its underlying number, with no Greek-letter alias.
+//! value `Display`s as its underlying number.
 //!
 //! See docs/reference/types/index.md.
 

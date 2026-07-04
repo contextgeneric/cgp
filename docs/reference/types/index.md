@@ -21,7 +21,7 @@ pub struct Index<const I: usize>;
 
 The single const parameter `I` is the position the type represents — `Index<0>` for the field at offset zero, and so on. The struct has no fields, so a value of `Index<I>` carries no data; the number lives entirely in the type. The derived `Default`, `Clone`, and `Copy` make a value trivially available when one is needed (for instance as a `PhantomData`-free tag value), and `Eq`/`PartialEq` compare two values of the same `Index<I>` as always equal, since there is nothing to differ.
 
-`Index<I>` implements both `Display` and `Debug`, and both print the underlying number `I` — `Index<0>` displays as `0`. The number a tag stands for is therefore visible directly in formatted output and in compiler diagnostics, with no Greek-letter or other alias substituted for it.
+`Index<I>` implements both `Display` and `Debug`, and both print the underlying number `I` — `Index<0>` displays as `0`. The number a tag stands for is therefore visible directly in formatted output and in compiler diagnostics.
 
 ## Behavior
 

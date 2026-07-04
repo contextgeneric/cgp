@@ -6,7 +6,7 @@ The handful of zero-sized types and type macros that CGP folds strings, numbers,
 
 CGP keys nearly everything by *type*, not by value. A getter looks up a field by a tag type; a [wiring](wiring.md) table selects a [provider](components.md) by a [component](components.md) key type; a [namespace](namespaces.md) re-routes a lookup along a path type. For that to work, things that are normally values — a field name string, a tuple position, a list of fields, a lifetime — have to be encoded as types the compiler can compare and dispatch on. The primitives in this reference are those encodings. Each is a familiar value-level idea lifted into a type: a string becomes a type-level character list, a number becomes a const-generic marker, a list becomes a recursive cons cell, a sum becomes a recursive branch.
 
-These types are almost never written by hand. They are produced by macros (`Symbol!`, `Product!`, `Sum!`, `Path!`) or emitted by derives, and a reader mostly meets them when *decoding a type the compiler prints* — in an error message, a `cargo expand` dump, or a hover. This reference is a decoder ring: skim it to read off what a long nested type means. One note on the printed forms first: the compiler abbreviates the busiest spines with Greek letters — `π` for `Cons`, `ε` for `Nil`, `ψ` for `Symbol`, `ζ` for `Chars`, `δ` for `Index` — so a printed `π<A, π<B, ε>>` is just `Cons<A, Cons<B, Nil>>`. The prose below always uses the readable `Cons`/`Nil`/`Symbol!` forms; treat the Greek as a transcription you may have to reverse.
+These types are almost never written by hand. They are produced by macros (`Symbol!`, `Product!`, `Sum!`, `Path!`) or emitted by derives, and a reader mostly meets them when *decoding a type the compiler prints* — in an error message, a `cargo expand` dump, or a hover. This reference is a decoder ring: skim it to read off what a long nested type means. The prose below always uses the readable `Cons`/`Nil`/`Symbol!` forms, which are exactly what the compiler prints — no abbreviations or aliases are substituted for these types.
 
 Assume `use cgp::prelude::*;` throughout.
 
@@ -95,7 +95,7 @@ The same string can be recovered at runtime — see [`StaticFormat`](#staticform
 pub struct Index<const I: usize>;
 ```
 
-It is a zero-sized marker: the number lives entirely in the type, so a tuple struct can carry a `HasField<Index<0>>` impl and a `HasField<Index<1>>` impl side by side and the compiler selects the right one purely from the tag. Selecting a wrong position — `Index<5>` on a three-field struct — is a type error, not a runtime panic, because no matching impl exists. Unlike the Greek-abbreviated spines, `Index` prints its number directly through `Display`, so `Index::<2>.to_string()` is `"2"` and the tag is legible in diagnostics.
+It is a zero-sized marker: the number lives entirely in the type, so a tuple struct can carry a `HasField<Index<0>>` impl and a `HasField<Index<1>>` impl side by side and the compiler selects the right one purely from the tag. Selecting a wrong position — `Index<5>` on a three-field struct — is a type error, not a runtime panic, because no matching impl exists. `Index` prints its number directly through `Display`, so `Index::<2>.to_string()` is `"2"` and the tag is legible in diagnostics.
 
 ## `Field`: a named value
 

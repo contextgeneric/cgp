@@ -706,17 +706,16 @@ inheritance syntax.
 CGP encodes lists, strings, and numbers as types. You mostly use the sugared macros and only need to
 *recognize* the expanded forms in errors:
 
-- **`Symbol!("name")`** — a type-level string (field-name tag). Expands to `Symbol<4, Chars<'n', Chars<'a', Chars<'m', Chars<'e', Nil>>>>`; the compiler may show the Greek `ψ`/`ζ` shorthands. The leading length works around missing const-generics.
-- **`Product![A, B, C]`** — a type-level list. Expands to `Cons<A, Cons<B, Cons<C, Nil>>>` (Greek `π`/`ε`). `product![…]` is the value-level form. Used for field lists and handler pipelines.
+- **`Symbol!("name")`** — a type-level string (field-name tag). Expands to `Symbol<4, Chars<'n', Chars<'a', Chars<'m', Chars<'e', Nil>>>>`. The leading length works around missing const-generics.
+- **`Product![A, B, C]`** — a type-level list. Expands to `Cons<A, Cons<B, Cons<C, Nil>>>`. `product![…]` is the value-level form. Used for field lists and handler pipelines.
 - **`Sum![A, B]`** — a type-level sum (the dual of `Product!`), over the `Either`/`Void` spine. Used for enum variant lists.
-- **`Index<N>`** — a type-level natural number (Greek `δ`), tags tuple-struct fields.
+- **`Index<N>`** — a type-level natural number, tags tuple-struct fields.
 - **`Field`** — a value paired with its type-level name tag.
 - **`Path!`** / `PathCons` — a type-level path, used by namespaces and `RedirectLookup`.
 - **`Life<'a>`** — a lifetime lifted into a type, used when a component has lifetime parameters.
 - **`MRef`** — an owned-or-borrowed value.
 
-Prefer the sugar (`Symbol!`, `Product!`) and the readable names (`Cons`/`Nil`) over the Greek forms
-in anything you write.
+Prefer the sugar (`Symbol!`, `Product!`) and the readable names (`Cons`/`Nil`) in anything you write.
 
 ---
 
