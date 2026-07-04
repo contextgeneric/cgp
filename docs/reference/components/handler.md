@@ -15,6 +15,7 @@ This generality is why the family promotes toward `Handler` rather than away fro
 ```rust
 #[async_trait]
 #[cgp_component(Handler)]
+#[prefix(@cgp.extra.handler in DefaultNamespace)]
 #[derive_delegate(UseDelegate<Code>)]
 #[derive_delegate(UseInputDelegate<Input>)]
 #[use_type(HasErrorType.Error)]
@@ -29,7 +30,7 @@ pub trait CanHandle<Code, Input> {
 }
 ```
 
-The consumer trait `CanHandle<Code, Input>` combines the async and fallible refinements of the base signature. Its `handle` method is declared `async` and returns `Result<Self::Output, Error>`, so it is the async counterpart of `CanTryCompute` and the fallible counterpart of `CanComputeAsync`. `#[use_type(HasErrorType.Error)]` adds `HasErrorType` as a supertrait and rewrites the bare `Error` to `<Self as HasErrorType>::Error`, which is why the definition never spells `HasErrorType` or `Self::Error` by hand; the local associated type `Output` stays qualified as `Self::Output`, because it is the trait's own type rather than an imported one. The `#[async_trait]` attribute then rewrites the `async fn` into a method returning `impl Future<Output = Result<Self::Output, Self::Error>>`, avoiding any boxed future. The component is wired through the generated `HandlerComponent` marker, its provider trait is `Handler<Context, Code, Input>` with the context moved into an explicit first parameter, and the two `#[derive_delegate(...)]` attributes generate dispatching providers keyed on `Code` and on `Input`.
+The consumer trait `CanHandle<Code, Input>` combines the async and fallible refinements of the base signature. Its `handle` method is declared `async` and returns `Result<Self::Output, Error>`, so it is the async counterpart of `CanTryCompute` and the fallible counterpart of `CanComputeAsync`. `#[use_type(HasErrorType.Error)]` adds `HasErrorType` as a supertrait and rewrites the bare `Error` to `<Self as HasErrorType>::Error`, which is why the definition never spells `HasErrorType` or `Self::Error` by hand; the local associated type `Output` stays qualified as `Self::Output`, because it is the trait's own type rather than an imported one. The `#[async_trait]` attribute then rewrites the `async fn` into a method returning `impl Future<Output = Result<Self::Output, Self::Error>>`, avoiding any boxed future. The component is wired through the generated `HandlerComponent` marker, its provider trait is `Handler<Context, Code, Input>` with the context moved into an explicit first parameter, and the two `#[derive_delegate(...)]` attributes generate dispatching providers keyed on `Code` and on `Input`. The [`#[prefix(...)]`](../macros/cgp_namespace.md) attribute registers the component into the `@cgp.extra.handler` path of `DefaultNamespace`, so a context that joins that namespace inherits the handler wiring by default.
 
 The by-reference sibling `HandlerRef` is identical except that it borrows its input. Its consumer trait `CanHandleRef` also imports the error type with `#[use_type(HasErrorType.Error)]` and declares `async fn handle_ref(&self, _tag: PhantomData<Code>, input: &Input) -> Result<Self::Output, Error>`, taking `&Input` where `CanHandle` takes `Input`.
 

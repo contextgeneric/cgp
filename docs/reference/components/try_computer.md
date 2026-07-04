@@ -14,6 +14,7 @@ Returning the *context's* abstract error rather than a concrete one is what keep
 
 ```rust
 #[cgp_component(TryComputer)]
+#[prefix(@cgp.extra.handler in DefaultNamespace)]
 #[derive_delegate(UseDelegate<Code>)]
 #[derive_delegate(UseInputDelegate<Input>)]
 #[use_type(HasErrorType.Error)]
@@ -28,7 +29,7 @@ pub trait CanTryCompute<Code, Input> {
 }
 ```
 
-The consumer trait `CanTryCompute<Code, Input>` mirrors `CanCompute` but for the fallible case. Its `try_compute` method takes `&self`, a `PhantomData<Code>` naming the computation, and the `Input` by value, returning `Result<Self::Output, Error>` — the associated `Output` on success and the context's abstract error on failure. `#[use_type(HasErrorType.Error)]` adds `HasErrorType` as a supertrait and rewrites the bare `Error` to `<Self as HasErrorType>::Error`, so the definition writes neither `HasErrorType` nor `Self::Error` by hand; the local associated type `Output` stays qualified as `Self::Output`, since it is the trait's own type. The component is wired through the generated `TryComputerComponent` marker, and the macro generates the provider trait `TryComputer<Context, Code, Input>` with the context moved into an explicit first parameter. The two `#[derive_delegate(...)]` attributes generate dispatching providers keyed on `Code` and on `Input`.
+The consumer trait `CanTryCompute<Code, Input>` mirrors `CanCompute` but for the fallible case. Its `try_compute` method takes `&self`, a `PhantomData<Code>` naming the computation, and the `Input` by value, returning `Result<Self::Output, Error>` — the associated `Output` on success and the context's abstract error on failure. `#[use_type(HasErrorType.Error)]` adds `HasErrorType` as a supertrait and rewrites the bare `Error` to `<Self as HasErrorType>::Error`, so the definition writes neither `HasErrorType` nor `Self::Error` by hand; the local associated type `Output` stays qualified as `Self::Output`, since it is the trait's own type. The component is wired through the generated `TryComputerComponent` marker, and the macro generates the provider trait `TryComputer<Context, Code, Input>` with the context moved into an explicit first parameter. The two `#[derive_delegate(...)]` attributes generate dispatching providers keyed on `Code` and on `Input`, and `#[prefix(@cgp.extra.handler in DefaultNamespace)]` registers the component into that namespace path like the rest of the family.
 
 The by-reference sibling `TryComputerRef` is identical except that it borrows its input. Its consumer trait `CanTryComputeRef` also imports the error type with `#[use_type(HasErrorType.Error)]` and declares `fn try_compute_ref(&self, _code: PhantomData<Code>, input: &Input) -> Result<Self::Output, Error>`, taking `&Input` where `CanTryCompute` takes `Input`. Both components are synchronous; their async-and-fallible counterpart is `Handler`.
 

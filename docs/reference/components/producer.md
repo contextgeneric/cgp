@@ -14,6 +14,7 @@ Being inputless does not isolate `Producer` from the family — it makes it the 
 
 ```rust
 #[cgp_component(Producer)]
+#[prefix(@cgp.extra.handler in DefaultNamespace)]
 #[derive_delegate(UseDelegate<Code>)]
 pub trait CanProduce<Code> {
     type Output;
@@ -22,7 +23,7 @@ pub trait CanProduce<Code> {
 }
 ```
 
-The consumer trait `CanProduce<Code>` takes only a `Code` tag, not an `Input`. Its `produce` method takes `&self` (the context) and a `PhantomData<Code>` naming which value to produce, returning the associated `Output`. The component is wired through the generated `ProducerComponent` marker, and the macro generates the provider trait `Producer<Context, Code>` with the context moved into an explicit first parameter. Because there is no input to dispatch on, `Producer` carries only the single `#[derive_delegate(UseDelegate<Code>)]` attribute — dispatch is on the `Code` tag alone, with no `UseInputDelegate` counterpart. `Producer` does not supertrait `HasErrorType`: like `Computer`, it is infallible and synchronous, returning its `Output` directly rather than a `Result`.
+The consumer trait `CanProduce<Code>` takes only a `Code` tag, not an `Input`. Its `produce` method takes `&self` (the context) and a `PhantomData<Code>` naming which value to produce, returning the associated `Output`. The component is wired through the generated `ProducerComponent` marker, and the macro generates the provider trait `Producer<Context, Code>` with the context moved into an explicit first parameter. Because there is no input to dispatch on, `Producer` carries only the single `#[derive_delegate(UseDelegate<Code>)]` attribute — dispatch is on the `Code` tag alone, with no `UseInputDelegate` counterpart. Like the rest of the handler family it also carries `#[prefix(@cgp.extra.handler in DefaultNamespace)]`, registering it into that namespace path. `Producer` does not supertrait `HasErrorType`: like `Computer`, it is infallible and synchronous, returning its `Output` directly rather than a `Result`.
 
 ## Implementations
 

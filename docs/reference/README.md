@@ -62,6 +62,12 @@ These attributes refine what the definition macros generate and are used inside 
 - [`#[extend_where]`](attributes/extend_where.md) — add `where` clauses to a generated trait definition.
 - [`#[derive_delegate]`](attributes/derive_delegate.md) — generate `UseDelegate` providers that dispatch on a generic parameter.
 
+Three further modifier attributes do not yet have their own page and are documented inside their host construct's document; each is a candidate for a dedicated page here.
+
+- `#[impl_generics(...)]` — add bounded generic parameters to a `#[cgp_fn]`'s impl only (not its trait); documented in [`#[cgp_fn]`](macros/cgp_fn.md).
+- `#[prefix(...)]` — register a `#[cgp_component]` trait into a namespace under a path; documented in [`#[cgp_namespace]`](macros/cgp_namespace.md).
+- `#[default_impl(...)]` — register a `#[cgp_impl]` provider as a namespace's per-type default; documented in [`DefaultNamespace`](traits/default_namespace.md).
+
 ## Data derives — [derives/](derives/)
 
 These derive macros generate the field-access and extensible-data machinery for structs and enums.

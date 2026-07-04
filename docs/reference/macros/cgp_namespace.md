@@ -40,7 +40,7 @@ cgp_namespace! {
 
 Here `ExtendedNamespace` inherits every entry of `DefaultNamespace` and additionally rewrites the `@cgp.core.error` path prefix to `@app`. The parent may itself be parameterized (it is parsed as a path with type arguments), and the entries in the child body layer on top of the inherited ones.
 
-Defining a namespace is only half of the pattern; a context joins a namespace through `delegate_components!` using a `namespace` header line, and individual components attach to a namespace through the [`#[prefix(...)]`](cgp_component.md) attribute on their trait. Those two constructs are where namespaces are consumed, and they are described under Examples and Related constructs.
+Defining a namespace is only half of the pattern; a context joins a namespace through `delegate_components!` using a `namespace` header line, and individual components attach to a namespace through the `#[prefix(...)]` attribute on their trait. Those two constructs are where namespaces are consumed, and both are shown under Expansion and Examples below.
 
 ## Syntax Grammar
 
@@ -132,7 +132,7 @@ where
 
 This says: for any `__Key__` the parent `DefaultNamespace` resolves, `ExtendedNamespace` resolves it to the same `__Value__`. The body entries of the child are emitted after this blanket impl and take precedence where their keys are more specific. The path-rewriting entry `@cgp.core.error => @app` becomes an impl keyed on the `cgp.core.error` path prefix whose `Delegate` is a `RedirectLookup` onto the `@app` prefix — rerouting an entire subtree of the parent's namespace rather than a single component.
 
-The other half of the pattern is what attaches a component to a namespace, via [`#[prefix(...)]`](cgp_component.md) on the component's trait. Given:
+The other half of the pattern is what attaches a component to a namespace, via the `#[prefix(...)]` attribute on the component's trait. Given:
 
 ```rust
 #[cgp_component(BarProvider)]

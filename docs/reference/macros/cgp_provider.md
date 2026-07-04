@@ -128,7 +128,7 @@ where
 }
 ```
 
-The macro expands this into the provider impl above plus `impl<Context> IsProviderFor<AreaCalculatorComponent, Context> for RectangleArea where Context: HasDimensions {}`. A concrete context wires the component to `RectangleArea` exactly as it would for any provider, through [`delegate_components!`](delegate_components.md), and the `IsProviderFor` impl ensures that a context missing the `HasDimensions` dependency produces an error naming that dependency rather than an opaque one.
+The macro expands this into the provider impl above plus `impl<Context> IsProviderFor<AreaCalculatorComponent, Context, ()> for RectangleArea where Context: HasDimensions {}`. A concrete context wires the component to `RectangleArea` exactly as it would for any provider, through [`delegate_components!`](delegate_components.md), and the `IsProviderFor` impl ensures that a context missing the `HasDimensions` dependency produces an error naming that dependency rather than an opaque one.
 
 In most code, the same provider would be written more concisely with [`#[cgp_impl]`](cgp_impl.md), which lets the body use `self`/`Self` and omit the explicit `Context` parameter. `#[cgp_provider]` is the right choice when you prefer to work directly in the provider trait's own form, or when reading code that another tool or macro has already lowered to that form.
 

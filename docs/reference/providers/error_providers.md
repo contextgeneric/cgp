@@ -12,7 +12,7 @@ Each provider implements one or both of the two error components through their p
 
 ## Implementations
 
-The six providers divide into three groups by which component they implement and how they treat the error. The pure raisers — `RaiseFrom`, `ReturnError`, and `RaiseInfallible` — implement `ErrorRaiser` to convert a source error into the abstract error. `DiscardDetail` implements `ErrorWrapper` to drop detail. `PanicOnError` implements `ErrorRaiser` to abort rather than produce an error value. The string-formatting providers `DebugError` and `DisplayError` implement both components, redirecting through a string. The following sections describe each, naming the component it provides and the bound it places on the context or the error.
+The seven providers divide into three groups by which component they implement and how they treat the error. The pure raisers — `RaiseFrom`, `ReturnError`, and `RaiseInfallible` — implement `ErrorRaiser` to convert a source error into the abstract error. `DiscardDetail` implements `ErrorWrapper` to drop detail. `PanicOnError` implements `ErrorRaiser` to abort rather than produce an error value. The string-formatting providers `DebugError` and `DisplayError` implement both components, redirecting through a string. The following sections describe each, naming the component it provides and the bound it places on the context or the error.
 
 ### `RaiseFrom` — convert via `From`
 
