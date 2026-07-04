@@ -139,6 +139,8 @@ A `#[check_params(...)]` entry expands its parameters into the `__Params__` slot
 
 A generic table threads its generics through both halves. `<T> MyContext<T> { ... }` yields `impl<T> DelegateComponent<...> for MyContext<T>` delegations alongside `impl<T> __CanUseMyContext<..., ()> for MyContext<T> {}` checks.
 
+A delegation key may also carry its own generic parameters, and they are bound on the derived check impl. An entry such as `<I> BarGetterAtComponent<I>: UseField<Symbol!("dummy")>` — the array-key generic form [`delegate_components!`](delegate_components.md) accepts — checks as `impl<I> __CanUse…<BarGetterAtComponent<I>, ()> for MyContext {}`, and a `#[check_params((I, Index<0>))]` value that mentions the key generic is bound the same way. This lets a component whose marker is generic be wired and checked in one step without splitting the check into a separate block.
+
 ## Examples
 
 A main context wired and checked together is the intended use:

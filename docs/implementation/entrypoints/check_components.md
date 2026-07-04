@@ -46,6 +46,16 @@ A component with parameters places them in the `__Params__` slot — a single pa
 
 **The check trait name is derived from the context type's final path segment.** `derive_check_trait_ident` parses the context type through `PathWithTypeArgs` and prepends `__Check` to the last segment's identifier, so a path-qualified context such as `some_mod::Context` yields `__CheckContext` and is accepted rather than rejected — matching `delegate_components!`, which uses the context type verbatim.
 
+## Failure modes
+
+A few `check_components!` inputs are accepted by the macro but rejected — or silently do nothing — downstream, each intended behavior rather than a bug. Unlike the empty `#[check_providers()]` the parser rejects outright, these are left to the compiler or to the user because catching them would require second-guessing a legitimate, if degenerate, request.
+
+An **empty check table** (`Context { }`, or every entry checking nothing) emits the check trait with no impls, so it compiles and verifies nothing. This is not rejected because a table trimmed down to nothing during editing is indistinguishable from a deliberately empty one, and an empty table causes no harm — it simply asserts nothing.
+
+A **duplicate check entry** — the same component and parameters listed twice, whether directly (`Context { FooComponent, FooComponent }`) or through array expansion (`[A, A]: P`) — emits two identical check impls and fails with the coherence error `E0119`, exactly as two hand-written impls would. The span override aims the conflict at the repeated component.
+
+**Two tables for the same context with no `#[check_trait]` override** both derive the same `__Check{Context}` name and emit conflicting trait definitions, failing with `E0428`. The fix is a `#[check_trait(Name)]` on one table, which is why the override exists.
+
 ## Snapshots
 
 Every `snapshot_check_components!` invocation across the suite is indexed here, since these snapshots belong to this entrypoint:

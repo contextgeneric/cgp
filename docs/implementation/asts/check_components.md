@@ -40,11 +40,11 @@ The wiring half is not re-derived here — the entrypoint calls `DelegateTable::
 
 `CheckParamsAttribute` is the per-entry check control parsed from the delegation key's attributes: `Default` (check with unit params), `Skip` (`#[skip_check]`, no check), or `Multi` (`#[check_params(...)]`, one check per listed parameter). Its `merge` combines a bracket-level attribute with an inner key's own — unioning two `Multi` sets, but erroring when `Skip` meets `Multi` — and `parse_attributes` enforces that at most one attribute appears and that `#[skip_check]` takes no arguments.
 
-`KeyWithCheckParams` pairs a delegation key type with its resolved `CheckParamsAttribute`. Its `to_check_entries` turns the pairing into `CheckEntry` values: `Default` yields one bare entry, `Skip` yields none, and `Multi` yields one valued entry per parameter.
+`KeyWithCheckParams` pairs a delegation key type with its own generics and its resolved `CheckParamsAttribute`. Its `to_check_entries` turns the pairing into `CheckEntry` values: `Default` yields one bare entry, `Skip` yields none, and `Multi` yields one valued entry per parameter. When the key carries generics, they are threaded onto each check value's `TypeWithGenerics` so the derived impl binds them — a `Default` key gets a unit-params value carrying the generics (rather than the bare `value: None`), and each `Multi` parameter carries them too.
 
 ## `ToKeysWithCheckParams`
 
-`ToKeysWithCheckParams` is the trait that walks a `DelegateEntries` and collects `KeyWithCheckParams`. It handles single and array keys (merging bracket-level and inner attributes), and it deliberately produces no check entries for redirect (`=>`) mappings, `@`-path keys, and the `open`/`namespace`/`for` statement forms — validating that each carries no attribute rather than silently dropping one. A per-key generic list on a `SingleDelegateKey` is intentionally not carried into the check entry, since the derived impl sees only the table-level generics; this limitation is recorded in the [entrypoint document's Known issues](../entrypoints/delegate_and_check_components.md).
+`ToKeysWithCheckParams` is the trait that walks a `DelegateEntries` and collects `KeyWithCheckParams`. It handles single and array keys (merging bracket-level and inner attributes), carrying each key's own generics into the `KeyWithCheckParams` so a generic key binds its parameters on the derived check impl. It deliberately produces no check entries for redirect (`=>`) mappings, `@`-path keys, and the `open`/`namespace`/`for` statement forms — validating that each carries no attribute rather than silently dropping one.
 
 ## Tests
 

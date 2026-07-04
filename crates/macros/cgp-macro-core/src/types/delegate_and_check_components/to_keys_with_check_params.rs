@@ -12,13 +12,12 @@ impl ToKeysWithCheckParams for SingleDelegateKey {
     fn to_keys_with_check_params(&self) -> syn::Result<Vec<KeyWithCheckParams>> {
         let check_params = CheckParamsAttribute::parse_attributes(&self.attributes)?;
 
-        // Note: any per-key `ImplGenerics` (`self.generics`) are not carried into
-        // the check entry. The generated check impl only sees the table-level
-        // generics, so a key that introduces its own generic parameters would
-        // reference them unbound. Generic keys are therefore not yet supported in
-        // the check half; use `#[skip_check]` for such keys if needed.
+        // Carry the key's own generics (`<I>` in `<I> FooKey<I>`) into the check
+        // entry so the derived check impl binds them; `KeyWithCheckParams` threads
+        // them onto each check value.
         let key = KeyWithCheckParams {
             check_params,
+            generics: self.generics.clone(),
             key_type: self.ty.clone(),
         };
 
@@ -38,6 +37,7 @@ impl ToKeysWithCheckParams for MultiDelegateKey {
                 let inner_params = check_params.merge(&inner.check_params)?;
                 out.push(KeyWithCheckParams {
                     key_type: inner.key_type,
+                    generics: inner.generics,
                     check_params: inner_params,
                 })
             }

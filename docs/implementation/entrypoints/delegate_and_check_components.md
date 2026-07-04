@@ -51,11 +51,15 @@ A table-level `#[check_trait(Name)]` overrides the derived name. A generic table
 
 **The two attributes are mutually exclusive and merge across bracket levels.** `#[check_params]` and `#[skip_check]` cannot both apply to one key, and at most one of each may appear. For an array key, a block-level attribute on the bracket merges with each inner key's own attribute — two `#[check_params]` sets union, while combining `#[skip_check]` with `#[check_params]` is an error.
 
+**A per-key generic list is threaded onto the derived check impl.** A delegation key that introduces its own generic parameters (`<I> FooKey<I>: …`) carries them into the check half, so the generated check impl binds them (`impl<I> __CanUse…<FooKey<I>, …> for Context {}`) rather than referencing them unbound. `KeyWithCheckParams` attaches the key's generics to every check value it produces: a bare `#[check_params(…)]`-less key gets a unit-params value carrying the generics, and each `#[check_params(…)]` parameter carries them too, so the merge in `CheckComponentsTable::eval` binds them alongside the table-level generics.
+
 **Statement forms and non-plain keys are not checked.** The `open`/`namespace`/`for` statements and redirect (`=>`) and `@`-path keys still produce delegation impls through `eval`, but the conversion generates no check entries for them; it validates that they carry no attributes rather than silently ignoring one. Path keys on the delegation side are likewise dropped from the check half. This means a per-value `open` dispatch is wired but not checked.
 
-## Known issues
+## Failure modes
 
-A **per-key generic list on a delegation key is not carried into the check half**. A key that introduces its own generic parameters (`<T> FooKey<T>: …`) would produce a check impl referencing those parameters unbound, since the derived check impl sees only the table-level generics. Such generic keys are therefore unsupported in the checking half; the workaround is `#[skip_check]` on that key and a separate `check_components!` block. The correct behavior would be to thread the per-key generics into the derived check entry as `check_components!` already does for its own generic values.
+Because the macro reuses the `delegate_components!` and `check_components!` pipelines, its accepted-but-uncompilable inputs are the same ones those macros defer to the compiler, and each is intended behavior rather than a bug. A **duplicate key** emits conflicting `DelegateComponent` impls on the wiring side (and, if checked, conflicting check impls too), failing with the coherence error `E0119` exactly as [`delegate_components!`](delegate_components.md) documents. A **missing impl-side dependency** is what the check half exists to surface — the derived check fails to compile at the wiring site and names the unmet bound.
+
+A table whose every entry is `#[skip_check]` (or an empty table) still emits the check trait but no check impls, so it verifies nothing; this parallels the empty `#[check_providers()]` that `check_components!` rejects, but here it is accepted because skipping every entry is a legitimate, if degenerate, request.
 
 ## Snapshots
 
@@ -64,6 +68,7 @@ Every `snapshot_delegate_and_check_components!` invocation across the suite is i
 - [checking/delegate_and_check_basic.rs](../../../crates/tests/cgp-tests/tests/checking/delegate_and_check_basic.rs) — the basic form: two entries wired and checked, with the check trait renamed via `#[check_trait(...)]`.
 - [checking/delegate_and_check_generic.rs](../../../crates/tests/cgp-tests/tests/checking/delegate_and_check_generic.rs) — a generic context (`<T> MyContext<T>`) threaded through both halves, with the check trait defaulting to `__CanUse{Context}`.
 - [checking/delegate_and_check_params.rs](../../../crates/tests/cgp-tests/tests/checking/delegate_and_check_params.rs) — `#[check_params(...)]` supplying parameter tuples, an array key wiring several components to one provider, and a block-level `#[check_params(...)]` on the bracket merged with each entry's own.
+- [checking/delegate_and_check_generic_key.rs](../../../crates/tests/cgp-tests/tests/checking/delegate_and_check_generic_key.rs) — a delegation key carrying its own generic parameters (`<I> BarGetterAtComponent<I>`) whose generics are threaded onto the derived check impl, with a `#[check_params((I, Index<0>))]` value that mentions the key generic.
 - [dispatching/use_delegate_getter.rs](../../../crates/tests/cgp-tests/tests/dispatching/use_delegate_getter.rs) — a `UseDelegate`-table value wired and checked in one step, exercising the legacy nested-table form through this macro.
 
 One variant has no snapshot: a `#[skip_check]` entry alongside checked entries, which the reference shows but no snapshot pins.

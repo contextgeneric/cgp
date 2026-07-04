@@ -3,10 +3,12 @@
 //! wiring of one test never leaks into another.
 
 // `delegate_and_check_components!` snapshots (this concept owns the macro's
-// expansion): the basic wire-and-check step, its generic-context form, and the
-// generic-parameter `#[check_params]` / array-key form.
+// expansion): the basic wire-and-check step, its generic-context form, the
+// generic-parameter `#[check_params]` / array-key form, and the per-key generic
+// form whose key generics are threaded onto the derived check impl.
 pub mod delegate_and_check_basic;
 pub mod delegate_and_check_generic;
+pub mod delegate_and_check_generic_key;
 pub mod delegate_and_check_params;
 
 // `check_components!` snapshots (this concept owns the macro's expansion): the
