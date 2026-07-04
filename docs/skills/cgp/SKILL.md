@@ -156,7 +156,7 @@ wrong, it is what you *read* in generated code and legacy wiring, not what you *
 | name an abstract type (e.g. `Error`) | `#[use_type(Trait.Type)]` + the bare alias | `: Trait` supertrait + `Self::Type` |
 | add a capability supertrait | `#[extend(Trait)]` | native `pub trait …: Supertrait` |
 | dispatch a component per type | the `open` statement (or a namespace) | `#[derive_delegate]` + `UseDelegate<new …>` tables |
-| wire a context's main table | `delegate_and_check_components!` | bare `delegate_components!` (unchecked) for a context |
+| verify a context is fully wired | separate `check_components!` (or `delegate_and_check_components!` for a basic starter context) | leaving a context's wiring unchecked |
 | build a field/list/string/path type | `Symbol!` / `Product!` / `Sum!` / `Path!` sugar | hand-written `Cons`/`Nil`/`Chars`/`Either`/`PathCons` |
 
 Two names are gone entirely, not merely dated: never write `#[cgp_context]` (removed — assemble a
@@ -429,8 +429,8 @@ at this site, walking through `IsProviderFor` so the real cause (e.g. a missing
 list the parameter after the component (`GreeterComponent: Rectangle`), group multiple parameters as
 a tuple (`(Rectangle, f64)`), and use array syntax to check several at once.
 
-**Prefer `delegate_and_check_components!` for a context's main wiring** — it wires and checks in one
-step, so every delegation is verified:
+`delegate_and_check_components!` fuses wiring and checking in one step, so every delegation is
+verified the moment it is written:
 
 ```rust
 delegate_and_check_components! {
@@ -443,9 +443,20 @@ delegate_and_check_components! {
 Its check trait is named `__CanUse{Context}` (vs. `__Check{Context}` for `check_components!`), so
 both macros can appear once per module without clashing; override with `#[check_trait(Name)]`. When
 the delegated component has generic parameters, add `#[check_params(...)]` on the entry; skip a
-single entry's check with `#[skip_check]`. Use plain `delegate_components!` (no check) for
-intermediary provider tables. Not every unsatisfied bound is a CGP component — some are ordinary or
-blanket traits that `check_components!` cannot verify.
+single entry's check with `#[skip_check]`.
+
+**This fused macro is a convenience for basic wiring and for getting started — not the default for
+advanced code.** It exists so a newcomer cannot forget to write a separate `check_components!` and
+then hit confusing lazy-wiring errors, and it derives a check only for the plain `Component: Provider`
+delegation form. It cannot easily derive checks for advanced mappings — generic-parameter dispatch
+(the `open` statement and `@`-path keys), namespaces, or per-layer higher-order checks. **In larger,
+more advanced codebases, keep `delegate_components!` and `check_components!` separate**, which gives
+full control over what is checked: `#[check_providers(...)]` per provider layer, concrete parameters
+for generic keys, and checks over opened or namespaced wiring. The one non-negotiable is that a
+context's wiring *is* checked somehow; which macro you use to do it scales with the wiring's
+complexity. Use plain `delegate_components!` with no check only for intermediary provider tables that
+are not contexts in their own right. Finally, not every unsatisfied bound is a CGP component — some
+are ordinary or blanket traits that `check_components!` cannot verify.
 
 For a nested [higher-order provider](references/higher-order-providers.md), checking the context
 tells you a layer is broken but not which one. The `#[check_providers(...)]` attribute on a

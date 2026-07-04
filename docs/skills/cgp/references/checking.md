@@ -138,7 +138,7 @@ Because each provider is checked independently, a dependency missing only from t
 
 ## Wiring and checking together with `delegate_and_check_components!`
 
-Keeping a standalone `check_components!` block in sync with the wiring is manual bookkeeping: add a delegation and you must remember to add its check. `delegate_and_check_components!` fuses the two — it wires each entry exactly as `delegate_components!` would and derives a check for each delegated key, so every wiring is proven the moment it is written:
+For basic wiring, and especially while getting started with CGP, `delegate_and_check_components!` removes the bookkeeping of keeping a standalone `check_components!` block in sync with the delegations. It fuses the two — wiring each entry exactly as `delegate_components!` would and deriving a check for each delegated key — so a simple context is proven the moment it is written and a newcomer cannot forget the check. (Its reach stops at that basic form, which is why advanced codebases keep the two macros separate; see the recommendation at the end of this section.)
 
 ```rust
 #[derive(HasField)]
@@ -190,7 +190,7 @@ delegate_and_check_components! {
 }
 ```
 
-The recommendation follows from these defaults: reach for `delegate_and_check_components!` for a main context's wiring, where catching a broken or incomplete wiring as early as possible is most valuable, and keep plain `delegate_components!` for intermediary provider-bundle tables that group providers without being a context in their own right. Use a standalone `check_components!` block when a check needs `#[check_providers(...)]` or other control beyond per-entry `#[check_params]` and `#[skip_check]`.
+Where `delegate_and_check_components!` fits is narrower than its convenience suggests: it is the beginner-friendly, basic-wiring form, not the default for advanced code. Its value is that a newcomer cannot forget to write a separate `check_components!` and then be tripped by the confusing lazy-wiring errors that follow; it derives a check for each plain `Component: Provider` entry so getting-started code is checked by construction. But the derivation only understands that basic delegation form. It cannot easily generate check traits for the advanced mappings — generic-parameter dispatch through the `open` statement and `@`-path keys, namespace joins, and per-layer higher-order checks — because those need concrete parameters or providers the fused derivation cannot infer from the delegation alone. So in larger, more advanced codebases, keep `delegate_components!` and `check_components!` separate: the standalone `check_components!` block is where `#[check_providers(...)]`, concrete parameters for generic keys, and checks over opened or namespaced wiring all live. Plain `delegate_components!` with no check at all remains right only for intermediary provider-bundle tables that are not contexts in their own right. The rule that does not bend is that a context's wiring is checked *somehow*; `delegate_and_check_components!` is simply the training-wheels way to guarantee that for simple contexts, and the two separate macros are the way that scales.
 
 ## Debugging an unsatisfied check
 

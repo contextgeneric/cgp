@@ -85,7 +85,7 @@ delegate_components! {
 }
 ```
 
-The `namespace DefaultNamespace;` line emits a blanket `DelegateComponent` impl on `AppA` that forwards every key through `DefaultNamespace<AppA>`, paired with the matching `IsProviderFor` forwarding so dependency errors stay diagnosable through [checking](checking.md). The direct `@test.ShowImplComponent.u64` line resolves first, so it wins for `u64` only — the inherit-and-override pattern in action. Joining through `delegate_and_check_components!` instead does the same while verifying the merged wiring.
+The `namespace DefaultNamespace;` line emits a blanket `DelegateComponent` impl on `AppA` that forwards every key through `DefaultNamespace<AppA>`, paired with the matching `IsProviderFor` forwarding so dependency errors stay diagnosable through [checking](checking.md). The direct `@test.ShowImplComponent.u64` line resolves first, so it wins for `u64` only — the inherit-and-override pattern in action. Joining through `delegate_and_check_components!` does the same and additionally checks the entries the block writes directly, but its derivation does not cover the components the namespace itself brings in — so verifying the full inherited wiring is a job for a standalone `check_components!` (see [checking](checking.md)).
 
 ## Paths with `Path!`
 
