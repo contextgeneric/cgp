@@ -3,7 +3,7 @@ use syn::spanned::Spanned;
 use syn::token::In;
 use syn::{Generics, ItemImpl, Type};
 
-use crate::functions::override_synthesized_span;
+use crate::functions::override_item_span;
 use crate::parse_internal;
 use crate::types::ident::PathWithTypeArgs;
 use crate::types::path::UniPathOrType;
@@ -41,14 +41,15 @@ impl DefaultImplAttribute {
             }
         };
 
-        // The impl's `impl`/`for` scaffolding is built from quasi-quoted tokens,
-        // so it carries the macro `call_site` span. Re-span those synthesized
-        // tokens onto the user-written key token so a coherence conflict (`E0119`)
-        // between two default impls for the same key is reported on that key rather
-        // than on the whole `#[cgp_impl]` attribute. The user's own tokens — the
-        // provider type, a per-entry generic — keep their spans, so they stay
-        // navigable in an IDE, mirroring `EvaluatedDelegateEntry::respan_impl`.
-        override_synthesized_span(key_type.span(), &item_impl)
+        // The impl is built from quasi-quoted tokens, so its boundary carries the
+        // macro `call_site` span. Re-span it onto the user-written key token so a
+        // coherence conflict (`E0119`) between two default impls for the same key
+        // is reported on that key rather than on the whole `#[cgp_impl]` attribute.
+        // Only the boundary moves; the interior tokens — the provider type, a
+        // per-entry generic, each synthesized reference — keep their spans, so the
+        // user's tokens stay navigable in an IDE, mirroring
+        // `EvaluatedDelegateEntry::respan_impl`.
+        override_item_span(key_type.span(), &item_impl)
     }
 }
 
