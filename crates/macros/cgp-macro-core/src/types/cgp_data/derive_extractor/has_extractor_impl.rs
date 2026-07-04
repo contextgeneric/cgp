@@ -1,7 +1,8 @@
 use quote::quote;
-use syn::{Arm, Ident, ItemEnum, ItemImpl, parse2};
+use syn::{Arm, Ident, ItemEnum, ItemImpl};
 
 use crate::exports::{HasExtractor, HasExtractorMut, HasExtractorRef, IsMut, IsPresent, IsRef};
+use crate::parse_internal;
 use crate::types::cgp_data::to_generic_args;
 
 /// Emit the owned `HasExtractor` impl: `to_extractor`/`from_extractor` map each
@@ -21,26 +22,26 @@ pub fn derive_has_extractor_impl(
     let mut from_match_arms = Vec::<Arm>::new();
 
     for variant in context_enum.variants.iter() {
-        extractor_generics.args.push(parse2(quote! {
+        extractor_generics.args.push(parse_internal! {
             #IsPresent
-        })?);
+        });
 
         let variant_ident = &variant.ident;
 
-        to_match_arms.push(parse2(quote! {
+        to_match_arms.push(parse_internal! {
             Self :: #variant_ident ( value ) => {
                 #extractor_ident:: #variant_ident ( value )
             }
-        })?);
+        });
 
-        from_match_arms.push(parse2(quote! {
+        from_match_arms.push(parse_internal! {
             #extractor_ident:: #variant_ident ( value ) => {
                 Self :: #variant_ident ( value )
             }
-        })?);
+        });
     }
 
-    let item_impl = parse2(quote! {
+    let item_impl: ItemImpl = parse_internal! {
         impl #impl_generics #HasExtractor
             for #context_ident #ty_generics
         #where_clause
@@ -59,7 +60,7 @@ pub fn derive_has_extractor_impl(
                 }
             }
         }
-    })?;
+    };
 
     Ok(item_impl)
 }
@@ -86,33 +87,33 @@ pub fn derive_has_extractor_ref_impl(
     if !is_empty {
         extractor_generics.args.insert(
             0,
-            parse2(quote! {
+            parse_internal! {
                 '__a__
-            })?,
+            },
         );
 
         extractor_generics.args.insert(
             1,
-            parse2(quote! {
+            parse_internal! {
                 #IsRef
-            })?,
+            },
         );
     }
 
     let mut match_arms = Vec::<Arm>::new();
 
     for variant in context_enum.variants.iter() {
-        extractor_generics.args.push(parse2(quote! {
+        extractor_generics.args.push(parse_internal! {
             #IsPresent
-        })?);
+        });
 
         let variant_ident = &variant.ident;
 
-        match_arms.push(parse2(quote! {
+        match_arms.push(parse_internal! {
             Self :: #variant_ident ( value ) => {
                 #extractor_ident:: #variant_ident ( value )
             }
-        })?);
+        });
     }
 
     let body = if is_empty {
@@ -121,7 +122,7 @@ pub fn derive_has_extractor_ref_impl(
         quote! { match self { #(#match_arms)* } }
     };
 
-    let item_impl = parse2(quote! {
+    let item_impl: ItemImpl = parse_internal! {
         impl #impl_generics #HasExtractorRef
             for #context_ident #ty_generics
         #where_clause
@@ -134,7 +135,7 @@ pub fn derive_has_extractor_ref_impl(
                 #body
             }
         }
-    })?;
+    };
 
     Ok(item_impl)
 }
@@ -158,33 +159,33 @@ pub fn derive_has_extractor_mut_impl(
     if !is_empty {
         extractor_generics.args.insert(
             0,
-            parse2(quote! {
+            parse_internal! {
                 '__a__
-            })?,
+            },
         );
 
         extractor_generics.args.insert(
             1,
-            parse2(quote! {
+            parse_internal! {
                 #IsMut
-            })?,
+            },
         );
     }
 
     let mut match_arms = Vec::<Arm>::new();
 
     for variant in context_enum.variants.iter() {
-        extractor_generics.args.push(parse2(quote! {
+        extractor_generics.args.push(parse_internal! {
             #IsPresent
-        })?);
+        });
 
         let variant_ident = &variant.ident;
 
-        match_arms.push(parse2(quote! {
+        match_arms.push(parse_internal! {
             Self :: #variant_ident ( value ) => {
                 #extractor_ident:: #variant_ident ( value )
             }
-        })?);
+        });
     }
 
     let body = if is_empty {
@@ -193,7 +194,7 @@ pub fn derive_has_extractor_mut_impl(
         quote! { match self { #(#match_arms)* } }
     };
 
-    let item_impl = parse2(quote! {
+    let item_impl: ItemImpl = parse_internal! {
         impl #impl_generics #HasExtractorMut
             for #context_ident #ty_generics
         #where_clause
@@ -206,7 +207,7 @@ pub fn derive_has_extractor_mut_impl(
                 #body
             }
         }
-    })?;
+    };
 
     Ok(item_impl)
 }

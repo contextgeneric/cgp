@@ -1,7 +1,7 @@
-use quote::quote;
-use syn::{Ident, ItemEnum, ItemImpl, Type, parse2};
+use syn::{Ident, ItemEnum, ItemImpl, Type};
 
 use crate::exports::{FinalizeExtract, IsVoid, MapTypeRef};
+use crate::parse_internal;
 use crate::types::cgp_data::to_generic_args;
 
 /// Emit `FinalizeExtract` for the all-`IsVoid` configuration of the partial
@@ -21,16 +21,16 @@ pub fn derive_finalize_extract_impl(
         if is_ref && !context_enum.variants.is_empty() {
             generics.params.insert(
                 0,
-                parse2(quote! {
+                parse_internal! {
                     '__a__
-                })?,
+                },
             );
 
             generics.params.insert(
                 0,
-                parse2(quote! {
+                parse_internal! {
                     __R__: #MapTypeRef
-                })?,
+                },
             );
         }
 
@@ -40,18 +40,18 @@ pub fn derive_finalize_extract_impl(
     let mut generic_args = to_generic_args(&generics)?;
 
     for _variant in context_enum.variants.iter() {
-        generic_args.args.push(parse2(quote! {
+        generic_args.args.push(parse_internal! {
             #IsVoid
-        })?);
+        });
     }
 
     let (impl_generics, _, where_clause) = generics.split_for_impl();
 
-    let extractor_type: Type = parse2(quote! {
+    let extractor_type: Type = parse_internal! {
         #extractor_ident #generic_args
-    })?;
+    };
 
-    let item_impl = parse2(quote! {
+    let item_impl: ItemImpl = parse_internal! {
         impl #impl_generics #FinalizeExtract for #extractor_type
         #where_clause
         {
@@ -59,7 +59,7 @@ pub fn derive_finalize_extract_impl(
                 match self {}
             }
         }
-    })?;
+    };
 
     Ok(item_impl)
 }

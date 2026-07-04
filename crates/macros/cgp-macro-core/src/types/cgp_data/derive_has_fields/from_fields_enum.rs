@@ -1,7 +1,8 @@
 use quote::quote;
-use syn::{ItemEnum, ItemImpl, parse2};
+use syn::{ItemEnum, ItemImpl};
 
 use crate::exports::{Either, FromFields};
+use crate::functions::parse_internal;
 use crate::types::cgp_data::derive_from_field_params;
 
 pub fn derive_from_fields_for_enum(item_enum: &ItemEnum) -> syn::Result<ItemImpl> {
@@ -43,5 +44,5 @@ pub fn derive_from_fields_for_enum(item_enum: &ItemEnum) -> syn::Result<ItemImpl
         }
     };
 
-    parse2(item_impl)
+    parse_internal(item_impl)
 }

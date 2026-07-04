@@ -45,7 +45,7 @@ Symbol<3, Chars<'f', Chars<'o', Chars<'o', Nil>>>>    Index<0>
 
 ## Tests
 
-- The stack has no parser-rejection tests of its own in `cgp-macro-tests`; the shape errors it raises (a non-struct/non-enum for `CgpData`, a non-struct for the record derives, a non-enum for the variant derives, and a non-single-field variant for the extractor and `FromVariant`) surface at `syn::parse2` or in the codegen helpers and are exercised only implicitly.
+- The shape-dispatch rejections are pinned in `cgp-macro-tests`'s `parser_rejections` target: [derive_cgp_data.rs](../../../crates/tests/cgp-macro-tests/tests/parser_rejections/derive_cgp_data.rs) drives `ItemCgpData` and asserts it refuses a non-struct/non-enum item and a non-single-field variant, and [derive_from_variant.rs](../../../crates/tests/cgp-macro-tests/tests/parser_rejections/derive_from_variant.rs) covers the variant-shape rejection (raised by the `get_variant_type` helper) plus `CgpVariant`'s non-enum rejection. The record derives' non-struct rejection (raised at `syn::parse2` of `ItemStruct`) has no dedicated test and is exercised only implicitly.
 - The stage transforms are exercised end-to-end by the expansion snapshots indexed in the entrypoint documents' Snapshots sections — the [`snapshot_derive_has_field`](../entrypoints/derive_has_field.md#snapshots), [`snapshot_derive_has_fields`](../entrypoints/derive_has_fields.md#snapshots), and [`snapshot_derive_cgp_data`](../entrypoints/derive_cgp_data.md#snapshots) families.
 
 ## Source

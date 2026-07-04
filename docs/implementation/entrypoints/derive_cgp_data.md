@@ -57,7 +57,14 @@ The snapshot tests above also carry runtime assertions that exercise the compose
 - `optional_builder.rs` drives the optional builder (`set`/`finalize_optional`/`finalize_with_default`).
 - `point_cast.rs` casts a smaller record up into a larger one.
 - The `derive_cgp_data*` variant snapshots run the extractor and the upcast/downcast casts.
-- The neighboring [record_build_from.rs](../../../crates/tests/cgp-tests/tests/extensible_records/record_build_from.rs), [record_build_with_handlers.rs](../../../crates/tests/cgp-tests/tests/extensible_records/record_build_with_handlers.rs), [shape_dispatch.rs](../../../crates/tests/cgp-tests/tests/extensible_variants/shape_dispatch.rs), [shape_dispatch_ref.rs](../../../crates/tests/cgp-tests/tests/extensible_variants/shape_dispatch_ref.rs), and [variant_dispatch.rs](../../../crates/tests/cgp-tests/tests/extensible_variants/variant_dispatch.rs) exercise the builder and dispatch behaviors on `CgpData` types without pinning a snapshot.
+
+Standalone behavioral tests (no snapshot, since the expansion shape is already pinned above) cover the corner cases the snapshots do not:
+
+- [extensible_records/record_lifetime.rs](../../../crates/tests/cgp-tests/tests/extensible_records/record_lifetime.rs) — the builder path on a struct with a lifetime parameter, threading `'a` through the `__Partial…` companion and every builder impl (the record-side counterpart of the enum lifetime test below).
+- [extensible_variants/derive_cgp_data_lifetime.rs](../../../crates/tests/cgp-tests/tests/extensible_variants/derive_cgp_data_lifetime.rs) — the extractor path on an enum whose own lifetime is named `'a`, confirming the reserved `'__a__` borrow lifetime does not collide.
+- [record_build_from.rs](../../../crates/tests/cgp-tests/tests/extensible_records/record_build_from.rs), [record_build_with_handlers.rs](../../../crates/tests/cgp-tests/tests/extensible_records/record_build_with_handlers.rs), [shape_dispatch.rs](../../../crates/tests/cgp-tests/tests/extensible_variants/shape_dispatch.rs), [shape_dispatch_ref.rs](../../../crates/tests/cgp-tests/tests/extensible_variants/shape_dispatch_ref.rs), and [variant_dispatch.rs](../../../crates/tests/cgp-tests/tests/extensible_variants/variant_dispatch.rs) exercise the builder and dispatch behaviors on `CgpData` types.
+
+The umbrella's own rejection path is pinned in [cgp-macro-tests/parser_rejections/derive_cgp_data.rs](../../../crates/tests/cgp-macro-tests/tests/parser_rejections/derive_cgp_data.rs): the shape dispatch refuses an item that is neither a struct nor an enum (a union), and the enum path propagates the single-unnamed-field variant restriction it shares with [`#[derive(CgpVariant)]`](derive_cgp_variant.md) and [`#[derive(FromVariant)]`](derive_from_variant.md).
 
 ## Source
 

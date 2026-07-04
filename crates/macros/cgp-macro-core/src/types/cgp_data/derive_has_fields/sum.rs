@@ -2,9 +2,10 @@ use proc_macro2::TokenStream;
 use quote::quote;
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
-use syn::{Type, Variant, parse2};
+use syn::{Type, Variant};
 
 use crate::exports::{Either, Field, Void};
+use crate::functions::parse_internal;
 use crate::types::cgp_data::item_fields_to_product_type;
 use crate::types::field::Symbol;
 
@@ -28,5 +29,5 @@ pub fn variants_to_sum_type(
         };
     }
 
-    parse2(out)
+    parse_internal(out)
 }

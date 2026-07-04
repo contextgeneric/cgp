@@ -39,7 +39,7 @@ impl ToTokens for Symbol {
         use crate::exports::{Chars, Nil, Symbol};
 
         let span = self.span;
-        let str_value = self.ident.to_string();
+        let str_value = self.ident.as_str();
 
         let chars = str_value.chars().rev().fold(
             quote_spanned!(span => #Nil),

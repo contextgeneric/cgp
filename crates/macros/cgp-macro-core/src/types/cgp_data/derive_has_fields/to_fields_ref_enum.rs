@@ -1,7 +1,8 @@
 use quote::quote;
-use syn::{ItemEnum, ItemImpl, parse2};
+use syn::{ItemEnum, ItemImpl};
 
 use crate::exports::ToFieldsRef;
+use crate::functions::parse_internal;
 use crate::types::cgp_data::derive_to_fields_match_arms;
 
 pub fn derive_to_fields_ref_for_enum(item_enum: &ItemEnum) -> syn::Result<ItemImpl> {
@@ -37,5 +38,5 @@ pub fn derive_to_fields_ref_for_enum(item_enum: &ItemEnum) -> syn::Result<ItemIm
         }
     };
 
-    parse2(item_impl)
+    parse_internal(item_impl)
 }

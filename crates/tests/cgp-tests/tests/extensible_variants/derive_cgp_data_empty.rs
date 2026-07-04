@@ -14,7 +14,6 @@
 //! See docs/reference/derives/derive_cgp_data.md and
 //! docs/reference/derives/derive_extract_field.md.
 
-use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_derive_cgp_data;
 
 snapshot_derive_cgp_data! {

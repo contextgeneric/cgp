@@ -1,7 +1,7 @@
-use quote::quote;
-use syn::{Arm, GenericArgument, Ident, ItemEnum, ItemImpl, Type, parse2};
+use syn::{Arm, GenericArgument, Ident, ItemEnum, ItemImpl, Type};
 
 use crate::exports::{ExtractField, IsPresent, IsVoid, MapType, MapTypeRef};
+use crate::parse_internal;
 use crate::types::cgp_data::{get_variant_type, index_to_generic_ident, to_generic_args};
 use crate::types::field::Symbol;
 
@@ -22,16 +22,16 @@ pub fn derive_extract_field_impls(
         if is_ref {
             generics.params.insert(
                 0,
-                parse2(quote! {
+                parse_internal! {
                     '__a__
-                })?,
+                },
             );
 
             generics.params.insert(
                 1,
-                parse2(quote! {
+                parse_internal! {
                     __R__: #MapTypeRef
-                })?,
+                },
             );
         }
 
@@ -52,28 +52,28 @@ pub fn derive_extract_field_impls(
             if other_index != current_index {
                 let generic_param_name = index_to_generic_ident(other_index);
 
-                generics.params.push(parse2(quote! {
+                generics.params.push(parse_internal! {
                     #generic_param_name: #MapType
-                })?);
+                });
 
-                let generic_arg: GenericArgument = parse2(quote! { #generic_param_name })?;
+                let generic_arg: GenericArgument = parse_internal! { #generic_param_name };
                 source_generic_args.push(generic_arg.clone());
                 output_generic_args.push(generic_arg);
 
-                match_arms.push(parse2(quote! {
+                match_arms.push(parse_internal! {
                     #extractor_ident :: #variant_ident ( value ) => {
                         Err(#extractor_ident :: #variant_ident ( value ))
                     }
-                })?);
+                });
             } else {
-                source_generic_args.push(parse2(quote! { #IsPresent })?);
-                output_generic_args.push(parse2(quote! { #IsVoid })?);
+                source_generic_args.push(parse_internal! { #IsPresent });
+                output_generic_args.push(parse_internal! { #IsVoid });
 
-                match_arms.push(parse2(quote! {
+                match_arms.push(parse_internal! {
                     #extractor_ident :: #variant_ident ( value ) => {
                         Ok( value )
                     }
-                })?);
+                });
             }
         }
 
@@ -81,7 +81,7 @@ pub fn derive_extract_field_impls(
             let value_type = get_variant_type(current_variant)?;
 
             if is_ref {
-                parse2(quote! { <__R__ as #MapTypeRef>::Map<'__a__, #value_type> })?
+                parse_internal! { <__R__ as #MapTypeRef>::Map<'__a__, #value_type> }
             } else {
                 value_type.clone()
             }
@@ -89,17 +89,17 @@ pub fn derive_extract_field_impls(
 
         let tag_type = Symbol::from_ident(current_variant.ident.clone());
 
-        let source_type: Type = parse2(quote! {
+        let source_type: Type = parse_internal! {
             #extractor_ident < #source_generic_args >
-        })?;
+        };
 
-        let output_type: Type = parse2(quote! {
+        let output_type: Type = parse_internal! {
             #extractor_ident < #output_generic_args >
-        })?;
+        };
 
         let (impl_generics, _, where_clause) = generics.split_for_impl();
 
-        let item_impl = parse2(quote! {
+        let item_impl: ItemImpl = parse_internal! {
             impl #impl_generics #ExtractField< #tag_type >
                 for #source_type
             #where_clause
@@ -114,7 +114,7 @@ pub fn derive_extract_field_impls(
                     }
                 }
             }
-        })?;
+        };
 
         item_impls.push(item_impl);
     }

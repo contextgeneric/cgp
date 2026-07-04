@@ -9,6 +9,7 @@ pub mod optional_builder;
 pub mod person_record;
 pub mod point_cast;
 pub mod record_derive;
+pub mod record_lifetime;
 pub mod tuple_record;
 
 // Behavioral record building: assembling a record from other records and from
