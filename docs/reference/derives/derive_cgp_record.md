@@ -24,7 +24,7 @@ pub struct Person {
 }
 ```
 
-Each named field becomes a type-level string [`Symbol!`](../macros/symbol.md) used as the field's `Tag`, while an unnamed field of a tuple struct becomes a positional [`Index<N>`](../types/index.md) — the same tagging rule as [`#[derive(HasField)]`](derive_has_field.md). The field's declared type becomes its value type, and generic parameters on the struct are carried onto the generated impls. The derive accepts the same structs that [`#[derive(CgpData)]`](derive_cgp_data.md) accepts for the record path; the only difference is that `CgpRecord` refuses non-struct inputs outright.
+Each named field becomes a type-level string [`Symbol!`](../macros/symbol.md) used as the field's `Tag`, while an unnamed field of a tuple struct becomes a positional [`Index<N>`](../types/index.md) — the same tagging rule as [`#[derive(HasField)]`](derive_has_field.md), including that a raw-identifier field such as `r#type` is tagged by its logical name `Symbol!("type")`. The field's declared type becomes its value type, and generic parameters on the struct are carried onto the generated impls. The derive accepts the same structs that [`#[derive(CgpData)]`](derive_cgp_data.md) accepts for the record path; the only difference is that `CgpRecord` refuses non-struct inputs outright.
 
 ## Expansion
 

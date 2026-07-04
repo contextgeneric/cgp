@@ -17,7 +17,7 @@ Symbol<2, Chars<'a', Chars<'b', Nil>>>
 
 Every emitted token carries the stored span via `quote_spanned!`, so a type error on the produced `Symbol` points back at the original literal. The `Symbol`, `Chars`, and `Nil` names come from the [export markers](../../../crates/macros/cgp-macro-core/src/exports.rs) so the output is hygienic.
 
-Beyond parsing a literal, `Symbol` is also constructed from a bare identifier through `Symbol::from_ident`, which the [`path` stack](path.md) uses to turn a lowercase path segment into a symbol; that constructor stores the identifier's text and span and reuses the same `ToTokens` emission, bypassing the `LitStr` parser. `Symbol` also implements the internal `ToType` trait, so a caller that needs a `syn::Type` rather than raw tokens can obtain one.
+Beyond parsing a literal, `Symbol` is also constructed from a bare identifier through `Symbol::from_ident`, which the data derives and the [`path` stack](path.md) use to turn a struct field, enum variant, or lowercase path segment into a symbol. That constructor calls `Ident::unraw` before storing the identifier's text, so a raw identifier such as `r#type` is tagged by its logical name `type` — the same symbol `Symbol!("type")` produces — rather than the literal `r#type`. This is an asymmetry with the parse path: `Symbol::parse` records the string literal verbatim, so `Symbol!("r#type")` would encode the literal `r#type`, and only `from_ident` strips the prefix. The constructor keeps the identifier's span and reuses the same `ToTokens` emission, bypassing the `LitStr` parser. `Symbol` also implements the internal `ToType` trait, so a caller that needs a `syn::Type` rather than raw tokens can obtain one.
 
 ## Tests
 

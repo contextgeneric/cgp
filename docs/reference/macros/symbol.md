@@ -77,7 +77,7 @@ let s = <Symbol!("hello")>::default();
 assert_eq!(s.to_string(), "hello"); // prints "hello"
 ```
 
-When a struct derives [`HasField`](../derives/derive_has_field.md), each named field's tag is a `Symbol!` of the field name, and the whole struct's [`HasFields`](../traits/has_fields.md) representation is a [`Product!`](product.md) of `Field<Symbol!("..."), Value>` entries — so `Symbol!` is the bridge between a field's source name and its type-level identity.
+When a struct derives [`HasField`](../derives/derive_has_field.md), each named field's tag is a `Symbol!` of the field name, and the whole struct's [`HasFields`](../traits/has_fields.md) representation is a [`Product!`](product.md) of `Field<Symbol!("..."), Value>` entries — so `Symbol!` is the bridge between a field's source name and its type-level identity. The derive tags a field by its *logical* name, stripping the `r#` prefix from a raw identifier: a field written `r#type` is tagged `Symbol!("type")`, the same tag you would write by hand, so `Symbol!("type")` addresses it. The `Symbol!` macro itself takes a string literal verbatim and performs no such stripping, which is why `Symbol!("type")` — not `Symbol!("r#type")` — is the tag that matches an `r#type` field.
 
 ## Related constructs
 

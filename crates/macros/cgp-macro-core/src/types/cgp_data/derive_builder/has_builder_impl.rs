@@ -1,9 +1,10 @@
 use quote::quote;
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
-use syn::{FieldValue, Ident, ItemImpl, ItemStruct, parse2};
+use syn::{FieldValue, Ident, ItemImpl, ItemStruct};
 
 use crate::exports::{HasBuilder, IsNothing};
+use crate::parse_internal;
 use crate::types::cgp_data::{field_to_member, field_value_expr, to_generic_args};
 
 pub fn derive_has_builder_impl(
@@ -19,16 +20,16 @@ pub fn derive_has_builder_impl(
     let mut builder_fields = <Punctuated<FieldValue, Comma>>::new();
 
     for (i, field) in context_struct.fields.iter().enumerate() {
-        builder_generics.args.push(parse2(quote! {
+        builder_generics.args.push(parse_internal! {
             #IsNothing
-        })?);
+        });
 
         let field_member = field_to_member(i, field);
 
         builder_fields.push(field_value_expr(field_member, quote! { () })?);
     }
 
-    let item_impl = parse2(quote! {
+    let item_impl = parse_internal! {
         impl #impl_generics #HasBuilder
             for #context_ident #ty_generics
         #where_clause
@@ -41,7 +42,7 @@ pub fn derive_has_builder_impl(
                 }
             }
         }
-    })?;
+    };
 
     Ok(item_impl)
 }

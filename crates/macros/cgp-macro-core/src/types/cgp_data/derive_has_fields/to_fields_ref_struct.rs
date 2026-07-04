@@ -1,7 +1,8 @@
 use quote::quote;
-use syn::{ItemImpl, ItemStruct, Lifetime, parse_quote, parse2};
+use syn::{ItemImpl, ItemStruct, Lifetime, parse_quote};
 
 use crate::exports::ToFieldsRef;
+use crate::parse_internal;
 use crate::types::cgp_data::{FieldLabel, derive_to_fields_constructor};
 
 pub fn derive_to_fields_ref_for_struct(item_struct: &ItemStruct) -> syn::Result<ItemImpl> {
@@ -20,7 +21,7 @@ pub fn derive_to_fields_ref_for_struct(item_struct: &ItemStruct) -> syn::Result<
 
     let life: Lifetime = parse_quote! { '__a };
 
-    let item_impl = parse2(quote! {
+    let item_impl = parse_internal! {
         impl #impl_generics
             #ToFieldsRef for #struct_name #type_generics
         #where_clause
@@ -34,7 +35,7 @@ pub fn derive_to_fields_ref_for_struct(item_struct: &ItemStruct) -> syn::Result<
                 #constructor
             }
         }
-    })?;
+    };
 
     Ok(item_impl)
 }

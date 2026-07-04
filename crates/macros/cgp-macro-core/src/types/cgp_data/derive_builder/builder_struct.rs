@@ -1,7 +1,7 @@
-use quote::quote;
-use syn::{GenericParam, Ident, ItemStruct, Type, TypeParam, parse2};
+use syn::{GenericParam, Ident, ItemStruct, Type, TypeParam};
 
 use crate::exports::MapType;
+use crate::parse_internal;
 use crate::types::cgp_data::index_to_generic_ident;
 
 pub fn derive_builder_struct(
@@ -18,17 +18,17 @@ pub fn derive_builder_struct(
     for (i, field) in builder_struct.fields.iter_mut().enumerate() {
         let generic_param_name = index_to_generic_ident(i);
 
-        let generic_param: TypeParam = parse2(quote! {
+        let generic_param: TypeParam = parse_internal! {
             #generic_param_name : #MapType
-        })?;
+        };
 
         generics.params.push(GenericParam::Type(generic_param));
 
         let field_type = &field.ty;
 
-        let mapped_type: Type = parse2(quote! {
+        let mapped_type: Type = parse_internal! {
             <#generic_param_name as #MapType>::Map<#field_type>
-        })?;
+        };
 
         field.ty = mapped_type;
     }

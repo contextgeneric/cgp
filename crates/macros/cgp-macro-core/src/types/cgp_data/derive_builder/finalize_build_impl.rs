@@ -1,9 +1,10 @@
 use quote::quote;
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
-use syn::{FieldValue, Ident, ItemImpl, ItemStruct, Type, parse2};
+use syn::{FieldValue, Ident, ItemImpl, ItemStruct, Type};
 
 use crate::exports::{FinalizeBuild, IsPresent};
+use crate::parse_internal;
 use crate::types::cgp_data::{field_to_member, field_value_expr, to_generic_args};
 
 pub fn derive_finalize_build_impl(
@@ -18,9 +19,9 @@ pub fn derive_finalize_build_impl(
     let mut builder_fields = <Punctuated<FieldValue, Comma>>::new();
 
     for (i, field) in context_struct.fields.iter().enumerate() {
-        generic_args.args.push(parse2(quote! {
+        generic_args.args.push(parse_internal! {
             #IsPresent
-        })?);
+        });
 
         let field_member = field_to_member(i, field);
 
@@ -32,11 +33,11 @@ pub fn derive_finalize_build_impl(
 
     let (impl_generics, _, where_clause) = generics.split_for_impl();
 
-    let builder_type: Type = parse2(quote! {
+    let builder_type: Type = parse_internal! {
         #builder_ident #generic_args
-    })?;
+    };
 
-    let item_impl = parse2(quote! {
+    let item_impl = parse_internal! {
         impl #impl_generics #FinalizeBuild for #builder_type
         #where_clause
         {
@@ -46,7 +47,7 @@ pub fn derive_finalize_build_impl(
                 }
             }
         }
-    })?;
+    };
 
     Ok(item_impl)
 }

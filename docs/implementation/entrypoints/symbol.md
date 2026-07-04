@@ -34,7 +34,7 @@ The leading `LEN` argument is the string's **byte** length, taken from `str::len
 
 Every emitted token carries the literal's span (via `quote_spanned!`), so a downstream type error points back at the `Symbol!` invocation rather than at the macro internals.
 
-The `Symbol` type is also constructed from a bare identifier rather than a literal by the [`Path!` stack](../asts/path.md): a lowercase path segment becomes a `Symbol` through `Symbol::from_ident`, which reuses the same `ToTokens` emission. That path does not go through this macro's `Parse` impl, which only accepts a `LitStr`.
+The `Symbol` type is also constructed from a bare identifier rather than a literal by the data derives and the [`Path!` stack](../asts/path.md): a struct field, enum variant, or lowercase path segment becomes a `Symbol` through `Symbol::from_ident`, which reuses the same `ToTokens` emission. That constructor calls `Ident::unraw` first, so a raw-identifier field such as `r#type` is tagged by its logical name — `Symbol!("type")`, not the literal `r#type` — which is what lets a `Symbol!("type")` bound match it. This path does not go through this macro's `Parse` impl, which only accepts a `LitStr` and records its value verbatim (so `Symbol!("r#type")` would encode the literal `r#type`).
 
 ## Known issues
 

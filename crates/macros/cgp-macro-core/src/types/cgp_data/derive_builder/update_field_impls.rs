@@ -1,9 +1,10 @@
 use quote::quote;
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
-use syn::{FieldValue, GenericArgument, Ident, ItemImpl, ItemStruct, Type, parse2};
+use syn::{FieldValue, GenericArgument, Ident, ItemImpl, ItemStruct, Type};
 
 use crate::exports::{MapType, UpdateField};
+use crate::parse_internal;
 use crate::types::cgp_data::{
     field_to_member, field_to_tag, field_value_expr, index_to_generic_ident, to_generic_args,
 };
@@ -30,11 +31,11 @@ pub fn derive_update_field_impls(
             if other_index != current_index {
                 let generic_param_name = index_to_generic_ident(other_index);
 
-                generics.params.push(parse2(quote! {
+                generics.params.push(parse_internal! {
                     #generic_param_name: #MapType
-                })?);
+                });
 
-                let generic_arg: GenericArgument = parse2(quote! { #generic_param_name })?;
+                let generic_arg: GenericArgument = parse_internal! { #generic_param_name };
                 source_generic_args.push(generic_arg.clone());
                 output_generic_args.push(generic_arg);
 
@@ -43,28 +44,28 @@ pub fn derive_update_field_impls(
                     quote! { self. #field_member },
                 )?);
             } else {
-                source_generic_args.push(parse2(quote! { __M1__ })?);
-                output_generic_args.push(parse2(quote! { __M2__ })?);
+                source_generic_args.push(parse_internal! { __M1__ });
+                output_generic_args.push(parse_internal! { __M2__ });
 
-                generics.params.push(parse2(quote! {
+                generics.params.push(parse_internal! {
                     __M1__: #MapType
-                })?);
+                });
 
-                generics.params.push(parse2(quote! {
+                generics.params.push(parse_internal! {
                     __M2__: #MapType
-                })?);
+                });
 
                 builder_fields.push(field_value_expr(field_member, quote! { value })?);
             }
         }
 
-        let source_type: Type = parse2(quote! {
+        let source_type: Type = parse_internal! {
             #builder_ident < #source_generic_args >
-        })?;
+        };
 
-        let output_type: Type = parse2(quote! {
+        let output_type: Type = parse_internal! {
             #builder_ident < #output_generic_args >
-        })?;
+        };
 
         let tag_type = field_to_tag(current_index, current_field);
 
@@ -72,7 +73,7 @@ pub fn derive_update_field_impls(
 
         let member = field_to_member(current_index, current_field);
 
-        let item_impl = parse2(quote! {
+        let item_impl = parse_internal! {
             impl #impl_generics #UpdateField< #tag_type, __M2__ >
                 for #source_type
             #where_clause
@@ -96,7 +97,7 @@ pub fn derive_update_field_impls(
                     )
                 }
             }
-        })?;
+        };
 
         item_impls.push(item_impl);
     }

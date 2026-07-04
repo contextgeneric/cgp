@@ -1,9 +1,10 @@
 use proc_macro2::TokenStream;
 use quote::quote;
 use syn::spanned::Spanned;
-use syn::{Error, Fields, Ident, ItemImpl, ItemStruct, parse2};
+use syn::{Error, Fields, Ident, ItemImpl, ItemStruct};
 
 use crate::exports::{Cons, FromFields, Nil};
+use crate::parse_internal;
 
 pub fn derive_from_fields_for_struct(item_struct: &ItemStruct) -> syn::Result<ItemImpl> {
     let struct_name = &item_struct.ident;
@@ -11,7 +12,7 @@ pub fn derive_from_fields_for_struct(item_struct: &ItemStruct) -> syn::Result<It
 
     let (fields_arg, constructor_args) = derive_from_field_params(&item_struct.fields)?;
 
-    let item_impl: ItemImpl = parse2(quote! {
+    let item_impl: ItemImpl = parse_internal! {
         impl #impl_generics
             #FromFields for #struct_name #type_generics
         #where_clause
@@ -22,7 +23,7 @@ pub fn derive_from_fields_for_struct(item_struct: &ItemStruct) -> syn::Result<It
                 Self #constructor_args
             }
         }
-    })?;
+    };
 
     Ok(item_impl)
 }

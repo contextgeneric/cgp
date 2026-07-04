@@ -1,8 +1,9 @@
 use proc_macro2::TokenStream;
 use quote::quote;
-use syn::{ItemImpl, ItemStruct, parse2};
+use syn::{ItemImpl, ItemStruct};
 
 use crate::exports::{HasFields, HasFieldsRef};
+use crate::parse_internal;
 use crate::types::cgp_data::{
     derive_from_fields_for_struct, derive_to_fields_for_struct, derive_to_fields_ref_for_struct,
     item_fields_to_product_type,
@@ -18,16 +19,16 @@ pub fn derive_has_fields_impls_from_struct(item_struct: &ItemStruct) -> syn::Res
 
     let fields_ref_type = item_fields_to_product_type(&item_struct.fields, &quote! { & #life })?;
 
-    let has_fields_impl: ItemImpl = parse2(quote! {
+    let has_fields_impl: ItemImpl = parse_internal! {
         impl #impl_generics
             #HasFields for #struct_name #type_generics
         #where_clause
         {
             type Fields = #fields_type ;
         }
-    })?;
+    };
 
-    let has_fields_ref_impl: ItemImpl = parse2(quote! {
+    let has_fields_ref_impl: ItemImpl = parse_internal! {
         impl #impl_generics
             #HasFieldsRef for #struct_name #type_generics
         #where_clause
@@ -37,7 +38,7 @@ pub fn derive_has_fields_impls_from_struct(item_struct: &ItemStruct) -> syn::Res
                 Self: #life
             ;
         }
-    })?;
+    };
 
     let from_fields_impl = derive_from_fields_for_struct(item_struct)?;
 

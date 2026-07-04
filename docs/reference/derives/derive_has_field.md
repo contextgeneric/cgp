@@ -34,6 +34,8 @@ pub struct Person {
 
 It applies to structs with named fields and to structs with unnamed (tuple) fields. The two cases differ only in how each field's tag is computed: a named field is keyed by [`Symbol!("field_name")`](../macros/symbol.md), the type-level string of its identifier, while a tuple field is keyed by [`Index<N>`](../types/index.md), the type-level natural number of its position. Unit structs produce no impls because they have no fields.
 
+A raw-identifier field is keyed by its logical name, with the `r#` prefix stripped: a field written `r#type` is keyed by `Symbol!("type")`, so it is addressed by the tag `Symbol!("type")` rather than `Symbol!("r#type")`. The generated accessor still borrows the real field, `&self.r#type`.
+
 The derive concerns itself only with the *field-level* view. To obtain the whole-struct view as a single type-level [`Product`](../macros/product.md), derive [`HasFields`](derive_has_fields.md) instead; the two are complementary and frequently derived together.
 
 ## Expansion

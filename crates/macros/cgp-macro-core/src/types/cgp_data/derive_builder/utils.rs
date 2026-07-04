@@ -4,6 +4,7 @@ use syn::spanned::Spanned;
 use syn::token::Colon;
 use syn::{AngleBracketedGenericArguments, Field, FieldValue, Generics, Ident, Member, parse2};
 
+use crate::functions::parse_internal;
 use crate::types::field::{FieldName, Index, Symbol};
 
 pub fn to_generic_args(generics: &Generics) -> syn::Result<AngleBracketedGenericArguments> {
@@ -40,6 +41,6 @@ pub fn field_value_expr(field_member: Member, expr: TokenStream) -> syn::Result<
         attrs: Vec::new(),
         member: field_member,
         colon_token: Some(Colon(Span::call_site())),
-        expr: parse2(expr)?,
+        expr: parse_internal(expr)?,
     })
 }
