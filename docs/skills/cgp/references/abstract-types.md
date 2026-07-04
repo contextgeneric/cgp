@@ -79,7 +79,11 @@ pub trait HasType<Tag> {
 }
 ```
 
-Every `#[cgp_type]` component you define is wired on top of this substrate: the macro generates an internal `WithProvider` impl that adapts a `TypeProvider` into the named component, so the same `UseType<T>` marker satisfies both the built-in `HasType` and any user-defined abstract type at once. In practice you rarely name `HasType<Tag>` directly — you define a readable `HasNameType` with `#[cgp_type]` and get `Self::Name` and its own provider, all resolving down to this `HasType` machinery. The takeaway is that `UseType<T>` is itself a `TypeProvider`, which is why one marker serves every abstract type.
+Every `#[cgp_type]` component you define is wired on top of this substrate: the macro generates an internal `WithProvider` impl that adapts a `TypeProvider` into the named component, so the same `UseType<T>` marker satisfies both the built-in `HasType` and any user-defined abstract type at once. In practice you rarely name `HasType<Tag>` directly — you define a readable `HasNameType` with `#[cgp_type]` and get `Self::Name` and its own provider, all resolving down to this `HasType` machinery. The takeaway is that `UseType<T>` is itself a `TypeProvider`, which is why one marker serves every abstract type. When you do want to name that adapter explicitly, its alias is `WithType<T>` (the `WithProvider` family from [wiring](wiring.md)).
+
+## Choosing the concrete type from a table with `UseDelegatedType`
+
+`UseDelegatedType<Components>` is the type-level analogue of the `UseDelegate` dispatcher: where `UseType<T>` binds an abstract type to one fixed `T`, `UseDelegatedType` looks the concrete type up in an inner `DelegateComponent` table keyed by the type tag, so one provider can answer several abstract-type components at once or route each tag to a type chosen elsewhere. It reads an entry out of the same kind of table `UseDelegate` reads, but yields a *type* rather than a method — the abstract-type mirror of the per-value behavioral dispatch in [wiring](wiring.md). Its `WithProvider` alias is `WithDelegatedType`. Reach for it only when a bundle of related types must be decided together; for a single concrete type per component, `UseType<T>` is simpler.
 
 ## Abstract type as a getter return type
 

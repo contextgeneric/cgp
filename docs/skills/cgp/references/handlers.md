@@ -101,6 +101,10 @@ pub trait CanSendRun<Code> {
 
 A context hosts many tasks by wiring `RunnerComponent` to a `UseDelegate` table keyed on `Code`, so `app.run(PhantomData::<ActionA>)` and `app.run(PhantomData::<ActionB>)` reach distinct providers. A runner provider reaches the runtime through `HasRuntime` to spawn or await work; the `CanSendRun` variant is the mechanism for the `Send`-recovery pattern described under [recovering `Send` bounds](#recovering-send-bounds).
 
+## The runtime: `HasRuntimeType` and `HasRuntime`
+
+A runner needs something to run *against* — an executor that can spawn, sleep, open sockets, or read the clock — and CGP keeps that runtime abstract so the same code runs on Tokio in production, a mock in tests, or a single-threaded executor in a benchmark. Two built-in components express it, split because the two questions are independent. `HasRuntimeType` is an [abstract type](abstract-types.md) (`type Runtime`) answering *what* the runtime type is, chosen per context through wiring like any `#[cgp_type]` component. `HasRuntime` is a getter that supertraits `HasRuntimeType` and answers *how to obtain* the runtime value from a borrow of the context (`fn runtime(&self) -> &Self::Runtime`). Code that only names types the runtime exposes bounds on `HasRuntimeType` alone; code that performs effects bounds on `HasRuntime`. This pair is the seam where context-generic logic meets concrete async machinery, which is why the runner providers reach through it to do their work.
+
 ## Defining handlers from functions
 
 `#[cgp_computer]` turns a plain function into a `Computer` provider and wires the rest of the family by promotion, so a computation as small as "add two numbers" needs no hand-written plumbing:

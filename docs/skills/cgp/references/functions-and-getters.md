@@ -242,6 +242,26 @@ The trait method is `name` but the context stores the value in `first_name`, and
 
 For getters whose return type is reached *through* a field by `AsRef`/`AsMut` rather than being the field itself, the related `UseFieldRef<Tag, Value>` provider reads the field at `Tag` and calls `as_ref()` to expose `&Value` — for example `UseFieldRef<Symbol!("name"), str>` exposes `&str` from a `String` field. It decouples the exposed type from the stored type as well as the field name from the method name. Unlike `UseField`, it is not re-exported through the prelude; reach it through `cgp::core::field::impls`.
 
+`UseField` and `UseFieldRef` are the foundational field-getter providers; their `WithProvider` aliases `WithField` and `WithFieldRef` (see [wiring](wiring.md)) are what you often see wired directly onto a getter component, reading `NameGetterComponent: WithField<Symbol!("first_name")>` as "serve this getter from the named field."
+
+## Reaching a nested field with `ChainGetters`
+
+When the value a getter needs is not on the context but several hops inside it — the context holds a config, the config holds a connection, the connection holds the timeout — `ChainGetters<Getters>` walks the path. It takes a `Product!` list of getters and applies them in order, threading the reference each step produces into the next, so the chain reads like the path it traverses:
+
+```rust
+delegate_components! {
+    App {
+        TimeoutGetterComponent: ChainGetters<Product![
+            GetConfig,      // App    -> Config
+            GetConnection,  // Config -> Connection
+            GetTimeout,     // Connection -> Duration
+        ]>,
+    }
+}
+```
+
+Each element is itself a field getter for the value the previous step produced, and like every provider `ChainGetters` is a zero-sized marker named in wiring. It saves writing a bespoke provider that hand-walks the nesting whenever a getter must reach into a sub-context.
+
 ## Getters are just traits: explicit implementation
 
 Every getter the macros produce is an ordinary trait, and explicit implementation is always available — the macros only save boilerplate. This matters when a context does not derive `HasField`, or stores the value under a name no tag matches. Because `#[cgp_auto_getter]` adds only a blanket impl and `#[cgp_getter]` a component whose consumer trait is plain Rust, you can write the impl by hand on a concrete type:
