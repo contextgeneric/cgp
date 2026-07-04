@@ -137,6 +137,33 @@ A consumer trait can also be implemented directly on a context like any normal R
 (`impl CanGreet for Person { … }`) — CGP traits are a superset of vanilla traits, and the macros
 only save boilerplate.
 
+## Which construct to use: prefer this, not that
+
+When two constructs can express the same thing, CGP has a preferred one, and choosing wrong produces
+code that compiles but reads as dated or misuses an advanced tool. This table is the quick answer, so
+you pick the right pattern even without reading further. Each preference is a default with narrow
+exceptions, spelled out under [Writing providers](#writing-providers) below and, with full before/after
+examples, in the [modern-idioms](references/modern-idioms.md) sub-skill; the "avoid" column is not
+wrong, it is what you *read* in generated code and legacy wiring, not what you *write* anew.
+
+| To… | Prefer | Not (legacy / advanced / read-only) |
+|---|---|---|
+| write a provider | `#[cgp_impl]`, header `impl Trait` (omit `for Context`) | raw `#[cgp_provider]` / `#[cgp_new_provider]` |
+| read a context field for your own use | an `#[implicit]` argument | a getter trait declared just to read it |
+| publish a shared accessor | `#[cgp_auto_getter]` | `#[cgp_getter]` (only for per-context field choice) |
+| require a capability | `#[uses(Trait)]` | `where Self: Trait` |
+| require an inner provider | `#[use_provider(P: Trait)]` | `where P: Trait<Self>` |
+| name an abstract type (e.g. `Error`) | `#[use_type(Trait.Type)]` + the bare alias | `: Trait` supertrait + `Self::Type` |
+| add a capability supertrait | `#[extend(Trait)]` | native `pub trait …: Supertrait` |
+| dispatch a component per type | the `open` statement (or a namespace) | `#[derive_delegate]` + `UseDelegate<new …>` tables |
+| wire a context's main table | `delegate_and_check_components!` | bare `delegate_components!` (unchecked) for a context |
+| build a field/list/string/path type | `Symbol!` / `Product!` / `Sum!` / `Path!` sugar | hand-written `Cons`/`Nil`/`Chars`/`Either`/`PathCons` |
+
+Two names are gone entirely, not merely dated: never write `#[cgp_context]` (removed — assemble a
+context with `delegate_components!` and the derives instead) or `ProvideType` (renamed to
+`TypeProvider`). One caveat carries across the whole table: a construct's *own* local associated type
+stays qualified as `Self::Output` — only an *imported* abstract type is written bare via `#[use_type]`.
+
 ## The prelude and version
 
 Almost everything CGP exports comes through one import, which belongs at the top of every module
@@ -285,7 +312,9 @@ The explicit forms remain correct and are what you *read* in generated code and 
 exceptions that still need them are narrow — an associated-type-equality bound (`Iterator<Item = u8>`)
 that `#[uses]` cannot spell, a lifetime or HRTB that forces a named context, or a **local**
 associated type such as `Self::Output`, which stays qualified because it is the trait's own type,
-not an imported abstract one.
+not an imported abstract one. For the full legacy-to-modern before/after mapping of each idiom — the
+reference to load whenever you read or modernize existing CGP — see
+[modern-idioms](references/modern-idioms.md).
 
 The provider's `where` clause is where **impl-side dependencies** live: `GreetHello` requires
 `Self: HasName`, but `CanGreet` exposes no such bound, so a caller bounding on `CanGreet` never sees
@@ -785,11 +814,7 @@ reading it, writing it, reviewing it, or debugging an error that mentions it —
 you move into an unfamiliar corner. When a task spans several areas, load each one; they cross-link,
 and following those links is expected, not a detour.
 
-Start with **[references/macro-grammar.md](references/macro-grammar.md)** for any task that writes,
-edits, or debugs CGP syntax. It is the single reference for the formal grammar of every macro, the
-invariant each expansion preserves, and a decoder for the compiler errors CGP produces. *Without it*
-you are guessing which attribute forms parse, what a macro emits, and what an `IsProviderFor` or
-`DelegateComponent` error is actually telling you.
+Two of the sub-skills are cross-cutting rather than construct-specific, and one of them applies to almost every task. Start with **[references/macro-grammar.md](references/macro-grammar.md)** for any task that writes, edits, or debugs CGP syntax: it is the single reference for the formal grammar of every macro, the invariant each expansion preserves, and a decoder for the compiler errors CGP produces. *Without it* you are guessing which attribute forms parse, what a macro emits, and what an `IsProviderFor` or `DelegateComponent` error is actually telling you. Reach for **[references/modern-idioms.md](references/modern-idioms.md)** whenever you read or modernize existing CGP: it maps every legacy, explicit form to the modern idiom you should prefer, both to write vanilla-looking code and to decode the inside-out provider impls, hand-written `where` bounds, `Self::Type` paths, and `UseDelegate` tables you meet in older code. *Without it* you will either propagate outdated syntax or fail to recognize that legacy code and modern code mean the same thing.
 
 The remaining sub-skills each own one construct family:
 
