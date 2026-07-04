@@ -201,8 +201,8 @@ snapshot_derive_cgp_data! {
             }
         }
         impl<Foo, Bar, Baz> HasExtractorRef for FooBarBazGeneric<Foo, Bar, Baz> {
-            type ExtractorRef<'a> = __PartialRefFooBarBazGeneric<
-                'a,
+            type ExtractorRef<'__a__> = __PartialRefFooBarBazGeneric<
+                '__a__,
                 IsRef,
                 Foo,
                 Bar,
@@ -212,8 +212,8 @@ snapshot_derive_cgp_data! {
                 IsPresent,
             >
             where
-                Self: 'a;
-            fn extractor_ref<'a>(&'a self) -> Self::ExtractorRef<'a> {
+                Self: '__a__;
+            fn extractor_ref<'__a__>(&'__a__ self) -> Self::ExtractorRef<'__a__> {
                 match self {
                     Self::Foo(value) => __PartialRefFooBarBazGeneric::Foo(value),
                     Self::Bar(value) => __PartialRefFooBarBazGeneric::Bar(value),
@@ -222,8 +222,8 @@ snapshot_derive_cgp_data! {
             }
         }
         impl<Foo, Bar, Baz> HasExtractorMut for FooBarBazGeneric<Foo, Bar, Baz> {
-            type ExtractorMut<'a> = __PartialRefFooBarBazGeneric<
-                'a,
+            type ExtractorMut<'__a__> = __PartialRefFooBarBazGeneric<
+                '__a__,
                 IsMut,
                 Foo,
                 Bar,
@@ -233,8 +233,8 @@ snapshot_derive_cgp_data! {
                 IsPresent,
             >
             where
-                Self: 'a;
-            fn extractor_mut<'a>(&'a mut self) -> Self::ExtractorMut<'a> {
+                Self: '__a__;
+            fn extractor_mut<'__a__>(&'__a__ mut self) -> Self::ExtractorMut<'__a__> {
                 match self {
                     Self::Foo(value) => __PartialRefFooBarBazGeneric::Foo(value),
                     Self::Bar(value) => __PartialRefFooBarBazGeneric::Bar(value),
@@ -248,8 +248,8 @@ snapshot_derive_cgp_data! {
                 match self {}
             }
         }
-        impl<'a, __R__: MapTypeRef, Foo, Bar, Baz> FinalizeExtract
-        for __PartialRefFooBarBazGeneric<'a, __R__, Foo, Bar, Baz, IsVoid, IsVoid, IsVoid> {
+        impl<'__a__, __R__: MapTypeRef, Foo, Bar, Baz> FinalizeExtract
+        for __PartialRefFooBarBazGeneric<'__a__, __R__, Foo, Bar, Baz, IsVoid, IsVoid, IsVoid> {
             fn finalize_extract<__T__>(self) -> __T__ {
                 match self {}
             }

@@ -4,6 +4,9 @@ use syn::{Ident, ItemEnum, ItemImpl, parse2};
 use crate::exports::{MapType, MapTypeRef, PartialData};
 use crate::types::cgp_data::index_to_generic_ident;
 
+/// Emit the `PartialData` impl that links a partial enum back to its original
+/// enum through the `Target` associated type. `is_ref` selects the borrowed
+/// partial enum, adding its `'__a__`/`__R__` parameters to the impl header.
 pub fn derive_partial_data_impl_from_enum(
     context_struct: &ItemEnum,
     builder_ident: &Ident,

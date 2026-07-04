@@ -5,6 +5,10 @@ use crate::exports::{ExtractField, IsPresent, IsVoid, MapType, MapTypeRef};
 use crate::types::cgp_data::{get_variant_type, index_to_generic_ident, to_generic_args};
 use crate::types::field::Symbol;
 
+/// Emit one `ExtractField` impl per variant on the partial enum, in scope only
+/// when that variant's marker is `IsPresent`: it returns `Ok(value)` on a match
+/// and `Err(remainder)` — the same partial enum with that variant flipped to
+/// `IsVoid` — on a miss. `is_ref` selects the borrowed partial enum.
 pub fn derive_extract_field_impls(
     context_enum: &ItemEnum,
     extractor_ident: &Ident,

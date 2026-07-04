@@ -5,6 +5,9 @@ use crate::parse_internal;
 use crate::types::cgp_data::get_variant_type;
 use crate::types::field::Symbol;
 
+/// Emit one `FromVariant` impl per variant, each keyed by the variant name's
+/// `Symbol!` and wrapping a payload into that variant. This is the whole of
+/// `#[derive(FromVariant)]` and the constructor slice of the variant derives.
 pub fn derive_from_variant_from_enum(item_enum: &ItemEnum) -> syn::Result<Vec<ItemImpl>> {
     let enum_ident = &item_enum.ident;
 

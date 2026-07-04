@@ -5,6 +5,9 @@ use syn::{GenericParam, Ident, ItemEnum, Lifetime, LifetimeParam, Type, TypePara
 use crate::exports::{MapType, MapTypeRef};
 use crate::types::cgp_data::{get_variant_type, index_to_generic_ident, type_to_variant_fields};
 
+/// Build the owned `__Partial{Name}` enum: a clone of the input enum that gains
+/// one `__F{i}__: MapType` parameter per variant, wrapping each payload so a
+/// variant can be present (`IsPresent`) or ruled out (`IsVoid`).
 pub fn derive_extractor_enum(
     context_enum: &ItemEnum,
     extractor_ident: &Ident,
@@ -38,6 +41,10 @@ pub fn derive_extractor_enum(
     Ok(extractor_enum)
 }
 
+/// Build the borrowed `__PartialRef{Name}` enum, the ref counterpart of
+/// [`derive_extractor_enum`]: it prepends a `'__a__` lifetime and an
+/// `__R__: MapTypeRef` parameter that selects a shared or mutable borrow of each
+/// payload, and bounds the enum's own type parameters by `'__a__`.
 pub fn derive_extractor_enum_ref(
     context_enum: &ItemEnum,
     extractor_ident: &Ident,

@@ -4,6 +4,8 @@ use syn::{Arm, Ident, ItemEnum, ItemImpl, parse2};
 use crate::exports::{HasExtractor, HasExtractorMut, HasExtractorRef, IsMut, IsPresent, IsRef};
 use crate::types::cgp_data::to_generic_args;
 
+/// Emit the owned `HasExtractor` impl: `to_extractor`/`from_extractor` map each
+/// variant to and from the all-`IsPresent` configuration of the partial enum.
 pub fn derive_has_extractor_impl(
     context_enum: &ItemEnum,
     extractor_ident: &Ident,
@@ -62,6 +64,9 @@ pub fn derive_has_extractor_impl(
     Ok(item_impl)
 }
 
+/// Emit the `HasExtractorRef` impl over the borrowed partial enum (`IsRef`). Its
+/// GAT and method use the reserved `'__a__` lifetime rather than a bare `'a` so
+/// they never collide with an enum whose own lifetime parameter is named `'a`.
 pub fn derive_has_extractor_ref_impl(
     context_enum: &ItemEnum,
     extractor_ident: &Ident,
@@ -74,7 +79,7 @@ pub fn derive_has_extractor_ref_impl(
     extractor_generics.args.insert(
         0,
         parse2(quote! {
-            'a
+            '__a__
         })?,
     );
 
@@ -106,11 +111,11 @@ pub fn derive_has_extractor_ref_impl(
             for #context_ident #ty_generics
         #where_clause
         {
-            type ExtractorRef<'a> = #extractor_ident #extractor_generics
+            type ExtractorRef<'__a__> = #extractor_ident #extractor_generics
             where
-                Self: 'a;
+                Self: '__a__;
 
-            fn extractor_ref<'a>(&'a self) -> Self::ExtractorRef<'a> {
+            fn extractor_ref<'__a__>(&'__a__ self) -> Self::ExtractorRef<'__a__> {
                 match self {
                     #(#match_arms)*
                 }
@@ -121,6 +126,8 @@ pub fn derive_has_extractor_ref_impl(
     Ok(item_impl)
 }
 
+/// Emit the `HasExtractorMut` impl: the `IsMut` mirror of
+/// [`derive_has_extractor_ref_impl`], likewise using the reserved `'__a__`.
 pub fn derive_has_extractor_mut_impl(
     context_enum: &ItemEnum,
     extractor_ident: &Ident,
@@ -133,7 +140,7 @@ pub fn derive_has_extractor_mut_impl(
     extractor_generics.args.insert(
         0,
         parse2(quote! {
-            'a
+            '__a__
         })?,
     );
 
@@ -165,11 +172,11 @@ pub fn derive_has_extractor_mut_impl(
             for #context_ident #ty_generics
         #where_clause
         {
-            type ExtractorMut<'a> = #extractor_ident #extractor_generics
+            type ExtractorMut<'__a__> = #extractor_ident #extractor_generics
             where
-                Self: 'a;
+                Self: '__a__;
 
-            fn extractor_mut<'a>(&'a mut self) -> Self::ExtractorMut<'a> {
+            fn extractor_mut<'__a__>(&'__a__ mut self) -> Self::ExtractorMut<'__a__> {
                 match self {
                     #(#match_arms)*
                 }

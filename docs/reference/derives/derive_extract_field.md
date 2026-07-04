@@ -72,10 +72,10 @@ impl HasExtractor for Shape {
 }
 
 impl HasExtractorRef for Shape {
-    type ExtractorRef<'a> = __PartialRefShape<'a, IsRef, IsPresent, IsPresent> where Self: 'a;
+    type ExtractorRef<'__a__> = __PartialRefShape<'__a__, IsRef, IsPresent, IsPresent> where Self: '__a__;
     fn extractor_ref(&self) -> Self::ExtractorRef<'_> { /* ... */ }
 }
-// plus HasExtractorMut over __PartialRefShape<'a, IsMut, IsPresent, IsPresent>
+// plus HasExtractorMut over __PartialRefShape<'__a__, IsMut, IsPresent, IsPresent>
 ```
 
 It emits a `FinalizeExtract` impl for the all-`IsVoid` configuration of each partial enum. Because that configuration is uninhabited, `finalize_extract` can return any type by matching on the empty value:
@@ -84,7 +84,7 @@ It emits a `FinalizeExtract` impl for the all-`IsVoid` configuration of each par
 impl FinalizeExtract for __PartialShape<IsVoid, IsVoid> {
     fn finalize_extract<__T__>(self) -> __T__ { match self {} }
 }
-// plus the borrowed __PartialRefShape<'a, __R__, IsVoid, IsVoid>
+// plus the borrowed __PartialRefShape<'__a__, __R__, IsVoid, IsVoid>
 ```
 
 Finally it emits, per variant, an `ExtractField` impl available only when that variant's marker is `IsPresent`. Calling it returns `Ok(value)` if the runtime value is that variant, or `Err(remainder)` where the remainder has that variant flipped to `IsVoid`:

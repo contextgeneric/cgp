@@ -4,6 +4,9 @@ use syn::{Ident, ItemEnum, ItemImpl, Type, parse2};
 use crate::exports::{FinalizeExtract, IsVoid, MapTypeRef};
 use crate::types::cgp_data::to_generic_args;
 
+/// Emit `FinalizeExtract` for the all-`IsVoid` configuration of the partial
+/// enum, whose `match self {}` body type-checks because that configuration is
+/// uninhabited. `is_ref` selects the borrowed enum, adding its `'__a__`/`__R__`.
 pub fn derive_finalize_extract_impl(
     context_enum: &ItemEnum,
     extractor_ident: &Ident,
@@ -16,7 +19,7 @@ pub fn derive_finalize_extract_impl(
             generics.params.insert(
                 0,
                 parse2(quote! {
-                    'a
+                    '__a__
                 })?,
             );
 

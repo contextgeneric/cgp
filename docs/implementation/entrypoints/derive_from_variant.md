@@ -43,7 +43,7 @@ Like the extractor derive, `#[derive(FromVariant)]` requires every variant to be
 `#[derive(FromVariant)]` has no snapshot macro of its own; the constructor impls it emits are part of the variant expansion pinned by the `snapshot_derive_cgp_data!` snapshots indexed in [derive_cgp_data.md's Snapshots section](derive_cgp_data.md#snapshots).
 
 - The behavioral variant tests in [crates/tests/cgp-tests/tests/extensible_variants/](../../../crates/tests/cgp-tests/tests/extensible_variants/) — notably [variant_dispatch.rs](../../../crates/tests/cgp-tests/tests/extensible_variants/variant_dispatch.rs) — construct enums through the generated `from_variant`.
-- The single-unnamed-field requirement has no dedicated failure case in `cgp-macro-tests` and is a candidate for one.
+- [parser_rejections/derive_from_variant.rs](../../../crates/tests/cgp-macro-tests/tests/parser_rejections/derive_from_variant.rs) pins the single-unnamed-field requirement: the derive rejects a fieldless, a multi-field, and a struct-style variant.
 
 ## Source
 

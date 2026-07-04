@@ -247,10 +247,10 @@ snapshot_derive_cgp_data! {
             }
         }
         impl HasExtractorRef for Shape {
-            type ExtractorRef<'a> = __PartialRefShape<'a, IsRef, IsPresent, IsPresent>
+            type ExtractorRef<'__a__> = __PartialRefShape<'__a__, IsRef, IsPresent, IsPresent>
             where
-                Self: 'a;
-            fn extractor_ref<'a>(&'a self) -> Self::ExtractorRef<'a> {
+                Self: '__a__;
+            fn extractor_ref<'__a__>(&'__a__ self) -> Self::ExtractorRef<'__a__> {
                 match self {
                     Self::Circle(value) => __PartialRefShape::Circle(value),
                     Self::Rectangle(value) => __PartialRefShape::Rectangle(value),
@@ -258,10 +258,10 @@ snapshot_derive_cgp_data! {
             }
         }
         impl HasExtractorMut for Shape {
-            type ExtractorMut<'a> = __PartialRefShape<'a, IsMut, IsPresent, IsPresent>
+            type ExtractorMut<'__a__> = __PartialRefShape<'__a__, IsMut, IsPresent, IsPresent>
             where
-                Self: 'a;
-            fn extractor_mut<'a>(&'a mut self) -> Self::ExtractorMut<'a> {
+                Self: '__a__;
+            fn extractor_mut<'__a__>(&'__a__ mut self) -> Self::ExtractorMut<'__a__> {
                 match self {
                     Self::Circle(value) => __PartialRefShape::Circle(value),
                     Self::Rectangle(value) => __PartialRefShape::Rectangle(value),
@@ -273,8 +273,8 @@ snapshot_derive_cgp_data! {
                 match self {}
             }
         }
-        impl<'a, __R__: MapTypeRef> FinalizeExtract
-        for __PartialRefShape<'a, __R__, IsVoid, IsVoid> {
+        impl<'__a__, __R__: MapTypeRef> FinalizeExtract
+        for __PartialRefShape<'__a__, __R__, IsVoid, IsVoid> {
             fn finalize_extract<__T__>(self) -> __T__ {
                 match self {}
             }
