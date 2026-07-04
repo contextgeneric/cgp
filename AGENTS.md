@@ -175,91 +175,89 @@ readability edit introduce a behavioral change.
 
 ### Scrutinize the macro codegen
 
-A CGP macro is only as correct as the code it emits, so review the implementation against the ways
-its input can be parsed and its output expanded, not just the happy path its tests exercise. Cover
-every one of these concerns, since a gap in any of them is a latent miscompilation waiting for the
-right input:
+A CGP macro is only as correct as the code it emits, so review it against the full space of inputs
+it can parse and outputs it can expand, not the happy path its tests exercise. A gap in any area
+below is a latent miscompilation — or a broken editor experience — waiting for the right input.
+**Apply every area to every macro you review**, not only the ones that already have a fixture or a
+worked example for it; these concerns recur across the whole suite, and a macro that has never been
+audited for one of them (spans especially) most likely has the bug. The areas below are the *what to
+check*; the [cross-cutting implementation notes](docs/implementation/README.md#cross-cutting-implementation-notes)
+explain *why the code behaves this way*, and most areas link out to the note or process doc that
+carries their full detail.
 
-- **Review every supported attribute.** Enumerate the attributes the macro accepts and confirm each
-  is parsed, validated, mutually constrained, and rejected-when-unknown exactly as documented — an
-  unrecognized attribute should fail with a spanned error, a mutually exclusive pair should error
-  when both appear, and a duplicate should not be silently accepted (or silently accepted for one
-  attribute while rejected for another).
-- **Prefer `parse_internal!`/`parse_internal` over `parse2` or `parse_quote!`.** When constructing a
-  `syn` node from quasi-quoted tokens, build it with `parse_internal!` so a malformed fragment fails
-  with an error naming the target type and the offending tokens (prelude prefix stripped) rather than
-  a bare parse error. Reserve `parse2` for re-parsing tokens already known to be valid (a span
-  override, say), and treat every `parse_quote!` as an assertion that parsing can never fail.
-- **Return `syn::Result` wherever parsing can fail.** A function that parses anything should thread
-  `syn::Result` and propagate the error, rather than `parse_quote!`-ing and risking a panic that
-  aborts the compiler with no usable diagnostic. Use the panicking `parse_quote!` only when it is
-  trivially obvious — from the surrounding, fully-controlled tokens — that the parse cannot fail.
-- **Enumerate every way the input can be parsed.** For each parser and `parse_internal!` call, think
-  through the full range of inputs a user could write — path-qualified types, generic and lifetime
-  parameters, arrays, tuples, empty lists, turbofish, associated-type bindings — and confirm none
-  reaches a parser that fails with a confusing internal error. Reject malformed or unsupported input
-  early, at the macro's own parse stage with a clear spanned message, rather than letting the failure
-  surface deep inside internal fragment parsing or in the expanded code.
-- **Enumerate every way the output can expand.** Walk the shapes the expansion can take across the
-  whole input space and confirm none can produce invalid Rust — no duplicate or conflicting `impl`
-  blocks from a cartesian expansion, no unbound or doubly-declared generic parameter, no empty
-  expansion that silently checks nothing, and no clash on a generated identifier. When you find a
-  case whose expansion fails to compile, capture it as a `trybuild` fixture in
-  `cgp-compile-fail-tests` — under `problematic/` when the macro should have rejected it or emitted
-  wrong code, or `acceptable/` when the failure is one CGP deliberately defers to the compiler — and
-  document it in the macro's implementation document, per
-  [crates/tests/AGENTS.md](crates/tests/AGENTS.md) and
-  [docs/implementation/AGENTS.md](docs/implementation/AGENTS.md).
-- **Scrutinize generics with care.** Generic parameters take many forms — lifetimes, types, consts,
-  and the distinction between *impl* generics (`impl<T>`) and *type* generics (the `<T>` in
-  `Foo<T>`) — and mixing them produces subtly wrong output. Confirm the macro keeps the kinds
-  separate, renders each in the right position, merges parameters from different sources without
-  colliding, and binds every parameter that appears in the generated header so nothing is left free.
-- **Fully qualify every CGP construct in the expansion.** Any CGP item the expansion references must
-  be emitted through the `crate::exports` markers so it resolves as `::cgp::macro_prelude::<Name>`,
-  never as a bare or hand-written path — this is what lets a user with only `cgp` in scope compile
-  the output. Grep the codegen for any CGP name that is not interpolated from an `exports` marker.
-- **Aim every generated item's span at the token the user wrote (watch for `call_site` leaks).** A
-  macro builds its output with `parse_internal!`/`quote!`, which stamp the structural tokens — the
-  `impl` keyword, the trait reference, the self type — with the macro's `call_site` span (the whole
-  invocation), while only the interpolated user fragments keep a narrower span. A compiler error that
-  reports on an item's header then underlines the *entire macro block* instead of the entry,
-  attribute, or impl the user actually wrote: a coherence conflict (`E0119`) between two generated
-  impls, an unsatisfied bound, or a name-resolution failure all read as "somewhere in this macro."
-  Re-span each generated item onto its originating token, following the
-  `delegate_components!`/`check_components!` pattern — the
-  [`override_item_span`](crates/macros/cgp-macro-core/src/functions/override_span.rs) helper re-spans
-  only the item's two *boundary* tokens (its leading `impl` keyword and trailing `{ … }` body) onto
-  the entry, which is enough because the compiler derives the item's span, and the caret, by joining
-  its first and last tokens. Do *not* re-span the interior: leaving it alone keeps a per-entry
-  generic's `E0207` on the `<T>` the user wrote, and — critically for the IDE — leaves every
-  synthesized *reference* (`IsProviderFor`, `DelegateComponent`) at `call_site` instead of on the
-  entry's range. rust-analyzer maps a source token to its expansion by source range alone (hygiene is
-  ignored), so a synthesized reference dragged onto the key would share the key's range and
-  go-to-definition on the key would offer every collided construct — the exact bug the earlier
-  whole-item re-span caused. Only a keyword and a delimiter group ever move, never a reference. Its
-  unconditional sibling `override_span` clobbers *every* token's span, which is right only for
-  `check_components!`, where the intent is to force the shared context token onto each checked
-  component. Where the originating token is *synthesized* and has lost its span (a
-  `PathCons<..>` nest, a `Symbol`'s `Chars` encoding), carry an explicit span field through the
-  evaluated form as `EvaluatedCheckEntry.span` and `EvaluatedDelegateEntry.span` do — mirroring
-  `Symbol`, which keeps its parse-time span and stamps its output with `quote_spanned!`. The same leak
-  lurks in the provider macros (`#[cgp_impl]`, `#[cgp_provider]`, `#[cgp_new_provider]`) and every
-  other expansion, so confirm a duplicated or conflicting generated item points at the impl or
-  attribute the user wrote, not the macro name. A **derived name** is the IDE-only variant of the
-  same leak: when the codegen builds an identifier with `Ident::new(&format!("{x}Suffix"), span)`,
-  span it on the user token `x` is derived from (as `derive_check_trait_ident` and the
-  `#[cgp_component]` marker struct do), never `Span::call_site()` — a `call_site` span makes the
-  generated item's *definition* cover the whole attribute, so go-to-definition on a reference to it
-  offers the defining macro alongside the item. That one is invisible to the compiler and to a
-  `trybuild` fixture, and shows only when navigating from another crate, so it must be checked by
-  hand. The error-caret spans, by contrast, are testable: a `trybuild` `.stderr` fixture records the
-  exact line and column of each caret, so a span regression changes the snapshot (see the
-  `acceptable/delegate_components/duplicate_*` fixtures).
+#### Attributes
 
-Beyond these, weigh the concerns that recur across the macro suite: the hygiene of the reserved
-identifiers the expansion introduces (`__Component__`, `__Context__`, and the like) and the
-idempotency of the expansion when the same entry is listed more than once.
+Enumerate the attributes the macro accepts and confirm each is parsed, validated, mutually
+constrained, and rejected when unknown: a bad attribute should fail with a spanned error, a mutually
+exclusive pair should error when both appear, and a duplicate should not be silently accepted (nor
+accepted for one attribute while rejected for another).
+
+#### Parsing the input
+
+Build every `syn` node from quasi-quoted tokens with
+[`parse_internal!`](docs/implementation/macros/parse_internal.md) rather than `parse2`/`parse_quote!`,
+and thread `syn::Result` so a malformed fragment propagates a named error instead of panicking;
+reserve the panicking `parse_quote!` for tokens trivially guaranteed to parse and `parse2` for
+re-parsing tokens already known valid. Reject malformed or unsupported input early, at the macro's
+own parse stage with a spanned message, rather than letting it surface deep inside fragment parsing.
+Walk the full input space — path-qualified types, generics, lifetimes, arrays, tuples, turbofish,
+associated-type bindings — and confirm none reaches a parser that fails obscurely; since `syn` parses
+far more leniently than Rust accepts, validate against CGP's restricted argument types. See
+[Parsing](docs/implementation/README.md#parsing-build-with-parse_internal-and-distrust-syns-leniency).
+
+#### Expanding the output
+
+Walk the shapes the expansion can take across the whole input space and confirm none produces invalid
+Rust — no conflicting `impl` blocks from a cartesian expansion, no unbound or doubly-declared generic,
+no empty expansion that checks nothing, no clash on a generated identifier. When an expansion fails to
+compile, capture it as a `trybuild` fixture in `cgp-compile-fail-tests` — `problematic/` when the
+macro should have rejected it, `acceptable/` when CGP defers the failure to the compiler — and
+document it in the macro's implementation document, per [crates/tests/AGENTS.md](crates/tests/AGENTS.md)
+and [docs/implementation/AGENTS.md](docs/implementation/AGENTS.md).
+
+#### Generics
+
+Keep the *kinds* (lifetime, type, const) and the *roles* (impl generics `impl<T>` versus type
+generics, the `<T>` in `Foo<T>`) distinct, render each in the right position, merge parameters from
+different sources without colliding, and bind every parameter that appears in a generated header so
+nothing is left free. See
+[Generic-parameter insertion](docs/implementation/README.md#generic-parameter-insertion-and-lifetime-ordering)
+and [keeping the kinds distinct](docs/implementation/README.md#generics-keep-the-kinds-and-roles-distinct).
+
+#### Qualified paths and hygiene
+
+Emit every CGP item through a `crate::exports` marker so it resolves as `::cgp::macro_prelude::<Name>`,
+never as a bare or hand-written path — grep the codegen for any CGP name not interpolated from an
+`exports` marker. Give the reserved identifiers the expansion introduces the double-underscore form
+(`__Context__`, `__Provider__`, `__Component__`, …) so they cannot clash with a user's names, and keep
+the expansion idempotent when the same entry is listed more than once. See
+[Hygiene](docs/implementation/README.md#hygiene-exports-markers-and-reserved-identifiers).
+
+#### Spans: for the compiler *and* the IDE
+
+Span placement is a correctness concern for two tools at once, and it applies to **every macro that
+emits items** — `#[cgp_impl]`, `#[cgp_provider]`, `#[cgp_new_provider]`, `#[cgp_type]`,
+`#[cgp_getter]`, and the derives — not just `delegate_components!`/`check_components!`. By default
+`parse_internal!`/`quote!` stamp generated tokens with the macro's `call_site` span (the whole
+invocation), which misleads both tools, so confirm both for each macro:
+
+- **Compiler carets.** An error on a generated item's header — a coherence conflict (`E0119`), an
+  unsatisfied bound, a name-resolution failure — must point at the entry the user wrote, not the whole
+  macro block. Re-span each generated item onto its originating token: with
+  [`override_item_span`](crates/macros/cgp-macro-core/src/functions/override_span.rs) for a generated
+  impl, a carried span field where the origin token is synthesized (`EvaluatedCheckEntry.span`,
+  `EvaluatedDelegateEntry.span`), or reuse of the user's own `for` token.
+- **IDE go-to-definition.** rust-analyzer maps a source token to its expansion by source range alone,
+  ignoring hygiene, so never drag a resolvable reference (`IsProviderFor`, `DelegateComponent`) onto a
+  user token's range, and span a *derived name* (a component marker) on the user identifier it derives
+  from, not `Span::call_site()`. A leaked derived name makes go-to-definition on a reference offer the
+  defining macro alongside the item.
+
+Only the caret half is pinned by a test (a `trybuild` `.stderr` fixture records each caret's exact
+position, so a regression changes the snapshot). The IDE half has no fixture and must be checked by
+hand in an editor — and cross-crate, since the derived-name leak is invisible from inside the defining
+crate. See [Spans](docs/implementation/README.md#spans-aim-generated-items-at-the-token-the-user-wrote)
+for the full mechanism and the `delegate_components!`/`#[cgp_impl]` worked examples.
 
 ### Keep every view in sync and verify
 
