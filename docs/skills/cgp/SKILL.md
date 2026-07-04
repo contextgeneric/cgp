@@ -313,15 +313,24 @@ visible machinery for syntax that reads like ordinary Rust:
 - **Import abstract types with [`#[use_type]`](references/abstract-types.md)**, writing the bare
   alias (`Scalar`, `Error`) instead of a hand-written `: HasScalarType` supertrait and a qualified
   `Self::Scalar` at every use. This holds even in `#[cgp_component]` definitions: prefer
-  `#[use_type(HasErrorType.Error)]` over `: HasErrorType` + `Self::Error`.
+  `#[use_type(HasErrorType.Error)]` over `: HasErrorType` + `Self::Error`. When a provider *pins* an
+  abstract type to a concrete one — a `where Self: HasErrorType<Error = AppError>` clause — express
+  that with the equality form `#[use_type(HasErrorType.{Error = AppError})]`, which emits the same
+  `Self: HasErrorType<Error = AppError>` bound; the right-hand side may even name another imported
+  alias (`#[use_type(HasPasswordType.Password, HasHashedPasswordType.{HashedPassword = Password})]`
+  unifies two abstract types). The equality form is a `#[cgp_impl]`/`#[cgp_fn]` tool — it is rejected
+  on `#[cgp_component]`.
 - **Dispatch a generic-parameter component with the `open` statement or a namespace**, skipping
   `#[derive_delegate]`/`UseDelegate` when defining a new component.
 
 The explicit forms remain correct and are what you *read* in generated code and desugaring; the
-exceptions that still need them are narrow — an associated-type-equality bound (`Iterator<Item = u8>`)
-that `#[uses]` cannot spell, a lifetime or HRTB that forces a named context, or a **local**
-associated type such as `Self::Output`, which stays qualified because it is the trait's own type,
-not an imported abstract one. For the full legacy-to-modern before/after mapping of each idiom — the
+exceptions that still need them are narrow — an associated-type-equality bound on a **non-abstract-type**
+trait (`Iterator<Item = u8>`, `From<X>`) that neither `#[uses]` nor `#[use_type]` can spell, a lifetime
+or HRTB that forces a named context, or a **local** associated type such as `Self::Output`, which stays
+qualified because it is the trait's own type, not an imported abstract one. Do *not* leave an
+equality bound on an **abstract-type** trait (`Self: HasErrorType<Error = AppError>`) as a hand-written
+`where` clause — that is exactly what the `#[use_type]` equality form `#[use_type(HasErrorType.{Error = AppError})]`
+replaces; only equality on a trait you would never `#[use_type]` from stays an explicit `where`. For the full legacy-to-modern before/after mapping of each idiom — the
 reference to load whenever you read or modernize existing CGP — see
 [modern-idioms](references/modern-idioms.md).
 
