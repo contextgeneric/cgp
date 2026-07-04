@@ -228,13 +228,19 @@ right input:
   impls, an unsatisfied bound, or a name-resolution failure all read as "somewhere in this macro."
   Re-span each generated item onto its originating token, following the
   `delegate_components!`/`check_components!` pattern — the
-  [`override_synthesized_span`](crates/macros/cgp-macro-core/src/functions/override_span.rs) helper
-  re-spans only an item's *synthesized* (`call_site`-stamped) tokens and leaves the user's own tokens
-  at their spans, so a per-entry generic's `E0207` keeps pointing at the `<T>` the user wrote and a
-  type written in the block (a wired provider) stays navigable for an editor's go-to-definition — do
-  not clobber user tokens' spans, the mistake its unconditional sibling `override_span` would make
-  (that one is for `check_components!`, which deliberately forces the shared context token onto each
-  checked component). Where the originating token is *synthesized* and has lost its span (a
+  [`override_item_span`](crates/macros/cgp-macro-core/src/functions/override_span.rs) helper re-spans
+  only the item's two *boundary* tokens (its leading `impl` keyword and trailing `{ … }` body) onto
+  the entry, which is enough because the compiler derives the item's span, and the caret, by joining
+  its first and last tokens. Do *not* re-span the interior: leaving it alone keeps a per-entry
+  generic's `E0207` on the `<T>` the user wrote, and — critically for the IDE — leaves every
+  synthesized *reference* (`IsProviderFor`, `DelegateComponent`) at `call_site` instead of on the
+  entry's range. rust-analyzer maps a source token to its expansion by source range alone (hygiene is
+  ignored), so a synthesized reference dragged onto the key would share the key's range and
+  go-to-definition on the key would offer every collided construct — the exact bug the earlier
+  whole-item re-span caused. Only a keyword and a delimiter group ever move, never a reference. Its
+  unconditional sibling `override_span` clobbers *every* token's span, which is right only for
+  `check_components!`, where the intent is to force the shared context token onto each checked
+  component. Where the originating token is *synthesized* and has lost its span (a
   `PathCons<..>` nest, a `Symbol`'s `Chars` encoding), carry an explicit span field through the
   evaluated form as `EvaluatedCheckEntry.span` and `EvaluatedDelegateEntry.span` do — mirroring
   `Symbol`, which keeps its parse-time span and stamps its output with `quote_spanned!`. The same leak
