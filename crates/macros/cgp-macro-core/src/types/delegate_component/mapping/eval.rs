@@ -2,7 +2,7 @@ use proc_macro2::Span;
 use syn::{Generics, ItemImpl, Type};
 
 use crate::exports::{DelegateComponent, IsProviderFor};
-use crate::functions::{merge_generics, override_span, parse_internal};
+use crate::functions::{merge_generics, override_synthesized_span, parse_internal};
 
 /// The flat form every key, value, and statement collapses to; it renders the
 /// impl pair for one wiring entry.
@@ -90,24 +90,23 @@ impl EvaluatedDelegateEntry {
         self.respan_impl(item_impl)
     }
 
-    /// Re-span a generated impl onto the entry's own span (`self.span`, the key's
-    /// source token) so a coherence conflict (`E0119`) between two entries mapping
-    /// the same key is reported on the offending entry rather than on the whole
-    /// `delegate_components!` block — the impl's `impl`/trait-ref/self-type tokens
-    /// otherwise carry the macro's `call_site` span, which spans the entire
-    /// invocation. Using the carried span rather than `self.key.span()` keeps a
-    /// synthesized key (an `@`-path's `PathCons<..>` nest, whose first token is a
-    /// `call_site`-spanned `PathCons`) pointing at what the user wrote.
+    /// Re-span the generated impl's synthesized tokens onto the entry's own span
+    /// (`self.span`, the key's source token) so a coherence conflict (`E0119`)
+    /// between two entries mapping the same key is reported on the offending entry
+    /// rather than on the whole `delegate_components!` block — the impl's
+    /// `impl`/trait-ref/`IsProviderFor` scaffolding otherwise carries the macro's
+    /// `call_site` span, which spans the entire invocation. Using the carried span
+    /// rather than `self.key.span()` keeps a synthesized key (an `@`-path's
+    /// `PathCons<..>` nest, whose tokens are all `call_site`-spanned) pointing at
+    /// what the user wrote.
     ///
-    /// The impl's generics keep their original spans, restored after re-spanning,
-    /// so a diagnostic about a per-entry generic (an unconstrained parameter's
-    /// `E0207`, say) still points at the generic the user wrote rather than the key.
+    /// [`override_synthesized_span`] re-spans only the `call_site`-stamped tokens,
+    /// so the user's own tokens — the wired provider (`self.value`), the target
+    /// type, a per-entry generic — keep their original spans. That leaves them
+    /// navigable in an IDE and, for a per-entry generic, keeps an unconstrained
+    /// parameter's `E0207` pointing at the `<T>` the user wrote rather than the key.
     fn respan_impl(&self, item_impl: ItemImpl) -> syn::Result<ItemImpl> {
-        let generics = item_impl.generics.clone();
-        let mut item_impl = override_span(self.span, &item_impl)?;
-        item_impl.generics = generics;
-
-        Ok(item_impl)
+        override_synthesized_span(self.span, &item_impl)
     }
 
     /// Emit `impl namespace_trait for Key { type Delegate = Value; }`, used by
