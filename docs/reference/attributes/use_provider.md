@@ -18,7 +18,7 @@ The body of such a provider still calls the inner provider as an associated func
 #[use_provider(InnerCalculator: AreaCalculator)]
 ```
 
-`InnerCalculator` is the provider type — usually a generic parameter of the impl — and `AreaCalculator` is the provider trait whose `Self`/context argument the macro fills in. The trait may carry its own further generic arguments after the context slot, and these are preserved in order behind the inserted `Self`. Several `#[use_provider]` bounds may be supplied — separated by commas inside one attribute or split across stacked attributes — to bind more than one inner provider.
+`InnerCalculator` is the provider type — usually a generic parameter of the impl — and `AreaCalculator` is the provider trait whose `Self`/context argument the macro fills in. The trait may carry its own further generic arguments after the context slot, and these are preserved in order behind the inserted `Self`. When a provider binds more than one inner provider, prefer supplying all the bounds in a single `#[use_provider]` attribute separated by commas — `#[use_provider(Inner1: TraitA, Inner2: TraitB)]` — since one attribute reads as a single dependency list. Splitting the bounds across stacked attributes behaves identically, but reach for a second attribute only when a real reason calls for it rather than as the default.
 
 ## Expansion
 

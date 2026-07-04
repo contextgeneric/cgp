@@ -18,7 +18,7 @@ This framing is the reason `#[uses(...)]` is recommended over hand-written `Self
 #[uses(RectangleArea, CanCalculateArea)]
 ```
 
-Each entry is the name of a capability, optionally with generic type arguments. A bare `RectangleArea` becomes `Self: RectangleArea`; a parameterized `CanCompute<Code, Input>` becomes `Self: CanCompute<Code, Input>`. The entries may be split across multiple `#[uses(...)]` attributes on the same item, and they accumulate.
+Each entry is the name of a capability, optionally with generic type arguments. A bare `RectangleArea` becomes `Self: RectangleArea`; a parameterized `CanCompute<Code, Input>` becomes `Self: CanCompute<Code, Input>`. When a provider depends on several capabilities, prefer listing them all in a single `#[uses(...)]` attribute — `#[uses(RectangleArea, CanCalculateArea)]` — since one combined import reads as a single dependency list. The entries may also be split across multiple `#[uses(...)]` attributes on the same item, and they accumulate, but stack a second attribute only when a genuine reason calls for it rather than as the default.
 
 The syntax deliberately supports only this simplified trait-path form. Because the attribute is meant to read like an import, it does not accept the more complex bound forms that Rust allows in a `where` clause — in particular, associated-type-equality bounds such as `Iterator<Item = u8>` are not expressible here. When a dependency genuinely needs such a bound, write it as an explicit `where` clause in the function body instead; `#[uses(...)]` is for the common, import-shaped case.
 

@@ -90,7 +90,7 @@ impl<InnerCalculator> AreaCalculator {
 }
 ```
 
-`#[uses(...)]` accepts only the simple `Trait<Params>` form, so a bound with associated-type equality such as `Iterator<Item = u8>` must still be written as an explicit `where` clause. Both attributes desugar to the same `where` predicates they replace.
+`#[uses(...)]` accepts only the simple `Trait<Params>` form, so a bound with associated-type equality such as `Iterator<Item = u8>` must still be written as an explicit `where` clause. Both attributes desugar to the same `where` predicates they replace. When a provider imports several capabilities or binds several inner providers, list them all in one attribute separated by commas — `#[uses(CanTransferMoney, CanRaiseHttpError<ErrUnauthorized, String>)]`, `#[use_provider(A: TraitA, B: TraitB)]` — rather than stacking the same attribute repeatedly; one combined attribute reads as a single dependency list.
 
 ## Read context fields with implicit arguments, not getter traits
 
@@ -123,9 +123,9 @@ impl AreaCalculator {
 }
 ```
 
-Reserve `#[cgp_auto_getter]` for when you genuinely want to publish a reusable getter *capability* rather than read a field for your own use — a named `self.name()` accessor that other providers depend on through `#[uses(HasName)]`, or a getter whose associated type is inferred from the field (`type Name; fn name(&self) -> &Self::Name;`). Both idioms desugar to the same `HasField` bounds and share the same access rules — `.clone()` for an owned value, `.as_str()` for a `&str` — so choosing between them is about whether the value is a private input or a published capability, not about mechanics.
+Use `#[cgp_auto_getter]` sparingly — only where an implicit argument cannot reach the field. Because an implicit argument reads from the provider's own `self` and takes a plain `&T` by reference without cloning, it covers every same-context read, including a field several providers each consume. A getter trait earns its keep in the three cases an implicit argument cannot serve: a field that lives on a type *other* than the provider's context, so the getter is required as a `where` bound on that type (`Request: HasBasicAuthHeader<Self>`, with no `self` field to read); an accessor that must exist as a *named* capability other code depends on through `#[uses(HasName)]` or a supertrait; and a getter whose associated type is inferred from the field (`type Name; fn name(&self) -> &Self::Name;`) so the type stays abstract for callers. Both idioms desugar to the same `HasField` bounds and share the same access rules — `.clone()` for an owned value, `.as_str()` for a `&str`, a plain `&T` by reference — so the choice is only about whether an implicit argument can reach the value.
 
-Avoid [`#[cgp_getter]`](../reference/macros/cgp_getter.md) in ordinary code. It builds a full wireable component so the source field name can be chosen at wiring time through a [`UseField`](../reference/providers/use_field.md) provider, and that flexibility is reserved for the advanced case where you want full control over the context implementation — deciding per context which field a getter reads from, or supplying the value by means other than a same-named field. For the common case of reading a field, an implicit argument (or, for a published accessor, `#[cgp_auto_getter]`) is the form to write.
+Avoid [`#[cgp_getter]`](../reference/macros/cgp_getter.md) in ordinary code. It builds a full wireable component so the source field name can be chosen at wiring time through a [`UseField`](../reference/providers/use_field.md) provider, and that flexibility is reserved for the advanced case where you want full control over the context implementation — deciding per context which field a getter reads from, or supplying the value by means other than a same-named field. For the common case of reading a field, an implicit argument is the form to write, with `#[cgp_auto_getter]` held back for the getter-only cases above.
 
 ## Import abstract types with `#[use_type]`
 
@@ -149,6 +149,8 @@ pub trait CanLoad {
 ```
 
 One rule bounds the rewrite: it fires only on the bare identifier of an *imported* type. A construct's own **local associated type always stays qualified as `Self::Assoc`** — a handler that declares `type Output` writes `Self::Output`, never a bare `Output`, because `Output` is the trait's own type rather than one imported from another trait. A mixed signature such as `Result<Self::Output, Error>` is therefore exactly right: the local `Self::Output` stays qualified while the imported foreign `Error` is written bare. When a capability supertrait has no associated type to import, add it with [`#[extend]`](../reference/attributes/extend.md) rather than `#[use_type]`, as the next section describes.
+
+When a definition imports types from several traits, combine them into one `#[use_type]` attribute by separating the trait paths with commas — `#[use_type(HasUserIdType.UserId, HasCurrencyType.Currency, HasErrorType.Error)]` — rather than stacking one attribute per trait; the combined form reads as a single import list. Several types from one trait use a braced list (`#[use_type(HasFooType.{Foo, Bar})]`), and stacked attributes behave identically, for when a real reason calls for them.
 
 ## Add supertraits with `#[extend]`, not native `:` syntax
 

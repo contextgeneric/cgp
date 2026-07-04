@@ -7,7 +7,7 @@ The concepts each step demonstrates are documented in full in the reference; thi
 - abstract domain types — [`#[cgp_type]`](../reference/macros/cgp_type.md) and the [abstract-types concept](../concepts/abstract-types.md)
 - an async, per-endpoint-dispatched component — [`#[cgp_component]`](../reference/macros/cgp_component.md), [`#[async_trait]`](../reference/macros/async_trait.md), [`#[derive_delegate]`](../reference/attributes/derive_delegate.md)
 - handlers that wrap other handlers — [higher-order providers](../concepts/higher-order-providers.md) written with [`#[cgp_impl]`](../reference/macros/cgp_impl.md)
-- backend providers reading context fields — [implicit field access](../concepts/implicit-arguments.md) via [`#[cgp_auto_getter]`](../reference/macros/cgp_auto_getter.md)
+- backend providers reading context fields — [implicit field access](../concepts/implicit-arguments.md) via [`#[implicit]`](../reference/attributes/implicit.md) arguments, with [`#[cgp_auto_getter]`](../reference/macros/cgp_auto_getter.md) reserved for the request fields a handler reads through a `where` bound
 - raising status-coded errors through an application-specific error component — [modular error handling](../concepts/modular-error-handling.md) over [`HasErrorType`](../reference/components/has_error_type.md)
 - per-endpoint wiring — [`delegate_components!`](../reference/macros/delegate_components.md) with [`UseDelegate`](../reference/providers/use_delegate.md) and a [`check_components!`](../reference/macros/check_components.md) assertion
 - restoring a `Send` bound for the HTTP server — the [recovering `Send` bounds concept](../concepts/send-bounds.md)
@@ -204,23 +204,11 @@ Because each wrapper is itself an `ApiHandler`, they nest into a pipeline. Writi
 
 ## The backend behind the capabilities
 
-The business capabilities are satisfied by a provider that reads its data from context fields. `UseMockedApp` is an in-memory backend that implements `MoneyTransferrer` and the other capabilities by reaching into maps stored on the context, retrieved through [`#[cgp_auto_getter]`](../reference/macros/cgp_auto_getter.md) traits:
+The business capabilities are satisfied by a provider that reads its data from context fields. `UseMockedApp` is an in-memory backend that implements `MoneyTransferrer` and the other capabilities by reaching into maps stored on the context, pulled in as [`#[implicit]`](../reference/attributes/implicit.md) arguments — the balances map is read by reference (`&Arc<Mutex<…>>`) with no clone and no getter trait to declare:
 
 ```rust
-#[cgp_auto_getter]
-#[use_type(HasUserIdType.UserId, HasCurrencyType.Currency, HasQuantityType.Quantity)]
-pub trait HasMockedUserBalances {
-    fn user_balances(
-        &self,
-    ) -> &Arc<Mutex<BTreeMap<(UserId, Currency), Quantity>>>;
-}
-
 #[cgp_impl(UseMockedApp)]
-#[uses(
-    HasMockedUserBalances,
-    CanRaiseHttpError<ErrNotFound, String>,
-    CanRaiseHttpError<ErrBadRequest, String>,
-)]
+#[uses(CanRaiseHttpError<ErrNotFound, String>, CanRaiseHttpError<ErrBadRequest, String>)]
 #[use_type(HasUserIdType.UserId, HasCurrencyType.Currency, HasQuantityType.Quantity, HasErrorType.Error)]
 impl MoneyTransferrer
 where
@@ -234,13 +222,16 @@ where
         recipient: &UserId,
         currency: &Currency,
         quantity: &Quantity,
+        #[implicit] user_balances: &Arc<Mutex<BTreeMap<(UserId, Currency), Quantity>>>,
     ) -> Result<(), Error> {
-        let mut balances = self.user_balances().lock().await;
+        let mut balances = user_balances.lock().await;
         /* debit the sender, credit the recipient, raising on overflow or missing accounts */
         Ok(())
     }
 }
 ```
+
+The `#[implicit]` argument reads the same `user_balances` field a getter would, but as a `&Arc<Mutex<…>>` bound at the top of the method rather than through a declared accessor — the preferred form for a field a provider reads from its own context. The request-field getters `HasLoggedInUser` and `HasBasicAuthHeader`, by contrast, stay [`#[cgp_auto_getter]`](../reference/macros/cgp_auto_getter.md) traits, because they read from the *request* type and are required as `where` bounds on it (`Request: HasBasicAuthHeader<Self>`) — a case an implicit argument, which reads only from `self`, cannot cover.
 
 A real deployment would swap this one provider for a database-backed one. Since `UseMockedApp` is selected per context in the wiring, replacing it with a `UsePostgres` provider that implements the same capabilities changes which backend runs without touching a single endpoint or wrapper.
 

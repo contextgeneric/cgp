@@ -86,11 +86,11 @@ impl<InnerCalculator> AreaCalculator {
 }
 ```
 
-`#[uses]` accepts only the simple `Trait<Params>` form, so a bound carrying associated-type equality (`Iterator<Item = u8>`) stays an explicit `where` clause.
+`#[uses]` accepts only the simple `Trait<Params>` form, so a bound carrying associated-type equality (`Iterator<Item = u8>`) stays an explicit `where` clause. When a provider imports several capabilities or binds several inner providers, combine them into one attribute separated by commas — `#[uses(CanQueryUserBalance, CanRaiseHttpError<ErrNotFound, String>)]`, `#[use_provider(A: TraitA, B: TraitB)]` — rather than stacking the same attribute repeatedly; one combined attribute reads as a single dependency list. Both attributes also accept being split across repeated attributes, but do that only when a real reason calls for it.
 
 ## Field reads: `#[implicit]` over a getter trait
 
-Read a value from a context field with an [`#[implicit]`](functions-and-getters.md) argument — in a `#[cgp_impl]` method exactly as in `#[cgp_fn]` — rather than declaring a getter trait and importing it. An implicit argument names both a local and the field it comes from, keeping the `HasField` machinery out of sight. The getter-trait version:
+Read a value from a context field with an [`#[implicit]`](functions-and-getters.md) argument — in a `#[cgp_impl]` method exactly as in `#[cgp_fn]` — rather than declaring a getter trait and importing it. This is the default for *any* field a provider reads from its own context, since an implicit argument reads from `self` and takes a plain `&T` by reference without cloning — even a field several providers each read is written as the same implicit argument in each, not promoted to a getter. An implicit argument names both a local and the field it comes from, keeping the `HasField` machinery out of sight. The getter-trait version:
 
 ```rust
 #[cgp_auto_getter]
@@ -117,7 +117,7 @@ impl AreaCalculator {
 }
 ```
 
-Reserve `#[cgp_auto_getter]` for a *published* accessor that other providers depend on through `#[uses(HasName)]`, or one carrying an associated type inferred from the field. Avoid `#[cgp_getter]` in ordinary code — its full wireable component is for the advanced case of choosing the source field per context at wiring time. Choosing between an implicit argument and a getter is about whether the value is a private input or a published capability, not about mechanics.
+Use `#[cgp_auto_getter]` sparingly — only where an implicit argument cannot reach. There are three such cases. The field lives on a type *other* than the provider's own context, so the getter is required as a `where` bound on that type (`Request: HasBasicAuthHeader<Self>`) and there is no `self` field for an implicit argument to read; the accessor must exist as a *named* capability other code depends on through `#[uses(HasName)]` or a supertrait; or the getter carries an *associated type inferred from the field* so the type stays abstract for callers. Everywhere else — including a same-context field read shared by several providers — prefer the implicit argument. Avoid `#[cgp_getter]` in ordinary code, since its full wireable component is for the advanced case of choosing the source field per context at wiring time.
 
 ## Abstract types: `#[use_type]` over supertrait + `Self::Type`
 
@@ -141,6 +141,8 @@ pub trait CanLoad {
 ```
 
 One rule bounds the rewrite: it fires only on the bare identifier of an *imported* type. A construct's own **local associated type stays qualified as `Self::Assoc`** — a handler that declares `type Output` writes `Self::Output`, never a bare `Output`. So a mixed signature like `Result<Self::Output, Error>` is exactly right: the local `Self::Output` stays qualified, the imported `Error` is bare.
+
+When a definition imports types from several traits, combine them into one `#[use_type]` attribute with the trait paths comma-separated — `#[use_type(HasUserIdType.UserId, HasCurrencyType.Currency, HasErrorType.Error)]` — rather than stacking one attribute per trait; the combined form reads as a single import list. Several types from one trait use the braced list (`#[use_type(HasFooType.{Foo, Bar})]`). Stacking repeated `#[use_type]` attributes behaves identically, but reach for it only when a real reason calls for it.
 
 ## Supertraits: `#[extend]` over native `:` syntax
 
