@@ -52,3 +52,12 @@ where
         format!("ANNOUNCEMENT from {}!", self.name())
     }
 }
+
+// A shared namespace downstream crates populate and join. It inherits the
+// built-in `DefaultNamespace`, so a context joining it also inherits the standard
+// defaults. `cgp-test-crate-b` registers a *local* component into it with
+// `#[default_impl]` — orphan-safe because the crate owns the component key even
+// though it does not own this namespace.
+cgp_namespace! {
+    new AppNamespace: DefaultNamespace {}
+}

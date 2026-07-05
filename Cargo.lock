@@ -63,6 +63,7 @@ name = "cgp-compile-fail-tests"
 version = "0.8.0-alpha"
 dependencies = [
  "cgp",
+ "cgp-test-crate-a",
  "trybuild",
 ]
 

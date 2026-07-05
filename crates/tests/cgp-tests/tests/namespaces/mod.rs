@@ -26,6 +26,7 @@ pub mod redirect_lookup;
 // `#[prefix]`, and `#[default_impl]` snapshots); the `*_wiring` modules consume
 // them from sibling modules to exercise the `for <..> in ..` loop, `DefaultImpls1`,
 // and namespace inheritance in `delegate_components!`.
+pub mod default_impl_use_type;
 pub mod default_impls;
 pub mod default_impls_wiring;
 pub mod extended;

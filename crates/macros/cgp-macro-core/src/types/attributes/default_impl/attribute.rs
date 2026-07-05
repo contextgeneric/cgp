@@ -29,6 +29,18 @@ impl DefaultImplAttribute {
             .push(parse_internal!(__Components__));
 
         let mut generics = provider_generics.clone();
+
+        // Drop the provider's impl-side dependencies. `provider_generics` is the
+        // provider impl's generics *after* `#[implicit]`/`#[uses]`/`#[use_type]`/
+        // `#[use_provider]` have pushed their `Self`-keyed bounds into its `where`
+        // clause (e.g. `Self: HasErrorType`). Those belong on the provider's own
+        // impl and its `IsProviderFor`, never on this registration impl, whose only
+        // job is `type Delegate = Provider`. Left in place they would bind the
+        // registration impl's `Self` — the path key `PathCons<..>` — so a
+        // dependency like `Self: HasErrorType` would demand `PathCons<..>:
+        // HasErrorType` and never resolve. The impl carries only the parameters
+        // that name the key and provider, plus the `__Components__` table.
+        generics.where_clause = None;
         generics.params.push(parse_internal!(__Components__));
 
         let (impl_generics, _, where_clause) = generics.split_for_impl();

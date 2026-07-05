@@ -10,13 +10,15 @@ The knowledge base also serves as a contract. When an agent changes how a macro 
 
 ## How it is organized
 
-The knowledge base is divided into three top-level sections, and will grow to contain more as the need arises.
+The knowledge base is divided into four top-level sections, and will grow to contain more as the need arises.
 
 The [reference/](reference/README.md) directory holds one document per CGP construct — one for `cgp_component`, one for `cgp_impl`, one for `delegate_components`, and so on. Each document is self-contained and explains a single construct completely: its purpose, its accepted syntax, the exact code it desugars to, worked examples, and links to the constructs it relates to. The [reference index](reference/README.md) lists every construct and tracks which ones are documented.
 
 The [concepts/](concepts/README.md) directory holds the cross-cutting conceptual overviews that span multiple constructs — the consumer/provider duality, dependency injection, namespaces, the handler family, and so on — each explaining one idea and linking down into the reference documents for the mechanics. Where the reference explains the individual trees, the concepts explain the shape of the forest.
 
 The [examples/](examples/README.md) directory holds self-contained worked examples, one realistic use case developed end to end per document, from its contexts and components through to the wiring that connects them. The examples are the canonical source of code snippets the reference and concept documents reuse, so the same running scenarios recur across the whole knowledge base.
+
+The [guides/](guides/README.md) directory holds the guides to *writing* CGP — documents that direct the choices an author makes when more than one construct could express the same thing. Where the reference and concepts explain what a construct means and why it exists, a guide is prescriptive: it recommends a default form, names the trade-offs of the alternatives, and usually walks a concrete before/after refactoring. The migration from explicit to modern idioms and the use of namespaces to keep wiring tables short both live here.
 
 ## How to use it
 

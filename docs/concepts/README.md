@@ -4,7 +4,7 @@ This directory holds the high-level conceptual overviews that tie the CGP constr
 
 ## How concepts differ from reference documents and examples
 
-A concept document explains an *idea that spans several constructs*, whereas a [reference document](../reference/README.md) explains a *single construct completely* and an [example](../examples/README.md) develops a *single use case end to end*. The three are complementary. The reference for `delegate_components!` states its syntax and exact expansion; the [coherence](coherence.md) concept explains *why* CGP wires components through such a table at all, and the [modular serialization](../examples/modular-serialization.md) example shows the pattern solving a real problem. A concept document carries only enough mechanism to make the idea legible and links to the reference for the rest, so a reader who wants the detail follows the link while a reader who wants the framing stays here.
+A concept document explains an *idea that spans several constructs*, whereas a [reference document](../reference/README.md) explains a *single construct completely* and an [example](../examples/README.md) develops a *single use case end to end*. A fourth section, [guides](../guides/README.md), is different again: a concept explains *what an idea is*, while a guide directs *which choice to make* when writing CGP code. These are complementary. The reference for `delegate_components!` states its syntax and exact expansion; the [coherence](coherence.md) concept explains *why* CGP wires components through such a table at all, and the [modular serialization](../examples/modular-serialization.md) example shows the pattern solving a real problem. A concept document carries only enough mechanism to make the idea legible and links to the reference for the rest, so a reader who wants the detail follows the link while a reader who wants the framing stays here.
 
 ## The catalog
 
@@ -12,7 +12,6 @@ The authoring rules for concept documents, including when a cross-cutting idea e
 
 - [Bypassing coherence](coherence.md) — what Rust's coherence rules forbid, and the incoherent-impl-plus-local-wiring strategy CGP uses to work around them.
 - [Modularity hierarchy](modularity-hierarchy.md) — the ladder from a single blanket impl to per-type-per-provider wiring, and how to pick the lowest rung a use case needs.
-- [Modern idioms: a migration guide](modern-idioms.md) — the preferred higher-level forms for providers, dependencies, abstract types, and dispatch, mapped from the explicit forms they replace.
 - [Consumer and provider traits](consumer-and-provider-traits.md) — the trait duality at the heart of CGP and how it sidesteps coherence.
 - [Impl-side dependencies](impl-side-dependencies.md) — dependency injection through the `where` clause of blanket impls.
 - [Implicit arguments](implicit-arguments.md) — writing providers as ordinary functions whose arguments come from context fields.

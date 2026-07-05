@@ -88,6 +88,19 @@ cgp_namespace! {
 }
 ```
 
+**Overriding a path the joined namespace already registers** also fails with `E0119`. A `namespace N;` header emits a blanket `impl<Key> DelegateComponent<Key> for Ctx where Key: N<Ctx>`, which covers every path `N` resolves — including any path `N` registers directly (through a body entry or a `#[default_impl]`). A direct `@path: Provider` entry on the same context emits a second `DelegateComponent<PathCons<..>> for Ctx` for that path, and the two overlap. The macro lowers both faithfully; only the whole program reveals that the path is claimed twice. To leave a path open for a context to override, the namespace must route the component *to* that path (via a `#[prefix]` redirect it inherits) without *terminating* the redirect there — so the context supplies the leaf:
+
+```rust
+delegate_components! {
+    App {
+        namespace AppNamespace; // registers @app.GreeterComponent via a #[default_impl]
+        @app.GreeterComponent: GreetBye, // E0119: also implements DelegateComponent for that path
+    }
+}
+```
+
+**Registering a default for a prefixed component into a namespace the crate does not own** fails the orphan rule (`E0210`/`E0117`). `#[default_impl(@path in Namespace)]` on a prefixed component expands to `impl Namespace<_> for PathCons<..>`, whose `Self` type is built entirely from the `cgp`-owned `PathCons`/`Symbol` types and the component's marker. Rust accepts a foreign-trait impl only if a type in it is local, so a downstream crate — which owns neither the foreign `Namespace` trait nor any element of the foreign path — cannot write it. A per-component default keyed on a prefix path is therefore confined to the namespace's own crate; the orphan-safe alternative is a *local* component key (`#[default_impl(LocalComponent in Namespace)]`), whose marker is a local type. This is a whole-program coherence fact the macro cannot see, so it defers to the compiler.
+
 ## Snapshots
 
 Every `snapshot_cgp_namespace!` invocation across the suite is indexed here, since these snapshots all belong to this entrypoint:
@@ -110,14 +123,21 @@ The behavioral tests confirm the generated namespaces wire correctly:
 - [namespaces/default_impls_wiring.rs](../../../crates/tests/cgp-tests/tests/namespaces/default_impls_wiring.rs) checks that a `DefaultNamespace`-based namespace supplies defaults a context can override.
 - [namespaces/multi_param_namespace.rs](../../../crates/tests/cgp-tests/tests/namespaces/multi_param_namespace.rs) and [namespaces/prefix_default_namespace.rs](../../../crates/tests/cgp-tests/tests/namespaces/prefix_default_namespace.rs) exercise parameterized namespaces and the `#[prefix(...)]` join that attaches a component to one.
 - [namespaces/for_where_clause.rs](../../../crates/tests/cgp-tests/tests/namespaces/for_where_clause.rs) pins the `for <..> in .. where ..` loop's `where` clause landing on each generated impl (a `snapshot_delegate_components!`, since `delegate_components!` owns the `for`-loop form).
+- [namespaces/default_impl_use_type.rs](../../../crates/tests/cgp-tests/tests/namespaces/default_impl_use_type.rs) registers a provider with a `#[use_type]` abstract-type dependency into a namespace via `#[default_impl]` and resolves it through a context that joins the namespace. Its `snapshot_cgp_impl!` pins that the namespace-registration impl carries no `where` clause — the provider's impl-side bounds must not leak onto the registration impl's `Self` (the path key), or the abstract-type dependency would be demanded of the path rather than the context. See [asts/attributes.md](../asts/attributes.md) for the mechanism.
+
+The cross-crate coverage in `cgp-test-crate-b` confirms the orphan-safe direction of the default-impl coherence rule:
+
+- [cgp-test-crate-b/src/lib.rs](../../../crates/tests/cgp-test-crate-b/src/lib.rs) registers a *local* component into `cgp-test-crate-a`'s foreign `AppNamespace` with `#[default_impl(FarewellComponent in AppNamespace)]` — legal because the crate owns the component key — and resolves it through a local context that joins the namespace.
 
 The rejection cases in `cgp-macro-tests` pin the attribute rejection:
 
 - [parser_rejections/cgp_namespace.rs](../../../crates/tests/cgp-macro-tests/tests/parser_rejections/cgp_namespace.rs) asserts the macro rejects an attribute on a `:` mapping key, on a `=>` redirect key, and on a key inside a `for` loop.
 
-The compile-fail fixture in `cgp-compile-fail-tests` pins an accepted expansion that fails to compile — an **acceptable** failure deferred to the compiler, described under [Failure modes](#failure-modes):
+The compile-fail fixtures in `cgp-compile-fail-tests` pin accepted expansions that fail to compile — **acceptable** failures deferred to the compiler, described under [Failure modes](#failure-modes):
 
 - [acceptable/cgp_namespace/duplicate_path_key.rs](../../../crates/tests/cgp-compile-fail-tests/tests/acceptable/cgp_namespace/duplicate_path_key.rs) — two identical `@`-path prefix-rewrite entries conflict (`E0119`); its `.stderr` pins the [error span](#error-spans) landing on the duplicated path leaf rather than the whole block, even though the key lowers to a synthesized `PathCons<..>` type.
+- [acceptable/cgp_namespace/override_registered_path.rs](../../../crates/tests/cgp-compile-fail-tests/tests/acceptable/cgp_namespace/override_registered_path.rs) — a context joins a namespace that registers a path (via `#[default_impl]`) and also wires that path directly, so the `namespace` blanket impl and the direct entry both implement `DelegateComponent` for the path (`E0119`).
+- [acceptable/cgp_namespace/default_impl_foreign_prefix_path.rs](../../../crates/tests/cgp-compile-fail-tests/tests/acceptable/cgp_namespace/default_impl_foreign_prefix_path.rs) — a downstream crate registers a default for an upstream *prefixed* component into the upstream namespace, whose `impl Namespace<_> for PathCons<..>` is wholly foreign and violates the orphan rule (`E0210`); depends on `cgp-test-crate-a` for the upstream component and namespace.
 
 ## Source
 

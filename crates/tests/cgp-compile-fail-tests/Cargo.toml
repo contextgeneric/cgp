@@ -12,6 +12,7 @@ readme       = "./README.md"
 
 [dependencies]
 cgp = { workspace = true }
+cgp-test-crate-a = { workspace = true }
 
 [dev-dependencies]
 trybuild = { version = "1.0.117" }

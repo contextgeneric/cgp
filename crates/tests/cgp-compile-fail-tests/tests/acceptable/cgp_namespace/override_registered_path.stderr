@@ -1,0 +1,20 @@
+error[E0119]: conflicting implementations of trait `IsProviderFor<PathCons<Symbol<3, cgp::prelude::Chars<'a', cgp::prelude::Chars<'p', cgp::prelude::Chars<'p', Nil>>>>, PathCons<GreeterComponent, Nil>>, _, _>` for type `App`
+  --> tests/acceptable/cgp_namespace/override_registered_path.rs:53:14
+   |
+51 |         namespace AppNamespace;
+   |                   ------------ first implementation here
+52 |
+53 |         @app.GreeterComponent: GreetBye,
+   |              ^^^^^^^^^^^^^^^^ conflicting implementation for `App`
+   |
+   = note: downstream crates may implement trait `cgp::prelude::IsProviderFor<cgp::prelude::PathCons<cgp::prelude::Symbol<3, cgp::prelude::Chars<'a', cgp::prelude::Chars<'p', cgp::prelude::Chars<'p', cgp::prelude::Nil>>>>, cgp::prelude::PathCons<GreeterComponent, cgp::prelude::Nil>>, _, _>` for type `GreetHello`
+   = note: downstream crates may implement trait `cgp::prelude::IsProviderFor<cgp::prelude::PathCons<cgp::prelude::Symbol<3, cgp::prelude::Chars<'a', cgp::prelude::Chars<'p', cgp::prelude::Chars<'p', cgp::prelude::Nil>>>>, cgp::prelude::PathCons<GreeterComponent, cgp::prelude::Nil>>, _, _>` for type `GreetBye`
+
+error[E0119]: conflicting implementations of trait `DelegateComponent<PathCons<Symbol<3, cgp::prelude::Chars<'a', cgp::prelude::Chars<'p', cgp::prelude::Chars<'p', Nil>>>>, PathCons<GreeterComponent, Nil>>>` for type `App`
+  --> tests/acceptable/cgp_namespace/override_registered_path.rs:53:14
+   |
+51 |         namespace AppNamespace;
+   |                   ------------ first implementation here
+52 |
+53 |         @app.GreeterComponent: GreetBye,
+   |              ^^^^^^^^^^^^^^^^ conflicting implementation for `App`
