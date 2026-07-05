@@ -311,4 +311,4 @@ The three techniques form a ladder, and most applications should climb only as f
 - [`DefaultNamespace`, `DefaultImpls1`, `DefaultImpls2`](../reference/traits/default_namespace.md) — the lookup traits behind namespaces and the `#[default_impl]` attribute.
 - [`delegate_components!`](../reference/macros/delegate_components.md) — the wiring table these techniques restructure, including the `open` statement for the self-contained case.
 - [Namespaces](../concepts/namespaces.md) — the mechanism (inheritance, `RedirectLookup`, and paths) that makes the preset pattern work.
-- [Modern idioms summary](README.md#summary) — the condensed reference for the provider, dependency, and abstract-type idioms the code above uses.
+- [Guides summary](README.md#summary) — the condensed cheat-sheet for the provider, dependency, and abstract-type idioms the code above uses.

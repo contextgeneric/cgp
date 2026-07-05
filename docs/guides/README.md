@@ -10,25 +10,22 @@ A guide leans on the other three rather than restating them. It links to the ref
 
 ## The catalog
 
-The authoring rules for these documents live in [../AGENTS.md](../AGENTS.md). Each guide below names a decision you face when writing CGP and walks through how to make it.
+The authoring rules for these documents live in [../AGENTS.md](../AGENTS.md). Each guide below names a decision you face when writing CGP and walks through how to make it; the [Summary](#summary) at the end condenses all of them into one cheat-sheet, so read it first for the recommendations and follow a link for the full before/after mapping and the rules.
 
-- [Organizing wiring with namespaces and prefixes](namespaces-and-prefixes.md) — how to keep a growing `delegate_components!` table short: grouping components under path prefixes with `#[prefix]`, binding providers to a namespace with `#[default_impl]`, and merging multiple providers into one flattened table, worked as a refactoring of a real application.
-- [Debugging CGP compile errors](debugging.md) — the playbook for tracing a wiring failure back to its cause: reading the error's shape, moving the error to the wiring site with checks, reducing to a minimal reproduction, inspecting the macro expansion, and a decoder for the errors you actually see.
-
-The **modern idioms** are a family of small, related choices — each a shift from an explicit form to a vanilla-looking one — so each has its own focused guide. The [Summary](#summary) below condenses these idioms *and* the two guides above into one cheat-sheet; go straight to a guide when you want the before/after mapping and the rules in full:
-
-- [Writing providers the modern way](writing-providers.md) — `#[cgp_impl]` in consumer-trait shape, omitting the context parameter.
+- [Writing providers](writing-providers.md) — `#[cgp_impl]` in consumer-trait shape, omitting the context parameter, instead of the inside-out provider forms.
 - [Declaring a provider's dependencies](declaring-dependencies.md) — `#[uses]` and `#[use_provider]` instead of hand-written `where` bounds.
 - [Reading context fields](reading-context-fields.md) — `#[implicit]` arguments instead of getter traits.
-- [Importing abstract types](importing-abstract-types.md) — `#[use_type]` aliases and the concrete-type equality form.
+- [Importing abstract types](importing-abstract-types.md) — `#[use_type]` aliases and the concrete-type equality form instead of a supertrait plus `Self::Type`.
 - [Adding capability supertraits](capability-supertraits.md) — `#[extend]` instead of native `:` supertrait syntax.
 - [Dispatching a component per type](dispatching-per-type.md) — the `open` statement or a namespace instead of a `UseDelegate` table.
+- [Organizing wiring with namespaces and prefixes](namespaces-and-prefixes.md) — keeping a growing `delegate_components!` table short with path prefixes, namespaces, and per-type defaults, worked as a refactoring of a real application.
+- [Debugging CGP compile errors](debugging.md) — tracing a wiring failure back to its cause: reading the error's shape, moving the error to the wiring site with checks, reducing to a minimal reproduction, inspecting the macro expansion, and a decoder for the errors you actually see.
 
 ## Summary
 
 This section condenses every guide above into one quick reference. Read it for the recommendation and the reason; follow a link when you need the full before/after mapping, the corner cases, or a worked example.
 
-**Write CGP that looks like ordinary Rust.** The explicit forms — an inside-out provider-trait `impl`, `where`-clause dependencies, `<Self as Trait>::Type` abstract types, `UseDelegate` dispatch tables — are exactly what the macros desugar to, so you keep reading them in generated code and older codebases, but you should *write* the modern idiom in all new code and reach for an explicit form only when a construct genuinely cannot express the case. Each row below is one such shift:
+**Write CGP that looks like ordinary Rust.** The explicit forms — an inside-out provider-trait `impl`, `where`-clause dependencies, `<Self as Trait>::Type` abstract types, `UseDelegate` dispatch tables — are exactly what the macros desugar to, so you keep reading them in generated code and older codebases, but you should *write* the vanilla-looking form in all new code and reach for an explicit form only when a construct genuinely cannot express the case. Each row below is one such shift:
 
 | When you… | Prefer | Instead of |
 |---|---|---|

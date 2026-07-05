@@ -2,7 +2,7 @@
 
 A provider reads values from its context's fields, and this guide is about doing that with an argument that looks like an ordinary parameter rather than a getter trait declared just to fetch it.
 
-This is one of the [modern idioms](README.md#summary); it is the value-level counterpart to [writing providers](writing-providers.md) in vanilla-looking form.
+This guide is the value-level counterpart to [writing providers](writing-providers.md) — the same move from visible machinery to an ordinary-looking parameter, applied to reading a field.
 
 ## Read context fields with implicit arguments, not getter traits
 
@@ -43,4 +43,4 @@ Avoid [`#[cgp_getter]`](../reference/macros/cgp_getter.md) in ordinary code. It 
 
 - [Writing providers](writing-providers.md) — the `#[cgp_impl]` provider these arguments live in.
 - [Importing abstract types](importing-abstract-types.md) — for a getter whose return type is an abstract type shared across contexts.
-- [Modern idioms](README.md#summary) — the overview and the cases where a getter trait is still the right tool.
+- [Guides summary](README.md#summary) — the cheat-sheet across all the guides, and the cases where a getter trait is still the right tool.

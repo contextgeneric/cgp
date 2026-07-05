@@ -2,7 +2,7 @@
 
 CGP abstracts over types with associated types on components, and this guide is about bringing such a type into a definition as a plain alias rather than a supertrait plus a fully-qualified `Self::Type` at every use.
 
-This is one of the [modern idioms](README.md#summary). It applies inside [`#[cgp_component]`](../reference/macros/cgp_component.md) definitions and [`#[cgp_impl]`](../reference/macros/cgp_impl.md)/[`#[cgp_fn]`](../reference/macros/cgp_fn.md) providers alike, and it is the recommended form for the built-in error type as much as for a domain type.
+It applies inside [`#[cgp_component]`](../reference/macros/cgp_component.md) definitions and [`#[cgp_impl]`](../reference/macros/cgp_impl.md)/[`#[cgp_fn]`](../reference/macros/cgp_fn.md) providers alike, and is the recommended form for the built-in error type as much as for a domain type.
 
 ## Import abstract types with `#[use_type]`
 
@@ -31,7 +31,7 @@ When a definition imports types from several traits, combine them into one `#[us
 
 ## Pinning an abstract type to a concrete one
 
-On a `#[cgp_impl]` or `#[cgp_fn]`, `#[use_type]` also *pins* an abstract type to a concrete one with the equality form `{Assoc = Type}`, which is the modern replacement for a hand-written `where Self: HasXType<Assoc = Concrete>` clause. Writing `#[use_type(HasErrorType.{Error = AppError})]` emits `Self: HasErrorType<Error = AppError>` (and rewrites any bare `Error`), so a provider fixed to a concrete error type moves that pin out of its `where` clause and into the import. The right-hand side may name another imported alias to *unify* two abstract types — `#[use_type(HasPasswordType.Password, HasHashedPasswordType.{HashedPassword = Password})]` emits `Self: HasHashedPasswordType<HashedPassword = <Self as HasPasswordType>::Password>`. The equality form is rejected on `#[cgp_component]`, since a trait definition cannot carry the impl-side constraint it produces — this is the one place a pin stays in a hand-written `where` clause, and only for equality on a trait you would never `#[use_type]` from.
+On a `#[cgp_impl]` or `#[cgp_fn]`, `#[use_type]` also *pins* an abstract type to a concrete one with the equality form `{Assoc = Type}`, which is the replacement for a hand-written `where Self: HasXType<Assoc = Concrete>` clause. Writing `#[use_type(HasErrorType.{Error = AppError})]` emits `Self: HasErrorType<Error = AppError>` (and rewrites any bare `Error`), so a provider fixed to a concrete error type moves that pin out of its `where` clause and into the import. The right-hand side may name another imported alias to *unify* two abstract types — `#[use_type(HasPasswordType.Password, HasHashedPasswordType.{HashedPassword = Password})]` emits `Self: HasHashedPasswordType<HashedPassword = <Self as HasPasswordType>::Password>`. The equality form is rejected on `#[cgp_component]`, since a trait definition cannot carry the impl-side constraint it produces — this is the one place a pin stays in a hand-written `where` clause, and only for equality on a trait you would never `#[use_type]` from.
 
 When a capability supertrait has no associated type to import — a plain capability like `HasName` — add it with [`#[extend]`](capability-supertraits.md) rather than `#[use_type]`. Use `#[use_type]` when the signature names the trait's associated type; use `#[extend]` when it only calls the trait's methods.
 
@@ -39,4 +39,4 @@ When a capability supertrait has no associated type to import — a plain capabi
 
 - [Capability supertraits](capability-supertraits.md) — the companion for a supertrait that contributes a capability rather than a type.
 - [Declaring dependencies](declaring-dependencies.md) — where an abstract-type pin moves *from* (a `#[uses]` or hand-written `where`).
-- [Modern idioms](README.md#summary) — the overview and the local-associated-type exception restated among the other still-explicit cases.
+- [Guides summary](README.md#summary) — the cheat-sheet across all the guides, with the local-associated-type exception restated among the other still-explicit cases.

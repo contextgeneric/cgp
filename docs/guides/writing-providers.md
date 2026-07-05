@@ -1,8 +1,8 @@
-# Writing providers the modern way
+# Writing providers
 
 A provider can be written at three levels of sugar over the same machinery, and this guide is about choosing the highest one — writing a provider that reads like an ordinary trait `impl` rather than the inside-out provider-trait form the macros desugar to.
 
-This is one of the [modern idioms](README.md#summary); it pairs with [declaring a provider's dependencies](declaring-dependencies.md) and [reading its context's fields](reading-context-fields.md), which cover what goes inside the provider once its header is written this way.
+This guide pairs with [declaring a provider's dependencies](declaring-dependencies.md) and [reading its context's fields](reading-context-fields.md), which cover what goes inside the provider once its header is written this way.
 
 ## Write providers with `#[cgp_impl]`, not the raw provider forms
 
@@ -22,7 +22,7 @@ where
 }
 ```
 
-becomes, with the modern idiom and [`#[implicit]`](../reference/attributes/implicit.md) arguments:
+becomes, with [`#[implicit]`](../reference/attributes/implicit.md) arguments:
 
 ```rust
 #[cgp_impl(new RectangleArea)]
@@ -67,4 +67,4 @@ impl AreaCalculator {
 
 - [Declaring a provider's dependencies](declaring-dependencies.md) — state the `where` bounds this idiom leaves off the header with `#[uses]` and `#[use_provider]`.
 - [Reading context fields](reading-context-fields.md) — pull field values into a provider with `#[implicit]` arguments, as the first example does.
-- [Modern idioms](README.md#summary) — the overview that ties these idioms together and lists when an explicit form is still right.
+- [Guides summary](README.md#summary) — the cheat-sheet across all the guides, and the list of when an explicit form is still right.

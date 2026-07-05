@@ -18,7 +18,7 @@ The [concepts/](concepts/README.md) directory holds the cross-cutting conceptual
 
 The [examples/](examples/README.md) directory holds self-contained worked examples, one realistic use case developed end to end per document, from its contexts and components through to the wiring that connects them. The examples are the canonical source of code snippets the reference and concept documents reuse, so the same running scenarios recur across the whole knowledge base.
 
-The [guides/](guides/README.md) directory holds the guides to *writing* CGP — documents that direct the choices an author makes when more than one construct could express the same thing. Where the reference and concepts explain what a construct means and why it exists, a guide is prescriptive: it recommends a default form, names the trade-offs of the alternatives, and usually walks a concrete before/after refactoring. The migration from explicit to modern idioms and the use of namespaces to keep wiring tables short both live here.
+The [guides/](guides/README.md) directory holds the guides to *writing* CGP — documents that direct the choices an author makes when more than one construct could express the same thing. Where the reference and concepts explain what a construct means and why it exists, a guide is prescriptive: it recommends a default form, names the trade-offs of the alternatives, and usually walks a concrete before/after refactoring. Choosing a construct's vanilla-looking form over its explicit equivalent, keeping wiring tables short with namespaces, and debugging a wiring that will not compile all live here.
 
 ## How to use it
 
