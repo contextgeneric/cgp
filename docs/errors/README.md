@@ -46,23 +46,23 @@ The [wiring/](wiring/) directory holds the whole-program **structural** failures
 
 ## Catalog
 
-This section indexes every error document. A checked box marks a document that is written and test-backed; an unchecked box marks a class whose scope is scaffolded but whose full documentation and fixture migration are still pending.
+This section indexes every error document, grouped by the subdirectory it lives in.
 
 Hidden-cause errors — [hidden/](hidden/):
 
-- [x] [Unsatisfied dependency (hidden)](hidden/unsatisfied-dependency.md) — a provider's impl-side dependency is unmet, and the failure is triggered by a direct consumer-trait method call, so the compiler reports only that the method's bounds are unsatisfied (`E0599`/`E0277`) and hides the missing dependency.
+- [Unsatisfied dependency (hidden)](hidden/unsatisfied-dependency.md) — a provider's impl-side dependency is unmet, and the failure is triggered by a direct consumer-trait method call, so the compiler reports only that the method's bounds are unsatisfied (`E0599`/`E0277`) and hides the missing dependency.
 
 Surfaced and cascading errors — [checks/](checks/):
 
-- [x] [Check-trait failure (surfaced)](checks/check-trait-failure.md) — the same unmet dependency forced through `check_components!`, where `IsProviderFor` surfaces the concrete missing bound at the wiring site.
-- [x] [Verbose dependency cascade](checks/verbose-cascade.md) — one deep mistake reported at every transitively dependent provider, and how to locate the single root cause among the repeats.
+- [Check-trait failure (surfaced)](checks/check-trait-failure.md) — the same unmet dependency forced through `check_components!`, where `IsProviderFor` surfaces the concrete missing bound at the wiring site.
+- [Verbose dependency cascade](checks/verbose-cascade.md) — one deep mistake reported at every transitively dependent provider, and how to locate the single root cause among the repeats.
 
 Structural wiring errors — [wiring/](wiring/):
 
-- [x] [Conflicting wiring](wiring/conflicting-wiring.md) — the same key or name wired twice, producing coherence (`E0119`) or duplicate-definition (`E0428`) errors.
-- [x] [Orphan-rule violation](wiring/orphan-rule.md) — a generated impl for a foreign trait and a fully foreign type (`E0210`, or `E0117`), as when a prefixed `#[default_impl]` is registered from the wrong crate.
-- [x] [Wiring cycle](wiring/wiring-cycle.md) — a delegation that chases its own tail: an `E0275` overflow when forced through a check, but the hidden `E0599` when reached by a plain method call.
-- [x] [Unconstrained generic](wiring/unconstrained-generic.md) — a per-entry generic that never reaches the key, leaving an impl parameter unconstrained (`E0207`).
+- [Conflicting wiring](wiring/conflicting-wiring.md) — the same key or name wired twice, producing coherence (`E0119`) or duplicate-definition (`E0428`) errors.
+- [Orphan-rule violation](wiring/orphan-rule.md) — a generated impl for a foreign trait and a fully foreign type (`E0210`, or `E0117`), as when a prefixed `#[default_impl]` is registered from the wrong crate.
+- [Wiring cycle](wiring/wiring-cycle.md) — a delegation that chases its own tail: an `E0275` overflow when forced through a check, but the hidden `E0599` when reached by a plain method call.
+- [Unconstrained generic](wiring/unconstrained-generic.md) — a per-entry generic that never reaches the key, leaving an impl parameter unconstrained (`E0207`).
 
 ## Relationship to the rest of the knowledge base
 
