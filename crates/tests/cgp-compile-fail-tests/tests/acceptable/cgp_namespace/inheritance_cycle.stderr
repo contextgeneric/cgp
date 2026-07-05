@@ -1,0 +1,53 @@
+error[E0275]: overflow evaluating the requirement `__Key__: NamespaceA<__NamespaceBComponents>`
+  --> tests/acceptable/cgp_namespace/inheritance_cycle.rs:21:1
+   |
+21 | / cgp_namespace! {
+22 | |     new NamespaceA: NamespaceB {}
+23 | | }
+   | |_^
+   |
+   = help: consider increasing the recursion limit by adding a `#![recursion_limit = "256"]` attribute to your crate (`$CRATE`)
+note: required for `__Key__` to implement `NamespaceB<__NamespaceAComponents>`
+  --> tests/acceptable/cgp_namespace/inheritance_cycle.rs:25:1
+   |
+25 | / cgp_namespace! {
+26 | |     new NamespaceB: NamespaceA {}
+27 | | }
+   | |_^
+note: required for `__Key__` to implement `NamespaceA<__NamespaceAComponents>`
+  --> tests/acceptable/cgp_namespace/inheritance_cycle.rs:21:1
+   |
+21 | / cgp_namespace! {
+22 | |     new NamespaceA: NamespaceB {}
+23 | | }
+   | |_^
+   = note: 3 redundant requirements hidden
+   = note: required for `__Key__` to implement `NamespaceB<__Table__>`
+   = note: this error originates in the macro `cgp_namespace` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0275]: overflow evaluating the requirement `__Key__: NamespaceB<__NamespaceAComponents>`
+  --> tests/acceptable/cgp_namespace/inheritance_cycle.rs:25:1
+   |
+25 | / cgp_namespace! {
+26 | |     new NamespaceB: NamespaceA {}
+27 | | }
+   | |_^
+   |
+   = help: consider increasing the recursion limit by adding a `#![recursion_limit = "256"]` attribute to your crate (`$CRATE`)
+note: required for `__Key__` to implement `NamespaceA<__NamespaceBComponents>`
+  --> tests/acceptable/cgp_namespace/inheritance_cycle.rs:21:1
+   |
+21 | / cgp_namespace! {
+22 | |     new NamespaceA: NamespaceB {}
+23 | | }
+   | |_^
+note: required for `__Key__` to implement `NamespaceB<__NamespaceBComponents>`
+  --> tests/acceptable/cgp_namespace/inheritance_cycle.rs:25:1
+   |
+25 | / cgp_namespace! {
+26 | |     new NamespaceB: NamespaceA {}
+27 | | }
+   | |_^
+   = note: 3 redundant requirements hidden
+   = note: required for `__Key__` to implement `NamespaceA<__Table__>`
+   = note: this error originates in the macro `cgp_namespace` (in Nightly builds, run with -Z macro-backtrace for more info)

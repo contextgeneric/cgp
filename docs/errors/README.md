@@ -56,12 +56,14 @@ Surfaced and cascading errors — [checks/](checks/):
 
 - [Check-trait failure (surfaced)](checks/check-trait-failure.md) — the same unmet dependency forced through `check_components!`, where `IsProviderFor` surfaces the concrete missing bound at the wiring site.
 - [Verbose dependency cascade](checks/verbose-cascade.md) — one deep mistake reported at every transitively dependent provider, and how to locate the single root cause among the repeats.
+- [Unregistered namespace path](checks/unregistered-namespace-path.md) — a component routed through a joined namespace to a path that no entry ever binds, so the *lookup* finds no delegate; a check surfaces it as an `E0277` on the path-keyed `DefaultNamespace`/`DelegateComponent` bound.
 
 Structural wiring errors — [wiring/](wiring/):
 
 - [Conflicting wiring](wiring/conflicting-wiring.md) — the same key or name wired twice, producing coherence (`E0119`) or duplicate-definition (`E0428`) errors.
 - [Orphan-rule violation](wiring/orphan-rule.md) — a generated impl for a foreign trait and a fully foreign type (`E0210`, or `E0117`), as when a prefixed `#[default_impl]` is registered from the wrong crate.
 - [Wiring cycle](wiring/wiring-cycle.md) — a delegation that chases its own tail: an `E0275` overflow when forced through a check, but the hidden `E0599` when reached by a plain method call.
+- [Namespace inheritance cycle](wiring/namespace-inheritance-cycle.md) — namespaces whose parent chain loops (`A: B`, `B: A`, or `A: A`), an `E0275` overflow caught *eagerly at the `cgp_namespace!` definitions* rather than lazily at a use site.
 - [Unconstrained generic](wiring/unconstrained-generic.md) — a per-entry generic that never reaches the key, leaving an impl parameter unconstrained (`E0207`).
 
 ## Relationship to the rest of the knowledge base
