@@ -65,3 +65,14 @@ when an intended change alters a diagnostic, regenerate the snapshots with
 `TRYBUILD=overwrite cargo test -p cgp-compile-fail-tests`, then review the diff
 before committing — an unexpected change to an `acceptable/` diagnostic, or a
 `problematic/` fixture that stops failing, is a signal worth reading closely.
+
+Regenerate with the pinned toolchain, because a snapshot can embed standard-library
+source. When an error points into the standard library — `option_slice.stderr` is
+the only current case — `rustc` prints the referenced source line (`pub enum
+Option<T> {`) if the `rust-src` component is installed and omits it otherwise, while
+`trybuild` normalizes the path to `$RUST/...` either way. The difference is therefore
+invisible in the path and shows up only as an added or missing snippet line, which
+reads as spurious non-determinism between machines. The pinned toolchain declares
+`rust-src` in [rust-toolchain.toml](../../../rust-toolchain.toml) precisely so this
+renders the same everywhere; blessing under a toolchain that lacks the component
+would silently strip the snippet and reintroduce the mismatch on CI.

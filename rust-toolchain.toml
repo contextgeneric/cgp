@@ -1,3 +1,12 @@
 [toolchain]
 channel = "1.96.1"
 profile = "default"
+
+# Pin rust-src so compiler diagnostics are deterministic across environments. When
+# rust-src is present, rustc resolves the remapped `/rustc/<hash>/...` std paths to
+# on-disk source and renders standard-library snippets in errors (e.g. the `Option`
+# definition); without it, the snippet is omitted. The cgp-compile-fail-tests
+# trybuild `.stderr` snapshots (option_slice.stderr) are blessed with those
+# snippets, so CI — which installs the toolchain from this file — must have rust-src
+# too, or it mismatches. The `default` profile does not include rust-src on its own.
+components = ["rust-src"]
