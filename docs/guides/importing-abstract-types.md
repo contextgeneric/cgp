@@ -2,7 +2,7 @@
 
 CGP abstracts over types with associated types on components, and this guide is about bringing such a type into a definition as a plain alias rather than a supertrait plus a fully-qualified `Self::Type` at every use.
 
-This is one of the [modern idioms](modern-idioms.md). It applies inside [`#[cgp_component]`](../reference/macros/cgp_component.md) definitions and [`#[cgp_impl]`](../reference/macros/cgp_impl.md)/[`#[cgp_fn]`](../reference/macros/cgp_fn.md) providers alike, and it is the recommended form for the built-in error type as much as for a domain type.
+This is one of the [modern idioms](README.md#summary). It applies inside [`#[cgp_component]`](../reference/macros/cgp_component.md) definitions and [`#[cgp_impl]`](../reference/macros/cgp_impl.md)/[`#[cgp_fn]`](../reference/macros/cgp_fn.md) providers alike, and it is the recommended form for the built-in error type as much as for a domain type.
 
 ## Import abstract types with `#[use_type]`
 
@@ -39,4 +39,4 @@ When a capability supertrait has no associated type to import — a plain capabi
 
 - [Capability supertraits](capability-supertraits.md) — the companion for a supertrait that contributes a capability rather than a type.
 - [Declaring dependencies](declaring-dependencies.md) — where an abstract-type pin moves *from* (a `#[uses]` or hand-written `where`).
-- [Modern idioms](modern-idioms.md) — the overview and the local-associated-type exception restated among the other still-explicit cases.
+- [Modern idioms](README.md#summary) — the overview and the local-associated-type exception restated among the other still-explicit cases.

@@ -2,7 +2,7 @@
 
 A component that is generic over a type parameter often wants a different provider per value of that parameter, and this guide is about doing that with the `open` statement or a namespace rather than the legacy `UseDelegate` nested table.
 
-This is one of the [modern idioms](modern-idioms.md), and it connects directly to [organizing wiring with namespaces and prefixes](namespaces-and-prefixes.md), which develops the namespace side of the choice in depth.
+This is one of the [modern idioms](README.md#summary), and it connects directly to [organizing wiring with namespaces and prefixes](namespaces-and-prefixes.md), which develops the namespace side of the choice in depth.
 
 ## Dispatch per type with `open` and namespaces, not `UseDelegate`
 
@@ -40,4 +40,4 @@ Choose between the two modern forms by scope. Prefer `open` for a self-contained
 ## Related guides
 
 - [Organizing wiring with namespaces and prefixes](namespaces-and-prefixes.md) — the full namespace treatment, including flattening multi-provider dispatch that `open` alone cannot.
-- [Modern idioms](modern-idioms.md) — the overview that ties the idioms together.
+- [Modern idioms](README.md#summary) — the overview that ties the idioms together.

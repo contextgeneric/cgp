@@ -2,7 +2,7 @@
 
 A provider states what it needs from its context in its `where` clause, and this guide is about writing those needs as attributes that read like imports rather than as hand-written trait bounds.
 
-This is one of the [modern idioms](modern-idioms.md); it follows on from [writing the provider header](writing-providers.md), which leaves the bounds off the header for these attributes to supply.
+This is one of the [modern idioms](README.md#summary); it follows on from [writing the provider header](writing-providers.md), which leaves the bounds off the header for these attributes to supply.
 
 ## Declare dependencies with `#[uses]` and `#[use_provider]`
 
@@ -37,4 +37,4 @@ Both attributes desugar to the same `where` predicates they replace. When a prov
 
 - [Writing providers](writing-providers.md) — the `#[cgp_impl]` header these attributes attach to.
 - [Importing abstract types](importing-abstract-types.md) — where an abstract-type pin belongs instead of `#[uses]`.
-- [Modern idioms](modern-idioms.md) — the overview and the list of cases where an explicit `where` clause is still right.
+- [Modern idioms](README.md#summary) — the overview and the list of cases where an explicit `where` clause is still right.

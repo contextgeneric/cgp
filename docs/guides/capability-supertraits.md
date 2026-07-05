@@ -2,7 +2,7 @@
 
 A CGP component often depends on another capability, and this guide is about declaring that dependency with `#[extend]`, which reads as importing a capability, rather than the native `:` supertrait syntax, which reads as inheritance.
 
-This is one of the [modern idioms](modern-idioms.md); it is the capability counterpart to [importing abstract types](importing-abstract-types.md), which handles a supertrait whose *type* the signature names.
+This is one of the [modern idioms](README.md#summary); it is the capability counterpart to [importing abstract types](importing-abstract-types.md), which handles a supertrait whose *type* the signature names.
 
 ## Add supertraits with `#[extend]`, not native `:` syntax
 
@@ -31,4 +31,4 @@ pub trait CanGreet {
 
 - [Importing abstract types](importing-abstract-types.md) — use `#[use_type]` instead when the supertrait carries an associated type the signature names.
 - [Declaring dependencies](declaring-dependencies.md) — the `#[uses]` counterpart for a capability the implementation uses privately rather than re-exporting.
-- [Modern idioms](modern-idioms.md) — the overview that ties the idioms together.
+- [Modern idioms](README.md#summary) — the overview that ties the idioms together.

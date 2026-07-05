@@ -15,12 +15,32 @@ The authoring rules for these documents live in [../AGENTS.md](../AGENTS.md). Ea
 - [Organizing wiring with namespaces and prefixes](namespaces-and-prefixes.md) — how to keep a growing `delegate_components!` table short: grouping components under path prefixes with `#[prefix]`, binding providers to a namespace with `#[default_impl]`, and merging multiple providers into one flattened table, worked as a refactoring of a real application.
 - [Debugging CGP compile errors](debugging.md) — the playbook for tracing a wiring failure back to its cause: reading the error's shape, moving the error to the wiring site with checks, reducing to a minimal reproduction, inspecting the macro expansion, and a decoder for the errors you actually see.
 
-The **modern idioms** are a family of small, related choices — each a shift from an explicit form to a vanilla-looking one — so they are grouped under a hub with a focused guide per idiom. Start at the hub for the framing and the map, or go straight to the idiom you are deciding on:
+The **modern idioms** are a family of small, related choices — each a shift from an explicit form to a vanilla-looking one — so each has its own focused guide. The [Summary](#summary) below condenses these idioms *and* the two guides above into one cheat-sheet; go straight to a guide when you want the before/after mapping and the rules in full:
 
-- [Modern idioms: a migration guide](modern-idioms.md) — the hub, with the explicit-to-modern framing and the list of cases where an explicit form is still right.
 - [Writing providers the modern way](writing-providers.md) — `#[cgp_impl]` in consumer-trait shape, omitting the context parameter.
 - [Declaring a provider's dependencies](declaring-dependencies.md) — `#[uses]` and `#[use_provider]` instead of hand-written `where` bounds.
 - [Reading context fields](reading-context-fields.md) — `#[implicit]` arguments instead of getter traits.
 - [Importing abstract types](importing-abstract-types.md) — `#[use_type]` aliases and the concrete-type equality form.
 - [Adding capability supertraits](capability-supertraits.md) — `#[extend]` instead of native `:` supertrait syntax.
 - [Dispatching a component per type](dispatching-per-type.md) — the `open` statement or a namespace instead of a `UseDelegate` table.
+
+## Summary
+
+This section condenses every guide above into one quick reference. Read it for the recommendation and the reason; follow a link when you need the full before/after mapping, the corner cases, or a worked example.
+
+**Write CGP that looks like ordinary Rust.** The explicit forms — an inside-out provider-trait `impl`, `where`-clause dependencies, `<Self as Trait>::Type` abstract types, `UseDelegate` dispatch tables — are exactly what the macros desugar to, so you keep reading them in generated code and older codebases, but you should *write* the modern idiom in all new code and reach for an explicit form only when a construct genuinely cannot express the case. Each row below is one such shift:
+
+| When you… | Prefer | Instead of |
+|---|---|---|
+| write a provider ([guide](writing-providers.md)) | `#[cgp_impl]` with the header `impl Trait` (omit `for Context`, keep `self`/`Self`) | raw `#[cgp_provider]`/`#[cgp_new_provider]` in inside-out shape |
+| require a capability or an inner provider ([guide](declaring-dependencies.md)) | `#[uses(Trait)]` / `#[use_provider(P: Trait)]`, comma-separated in one attribute | hand-written `Self:`/`P: Trait<Self>` `where` bounds |
+| read a value from the context's own field ([guide](reading-context-fields.md)) | an `#[implicit]` argument | a getter trait declared only to read it |
+| name an abstract type ([guide](importing-abstract-types.md)) | `#[use_type(Trait.Type)]` + the bare alias (and `{Type = Concrete}` to pin one) | a `: Trait` supertrait + qualified `Self::Type` |
+| add a non-type capability supertrait ([guide](capability-supertraits.md)) | `#[extend(Trait)]` | native `: Supertrait` inheritance syntax |
+| dispatch a generic-parameter component per type ([guide](dispatching-per-type.md)) | the `open` statement or a [namespace](namespaces-and-prefixes.md) | `#[derive_delegate]` + a `UseDelegate` nested table |
+
+**When an explicit form is still right.** Keep a hand-written `where` clause for an associated-type-equality bound on a trait you would not `#[use_type]` from (`Iterator<Item = u8>`, `From<X>`) — but move an *abstract-type* pin like `Self: HasErrorType<Error = AppError>` into the `#[use_type]` equality form. Name the context explicitly (`impl<Context> Trait for Context`) only for a lifetime or higher-ranked bound the sugar cannot carry, or reach for `#[cgp_getter]` only when a context must choose per-wiring which field a getter reads. And a construct's own local associated type stays qualified as `Self::Output` always — it is never a `#[use_type]` import.
+
+**Keep a growing wiring table short with namespaces and prefixes** ([guide](namespaces-and-prefixes.md)). As component counts rise, group components under path prefixes with `#[prefix(@path in DefaultNamespace)]`, lift a backend's provider choices into a reusable namespace (via `#[default_impl]` or namespace body entries) so a context joins it with one `namespace N;` line, and pull a separate concern's table in with a `for … in` loop. Two rules bite: a context can only override a path its namespace routes *to* but does not itself register, and a prefixed component's `#[default_impl]` must live in the namespace's own crate.
+
+**When a wiring fails to compile, trace it, don't stare at it** ([guide](debugging.md)). CGP wiring is lazy, so one broken link surfaces as many errors on distant lines naming generated types; read the failing *trait* (an unmet `IsProviderFor` means a dependency is missing, a failed `DelegateComponent` means the lookup has no entry), move the error to the wiring site with `check_components!`, and when a large program puzzles you, reduce it to the smallest reproduction — or snapshot the expansion — rather than reasoning about coherence on paper.
