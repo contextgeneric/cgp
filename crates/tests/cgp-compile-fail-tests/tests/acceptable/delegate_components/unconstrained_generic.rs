@@ -13,7 +13,7 @@
 //! hand-written `impl<T>` with an unused parameter. Deferring this to the
 //! compiler is the intended behavior, not a macro defect.
 //!
-//! See docs/implementation/entrypoints/delegate_components.md (Failure modes).
+//! See docs/errors/wiring/unconstrained-generic.md.
 
 use core::marker::PhantomData;
 

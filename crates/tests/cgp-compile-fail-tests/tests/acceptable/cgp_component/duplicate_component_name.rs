@@ -15,7 +15,7 @@
 //! whole `#[cgp_component(..)]` attribute — the leak the span fix removed so that
 //! cross-crate go-to-definition on the marker resolves to the provider name alone.
 //!
-//! See docs/implementation/entrypoints/cgp_component.md (Failure modes).
+//! See docs/errors/wiring/conflicting-wiring.md.
 
 use cgp::prelude::*;
 

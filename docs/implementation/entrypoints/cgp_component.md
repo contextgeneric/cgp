@@ -66,9 +66,7 @@ The **marker struct's name span** is the provider identifier's span, not `Span::
 
 ## Failure modes
 
-This failure is one `#[cgp_component]` **intentionally defers to the Rust compiler**: each invocation expands with no view of the rest of the module, so a name clash only a whole-module view could catch is left to `rustc`. It is pinned by a fixture under [acceptable/cgp_component/](../../../crates/tests/cgp-compile-fail-tests/tests/acceptable/cgp_component) in `cgp-compile-fail-tests`.
-
-A **name clash on the derived marker** — a module that declares its own `GreeterComponent` alongside a `#[cgp_component(Greeter)]` that derives the same marker — defines the name twice and fails with `E0428`. The `E0428` "previous definition here" note lands on the `Greeter` provider name inside `#[cgp_component(..)]`, not on the whole attribute, per the marker-span behavior above; the fixture exists to pin that span, since a regression to `call_site` would move the note onto the attribute. Pinned by [acceptable/cgp_component/duplicate_component_name.rs](../../../crates/tests/cgp-compile-fail-tests/tests/acceptable/cgp_component/duplicate_component_name.rs).
+A **name clash on the derived marker** — a module that declares its own `GreeterComponent` alongside a `#[cgp_component(Greeter)]` that derives the same marker — defines the name twice and fails with `E0428`, the [conflicting wiring](../../errors/wiring/conflicting-wiring.md) error class. What this document pins is the **span**: the `E0428` "previous definition here" note lands on the `Greeter` provider name inside `#[cgp_component(..)]`, not on the whole attribute, per the marker-span behavior above. [acceptable/cgp_component/duplicate_component_name.rs](../../../crates/tests/cgp-compile-fail-tests/tests/acceptable/cgp_component/duplicate_component_name.rs) is the regression test for that span, since a regression to `call_site` would move the note onto the attribute.
 
 ## Snapshots
 

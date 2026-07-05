@@ -12,7 +12,7 @@
 //! `GreeterComponent` inside `open …;`, and the conflict caret on the explicit
 //! mapping's key.
 //!
-//! See docs/implementation/entrypoints/delegate_components.md (Error spans).
+//! See docs/errors/wiring/conflicting-wiring.md; error-span mechanics in docs/implementation/entrypoints/delegate_components.md.
 
 use cgp::prelude::*;
 

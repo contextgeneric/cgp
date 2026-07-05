@@ -15,7 +15,7 @@
 //! or wire the override on a path the namespace never registers. A namespace that
 //! registers the leaf path leaves nothing for the context to override there.
 //!
-//! See docs/implementation/entrypoints/cgp_namespace.md (Failure modes).
+//! See docs/errors/wiring/conflicting-wiring.md.
 
 use cgp::prelude::*;
 

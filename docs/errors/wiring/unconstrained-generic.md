@@ -2,22 +2,46 @@
 
 A per-entry generic parameter appears only in the provider value and never reaches the key, so the generated impl leaves the parameter unconstrained and the compiler rejects it with `E0207`.
 
-> **Status: planned.** This class is scaffolded but not yet fully written. The scope and backing below are recorded so the campaign can fill it in; see [../README.md](../README.md) and [../AGENTS.md](../AGENTS.md).
+## What triggers it
 
-## Intended scope
+A `delegate_components!` entry may introduce its own generic parameters, but a per-entry generic is well-formed only when it reaches the *key* — where `DelegateComponent<Key<…>>` binds it. Writing one that appears only in the provider value never binds it, and CGP lowers the entry faithfully rather than second-guessing it, so the compiler rejects the free parameter exactly as it would a hand-written impl with an unused parameter.
 
-This document covers the case where a `delegate_components!` entry introduces a generic that its key does not bind — `<T> GreeterComponent: GreetWith<T>` — so the entry lowers to an impl whose `Delegate` associated type mentions `T` while nothing constrains it. The same shape appears when a *generic* provider is registered as a per-type default, since the provider's parameter lands only in the `Delegate` position. The document should record:
+```rust
+delegate_components! {
+    Person {
+        <T> GreeterComponent: GreetWith<T>, // T is in the value, never the key
+    }
+}
+// lowers to an impl with an unconstrained parameter:
+impl<T> DelegateComponent<GreeterComponent> for Person {
+    type Delegate = GreetWith<T>; // T constrains nothing
+}
+```
 
-- **The diagnostic** — `E0207` "the type parameter `T` is not constrained by the impl trait, self type, or predicates", with the caret on the `<T>` the user wrote.
-- **Where the root cause is** — present and precise; the fix is to make the generic reach the key (`<T> SomeKey<T>: …`) or to register a concrete provider.
-- **Notes for tooling** — this is a well-localized structural error; a tool mostly needs to explain the CGP-specific remedy (route the generic through the key) rather than reformat the diagnostic.
+The same shape arises when a *generic* provider is registered as a per-type default, since the provider's parameter lands only in the `Delegate` associated-type position.
+
+## The diagnostic
+
+The compiler reports a single **`E0207`** — "the type parameter `T` is not constrained by the impl trait, self type, or predicates" — with the caret on the `<T>` the user wrote in the entry. It is one clean, well-localized error, with no note chain and no cascade.
+
+## Where the root cause is
+
+The root cause is **present and precise**: the caret sits on the offending generic parameter, and the message states exactly why it is rejected. This is the most localized class in the catalog — the diagnostic needs no tracing and hides nothing. The only thing the raw message lacks is the CGP-specific remedy, since it describes the constraint in impl terms rather than in terms of the wiring entry.
+
+## Resolving it
+
+Make the generic reach the key so it is bound — introduce it on a key that carries it (`<T> SomeKey<T>: …`) rather than only on the value — or, when the intent was a single concrete wiring, register a concrete provider with no per-entry generic at all. For a generic provider registered as a per-type default, register a concrete provider instead, since the default position cannot bind the provider's parameter.
+
+## Notes for tooling
+
+This class needs the least tool intervention: the `E0207` is already pinpoint-accurate, so a `cargo-cgp`-style post-processor only needs to **restate the fix in wiring terms** — "the generic `T` on this entry must appear in the component key, not only in the provider" — rather than reformat or recover anything. It is worth recognizing precisely so a tool does *not* treat it like the hidden or cascading classes; there is nothing buried here.
 
 ## Backing fixtures
 
-- [acceptable/delegate_components/unconstrained_generic.rs](../../../crates/tests/cgp-compile-fail-tests/tests/acceptable/delegate_components/unconstrained_generic.rs) — a per-entry generic that appears only in the value, lowering to an impl with an unconstrained `T`.
+- [acceptable/delegate_components/unconstrained_generic.rs](../../../crates/tests/cgp-compile-fail-tests/tests/acceptable/delegate_components/unconstrained_generic.rs) — a per-entry generic (`<T> GreeterComponent: GreetWith<T>`) that appears only in the value, lowering to an impl with an unconstrained `T`; its `.stderr` pins the `E0207` caret on the `<T>`.
 
 ## Related
 
 - [Conflicting wiring](conflicting-wiring.md), [Orphan-rule violation](orphan-rule.md), [Wiring cycle](wiring-cycle.md) — the sibling structural classes.
-- [Debugging CGP compile errors](../../guides/debugging.md) — the `E0207` entry in the decoder.
 - [`delegate_components!`](../../reference/macros/delegate_components.md) and [`DelegateComponent`](../../reference/traits/delegate_component.md).
+- [Debugging CGP compile errors](../../guides/debugging.md) — the `E0207` entry in the decoder.

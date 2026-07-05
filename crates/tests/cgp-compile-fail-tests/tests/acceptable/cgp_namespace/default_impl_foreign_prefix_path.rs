@@ -7,7 +7,7 @@
 //! `impl AppNamespace<_> for PathCons<Symbol<"app">, PathCons<AnnouncerComponent, Nil>>`,
 //! whose trait (`AppNamespace`) and every element of the `Self` type (`PathCons`
 //! and `Symbol` from `cgp`, `AnnouncerComponent` from crate-a) are all foreign to
-//! this crate — an orphan-rule violation (E0117). A per-component default keyed on
+//! this crate — an orphan-rule violation (E0210). A per-component default keyed on
 //! a *prefix path* can therefore only be written in the crate that owns the
 //! namespace; a downstream crate must own the key, which for a prefixed component
 //! it does not. (The orphan-safe counterpart — a *local* component key registered
@@ -17,7 +17,7 @@
 //! crate and why the guide recommends namespace *body* entries for wiring that
 //! must live downstream of the namespace.
 //!
-//! See docs/implementation/entrypoints/cgp_namespace.md (Failure modes).
+//! See docs/errors/wiring/orphan-rule.md.
 
 use cgp::prelude::*;
 use cgp_test_crate_a::{Announcer, AnnouncerComponent, AppNamespace, HasName};

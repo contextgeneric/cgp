@@ -11,7 +11,7 @@
 //! block. If the per-entry re-spanning in `mapping/eval.rs` regresses, both
 //! carets snap back to the macro invocation and this `.stderr` changes.
 //!
-//! See docs/implementation/entrypoints/delegate_components.md (Error spans).
+//! See docs/errors/wiring/conflicting-wiring.md; error-span mechanics in docs/implementation/entrypoints/delegate_components.md.
 
 use cgp::prelude::*;
 

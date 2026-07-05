@@ -74,37 +74,13 @@ Because the `.stderr` fixtures record the exact line and column of each caret, t
 
 ## Failure modes
 
-Some `delegate_components!` inputs are accepted by the macro but then fail to compile, and for `delegate_components!` these failures are all ones the macro **intentionally defers to the Rust compiler**: it lowers each block independently, with no whole-program view, so a mistake that only a global check could catch is left to `rustc`. Each is intended behavior rather than a bug — the diagnostic below is the one a user should expect — and each is pinned by a fixture under [acceptable/delegate_components/](../../../crates/tests/cgp-compile-fail-tests/tests/acceptable/delegate_components) in `cgp-compile-fail-tests`.
+Some `delegate_components!` inputs are accepted by the macro but fail to compile downstream, because the macro lowers each block independently with no whole-program view. These are intended behavior rather than bugs, and their full anatomy is documented in the [error catalog](../../errors/README.md); the [Error spans](#error-spans) section below covers how each caret is aimed at the offending entry.
 
-A **duplicate key** — the same component mapped twice, whether by two entries in one block, two separate blocks, or an `open` header colliding with an explicit mapping — emits two conflicting `DelegateComponent` impls and fails with the coherence error `E0119`, exactly as two hand-written impls would. The error points at each offending entry rather than the whole block, per [Error spans](#error-spans):
-
-```rust
-delegate_components! { Person { GreeterComponent: GreetHello } }
-delegate_components! { Person { GreeterComponent: GreetGoodbye } } // E0119: conflicting impl
-```
-
-An **overlapping generic entry** is the same failure reached through generics: a `<T> Wrapper<T>` table and a specific `Wrapper<u64>` table wiring the same component overlap at `Wrapper<u64>`, and since stable Rust has no specialization the two impls conflict with `E0119`.
-
-```rust
-delegate_components! { <T> Wrapper<T> { GreeterComponent: GreetHello } }
-delegate_components! { Wrapper<u64>  { GreeterComponent: GreetHello } } // E0119 at Wrapper<u64>
-```
+A **duplicate key** (the same component mapped twice — across blocks, within a block, or an `open` header colliding with a mapping) and an **overlapping generic entry** (a `<T> Wrapper<T>` table conflicting with a specific `Wrapper<u64>`) both produce the coherence error `E0119`, the [conflicting wiring](../../errors/wiring/conflicting-wiring.md) error class.
 
 A **missing impl-side dependency** — a lazily-wired provider whose `where` clause the context cannot satisfy — is accepted here and fails only when the consumer trait is used. Its full anatomy (the `E0599` that names `Person: Greeter<Person>` while *hiding* the missing dependency, and how a `check_components!` site promotes it to a readable error) is documented as the [hidden unsatisfied-dependency](../../errors/hidden/unsatisfied-dependency.md) error class in the error catalog.
 
-An **unconstrained per-entry generic** is accepted when its parameter appears only in the provider value and not in the key. A per-entry generic list is well-formed only when it reaches the key (as in `<T2> BazKey<T1, T2>`, where `DelegateComponent<BazKey<..>>` binds it); writing one that never does is ill-formed input, and the macro lowers it faithfully rather than second-guessing it, so the compiler rejects the free parameter with `E0207` just as it would a hand-written impl with an unused parameter:
-
-```rust
-delegate_components! {
-    Person {
-        <T> GreeterComponent: GreetWith<T>, // T never reaches the key
-    }
-}
-// lowers to an impl with an unconstrained parameter:
-impl<T> DelegateComponent<GreeterComponent> for Person {
-    type Delegate = GreetWith<T>; // E0207: `T` is not constrained
-}
-```
+An **unconstrained per-entry generic** — a parameter that reaches the provider value but not the key — is rejected with `E0207`, the [unconstrained generic](../../errors/wiring/unconstrained-generic.md) error class.
 
 ## Known issues
 
@@ -149,7 +125,7 @@ The failure cases in `cgp-macro-tests` pin the attribute rejection:
 
 - [parser_rejections/delegate_components.rs](../../../crates/tests/cgp-macro-tests/tests/parser_rejections/delegate_components.rs) asserts the macro rejects an attribute on the table, on a key, and on a key nested inside a `UseDelegate<new Inner { … }>` value (the last confirms the validator recurses through mapping values rather than dropping the attribute), and that a braceless `open` header listing more than one component is rejected (the braceless form opens exactly one).
 
-The compile-fail fixtures in `cgp-compile-fail-tests` pin the expansions that fail to compile. All are **acceptable** failures — deferred to the compiler by design — and are described under [Failure modes](#failure-modes) above:
+The compile-fail fixtures in `cgp-compile-fail-tests` pin the expansions that fail to compile. All are **acceptable** failures — deferred to the compiler by design — and their anatomy is documented in the [error catalog](../../errors/README.md) (the [Failure modes](#failure-modes) section links each to its class):
 
 - [acceptable/delegate_components/duplicate_key.rs](../../../crates/tests/cgp-compile-fail-tests/tests/acceptable/delegate_components/duplicate_key.rs) — two blocks mapping the same key expand to conflicting `DelegateComponent` impls (`E0119`).
 - [acceptable/delegate_components/duplicate_key_same_block.rs](../../../crates/tests/cgp-compile-fail-tests/tests/acceptable/delegate_components/duplicate_key_same_block.rs) — the same conflict from two entries in one block; its `.stderr` pins the per-entry [error spans](#error-spans), each caret landing on its own `GreeterComponent` key rather than the whole block.

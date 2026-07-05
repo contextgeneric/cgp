@@ -6,7 +6,7 @@
 //! defers the overlap check to the compiler, the same as two overlapping
 //! hand-written generic impls.
 //!
-//! See docs/implementation/entrypoints/delegate_components.md (Failure modes).
+//! See docs/errors/wiring/conflicting-wiring.md.
 
 use cgp::prelude::*;
 

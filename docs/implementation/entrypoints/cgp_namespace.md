@@ -75,31 +75,11 @@ Each generated namespace impl is re-spanned onto the entry that produced it, so 
 
 ## Failure modes
 
-Some namespace input is accepted by the macro but then fails to compile, and these failures are ones the macro **intentionally defers to the Rust compiler** because it lacks the whole-program view the check needs. Each is intended behavior, not a bug, and is pinned by a fixture under [acceptable/cgp_namespace/](../../../crates/tests/cgp-compile-fail-tests/tests/acceptable/cgp_namespace) in `cgp-compile-fail-tests`.
+Some namespace input is accepted by the macro but fails to compile downstream, deferred to the compiler because it lacks the whole-program view the check needs. Each is intended behavior, not a bug, and its full anatomy lives in the [error catalog](../../errors/README.md); the [Error spans](#error-spans) section below covers how each caret is aimed at the offending entry.
 
-A **duplicate key** — the same key mapped twice in one namespace block — emits two conflicting impls of the namespace lookup trait for that key and fails with `E0119`, exactly as two hand-written impls would. The error points at each offending entry rather than the whole block, per [Error spans](#error-spans):
+A **duplicate key** (the same key mapped twice in one `cgp_namespace!` block) and **overriding a path the joined namespace already registers** both produce `E0119` — the [conflicting wiring](../../errors/wiring/conflicting-wiring.md) error class. The override case is the subtle one: a `namespace N;` header emits a blanket `impl<Key> DelegateComponent<Key> for Ctx where Key: N<Ctx>` that covers every path `N` resolves, so a direct `@path: Provider` entry for a path `N` also registers overlaps with it. To keep such an override, target a path the namespace routes *to* but does not itself terminate, so the context supplies the leaf without the two impls overlapping.
 
-```rust
-cgp_namespace! {
-    new MyNamespace {
-        @foo.bar => @baz,
-        @foo.bar => @qux, // E0119: conflicting `MyNamespace<_>` impl for the same path
-    }
-}
-```
-
-**Overriding a path the joined namespace already registers** also fails with `E0119`. A `namespace N;` header emits a blanket `impl<Key> DelegateComponent<Key> for Ctx where Key: N<Ctx>`, which covers every path `N` resolves — including any path `N` registers directly (through a body entry or a `#[default_impl]`). A direct `@path: Provider` entry on the same context emits a second `DelegateComponent<PathCons<..>> for Ctx` for that path, and the two overlap. The macro lowers both faithfully; only the whole program reveals that the path is claimed twice. To leave a path open for a context to override, the namespace must route the component *to* that path (via a `#[prefix]` redirect it inherits) without *terminating* the redirect there — so the context supplies the leaf:
-
-```rust
-delegate_components! {
-    App {
-        namespace AppNamespace; // registers @app.GreeterComponent via a #[default_impl]
-        @app.GreeterComponent: GreetBye, // E0119: also implements DelegateComponent for that path
-    }
-}
-```
-
-**Registering a default for a prefixed component into a namespace the crate does not own** fails the orphan rule (`E0210`/`E0117`). `#[default_impl(@path in Namespace)]` on a prefixed component expands to `impl Namespace<_> for PathCons<..>`, whose `Self` type is built entirely from the `cgp`-owned `PathCons`/`Symbol` types and the component's marker. Rust accepts a foreign-trait impl only if a type in it is local, so a downstream crate — which owns neither the foreign `Namespace` trait nor any element of the foreign path — cannot write it. A per-component default keyed on a prefix path is therefore confined to the namespace's own crate; the orphan-safe alternative is a *local* component key (`#[default_impl(LocalComponent in Namespace)]`), whose marker is a local type. This is a whole-program coherence fact the macro cannot see, so it defers to the compiler.
+**Registering a default for a prefixed component into a namespace the crate does not own** fails the orphan rule (`E0210`) — the [orphan-rule violation](../../errors/wiring/orphan-rule.md) error class. `#[default_impl(@path in Namespace)]` on a prefixed component expands to `impl Namespace<_> for PathCons<..>`, an impl of a foreign trait for a fully foreign type, so a per-component default keyed on a prefix path is confined to the namespace's own crate; the orphan-safe alternative is a *local* component key.
 
 ## Snapshots
 
@@ -133,7 +113,7 @@ The rejection cases in `cgp-macro-tests` pin the attribute rejection:
 
 - [parser_rejections/cgp_namespace.rs](../../../crates/tests/cgp-macro-tests/tests/parser_rejections/cgp_namespace.rs) asserts the macro rejects an attribute on a `:` mapping key, on a `=>` redirect key, and on a key inside a `for` loop.
 
-The compile-fail fixtures in `cgp-compile-fail-tests` pin accepted expansions that fail to compile — **acceptable** failures deferred to the compiler, described under [Failure modes](#failure-modes):
+The compile-fail fixtures in `cgp-compile-fail-tests` pin accepted expansions that fail to compile — **acceptable** failures deferred to the compiler, documented in the [error catalog](../../errors/README.md) (the [Failure modes](#failure-modes) section links each to its class):
 
 - [acceptable/cgp_namespace/duplicate_path_key.rs](../../../crates/tests/cgp-compile-fail-tests/tests/acceptable/cgp_namespace/duplicate_path_key.rs) — two identical `@`-path prefix-rewrite entries conflict (`E0119`); its `.stderr` pins the [error span](#error-spans) landing on the duplicated path leaf rather than the whole block, even though the key lowers to a synthesized `PathCons<..>` type.
 - [acceptable/cgp_namespace/override_registered_path.rs](../../../crates/tests/cgp-compile-fail-tests/tests/acceptable/cgp_namespace/override_registered_path.rs) — a context joins a namespace that registers a path (via `#[default_impl]`) and also wires that path directly, so the `namespace` blanket impl and the direct entry both implement `DelegateComponent` for the path (`E0119`).

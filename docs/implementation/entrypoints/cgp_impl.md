@@ -68,7 +68,7 @@ The one wholly-synthesized item is each `#[default_impl]` delegation impl, built
 
 ## Failure modes
 
-Both failures below are ones `#[cgp_impl]` **intentionally defers to the Rust compiler**: each block lowers independently with no view of any other, so a collision only a whole-program view could catch is left to `rustc`, exactly as two hand-written definitions would be. Each is pinned by a fixture under [acceptable/cgp_impl/](../../../crates/tests/cgp-compile-fail-tests/tests/acceptable/cgp_impl) in `cgp-compile-fail-tests`.
+Both failures below are ones `#[cgp_impl]` defers to the compiler, and both are the [conflicting wiring](../../errors/wiring/conflicting-wiring.md) error class; what this document pins is where each caret lands. Each is covered by a fixture under [acceptable/cgp_impl/](../../../crates/tests/cgp-compile-fail-tests/tests/acceptable/cgp_impl) in `cgp-compile-fail-tests`.
 
 A **duplicate provider name** — two `#[cgp_impl(new Foo)]` blocks — declares `pub struct Foo;` twice (`E0428`) and emits two conflicting provider impls (`E0119`). The `E0428` carets land on the `Foo` inside each `#[cgp_impl(new …)]` and the `E0119` carets on each provider `impl` block, per [Error spans](#error-spans). Pinned by [acceptable/cgp_impl/duplicate_provider_name.rs](../../../crates/tests/cgp-compile-fail-tests/tests/acceptable/cgp_impl/duplicate_provider_name.rs).
 

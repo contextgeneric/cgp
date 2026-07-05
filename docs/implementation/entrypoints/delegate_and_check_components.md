@@ -57,7 +57,7 @@ A table-level `#[check_trait(Name)]` overrides the derived name. A generic table
 
 ## Failure modes
 
-Because the macro reuses the `delegate_components!` and `check_components!` pipelines, its accepted-but-uncompilable inputs are the same ones those macros defer to the compiler, and each is intended behavior rather than a bug. A **duplicate key** emits conflicting `DelegateComponent` impls on the wiring side (and, if checked, conflicting check impls too), failing with the coherence error `E0119` exactly as [`delegate_components!`](delegate_components.md) documents. A **missing impl-side dependency** is what the check half exists to surface — the derived check fails to compile at the wiring site and names the unmet bound.
+Because the macro reuses the `delegate_components!` and `check_components!` pipelines, its accepted-but-uncompilable inputs are the same ones those macros defer to the compiler. A **duplicate key** produces `E0119` on the wiring side (and, if checked, the check side too) — the [conflicting wiring](../../errors/wiring/conflicting-wiring.md) error class. A **missing impl-side dependency** is what the check half exists to surface — the [check-trait failure](../../errors/checks/check-trait-failure.md) error class, reported at the wiring site rather than lazily at the call site.
 
 A table whose every entry is `#[skip_check]` (or an empty table) still emits the check trait but no check impls, so it verifies nothing; this parallels the empty `#[check_providers()]` that `check_components!` rejects, but here it is accepted because skipping every entry is a legitimate, if degenerate, request.
 

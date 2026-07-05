@@ -5,7 +5,7 @@
 //! independently and has no view of the other block — so it correctly defers to
 //! the compiler, exactly as two hand-written overlapping impls would.
 //!
-//! See docs/implementation/entrypoints/delegate_components.md (Failure modes).
+//! See docs/errors/wiring/conflicting-wiring.md.
 
 use cgp::prelude::*;
 

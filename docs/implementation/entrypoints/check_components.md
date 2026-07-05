@@ -54,9 +54,9 @@ An **unsatisfied dependency** is the central intended failure and the reason the
 
 An **empty check table** (`Context { }`, or every entry checking nothing) emits the check trait with no impls, so it compiles and verifies nothing. This is not rejected because a table trimmed down to nothing during editing is indistinguishable from a deliberately empty one, and an empty table causes no harm — it simply asserts nothing.
 
-A **duplicate check entry** — the same component and parameters listed twice, whether directly (`Context { FooComponent, FooComponent }`) or through array expansion (`[A, A]: P`) — emits two identical check impls and fails with the coherence error `E0119`, exactly as two hand-written impls would. The span override aims the conflict at the repeated component.
+A **duplicate check entry** — the same component and parameters listed twice, directly (`Context { FooComponent, FooComponent }`) or through array expansion (`[A, A]: P`) — emits two identical check impls and fails with `E0119`, the [conflicting wiring](../../errors/wiring/conflicting-wiring.md) error class. The span override aims the conflict at the repeated component.
 
-**Two tables for the same context with no `#[check_trait]` override** both derive the same `__Check{Context}` name and emit conflicting trait definitions, failing with `E0428`. The fix is a `#[check_trait(Name)]` on one table, which is why the override exists.
+**Two tables for the same context with no `#[check_trait]` override** both derive the same `__Check{Context}` name and emit conflicting trait definitions, failing with `E0428` (the [conflicting wiring](../../errors/wiring/conflicting-wiring.md) error class). The fix is a `#[check_trait(Name)]` on one table, which is why the override exists.
 
 ## Snapshots
 
