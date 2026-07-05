@@ -90,13 +90,7 @@ delegate_components! { <T> Wrapper<T> { GreeterComponent: GreetHello } }
 delegate_components! { Wrapper<u64>  { GreeterComponent: GreetHello } } // E0119 at Wrapper<u64>
 ```
 
-A **missing impl-side dependency** follows from wiring being lazy: `delegate_components!` records the entry without checking the provider's transitive requirements, so wiring a provider whose `where` clause the context cannot satisfy is accepted, and the unmet bound surfaces only when the consumer trait is used (an `E0599` naming the missing `Greeter<Person>` / `IsProviderFor` bound). A `check_components!` site moves the same error earlier, to the wiring.
-
-```rust
-// GreetHello requires `Self: HasName`, but `Person` has no `name` field.
-delegate_components! { Person { GreeterComponent: GreetHello } } // accepted — wiring is lazy
-person.greet(); // E0599: `Person: Greeter<Person>` is not satisfied
-```
+A **missing impl-side dependency** — a lazily-wired provider whose `where` clause the context cannot satisfy — is accepted here and fails only when the consumer trait is used. Its full anatomy (the `E0599` that names `Person: Greeter<Person>` while *hiding* the missing dependency, and how a `check_components!` site promotes it to a readable error) is documented as the [hidden unsatisfied-dependency](../../errors/hidden/unsatisfied-dependency.md) error class in the error catalog.
 
 An **unconstrained per-entry generic** is accepted when its parameter appears only in the provider value and not in the key. A per-entry generic list is well-formed only when it reaches the key (as in `<T2> BazKey<T1, T2>`, where `DelegateComponent<BazKey<..>>` binds it); writing one that never does is ill-formed input, and the macro lowers it faithfully rather than second-guessing it, so the compiler rejects the free parameter with `E0207` just as it would a hand-written impl with an unused parameter:
 
@@ -162,7 +156,7 @@ The compile-fail fixtures in `cgp-compile-fail-tests` pin the expansions that fa
 - [acceptable/delegate_components/duplicate_path_key.rs](../../../crates/tests/cgp-compile-fail-tests/tests/acceptable/delegate_components/duplicate_path_key.rs) — the `@`-path analogue: two identical `@cgp.core.error.ErrorTypeProviderComponent` entries under a `namespace` header conflict, and its `.stderr` pins the [error span](#error-spans) landing on the duplicated path leaf rather than the whole block, even though the key lowers to a synthesized `PathCons<..>` type.
 - [acceptable/delegate_components/duplicate_open_key.rs](../../../crates/tests/cgp-compile-fail-tests/tests/acceptable/delegate_components/duplicate_open_key.rs) — an `open` header colliding with an explicit mapping for the same component; its `.stderr` pins the [error span](#error-spans) of the `open`-header entry, whose span comes from the opened component (a source distinct from the plain key path).
 - [acceptable/delegate_components/overlapping_generic.rs](../../../crates/tests/cgp-compile-fail-tests/tests/acceptable/delegate_components/overlapping_generic.rs) — a generic `<T> Wrapper<T>` entry overlaps a specific `Wrapper<u64>` entry at the same key (`E0119`).
-- [acceptable/delegate_components/missing_dependency.rs](../../../crates/tests/cgp-compile-fail-tests/tests/acceptable/delegate_components/missing_dependency.rs) — a lazily-wired provider whose `Self: HasName` dependency the context does not satisfy; the unmet bound surfaces at the call site (`E0599`).
+- [acceptable/delegate_components/missing_dependency.rs](../../../crates/tests/cgp-compile-fail-tests/tests/acceptable/delegate_components/missing_dependency.rs) — a lazily-wired provider whose `Self: HasName` dependency the context does not satisfy; the unmet bound surfaces at the call site (`E0599`). Its anatomy is the [hidden unsatisfied-dependency](../../errors/hidden/unsatisfied-dependency.md) error class.
 - [acceptable/delegate_components/unconstrained_generic.rs](../../../crates/tests/cgp-compile-fail-tests/tests/acceptable/delegate_components/unconstrained_generic.rs) — a per-entry generic that appears only in the value (`<T> GreeterComponent: GreetWith<T>`) lowers to an impl with an unconstrained `T` (`E0207`), which the compiler rejects as it would a hand-written impl.
 
 ## Source

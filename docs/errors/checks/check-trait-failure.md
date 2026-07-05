@@ -1,23 +1,76 @@
 # Check-trait failure (surfaced)
 
-A check forces an unsatisfied impl-side dependency through `IsProviderFor`, so the compiler reports the real missing bound (`E0277`) at the wiring site — the surfaced counterpart of the [hidden unsatisfied dependency](../hidden/unsatisfied-dependency.md).
+A check forces an unsatisfied impl-side dependency through `IsProviderFor`, so the compiler names the real missing bound (`E0277`) at the wiring site — the surfaced counterpart of the [hidden unsatisfied dependency](../hidden/unsatisfied-dependency.md), produced from the very same mistake.
 
-> **Status: planned.** This class is scaffolded but not yet fully written. The scope and backing below are recorded so the campaign can fill it in; see [../README.md](../README.md) and [../AGENTS.md](../AGENTS.md).
+## What triggers it
 
-## Intended scope
+This class arises from exactly the mistake behind the [hidden class](../hidden/unsatisfied-dependency.md) — a provider wired onto a context that cannot meet the provider's impl-side dependency — but exercised through a [`check_components!`](../../reference/macros/check_components.md) assertion (or the fused `delegate_and_check_components!`) instead of a direct method call. The check is what changes the outcome: it asserts `CanUseComponent` for each listed component, and that assertion requires `IsProviderFor` as a *direct* bound, which forces the compiler to evaluate the provider's `where` clause rather than suppressing it.
 
-This document covers the diagnostic a [`check_components!`](../../reference/macros/check_components.md) or `delegate_and_check_components!` assertion produces when a checked component's provider has a dependency the context cannot meet. The check asserts `CanUseComponent`, which requires `IsProviderFor` as a direct bound, defeating the suppression heuristic that hides the [consumer-trait form](../hidden/unsatisfied-dependency.md). The document should record:
+```rust
+#[cgp_component(Greeter)]
+pub trait CanGreet {
+    fn greet(&self);
+}
 
-- **The diagnostic** — an `E0277` note chain, `CanUseComponent` at the top, walking through `IsProviderFor` and each intervening trait (`HasName`, …) down to the concrete missing bound (`HasField<Symbol!("name")>`). Surfaced, not hidden.
-- **Where the root cause is** — present, near the *end* of the note chain (the innermost failing bound is reported last), and the caret lands on the checked component inside the `check_components!` block rather than on the context.
-- **Notes for tooling** — the headline a `cargo-cgp` tool should extract is the last note's bound; the intervening `IsProviderFor`/`CanUseComponent` frames are the noise to suppress.
+#[cgp_auto_getter]
+pub trait HasName {
+    fn name(&self) -> &str;
+}
+
+#[cgp_impl(new GreetHello)]
+impl Greeter
+where
+    Self: HasName, // impl-side dependency
+{
+    fn greet(&self) {
+        let _ = self.name();
+    }
+}
+
+#[derive(HasField)]
+pub struct Person {
+    pub age: u8, // no `name` field
+}
+
+delegate_components! {
+    Person {
+        GreeterComponent: GreetHello,
+    }
+}
+
+// Forces the failure here, at the wiring, instead of at a later call site.
+check_components! {
+    Person {
+        GreeterComponent,
+    }
+}
+```
+
+## The diagnostic
+
+This is a **surfaced** class: the compiler prints an `E0277` that names the concrete missing bound, unlike the hidden class that omits it. The primary error reports that `Person: CanUseComponent<GreeterComponent>` is not satisfied, and its caret lands on the `GreeterComponent` entry *inside the `check_components!` block* — not on the `Person` context type — because the check re-spans the shared context token onto each listed component in turn. Immediately below, a `help:` note gives the actual unmet leaf bound: that `HasField<Symbol!("name")>` is not implemented for `Person`, "but trait `HasField<Symbol!("age")>` is implemented for it." That second half is a useful landmark — the compiler is pointing at the *nearest existing* field impl, which tells you the context has a field, just not the one the provider expects.
+
+Below the `help:` note, a `required for …` chain traces the dependency path outward from the leaf: `Person` to implement `HasName`, then `GreetHello` to implement `IsProviderFor<GreeterComponent, Person>`, then `Person` to implement `CanUseComponent<GreeterComponent>`, and finally the bound in the generated `__CheckPerson` trait that the `check_components!` block emitted. The chain is the scaffolding; the leaf in the `help:` note is the cause.
+
+## Where the root cause is
+
+The root cause is **present**, and it is near the top — in the compiler's `help:` note, not at the end of the output. This is the opposite of what a reader might expect from a long note chain: the concrete unmet bound (`HasField<Symbol!("name")>`) is stated early, and the `required for …` notes that follow build *outward* from it toward the check trait, rather than drilling down to it. The caret's position is the other half of the value — it sits on the wiring entry the user controls, so the error points at the fix site rather than at a distant call. When many providers depend transitively on one leaf, the output multiplies into a [verbose cascade](verbose-cascade.md), and the position guidance shifts to *which block* carries the actionable cause; for a single checked component it is simply the `help:` note.
+
+## Resolving it
+
+The fix is what the diagnostic already points to: satisfy the named leaf bound. Add the `name` field to `Person`, or wire the getter component to the existing field, so `Person` implements `HasName` and `GreetHello` becomes a valid provider for the component. Because the check surfaced both the concrete bound *and* the wiring entry, no further tracing is usually needed — which is exactly why the standard remedy for a [hidden](../hidden/unsatisfied-dependency.md) failure is to add a check and read this class instead.
+
+## Notes for tooling
+
+For a `cargo-cgp`-style post-processor, the fact to extract as the headline is the **leaf bound in the `help:` note** — the `HasField`, abstract type, or capability that is genuinely unimplemented — together with the caret's component entry. The `CanUseComponent` / `IsProviderFor` / `__Check…` frames in the `required for` chain are CGP scaffolding a user did not write and should be suppressed or collapsed into a short dependency path. This class is the *target* a tool aims for when handling the hidden class: promoting a hidden failure by synthesizing a check produces precisely this diagnostic, so a tool can normalize both to the same headline.
 
 ## Backing fixtures
 
-- [acceptable/check_components/missing_dependency.rs](../../../crates/tests/cgp-compile-fail-tests/tests/acceptable/check_components/missing_dependency.rs) — the surfaced `E0277` chain ending at `HasField<Symbol!("name")>`, contrasted against its hidden `delegate_components` counterpart.
+- [acceptable/check_components/missing_dependency.rs](../../../crates/tests/cgp-compile-fail-tests/tests/acceptable/check_components/missing_dependency.rs) — the surfaced `E0277` for `GreetHello`'s unmet `Self: HasName`, whose `.stderr` pins the `help:` note naming `HasField<Symbol!("name")>` and the caret landing on `GreeterComponent` inside the block. Its unchecked counterpart, [acceptable/delegate_components/missing_dependency.rs](../../../crates/tests/cgp-compile-fail-tests/tests/acceptable/delegate_components/missing_dependency.rs), pins the [hidden](../hidden/unsatisfied-dependency.md) `E0599` for the same mistake. The fused `delegate_and_check_components!` form produces the same surfaced shape.
 
 ## Related
 
-- [Unsatisfied dependency (hidden)](../hidden/unsatisfied-dependency.md) — the hidden counterpart; the two are the two halves of one phenomenon.
-- [Verbose dependency cascade](verbose-cascade.md) — what a surfaced failure looks like when many providers depend transitively on one cause.
-- [Debugging CGP compile errors](../../guides/debugging.md) and the [check-traits concept](../../concepts/check-traits.md).
+- [Unsatisfied dependency (hidden)](../hidden/unsatisfied-dependency.md) — the hidden counterpart; the two are the two halves of one phenomenon, and promoting the hidden one yields this class.
+- [Verbose dependency cascade](verbose-cascade.md) — this diagnostic multiplied when many providers depend transitively on one leaf.
+- [`check_components!`](../../reference/macros/check_components.md), [`CanUseComponent`](../../reference/traits/can_use_component.md), and [`IsProviderFor`](../../reference/traits/is_provider_for.md) — the macro and traits this class is expressed through.
+- [Debugging CGP compile errors](../../guides/debugging.md) and the [check-traits concept](../../concepts/check-traits.md) — why the check moves the error here and how to read it.

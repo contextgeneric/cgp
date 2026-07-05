@@ -24,7 +24,7 @@ One nuance follows the [acceptable / problematic split](../implementation/AGENTS
 
 The single most important distinction in this catalog is whether the compiler **surfaces** or **hides** the root cause of an unsatisfied dependency, because the two produce completely different diagnostics from the very same mistake. CGP wiring is resolved lazily, so a provider whose impl-side dependency the context cannot meet is wired without complaint and only fails when the wiring is exercised. *How* it is exercised decides what the user sees.
 
-When the failure is forced through a **check trait** — `check_components!` asserting `CanUseComponent`, which walks through [`IsProviderFor`](../reference/traits/is_provider_for.md) — the compiler evaluates the provider's `where` clause and reports the real unmet bound, naming the missing `HasField`, abstract type, or transitive dependency. The root cause is **surfaced**, and it sits near the end of the note chain. These errors are cataloged under [checks/](checks/).
+When the failure is forced through a **check trait** — `check_components!` asserting `CanUseComponent`, which walks through [`IsProviderFor`](../reference/traits/is_provider_for.md) — the compiler evaluates the provider's `where` clause and reports the real unmet bound, naming the missing `HasField`, abstract type, or transitive dependency. The root cause is **surfaced** — the concrete missing bound is named in the diagnostic (for a single-component check, in the compiler's `help:` note), and a `required for …` note chain traces the dependency path from it back to the check. These errors are cataloged under [checks/](checks/).
 
 When the same broken wiring is instead exercised by **calling the consumer-trait method directly** on the context, the compiler sees a blanket impl of the consumer trait alongside the other candidate impls, cannot commit to one, and falls back to a heuristic that reports only "the method exists but its trait bounds were not satisfied" — naming the consumer and provider traits but *not* descending into the dependency that actually failed. The root cause is **hidden**: it is absent from the output, not merely buried. Because these errors report nothing about the true cause, mixing them with the surfaced classes would mislead a reader into looking for a root cause that is not there. They are isolated under [hidden/](hidden/), and recovering their root cause requires either re-checking the wiring to promote the error into a surfaced one, or the kind of compiler-internal introspection a `cargo-cgp` tool would perform.
 
@@ -54,7 +54,7 @@ Hidden-cause errors — [hidden/](hidden/):
 
 Surfaced and cascading errors — [checks/](checks/):
 
-- [ ] [Check-trait failure (surfaced)](checks/check-trait-failure.md) — the same unmet dependency forced through `check_components!`, where `IsProviderFor` surfaces the missing bound at the end of the note chain.
+- [x] [Check-trait failure (surfaced)](checks/check-trait-failure.md) — the same unmet dependency forced through `check_components!`, where `IsProviderFor` surfaces the concrete missing bound at the wiring site.
 - [ ] [Verbose dependency cascade](checks/verbose-cascade.md) — one deep mistake reported at every transitively dependent provider, and how to locate the single root cause among the repeats.
 
 Structural wiring errors — [wiring/](wiring/):

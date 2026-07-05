@@ -8,8 +8,8 @@
 //! site; deferring it to the use site is the intended lazy behavior, not a
 //! macro defect.
 //!
-//! See docs/implementation/entrypoints/delegate_components.md (Failure modes) and
-//! docs/implementation/entrypoints/check_components.md.
+//! See docs/errors/hidden/unsatisfied-dependency.md; its surfaced counterpart is
+//! docs/errors/checks/check-trait-failure.md.
 
 use cgp::prelude::*;
 
