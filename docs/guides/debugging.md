@@ -57,6 +57,7 @@ A handful of specific compiler errors recur in CGP code, and each maps to a smal
 
 ## Related documentation
 
+- [Error catalog](../errors/README.md) — the reference companion to this guide: one document per class of post-codegen error, recording the diagnostic's shape, whether the root cause is present, and where it sits. Where this guide is the tracing playbook, the catalog is the per-class reference it indexes into — including the [hidden unsatisfied-dependency](../errors/hidden/unsatisfied-dependency.md) class, whose diagnostic omits the root cause entirely.
 - [Check traits](../concepts/check-traits.md) — why wiring is lazy and how checks force a readable error at the wiring site.
 - [`check_components!`](../reference/macros/check_components.md) — the full checking surface, including `#[check_providers]` and checking generic components with concrete parameters.
 - [`IsProviderFor`](../reference/traits/is_provider_for.md) and [`DelegateComponent`](../reference/traits/delegate_component.md) — the two traits every wiring error is ultimately about.

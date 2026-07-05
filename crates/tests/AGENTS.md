@@ -173,7 +173,9 @@ implementation document, so the fixture tree mirrors [docs/implementation/entryp
 Within a subdirectory, write one fixture file per case, named for the failure mode it
 probes (`duplicate_key.rs`, `missing_dependency.rs`), and open each with a comment
 stating what it exercises and why it must not compile — exactly as the main suite
-requires. The driver [tests/compile_fail_tests.rs](cgp-compile-fail-tests/tests/compile_fail_tests.rs)
+requires. **Keep each fixture subdirectory small — no more than about a dozen cases —
+and split into further nested subdirectories when one grows past that**; the driver's
+`**` glob picks up the new level with no registration. The driver [tests/compile_fail_tests.rs](cgp-compile-fail-tests/tests/compile_fail_tests.rs)
 globs both trees with `**`, so the two `t.compile_fail(...)` calls pick up a new
 fixture with no per-file registration. A single `trybuild::TestCases` runs both globs
 — do not split them across two `#[test]` functions, which would race on the shared
@@ -191,6 +193,13 @@ capture the expanded code as an `insta` inline string snapshot in the
 `invalid_expansion` target of `cgp-macro-tests` (the snapshot is a *string*, so it
 compiles even though the code would not), with a comment explaining **why** the
 output is wrong and **what the correct output should be**.
+
+Post-codegen compile-fail cases are additionally cataloged in the [error catalog](../../docs/errors/README.md)
+under `docs/errors/`, which is becoming the canonical, reader-facing documentation for
+them (see [docs/errors/AGENTS.md](../../docs/errors/AGENTS.md)): a fixture cross-links to
+the error *class* it exercises there, and the catalog indexes the fixture. This migration
+proceeds class by class — until a class is migrated, its fixture continues to cross-link
+to the owning macro's implementation document as described below.
 
 Every failure case must also be recorded in the owning macro's **implementation
 document** under `docs/implementation/`, and *which section* holds it is what the
