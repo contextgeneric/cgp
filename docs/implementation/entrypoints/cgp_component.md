@@ -64,6 +64,12 @@ The **reserved identifiers** appear literally in the output: the context paramet
 
 The **marker struct's name span** is the provider identifier's span, not `Span::call_site()`. When the component name is not given explicitly, `CgpComponentArgs` derives it as `{Provider}Component` and spans that identifier on the provider identifier the user wrote in `#[cgp_component(Provider)]`. A `call_site` span would instead cover the whole `#[cgp_component(..)]` attribute, so the generated `struct {Provider}Component` would report its definition on a range that also contains the `cgp_component` macro path — and rust-analyzer go-to-definition on a delegate key naming the component would then offer both the component and the macro as targets. That misdirection appears only when navigating from another crate, where the editor relies on the recorded definition span rather than a live expansion; deriving the span from the provider identifier keeps the definition on a single user token, mirroring `derive_check_trait_ident`. See the [Spans note](../README.md#spans-aim-generated-items-at-the-token-the-user-wrote) for why span placement serves the editor as well as the compiler.
 
+## Failure modes
+
+This failure is one `#[cgp_component]` **intentionally defers to the Rust compiler**: each invocation expands with no view of the rest of the module, so a name clash only a whole-module view could catch is left to `rustc`. It is pinned by a fixture under [acceptable/cgp_component/](../../../crates/tests/cgp-compile-fail-tests/tests/acceptable/cgp_component) in `cgp-compile-fail-tests`.
+
+A **name clash on the derived marker** — a module that declares its own `GreeterComponent` alongside a `#[cgp_component(Greeter)]` that derives the same marker — defines the name twice and fails with `E0428`. The `E0428` "previous definition here" note lands on the `Greeter` provider name inside `#[cgp_component(..)]`, not on the whole attribute, per the marker-span behavior above; the fixture exists to pin that span, since a regression to `call_site` would move the note onto the attribute. Pinned by [acceptable/cgp_component/duplicate_component_name.rs](../../../crates/tests/cgp-compile-fail-tests/tests/acceptable/cgp_component/duplicate_component_name.rs).
+
 ## Snapshots
 
 Every `snapshot_cgp_component!` invocation across the suite is indexed here, since these snapshots all belong to this entrypoint:
@@ -84,6 +90,7 @@ The behavioral tests confirm the generated wiring works:
 - [generic_components/component_type_param.rs](../../../crates/tests/cgp-tests/tests/generic_components/component_type_param.rs) wires a single-type-parameter component to one provider, passes `check_components!` for a concrete type argument, and computes an area at run time.
 - [generic_components/component_lifetime.rs](../../../crates/tests/cgp-tests/tests/generic_components/component_lifetime.rs) wires the lifetime-carrying component and passes `check_components!`.
 - [cgp-macro-tests/tests/parser_rejections/cgp_component.rs](../../../crates/tests/cgp-macro-tests/tests/parser_rejections/cgp_component.rs) asserts the macro rejects a non-trait item and a trait carrying a const generic parameter.
+- [cgp-compile-fail-tests acceptable/cgp_component/duplicate_component_name.rs](../../../crates/tests/cgp-compile-fail-tests/tests/acceptable/cgp_component/duplicate_component_name.rs) pins that the derived marker's `E0428` "previous definition" note falls on the provider name rather than the whole attribute — a regression test for the marker-name span (see [Failure modes](#failure-modes)).
 
 ## Source
 

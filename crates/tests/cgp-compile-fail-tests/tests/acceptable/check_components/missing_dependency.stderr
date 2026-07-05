@@ -1,0 +1,38 @@
+error[E0277]: the trait bound `Person: CanUseComponent<GreeterComponent>` is not satisfied
+  --> tests/acceptable/check_components/missing_dependency.rs:55:9
+   |
+55 |         GreeterComponent,
+   |         ^^^^^^^^^^^^^^^^ unsatisfied trait bound
+   |
+help: the trait `HasField<Symbol<4, cgp::prelude::Chars<'n', cgp::prelude::Chars<'a', cgp::prelude::Chars<'m', cgp::prelude::Chars<'e', Nil>>>>>>` is not implemented for `Person`
+      but trait `HasField<Symbol<3, cgp::prelude::Chars<'a', cgp::prelude::Chars<'g', cgp::prelude::Chars<'e', Nil>>>>>` is implemented for it
+  --> tests/acceptable/check_components/missing_dependency.rs:41:10
+   |
+41 | #[derive(HasField)]
+   |          ^^^^^^^^
+note: required for `Person` to implement `HasName`
+  --> tests/acceptable/check_components/missing_dependency.rs:26:1
+   |
+26 | #[cgp_auto_getter]
+   | ^^^^^^^^^^^^^^^^^^
+27 | pub trait HasName {
+   |           ^^^^^^^
+note: required for `GreetHello` to implement `IsProviderFor<GreeterComponent, Person>`
+  --> tests/acceptable/check_components/missing_dependency.rs:31:1
+   |
+31 | #[cgp_impl(new GreetHello)]
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+34 |     Self: HasName,
+   |           ------- unsatisfied trait bound introduced here
+   = note: required for `Person` to implement `CanUseComponent<GreeterComponent>`
+note: required by a bound in `__CheckPerson`
+  --> tests/acceptable/check_components/missing_dependency.rs:53:1
+   |
+53 | / check_components! {
+54 | |     Person {
+55 | |         GreeterComponent,
+56 | |     }
+57 | | }
+   | |_^ required by this bound in `__CheckPerson`
+   = note: this error originates in the derive macro `HasField` which comes from the expansion of the macro `check_components` (in Nightly builds, run with -Z macro-backtrace for more info)

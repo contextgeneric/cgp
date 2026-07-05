@@ -50,6 +50,8 @@ A component with parameters places them in the `__Params__` slot — a single pa
 
 A few `check_components!` inputs are accepted by the macro but rejected — or silently do nothing — downstream, each intended behavior rather than a bug. Unlike the empty `#[check_providers()]` the parser rejects outright, these are left to the compiler or to the user because catching them would require second-guessing a legitimate, if degenerate, request.
 
+An **unsatisfied dependency** is the central intended failure, and the reason the macro exists: a checked component whose provider has an impl-side dependency the context cannot meet fails with `E0277` at the check site, naming the missing bound through `IsProviderFor` rather than lazily at the eventual call site. The unsatisfied-bound caret lands on the component inside the `check_components!` block, not on the shared context type, because the check impl re-spans that one context token onto each listed component in turn with `override_span`. This is pinned by [acceptable/check_components/missing_dependency.rs](../../../crates/tests/cgp-compile-fail-tests/tests/acceptable/check_components/missing_dependency.rs) in `cgp-compile-fail-tests`, a regression test for that re-span; the [`delegate_components!` counterpart](delegate_components.md) leaves the same wiring unchecked to show the contrasting lazy error at the call site.
+
 An **empty check table** (`Context { }`, or every entry checking nothing) emits the check trait with no impls, so it compiles and verifies nothing. This is not rejected because a table trimmed down to nothing during editing is indistinguishable from a deliberately empty one, and an empty table causes no harm — it simply asserts nothing.
 
 A **duplicate check entry** — the same component and parameters listed twice, whether directly (`Context { FooComponent, FooComponent }`) or through array expansion (`[A, A]: P`) — emits two identical check impls and fails with the coherence error `E0119`, exactly as two hand-written impls would. The span override aims the conflict at the repeated component.
@@ -73,6 +75,7 @@ The behavioral coverage for `check_components!` is the compile-time assertion it
 
 - The files listed under Snapshots are compile-only tests, so a successful build is the passing check. Each pins both the expansion (via the snapshot) and the fact that the asserted wiring resolves.
 - [parser_rejections/check_components.rs](../../../crates/tests/cgp-macro-tests/tests/parser_rejections/check_components.rs) — the table-level attribute rejections: an empty `#[check_providers()]`, a repeated `#[check_providers]`, a repeated `#[check_trait]`, and an unknown attribute each fail to parse.
+- [cgp-compile-fail-tests acceptable/check_components/missing_dependency.rs](../../../crates/tests/cgp-compile-fail-tests/tests/acceptable/check_components/missing_dependency.rs) pins that an unsatisfied impl-side dependency is reported with its `E0277` caret on the checked component inside the block — a regression test for the `override_span` re-span (see [Failure modes](#failure-modes)).
 
 ## Source
 

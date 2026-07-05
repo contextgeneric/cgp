@@ -1,0 +1,10 @@
+error[E0428]: the name `GreeterComponent` is defined multiple times
+  --> tests/acceptable/cgp_component/duplicate_component_name.rs:28:1
+   |
+22 | #[cgp_component(Greeter)]
+   |                 ------- previous definition of the type `GreeterComponent` here
+...
+28 | pub struct GreeterComponent;
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ `GreeterComponent` redefined here
+   |
+   = note: `GreeterComponent` must be defined only once in the type namespace of this module
