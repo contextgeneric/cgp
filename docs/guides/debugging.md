@@ -20,6 +20,38 @@ One error shape is especially worth recognizing: **"the trait `X` is not impleme
 
 When a type in the error is elided as `...`, the full form is written to a file the compiler names in a final note (`the full name for the type has been written to '….long-type-….txt'`). Reading that file is how you recover *which* path or *which* context the error is really about — the elided middle is frequently the one segment that reveals the mistake, as when a dependency's context parameter turns out to be a `PathCons<..>` path rather than the real context.
 
+## Grep for the suspected line instead of reading the whole log
+
+When you already suspect what went wrong, grep the captured error output for the one line that would confirm it rather than reading the cascade top to bottom. A CGP failure routinely runs to hundreds of lines — one mistake repeated at every dependent provider, each block naming generated types you never wrote — so reading all of it to recover a fact you could have searched for wastes both effort and context. Capture the build output to a file first, targeting the smallest failing unit so the cascade does not multiply across crates, then work the file with `grep -n` so every match carries a line number you can open directly:
+
+```bash
+cargo check -p <crate> 2>&1 | tee /tmp/cgp-error.txt   # or a single --test / example
+```
+
+This is the cheap alternative to handing the whole log to a sub-agent: grep when a targeted search answers your question, and [delegate](../skills/cgp/references/error-extraction.md) only when it will not. It pays off most when your suspicion is right — a field you think you forgot, a key you think you wired twice, a cycle you think you introduced — because then a single grep either confirms the cause and points at the fix, or rules it out and redirects you, for the price of a few lines.
+
+Grep the error headlines first, because that one search classifies everything. `grep -nE '^error' /tmp/cgp-error.txt` prints one line per error block — the code and the trait it names — which is the whole of [reading the error's shape](#read-the-errors-shape-before-its-contents) recovered without scrolling. From the headlines alone you know whether you face a dependency error (`E0277`/`E0599`), a coherence conflict (`E0119`), a cycle (`E0275`), an orphan violation (`E0210`), an unconstrained generic (`E0207`), or a name-resolution failure (`E0576`/`E0425`), and the [decoder below](#a-decoder-for-the-errors-you-will-actually-see) says what each means. Pair it with the tail of the file (`tail -n 3`), which shows the error count and any `the full name for the type has been written to '…long-type-….txt'` note telling you a cause is hiding behind an elided `...`.
+
+Then grep one class-specific pattern to confirm the cause, because each class has a signature line the headline points you to. Once the headline names the class, the second grep either finds the cause or proves it absent:
+
+| To confirm | Grep for | What the hit tells you |
+|---|---|---|
+| a surfaced dependency leaf (missing field or capability) | `grep -n 'help:'` | the concrete unmet bound; a `HasField<Symbol<N, Chars<…>>>` spells the field name letter-by-letter on that one line, and the paired "but trait `HasField<…>` *is* implemented" hint names the field the context *does* have |
+| an unwired component | `grep -n 'does not contain any DelegateComponent entry'` | CGP's own diagnostic message, naming the component with no wiring |
+| a duplicate key or generated name (`E0119`/`E0428`) | `grep -n 'conflicting implementation\|defined multiple times'` | the two carets are the two entries to reconcile |
+| whether an `E0119` is a specific override or a blanket forwarding overlap | `grep -n 'downstream crates may implement'` | present → a duplicate key or a namespace override on a concrete key; absent on a fully-generic `DelegateComponent<_>` → two namespaces (or a namespace and a bare-key `for` loop) joined |
+| a wiring or namespace-inheritance cycle (`E0275`) | `grep -n 'overflow evaluating'` | the recursing requirement names the loop; ignore the `recursion limit` help, which never applies to a true cycle |
+| an orphan-rule violation (`E0210`/`E0117`) | `grep -n 'must be used as the type parameter'` | a registration into a foreign namespace with no local type |
+| an unconstrained entry generic (`E0207`) | `grep -n 'is not constrained'` | the caret sits on the `<T>` that must reach the key |
+| an ill-formed lowered type (`E0277` `Sized`) | `grep -n 'size for values of type\|Sized'` | a field- or argument-type shorthand combination with no lowering rule (e.g. `Option<&[T]>`) |
+| a `#[use_type]` name or context typo (`E0576`/`E0425`) | `grep -n 'cannot find associated type\|cannot find type'` | the caret sits on the misspelled name |
+
+The leaf is not always in a `help:` note: for an [unsatisfied ordinary trait bound](../errors/checks/ordinary-trait-bound.md) (`f64: Eq`) and an [unregistered namespace path](../errors/checks/unregistered-namespace-path.md) (`PathCons<..>: DefaultNamespace<Ctx>`) the concrete cause *is* the `^error` headline itself, so the first grep already carries it. A `PathCons<Symbol<…>>` key, like a field `Symbol`, spells its path segments out on one line, so reading that single hit decodes the unbound path.
+
+One shape defeats grep entirely, and recognizing it saves a fruitless search. If the headline grep returns only an `E0599` "method … exists … but its trait bounds were not satisfied" (or an `E0277` on a bare consumer trait) with no `CanUseComponent`/`IsProviderFor` block beneath it, you are looking at a [hidden dependency](../errors/hidden/unsatisfied-dependency.md): the root cause is *absent from the output*, not merely far down it, so no grep can find it. Do not keep searching — [promote the error with a check](#move-the-error-to-where-the-mistake-is-with-checks) and re-run, which turns it into a surfaced `E0277` whose leaf the greps above do find.
+
+Spawn a sub-agent instead of grepping when the search will not converge. Grep is the right tool when you have a hypothesis to test or a single fact to pull from a class you have already identified; hand the whole log to a sub-agent, per the [error-extraction skill](../skills/cgp/references/error-extraction.md), when the headline grep shows several unrelated classes tangled together, when the cause hides behind an elided `...` that forces you to cross-reference the `long-type-….txt` file and decode a deep `PathCons` spine, or when you have no hypothesis and the cascade is large. The dividing line is whether you know what you are looking for: a targeted question is a grep, an open-ended read is a delegation.
+
 ## Move the error to where the mistake is with checks
 
 Because a lazy failure surfaces far from its cause, the most reliable first move is to force the check *at the wiring site* with [`check_components!`](../reference/macros/check_components.md). A standalone check trait asserts `CanUseComponent` for each component you name, so a missing dependency errors on the checked component's line — walking through `IsProviderFor` to name the real cause — instead of at some distant call site. Adding a check for the component you suspect turns a confusing downstream error into one anchored at the wiring you control. The [check-traits concept](../concepts/check-traits.md) explains why this works.
