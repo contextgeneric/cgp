@@ -7,6 +7,11 @@ use syn::{Ident, Type, WherePredicate};
 use crate::functions::parse_internal;
 use crate::types::attributes::{UseTypeAttribute, UseTypeIdent};
 
+/// Derive the impl-side `where` predicates a set of `#[use_type]` specs
+/// contributes: one `Context: Trait` bound per spec, carrying any type-equality
+/// (`= T`) pins as associated-type bindings. The specs' contexts must already be
+/// grounded (see [`UseTypeAttributes::grounded_specs`]), so this reads
+/// `use_type.context_type` directly rather than re-resolving aliases.
 pub fn derive_use_type_predicates(specs: &[UseTypeAttribute]) -> syn::Result<Vec<WherePredicate>> {
     let mut predicates = Vec::new();
 
@@ -14,13 +19,7 @@ pub fn derive_use_type_predicates(specs: &[UseTypeAttribute]) -> syn::Result<Vec
         let type_equalities = find_type_equalities(use_type, specs)?;
 
         let trait_path = &use_type.trait_path;
-        let mut context_type = use_type.context_type.clone();
-
-        if context_type != parse_internal!(Self)
-            && let Some(new_context_type) = find_type_alias(specs, &context_type)?
-        {
-            context_type = new_context_type;
-        }
+        let context_type = &use_type.context_type;
 
         if type_equalities.is_empty() {
             predicates.push(parse_internal! {
@@ -42,30 +41,6 @@ pub fn derive_use_type_predicates(specs: &[UseTypeAttribute]) -> syn::Result<Vec
     }
 
     Ok(predicates)
-}
-
-fn find_type_alias(specs: &[UseTypeAttribute], context_type: &Type) -> syn::Result<Option<Type>> {
-    let Ok(context_ident) = parse_internal::<Ident>(context_type.to_token_stream()) else {
-        return Ok(None);
-    };
-
-    for spec in specs {
-        for ident in spec.type_idents.iter() {
-            if ident.alias_ident() == &context_ident {
-                let new_context_type = &spec.context_type;
-                let type_ident = &ident.type_ident;
-                let trait_path = &spec.trait_path;
-
-                let new_type = parse_internal! {
-                    <#new_context_type as #trait_path>::#type_ident
-                };
-
-                return Ok(Some(new_type));
-            }
-        }
-    }
-
-    Ok(None)
 }
 
 /// Reject two imports that resolve to the same bare identifier or alias, across

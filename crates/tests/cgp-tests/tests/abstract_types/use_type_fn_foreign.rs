@@ -1,12 +1,15 @@
 //! `#[use_type]` importing an abstract type from a *foreign generic parameter* in
 //! a `#[cgp_fn]`: `#[use_type(@Types.HasScalarType.Scalar)]`.
 //!
-//! The function is generic over `Types: HasScalarType`, and the `@Types::` prefix
-//! resolves `Scalar` against that parameter, rewriting the bare alias to
-//! `<Types as HasScalarType>::Scalar` throughout — the generated trait becomes
-//! `RectangleArea<Types: HasScalarType>`. `CheckRectangle` is a compile-time
-//! assertion that `Rectangle` implements the generated trait for the concrete
-//! `Types`. The `#[cgp_fn]` snapshot is kept for the rewrite; `#[cgp_type]` is plain.
+//! The function is generic over a plain `Types` (declared *without* a
+//! `HasScalarType` bound), and the `@Types::` prefix resolves `Scalar` against
+//! that parameter, rewriting the bare alias to `<Types as HasScalarType>::Scalar`
+//! throughout. The foreign import supplies the `Types: HasScalarType` bound on
+//! the generated trait itself — the regression guard for that bound being
+//! dropped — so the trait becomes `RectangleArea<Types> where Types: HasScalarType`.
+//! `CheckRectangle` is a compile-time assertion that `Rectangle` implements the
+//! generated trait for the concrete `Types`. The `#[cgp_fn]` snapshot is kept for
+//! the rewrite; `#[cgp_type]` is plain.
 //!
 //! See docs/reference/attributes/use_type.md and docs/concepts/abstract-types.md.
 
@@ -23,7 +26,7 @@ pub trait HasScalarType {
 snapshot_cgp_fn! {
     #[cgp_fn]
     #[use_type(@Types.HasScalarType.Scalar)]
-    pub fn rectangle_area<Types: HasScalarType>(
+    pub fn rectangle_area<Types>(
         &self,
         #[implicit] width: Scalar,
         #[implicit] height: Scalar,
@@ -37,10 +40,13 @@ snapshot_cgp_fn! {
 
     expand_rectangle_area(output) {
         insta::assert_snapshot!(output, @"
-        pub trait RectangleArea<Types: HasScalarType> {
+        pub trait RectangleArea<Types>
+        where
+            Types: HasScalarType,
+        {
             fn rectangle_area(&self) -> <Types as HasScalarType>::Scalar;
         }
-        impl<__Context__, Types: HasScalarType> RectangleArea<Types> for __Context__
+        impl<__Context__, Types> RectangleArea<Types> for __Context__
         where
             <Types as HasScalarType>::Scalar: Mul<Output = <Types as HasScalarType>::Scalar>
                 + Copy,

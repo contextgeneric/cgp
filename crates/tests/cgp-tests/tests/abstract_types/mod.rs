@@ -12,8 +12,9 @@ pub mod cgp_type_self_referential;
 pub mod cgp_type_unsized;
 
 // The `#[use_type]` attribute (and the `#[extend]` alternative) importing an
-// abstract type into a `#[cgp_component]`/`#[cgp_impl]`.
+// abstract type into a `#[cgp_component]`/`#[cgp_impl]`/`#[cgp_auto_getter]`.
 pub mod extend_component;
+pub mod use_type_auto_getter;
 pub mod use_type_component;
 pub mod use_type_foreign;
 pub mod use_type_generic_param;
@@ -21,9 +22,11 @@ pub mod use_type_path_qualified;
 
 // The `#[use_type]` attribute rewriting abstract types inside `#[cgp_fn]`: the
 // bare alias, alias renaming, type-equality bounds, and foreign/nested type
-// sources. These keep the `#[cgp_fn]` snapshot because the abstract-type rewrite
-// is the point (the `#[cgp_fn]` expansion itself is owned by `implicit_arguments`).
+// sources (including a two-hop foreign chain). These keep the `#[cgp_fn]` snapshot
+// because the abstract-type rewrite is the point (the `#[cgp_fn]` expansion itself
+// is owned by `implicit_arguments`).
 pub mod use_type_fn_alias;
+pub mod use_type_fn_deep_foreign;
 pub mod use_type_fn_equality;
 pub mod use_type_fn_equality_cross_trait;
 pub mod use_type_fn_extend;

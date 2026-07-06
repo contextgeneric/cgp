@@ -9,6 +9,12 @@
 //! the concrete scalar, while `Rectangle` supplies the fields and error type.
 //! `#[cgp_type]`, wiring, and check are incidental and use the plain macros.
 //!
+//! The generic `Types` is declared *without* a `HasScalarType` bound: the foreign
+//! `@Types` import supplies `Types: HasScalarType` on both the consumer and
+//! provider traits on its own, so the component compiles and checks even though
+//! nothing else names the bound. This is the regression guard for the foreign
+//! bound being dropped from the trait.
+//!
 //! See docs/reference/attributes/use_type.md and docs/concepts/abstract-types.md.
 
 use std::convert::Infallible;
@@ -24,7 +30,7 @@ pub trait HasScalarType {
 
 #[cgp_component(AreaCalculator)]
 #[use_type(@Types.HasScalarType.Scalar, HasErrorType.Error)]
-pub trait CanCalculateArea<Types: HasScalarType> {
+pub trait CanCalculateArea<Types> {
     fn area(&self) -> Result<Scalar, Error>;
 }
 

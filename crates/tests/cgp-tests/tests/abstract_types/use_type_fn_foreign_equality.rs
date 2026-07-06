@@ -37,7 +37,10 @@ snapshot_cgp_fn! {
 
     expand_rectangle_area(output) {
         insta::assert_snapshot!(output, @"
-        pub trait RectangleArea: HasTypes {
+        pub trait RectangleArea: HasTypes
+        where
+            <Self as HasTypes>::Types: HasScalarType,
+        {
             fn rectangle_area(&self) -> <<Self as HasTypes>::Types as HasScalarType>::Scalar;
         }
         impl<__Context__> RectangleArea for __Context__

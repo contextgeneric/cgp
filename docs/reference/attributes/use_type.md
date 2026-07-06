@@ -52,7 +52,7 @@ UseTypeIdent -> IDENTIFIER (`as` IDENTIFIER)? (`=` Type)?
 
 ## Expansion
 
-`#[use_type]` runs before the rest of the macro and does two things: it substitutes every matching bare type identifier with the qualified associated type, and it adds the trait as a supertrait or bound. Consider this `#[cgp_fn]` using the single-import form:
+`#[use_type]` runs before the rest of the macro in three steps: it first *grounds* each import's context (resolving an `@Context` that names another import into a fully-qualified path), then substitutes every matching bare type identifier with the qualified associated type in one pass, and finally adds the trait as a supertrait or bound. Consider this `#[cgp_fn]` using the single-import form:
 
 ```rust
 pub trait HasScalarType {
@@ -116,12 +116,12 @@ pub trait CanCalculateArea: HasScalarType {
 }
 ```
 
-The supertrait is added only when the rewrite target is `Self`. With the foreign-type `@` form the target is a named type, so on `#[cgp_fn]` and `#[cgp_impl]` the bound lands in the impl's `where` clause instead of as a supertrait; on `#[cgp_component]` no bound is added at all, so a component using the `@` form must declare the parameter's bound itself (for example `pub trait CanCalculateArea<Types: HasScalarType>`). This `#[cgp_fn]` imports `Scalar` from a generic parameter `Types`:
+The supertrait is added only when the rewrite target is `Self`. With the foreign-type `@` form the target is a named type, so the bound cannot be a supertrait of `Self`; instead the macro adds a plain `Context: Trait` predicate wherever the substituted `<Context as Trait>::Assoc` paths appear. On `#[cgp_fn]` and `#[cgp_impl]` that predicate lands in the impl's `where` clause, and on `#[cgp_component]` and `#[cgp_fn]` it is *also* added to the generated trait's own `where` clause — because the trait's signatures now name `<Context as Trait>::Assoc` and would not be well-formed without it. This means a component using the `@` form no longer has to declare the parameter's bound by hand; writing `pub trait CanCalculateArea<Types>` is enough, and `Types: HasScalarType` is supplied for you. (The type-equality `= T` pin, by contrast, stays impl-side and is never added to the trait.) This `#[cgp_fn]` imports `Scalar` from a generic parameter `Types`:
 
 ```rust
 #[cgp_fn]
 #[use_type(@Types.HasScalarType.Scalar)]
-pub fn rectangle_area<Types: HasScalarType>(
+pub fn rectangle_area<Types>(
     &self,
     #[implicit] width: Scalar,
     #[implicit] height: Scalar,
@@ -134,14 +134,17 @@ where
 }
 ```
 
-Every `Scalar`, including the ones in the explicit `where` clause, expands to `<Types as HasScalarType>::Scalar`, and the bound `Types: HasScalarType` is added to the impl's `where` clause rather than as a supertrait:
+Every `Scalar`, including the ones in the explicit `where` clause, expands to `<Types as HasScalarType>::Scalar`, and the bound `Types: HasScalarType` is added to *both* the generated trait's `where` clause and the impl's — so the plain, unbounded `<Types>` the author wrote is enough. It is a `where` bound rather than a supertrait because the target is a named type, not `Self`:
 
 ```rust
-pub trait RectangleArea<Types: HasScalarType> {
+pub trait RectangleArea<Types>
+where
+    Types: HasScalarType,
+{
     fn rectangle_area(&self) -> <Types as HasScalarType>::Scalar;
 }
 
-impl<Context, Types: HasScalarType> RectangleArea<Types> for Context
+impl<Context, Types> RectangleArea<Types> for Context
 where
     <Types as HasScalarType>::Scalar:
         Mul<Output = <Types as HasScalarType>::Scalar> + Copy,
@@ -203,7 +206,7 @@ The provider's `#[use_type]` adds `Self: HasScalarType` to its `where` clause an
 ## Source
 
 - Parsing: the attribute is parsed by `UseTypeAttribute` in [crates/macros/cgp-macro-core/src/types/attributes/use_type/attribute.rs](../../../crates/macros/cgp-macro-core/src/types/attributes/use_type/attribute.rs), which reads the context and trait as `PathWithTypeArgs` separated by `.`; per-type entries (`as` alias and `=` equality) are in `ident.rs`.
-- Two-phase transform (substitute then add bounds): lives in `attributes.rs` as `transform_item_trait` (supertrait for `#[cgp_component]`) and `transform_item_impl` (`where` bound for impls); the type-equality and foreign-context resolution are in `type_predicates.rs`, whose `forbid_duplicate_aliases` both transforms call to reject a shared identifier or alias.
-- Identifier substitution: the `SubstituteAbstractType` `VisitMut` pass in [crates/macros/cgp-macro-core/src/visitors/substitute_abstract_type.rs](../../../crates/macros/cgp-macro-core/src/visitors/substitute_abstract_type.rs), which matches single-segment, argument-free type paths.
+- Three-step transform (ground contexts, substitute, add bounds): lives in `attributes.rs`. `grounded_specs` resolves each `@Context` that names another import into a fully-qualified path; `transform_item_trait` then substitutes and adds bounds to a trait (a supertrait for a `Self` import, a `where` bound for a foreign `@` import — this is `#[cgp_component]` and `#[cgp_fn]`), and `transform_item_impl` does the same for an impl's `where` clause. Both call `forbid_duplicate_aliases` first to reject a shared identifier or alias, and the impl-side type-equality predicates are derived in `type_predicates.rs`.
+- Identifier substitution: the `SubstituteAbstractTypes` `VisitMut` pass in [crates/macros/cgp-macro-core/src/visitors/substitute_abstract_type.rs](../../../crates/macros/cgp-macro-core/src/visitors/substitute_abstract_type.rs), which holds every grounded spec at once and rewrites single-segment, argument-free type paths in a single traversal.
 - `= ...` rejection for component traits: enforced in `types/attributes/cgp_component_attributes.rs`.
 - Implementation document (the internal AST types, the two-phase transform, and the index of tests and snapshots): [implementation/asts/attributes.md](../../implementation/asts/attributes.md).
