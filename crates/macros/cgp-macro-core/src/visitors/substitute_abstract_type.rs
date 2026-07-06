@@ -18,8 +18,22 @@ use crate::types::attributes::UseTypeAttribute;
 /// before the visitor runs. Grounding is what lets a single traversal suffice:
 /// the replacement a spec emits contains no bare alias, so the visitor never has
 /// to revisit its own output to finish a nested import.
+///
+/// `is_changed` records whether any replacement was made during the traversal,
+/// which the grounding fixpoint reads to decide when a further pass would be a
+/// no-op.
 pub struct SubstituteAbstractTypes<'a> {
     pub specs: &'a [UseTypeAttribute],
+    pub is_changed: bool,
+}
+
+impl<'a> SubstituteAbstractTypes<'a> {
+    pub fn new(specs: &'a [UseTypeAttribute]) -> Self {
+        Self {
+            specs,
+            is_changed: false,
+        }
+    }
 }
 
 impl VisitMut for SubstituteAbstractTypes<'_> {
@@ -35,6 +49,7 @@ impl VisitMut for SubstituteAbstractTypes<'_> {
                         let trait_path = &spec.trait_path;
                         let context_type = &spec.context_type;
                         *ty = parse_quote! { <#context_type as #trait_path>::#replacement_ident };
+                        self.is_changed = true;
                         return;
                     }
                 }

@@ -76,10 +76,11 @@ Structural wiring errors — [wiring/](wiring/):
 Lowering errors — [lowering/](lowering/):
 
 - [Ill-formed generated type](lowering/ill-formed-generated-type.md) — a macro lowers an unsupported field- or argument-type shorthand (such as `Option<&[T]>`) into a generated bound naming an ill-formed, unsized type, which the compiler rejects with the `E0277` `Sized` form.
+- [Unresolved imported abstract type](lowering/unresolved-imported-type.md) — a `#[use_type]` import names an associated type the owning trait does not declare, so the rewritten `<Self as Trait>::WrongName` path resolves to nothing and the compiler rejects it with `E0576`, its caret on the name the user wrote.
 
 Error-code reference — [error_codes/](error_codes/):
 
-- One entry per `rustc` code the catalog surfaces — [`E0119`](error_codes/e0119.md), [`E0117`](error_codes/e0117.md), [`E0207`](error_codes/e0207.md), [`E0210`](error_codes/e0210.md), [`E0275`](error_codes/e0275.md), [`E0277`](error_codes/e0277.md), [`E0428`](error_codes/e0428.md), [`E0599`](error_codes/e0599.md) — each recording what the code means in plain Rust, the rule behind it, and where CGP produces it. See the [error-code reference index](error_codes/README.md).
+- One entry per `rustc` code the catalog surfaces — [`E0119`](error_codes/e0119.md), [`E0117`](error_codes/e0117.md), [`E0207`](error_codes/e0207.md), [`E0210`](error_codes/e0210.md), [`E0275`](error_codes/e0275.md), [`E0277`](error_codes/e0277.md), [`E0428`](error_codes/e0428.md), [`E0576`](error_codes/e0576.md), [`E0599`](error_codes/e0599.md) — each recording what the code means in plain Rust, the rule behind it, and where CGP produces it. See the [error-code reference index](error_codes/README.md).
 
 ## Relationship to the rest of the knowledge base
 

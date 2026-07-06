@@ -10,7 +10,7 @@ Each entry records the same four things: the message `rustc` prints, when the co
 
 ## The codes
 
-The catalog surfaces eight codes, split by the kind of rule they enforce. Three are **coherence and orphan** rules — the compiler refusing overlapping or foreign impls:
+The catalog surfaces nine codes, split by the kind of rule they enforce. Three are **coherence and orphan** rules — the compiler refusing overlapping or foreign impls:
 
 - [`E0119`](e0119.md) — conflicting implementations of a trait for a type.
 - [`E0210`](e0210.md) — orphan rule: an uncovered type parameter in a foreign-trait impl.
@@ -25,9 +25,10 @@ Two are **trait-solving** outcomes — the solver failing to satisfy or terminat
 - [`E0277`](e0277.md) — a trait bound is not satisfied (including the `Sized` special case).
 - [`E0275`](e0275.md) — overflow evaluating a requirement (a recursion-limit or cycle failure).
 
-Two are **name-resolution and method-probe** diagnostics:
+Three are **name-resolution and method-probe** diagnostics:
 
 - [`E0428`](e0428.md) — a name is defined more than once in one scope.
+- [`E0576`](e0576.md) — an associated item is named that the trait or type does not declare.
 - [`E0599`](e0599.md) — a method exists but its trait bounds are not satisfied.
 
 ## Relationship to the rest of the catalog

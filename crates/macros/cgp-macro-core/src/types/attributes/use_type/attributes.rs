@@ -35,11 +35,9 @@ impl UseTypeAttributes {
             let mut changed = false;
 
             for spec in grounded.iter_mut() {
-                let before = spec.context_type.to_token_stream().to_string();
-                SubstituteAbstractTypes { specs: &snapshot }.visit_type_mut(&mut spec.context_type);
-                if spec.context_type.to_token_stream().to_string() != before {
-                    changed = true;
-                }
+                let mut visitor = SubstituteAbstractTypes::new(&snapshot);
+                visitor.visit_type_mut(&mut spec.context_type);
+                changed |= visitor.is_changed;
             }
 
             if !changed {
@@ -59,7 +57,7 @@ impl UseTypeAttributes {
 
         let grounded = self.grounded_specs();
 
-        SubstituteAbstractTypes { specs: &grounded }.visit_item_trait_mut(item_trait);
+        SubstituteAbstractTypes::new(&grounded).visit_item_trait_mut(item_trait);
 
         let self_type: Type = parse_internal! { Self };
 
@@ -104,7 +102,7 @@ impl UseTypeAttributes {
 
         let grounded = self.grounded_specs();
 
-        SubstituteAbstractTypes { specs: &grounded }.visit_item_impl_mut(item_impl);
+        SubstituteAbstractTypes::new(&grounded).visit_item_impl_mut(item_impl);
 
         let predicates = derive_use_type_predicates(&grounded)?;
 

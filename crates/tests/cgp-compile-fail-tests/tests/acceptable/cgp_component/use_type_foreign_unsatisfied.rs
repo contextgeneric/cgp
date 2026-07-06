@@ -8,7 +8,7 @@
 //! working as designed: it emits the bound and defers the actual check to `rustc`,
 //! which reports the missing `NoScalar: HasScalarType` at the use site.
 //!
-//! See docs/reference/attributes/use_type.md and docs/errors/checks/ordinary-trait-bound.md.
+//! See docs/reference/attributes/use_type.md and docs/errors/checks/check-trait-failure.md.
 
 use cgp::prelude::*;
 
