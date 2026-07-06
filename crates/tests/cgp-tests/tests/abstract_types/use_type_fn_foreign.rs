@@ -1,8 +1,8 @@
 //! `#[use_type]` importing an abstract type from a *foreign generic parameter* in
-//! a `#[cgp_fn]`: `#[use_type(@Types.HasScalarType.Scalar)]`.
+//! a `#[cgp_fn]`: `#[use_type(HasScalarType.Scalar in Types)]`.
 //!
 //! The function is generic over a plain `Types` (declared *without* a
-//! `HasScalarType` bound), and the `@Types::` prefix resolves `Scalar` against
+//! `HasScalarType` bound), and the `in Types` suffix resolves `Scalar` against
 //! that parameter, rewriting the bare alias to `<Types as HasScalarType>::Scalar`
 //! throughout. The foreign import supplies the `Types: HasScalarType` bound on
 //! the generated trait itself — the regression guard for that bound being
@@ -25,7 +25,7 @@ pub trait HasScalarType {
 
 snapshot_cgp_fn! {
     #[cgp_fn]
-    #[use_type(@Types.HasScalarType.Scalar)]
+    #[use_type(HasScalarType.Scalar in Types)]
     pub fn rectangle_area<Types>(
         &self,
         #[implicit] width: Scalar,

@@ -132,7 +132,7 @@ This attribute has enough structure to warrant a grammar of its own:
 ```ebnf
 UseTypeArgs  -> UseTypeSpec ( `,` UseTypeSpec )* `,`?
 
-UseTypeSpec  -> ( `@` ContextPath `.` )? TraitPath `.` TypeItems
+UseTypeSpec  -> TraitPath `.` TypeItems ( `in` ContextPath )?
 
 ContextPath  -> TypePath
 TraitPath    -> TypePath
@@ -143,7 +143,7 @@ TypeItems    -> UseTypeIdent
 UseTypeIdent -> IDENTIFIER ( `as` IDENTIFIER )? ( `=` Type )?
 ```
 
-The `.` (not `::`) after the trait path starts the associated-type list — a trait path keeps its own `::` segments and may carry generics. Omitting the `@ContextPath .` prefix defaults the rewrite target to `Self`; a `@Types.` prefix rewrites against a named generic parameter and adds `Types: Trait` as a `where` bound rather than a supertrait. In each `UseTypeIdent`, `as` gives a local alias to write in signatures, and `= Type` pins the type with an equality bound (accepted on `#[cgp_fn]`/`#[cgp_impl]`, **rejected on `#[cgp_component]`**, whose trait definition cannot carry the impl-side equality). The macro rewrites every bare mention of the imported identifier (or alias) to the fully-qualified `<Target as Trait>::Type`. Host: `#[cgp_fn]`, `#[cgp_impl]`, `#[cgp_component]`. See [abstract-types](abstract-types.md).
+The `.` (not `::`) after the trait path starts the associated-type list — a trait path keeps its own `::` segments and may carry generics. Omitting the `in ContextPath` suffix defaults the rewrite target to `Self`; an `in Types` suffix rewrites against a named generic parameter and adds `Types: Trait` as a `where` bound rather than a supertrait (`in` is a reserved keyword, so it can never be mistaken for part of a type, and reads like the `in` in `#[prefix(@Path in Namespace)]`). In each `UseTypeIdent`, `as` gives a local alias to write in signatures, and `= Type` pins the type with an equality bound (accepted on `#[cgp_fn]`/`#[cgp_impl]`, **rejected on `#[cgp_component]`**, whose trait definition cannot carry the impl-side equality). The macro rewrites every bare mention of the imported identifier (or alias) to the fully-qualified `<Target as Trait>::Type`. The old `@Context.` prefix form was removed — a leading `@` is rejected with a migration hint. Host: `#[cgp_fn]`, `#[cgp_impl]`, `#[cgp_component]`. See [abstract-types](abstract-types.md).
 
 ---
 

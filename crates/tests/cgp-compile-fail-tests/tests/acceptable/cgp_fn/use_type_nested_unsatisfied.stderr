@@ -32,10 +32,10 @@ note: required for `NoScalar` to implement `HasScalarType`
 22 | pub trait HasScalarType {
    |           ^^^^^^^^^^^^^
 note: required by a bound in `GetScalar`
-  --> tests/acceptable/cgp_fn/use_type_nested_unsatisfied.rs:31:35
+  --> tests/acceptable/cgp_fn/use_type_nested_unsatisfied.rs:31:28
    |
-31 | #[use_type(HasTypes.Types, @Types.HasScalarType.Scalar)]
-   |                                   ^^^^^^^^^^^^^ required by this bound in `GetScalar`
+31 | #[use_type(HasTypes.Types, HasScalarType.Scalar in Types)]
+   |                            ^^^^^^^^^^^^^ required by this bound in `GetScalar`
 32 | pub fn get_scalar(&self) -> Scalar {
    |        ---------- required by a bound in this trait
    = note: this error originates in the attribute macro `cgp_type` (in Nightly builds, run with -Z macro-backtrace for more info)
@@ -74,10 +74,10 @@ note: required for `NoScalar` to implement `HasScalarType`
 22 | pub trait HasScalarType {
    |           ^^^^^^^^^^^^^
 note: required by a bound in `GetScalar`
-  --> tests/acceptable/cgp_fn/use_type_nested_unsatisfied.rs:31:35
+  --> tests/acceptable/cgp_fn/use_type_nested_unsatisfied.rs:31:28
    |
-31 | #[use_type(HasTypes.Types, @Types.HasScalarType.Scalar)]
-   |                                   ^^^^^^^^^^^^^ required by this bound in `GetScalar`
+31 | #[use_type(HasTypes.Types, HasScalarType.Scalar in Types)]
+   |                            ^^^^^^^^^^^^^ required by this bound in `GetScalar`
 32 | pub fn get_scalar(&self) -> Scalar {
    |        ---------- required by a bound in this trait
    = note: this error originates in the attribute macro `cgp_type` (in Nightly builds, run with -Z macro-backtrace for more info)
@@ -121,8 +121,8 @@ note: required for `App` to implement `GetScalar`
    |
 30 | #[cgp_fn]
    | ^^^^^^^^^
-31 | #[use_type(HasTypes.Types, @Types.HasScalarType.Scalar)]
-   |                                   ------------- unsatisfied trait bound introduced here
+31 | #[use_type(HasTypes.Types, HasScalarType.Scalar in Types)]
+   |                            ------------- unsatisfied trait bound introduced here
 32 | pub fn get_scalar(&self) -> Scalar {
    |        ^^^^^^^^^^
    = note: this error originates in the attribute macro `cgp_type` which comes from the expansion of the attribute macro `cgp_fn` (in Nightly builds, run with -Z macro-backtrace for more info)
@@ -166,8 +166,8 @@ note: required for `App` to implement `GetScalar`
    |
 30 | #[cgp_fn]
    | ^^^^^^^^^
-31 | #[use_type(HasTypes.Types, @Types.HasScalarType.Scalar)]
-   |                                   ------------- unsatisfied trait bound introduced here
+31 | #[use_type(HasTypes.Types, HasScalarType.Scalar in Types)]
+   |                            ------------- unsatisfied trait bound introduced here
 32 | pub fn get_scalar(&self) -> Scalar {
    |        ^^^^^^^^^^
    = note: this error originates in the attribute macro `cgp_type` which comes from the expansion of the attribute macro `cgp_fn` (in Nightly builds, run with -Z macro-backtrace for more info)

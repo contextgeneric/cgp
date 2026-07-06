@@ -1,13 +1,14 @@
 use syn::parse::{Parse, ParseStream};
-use syn::token::{At, Brace, Comma, Dot};
+use syn::token::{At, Brace, Comma, Dot, In};
 use syn::{Ident, Type};
 
 use crate::parse_internal;
 use crate::types::attributes::UseTypeIdent;
 use crate::types::ident::PathWithTypeArgs;
 
-/// One `#[use_type(...)]` import spec: a rewrite target (`Self` or an `@Context`),
-/// the owning trait path, and one or more associated types to import from it.
+/// One `#[use_type(...)]` import spec: the owning trait path, one or more
+/// associated types to import from it, and a rewrite target (`Self`, or a named
+/// type set by a trailing `in Context`).
 #[derive(Clone)]
 pub struct UseTypeAttribute {
     pub context_type: Type,
@@ -31,19 +32,20 @@ impl UseTypeAttribute {
 
 impl Parse for UseTypeAttribute {
     fn parse(input: ParseStream) -> syn::Result<Self> {
-        // A `.` (not `::`) separates the context, trait, and associated type. This
+        // The `@Context.` prefix form was removed in favor of the `... in Context`
+        // suffix form; reject a leading `@` with a migration hint rather than
+        // letting it fail deep inside path parsing.
+        if input.peek(At) {
+            return Err(input.error(
+                "the `@Context.` prefix form was removed; write the foreign context \
+                 as a trailing `in Context` instead, e.g. `HasScalarType.Scalar in Types`",
+            ));
+        }
+
+        // A `.` (not `::`) separates the trait from the associated type. This
         // keeps the trait unambiguous even when it is a full path such as
         // `foo::bar::HasScalarType`: `::` stays inside the path, and the trailing
         // `.` marks where the associated type begins.
-        let context_type: Type = if input.peek(At) {
-            let _: At = input.parse()?;
-            let context: PathWithTypeArgs = input.parse()?;
-            let _: Dot = input.parse()?;
-            context.into()
-        } else {
-            parse_internal! { Self }
-        };
-
         let trait_path: PathWithTypeArgs = input.parse()?;
 
         let _: Dot = input.parse()?;
@@ -57,6 +59,18 @@ impl Parse for UseTypeAttribute {
                 .collect()
         } else {
             vec![input.parse()?]
+        };
+
+        // An optional `in Context` suffix sets the rewrite target to a named
+        // type; `in` is a reserved keyword, so it can never be confused with a
+        // trait, type, or associated-type name and reads as a clean delimiter.
+        // Without the suffix, the target defaults to `Self`.
+        let context_type: Type = if input.peek(In) {
+            let _: In = input.parse()?;
+            let context: PathWithTypeArgs = input.parse()?;
+            context.into()
+        } else {
+            parse_internal! { Self }
         };
 
         Ok(Self {

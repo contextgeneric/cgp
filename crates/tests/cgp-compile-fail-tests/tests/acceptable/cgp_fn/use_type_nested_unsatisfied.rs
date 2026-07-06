@@ -1,4 +1,4 @@
-//! Acceptable failure: a *nested* foreign `#[use_type(HasTypes.Types, @Types.HasScalarType.Scalar)]`
+//! Acceptable failure: a *nested* foreign `#[use_type(HasTypes.Types, HasScalarType.Scalar in Types)]`
 //! import adds the two-hop bound `<Self as HasTypes>::Types: HasScalarType` to the
 //! generated trait, so a context whose `Types` associated type does not implement
 //! `HasScalarType` is rejected — proof the transitively-grounded foreign bound is
@@ -28,7 +28,7 @@ pub trait HasScalarType {
 //   where <Self as HasTypes>::Types: HasScalarType
 //   { fn get_scalar(&self) -> <<Self as HasTypes>::Types as HasScalarType>::Scalar; }
 #[cgp_fn]
-#[use_type(HasTypes.Types, @Types.HasScalarType.Scalar)]
+#[use_type(HasTypes.Types, HasScalarType.Scalar in Types)]
 pub fn get_scalar(&self) -> Scalar {
     todo!()
 }

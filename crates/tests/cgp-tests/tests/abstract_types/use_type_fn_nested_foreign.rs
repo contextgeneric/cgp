@@ -1,8 +1,8 @@
 //! `#[use_type]` reaching a nested foreign type in `#[cgp_fn]` combined with
-//! `#[extend_where]`: `#[use_type(HasTypes.Types, @Types.HasScalarType.Scalar)]`
+//! `#[extend_where]`: `#[use_type(HasTypes.Types, HasScalarType.Scalar in Types)]`
 //! plus `#[extend_where(Scalar: Copy)]`.
 //!
-//! `HasTypes::Types` imports the abstract `Types`, then `@Types::HasScalarType::Scalar`
+//! `HasTypes::Types` imports the abstract `Types`, then `HasScalarType.Scalar in Types`
 //! resolves `Scalar` against it, so the bare alias rewrites to the two-hop
 //! `<<Self as HasTypes>::Types as HasScalarType>::Scalar`. The foreign import adds
 //! the nested `<Self as HasTypes>::Types: HasScalarType` bound to the generated
@@ -32,7 +32,7 @@ pub trait HasTypes {
 
 snapshot_cgp_fn! {
     #[cgp_fn]
-    #[use_type(HasTypes.Types, @Types.HasScalarType.Scalar)]
+    #[use_type(HasTypes.Types, HasScalarType.Scalar in Types)]
     #[extend_where(Scalar: Copy)]
     pub fn rectangle_area(&self, #[implicit] width: Scalar, #[implicit] height: Scalar) -> Scalar
     where

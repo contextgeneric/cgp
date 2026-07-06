@@ -1,7 +1,8 @@
 //! `#[use_type]` rejects imports it cannot lower unambiguously: a type-equality
 //! constraint on a `#[cgp_component]` trait, and two imports that resolve to the
 //! same identifier or alias — whether across specs or within one braced list, and
-//! on any host macro.
+//! on any host macro. It also rejects the removed `@Context.` prefix form, which
+//! the `... in Context` suffix form replaced.
 //!
 //! See docs/implementation/asts/attributes.md (Tests) for these failure cases and
 //! docs/reference/attributes/use_type.md for the user-facing semantics.
@@ -21,6 +22,23 @@ fn rejects_equality_on_component() {
                 #[use_type(HasScalarType.{Scalar = f64})]
                 pub trait CanCalculateArea {
                     fn area(&self) -> Scalar;
+                }
+            ),
+        )
+    });
+}
+
+#[test]
+fn rejects_at_prefix_context() {
+    // The `@Context.` prefix form was removed in favor of the `... in Context`
+    // suffix form, so a leading `@` is now a spanned parse error.
+    assert_macro_rejects("use_type with the removed @Context. prefix", || {
+        cgp_macro_lib::cgp_fn(
+            quote!(),
+            quote!(
+                #[use_type(@Types.HasScalarType.Scalar)]
+                pub fn rectangle_area<Types>(&self) -> Scalar {
+                    todo!()
                 }
             ),
         )

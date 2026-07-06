@@ -1,8 +1,8 @@
 //! Importing an abstract type from a *foreign* type parameter with the
-//! `#[use_type(@Types.HasScalarType.Scalar)]` form on a generic component.
+//! `#[use_type(HasScalarType.Scalar in Types)]` form on a generic component.
 //!
 //! When the abstract type lives on a generic parameter of the component rather
-//! than on `Self`, the `@Types.` prefix tells `#[use_type]` to resolve `Scalar`
+//! than on `Self`, the `in Types` suffix tells `#[use_type]` to resolve `Scalar`
 //! against that parameter, rewriting the bare alias to
 //! `<Types as HasScalarType>::Scalar`. The `Error` type is still resolved against
 //! `Self` via `HasErrorType::Error`. `Types` is a standalone type that supplies
@@ -10,7 +10,7 @@
 //! `#[cgp_type]`, wiring, and check are incidental and use the plain macros.
 //!
 //! The generic `Types` is declared *without* a `HasScalarType` bound: the foreign
-//! `@Types` import supplies `Types: HasScalarType` on both the consumer and
+//! `in Types` import supplies `Types: HasScalarType` on both the consumer and
 //! provider traits on its own, so the component compiles and checks even though
 //! nothing else names the bound. This is the regression guard for the foreign
 //! bound being dropped from the trait.
@@ -29,13 +29,13 @@ pub trait HasScalarType {
 }
 
 #[cgp_component(AreaCalculator)]
-#[use_type(@Types.HasScalarType.Scalar, HasErrorType.Error)]
+#[use_type(HasScalarType.Scalar in Types, HasErrorType.Error)]
 pub trait CanCalculateArea<Types> {
     fn area(&self) -> Result<Scalar, Error>;
 }
 
 #[cgp_impl(new RectangleArea)]
-#[use_type(@Types.HasScalarType.Scalar, HasErrorType.Error)]
+#[use_type(HasScalarType.Scalar in Types, HasErrorType.Error)]
 impl<Types> AreaCalculator<Types>
 where
     Scalar: Mul<Output = Scalar> + Copy,

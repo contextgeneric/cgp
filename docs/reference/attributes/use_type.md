@@ -22,9 +22,9 @@ The part before the `.` is the trait and the identifier after it is the associat
 
 Because the `.` is the only separator the macro looks for, the trait may be written as a full path or with generic arguments, both using ordinary `::`. `#[use_type(errors::HasErrorType.Error)]` imports from a trait named by path without bringing it into scope, and `#[use_type(HasFooType<X>.Foo)]` imports the associated type of a specific generic instantiation, rewriting `Foo` to `<Self as HasFooType<X>>::Foo`. This is what makes it possible to import the same associated type from two instantiations under different aliases, as in `#[use_type(HasFooType<X>.{Foo as FooX}, HasFooType<Y>.{Foo as FooY})]`.
 
-A leading `@` changes the rewrite target from `Self` to a named type, which is how foreign abstract types are imported. The form `#[use_type(@Types.HasScalarType.Scalar)]` treats the first segment, `Types`, as the context type and rewrites `Scalar` to `<Types as HasScalarType>::Scalar`. `Types` is typically a generic parameter of the function or impl rather than `Self`, which lets a trait pull an abstract type from a parameter instead of from the implementing context.
+A trailing `in Context` clause changes the rewrite target from `Self` to a named type, which is how foreign abstract types are imported. The form `#[use_type(HasScalarType.Scalar in Types)]` treats `Types` as the context type and rewrites `Scalar` to `<Types as HasScalarType>::Scalar`. `Types` is typically a generic parameter of the function or impl rather than `Self`, which lets a trait pull an abstract type from a parameter instead of from the implementing context. The `in` keyword is reserved in Rust, so it can never be confused with a trait, type, or associated-type name and reads as a clean delimiter after the associated-type list; the clause is consistent with the `in` used elsewhere in CGP wiring, such as `#[prefix(@Path in Namespace)]`.
 
-Several types from the same trait can be imported in one attribute using a braced list, and each entry may be renamed with `as` or constrained with `=`. The braced form `#[use_type(HasFooType.{Foo, Bar as Baz})]` imports `Foo` under its own name and `Bar` under the local alias `Baz`. The equality form `#[use_type(HasScalarType.{Scalar = f64})]` imports `Scalar` and additionally constrains it, emitting `Self: HasScalarType<Scalar = f64>` in the `where` clause.
+Several types from the same trait can be imported in one attribute using a braced list, and each entry may be renamed with `as` or constrained with `=`. The braced form `#[use_type(HasFooType.{Foo, Bar as Baz})]` imports `Foo` under its own name and `Bar` under the local alias `Baz`. The equality form `#[use_type(HasScalarType.{Scalar = f64})]` imports `Scalar` and additionally constrains it, emitting `Self: HasScalarType<Scalar = f64>` in the `where` clause. A braced list may itself carry a foreign context — `#[use_type(HasFooType.{Foo, Bar} in Ctx)]` projects every imported type in the group against `Ctx`, since the `in` clause scopes over the whole spec, not a single entry.
 
 When a definition imports types from several traits at once, prefer combining them into a single `#[use_type]` attribute by separating the trait paths with commas — `#[use_type(HasUserIdType.UserId, HasCurrencyType.Currency, HasErrorType.Error)]` — since one attribute reads as a single import list. Stacking multiple `#[use_type]` attributes is also accepted and behaves identically, as in `#[use_type(HasBarType.{Bar as Baz = Foo}, HasFooType.Foo)]` written across two lines, but reach for a second attribute only when a real reason calls for it rather than as the default.
 
@@ -37,7 +37,7 @@ The grammar below covers the tokens inside `#[use_type(...)]` — the comma-sepa
 ```ebnf
 UseTypeArgs -> UseTypeSpec (`,` UseTypeSpec)* `,`?
 
-UseTypeSpec -> (`@` ContextPath `.`)? TraitPath `.` TypeItems
+UseTypeSpec -> TraitPath `.` TypeItems (`in` ContextPath)?
 
 ContextPath -> TypePath
 TraitPath   -> TypePath
@@ -48,11 +48,11 @@ TypeItems -> UseTypeIdent
 UseTypeIdent -> IDENTIFIER (`as` IDENTIFIER)? (`=` Type)?
 ```
 
-`ContextPath` and `TraitPath` are ordinary Rust `TypePath`s (a path whose final segment may carry angle-bracketed generic arguments); their `::` segments belong to the path, while the `.` after them starts the associated-type list. An omitted `@ContextPath .` prefix defaults the rewrite target to `Self`. In each `UseTypeIdent`, the leading `IDENTIFIER` is the associated type's own name, an `as` clause gives it a local alias to write in the signature, and an `= Type` clause pins it with an equality bound (accepted on `#[cgp_fn]` and `#[cgp_impl]`, rejected on `#[cgp_component]`).
+`ContextPath` and `TraitPath` are ordinary Rust `TypePath`s (a path whose final segment may carry angle-bracketed generic arguments); their `::` segments belong to the path, while the `.` after the trait starts the associated-type list. An omitted `in ContextPath` clause defaults the rewrite target to `Self`; because `in` is a reserved keyword it can never appear inside `TypeItems`, so it marks the context clause unambiguously. In each `UseTypeIdent`, the leading `IDENTIFIER` is the associated type's own name, an `as` clause gives it a local alias to write in the signature, and an `= Type` clause pins it with an equality bound (accepted on `#[cgp_fn]` and `#[cgp_impl]`, rejected on `#[cgp_component]`).
 
 ## Expansion
 
-`#[use_type]` runs before the rest of the macro in three steps: it first *grounds* each import's context (resolving an `@Context` that names another import into a fully-qualified path), then substitutes every matching bare type identifier with the qualified associated type in one pass, and finally adds the trait as a supertrait or bound. Consider this `#[cgp_fn]` using the single-import form:
+`#[use_type]` runs before the rest of the macro in three steps: it first *grounds* each import's context (resolving an `in Context` that names another import into a fully-qualified path), then substitutes every matching bare type identifier with the qualified associated type in one pass, and finally adds the trait as a supertrait or bound. Consider this `#[cgp_fn]` using the single-import form:
 
 ```rust
 pub trait HasScalarType {
@@ -116,11 +116,11 @@ pub trait CanCalculateArea: HasScalarType {
 }
 ```
 
-The supertrait is added only when the rewrite target is `Self`. With the foreign-type `@` form the target is a named type, so the bound cannot be a supertrait of `Self`; instead the macro adds a plain `Context: Trait` predicate wherever the substituted `<Context as Trait>::Assoc` paths appear. On `#[cgp_fn]` and `#[cgp_impl]` that predicate lands in the impl's `where` clause, and on `#[cgp_component]` and `#[cgp_fn]` it is *also* added to the generated trait's own `where` clause — because the trait's signatures now name `<Context as Trait>::Assoc` and would not be well-formed without it. This means a component using the `@` form no longer has to declare the parameter's bound by hand; writing `pub trait CanCalculateArea<Types>` is enough, and `Types: HasScalarType` is supplied for you. (The type-equality `= T` pin, by contrast, stays impl-side and is never added to the trait.) This `#[cgp_fn]` imports `Scalar` from a generic parameter `Types`:
+The supertrait is added only when the rewrite target is `Self`. With the foreign-type `in Context` form the target is a named type, so the bound cannot be a supertrait of `Self`; instead the macro adds a plain `Context: Trait` predicate wherever the substituted `<Context as Trait>::Assoc` paths appear. On `#[cgp_fn]` and `#[cgp_impl]` that predicate lands in the impl's `where` clause, and on `#[cgp_component]` and `#[cgp_fn]` it is *also* added to the generated trait's own `where` clause — because the trait's signatures now name `<Context as Trait>::Assoc` and would not be well-formed without it. This means a component using the `in` form no longer has to declare the parameter's bound by hand; writing `pub trait CanCalculateArea<Types>` is enough, and `Types: HasScalarType` is supplied for you. (The type-equality `= T` pin, by contrast, stays impl-side and is never added to the trait.) This `#[cgp_fn]` imports `Scalar` from a generic parameter `Types`:
 
 ```rust
 #[cgp_fn]
-#[use_type(@Types.HasScalarType.Scalar)]
+#[use_type(HasScalarType.Scalar in Types)]
 pub fn rectangle_area<Types>(
     &self,
     #[implicit] width: Scalar,
@@ -205,8 +205,8 @@ The provider's `#[use_type]` adds `Self: HasScalarType` to its `where` clause an
 
 ## Source
 
-- Parsing: the attribute is parsed by `UseTypeAttribute` in [crates/macros/cgp-macro-core/src/types/attributes/use_type/attribute.rs](../../../crates/macros/cgp-macro-core/src/types/attributes/use_type/attribute.rs), which reads the context and trait as `PathWithTypeArgs` separated by `.`; per-type entries (`as` alias and `=` equality) are in `ident.rs`.
-- Three-step transform (ground contexts, substitute, add bounds): lives in `attributes.rs`. `grounded_specs` resolves each `@Context` that names another import into a fully-qualified path; `transform_item_trait` then substitutes and adds bounds to a trait (a supertrait for a `Self` import, a `where` bound for a foreign `@` import — this is `#[cgp_component]` and `#[cgp_fn]`), and `transform_item_impl` does the same for an impl's `where` clause. Both call `forbid_duplicate_aliases` first to reject a shared identifier or alias, and the impl-side type-equality predicates are derived in `type_predicates.rs`.
+- Parsing: the attribute is parsed by `UseTypeAttribute` in [crates/macros/cgp-macro-core/src/types/attributes/use_type/attribute.rs](../../../crates/macros/cgp-macro-core/src/types/attributes/use_type/attribute.rs), which reads the trait as a `PathWithTypeArgs`, the associated-type list after the `.`, and an optional `in Context` (also a `PathWithTypeArgs`); a leading `@` is rejected with a migration hint pointing at the `in` form. Per-type entries (`as` alias and `=` equality) are in `ident.rs`.
+- Three-step transform (ground contexts, substitute, add bounds): lives in `attributes.rs`. `grounded_specs` resolves each `in Context` that names another import into a fully-qualified path; `transform_item_trait` then substitutes and adds bounds to a trait (a supertrait for a `Self` import, a `where` bound for a foreign `in` import — this is `#[cgp_component]` and `#[cgp_fn]`), and `transform_item_impl` does the same for an impl's `where` clause. Both call `forbid_duplicate_aliases` first to reject a shared identifier or alias, and the impl-side type-equality predicates are derived in `type_predicates.rs`.
 - Identifier substitution: the `SubstituteAbstractTypes` `VisitMut` pass in [crates/macros/cgp-macro-core/src/visitors/substitute_abstract_type.rs](../../../crates/macros/cgp-macro-core/src/visitors/substitute_abstract_type.rs), which holds every grounded spec at once and rewrites single-segment, argument-free type paths in a single traversal.
 - `= ...` rejection for component traits: enforced in `types/attributes/cgp_component_attributes.rs`.
 - Implementation document (the internal AST types, the two-phase transform, and the index of tests and snapshots): [implementation/asts/attributes/use_type.md](../../implementation/asts/attributes/use_type.md).

@@ -1,4 +1,4 @@
-//! Acceptable failure: a foreign `#[use_type(@Types.HasScalarType.Scalar)]` import
+//! Acceptable failure: a foreign `#[use_type(HasScalarType.Scalar in Types)]` import
 //! adds `Types: HasScalarType` to the generated trait, so naming the component for
 //! a `Types` that does not implement `HasScalarType` is rejected by the compiler.
 //!
@@ -18,7 +18,7 @@ pub trait HasScalarType {
 }
 
 #[cgp_component(AreaCalculator)]
-#[use_type(@Types.HasScalarType.Scalar)]
+#[use_type(HasScalarType.Scalar in Types)]
 pub trait CanCalculateArea<Types> {
     fn area(&self) -> Scalar;
 }

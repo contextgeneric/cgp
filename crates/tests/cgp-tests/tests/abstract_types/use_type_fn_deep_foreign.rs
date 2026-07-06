@@ -1,8 +1,8 @@
 //! `#[use_type]` chaining three foreign imports so a context is resolved through
-//! two hops: `#[use_type(HasA.A, @A.HasB.B, @B.HasC.C)]`.
+//! two hops: `#[use_type(HasA.A, HasB.B in A, HasC.C in B)]`.
 //!
-//! `HasA.A` imports `A` from `Self`, `@A.HasB.B` imports `B` from that `A`, and
-//! `@B.HasC.C` imports `C` from that `B`. Grounding each spec's context up front
+//! `HasA.A` imports `A` from `Self`, `HasB.B in A` imports `B` from that `A`, and
+//! `HasC.C in B` imports `C` from that `B`. Grounding each spec's context up front
 //! resolves the chain fully: `A` grounds to `<Self as HasA>::A`, `B` to
 //! `<<Self as HasA>::A as HasB>::B`, so the bare `C` rewrites to the three-hop
 //! `<<<Self as HasA>::A as HasB>::B as HasC>::C`, and the appended bounds name the
@@ -35,7 +35,7 @@ pub trait HasC {
 
 snapshot_cgp_fn! {
     #[cgp_fn]
-    #[use_type(HasA.A, @A.HasB.B, @B.HasC.C)]
+    #[use_type(HasA.A, HasB.B in A, HasC.C in B)]
     pub fn deep(&self) -> C {
         todo!()
     }

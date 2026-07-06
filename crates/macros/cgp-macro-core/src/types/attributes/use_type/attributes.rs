@@ -19,8 +19,8 @@ impl UseTypeAttributes {
     /// used, so that both the body substitution and the appended bounds agree on
     /// one grounded context.
     ///
-    /// A `@Context` prefix whose `Context` is itself imported by another spec —
-    /// as in `#[use_type(HasTypes.Types, @Types.HasScalarType.Scalar)]` — is
+    /// An `in Context` suffix whose `Context` is itself imported by another spec —
+    /// as in `#[use_type(HasTypes.Types, HasScalarType.Scalar in Types)]` — is
     /// rewritten from the bare alias `Types` to `<Self as HasTypes>::Types`.
     /// Contexts that name a real generic parameter or `Self` are left untouched.
     /// The pass iterates to a fixpoint so a chain of links resolves fully; each
@@ -71,7 +71,7 @@ impl UseTypeAttributes {
                     .supertraits
                     .push(parse_internal(trait_path.to_token_stream())?);
             } else {
-                // A foreign `@Context` import rewrites signatures to name
+                // A foreign `in Context` import rewrites signatures to name
                 // `<Context as Trait>::Assoc`, so the trait must require
                 // `Context: Trait` for those paths to be well-formed. Without
                 // this bound the constraint would be silently dropped, leaving a

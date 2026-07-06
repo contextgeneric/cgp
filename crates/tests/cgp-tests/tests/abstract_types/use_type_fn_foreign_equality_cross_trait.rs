@@ -1,8 +1,8 @@
 //! `#[use_type]` reaching through a *nested foreign* associated type across traits
-//! in `#[cgp_fn]`: `#[use_type(HasBarType.Bar, @Bar.HasFooType.Foo)]` and the
-//! equality form `@Bar::HasFooType::{Foo as BarFoo = Foo}`.
+//! in `#[cgp_fn]`: `#[use_type(HasBarType.Bar, HasFooType.Foo in Bar)]` and the
+//! equality form `HasFooType.{Foo as BarFoo = Foo} in Bar`.
 //!
-//! Here `HasBarType::Bar` itself implements `HasFooType`, so `@Bar::HasFooType::Foo`
+//! Here `HasBarType::Bar` itself implements `HasFooType`, so `HasFooType.Foo in Bar`
 //! resolves the alias to the two-hop `<<Self as HasBarType>::Bar as HasFooType>::Foo`
 //! and adds `<Self as HasBarType>::Bar: HasFooType` to the impl. The final function
 //! equates that nested type to `Self`'s own `Foo` (`{Foo as BarFoo = Foo}`),
@@ -49,7 +49,7 @@ snapshot_cgp_fn! {
 
 snapshot_cgp_fn! {
     #[cgp_fn]
-    #[use_type(HasBarType.Bar, @Bar.HasFooType.Foo)]
+    #[use_type(HasBarType.Bar, HasFooType.Foo in Bar)]
     pub fn do_bar(&self) -> Foo {
         todo!()
     }
@@ -80,7 +80,7 @@ snapshot_cgp_fn! {
     #[use_type(
         HasFooType.Foo,
         HasBarType.Bar,
-        @Bar.HasFooType.{Foo as BarFoo = Foo},
+        HasFooType.{Foo as BarFoo = Foo} in Bar,
     )]
     #[uses(DoFoo, DoBar)]
     fn return_foo_or_bar(&self, flag: bool, #[implicit] foo: &Foo, #[implicit] bar: &BarFoo) -> Foo {

@@ -32,10 +32,10 @@ note: required for `NoScalar` to implement `HasScalarType`
 16 | pub trait HasScalarType {
    |           ^^^^^^^^^^^^^
 note: required by a bound in `CanCalculateArea`
-  --> tests/acceptable/cgp_component/use_type_foreign_unsatisfied.rs:21:19
+  --> tests/acceptable/cgp_component/use_type_foreign_unsatisfied.rs:21:12
    |
-21 | #[use_type(@Types.HasScalarType.Scalar)]
-   |                   ^^^^^^^^^^^^^ required by this bound in `CanCalculateArea`
+21 | #[use_type(HasScalarType.Scalar in Types)]
+   |            ^^^^^^^^^^^^^ required by this bound in `CanCalculateArea`
 22 | pub trait CanCalculateArea<Types> {
    |           ---------------- required by a bound in this trait
    = note: this error originates in the attribute macro `cgp_type` (in Nightly builds, run with -Z macro-backtrace for more info)
@@ -74,10 +74,10 @@ note: required for `NoScalar` to implement `HasScalarType`
 16 | pub trait HasScalarType {
    |           ^^^^^^^^^^^^^
 note: required by a bound in `CanCalculateArea`
-  --> tests/acceptable/cgp_component/use_type_foreign_unsatisfied.rs:21:19
+  --> tests/acceptable/cgp_component/use_type_foreign_unsatisfied.rs:21:12
    |
-21 | #[use_type(@Types.HasScalarType.Scalar)]
-   |                   ^^^^^^^^^^^^^ required by this bound in `CanCalculateArea`
+21 | #[use_type(HasScalarType.Scalar in Types)]
+   |            ^^^^^^^^^^^^^ required by this bound in `CanCalculateArea`
 22 | pub trait CanCalculateArea<Types> {
    |           ---------------- required by a bound in this trait
    = note: this error originates in the attribute macro `cgp_type` (in Nightly builds, run with -Z macro-backtrace for more info)
