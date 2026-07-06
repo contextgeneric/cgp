@@ -98,4 +98,4 @@ The wiring reads in two layers. `MyApp` delegates `AreaCalculatorComponent` to `
 - The struct is defined in [crates/core/cgp-component/src/providers/use_delegate.rs](../../../crates/core/cgp-component/src/providers/use_delegate.rs).
 - The `UseDelegate` provider impl is generated from the `#[derive_delegate]` directive parsed in [crates/macros/cgp-macro-core/src/types/attributes/](../../../crates/macros/cgp-macro-core/src/types/attributes/) and emitted by the `#[cgp_component]` pipeline in [crates/macros/cgp-macro-core/src/types/cgp_component/](../../../crates/macros/cgp-macro-core/src/types/cgp_component/).
 - The nested-table wiring is handled by `delegate_components!` in [crates/macros/cgp-macro-core/src/types/delegate_component/](../../../crates/macros/cgp-macro-core/src/types/delegate_component/).
-- For how it is generated and the index of tests, see the implementation document [implementation/asts/attributes](../../implementation/asts/attributes.md).
+- For how it is generated and the index of tests, see the implementation document [implementation/asts/attributes/derive_delegate.md](../../implementation/asts/attributes/derive_delegate.md).

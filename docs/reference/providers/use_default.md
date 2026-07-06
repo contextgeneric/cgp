@@ -108,4 +108,4 @@ delegate_components! {
 ## Source
 
 - The struct is defined in [crates/core/cgp-component/src/providers/use_default.rs](../../../crates/core/cgp-component/src/providers/use_default.rs) and re-exported in [crates/core/cgp-component/src/providers/mod.rs](../../../crates/core/cgp-component/src/providers/mod.rs); the file contains only the bare struct, with no macro-generated impls.
-- For how it is generated and the index of tests, see the implementation document [implementation/asts/attributes](../../implementation/asts/attributes.md).
+- For how it is generated and the index of tests, see the implementation document [implementation/asts/attributes/default_impl.md](../../implementation/asts/attributes/default_impl.md).

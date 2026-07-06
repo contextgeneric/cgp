@@ -68,7 +68,7 @@ One document per evaluation stack, grouped by the macro that owns it:
 - [delegate_component](asts/delegate_component.md), [check_components](asts/check_components.md), [namespace](asts/namespace.md).
 - [cgp_data](asts/cgp_data.md) — the shared extensible-data derive stack.
 - [product](asts/product.md), [sum](asts/sum.md), [path](asts/path.md), [symbol](asts/symbol.md) — the type-level construction stacks.
-- [attributes](asts/attributes.md) — the modifier-attribute AST types (`#[uses]`, `#[use_type]`, `#[use_provider]`, `#[extend]`, `#[extend_where]`, `#[derive_delegate]`, `#[default_impl]`).
+- [attributes/](asts/attributes/README.md) — the modifier-attribute AST stacks, one page per modifier: [`#[uses]`](asts/attributes/uses.md), [`#[use_type]`](asts/attributes/use_type.md), [`#[use_provider]`](asts/attributes/use_provider.md), [`#[extend]`](asts/attributes/extend.md), [`#[extend_where]`](asts/attributes/extend_where.md), [`#[derive_delegate]`](asts/attributes/derive_delegate.md), and [`#[default_impl]`](asts/attributes/default_impl.md).
 
 ### Functions — [functions/](functions/)
 
