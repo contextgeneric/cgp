@@ -15,7 +15,11 @@
 //! or wire the override on a path the namespace never registers. A namespace that
 //! registers the leaf path leaves nothing for the context to override there.
 //!
-//! See docs/errors/wiring/conflicting-wiring.md.
+//! This is the context-level (join) shape of the override-conflict class; contrast
+//! the namespace-level (inheritance) shape in inherited_override_conflict.rs, where
+//! a child namespace tries to override an entry its parent binds.
+//!
+//! See docs/errors/wiring/namespace-override-conflict.md.
 
 use cgp::prelude::*;
 

@@ -36,13 +36,17 @@ Because of this, **the documents here never record verbatim error output.** Repr
 
 ## Organization
 
-The catalog is divided into three subdirectories by the axis above, so a reader lands in the right class before decoding any type. Each document is registered in the catalog below in the same change that adds it.
+The catalog is divided into four subdirectories, so a reader lands in the right class before decoding any type. The first three follow the hidden-versus-surfaced axis above; the fourth holds a failure that arises earlier, in the macro's lowering itself. Each document is registered in the catalog below in the same change that adds it.
 
 The [hidden/](hidden/) directory holds the classes where the compiler **suppresses** the root cause — the errors a user meets by exercising broken wiring through a consumer trait rather than a check. These are isolated precisely because their diagnostics report nothing about the true cause, so a reader must know not to look for one.
 
 The [checks/](checks/) directory holds the classes where a check trait **surfaces** the root cause through `IsProviderFor`, and the classes that are dominated by the *volume* of a surfaced cascade rather than by any single message.
 
-The [wiring/](wiring/) directory holds the whole-program **structural** failures — coherence conflicts, orphan-rule violations, wiring cycles, and unconstrained generics — where the compiler reports a definite error code (`E0119`, `E0210`, `E0275`, `E0207`) and the difficulty is mapping that code back to the wiring mistake rather than a hidden or cascading cause.
+The [wiring/](wiring/) directory holds the whole-program **structural** failures — coherence conflicts, orphan-rule violations, wiring cycles, unconstrained generics, and the namespace-specific coherence collisions — where the compiler reports a definite error code (`E0119`, `E0210`, `E0275`, `E0207`) and the difficulty is mapping that code back to the wiring mistake rather than a hidden or cascading cause. Because the catalog groups by usage as well as by error code, the namespace collisions live in their own documents even where they share a code (`E0119`) with a plain duplicate declaration.
+
+The [lowering/](lowering/) directory holds the classes where the failure is not in the wiring at all but in what a macro *lowered* the user's input into — an accepted shorthand or type combination expanded into Rust that is ill-formed on its own terms (an unsized type, for instance), so the compiler rejects the generated code rather than any wiring decision.
+
+A fifth directory, [error_codes/](error_codes/), is a supporting *reference* rather than a class of error: one entry per `rustc` error code the catalog surfaces (`E0119`, `E0117`, `E0207`, `E0210`, `E0275`, `E0277`, `E0428`, `E0599`), stating what the code means in plain Rust, the rule behind it, and the RFC or issue that defines it, grounded in the official documentation. The class documents cite these entries in place of the raw `doc.rust-lang.org` URLs, so the Rust-language facts live in one verified place and the class docs carry only the CGP-specific anatomy.
 
 ## Catalog
 
@@ -54,17 +58,28 @@ Hidden-cause errors — [hidden/](hidden/):
 
 Surfaced and cascading errors — [checks/](checks/):
 
-- [Check-trait failure (surfaced)](checks/check-trait-failure.md) — the same unmet dependency forced through `check_components!`, where `IsProviderFor` surfaces the concrete missing bound at the wiring site.
+- [Check-trait failure (surfaced)](checks/check-trait-failure.md) — the same unmet dependency forced through `check_components!`, where `IsProviderFor` surfaces the concrete missing bound (a `HasField` or CGP capability) at the wiring site.
+- [Unsatisfied ordinary trait bound (surfaced)](checks/ordinary-trait-bound.md) — an impl-side dependency that is an *ordinary* Rust trait (`Eq`, `Clone`, …) on an abstract type or impl generic, unmet by the concrete type the context supplies; a check surfaces the ordinary bound (`f64: Eq`) as the primary `E0277`.
 - [Verbose dependency cascade](checks/verbose-cascade.md) — one deep mistake reported at every transitively dependent provider, and how to locate the single root cause among the repeats.
 - [Unregistered namespace path](checks/unregistered-namespace-path.md) — a component routed through a joined namespace to a path that no entry ever binds, so the *lookup* finds no delegate; a check surfaces it as an `E0277` on the path-keyed `DefaultNamespace`/`DelegateComponent` bound.
 
 Structural wiring errors — [wiring/](wiring/):
 
-- [Conflicting wiring](wiring/conflicting-wiring.md) — the same key or name wired twice, producing coherence (`E0119`) or duplicate-definition (`E0428`) errors.
-- [Orphan-rule violation](wiring/orphan-rule.md) — a generated impl for a foreign trait and a fully foreign type (`E0210`, or `E0117`), as when a prefixed `#[default_impl]` is registered from the wrong crate.
+- [Conflicting wiring](wiring/conflicting-wiring.md) — the same key or name wired or declared twice, producing coherence (`E0119`) or duplicate-definition (`E0428`) errors.
+- [Overlapping namespace forwarding](wiring/namespace-forwarding-conflict.md) — two blanket forwarding impls that each cover every key (joining two namespaces, or a namespace join plus a bare-key `for` loop), a fully-generic `E0119` with no downstream note.
+- [Namespace override conflict](wiring/namespace-override-conflict.md) — a specific entry that overrides a key a namespace already claims (a context re-wiring a registered path, or a child namespace redefining an inherited entry), an `E0119` on a concrete key.
+- [Orphan-rule violation](wiring/orphan-rule.md) — a generated impl registering into a foreign namespace with no local type (`E0210`, or `E0117`), as when a `#[default_impl]` or a `cgp_namespace!` re-open targets a namespace and key the crate does not own.
 - [Wiring cycle](wiring/wiring-cycle.md) — a delegation that chases its own tail: an `E0275` overflow when forced through a check, but the hidden `E0599` when reached by a plain method call.
 - [Namespace inheritance cycle](wiring/namespace-inheritance-cycle.md) — namespaces whose parent chain loops (`A: B`, `B: A`, or `A: A`), an `E0275` overflow caught *eagerly at the `cgp_namespace!` definitions* rather than lazily at a use site.
 - [Unconstrained generic](wiring/unconstrained-generic.md) — a per-entry generic that never reaches the key, leaving an impl parameter unconstrained (`E0207`).
+
+Lowering errors — [lowering/](lowering/):
+
+- [Ill-formed generated type](lowering/ill-formed-generated-type.md) — a macro lowers an unsupported field- or argument-type shorthand (such as `Option<&[T]>`) into a generated bound naming an ill-formed, unsized type, which the compiler rejects with the `E0277` `Sized` form.
+
+Error-code reference — [error_codes/](error_codes/):
+
+- One entry per `rustc` code the catalog surfaces — [`E0119`](error_codes/e0119.md), [`E0117`](error_codes/e0117.md), [`E0207`](error_codes/e0207.md), [`E0210`](error_codes/e0210.md), [`E0275`](error_codes/e0275.md), [`E0277`](error_codes/e0277.md), [`E0428`](error_codes/e0428.md), [`E0599`](error_codes/e0599.md) — each recording what the code means in plain Rust, the rule behind it, and where CGP produces it. See the [error-code reference index](error_codes/README.md).
 
 ## Relationship to the rest of the knowledge base
 

@@ -14,10 +14,11 @@
 //! than on every key. CGP lowers both blanket impls faithfully; only the whole
 //! program reveals the overlap, so it defers to the compiler.
 //!
-//! This is the blanket-vs-blanket shape of the conflicting-wiring class; contrast
-//! the specific-key override in override_registered_path.rs.
+//! This is the blanket-vs-blanket shape of the overlapping-forwarding class,
+//! alongside two_namespaces_joined.rs (two `namespace` joins on one context);
+//! contrast the specific-vs-blanket override in override_registered_path.rs.
 //!
-//! See docs/errors/wiring/conflicting-wiring.md.
+//! See docs/errors/wiring/namespace-forwarding-conflict.md.
 
 use cgp::prelude::*;
 

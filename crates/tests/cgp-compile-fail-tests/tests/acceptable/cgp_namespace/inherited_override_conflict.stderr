@@ -1,0 +1,7 @@
+error[E0119]: conflicting implementations of trait `ChildNs<_>` for type `GreeterComponent`
+  --> tests/acceptable/cgp_namespace/inherited_override_conflict.rs:55:9
+   |
+54 |     new ChildNs: BaseNs {
+   |                  ------ first implementation here
+55 |         GreeterComponent: GreetBye,
+   |         ^^^^^^^^^^^^^^^^ conflicting implementation for `GreeterComponent`

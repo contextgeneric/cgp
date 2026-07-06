@@ -1,0 +1,15 @@
+error[E0119]: conflicting implementations of trait `IsProviderFor<_, _, _>` for type `App`
+  --> tests/acceptable/cgp_namespace/two_namespaces_joined.rs:53:19
+   |
+52 |         namespace NamespaceA;
+   |                   ---------- first implementation here
+53 |         namespace NamespaceB;
+   |                   ^^^^^^^^^^ conflicting implementation for `App`
+
+error[E0119]: conflicting implementations of trait `DelegateComponent<_>` for type `App`
+  --> tests/acceptable/cgp_namespace/two_namespaces_joined.rs:53:19
+   |
+52 |         namespace NamespaceA;
+   |                   ---------- first implementation here
+53 |         namespace NamespaceB;
+   |                   ^^^^^^^^^^ conflicting implementation for `App`

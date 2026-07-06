@@ -4,7 +4,7 @@ A provider is wired onto a context that cannot satisfy the provider's impl-side 
 
 ## What triggers it
 
-This class arises whenever [wiring](../../reference/macros/delegate_components.md) is lazy and the mistake is exercised through the consumer trait rather than a check. A provider carries an impl-side dependency in its `where` clause; a context is wired to that provider but does not meet the dependency; and because `delegate_components!` records the entry without verifying the provider's transitive requirements, the wiring is accepted. The failure appears only when the context's consumer-trait method is finally called.
+This class arises whenever [wiring](../../reference/macros/delegate_components.md) is lazy and the mistake is exercised through the consumer trait rather than a check. A provider carries an impl-side dependency in its `where` clause; a context is wired to that provider but does not meet the dependency; and because `delegate_components!` records the entry without verifying the provider's transitive requirements, the wiring is accepted. The failure appears only when the context's consumer-trait method is finally called. The dependency's leaf can be any bound the provider names — a missing `HasField`, an unmet CGP capability like `HasName`, or an [ordinary Rust trait bound](../checks/ordinary-trait-bound.md) such as `Scalar: Eq` on an abstract type — and the hidden form suppresses it identically in every case, because the compiler's method-probe heuristic drops the nested bound without inspecting what it is.
 
 ```rust
 #[cgp_component(Greeter)]
@@ -83,10 +83,12 @@ A `cargo-cgp`-style post-processor **cannot extract the root cause from this dia
 ## Backing fixtures
 
 - [acceptable/delegate_components/missing_dependency.rs](../../../crates/tests/cgp-compile-fail-tests/tests/acceptable/delegate_components/missing_dependency.rs) — `GreetHello` requires `Self: HasName`, `Person` lacks the `name` field, and the method is called directly; its `.stderr` pins the `E0599` shape that names `Person: Greeter<Person>` without descending to the missing field. Its checked counterpart, [acceptable/check_components/missing_dependency.rs](../../../crates/tests/cgp-compile-fail-tests/tests/acceptable/check_components/missing_dependency.rs), pins the surfaced `E0277` for the same mistake and belongs to the [check-trait failure](../checks/check-trait-failure.md) class.
+- [acceptable/delegate_components/ordinary_bound_unsatisfied.rs](../../../crates/tests/cgp-compile-fail-tests/tests/acceptable/delegate_components/ordinary_bound_unsatisfied.rs) — the same hidden `E0599` shape where the suppressed leaf is an *ordinary* trait bound (`Scalar: Eq`, with `f64` wired) rather than a `HasField`, confirming the heuristic drops the nested bound regardless of its kind. Its surfaced counterpart is the [unsatisfied ordinary trait bound](../checks/ordinary-trait-bound.md) class.
 
 ## Related
 
 - [Check-trait failure (surfaced)](../checks/check-trait-failure.md) — the same unmet dependency forced through a check, where the cause *is* reported; the two are the two halves of one phenomenon.
+- [Unsatisfied ordinary trait bound (surfaced)](../checks/ordinary-trait-bound.md) — the surfaced class for the ordinary-trait-bound flavor of this hidden failure.
 - [Debugging CGP compile errors](../../guides/debugging.md) — the playbook: read the error's shape, then move the error to the wiring site with a check to surface a hidden cause.
 - [`IsProviderFor`](../../reference/traits/is_provider_for.md) and [`DelegateComponent`](../../reference/traits/delegate_component.md) — the traits every wiring error is ultimately about; `IsProviderFor` is the supertrait a check uses to defeat the suppression heuristic.
 - [`check_components!`](../../reference/macros/check_components.md) and the [check-traits concept](../../concepts/check-traits.md) — why wiring is lazy and how a check forces a readable error at the wiring site.

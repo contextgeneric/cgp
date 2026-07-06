@@ -9,8 +9,8 @@
 //! given a bespoke rule. The same boundary holds for `#[cgp_getter]` and for a
 //! `#[cgp_fn]` `#[implicit]` argument, since all three share `parse_field_type`.
 //!
-//! See docs/implementation/entrypoints/cgp_auto_getter.md (Behavior and corner
-//! cases).
+//! See docs/errors/lowering/ill-formed-generated-type.md; the parser detail is in
+//! docs/implementation/entrypoints/cgp_auto_getter.md (Behavior and corner cases).
 
 use cgp::prelude::*;
 

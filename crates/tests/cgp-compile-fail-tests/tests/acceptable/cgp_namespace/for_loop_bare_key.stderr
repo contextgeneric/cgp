@@ -1,17 +1,17 @@
 error[E0119]: conflicting implementations of trait `IsProviderFor<_, _, _>` for type `App`
-  --> tests/acceptable/cgp_namespace/for_loop_bare_key.rs:49:13
+  --> tests/acceptable/cgp_namespace/for_loop_bare_key.rs:50:13
    |
-46 |         namespace DefaultNamespace;
+47 |         namespace DefaultNamespace;
    |                   ---------------- first implementation here
 ...
-49 |             Key: Value,
+50 |             Key: Value,
    |             ^^^ conflicting implementation for `App`
 
 error[E0119]: conflicting implementations of trait `DelegateComponent<_>` for type `App`
-  --> tests/acceptable/cgp_namespace/for_loop_bare_key.rs:49:13
+  --> tests/acceptable/cgp_namespace/for_loop_bare_key.rs:50:13
    |
-46 |         namespace DefaultNamespace;
+47 |         namespace DefaultNamespace;
    |                   ---------------- first implementation here
 ...
-49 |             Key: Value,
+50 |             Key: Value,
    |             ^^^ conflicting implementation for `App`

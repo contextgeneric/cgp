@@ -73,6 +73,7 @@ For a `cargo-cgp`-style post-processor, the fact to extract as the headline is t
 ## Related
 
 - [Unsatisfied dependency (hidden)](../hidden/unsatisfied-dependency.md) — the hidden counterpart; the two are the two halves of one phenomenon, and promoting the hidden one yields this class.
+- [Unsatisfied ordinary trait bound (surfaced)](ordinary-trait-bound.md) — the sibling surfaced class whose leaf is an ordinary Rust trait (`Eq`, `Clone`) on a concrete type rather than a CGP capability like `HasField`; the leaf's kind changes the `help:` note and the position of the cause.
 - [Verbose dependency cascade](verbose-cascade.md) — this diagnostic multiplied when many providers depend transitively on one leaf.
 - [`check_components!`](../../reference/macros/check_components.md), [`CanUseComponent`](../../reference/traits/can_use_component.md), and [`IsProviderFor`](../../reference/traits/is_provider_for.md) — the macro and traits this class is expressed through.
 - [Debugging CGP compile errors](../../guides/debugging.md) and the [check-traits concept](../../concepts/check-traits.md) — why the check moves the error here and how to read it.
