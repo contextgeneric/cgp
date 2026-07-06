@@ -33,6 +33,8 @@ Both attributes desugar to the same `where` predicates they replace. When a prov
 
 `#[uses(...)]` accepts any bound a `where` clause allows, including one with associated-type equality, though the simple `Trait<Params>` form is the idiomatic one. One case moves elsewhere: when a bound pins an *abstract type* — `Self: HasErrorType<Error = AppError>` — express it with the [`#[use_type]` equality form](importing-abstract-types.md) rather than spelling the equality in `#[uses]` or a hand-written `where`. Only equality on a trait that is not a `#[use_type]` import (`Iterator<Item = u8>`) stays an explicit `where` clause, where it reads more clearly than crammed into an import-shaped attribute.
 
+When a `#[uses]`-imported trait carries an abstract-type component as a *supertrait*, its associated type reaches the definition transitively — but prefer to also import that type explicitly with [`#[use_type]`](importing-abstract-types.md) rather than lean on the transitive `Self::Assoc`. If `CanCreateFoo` has `HasFooType` as a supertrait, write `#[uses(CanCreateFoo)]` *and* `#[use_type(HasFooType.Foo)]` so the signature names the bare `Foo`, with `#[uses]` declaring the capability dependency and `#[use_type]` declaring the type dependency — both visible, rather than the type riding in silently on the capability. See [importing abstract types](importing-abstract-types.md#re-import-a-type-that-arrives-through-a-supertrait).
+
 ## Related guides
 
 - [Writing providers](writing-providers.md) — the `#[cgp_impl]` header these attributes attach to.

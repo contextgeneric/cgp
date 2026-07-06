@@ -213,6 +213,18 @@ pub trait HasName {
 
 A context gains the getter just by deriving `HasField` with a matching field — `person.name()` resolves through the blanket impl with no wiring. The cost of that simplicity is rigidity: the field name *must* equal the method name, and there is no way to swap the implementation. When you need either, `#[cgp_getter]` provides it — but that is an advanced tool, not a routine next step.
 
+When the getter's return type names an abstract type that lives on a *foreign* type — a generic parameter of the trait rather than `Self` — prefer importing it with [`#[use_type]`](abstract-types.md)'s `in Context` clause over a hand-written `where` bound and a qualified path. Write
+
+```rust
+#[cgp_auto_getter]
+#[use_type(HasUserIdType.UserId in App)]
+pub trait HasLoggedInUser<App> {
+    fn logged_in_user(&self) -> &Option<UserId>;
+}
+```
+
+rather than declaring `where App: HasUserIdType` and returning `&Option<App::UserId>`. The `in App` clause supplies `App: HasUserIdType` on the generated trait and rewrites the bare `UserId` to `<App as HasUserIdType>::UserId`, so the plain `<App>` parameter and the bare alias are enough — the same benefit `#[use_type]` gives on `Self`, extended to a parameter.
+
 ## Wireable getters: `#[cgp_getter]` and `UseField`
 
 `#[cgp_getter]` defines a getter as a full CGP [component](components.md) instead of a blanket impl, so the field name can differ from the method name and the getter can be swapped per context through [wiring](wiring.md). It is a specialized, advanced tool: reserve it for when a context genuinely needs full control over which field a getter reads from, and prefer an implicit argument or `#[cgp_auto_getter]` for the ordinary case of a same-named field. It accepts the same getter-method forms as `#[cgp_auto_getter]`, but because it is an extension of `#[cgp_component]` it needs a provider trait name. The default derives one from the trait name by stripping a leading `Has` and appending `Getter`, so `HasName` yields the provider `NameGetter` and the component marker `NameGetterComponent`; pass an argument like `#[cgp_getter(GetName)]` to override it.

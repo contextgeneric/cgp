@@ -39,9 +39,14 @@ Correct the imported name so it matches an associated type the trait declares �
 
 This class needs no special tool handling beyond recognizing its origin. A `cargo-cgp`-style post-processor should pass the `E0576` through essentially unchanged — the caret and the `help:` already point at the fix — and at most annotate that the name was introduced by a `#[use_type]` import so a user who does not see the connection between the signature alias and the attribute can find it. There is nothing to suppress and no hidden cause to recover.
 
+## A sibling: the unresolved *context*
+
+The same textual-substitution mechanism produces a related failure when the part that cannot be resolved is the `in Context`, not the associated-type name. Two nested imports whose `in Context` clauses reference each other — `#[use_type(HasA.A in B, HasB.B in A)]` — form a cycle with no valid grounding order. Grounding iterates to a fixpoint and deliberately stops rather than loops, so the context aliases are never resolved and the rewrite leaves the bare `A` and `B` in type position. The compiler reports this as [`E0425`](https://doc.rust-lang.org/error_codes/E0425.html) "cannot find type" — a *type*, not an associated type, so a different code from the misnamed-name case above — with the caret on the unresolved alias the user wrote in the attribute. The fix is the same in spirit: make the imports form an acyclic chain (any acyclic order grounds fine). CGP could detect the cycle locally and reject it at macro time, but currently lowers it faithfully and defers to the compiler.
+
 ## Backing fixtures
 
 - [acceptable/cgp_fn/use_type_unknown_assoc.rs](../../../crates/tests/cgp-compile-fail-tests/tests/acceptable/cgp_fn/use_type_unknown_assoc.rs) — a `#[cgp_fn]` importing `HasScalarType.Scalr` where the trait declares `Scalar`; its `.stderr` pins the `E0576` with the caret on the `Scalr` in the signature and the "similarly named associated type" `help:`, doubling as a guard that the substitution preserves the user's identifier span.
+- [acceptable/cgp_fn/use_type_cyclic_context.rs](../../../crates/tests/cgp-compile-fail-tests/tests/acceptable/cgp_fn/use_type_cyclic_context.rs) — the unresolved-*context* sibling: two `in Context` clauses referencing each other, whose `.stderr` pins the `E0425` "cannot find type" with the caret on the unresolved `in` alias.
 
 ## Related
 

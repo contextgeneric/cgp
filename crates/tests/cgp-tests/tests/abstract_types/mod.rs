@@ -34,3 +34,6 @@ pub mod use_type_fn_foreign;
 pub mod use_type_fn_foreign_equality;
 pub mod use_type_fn_foreign_equality_cross_trait;
 pub mod use_type_fn_nested_foreign;
+pub mod use_type_fn_reverse_order;
+pub mod use_type_foreign_getter;
+pub mod use_type_uses_supertrait;

@@ -1,5 +1,5 @@
 use syn::parse::{Parse, ParseStream};
-use syn::token::{At, Brace, Comma, Dot, In};
+use syn::token::{Brace, Comma, Dot, In};
 use syn::{Ident, Type};
 
 use crate::parse_internal;
@@ -32,16 +32,6 @@ impl UseTypeAttribute {
 
 impl Parse for UseTypeAttribute {
     fn parse(input: ParseStream) -> syn::Result<Self> {
-        // The `@Context.` prefix form was removed in favor of the `... in Context`
-        // suffix form; reject a leading `@` with a migration hint rather than
-        // letting it fail deep inside path parsing.
-        if input.peek(At) {
-            return Err(input.error(
-                "the `@Context.` prefix form was removed; write the foreign context \
-                 as a trailing `in Context` instead, e.g. `HasScalarType.Scalar in Types`",
-            ));
-        }
-
         // A `.` (not `::`) separates the trait from the associated type. This
         // keeps the trait unambiguous even when it is a full path such as
         // `foo::bar::HasScalarType`: `::` stays inside the path, and the trailing

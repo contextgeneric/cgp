@@ -144,6 +144,49 @@ One rule bounds the rewrite: it fires only on the bare identifier of an *importe
 
 When a definition imports types from several traits, combine them into one `#[use_type]` attribute with the trait paths comma-separated — `#[use_type(HasUserIdType.UserId, HasCurrencyType.Currency, HasErrorType.Error)]` — rather than stacking one attribute per trait; the combined form reads as a single import list. Several types from one trait use the braced list (`#[use_type(HasFooType.{Foo, Bar})]`). Stacking repeated `#[use_type]` attributes behaves identically, but reach for it only when a real reason calls for it.
 
+Prefer `#[use_type]` even when the type lives on a **foreign** type rather than `Self` — a type named by a generic parameter — using the trailing `in Context` clause. It rewrites the bare alias to `<Context as Trait>::Assoc` *and* supplies `Context: Trait`, so the hand-written
+
+```rust
+#[cgp_auto_getter]
+pub trait HasLoggedInUser<App>
+where
+    App: HasUserIdType,
+{
+    fn logged_in_user(&self) -> &Option<App::UserId>;
+}
+```
+
+becomes
+
+```rust
+#[cgp_auto_getter]
+#[use_type(HasUserIdType.UserId in App)]
+pub trait HasLoggedInUser<App> {
+    fn logged_in_user(&self) -> &Option<UserId>;
+}
+```
+
+with `App: HasUserIdType` supplied for you, so the plain `<App>` parameter and the bare `UserId` are enough.
+
+Import a type with `#[use_type]` even when it *already* arrives transitively — as the supertrait of a trait pulled in by `#[uses]`. When `CanCreateFoo` has `HasFooType` as a supertrait, prefer re-importing over leaning on the transitive `Self::Foo`:
+
+```rust
+#[cgp_fn]
+#[uses(CanCreateFoo)]
+#[use_type(HasFooType.Foo)]        // re-import: bare `Foo`, explicit `HasFooType` dep
+fn bar(&self) -> Foo { self.create_foo(42) }
+```
+
+instead of
+
+```rust
+#[cgp_fn]
+#[uses(CanCreateFoo)]
+fn bar(&self) -> Self::Foo { self.create_foo(42) }   // relies on the reachable supertrait
+```
+
+The re-import re-adds a harmless (already-implied) `Self: HasFooType` and rewrites the bare `Foo`, so `#[uses]` states the *capability* dependency and `#[use_type]` states the *type* dependency, both visible rather than one riding in silently.
+
 `#[use_type]` also *pins* an abstract type with the equality form `{Assoc = Type}`, which is the modern replacement for a hand-written `where Self: HasXType<Assoc = Concrete>` clause — reach for it whenever a provider constrains an abstract type to a concrete one, rather than leaving the equality as an explicit `where`. On a `#[cgp_impl]`, the legacy
 
 ```rust

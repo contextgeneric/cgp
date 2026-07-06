@@ -32,7 +32,7 @@ This section condenses every guide above into one quick reference. Read it for t
 | write a provider ([guide](writing-providers.md)) | `#[cgp_impl]` with the header `impl Trait` (omit `for Context`, keep `self`/`Self`) | raw `#[cgp_provider]`/`#[cgp_new_provider]` in inside-out shape |
 | require a capability or an inner provider ([guide](declaring-dependencies.md)) | `#[uses(Trait)]` / `#[use_provider(P: Trait)]`, comma-separated in one attribute | hand-written `Self:`/`P: Trait<Self>` `where` bounds |
 | read a value from the context's own field ([guide](reading-context-fields.md)) | an `#[implicit]` argument | a getter trait declared only to read it |
-| name an abstract type ([guide](importing-abstract-types.md)) | `#[use_type(Trait.Type)]` + the bare alias (and `{Type = Concrete}` to pin one) | a `: Trait` supertrait + qualified `Self::Type` |
+| name an abstract type ([guide](importing-abstract-types.md)) | `#[use_type(Trait.Type)]` + the bare alias (`Trait.Type in Context` for a foreign type, `{Type = Concrete}` to pin one) | a `: Trait` supertrait + qualified `Self::Type`, or `where Context: Trait` + `Context::Type` |
 | add a non-type capability supertrait ([guide](capability-supertraits.md)) | `#[extend(Trait)]` | native `: Supertrait` inheritance syntax |
 | dispatch a generic-parameter component per type ([guide](dispatching-per-type.md)) | the `open` statement or a [namespace](namespaces-and-prefixes.md) | `#[derive_delegate]` + a `UseDelegate` nested table |
 
