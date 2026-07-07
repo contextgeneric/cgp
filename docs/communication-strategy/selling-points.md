@@ -41,7 +41,7 @@ Avoid implying the choice is automatic. CGP does not find the implementation for
 
 ## Dependencies that are explicit and compiler-checked
 
-CGP makes what a provider needs from its context explicit in its declarations and enforces it at compile time, which answers the loudest complaint against dependency-injection frameworks directly. A provider states its dependencies through `#[uses]` and `#[implicit]` rather than hiding them, so a reader sees what a component requires without spelunking, and a context that fails to satisfy a dependency is a compile error at the wiring site — not a startup exception or a `NullPointerException` in production. This is "the explicitness the Spring community learned to prefer, by default," and it lands hardest with the enterprise and dependency-injection reader profiled in [reader-profiles.md](reader-profiles.md).
+CGP makes what a provider needs from its context explicit in its declarations and enforces it at compile time, which answers the loudest complaint against dependency-injection frameworks directly. A provider states its dependencies through `#[uses]` and `#[implicit]` rather than hiding them, so a reader sees what a component requires without spelunking, and a context that fails to satisfy a dependency is a compile error at the wiring site — not a startup exception or a `NullPointerException` in production. This is "the explicitness the Spring community learned to prefer, by default," and it lands hardest with the enterprise and dependency-injection reader profiled in [reader-profiles.md](reader-profiles.md). It also answers a pain the pure-Rust reader feels without any framework at all: because a provider's dependencies live in its own implementation rather than in a public trait's method signature, they never force internal types to become public — the encapsulation leak that hand-rolled trait-based dependency injection is prone to, documented with its source in [attention-and-engagement.md](attention-and-engagement.md).
 
 Say it like this:
 
@@ -49,6 +49,7 @@ Say it like this:
 - "A missing dependency is a compile error at the wiring site, not a runtime surprise."
 - "No hidden dependencies: what a component needs is in its signature, not buried in its body."
 - "[`check_components!`](../reference/macros/check_components.md) is your container's startup validation — run at compile time instead of at boot."
+- "Dependencies stay in the implementation, not the public interface, so they never leak internal types into your API the way a public generic trait does."
 
 Avoid overselling the verification as effortless. The check is something you write, and its error messages, though they name the missing dependency, are verbose — say so when the audience is technical, because pretending the diagnostics are pretty is exactly the kind of small dishonesty that costs trust. Frame the trade honestly: you write a check line, and in return the whole class of runtime wiring failures cannot occur.
 
@@ -67,6 +68,8 @@ Avoid two opposite mistakes. Do not claim "no boilerplate" — there is wiring, 
 ## Overlapping and orphan implementations, made safe
 
 For the type-system and functional-programming audience, the standout selling point is that CGP makes legal the overlapping and orphan implementations their languages forbid or make fragile — and makes them safe by keeping every choice explicit and local. Because a provider implements a provider trait for its own marker type rather than for the context, the orphan rule and the overlap rule do not bite: a crate can define many implementations of one capability, and implement a capability for a type it does not own, without the newtype dance or the coherence contortions. The per-context wiring table is what keeps this safe rather than chaotic, so incoherence never means the indeterminism that makes Haskell's `INCOHERENT` a footgun. The full comparison lives in [type classes](../related-work/type-classes.md) and [bypassing coherence](../concepts/coherence.md).
+
+This selling point has a rare asset behind it: developers already reinvent CGP's mechanism by hand. Rust programmers who hit the "no two blanket impls may overlap" wall reach independently for the same zero-sized-marker-plus-helper-trait pattern CGP is built on, as [attention-and-engagement.md](attention-and-engagement.md) documents — so the pitch reminds a reader of a workaround they have written and would rather not maintain, not a capability they must be talked into wanting. Leading with that recognition ("you have written the three-line version of this") disarms the "over-engineered" reflex faster than any claim about expressiveness.
 
 Say it like this:
 
