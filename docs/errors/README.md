@@ -1,6 +1,6 @@
 # CGP Error Catalog
 
-This directory is a catalog of the compiler errors a programmer encounters when using CGP, organized by the *kind* of error rather than by the macro that produced it. Each document describes one class of failure: the mistake that triggers it, the shape of the diagnostic the Rust compiler prints, whether that diagnostic contains the real root cause, and — when it does — where in the output to find it. The catalog is the fifth section of the knowledge base, alongside [reference/](../reference/README.md), [concepts/](../concepts/README.md), [examples/](../examples/README.md), and [guides/](../guides/README.md).
+This directory is a catalog of the compiler errors a programmer encounters when using CGP, organized by the *kind* of error rather than by the macro that produced it. Each document describes one class of failure: the mistake that triggers it, the shape of the diagnostic the Rust compiler prints, whether that diagnostic contains the real root cause, and — when it does — where in the output to find it. The catalog is one of the knowledge base's top-level sections, alongside [reference/](../reference/README.md), [concepts/](../concepts/README.md), [examples/](../examples/README.md), [guides/](../guides/README.md), and [related-work/](../related-work/README.md).
 
 ## Why this exists
 
