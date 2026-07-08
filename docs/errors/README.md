@@ -61,6 +61,7 @@ Surfaced and cascading errors — [checks/](checks/):
 - [Check-trait failure (surfaced)](checks/check-trait-failure.md) — the same unmet dependency forced through `check_components!`, where `IsProviderFor` surfaces the concrete missing bound (a `HasField` or CGP capability) at the wiring site.
 - [Unsatisfied ordinary trait bound (surfaced)](checks/ordinary-trait-bound.md) — an impl-side dependency that is an *ordinary* Rust trait (`Eq`, `Clone`, …) on an abstract type or impl generic, unmet by the concrete type the context supplies; a check surfaces the ordinary bound (`f64: Eq`) as the primary `E0277`.
 - [Verbose dependency cascade](checks/verbose-cascade.md) — one deep mistake reported at every transitively dependent provider, and how to locate the single root cause among the repeats.
+- [Higher-order provider layer failure (surfaced)](checks/higher-order-provider-layer.md) — a checked higher-order provider with an unmet dependency, where the diagnostic's shape (chain depth, which `where` clause the caret sits on) identifies whether the inner or the outer layer is at fault.
 - [Unregistered namespace path](checks/unregistered-namespace-path.md) — a component routed through a joined namespace to a path that no entry ever binds, so the *lookup* finds no delegate; a check surfaces it as an `E0277` on the path-keyed `DefaultNamespace`/`DelegateComponent` bound.
 
 Structural wiring errors — [wiring/](wiring/):

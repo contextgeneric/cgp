@@ -57,6 +57,7 @@ For a `cargo-cgp`-style post-processor, this class is the strongest case for **d
 ## Related
 
 - [Check-trait failure (surfaced)](check-trait-failure.md) — the single-cause diagnostic this class multiplies.
+- [Higher-order provider layer failure (surfaced)](higher-order-provider-layer.md) — a sibling class that emits the same intermediate provider-trait noise blocks, there to distinguish an inner-layer failure from an outer one.
 - [Unsatisfied dependency (hidden)](../hidden/unsatisfied-dependency.md) — the same root cause seen through consumer-trait calls, where each block hides the cause instead of surfacing it.
 - [Debugging CGP compile errors](../../guides/debugging.md) — why the error count tells you nothing about the number of mistakes, and how to isolate the one link.
 - [`check_components!`](../../reference/macros/check_components.md) and [`IsProviderFor`](../../reference/traits/is_provider_for.md).

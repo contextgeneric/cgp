@@ -1,0 +1,75 @@
+error[E0277]: the trait bound `BaseArea: AreaCalculator<Rectangle>` is not satisfied
+  --> tests/acceptable/check_components/higher_order_inner_dependency.rs:75:9
+   |
+75 |         AreaCalculatorComponent,
+   |         ^^^^^^^^^^^^^^^^^^^^^^^ unsatisfied trait bound
+   |
+help: the trait `AreaCalculator<Rectangle>` is not implemented for `BaseArea`
+  --> tests/acceptable/check_components/higher_order_inner_dependency.rs:38:16
+   |
+38 | #[cgp_impl(new BaseArea)]
+   |                ^^^^^^^^
+help: the trait `AreaCalculator<__Context__>` is implemented for `BaseArea`
+  --> tests/acceptable/check_components/higher_order_inner_dependency.rs:39:1
+   |
+39 | / impl AreaCalculator
+40 | | where
+41 | |     Self: HasBaseArea,
+   | |______________________^
+note: required for `ScaledArea<BaseArea>` to implement `IsProviderFor<AreaCalculatorComponent, Rectangle>`
+  --> tests/acceptable/check_components/higher_order_inner_dependency.rs:48:1
+   |
+48 | #[cgp_impl(new ScaledArea<Inner>)]
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   = note: required for `Rectangle` to implement `CanUseComponent<AreaCalculatorComponent>`
+note: required by a bound in `__CheckRectangle`
+  --> tests/acceptable/check_components/higher_order_inner_dependency.rs:73:1
+   |
+73 | / check_components! {
+74 | |     Rectangle {
+75 | |         AreaCalculatorComponent,
+76 | |     }
+77 | | }
+   | |_^ required by this bound in `__CheckRectangle`
+   = note: this error originates in the attribute macro `cgp_impl` which comes from the expansion of the macro `check_components` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `Rectangle: CanUseComponent<AreaCalculatorComponent>` is not satisfied
+  --> tests/acceptable/check_components/higher_order_inner_dependency.rs:75:9
+   |
+75 |         AreaCalculatorComponent,
+   |         ^^^^^^^^^^^^^^^^^^^^^^^ unsatisfied trait bound
+   |
+help: the trait `HasField<Symbol<9, cgp::prelude::Chars<'b', cgp::prelude::Chars<'a', cgp::prelude::Chars<'s', cgp::prelude::Chars<'e', cgp::prelude::Chars<'_', cgp::prelude::Chars<'a', cgp::prelude::Chars<'r', cgp::prelude::Chars<'e', cgp::prelude::Chars<'a', Nil>>>>>>>>>>>` is not implemented for `Rectangle`
+      but trait `HasField<Symbol<12, cgp::prelude::Chars<'s', cgp::prelude::Chars<'c', cgp::prelude::Chars<'a', cgp::prelude::Chars<'l', cgp::prelude::Chars<'e', cgp::prelude::Chars<'_', cgp::prelude::Chars<'f', cgp::prelude::Chars<'a', cgp::prelude::Chars<'c', cgp::prelude::Chars<'t', cgp::prelude::Chars<'o', cgp::prelude::Chars<'r', Nil>>>>>>>>>>>>>>` is implemented for it
+  --> tests/acceptable/check_components/higher_order_inner_dependency.rs:59:10
+   |
+59 | #[derive(HasField)]
+   |          ^^^^^^^^
+note: required for `Rectangle` to implement `HasBaseArea`
+  --> tests/acceptable/check_components/higher_order_inner_dependency.rs:28:1
+   |
+28 | #[cgp_auto_getter]
+   | ^^^^^^^^^^^^^^^^^^
+29 | pub trait HasBaseArea {
+   |           ^^^^^^^^^^^
+note: required for `BaseArea` to implement `IsProviderFor<AreaCalculatorComponent, Rectangle>`
+  --> tests/acceptable/check_components/higher_order_inner_dependency.rs:38:1
+   |
+38 | #[cgp_impl(new BaseArea)]
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+41 |     Self: HasBaseArea,
+   |           ----------- unsatisfied trait bound introduced here
+   = note: 1 redundant requirement hidden
+   = note: required for `ScaledArea<BaseArea>` to implement `IsProviderFor<AreaCalculatorComponent, Rectangle>`
+   = note: required for `Rectangle` to implement `CanUseComponent<AreaCalculatorComponent>`
+note: required by a bound in `__CheckRectangle`
+  --> tests/acceptable/check_components/higher_order_inner_dependency.rs:73:1
+   |
+73 | / check_components! {
+74 | |     Rectangle {
+75 | |         AreaCalculatorComponent,
+76 | |     }
+77 | | }
+   | |_^ required by this bound in `__CheckRectangle`
+   = note: this error originates in the derive macro `HasField` which comes from the expansion of the macro `check_components` (in Nightly builds, run with -Z macro-backtrace for more info)
