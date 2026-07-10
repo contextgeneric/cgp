@@ -3,10 +3,6 @@ use core::ops::DerefMut;
 
 use crate::traits::{FieldGetter, HasField};
 
-#[diagnostic::on_unimplemented(
-    message = "HasFieldMut is not implemented for {Self} with the field: {Tag}",
-    note = "You need to add #[derive(HasField)] to {Self} with the given field present in the struct"
-)]
 pub trait HasFieldMut<Tag>: HasField<Tag> {
     fn get_field_mut(&mut self, tag: PhantomData<Tag>) -> &mut Self::Value;
 }
