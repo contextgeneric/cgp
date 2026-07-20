@@ -18,6 +18,7 @@ The established CGP vocabulary is the same in public writing as in the rest of t
 - **Provider** — a named, swappable implementation of a component. Introduce it as "one implementation you can choose," which is the word's whole job; avoid explaining that it is a zero-sized marker type until the reader is reading generated code.
 - **Wiring** — choosing which provider implements each component for a context. Introduce it as "a small table that says which implementation to use," and lean on the table image, since it is the single most load-bearing analogy in CGP writing.
 - **Impl-side dependency** — a requirement a provider states in its own implementation rather than in the interface callers see. Introduce it as "the provider declares what it needs, and callers never see it," because the encapsulation benefit is the point and the phrase "impl-side" means nothing cold.
+- **Pluggable trait implementations** — the chosen lead descriptor for the core capability, from [tag-lines.md](tag-lines.md): one interface with many interchangeable implementations, each chosen per context. Prefer "pluggable" as the novelty word and pair it with "at compile-time," because the tension between the two — pluggability a Rust reader expects at runtime, delivered statically — is the pitch in miniature.
 - **Context-generic programming** — the name of the paradigm, never the pitch. Introduce it only after a concrete capability has landed, always paired with a plain descriptor, per [tag-lines.md](tag-lines.md).
 
 ## Terms to defer, and how to reveal them
@@ -40,6 +41,7 @@ A handful of words reliably create the misunderstandings the section spends its 
 - Avoid **"blazingly fast"** and any **unbenchmarked "faster than."** Say **"there is no runtime cost to compare,"** which is the honest and stronger claim.
 - Avoid **"no boilerplate."** Say CGP **"moves the wiring into one readable place,"** because there is wiring and the reader will find it.
 - Avoid **"replaces traits"** or **"a new language."** Say **"a superset of ordinary traits"** and **"a library on stable Rust," "an extension,"** never "a language of its own," per [tag-lines.md](tag-lines.md).
+- Avoid **"reusable"** as the word for the novelty — to a Rust reader traits are already the reuse mechanism, so "reusable trait implementations" names nothing new and points at the wrong axis. Say **"pluggable"** (or "interchangeable," "many implementations chosen per context"), which names the capability coherence normally forbids, per [tag-lines.md](tag-lines.md).
 - Avoid **"just"** in a competitor's description — "just macros," "just another DI framework" are the reader's dismissals, not ours, and echoing them concedes the frame.
 - Avoid overstating maturity — **"works on stable Rust today"** is true and worth saying, while **"production-proven at scale"** needs evidence the [evaluator](reader-profiles.md) will notice is missing.
 

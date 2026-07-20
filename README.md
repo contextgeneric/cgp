@@ -6,9 +6,9 @@
 ![Rust Stable](https://img.shields.io/badge/rustc-stable-blue.svg)
 ![Rust 1.89+](https://img.shields.io/badge/rustc-1.89+-blue.svg)
 
-**A Rust language extension for reusable, swappable trait implementations — checked at compile time, with zero runtime cost.**
+**A language extension for Rust, with pluggable trait implementations at compile-time.**
 
-Context-generic programming (CGP) is a library, built on stable Rust, that lets one interface have many interchangeable implementations and lets each *context* — an application, a test, a deployment — choose which one it uses. The choice is written in one readable place and resolved entirely during compilation, so it compiles down to direct calls: there is no runtime container, no reflection, and nothing left in the binary for an implementation a context does not use.
+Context-Generic Programming (CGP) is a library on stable Rust that lifts the language's one-implementation-per-type limit off your traits: it lets one interface have many interchangeable implementations and lets each *context* — an application, a test, a deployment — plug in the one it uses. The choice is written in one readable place and resolved entirely during compilation, so it compiles down to direct calls: there is no runtime container, no reflection, and nothing left in the binary for an implementation a context does not use.
 
 > [!IMPORTANT]
 > The `main` branch tracks the upcoming **v0.8.0** release (published as `0.8.0-alpha` pre-release crates). The current stable release on crates.io is **v0.7.0**, which is **not compatible** with this branch — v0.8.0 changes and removes syntax that v0.7.0 used. **All documentation in this repository describes v0.8.0 only.** For v0.7.0, refer to its published crate documentation instead.
@@ -72,8 +72,19 @@ impl StorageObjectFetcher { /* fetch the object from Amazon S3 */ }
 impl StorageObjectFetcher { /* fetch the object from Google Cloud Storage */ }
 
 // ...and each context picks one, resolved at compile time.
-delegate_components! { App       { StorageObjectFetcherComponent: FetchS3Object } }
-delegate_components! { GCloudApp { StorageObjectFetcherComponent: FetchGCloudObject } }
+delegate_components! {
+    App {
+        StorageObjectFetcherComponent: FetchS3Object,
+        // ...
+    }
+}
+
+delegate_components! {
+    GCloudApp {
+        StorageObjectFetcherComponent: FetchGCloudObject,
+        // ...
+    }
+}
 ```
 
 `App` fetches from Amazon S3, and `GCloudApp` — a context carrying a Google Cloud storage client instead — fetches from Google Cloud. Neither pays for `dyn` or runtime dispatch, the choice is a single greppable line, and code that calls `self.fetch_storage_object(..)` never changes. (Method bodies are elided here for brevity.)

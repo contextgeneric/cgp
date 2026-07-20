@@ -6,7 +6,7 @@ This document assembles the section's guidance into finished pieces of public wr
 
 These drafts exist because the rest of the section is prescriptive and abstract, and a marketing-naive expert learns faster from one finished model than from twelve documents of rules. Each is a model of one artifact from [formats.md](formats.md), written the way that format's playbook prescribes, then followed by a note that names each move and its source. Read the draft first as a reader would, front to back and fast; then read the annotations to see the machinery behind it. The point is not to copy the copy but to watch the whole apparatus operate at once, so you can run it yourself on your own piece.
 
-Treat every draft as an illustration, not approved copy, because two honesty caveats travel with each one. The tag lines they use are the candidates from [tag-lines.md](tag-lines.md) that the project has still to validate with real audiences, so they are shown as plausible starting points rather than settled choices — [attention-and-engagement.md](attention-and-engagement.md) explains why publication itself is the real measurement. And every CGP claim and code snippet is bound by the knowledge base's synchronization rule exactly as a selling point is: verify it against the source and the `/cgp` skill before it ships, because a stale claim in a model draft is copied straight into real copy.
+Treat every draft as an illustration, not approved copy, because two honesty caveats travel with each one. The tag line they use is the chosen one from [tag-lines.md](tag-lines.md); it is settled for consistency's sake, but publication remains the real measurement of any hook, so treat the copy as a strong starting point rather than a guarantee — [attention-and-engagement.md](attention-and-engagement.md) explains why. And every CGP claim and code snippet is bound by the knowledge base's synchronization rule exactly as a selling point is: verify it against the source and the `/cgp` skill before it ships, because a stale claim in a model draft is copied straight into real copy.
 
 The code uses the modern idioms the `/cgp` skill teaches, so a reader who borrows a draft learns the current idiom rather than a dialect to unlearn. A provider is written with [`#[cgp_impl]`](../reference/macros/cgp_impl.md), a value is read with [`#[cgp_auto_getter]`](../reference/macros/cgp_auto_getter.md) or an [`#[implicit]`](../reference/attributes/implicit.md) argument, and wiring is a [`delegate_components!`](../reference/macros/delegate_components.md) table — the same forms [problems-solved.md](problems-solved.md) uses, and for the same reason.
 
@@ -16,7 +16,7 @@ The launch post on Lobsters or the Rust subreddit is the format to get right fir
 
 ### The draft
 
-> **Reusable, swappable trait implementations for Rust**
+> **Pluggable trait implementations for Rust, at compile-time**
 >
 > Every Rust project eventually needs to swap a real implementation for a fake one — the real email sender in production, a recording stub in tests. The usual routes each cost something. A `Box<dyn EmailSender>` pays for dynamic dispatch and spreads a trait object through your types. A generic `<E: EmailSender>` parameter has to be threaded through every layer that touches it, and it multiplies as more dependencies join. A dependency-injection crate brings machinery most of us would rather not.
 >
@@ -58,7 +58,7 @@ delegate_components! { TestApp { EmailSenderComponent: RecordEmails } }
 
 Every choice above is a rule from elsewhere in the section, and naming them shows how to reproduce the result rather than the wording. The moves, in reading order:
 
-- **The title is a concrete capability, not the paradigm name.** "Reusable, swappable trait implementations for Rust" is the shortlist hook from [tag-lines.md](tag-lines.md), chosen over "context-generic programming" because the title is the whole pitch for most of this audience, per the [launch-post playbook](formats.md).
+- **The title is a concrete capability, not the paradigm name.** "Pluggable trait implementations for Rust, at compile-time" is the concrete-capability half of the chosen tag line in [tag-lines.md](tag-lines.md), used over "context-generic programming" because the title is the whole pitch for most of this audience, per the [launch-post playbook](formats.md).
 - **It opens on a pain, not the paradigm.** The mock-in-tests swap is the most universal problem CGP removes and the entry to lead with for the working developer, drawn straight from [problems-solved.md](problems-solved.md) and keyed to that [reader profile](reader-profiles.md).
 - **It shows the workarounds the reader already writes.** Naming `Box<dyn>`, the threaded generic, and the DI crate lets the CGP version arrive as relief rather than as a new thing to learn — the before/after discipline of [problems-solved.md](problems-solved.md).
 - **It concedes the cost and the boundary in plain words.** "This is more than a single trait needs … CGP would be over-engineering" defuses the "why not just traits" and "over-engineered" reflexes from [skepticism.md](skepticism.md) by drawing the line [positioning.md](positioning.md) draws — and the concession is what makes the rest believable to this audience.
@@ -77,9 +77,9 @@ The README's first screen is where an evaluator and a skimmer both decide in sec
 
 > **Context-Generic Programming**
 >
-> *A Rust language extension for reusable, swappable trait implementations — checked at compile time, with zero runtime cost.*
+> *A language extension for Rust, with pluggable trait implementations at compile-time.*
 >
-> A library on stable Rust — no nightly, no fork. `cargo add cgp`
+> Still ordinary Rust — no nightly, no fork, and zero runtime cost. `cargo add cgp`
 >
 > ---
 >
@@ -135,7 +135,7 @@ fn main() {
 
 The README makes different promises to two readers at once, and each element serves one or both. The moves:
 
-- **The tag line is layered.** The owned name, a plain descriptor, and a subline that heads off the runtime-container and new-language misreadings are the layered form from [tag-lines.md](tag-lines.md); the subline does the skeptic's work by saying "checked at compile time, zero runtime cost" before the reader supplies a worse reading.
+- **The tag line is layered.** The owned name as the title, the chosen descriptor beneath it, and a reassurance line under that are the layered form from [tag-lines.md](tag-lines.md); the reassurance does the skeptic's work by saying "still ordinary Rust — no nightly, zero runtime cost" before the reader supplies a worse reading of "language extension" or "pluggable."
 - **It states "a library on stable Rust" and the install line early.** The [evaluator](reader-profiles.md) is scanning for the toolchain gamble, so the reassurance and `cargo add cgp` come before the prose, per [formats.md](formats.md) and the stable-Rust [selling point](selling-points.md).
 - **The feature set is the ruthless few, and each title avoids a repellent word.** Three of the canonical headline features from [key-features.md](key-features.md) appear, each title leading with a concrete capability or a recognized Rust term rather than "modular," "macros," or "magic," and each sentence carrying its honest qualifier ("at compile time," "made safe because … explicit and local").
 - **Runnable code sits above the fold.** A reader wants to see the code before the prose, and CGP's own launch feedback asked for exactly a runnable example ([attention-and-engagement.md](attention-and-engagement.md)); the Hello World shows a component, a provider, a getter, and wiring in the smallest honest form.

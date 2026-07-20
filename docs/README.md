@@ -1,6 +1,8 @@
 # CGP Knowledge Base
 
-This directory is a knowledge base about Context-Generic Programming (CGP), written by and for AI coding agents. Its purpose is to give an agent everything it needs to understand the *full semantics* of CGP — what each construct means, what code it expands into, and how the pieces fit together — without having to re-derive that understanding from the macro implementation every time. The `/cgp` skill gives a fast orientation; this knowledge base is the durable, version-controlled record that goes deeper and stays in sync with the code.
+Context-Generic Programming (CGP) is a language extension for Rust, with pluggable trait implementations at compile-time. In ordinary Rust a trait has one implementation per type; CGP lets one trait have many interchangeable implementations and lets each context choose which one it uses, through a small wiring table the compiler resolves statically — so the flexibility costs nothing at runtime. It is an ordinary library on stable Rust that desugars to plain traits and impls, adopted one component at a time, and it reaches beyond swappable implementations to abstract types each context picks for itself, extensible records and variants, and a family of composable handlers.
+
+This directory is a knowledge base about CGP, written by and for AI coding agents. Its purpose is to give an agent everything it needs to understand the *full semantics* of CGP — what each construct means, what code it expands into, and how the pieces fit together — without having to re-derive that understanding from the macro implementation every time. The `/cgp` skill gives a fast orientation; this knowledge base is the durable, version-controlled record that goes deeper and stays in sync with the code.
 
 ## Why this exists
 
