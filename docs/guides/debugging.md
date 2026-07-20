@@ -1,12 +1,18 @@
 # Debugging CGP compile errors
 
-A broken CGP wiring rarely fails where it is wrong — it fails wherever the wiring is finally used, often as a wall of errors naming deeply nested types; this guide is the playbook for tracing such an error back to its cause.
+A broken CGP wiring rarely fails where it is wrong — it fails wherever the wiring is finally used, often as a wall of errors naming deeply nested types; this guide is the playbook for tracing such an error back to its cause. The fastest path, though, is usually not to trace it by hand at all: **run [`cargo-cgp`](../reference/cargo-cgp.md) first** — it does this tracing for you — and treat the hand techniques in this guide as the fallback for when it is unavailable or leaves an error unrewritten.
 
 ## Why CGP errors are shaped the way they are
 
 The first thing to internalize is that CGP wiring is resolved *lazily*, so a single missing or wrong entry does not error at the entry — it errors at every place that transitively needs it. A context assembles its behavior from a table of [`DelegateComponent`](../reference/traits/delegate_component.md) entries, and the compiler only checks that a provider's dependencies are met when something actually calls the consumer trait. One unsatisfied dependency deep in the graph therefore surfaces as a cascade of failures on unrelated-looking lines, and the *count* of errors tells you nothing about the number of mistakes — a dozen errors are usually one broken link seen from a dozen angles. Fix the first root cause and the cascade collapses.
 
 The second thing is that the errors quote *generated* code, so they name types you never wrote. A component's wiring runs through [`IsProviderFor`](../reference/traits/is_provider_for.md), `DelegateComponent`, [`CanUseComponent`](../reference/traits/can_use_component.md), `RedirectLookup`, and the type-level `PathCons`/`Symbol`/`Chars` spines, and a failure prints these in full. The nested types are noise until you learn to read past them to the one trait and the one context that actually failed. The techniques below are all ways to cut through that noise: read the error's shape, move the error to where the mistake is, or shrink the program until the mistake is the only thing left.
+
+## Reach for cargo-cgp first
+
+Before applying any technique in this guide, reach for [`cargo-cgp`](../reference/cargo-cgp.md) — CGP's first-class error toolchain — because it automates by machine exactly what the rest of this guide does by hand. Run `cargo cgp check` in place of `cargo check`: it turns on the next-generation trait solver, which *un-hides* the buried dependency errors the default solver suppresses, and it rewrites the classes it recognizes into a compact, root-cause-first form — a `[CGP-Exxx]` headline over a `cargo tree`-style dependency chain that names the real cause. For the common wiring mistakes — a missing field, an unwired component, an unmet dependency — the cause you would otherwise trace through a cascade is already at the top of the output. Install and run it per the [cargo-cgp reference](../reference/cargo-cgp.md).
+
+**The rest of this guide is the fallback.** Reach for the hand techniques below when `cargo-cgp` is not available on the machine, when it leaves an error largely as `rustc` wrote it — it is an early pre-release (v0.1.0-alpha) that reshapes the core classes but not yet every one, so an orphan-rule error, for instance, still comes through raw — or when you want to understand the raw diagnostic behind a reshaped one. In every such case the shape-reading, grepping, check-promotion, and reduction moves that follow still apply to the underlying compiler output, which is the same output `cargo-cgp` starts from.
 
 ## Read the error's shape before its contents
 
@@ -91,6 +97,7 @@ A handful of specific compiler errors recur in CGP code, and each maps to a smal
 
 ## Related documentation
 
+- [cargo-cgp](../reference/cargo-cgp.md) — CGP's error toolchain, the recommended first move this guide defers to; install and run it, and fall back to the hand techniques here only when it cannot help.
 - [Error catalog](../errors/README.md) — the reference companion to this guide: one document per class of post-codegen error, recording the diagnostic's shape, whether the root cause is present, and where it sits. Where this guide is the tracing playbook, the catalog is the per-class reference it indexes into — including the [hidden unsatisfied-dependency](../errors/hidden/unsatisfied-dependency.md) class, whose diagnostic omits the root cause entirely.
 - [Check traits](../concepts/check-traits.md) — why wiring is lazy and how checks force a readable error at the wiring site.
 - [`check_components!`](../reference/macros/check_components.md) — the full checking surface, including `#[check_providers]` and checking generic components with concrete parameters.

@@ -10,7 +10,7 @@ This README is the map.
 
 ## The crates
 
-The suite is split into four kinds of crate, each with a distinct job.
+The suite is split into two kinds of crate, each with a distinct job.
 
 **`cgp-tests`** is the main suite: realistic example code that must compile and
 run. Because much of CGP is compile-time wiring, a test here often passes simply
@@ -22,22 +22,16 @@ where the canonical macro-expansion snapshots live.
 refuses during expansion — and for pinning the invalid tokens a macro currently
 emits.
 
-**`cgp-compile-fail-tests`** holds the **`trybuild` compile-fail tests**: input a
-macro *accepts* but whose *expansion* then fails to compile. Each case is a
-standalone `.rs` fixture with a committed `.stderr` snapshot of the expected
-compiler output, split into two categories — **acceptable** failures that CGP
-intentionally delegates to the Rust compiler (overlapping wiring, a lazily-wired
-missing dependency) and **problematic** failures that are a CGP defect (input a
-macro should have rejected, or an expansion that emits invalid Rust). See
-[cgp-compile-fail-tests/README.md](cgp-compile-fail-tests/README.md) for what
-belongs in each category, the fixture layout, and how to regenerate the
-`.stderr` snapshots.
-
-**`cgp-test-crate-a`** and **`cgp-test-crate-b`** are auxiliary packages for
-**cross-crate** behavior. Crate A defines components, a provider, and a namespaced
-component; crate B (a downstream crate) wires them, supplies its own provider for a
-foreign component, and participates in crate A's namespace — showing that CGP stays
-within Rust's coherence and orphan rules across crate boundaries.
+**Post-codegen compile failures live in `cargo-cgp`, not here.** The cases where a
+macro *accepts* input but its *expansion* then fails to compile — and the
+cross-crate coherence and orphan-rule fixtures that need a companion crate — were
+migrated to `cargo-cgp`'s UI test suite, which snapshots the readable, root-cause-first
+errors `cargo-cgp` renders for each class (its `.rust.stderr` still records the raw
+compiler output as the "before"). `cargo-cgp` is CGP's first-class error toolchain, so
+those diagnostics are pinned where the tool that improves them lives; the
+[error catalog](../../docs/errors/README.md) links each class to the fixture that
+backs it. See
+[cargo-cgp's UI tests](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/README.md).
 
 ## How the tests are laid out
 
@@ -60,15 +54,6 @@ accumulates too many cases to stay coherent, it is split into finer targets.
 for parser corner cases, and the failure-case targets `parser_rejections` and
 `invalid_expansion`.
 
-`cgp-compile-fail-tests` is laid out for `trybuild` instead: a single driver
-`tests/compile_fail_tests.rs` recursively glob-compiles every fixture under
-`tests/acceptable/` and `tests/problematic/`, which are further grouped into one
-subdirectory per owning macro (`acceptable/delegate_components/`, or a
-`problematic/<macro>/` when a defect is pinned). Each fixture is a self-contained
-program paired with a committed `.stderr` snapshot of the compiler output it must
-produce. Its own [README](cgp-compile-fail-tests/README.md) is the authoritative
-guide to this crate.
-
 ## Snapshots
 
 Many tests assert the exact code a macro generates, using the `snapshot_*!` macros
@@ -83,16 +68,11 @@ everywhere else (see [AGENTS.md](AGENTS.md) for the ownership rules).
 ```
 cargo nextest run -p cgp-tests                  # the main suite
 cargo nextest run -p cgp-macro-tests            # macro internals + rejection cases
-cargo nextest run -p cgp-compile-fail-tests     # trybuild compile-fail fixtures
-cargo nextest run --workspace                   # everything, including the aux crates
+cargo nextest run --workspace                   # everything
 
 cargo insta test -p cgp-tests --review          # review snapshot diffs interactively
 cargo insta test -p cgp-tests --accept          # accept intended snapshot changes
-
-TRYBUILD=overwrite cargo test -p cgp-compile-fail-tests   # regenerate .stderr snapshots
 ```
 
 When a `snapshot_*!` test fails it prints a diff of the generated code; accept the
-new output with `cargo insta` only after confirming the change is intended. When a
-`trybuild` fixture fails it prints a diff against the committed `.stderr`; regenerate
-it with `TRYBUILD=overwrite` only after confirming the diagnostic change is intended.
+new output with `cargo insta` only after confirming the change is intended.

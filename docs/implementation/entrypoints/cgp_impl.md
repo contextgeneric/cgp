@@ -68,11 +68,11 @@ The one wholly-synthesized item is each `#[default_impl]` delegation impl, built
 
 ## Failure modes
 
-Both failures below are ones `#[cgp_impl]` defers to the compiler, and both are the [conflicting wiring](../../errors/wiring/conflicting-wiring.md) error class; what this document pins is where each caret lands. Each is covered by a fixture under [acceptable/cgp_impl/](../../../crates/tests/cgp-compile-fail-tests/tests/acceptable/cgp_impl) in `cgp-compile-fail-tests`.
+Both failures below are ones `#[cgp_impl]` defers to the compiler, and both are the [conflicting wiring](../../errors/wiring/conflicting-wiring.md) error class; what this document pins is where each caret lands. Each is covered by a `cargo-cgp` UI fixture, linked per case below.
 
-A **duplicate provider name** — two `#[cgp_impl(new Foo)]` blocks — declares `pub struct Foo;` twice (`E0428`) and emits two conflicting provider impls (`E0119`). The `E0428` carets land on the `Foo` inside each `#[cgp_impl(new …)]` and the `E0119` carets on each provider `impl` block, per [Error spans](#error-spans). Pinned by [acceptable/cgp_impl/duplicate_provider_name.rs](../../../crates/tests/cgp-compile-fail-tests/tests/acceptable/cgp_impl/duplicate_provider_name.rs).
+A **duplicate provider name** — two `#[cgp_impl(new Foo)]` blocks — declares `pub struct Foo;` twice (`E0428`) and emits two conflicting provider impls (`E0119`). The `E0428` carets land on the `Foo` inside each `#[cgp_impl(new …)]` and the `E0119` carets on each provider `impl` block, per [Error spans](#error-spans). Pinned by [`acceptable/wiring/duplicate-keys/duplicate_provider_name.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/duplicate-keys/duplicate_provider_name.rs).
 
-A **duplicate `#[default_impl]` key** — two `#[cgp_impl]` blocks each registering the same key as a per-type default in the same namespace — emits two conflicting delegation impls and fails with `E0119`. The carets land on the `Key` inside each `#[default_impl(Key in …)]` per [Error spans](#error-spans). Pinned by [acceptable/cgp_impl/duplicate_default_impl.rs](../../../crates/tests/cgp-compile-fail-tests/tests/acceptable/cgp_impl/duplicate_default_impl.rs).
+A **duplicate `#[default_impl]` key** — two `#[cgp_impl]` blocks each registering the same key as a per-type default in the same namespace — emits two conflicting delegation impls and fails with `E0119`. The carets land on the `Key` inside each `#[default_impl(Key in …)]` per [Error spans](#error-spans). Pinned by [`acceptable/wiring/namespace-paths/duplicate_default_impl.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/namespace-paths/duplicate_default_impl.rs).
 
 ## Known issues
 

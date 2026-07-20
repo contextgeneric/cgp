@@ -66,7 +66,7 @@ The **marker struct's name span** is the provider identifier's span, not `Span::
 
 ## Failure modes
 
-A **name clash on the derived marker** — a module that declares its own `GreeterComponent` alongside a `#[cgp_component(Greeter)]` that derives the same marker — defines the name twice and fails with `E0428`, the [conflicting wiring](../../errors/wiring/conflicting-wiring.md) error class. What this document pins is the **span**: the `E0428` "previous definition here" note lands on the `Greeter` provider name inside `#[cgp_component(..)]`, not on the whole attribute, per the marker-span behavior above. [acceptable/cgp_component/duplicate_component_name.rs](../../../crates/tests/cgp-compile-fail-tests/tests/acceptable/cgp_component/duplicate_component_name.rs) is the regression test for that span, since a regression to `call_site` would move the note onto the attribute.
+A **name clash on the derived marker** — a module that declares its own `GreeterComponent` alongside a `#[cgp_component(Greeter)]` that derives the same marker — defines the name twice and fails with `E0428`, the [conflicting wiring](../../errors/wiring/conflicting-wiring.md) error class. What this document pins is the **span**: the `E0428` "previous definition here" note lands on the `Greeter` provider name inside `#[cgp_component(..)]`, not on the whole attribute, per the marker-span behavior above. The `cargo-cgp` UI fixture [`acceptable/wiring/duplicate-keys/duplicate_component_name.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/duplicate-keys/duplicate_component_name.rs) is the regression test for that span, since a regression to `call_site` would move the note onto the attribute.
 
 ## Snapshots
 
@@ -88,7 +88,7 @@ The behavioral tests confirm the generated wiring works:
 - [generic_components/component_type_param.rs](../../../crates/tests/cgp-tests/tests/generic_components/component_type_param.rs) wires a single-type-parameter component to one provider, passes `check_components!` for a concrete type argument, and computes an area at run time.
 - [generic_components/component_lifetime.rs](../../../crates/tests/cgp-tests/tests/generic_components/component_lifetime.rs) wires the lifetime-carrying component and passes `check_components!`.
 - [cgp-macro-tests/tests/parser_rejections/cgp_component.rs](../../../crates/tests/cgp-macro-tests/tests/parser_rejections/cgp_component.rs) asserts the macro rejects a non-trait item and a trait carrying a const generic parameter.
-- [cgp-compile-fail-tests acceptable/cgp_component/duplicate_component_name.rs](../../../crates/tests/cgp-compile-fail-tests/tests/acceptable/cgp_component/duplicate_component_name.rs) pins that the derived marker's `E0428` "previous definition" note falls on the provider name rather than the whole attribute — a regression test for the marker-name span (see [Failure modes](#failure-modes)).
+- The `cargo-cgp` UI fixture [`acceptable/wiring/duplicate-keys/duplicate_component_name.rs`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/ui/acceptable/wiring/duplicate-keys/duplicate_component_name.rs) pins that the derived marker's `E0428` "previous definition" note falls on the provider name rather than the whole attribute — a regression test for the marker-name span (see [Failure modes](#failure-modes)). Its error class is [conflicting wiring](../../errors/wiring/conflicting-wiring.md).
 
 ## Source
 

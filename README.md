@@ -112,6 +112,19 @@ CGP requires **Rust 1.89+** and runs on the **stable** toolchain — no nightly,
 > ```
 > Once v0.8.0 is released, `cargo add cgp` will install it.
 
+### Install cargo-cgp for readable errors
+
+CGP compiles to ordinary Rust, so a wiring mistake surfaces as a compiler error about generated types — often a wall of them with the real cause buried. **When you start with CGP, install [`cargo-cgp`](https://github.com/contextgeneric/cargo-cgp) alongside it.** cargo-cgp is CGP's error toolchain: a drop-in for `cargo check` that rewrites those errors into a compact, root-cause-first form, leading with the field or wiring that actually failed. It is the single biggest quality-of-life improvement for writing CGP, so treat it as part of your getting-started setup.
+
+```bash
+cargo install cargo-cgp     # the front-end (installs on any toolchain)
+cargo cgp setup             # provisions the compiler + driver it needs
+```
+
+Then run `cargo cgp check` wherever you would run `cargo check`; it forces the pinned nightly that `cargo cgp setup` installed only for its own check, so your project keeps its toolchain untouched. (Prefer Nix? `nix run github:contextgeneric/cargo-cgp/v0.1.0-alpha -- check` runs it without installing.) cargo-cgp is an early pre-release that already makes the common wiring errors readable and is steadily covering more; see its [README](https://github.com/contextgeneric/cargo-cgp) for the full guide.
+
+cargo-cgp is optional and adds only a diagnostic `check`: keep building, running, and testing with ordinary cargo — CGP is a plain library needing only stable Rust (1.89+) — and reach for `cargo cgp check` when you want a wiring error made readable. Plain `cargo check` still works too, and is fine when you are not expecting a compile error.
+
 ## When to use CGP — and when not
 
 CGP is a tool with a boundary, and it earns its cost only past that boundary. The rule of thumb is to **reach for CGP when a capability needs more than one implementation and the choice belongs to the context — not before.** Concretely:

@@ -62,6 +62,12 @@ The distinction between [components/](components/) and [traits/](traits/) is whe
 
 This index is the catalog of constructs. When you add, remove, or rename a construct, update both its document and this index in the same change. Because documents live in different subdirectories, a cross-link between two of them is a relative path — a sibling in the same directory is `name.md`, and a document in another directory is `../that-dir/name.md`.
 
+## Tooling — [cargo-cgp.md](cargo-cgp.md)
+
+One document here describes a tool rather than a construct, and it is the exception to the per-construct rule above: it has no subdirectory and no Syntax/Expansion shape. It is registered here because a reader looking up how to *read* a CGP error belongs in the reference.
+
+- [`cargo-cgp`](cargo-cgp.md) — CGP's first-class error toolchain: the cargo subcommand that rewrites CGP compiler errors into a readable, root-cause-first form, how to install and run it, and how its `[CGP-Exxx]` output maps to the [error catalog](../errors/README.md). Recommend it for building, checking, and debugging CGP code.
+
 ## Component definition macros — [macros/](macros/)
 
 These macros define CGP components and the providers that implement them — the core act of writing CGP code.

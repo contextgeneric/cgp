@@ -18,6 +18,43 @@ Only the library crates are published. The five crates under [crates/tests/](cra
 marked `publish = false`, so `cargo publish --workspace` skips them and publishes just the real CGP
 crates.
 
+## The two projects: cgp and cargo-cgp
+
+`cgp` and `cargo-cgp` are developed together but live in separate Git repositories, so a task in one
+routinely reads — and sometimes updates — the other. [`cargo-cgp`](https://github.com/contextgeneric/cargo-cgp)
+is CGP's **first-class toolchain**: a cargo subcommand that rewrites the compiler's diagnostics into
+readable, root-cause-first CGP errors. It is the recommended way to build and check CGP code and to
+read a CGP compile error, so recommend it wherever CGP errors are discussed, and prefer it over raw
+`cargo check` when diagnosing a wiring failure in this repository.
+
+**Finding `cargo-cgp`.** Look first in the parent directory, at `../cargo-cgp`. When that sibling
+checkout is present, use it — it is the fastest reference and reflects any uncommitted work. When it
+is absent, fall back to the official repository at
+[github.com/contextgeneric/cargo-cgp](https://github.com/contextgeneric/cargo-cgp), fetching the file
+you need from there. (The mirror image applies to an agent working in `cargo-cgp` and looking for
+`cgp` at `../cgp`.)
+
+**Writing cross-project links.** A *link* from a committed file here to a document in `cargo-cgp` — a
+Markdown link or a URL — is **always written as a GitHub URL**
+(`https://github.com/contextgeneric/cargo-cgp/blob/main/<path>`), never as a relative `../cargo-cgp/...`
+link, so the document resolves for a reader who has only this repository checked out. When *reading*
+such a link yourself, prefer the local `../cargo-cgp` checkout if it is available and fetch the GitHub
+URL only when it is not. (A bare mention of the checkout's location, like the path `../cargo-cgp`, is
+a filesystem reference rather than a link and stays relative.)
+
+**Keeping the two in sync.** When a change here affects `cargo-cgp` — most often when a construct
+change alters a compiler diagnostic that `cargo-cgp` has a UI fixture for — and `cargo-cgp` is checked
+out at `../cargo-cgp`, update it in the same change, following `cargo-cgp`'s own conventions (its
+`AGENTS.md`). When `../cargo-cgp` is not checked out, state plainly what needs updating there so it is
+not silently left to drift. The post-codegen compile-fail cases this repository used to keep in
+`cgp-compile-fail-tests` now live as `cargo-cgp` UI fixtures, and the [error catalog](docs/errors/README.md)
+links each error class to the fixture that backs it.
+
+**The code dependency stays one-way.** No `cgp` *crate* may depend on a `cargo-cgp` crate:
+`cargo-cgp` reads `cgp`, never the reverse. Documentation is the deliberate exception — this
+repository's docs and skill reference `cargo-cgp` as the recommended toolchain — so it is the *code*
+graph that stays acyclic, not the documentation.
+
 ## Orient before any task
 
 This repository **is** the implementation of Context-Generic Programming (CGP), and its behavior is
@@ -59,13 +96,14 @@ do).
 - **Lint:** `cargo clippy --all-features --all-targets -- -D warnings`
   and `cargo clippy --no-default-features --all-targets -- -D warnings`
 - **Test** (uses `cargo-nextest`): `cargo nextest run --all-features --no-fail-fast --workspace`.
-  This runs the whole suite, including the `trybuild` compile-fail fixtures in
-  `cgp-compile-fail-tests` (an ordinary integration test, so nextest picks it up).
+  This runs the whole suite: `cgp-tests` (behavior + expansion snapshots) and `cgp-macro-tests`
+  (macro internals, rejection cases, invalid-expansion snapshots).
 - **Single test crate / test:** `cargo nextest run -p cgp-tests` or target one file with the
   standard test harness, e.g. `cargo test -p cgp-tests --test component`
-- **Compile-fail fixtures:** `cargo nextest run -p cgp-compile-fail-tests` runs the `trybuild`
-  cases that check macro *expansions* fail to compile with a pinned `.stderr`; regenerate the
-  snapshots with `TRYBUILD=overwrite cargo test -p cgp-compile-fail-tests`.
+- **Post-codegen compile failures** (input a macro accepts but whose expansion fails to compile) are
+  no longer tested here: they are UI fixtures in [`cargo-cgp`](https://github.com/contextgeneric/cargo-cgp),
+  the first-class error toolchain, and cataloged in the [error catalog](docs/errors/README.md). See
+  [crates/tests/AGENTS.md](crates/tests/AGENTS.md) for the workflow.
 - Many "tests" are **compile-time wiring checks** (`check_components!` /
   `delegate_and_check_components!`) and **macro-expansion snapshots** — for these, a successful
   `cargo build`/`cargo test` compilation *is* the passing test. A wiring mistake surfaces as a
@@ -210,10 +248,11 @@ far more leniently than Rust accepts, validate against CGP's restricted argument
 Walk the shapes the expansion can take across the whole input space and confirm none produces invalid
 Rust — no conflicting `impl` blocks from a cartesian expansion, no unbound or doubly-declared generic,
 no empty expansion that checks nothing, no clash on a generated identifier. When an expansion fails to
-compile, capture it as a `trybuild` fixture in `cgp-compile-fail-tests` — `problematic/` when the
-macro should have rejected it, `acceptable/` when CGP defers the failure to the compiler — and
-document it in the macro's implementation document, per [crates/tests/AGENTS.md](crates/tests/AGENTS.md)
-and [docs/implementation/AGENTS.md](docs/implementation/AGENTS.md).
+compile, capture it as a [`cargo-cgp` UI fixture](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/README.md)
+(post-codegen compile-fail cases live there now, filed by the quality of the output the tool produces)
+and catalog the class in the [error catalog](docs/errors/README.md); when the failure is a CGP *defect*
+the macro should have rejected, also record it under the macro's `## Known issues`, per
+[crates/tests/AGENTS.md](crates/tests/AGENTS.md) and [docs/implementation/AGENTS.md](docs/implementation/AGENTS.md).
 
 #### Generics
 

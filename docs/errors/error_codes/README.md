@@ -6,7 +6,7 @@ This directory is a compact reference for the handful of `rustc` error codes CGP
 
 The per-class documents in the catalog each explain one CGP failure, and several of them lean on the same underlying Rust rule — coherence, the orphan rule, the trait-solver recursion limit. Rather than restate that rule in every class that touches it, each code has one entry here that states it once, grounded in the official Rust documentation and the RFCs and issues that define it, and the class documents link to that entry. This keeps the Rust-language facts in one verified place and the CGP-specific anatomy in the class docs, so neither drifts and neither repeats the other.
 
-Each entry records the same four things: the message `rustc` prints, when the compiler emits it in ordinary Rust, the rule it enforces and where that rule is defined, and which CGP error classes produce it. The facts here are verified against the official [error index](https://doc.rust-lang.org/error_codes/), the [Rust reference](https://doc.rust-lang.org/reference/), and the linked RFCs and `rust-lang/rust` issues, not against memory; the class documents remain the source of truth for the *exact* diagnostic a CGP mistake produces, pinned by their `.stderr` fixtures.
+Each entry records the same four things: the message `rustc` prints, when the compiler emits it in ordinary Rust, the rule it enforces and where that rule is defined, and which CGP error classes produce it. The facts here are verified against the official [error index](https://doc.rust-lang.org/error_codes/), the [Rust reference](https://doc.rust-lang.org/reference/), and the linked RFCs and `rust-lang/rust` issues, not against memory; the class documents remain the source of truth for the *exact* diagnostic a CGP mistake produces, pinned by their [`cargo-cgp` UI fixtures](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/README.md).
 
 ## The codes
 
@@ -30,6 +30,10 @@ Three are **name-resolution and method-probe** diagnostics:
 - [`E0428`](e0428.md) — a name is defined more than once in one scope.
 - [`E0576`](e0576.md) — an associated item is named that the trait or type does not declare.
 - [`E0599`](e0599.md) — a method exists but its trait bounds are not satisfied.
+
+Beyond the `rustc` codes, `cargo-cgp` stamps its own `[CGP-Exxx]` codes on a message it rewrites into a recognized CGP class. Those are `cargo-cgp`'s, not CGP's, so they are cataloged in one pointer entry rather than mixed in above:
+
+- [cargo-cgp-codes.md](cargo-cgp-codes.md) — the headline (`CGP-E0xx`), dependency-tree (`CGP-E1xx`), and root-cause-lead (`CGP-E2xx`) codes, each with a one-line meaning and a link to `cargo-cgp`'s authoritative [error-code catalog](https://github.com/contextgeneric/cargo-cgp/blob/main/docs/error-code.md).
 
 ## Relationship to the rest of the catalog
 

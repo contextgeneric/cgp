@@ -45,6 +45,76 @@ traits and impls, so the reliable way to understand any construct is to know the
 to. This primer shows those expansions where they matter and keeps them out of the way where they
 do not.
 
+## Tooling: use cargo-cgp for readable errors
+
+**Before debugging any CGP compile error, use `cargo-cgp` if it is available.** `cargo-cgp` is CGP's
+first-class toolchain — a cargo subcommand that stands in for `cargo check` and rewrites CGP's
+compiler errors into a compact, root-cause-first form, tagging each rewritten message with a
+`[CGP-Exxx]` code. A raw CGP error is often a wall of generated types with the real cause buried or
+hidden entirely; `cargo-cgp` names the cause and renders the dependency chain that leads to it.
+Recommend it to the user for building and checking CGP code, and prefer it over plain `cargo check`
+whenever a wiring failure needs diagnosing.
+
+**Check whether it is installed** with `cargo cgp --version` (or just run `cargo cgp check` in a CGP
+project). If the subcommand is missing, it is not installed.
+
+**If it is not installed, recommend installing it** — tell the user it makes CGP errors far more
+readable — and **install it on their behalf only with their approval**, since it provisions a nightly
+toolchain and builds a compiler-linked driver (heavy).
+
+**Prefer the cargo path**, which is the default for almost every machine: `cargo install cargo-cgp`
+then `cargo cgp setup` (the first installs the small front-end on whatever toolchain is present;
+`setup` provisions the pinned nightly and builds the matching driver in lockstep). It needs rustup.
+
+**Reach for Nix only if the host actually has it** — a `nix` command on `PATH` or a `flake.nix` in the
+project — or if the user explicitly asks for it; otherwise do not bring Nix up at all. When Nix *is*
+present but cargo-cgp is not installed, the lightest move is to **not install** and instead run the
+tool through the flake from the project directory:
+`nix run github:contextgeneric/cargo-cgp/v0.1.0-alpha -- check` (arguments after `--` go to
+`cargo check`). To install into a Nix profile instead, use
+`nix profile install github:contextgeneric/cargo-cgp/v0.1.0-alpha`.
+
+cargo-cgp requires a specific pinned Rust nightly, installed by `cargo cgp setup` (or built by the
+Nix flake), and forces it only for its own check, so the user's project keeps its own toolchain
+untouched. Full instructions:
+<https://github.com/contextgeneric/cargo-cgp/blob/main/docs/reference/installation.md>.
+
+**Using it:** run it wherever you would run `cargo check` (arguments after `check` are forwarded):
+`cargo cgp check`, `cargo cgp check --workspace`. It keeps rustc's own error code and adds a
+`[CGP-Exxx]` tag, leading with the root cause over a `cargo tree`-style dependency chain; the codes
+are catalogued at <https://github.com/contextgeneric/cargo-cgp/blob/main/docs/error-code.md>.
+
+**Scope:** cargo-cgp is optional and adds only `check` — there is no `cargo cgp build`/`run`/`test`,
+so build, run, and test the project with plain cargo. CGP itself compiles on any **stable Rust ≥
+1.89**, so plain `cargo check` works on a CGP project too; reach for `cargo cgp check` specifically
+when you hit or expect a wiring error and want it made readable.
+
+`cargo-cgp` can also be Rust Analyzer's on-save check backend, via
+`rust-analyzer.check.overrideCommand` set to
+`["cargo","cgp","check","--workspace","--all-targets","--message-format=json"]`. But **never modify
+the user's Rust Analyzer settings implicitly** — mention this option and let them opt in, and only
+edit their editor configuration when they explicitly ask you to.
+
+**When cargo-cgp is not available, or leaves an error largely unrewritten**, fall back to reading the
+raw compiler output by hand — and only then load the [error-extraction sub-skill](references/error-extraction.md),
+the technique for reducing a raw CGP cascade to its root cause. When cargo-cgp *has* reshaped the
+error, its `[CGP-Exxx]` headline and root-cause tree are already the compact summary that sub-skill
+would produce, so you do not need it.
+
+### Versions and keeping this skill current
+
+This skill is written for **CGP v0.8.0** and **cargo-cgp v0.1.0-alpha**. Check both on the host and
+act on a mismatch:
+
+- Read the user's `cgp` version (its `Cargo.toml`/`Cargo.lock` entry) and run `cargo cgp --version`
+  for the tool.
+- **If either is older than recorded here**, recommend updating it — `cargo update -p cgp` for the
+  library, `cargo cgp update` (or a Nix flake refresh) for the tool — so its behavior matches this
+  skill.
+- **If the host's `cgp` is *newer* than v0.8.0**, this skill is behind the library: tell the user the
+  **skill should be upgraded** to match their `cgp`, rather than changing their code to fit an older
+  skill. Treat the newer `cgp` as authoritative and flag the gap instead of guessing.
+
 ## The problem CGP solves
 
 Rust's coherence rules permit at most one implementation of a trait for a given type, and forbid
@@ -174,7 +244,9 @@ that uses CGP:
 use cgp::prelude::*;
 ```
 
-This skill describes CGP **v0.8.0**. A few names are intentionally *not* in the prelude and must be
+This skill describes CGP **v0.8.0** (and cargo-cgp **v0.1.0-alpha** — see
+[Tooling](#tooling-use-cargo-cgp-for-readable-errors) for checking both versions on the host and
+reconciling a mismatch). A few names are intentionally *not* in the prelude and must be
 imported from their module — most notably the error-handling wiring keys and backends (see Error
 handling below). Inside documentation code blocks you may omit the prelude import for brevity.
 
@@ -872,7 +944,7 @@ The remaining sub-skills each own one construct family:
 - **[references/components.md](references/components.md)** — `#[cgp_component]` and the full expansion (consumer/provider traits, the two blanket impls, the `…Component` marker), why `IsProviderFor` exists, and the three provider-writing macros (`#[cgp_impl]`, `#[cgp_provider]`, `#[cgp_new_provider]`). *Without it* you will misjudge what `self`/`Self` mean inside a provider and how the blanket impls route a call. Load it before writing any component or provider.
 - **[references/wiring.md](references/wiring.md)** — `DelegateComponent`, every `delegate_components!` form (arrays, `new`, generic tables), `open` per-type dispatch, direct consumer-trait impls, `UseContext` and its circular-dependency trap, the legacy `UseDelegate` tables, and the other providers you see in tables (`WithProvider` and its `WithField`/`WithType`/`WithContext` aliases, `UseDefault`). *Without it* you will not know when a hand-written impl collides with the table, why `UseContext` overflows, or what a `WithField<…>` entry means. Load it before wiring any context.
 - **[references/checking.md](references/checking.md)** — why wiring is lazy, how check traits and `CanUseComponent` force readable errors, every `check_components!` / `delegate_and_check_components!` option (`#[check_trait]`, `#[check_providers]`, `#[check_params]`, `#[skip_check]`), and a debugging playbook. *Without it* you cannot localize a broken wiring or read the error it throws. Load it whenever a wiring fails to compile.
-- **[references/error-extraction.md](references/error-extraction.md)** — how to reduce a long CGP compile error to a compact, root-cause-first summary, the hidden-versus-surfaced distinction that decides whether the root cause is even present in the output, how to confirm a suspected cause by grepping the error output for one signature line instead of reading it all, and how to delegate the reading to a sub-agent so a wall of generated-type errors does not consume your context. *Without it* you will read a cascade inline, chase a cause a hidden error does not contain, or hand back raw output instead of the few facts that matter. Load it whenever a CGP error is long enough that a sub-agent should read it — in an ordinary debugging session, not only when authoring the error catalog.
+- **[references/error-extraction.md](references/error-extraction.md)** — the **fallback for when `cargo-cgp` is not available, or leaves an error largely unrewritten** (see [Tooling](#tooling-use-cargo-cgp-for-readable-errors) first — `cargo-cgp`'s `[CGP-Exxx]` headline and root-cause tree already are the compact summary this sub-skill produces, so reach for the sub-skill only when the tool is absent or passes the error through). It covers how to reduce a long raw CGP compile error to a compact, root-cause-first summary, the hidden-versus-surfaced distinction that decides whether the root cause is even present in the output, how to confirm a suspected cause by grepping for one signature line, and how to delegate the reading to a sub-agent so a wall of generated-type errors does not consume your context. *Without it* you will read a cascade inline, chase a cause a hidden error does not contain, or hand back raw output instead of the few facts that matter.
 - **[references/functions-and-getters.md](references/functions-and-getters.md)** — `HasField`/`#[derive(HasField)]`, `#[cgp_fn]`, `#[implicit]` and its access rules, `#[uses]`/`#[extend]`/`#[extend_where]`/`#[impl_generics]`, the getters `#[cgp_auto_getter]`/`#[cgp_getter]`/`UseField`/`WithField`, and `ChainGetters` for nested-context fields. *Without it* you will reach for a getter trait where an implicit argument is idiomatic, or misapply the `.clone()`/`.as_str()`/`&mut` field-access rules. Load it for the ergonomic day-to-day surface.
 - **[references/abstract-types.md](references/abstract-types.md)** — `#[cgp_type]`, the built-in `HasType`/`TypeProvider`, wiring with `UseType<T>` (and `UseDelegatedType` for table-chosen types), importing types with the `#[use_type]` attribute (distinct from the `UseType` provider), and the `WithType`/`WithDelegatedType` adapters. *Without it* you will confuse the provider and the attribute and write `Self::` paths by hand. Load it for any associated-type abstraction.
 - **[references/higher-order-providers.md](references/higher-order-providers.md)** — providers parameterized by other providers, the stray `<Self>` on the inner bound, `#[use_provider]`, `UseContext` defaults, generic-parameter components, and cross-context dependencies. *Without it* you will call the inner provider as a method instead of `Provider::method(self)` and misplace the context slot. Load it before composing providers.

@@ -1,8 +1,0 @@
-error[E0119]: conflicting implementations of trait `DefaultImpls1<ShowImplComponent, _>` for type `String`
-  --> tests/acceptable/cgp_impl/duplicate_default_impl.rs:35:16
-   |
-26 | #[default_impl(String in DefaultImpls1<ShowImplComponent>)]
-   |                ------ first implementation here
-...
-35 | #[default_impl(String in DefaultImpls1<ShowImplComponent>)]
-   |                ^^^^^^ conflicting implementation for `String`

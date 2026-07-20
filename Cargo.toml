@@ -38,9 +38,6 @@ members = [
 
     "crates/tests/cgp-tests",
     "crates/tests/cgp-macro-tests",
-    "crates/tests/cgp-compile-fail-tests",
-    "crates/tests/cgp-test-crate-a",
-    "crates/tests/cgp-test-crate-b",
 ]
 
 [workspace.package]
@@ -78,8 +75,6 @@ cgp-macro-core              = { version = "0.8.0-alpha", path = "./crates/macros
 cgp-macro-lib               = { version = "0.8.0-alpha", path = "./crates/macros/cgp-macro-lib" }
 cgp-macro-test-util         = { version = "0.8.0-alpha", path = "./crates/macros/cgp-macro-test-util" }
 
-cgp-test-crate-a            = { version = "0.8.0-alpha", path = "./crates/tests/cgp-test-crate-a" }
-cgp-test-crate-b            = { version = "0.8.0-alpha", path = "./crates/tests/cgp-test-crate-b" }
 cgp-macro-test-util-lib     = { version = "0.8.0-alpha", path = "./crates/macros/cgp-macro-test-util-lib" }
 cgp-extra-macro             = { version = "0.8.0-alpha", path = "./crates/macros/cgp-extra-macro" }
 cgp-extra-macro-lib         = { version = "0.8.0-alpha", path = "./crates/macros/cgp-extra-macro-lib" }
