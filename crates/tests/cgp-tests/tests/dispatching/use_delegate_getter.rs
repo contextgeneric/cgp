@@ -456,7 +456,6 @@ snapshot_cgp_getter! {
 mod derive_delegate {
     use core::marker::PhantomData;
 
-    use cgp::prelude::*;
     use cgp_macro_test_util::snapshot_delegate_and_check_components;
 
     use super::*;
@@ -592,7 +591,6 @@ mod derive_delegate {
 mod derive_delegate2 {
     use core::marker::PhantomData;
 
-    use cgp::prelude::*;
     use cgp_macro_test_util::snapshot_delegate_components;
 
     use super::*;
