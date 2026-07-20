@@ -7,6 +7,7 @@ repository   = { workspace = true }
 authors      = { workspace = true }
 rust-version = { workspace = true }
 keywords     = { workspace = true }
+description  = { workspace = true }
 
 [dependencies]
 syn                 = { version = "2.0.95", features = [ "full", "extra-traits", "visit", "visit-mut" ] }

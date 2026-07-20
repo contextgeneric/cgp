@@ -1,16 +1,14 @@
 [package]
 name         = "cgp"
 version      = "0.8.0-alpha"
+readme       = "./README.md"
 edition      = { workspace = true }
 license      = { workspace = true }
 repository   = { workspace = true }
 authors      = { workspace = true }
 rust-version = { workspace = true }
 keywords     = { workspace = true }
-readme       = "./README.md"
-description  = """
-    Main crate for using context-generic programming
-"""
+description  = { workspace = true }
 
 [dependencies]
 cgp-core       = { workspace = true }

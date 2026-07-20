@@ -7,9 +7,8 @@ repository   = { workspace = true }
 authors      = { workspace = true }
 rust-version = { workspace = true }
 keywords     = { workspace = true }
-description  = """
-    Context-generic programming extra meta-crate
-"""
+description  = { workspace = true }
+
 [features]
 default = [ "full" ]
 full = [ "cgp-error-extra/alloc" ]

@@ -47,6 +47,7 @@ license         = "Apache-2.0"
 repository      = "https://github.com/contextgeneric/cgp"
 authors         = ["Soares Chen <soares.chen@maybevoid.com>"]
 keywords        = ["cgp"]
+description     = "A language extension for Rust, with pluggable trait implementations at compile-time."
 
 [workspace.dependencies]
 cgp                         = { version = "0.8.0-alpha", path = "./crates/main/cgp" }

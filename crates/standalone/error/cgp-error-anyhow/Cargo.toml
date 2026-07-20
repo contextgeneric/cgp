@@ -8,7 +8,7 @@ authors      = { workspace = true }
 rust-version = { workspace = true }
 keywords     = { workspace = true }
 description  = """
-    Context-generic programming error handlers implemented using eyre
+    Context-generic programming error handlers implemented using anyhow
 """
 
 [dependencies]

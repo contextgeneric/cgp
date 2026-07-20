@@ -8,6 +8,7 @@ repository   = { workspace = true }
 authors      = { workspace = true }
 rust-version = { workspace = true }
 keywords     = { workspace = true }
+description  = { workspace = true }
 
 [dependencies]
 cgp                     = { workspace = true }

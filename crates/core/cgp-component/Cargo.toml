@@ -7,8 +7,6 @@ repository   = { workspace = true }
 authors      = { workspace = true }
 rust-version = { workspace = true }
 keywords     = { workspace = true }
-description  = """
-    Core CGP traits and types used for implementing the CGP component system
-"""
+description  = { workspace = true }
 
 [dependencies]
