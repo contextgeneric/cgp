@@ -34,6 +34,10 @@ The `PhantomData<Tag>` argument exists only to let a caller select which variant
 
 The enum's generic parameters are threaded onto every impl. This derive emits no `HasFields` representation impls and no extractor — those come from [`#[derive(HasFields)]`](derive_has_fields.md) and [`#[derive(ExtractField)]`](derive_extract_field.md); `FromVariant` is purely the construction slice, included wholesale by [`#[derive(CgpVariant)]`](derive_cgp_variant.md) and [`#[derive(CgpData)]`](derive_cgp_data.md).
 
+## Error spans
+
+Each per-variant impl is re-spanned onto the variant it constructs, so a coherence conflict (`E0119`) with a hand-written `FromVariant` impl lands its caret on the variant the user wrote rather than on the whole `#[derive(FromVariant)]`. `derive_from_variant_from_enum` passes each finished impl through [`override_item_span`](../README.md#spans-aim-generated-items-at-the-token-the-user-wrote), moving only the `impl`/`{ … }` boundary — the mechanism the [`#[derive(HasField)]`](derive_has_field.md#error-spans) doc explains in full.
+
 ## Known issues
 
 Like the extractor derive, `#[derive(FromVariant)]` requires every variant to be a single-unnamed-field tuple variant. A fieldless, multi-field, or struct-style variant makes the macro fail with "Expected variant to contain exactly one unnamed field," with no per-variant opt-out. The requirement is described alongside the extractor's in [`derive_extract_field`](derive_extract_field.md#known-issues), and the reference document records its user-visible form.

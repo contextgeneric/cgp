@@ -1,6 +1,7 @@
 use syn::{Ident, ItemEnum, ItemImpl};
 
 use crate::exports::{MapType, MapTypeRef, PartialData};
+use crate::functions::override_item_span;
 use crate::parse_internal;
 use crate::types::cgp_data::index_to_generic_ident;
 
@@ -56,5 +57,7 @@ pub fn derive_partial_data_impl_from_enum(
         }
     };
 
-    Ok(item_impl)
+    // Key the error span on the enum name the user wrote, not the whole derive.
+    // See docs/implementation/README.md#spans.
+    override_item_span(context_ident.span(), &item_impl)
 }

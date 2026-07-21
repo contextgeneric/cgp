@@ -1,6 +1,7 @@
 use syn::{Ident, ItemEnum, ItemImpl, Type};
 
 use crate::exports::{FinalizeExtract, IsVoid, MapTypeRef};
+use crate::functions::override_item_span;
 use crate::parse_internal;
 use crate::types::cgp_data::to_generic_args;
 
@@ -61,5 +62,7 @@ pub fn derive_finalize_extract_impl(
         }
     };
 
-    Ok(item_impl)
+    // Key the error span on the enum name the user wrote, not the whole derive.
+    // See docs/implementation/README.md#spans.
+    override_item_span(context_enum.ident.span(), &item_impl)
 }

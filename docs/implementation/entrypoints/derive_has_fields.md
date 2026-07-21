@@ -47,6 +47,10 @@ The type's **generic parameters and `where` clause** are threaded onto all five 
 
 An **enum** always maps each variant's payload into a `Field` entry regardless of the payload's own shape; the `HasFields` enum path does not impose the single-unnamed-field requirement that the extractor and `FromVariant` derives do, because it only names the payload type rather than deconstructing it.
 
+## Error spans
+
+All five impls are keyed on the whole type, so each is re-spanned onto the struct or enum name the user wrote rather than left at the derive's `call_site` span. A coherence conflict (`E0119`) — a hand-written `HasFields` impl clashing with the derived one — therefore lands its caret on the type name instead of on the whole `#[derive(HasFields)]`. `derive_has_fields_impls_from_struct` and `derive_has_fields_impls_from_enum` pass each finished impl through [`override_item_span`](../README.md#spans-aim-generated-items-at-the-token-the-user-wrote), which moves only the `impl`/`{ … }` boundary — the mechanism the [`#[derive(HasField)]`](derive_has_field.md#error-spans) doc explains in full.
+
 ## Snapshots
 
 Every `snapshot_derive_has_fields!` invocation across the suite is indexed here, since these snapshots all belong to this entrypoint. The struct expansion is owned by the `extensible_records` target and the enum expansion by `extensible_variants`:

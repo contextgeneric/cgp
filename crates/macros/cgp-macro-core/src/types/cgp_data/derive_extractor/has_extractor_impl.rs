@@ -2,6 +2,7 @@ use quote::quote;
 use syn::{Arm, Ident, ItemEnum, ItemImpl};
 
 use crate::exports::{HasExtractor, HasExtractorMut, HasExtractorRef, IsMut, IsPresent, IsRef};
+use crate::functions::override_item_span;
 use crate::parse_internal;
 use crate::types::cgp_data::to_generic_args;
 
@@ -62,7 +63,9 @@ pub fn derive_has_extractor_impl(
         }
     };
 
-    Ok(item_impl)
+    // Key the error span on the enum name the user wrote, not the whole derive.
+    // See docs/implementation/README.md#spans.
+    override_item_span(context_ident.span(), &item_impl)
 }
 
 /// Emit the `HasExtractorRef` impl over the borrowed partial enum (`IsRef`). Its
@@ -137,7 +140,9 @@ pub fn derive_has_extractor_ref_impl(
         }
     };
 
-    Ok(item_impl)
+    // Key the error span on the enum name the user wrote, not the whole derive.
+    // See docs/implementation/README.md#spans.
+    override_item_span(context_ident.span(), &item_impl)
 }
 
 /// Emit the `HasExtractorMut` impl: the `IsMut` mirror of
@@ -209,5 +214,7 @@ pub fn derive_has_extractor_mut_impl(
         }
     };
 
-    Ok(item_impl)
+    // Key the error span on the enum name the user wrote, not the whole derive.
+    // See docs/implementation/README.md#spans.
+    override_item_span(context_ident.span(), &item_impl)
 }

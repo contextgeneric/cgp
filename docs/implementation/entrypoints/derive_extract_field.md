@@ -48,6 +48,10 @@ A variantless enum is special-cased so its degenerate expansion still compiles. 
 
 This derive emits no `HasFields` representation impls and no `FromVariant` constructors — those come from [`#[derive(HasFields)]`](derive_has_fields.md) and [`#[derive(FromVariant)]`](derive_from_variant.md); `ExtractField` is purely the deconstruction slice, included wholesale by [`#[derive(CgpVariant)]`](derive_cgp_variant.md) and [`#[derive(CgpData)]`](derive_cgp_data.md).
 
+## Error spans
+
+Each generated impl is re-spanned onto the token it derives from, so a compiler error points at that token rather than at the whole `#[derive(ExtractField)]`. The per-variant `ExtractField` impls are aimed at the variant they match, and the whole-enum `HasExtractor`/`HasExtractorRef`/`HasExtractorMut`/`FinalizeExtract`/`PartialData` impls at the enum name. Each goes through [`override_item_span`](../README.md#spans-aim-generated-items-at-the-token-the-user-wrote), moving only the `impl`/`{ … }` boundary — the mechanism the [`#[derive(HasField)]`](derive_has_field.md#error-spans) doc explains in full. The `__Partial{Name}`/`__PartialRef{Name}` companion enums are cloned from the user's own enum, so their tokens already carry meaningful spans and need no re-spanning.
+
 ## Known issues
 
 The extractor codegen requires every variant to be a single-unnamed-field tuple variant (enforced by `get_variant_type` in the `derive_extractor/utils.rs` helper). A fieldless variant like `Empty`, a multi-field variant like `Pair(A, B)`, or a struct-style variant like `Named { x: A }` makes the macro fail with "Expected variant to contain exactly one unnamed field." There is no per-variant opt-out, so an enum mixing variant shapes cannot derive the extractor at all; the same requirement applies to [`#[derive(FromVariant)]`](derive_from_variant.md) and therefore to `#[derive(CgpVariant)]`/`#[derive(CgpData)]` on such an enum. The reference document records the user-visible form of this limitation in its own Known issues.

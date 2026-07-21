@@ -1,6 +1,8 @@
+use syn::spanned::Spanned;
 use syn::{Ident, ItemImpl, ItemStruct};
 
 use crate::exports::{HasField, IsPresent, MapType};
+use crate::functions::override_item_span;
 use crate::parse_internal;
 use crate::types::cgp_data::{
     field_to_member, field_to_tag, index_to_generic_ident, to_generic_args,
@@ -55,7 +57,13 @@ pub fn derive_has_field_impls(
             }
         };
 
-        item_impls.push(item_impl);
+        // Point an error on this per-field impl at the field the user wrote
+        // rather than at the whole derive. See docs/implementation/README.md#spans.
+        let field_span = current_field
+            .ident
+            .as_ref()
+            .map_or_else(|| current_field.span(), |ident| ident.span());
+        item_impls.push(override_item_span(field_span, &item_impl)?);
     }
 
     Ok(item_impls)

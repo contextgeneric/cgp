@@ -3,6 +3,7 @@ use quote::quote;
 use syn::{ItemEnum, ItemImpl};
 
 use crate::exports::{HasFields, HasFieldsRef};
+use crate::functions::override_item_span;
 use crate::parse_internal;
 use crate::types::cgp_data::{
     derive_from_fields_for_enum, derive_to_fields_for_enum, derive_to_fields_ref_for_enum,
@@ -45,11 +46,17 @@ pub fn derive_has_fields_impls_from_enum(item_enum: &ItemEnum) -> syn::Result<Ve
 
     let to_fields_ref_impl = derive_to_fields_ref_for_enum(item_enum)?;
 
-    Ok(vec![
+    // These impls are all keyed on the whole enum, so aim an error on any of
+    // their headers at the enum name the user wrote rather than at the whole
+    // `#[derive(...)]`. See docs/implementation/README.md#spans.
+    [
         has_fields_impl,
         has_fields_ref_impl,
         from_fields_impl,
         to_fields_impl,
         to_fields_ref_impl,
-    ])
+    ]
+    .into_iter()
+    .map(|item_impl| override_item_span(struct_name.span(), &item_impl))
+    .collect()
 }

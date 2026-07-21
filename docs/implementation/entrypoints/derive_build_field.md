@@ -45,6 +45,10 @@ A named field is keyed by [`Symbol!`](../../reference/macros/symbol.md) and a tu
 
 An **empty struct** produces a `__Partial{Name}` with no field markers, a trivial `HasBuilder`/`FinalizeBuild`, and no `UpdateField`/`HasField` impls. This derive emits no `HasField`/`HasFieldMut` getters on the original struct and no `HasFields` representation impls — those come from [`#[derive(HasField)]`](derive_has_field.md) and [`#[derive(HasFields)]`](derive_has_fields.md); `BuildField` is purely the construction slice, included wholesale by [`#[derive(CgpRecord)]`](derive_cgp_record.md) and [`#[derive(CgpData)]`](derive_cgp_data.md).
 
+## Error spans
+
+Each generated impl is re-spanned onto the token it derives from, so a compiler error points at that token rather than at the whole `#[derive(BuildField)]`. The per-field `UpdateField` and `HasField`-on-partial impls are aimed at the field they read (the field identifier, or the whole `syn::Field` for a tuple field), and the whole-struct `HasBuilder`/`IntoBuilder`/`PartialData`/`FinalizeBuild` impls at the struct name. Each goes through [`override_item_span`](../README.md#spans-aim-generated-items-at-the-token-the-user-wrote), moving only the `impl`/`{ … }` boundary — the mechanism the [`#[derive(HasField)]`](derive_has_field.md#error-spans) doc explains in full. The `__Partial{Name}` companion struct is cloned from the user's own struct, so its tokens already carry meaningful spans and need no re-spanning.
+
 ## Tests
 
 `#[derive(BuildField)]` has no snapshot macro of its own; the builder items it emits are part of the record expansion pinned by the `snapshot_derive_cgp_data!` snapshots indexed in [derive_cgp_data.md's Snapshots section](derive_cgp_data.md#snapshots). The behavioral builder tests in [crates/tests/cgp-tests/tests/extensible_records/](../../../crates/tests/cgp-tests/tests/extensible_records/) exercise the machinery:

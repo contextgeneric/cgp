@@ -34,6 +34,8 @@ Field tagging follows the same rule as the whole family: a named struct field or
 
 The shape-specific corner cases are inherited from the building blocks rather than introduced here: a single-field tuple struct is special-cased in the `HasFields` product (see [`derive_has_fields`](derive_has_fields.md)), and an enum whose variants are not each single-unnamed-field tuple variants fails in the extractor and `FromVariant` codegen (see [`derive_extract_field`](derive_extract_field.md) and [`derive_from_variant`](derive_from_variant.md)). `CgpData` on such an enum therefore fails the same way, because it runs the same helpers.
 
+Error spans are inherited the same way. Because `CgpData` runs exactly the slice helpers, each generated impl is already re-spanned onto the token it derives from — a per-field impl onto its field, a per-variant impl onto its variant, and a whole-type impl onto the struct or enum name — so a coherence conflict points at that token rather than at the whole `#[derive(CgpData)]`. The mechanism is documented under [`#[derive(HasField)]`](derive_has_field.md#error-spans) and repeated in each slice's Error spans section.
+
 ## Snapshots
 
 Every `snapshot_derive_cgp_data!` invocation across the suite is indexed here, since these snapshots all belong to this entrypoint. The record expansion is owned by the `extensible_records` target and the variant expansion by `extensible_variants`:

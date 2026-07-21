@@ -3,6 +3,7 @@ use quote::quote;
 use syn::{ItemImpl, ItemStruct};
 
 use crate::exports::{HasFields, HasFieldsRef};
+use crate::functions::override_item_span;
 use crate::parse_internal;
 use crate::types::cgp_data::{
     derive_from_fields_for_struct, derive_to_fields_for_struct, derive_to_fields_ref_for_struct,
@@ -46,11 +47,17 @@ pub fn derive_has_fields_impls_from_struct(item_struct: &ItemStruct) -> syn::Res
 
     let to_fields_ref_impl = derive_to_fields_ref_for_struct(item_struct)?;
 
-    Ok(vec![
+    // These impls are all keyed on the whole struct, so aim an error on any of
+    // their headers at the struct name the user wrote rather than at the whole
+    // `#[derive(...)]`. See docs/implementation/README.md#spans.
+    [
         has_fields_impl,
         has_fields_ref_impl,
         from_fields_impl,
         to_fields_impl,
         to_fields_ref_impl,
-    ])
+    ]
+    .into_iter()
+    .map(|item_impl| override_item_span(struct_name.span(), &item_impl))
+    .collect()
 }

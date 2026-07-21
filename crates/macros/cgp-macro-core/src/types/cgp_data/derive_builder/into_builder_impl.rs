@@ -4,6 +4,7 @@ use syn::token::Comma;
 use syn::{FieldValue, Ident, ItemImpl, ItemStruct};
 
 use crate::exports::{IntoBuilder, IsPresent};
+use crate::functions::override_item_span;
 use crate::parse_internal;
 use crate::types::cgp_data::{field_to_member, field_value_expr, to_generic_args};
 
@@ -47,5 +48,7 @@ pub fn derive_into_builder_impl(
         }
     };
 
-    Ok(item_impl)
+    // Key the error span on the struct name the user wrote, not the whole
+    // derive. See docs/implementation/README.md#spans.
+    override_item_span(context_ident.span(), &item_impl)
 }

@@ -1,6 +1,7 @@
 use syn::{Ident, ItemImpl, ItemStruct};
 
 use crate::exports::{MapType, PartialData};
+use crate::functions::override_item_span;
 use crate::parse_internal;
 use crate::types::cgp_data::index_to_generic_ident;
 
@@ -32,5 +33,7 @@ pub fn derive_partial_data_impl_from_struct(
         }
     };
 
-    Ok(item_impl)
+    // Key the error span on the struct name the user wrote, not the whole
+    // derive. See docs/implementation/README.md#spans.
+    override_item_span(context_ident.span(), &item_impl)
 }

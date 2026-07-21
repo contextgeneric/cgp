@@ -1,6 +1,7 @@
 use syn::{Arm, GenericArgument, Ident, ItemEnum, ItemImpl, Type};
 
 use crate::exports::{ExtractField, IsPresent, IsVoid, MapType, MapTypeRef};
+use crate::functions::override_item_span;
 use crate::parse_internal;
 use crate::types::cgp_data::{get_variant_type, index_to_generic_ident, to_generic_args};
 use crate::types::field::Symbol;
@@ -116,7 +117,12 @@ pub fn derive_extract_field_impls(
             }
         };
 
-        item_impls.push(item_impl);
+        // Point an error on this per-variant impl at the variant the user wrote
+        // rather than at the whole derive. See docs/implementation/README.md#spans.
+        item_impls.push(override_item_span(
+            current_variant.ident.span(),
+            &item_impl,
+        )?);
     }
 
     Ok(item_impls)
