@@ -2,6 +2,7 @@ use syn::spanned::Spanned;
 use syn::{Fields, ItemImpl, ItemStruct, LitInt};
 
 use crate::exports::{HasField, HasFieldMut};
+use crate::functions::override_item_span;
 use crate::parse_internal;
 use crate::types::field::{Index, Symbol};
 
@@ -16,6 +17,14 @@ pub fn derive_has_field_impls_from_struct(item_struct: &ItemStruct) -> syn::Resu
         Fields::Named(fields) => {
             for field in fields.named.iter() {
                 let field_ident = field.ident.as_ref().unwrap();
+
+                // Aim a compiler error on either generated impl — a coherence
+                // conflict (`E0119`) with a hand-written `HasField` impl for the
+                // same tag, say — at the field the user wrote rather than at the
+                // whole `#[derive(HasField)]`, which is where the impl's
+                // `call_site`-spanned `impl`/`{ … }` boundary would otherwise put
+                // the caret. See docs/implementation/README.md#spans.
+                let field_span = field_ident.span();
 
                 let field_symbol = Symbol::from_ident(field_ident.clone());
 
@@ -53,18 +62,23 @@ pub fn derive_has_field_impls_from_struct(item_struct: &ItemStruct) -> syn::Resu
                     }
                 };
 
-                item_impls.push(has_field_impl);
-                item_impls.push(has_field_mut_impl);
+                item_impls.push(override_item_span(field_span, &has_field_impl)?);
+                item_impls.push(override_item_span(field_span, &has_field_mut_impl)?);
             }
         }
         Fields::Unnamed(fields) => {
             for (i, field) in fields.unnamed.iter().enumerate() {
+                // A tuple field has no identifier, so its whole `syn::Field` span
+                // is the narrowest token the user wrote; re-span each generated
+                // impl onto it for the same reason as the named case above.
+                let field_span = field.span();
+
                 let field_tag = Index {
                     index: i,
-                    span: field.span(),
+                    span: field_span,
                 };
 
-                let field_ident = LitInt::new(&format!("{i}"), field.span());
+                let field_ident = LitInt::new(&format!("{i}"), field_span);
 
                 let field_type = &field.ty;
 
@@ -100,8 +114,8 @@ pub fn derive_has_field_impls_from_struct(item_struct: &ItemStruct) -> syn::Resu
                     }
                 };
 
-                item_impls.push(has_field_impl);
-                item_impls.push(has_field_mut_impl);
+                item_impls.push(override_item_span(field_span, &has_field_impl)?);
+                item_impls.push(override_item_span(field_span, &has_field_mut_impl)?);
             }
         }
         _ => {}
