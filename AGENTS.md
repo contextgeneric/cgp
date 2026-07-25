@@ -84,12 +84,12 @@ lists every document in one page, which is the fastest way to find the few a tas
   `#[cgp_component]`/`#[cgp_impl]`/`#[cgp_fn]`, `delegate_components!`, `HasField`, `UseDelegate`,
   check traits, and so on). Re-invoke it whenever you move into an unfamiliar construct — the macros
   and core traits here are the ground truth the skill describes, so read the two together.
-- **Always read [cgp-knowledge-base/cgp/README.md](https://github.com/contextgeneric/cgp-knowledge-base/blob/main/cgp/README.md)** to orient in the knowledge base, then follow it
-  into the README of whichever section covers your task.
-- **Read [cgp-knowledge-base/cgp/reference/README.md](https://github.com/contextgeneric/cgp-knowledge-base/blob/main/cgp/reference/README.md) and the relevant reference documents
-  whenever the task requires understanding a CGP construct** — what it means, what syntax it accepts,
-  and what code it expands to.
-- **Read [cgp-knowledge-base/cgp/implementation/README.md](https://github.com/contextgeneric/cgp-knowledge-base/blob/main/cgp/implementation/README.md) and the relevant
+- **Always read the knowledge base's [`cgp` section README](https://github.com/contextgeneric/cgp-knowledge-base/blob/main/cgp/README.md)** to orient,
+  then follow it into the README of whichever part covers your task.
+- **Read the [construct reference](https://github.com/contextgeneric/cgp-knowledge-base/blob/main/cgp/reference/README.md) and the relevant reference
+  documents whenever the task requires understanding a CGP construct** — what it means, what syntax
+  it accepts, and what code it expands to.
+- **Read the [implementation reference](https://github.com/contextgeneric/cgp-knowledge-base/blob/main/cgp/implementation/README.md) and the relevant
   implementation documents whenever the task involves reading or modifying the CGP source code** —
   they map each macro to its `cgp-macro-core`/`cgp-macro-lib` internals, corner cases, and tests.
 - **Load the `/dual-reader-prose` skill whenever the task involves editing markdown documentation or
@@ -187,13 +187,14 @@ as the behavior allows.
 ### Orient before touching anything
 
 Perform the standing steps in [Orient before any task](#orient-before-any-task) first, every
-iteration. Then read the documentation specific to the macro under review, in the [knowledge base](https://github.com/contextgeneric/cgp-knowledge-base/tree/main/cgp): its
-reference document under [cgp-knowledge-base/cgp/reference/](https://github.com/contextgeneric/cgp-knowledge-base/tree/main/cgp/reference), its implementation documents under
-[cgp-knowledge-base/cgp/implementation/](https://github.com/contextgeneric/cgp-knowledge-base/tree/main/cgp/implementation) (the `entrypoints/` document, the `asts/` stack it
-drives, and any `functions/` helpers it relies on), and the governing `AGENTS.md` files that define
-how those documents stay in sync with the code: [cgp-knowledge-base/cgp/AGENTS.md](https://github.com/contextgeneric/cgp-knowledge-base/blob/main/cgp/AGENTS.md),
-[cgp-knowledge-base/cgp/implementation/AGENTS.md](https://github.com/contextgeneric/cgp-knowledge-base/blob/main/cgp/implementation/AGENTS.md), and
-[crates/macros/cgp-macro-core/AGENTS.md](crates/macros/cgp-macro-core/AGENTS.md). These establish
+iteration. Then read the knowledge base's documentation for the macro under review: its
+[reference document](https://github.com/contextgeneric/cgp-knowledge-base/tree/main/cgp/reference), its
+[implementation documents](https://github.com/contextgeneric/cgp-knowledge-base/tree/main/cgp/implementation) — the `entrypoints/` document, the
+`asts/` stack it drives, and any `functions/` helpers it relies on — and the `AGENTS.md` files that
+define how those documents stay in sync with the code
+([the `cgp` section's](https://github.com/contextgeneric/cgp-knowledge-base/blob/main/cgp/AGENTS.md),
+[the implementation tree's](https://github.com/contextgeneric/cgp-knowledge-base/blob/main/cgp/implementation/AGENTS.md), and
+[cgp-macro-core's](crates/macros/cgp-macro-core/AGENTS.md)). These establish
 that the source is the single source of truth and that reference, implementation, snapshot, and
 skill are four views of it that must never drift.
 

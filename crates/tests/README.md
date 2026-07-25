@@ -1,16 +1,16 @@
 # CGP test suite
 
-This directory holds the test suite for Context-Generic Programming. The tests
-are organized **by CGP concept** — basic delegation, abstract types, implicit
-arguments, namespaces, and so on — rather than by the macro that implements each
-concept, because a single macro (for example `delegate_components!`) serves many
-concepts at once. If you are maintaining or extending the suite, read
-[AGENTS.md](AGENTS.md) first; it is the authoritative guide to the conventions.
-This README is the map.
+This directory holds the test suite for Context-Generic Programming, organized **by
+CGP concept** — basic delegation, abstract types, implicit arguments, namespaces,
+and so on — rather than by the macro that implements each concept, because a single
+macro such as `delegate_components!` serves many concepts at once. This README is
+the map of what is here and how to run it; [AGENTS.md](AGENTS.md) is the
+authoritative guide to the conventions, and you should read it before adding,
+moving, or refactoring a test.
 
 ## The crates
 
-The suite is split into two kinds of crate, each with a distinct job.
+The suite is split into two crates, each with a distinct job.
 
 **`cgp-tests`** is the main suite: realistic example code that must compile and
 run. Because much of CGP is compile-time wiring, a test here often passes simply
@@ -22,46 +22,28 @@ where the canonical macro-expansion snapshots live.
 refuses during expansion — and for pinning the invalid tokens a macro currently
 emits.
 
-**Post-codegen compile failures live in `cargo-cgp`, not here.** The cases where a
-macro *accepts* input but its *expansion* then fails to compile — and the
-cross-crate coherence and orphan-rule fixtures that need a companion crate — were
-migrated to `cargo-cgp`'s UI test suite, which snapshots the readable, root-cause-first
-errors `cargo-cgp` renders for each class (its `.rust.stderr` still records the raw
-compiler output as the "before"). `cargo-cgp` is CGP's first-class error toolchain, so
-those diagnostics are pinned where the tool that improves them lives; the
-[error catalog](https://github.com/contextgeneric/cgp-knowledge-base/blob/main/cgp/errors/README.md) links each class to the fixture that
-backs it. See
-[cargo-cgp's UI tests](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/README.md).
+A third category lives in another repository: the cases where a macro *accepts*
+input whose *expansion* then fails to compile are UI fixtures in
+[`cargo-cgp`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/README.md),
+so each is pinned as the readable error the tool renders for it. AGENTS.md's
+"Adding a failure case" says which of the three a new case belongs in.
 
 ## How the tests are laid out
 
 Inside `cgp-tests`, each concept is one **integration test target**, which Cargo
-compiles as its own crate (its own coherence scope). A target is an entrypoint file
-`tests/<concept>_tests.rs` plus a module directory `tests/<concept>/` holding one
-`.rs` file per unit test. Each unit-test file is self-contained: it defines its own
-components, providers, and context types at module scope, so the type-level wiring
-of one test never leaks into another. `tests/basic_delegation/` is the reference
-example of this layout.
+compiles as its own crate — and therefore its own coherence scope. A target is an
+entrypoint file `tests/<concept>_tests.rs` plus a module directory
+`tests/<concept>/` holding one `.rs` file per unit test, each self-contained so the
+type-level wiring of one test never leaks into another. `tests/basic_delegation/`
+is the reference example of the layout.
 
 The concept targets currently cover: basic delegation, impl-side dependencies,
 implicit arguments, higher-order providers, generic components, abstract types,
 getters, field access, extensible records, extensible variants, checking,
 dispatching, namespaces, handlers, monadic handlers, async and Send bounds, and
-blanket traits. This set grows and subdivides over time — when a concept
-accumulates too many cases to stay coherent, it is split into finer targets.
-
-`cgp-macro-tests` follows the same target/`_tests.rs` shape: `ident_with_type_params`
-for parser corner cases, and the failure-case targets `parser_rejections` and
-`invalid_expansion`.
-
-## Snapshots
-
-Many tests assert the exact code a macro generates, using the `snapshot_*!` macros
-from `cgp-macro-test-util`. Each such macro emits the real generated code into the
-module **and** generates a `#[test]` asserting a pretty-printed inline `insta`
-snapshot of it. Snapshots are used deliberately: a macro's expansion is snapshotted
-only in the concept target that owns that macro's feature, and written plainly
-everywhere else (see [AGENTS.md](AGENTS.md) for the ownership rules).
+blanket traits. The set grows and subdivides over time. `cgp-macro-tests` follows
+the same shape, with `ident_with_type_params` for parser corner cases and the
+failure-case targets `parser_rejections` and `invalid_expansion`.
 
 ## Running the tests
 
@@ -74,5 +56,9 @@ cargo insta test -p cgp-tests --review          # review snapshot diffs interact
 cargo insta test -p cgp-tests --accept          # accept intended snapshot changes
 ```
 
-When a `snapshot_*!` test fails it prints a diff of the generated code; accept the
-new output with `cargo insta` only after confirming the change is intended.
+Many tests assert the exact code a macro generates, through the `snapshot_*!`
+macros from `cgp-macro-test-util`: each emits the real generated code into the
+module *and* generates a `#[test]` asserting a pretty-printed inline `insta`
+snapshot of it. So a failing snapshot prints a diff of the generated code — accept
+it with `cargo insta` only after confirming the change is intended. Which target
+owns a given macro's snapshot is a convention AGENTS.md sets out.
