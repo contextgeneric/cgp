@@ -74,7 +74,14 @@ A scratch module or throwaway test is the natural place for this — it compiles
 
 ## Inspect what the macro actually emitted
 
-When a reproduction still puzzles you, stop guessing about the expansion and look at it. The wiring failure is always "the emitted impls do not resolve," and you cannot reason about why until you see the impls. In any project, `cargo expand` prints the macro-expanded source directly; in a project set up with the CGP test utilities, the `snapshot_*!` helpers in `cgp-macro-test-util` (`snapshot_cgp_impl!`, `snapshot_delegate_components!`, `snapshot_cgp_namespace!`, …) additionally emit the real generated code into the module *and* pretty-print it into an inline snapshot you can review and keep. Either way, reading the generated `where` clauses and the exact key types is often enough to spot the defect — a bound on the wrong type, a path with a segment too many, a parameter that should not be there.
+When a reproduction still puzzles you, stop guessing about the expansion and look at it. The wiring failure is always "the emitted impls do not resolve," and you cannot reason about why until you see the impls. [`cargo cgp expand`](../reference/cargo-cgp.md#expanding-the-generated-code) is the way to see them: it prints the crate after macro expansion with CGP's type-level constructs resugared, so a key that the error rendered as a `Symbol<6, Chars<'h', …>>` spine reads `Symbol!("height")` here. Narrow it to the construct in question rather than reading a whole crate — naming a provider trait gives you every impl of it, which is exactly "what did this component generate":
+
+```sh
+cargo cgp expand --lib --item AreaCalculator        # a trait: its definition and every impl of it
+cargo cgp expand --lib --item contexts::MockApp     # a type: its HasField impls and its wiring entries
+```
+
+Reading the generated `where` clauses and the exact key types is often enough to spot the defect — a bound on the wrong type, a path with a segment too many, a parameter that should not be there. Where `cargo cgp expand` is unavailable, plain `cargo expand` shows the same expansion without the resugaring; and in a project set up with the CGP test utilities, the `snapshot_*!` helpers in `cgp-macro-test-util` (`snapshot_cgp_impl!`, `snapshot_delegate_components!`, `snapshot_cgp_namespace!`, …) additionally emit the real generated code into the module *and* pretty-print it into an inline snapshot you can review and keep.
 
 Comparing two expansions side by side localizes a difference precisely. When one form works and another does not, expand both and diff the output; the delta is the bug. This is how a `#[default_impl]` defect can be pinned: the namespace-registration impl it emitted carried a `where` clause that the equivalent body entry did not, and seeing the two expansions next to each other made the leaked clause obvious. Capturing the expansion as a snapshot doubles as a permanent regression test, so the effort is not throwaway.
 

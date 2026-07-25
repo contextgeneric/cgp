@@ -42,7 +42,15 @@ cargo test -p <your-crate> --test <target> 2>&1 | tee /tmp/cgp-error.txt
 
 Two details recur, both plain `rustc` behavior rather than anything CGP-specific. When a type in the error is elided as `...`, the compiler writes its full form to a file named in a final note (`the full name for the type has been written to '….long-type-….txt'`); that elided middle is frequently the one segment that reveals *which* context or path the error is about, so read that file when the cause hinges on a long type. And watch for the **near-contradiction** shape — "the trait `X` is not implemented for `T`" immediately followed by a `help:` note that `X` *is* implemented for `T` — which means an impl exists but a nested bound it carries does not hold, or two candidates are ambiguous; trust the error, not the `help:`.
 
-When the cause hinges on *what the macro emitted* rather than on the message itself, stop reading the error and read the expansion. `cargo expand` prints the macro-expanded source in any project; in a project set up with the CGP test utilities, the `snapshot_*!` helpers from `cgp-macro-test-util` additionally pin an expansion as a reviewable snapshot. The [macro-grammar](macro-grammar.md) skill covers how to read the expanded impls once you have them.
+When the cause hinges on *what the macro emitted* rather than on the message itself, stop reading the error and read the expansion. Reach for `cargo cgp expand` first: it prints the crate after macro expansion with CGP's type-level constructs resugared, so a field tag that the error rendered as a `Chars` spine reads `Symbol!("height")` in the expansion — the generated code is often easier to read than the diagnostic about it. Narrow it to the part you care about, since a whole crate's expansion is long and a filtered one keeps your context clear:
+
+```sh
+cargo cgp expand --lib --item AreaCalculator     # a trait: every impl of it — what a component generated
+cargo cgp expand --lib --item contexts::MockApp  # a type: its HasField impls and its wiring entries
+cargo cgp expand --lib > /tmp/expanded.rs        # or redirect the whole thing and grep it
+```
+
+Pass `--lib` or `--bin NAME` when the package has several targets, or cargo refuses to run. Plain `cargo expand` is the fallback where `cargo cgp expand` is unavailable — it shows the same expansion without the resugaring — and in a project set up with the CGP test utilities the `snapshot_*!` helpers from `cgp-macro-test-util` additionally pin an expansion as a reviewable snapshot. The [macro-grammar](macro-grammar.md) skill covers how to read the expanded impls once you have them.
 
 ### Reduce to the compact summary
 

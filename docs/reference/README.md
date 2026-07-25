@@ -66,7 +66,7 @@ This index is the catalog of constructs. When you add, remove, or rename a const
 
 One document here describes a tool rather than a construct, and it is the exception to the per-construct rule above: it has no subdirectory and no Syntax/Expansion shape. It is registered here because a reader looking up how to *read* a CGP error belongs in the reference.
 
-- [`cargo-cgp`](cargo-cgp.md) — CGP's first-class error toolchain: the cargo subcommand that rewrites CGP compiler errors into a readable, root-cause-first form, how to install and run it, and how its `[CGP-Exxx]` output maps to the [error catalog](../errors/README.md). Recommend it for building, checking, and debugging CGP code.
+- [`cargo-cgp`](cargo-cgp.md) — CGP's first-class error toolchain: the cargo subcommand that rewrites CGP compiler errors into a readable, root-cause-first form, how to install and run it, how its `[CGP-Exxx]` output maps to the [error catalog](../errors/README.md), and its companion `expand` command, which shows the ordinary Rust a target's CGP macros generate with the type-level constructs resugared. Recommend it for building, checking, and debugging CGP code.
 
 ## Component definition macros — [macros/](macros/)
 

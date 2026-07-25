@@ -45,9 +45,11 @@ traits and impls, so the reliable way to understand any construct is to know the
 to. This primer shows those expansions where they matter and keeps them out of the way where they
 do not.
 
-## Tooling: use cargo-cgp for readable errors
+## Tooling: use cargo-cgp for readable errors and expansions
 
-**Before debugging any CGP compile error, use `cargo-cgp` if it is available.** `cargo-cgp` is CGP's
+**Before debugging any CGP compile error, use `cargo-cgp` if it is available.** It has two commands
+you will want: `check`, which reshapes the errors, and
+[`expand`](#reading-what-a-macro-generated-cargo-cgp-expand), which shows the code the macros generated. `cargo-cgp` is CGP's
 first-class toolchain — a cargo subcommand that stands in for `cargo check` and rewrites CGP's
 compiler errors into a compact, root-cause-first form, tagging each rewritten message with a
 `[CGP-Exxx]` code. A raw CGP error is often a wall of generated types with the real cause buried or
@@ -84,10 +86,69 @@ untouched. Full instructions:
 `[CGP-Exxx]` tag, leading with the root cause over a `cargo tree`-style dependency chain; the codes
 are catalogued at <https://github.com/contextgeneric/cargo-cgp/blob/main/docs/error-code.md>.
 
-**Scope:** cargo-cgp is optional and adds only `check` — there is no `cargo cgp build`/`run`/`test`,
-so build, run, and test the project with plain cargo. CGP itself compiles on any **stable Rust ≥
-1.89**, so plain `cargo check` works on a CGP project too; reach for `cargo cgp check` specifically
-when you hit or expect a wiring error and want it made readable.
+### Reading what a macro generated: `cargo cgp expand`
+
+**When a CGP error stops making sense, read the code the macros produced rather than reasoning about
+what you think they produce.** A wiring failure is always "the emitted impls do not resolve," and the
+impls are generated, so the fastest way past a confusing diagnostic is often to look at them.
+`cargo cgp expand` prints the crate after macro expansion, with CGP's type-level constructs
+**resugared** — a field tag reads `Symbol!("width")`, not the raw `Symbol<5, Chars<'w', …>>`
+spine the compiler prints; a pipeline reads `Product![StepOne, StepTwo]`; a namespace key reads
+`Path!(@app.GreeterComponent)` — so the generated code is legible in the same vocabulary as the
+source.
+
+Reach for it in four situations, each one where the answer is in the generated code rather than in the
+message:
+
+- **A diagnostic names a type you did not write** (`IsProviderFor<…>`, a `PathCons<…>` key, a
+  `__Context__` parameter) and you need to see the impl it came from.
+- **A wiring table does not resolve** and you want the real `DelegateComponent` keys and `Delegate`
+  values it produced, rather than inferring them from the table's syntax.
+- **You are unsure what a construct emits** — the exact `where` clauses of a provider impl, whether a
+  getter's blanket impl requires the field you think it does. Reading the expansion beats guessing, and
+  beats trusting a remembered expansion.
+- **Two forms differ and only one compiles.** Expand both and diff; the delta is the bug.
+
+Run it on one target, narrowed to what you care about:
+
+```sh
+cargo cgp expand --lib                              # the whole library target
+cargo cgp expand --lib --item contexts::MockApp     # one module, type, or trait
+```
+
+**Target selection is required when a package has several targets** — pass `--lib` or `--bin NAME`, or
+cargo declines with "extra arguments to `rustc` can only be passed to one target". Other arguments
+(`-p`, `--features`) forward to `cargo rustc`, and the expansion goes to stdout, so redirect it to a
+file when it is long and read that instead of flooding your context.
+
+**`--item <path>` is what makes the output manageable**, and which of three rules applies depends on
+what the path names. The path is `::`-separated, may carry a leading `crate::`, and names something
+inside the crate being expanded:
+
+- a **module** → its contents (`--item contexts`);
+- a **type** → its declaration and every impl written *for* it. For a context that is its struct, the
+  `HasField`/`HasFieldMut` impls the derive generated, and its `DelegateComponent` wiring entries with
+  the real key and provider types (`--item Rectangle`);
+- a **trait** → its definition and every impl *of* it, which is usually the rule you want. Naming a
+  component's *provider* trait (`--item AreaCalculator`) gives the provider trait, the delegation
+  blanket impl, the `UseContext` and `RedirectLookup` impls, and each wired provider's impl; naming the
+  *consumer* trait (`--item CanCalculateArea`) gives just the consumer trait and its routing blanket.
+
+Two limits matter when you read the output. **`expand` is not a check**: it stops once the macros are
+expanded, so it reports nothing about wiring — use `cargo cgp check` for that, and expect `expand` to
+succeed even on a crate that does not type-check (which is exactly what makes it useful mid-debugging).
+And the output is for reading, not compiling: the `cgp::macro_prelude::` qualifier is stripped, and an
+`open` statement's per-key entry keeps its raw `PathCons<…>` key.
+
+One availability note: `expand` is newer than cargo-cgp v0.1.0-alpha, so a crates.io install does not
+carry it yet. Until the next release it comes from the Nix flake without a tag
+(`nix run github:contextgeneric/cargo-cgp -- expand --lib`) or from a source checkout; see
+<https://github.com/contextgeneric/cargo-cgp/blob/main/docs/reference/installation.md>.
+
+**Scope:** cargo-cgp is optional and adds only `check` and `expand` — there is no
+`cargo cgp build`/`run`/`test`, so build, run, and test the project with plain cargo. CGP itself
+compiles on any **stable Rust ≥ 1.89**, so plain `cargo check` works on a CGP project too; reach for
+`cargo cgp check` specifically when you hit or expect a wiring error and want it made readable.
 
 `cargo-cgp` can also be Rust Analyzer's on-save check backend, via
 `rust-analyzer.check.overrideCommand` set to
