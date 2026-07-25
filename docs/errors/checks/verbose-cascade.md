@@ -46,7 +46,7 @@ The root cause is **present and repeated** — the same `HasField<Symbol!("name"
 
 `cargo-cgp` collapses the whole cascade to a single block. First it **drops every intermediate provider-trait block** as derived noise and recovers each *checked* component's failure to a `root cause:` tree that descends all the way to the leaf. Then it **coalesces** the checked components that share that leaf: rather than one block per component, it emits one `[CGP-E001]` headline naming every affected consumer trait — `` the consumer traits `CanBaz`, `CanBar`, and `CanFoo` are not implemented for context `App` `` — with a caret at each check entry and a single `root cause: [CGP-E106] missing field \`name\`` tree beneath. So a six-block raw cascade over three checked components becomes one block, and cargo's re-count reports one error. A component rustc happened to surface provider-side (a lone `[CGP-E002]` block) is worded uniformly as a consumer in the merged headline, since a `check_components!` entry failing *is* the consumer trait failing.
 
-Listing every affected consumer in one headline is possible because the tool holds the compilation's diagnostics until they have all arrived (there is no end-of-compilation hook), then groups them by a consumer-independent cause signature. The codes are defined in the [cargo-cgp error-code catalog](https://github.com/contextgeneric/cargo-cgp/blob/main/docs/error-code.md).
+Listing every affected consumer in one headline is possible because the tool holds the compilation's diagnostics until they have all arrived (there is no end-of-compilation hook), then groups together the ones that *share* a root cause. Grouping on a shared cause rather than on a whole-failure key is what also reaches the harder shape, where one omission is reached at several instantiations and so surfaces as several root causes: each check entry stops at the first unmet leaf on its own branch while a use-site call reaches them all, so no two of those cause sets are equal and grouping on equality left one mistake reported as several blocks. The codes are defined in the [cargo-cgp error-code catalog](https://github.com/contextgeneric/cargo-cgp/blob/main/docs/error-code.md).
 
 ## Resolving it
 
@@ -54,7 +54,7 @@ Fix the single root cause and the entire cascade collapses at once — supply th
 
 ## Notes for tooling
 
-`cargo-cgp` reshapes this class in full, as [How cargo-cgp presents it](#how-cargo-cgp-presents-it) describes: it drops the intermediate provider-trait blocks, recovers each checked component's innermost concrete cause, and coalesces the components that share one leaf into a single headline that lists every affected consumer over one root-cause tree. The coalescing keys on a consumer-independent cause signature, so it generalizes to any set of checked components bottoming out on the same root cause, not just a field.
+`cargo-cgp` reshapes this class in full, as [How cargo-cgp presents it](#how-cargo-cgp-presents-it) describes: it drops the intermediate provider-trait blocks, recovers each checked component's innermost concrete cause, and coalesces the components that share one leaf into a single headline that lists every affected consumer over one root-cause tree. The coalescing keys on the root causes themselves, consumer-independently and one cause at a time, so it generalizes to any set of checked components bottoming out on the same root cause — not just a field, and not only components whose causes match exactly, since failures whose cause sets merely overlap are grouped too.
 
 ## Backing fixtures
 
