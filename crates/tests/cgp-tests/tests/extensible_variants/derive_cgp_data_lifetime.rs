@@ -9,8 +9,8 @@
 //! extractor expansion shape, so this only exercises the corner case at compile
 //! and run time.
 //!
-//! See docs/reference/derives/derive_cgp_data.md and
-//! docs/reference/derives/derive_extract_field.md.
+//! See cgp-knowledge-base/cgp/reference/derives/derive_cgp_data.md and
+//! cgp-knowledge-base/cgp/reference/derives/derive_extract_field.md.
 
 use core::marker::PhantomData;
 

@@ -2,7 +2,7 @@
 //! associated type used as the return type: the type is inferred from the field
 //! and the trait bound (`Display`) is carried onto the generated blanket impl.
 //!
-//! See docs/reference/macros/cgp_auto_getter.md.
+//! See cgp-knowledge-base/cgp/reference/macros/cgp_auto_getter.md.
 
 use core::fmt::Display;
 

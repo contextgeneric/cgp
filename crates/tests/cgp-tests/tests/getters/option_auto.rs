@@ -2,7 +2,7 @@
 //! `Option<String>` field named after the method and calls `.as_ref()`,
 //! converting `&Option<String>` into `Option<&String>` without wiring.
 //!
-//! See docs/reference/macros/cgp_auto_getter.md.
+//! See cgp-knowledge-base/cgp/reference/macros/cgp_auto_getter.md.
 
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_cgp_auto_getter;

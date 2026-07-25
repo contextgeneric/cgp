@@ -6,7 +6,7 @@
 //! carries `Name: Display`. A second `#[cgp_fn]` (`test_greet`) then imports the
 //! `Greet` capability with `#[uses(...)]` and drives the runtime assertion.
 //!
-//! See docs/reference/macros/cgp_fn.md.
+//! See cgp-knowledge-base/cgp/reference/macros/cgp_fn.md.
 
 use core::fmt::Display;
 

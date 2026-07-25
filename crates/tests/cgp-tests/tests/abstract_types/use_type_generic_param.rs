@@ -9,7 +9,8 @@
 //! generic parameter — i.e. `Self::Error` resolution stays distinct from the
 //! `Error` type argument.
 //!
-//! See docs/reference/attributes/use_type.md and docs/concepts/abstract-types.md.
+//! See cgp-knowledge-base/cgp/reference/attributes/use_type.md and
+//! cgp-knowledge-base/cgp/concepts/abstract-types.md.
 
 use cgp::prelude::*;
 

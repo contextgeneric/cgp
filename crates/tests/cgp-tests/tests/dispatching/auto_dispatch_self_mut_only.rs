@@ -3,7 +3,7 @@
 //! The generated handler routes a `&mut FooBar` reference to the matching
 //! variant impl of `CanCall`.
 //!
-//! See docs/reference/macros/cgp_auto_dispatch.md.
+//! See cgp-knowledge-base/cgp/reference/macros/cgp_auto_dispatch.md.
 
 use cgp::prelude::*;
 

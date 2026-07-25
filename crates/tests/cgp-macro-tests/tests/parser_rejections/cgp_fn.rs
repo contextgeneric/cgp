@@ -9,8 +9,8 @@
 //! `trybuild` compile-fail fixture, which is reserved for input the macro accepts
 //! but whose expansion then fails to compile.
 //!
-//! See docs/implementation/entrypoints/cgp_fn.md (Tests) for these failure cases,
-//! and docs/reference/attributes/implicit.md for the user-facing rules on where
+//! See cgp-knowledge-base/cgp/implementation/entrypoints/cgp_fn.md (Tests) for these failure cases,
+//! and cgp-knowledge-base/cgp/reference/attributes/implicit.md for the user-facing rules on where
 //! `#[implicit]` may appear.
 
 use quote::quote;

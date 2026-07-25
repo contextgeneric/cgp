@@ -8,8 +8,8 @@
 //! expansions are owned by the `getters` and `checking` targets — so they are
 //! written as the plain macros.
 //!
-//! See docs/reference/derives/derive_has_field.md and
-//! docs/reference/traits/has_field.md.
+//! See cgp-knowledge-base/cgp/reference/derives/derive_has_field.md and
+//! cgp-knowledge-base/cgp/reference/traits/has_field.md.
 
 use cgp::core::field::impls::ChainGetters;
 use cgp::prelude::*;

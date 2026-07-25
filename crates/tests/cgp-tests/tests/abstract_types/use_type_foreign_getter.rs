@@ -13,8 +13,8 @@
 //! type is that qualified associated type, so the context supplies the field while
 //! `App` supplies the concrete `UserId`.
 //!
-//! See docs/guides/importing-abstract-types.md and
-//! docs/reference/attributes/use_type.md.
+//! See cgp-knowledge-base/cgp/guides/importing-abstract-types.md and
+//! cgp-knowledge-base/cgp/reference/attributes/use_type.md.
 
 use cgp::prelude::*;
 

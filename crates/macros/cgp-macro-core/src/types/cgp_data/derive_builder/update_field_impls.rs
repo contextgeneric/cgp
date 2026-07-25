@@ -102,7 +102,8 @@ pub fn derive_update_field_impls(
         };
 
         // Point an error on this per-field impl at the field the user wrote
-        // rather than at the whole derive. See docs/implementation/README.md#spans.
+        // rather than at the whole derive. See
+        // cgp-knowledge-base/cgp/implementation/README.md#spans.
         let field_span = current_field
             .ident
             .as_ref()

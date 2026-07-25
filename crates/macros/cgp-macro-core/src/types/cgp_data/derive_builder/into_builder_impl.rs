@@ -49,6 +49,6 @@ pub fn derive_into_builder_impl(
     };
 
     // Key the error span on the struct name the user wrote, not the whole
-    // derive. See docs/implementation/README.md#spans.
+    // derive. See cgp-knowledge-base/cgp/implementation/README.md#spans.
     override_item_span(context_ident.span(), &item_impl)
 }

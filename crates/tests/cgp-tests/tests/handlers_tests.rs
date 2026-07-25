@@ -10,9 +10,10 @@
 //! `check_components!`, or `delegate_components!` snapshots — those live in their
 //! owning targets — so the scaffolding here uses the plain macros.
 //!
-//! See docs/reference/components/computer.md,
-//! docs/reference/components/producer.md, docs/reference/components/handler.md,
-//! and docs/reference/providers/handler_combinators.md.
+//! See cgp-knowledge-base/cgp/reference/components/computer.md,
+//! cgp-knowledge-base/cgp/reference/components/producer.md,
+//! cgp-knowledge-base/cgp/reference/components/handler.md, and
+//! cgp-knowledge-base/cgp/reference/providers/handler_combinators.md.
 #![allow(dead_code)]
 
 pub mod handlers;

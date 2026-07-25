@@ -11,8 +11,8 @@
 //! `bar` forwards to `create_foo`, so this asserts a value flows end to end through
 //! the transitively-required, then explicitly re-imported, abstract type.
 //!
-//! See docs/guides/declaring-dependencies.md and
-//! docs/guides/importing-abstract-types.md.
+//! See cgp-knowledge-base/cgp/guides/declaring-dependencies.md and
+//! cgp-knowledge-base/cgp/guides/importing-abstract-types.md.
 
 use cgp::prelude::*;
 

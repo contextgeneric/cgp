@@ -4,8 +4,8 @@
 //! rather than silently drop. It also rejects a braceless `open` header that
 //! lists more than one component, since the braceless form opens exactly one.
 //!
-//! See docs/implementation/entrypoints/delegate_components.md (Tests) for these
-//! failure cases, and docs/reference/macros/delegate_components.md for the
+//! See cgp-knowledge-base/cgp/implementation/entrypoints/delegate_components.md (Tests) for these
+//! failure cases, and cgp-knowledge-base/cgp/reference/macros/delegate_components.md for the
 //! user-facing semantics.
 
 use quote::quote;

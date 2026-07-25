@@ -1,7 +1,7 @@
 //! Runtime behavior of the `Index<N>` type-level number tag: an `Index<N>`
 //! value `Display`s as its underlying number.
 //!
-//! See docs/reference/types/index.md.
+//! See cgp-knowledge-base/cgp/reference/types/index.md.
 
 use cgp::prelude::*;
 

@@ -9,8 +9,8 @@
 //! The `#[prefix]`-component and namespace `delegate_components!` snapshots are the
 //! canonical golden output this concept owns.
 //!
-//! See docs/reference/traits/default_namespace.md and
-//! docs/reference/macros/delegate_components.md.
+//! See cgp-knowledge-base/cgp/reference/traits/default_namespace.md and
+//! cgp-knowledge-base/cgp/reference/macros/delegate_components.md.
 
 use cgp::core::error::{ErrorRaiserComponent, ErrorTypeProviderComponent};
 use cgp::extra::error::ReturnError;

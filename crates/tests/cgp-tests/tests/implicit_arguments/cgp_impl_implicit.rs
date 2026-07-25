@@ -8,7 +8,8 @@
 //! `IsProviderFor` impl. (The basic, no-implicit `#[cgp_impl]` snapshot lives in
 //! `basic_delegation`.)
 //!
-//! See docs/reference/macros/cgp_impl.md and docs/reference/attributes/implicit.md.
+//! See cgp-knowledge-base/cgp/reference/macros/cgp_impl.md and
+//! cgp-knowledge-base/cgp/reference/attributes/implicit.md.
 
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_cgp_impl;

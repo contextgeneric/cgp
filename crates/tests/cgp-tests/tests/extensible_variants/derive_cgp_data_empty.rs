@@ -11,8 +11,8 @@
 //! This concept owns the variant expansion of `#[derive(CgpData)]`; this file is
 //! the empty-enum snapshot.
 //!
-//! See docs/reference/derives/derive_cgp_data.md and
-//! docs/reference/derives/derive_extract_field.md.
+//! See cgp-knowledge-base/cgp/reference/derives/derive_cgp_data.md and
+//! cgp-knowledge-base/cgp/reference/derives/derive_extract_field.md.
 
 use cgp_macro_test_util::snapshot_derive_cgp_data;
 

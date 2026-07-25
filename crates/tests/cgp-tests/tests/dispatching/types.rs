@@ -6,7 +6,7 @@
 //! `Bar`, and rely on `#[cgp_auto_dispatch]` to route a `FooBar` value to the
 //! matching variant impl. Referenced by siblings via `super::types`.
 //!
-//! See docs/reference/macros/cgp_auto_dispatch.md.
+//! See cgp-knowledge-base/cgp/reference/macros/cgp_auto_dispatch.md.
 
 use cgp::prelude::*;
 

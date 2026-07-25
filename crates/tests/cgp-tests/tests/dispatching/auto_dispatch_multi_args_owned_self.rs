@@ -1,7 +1,7 @@
 //! `#[cgp_auto_dispatch]` on a by-value `self` method that takes a `&mut`
 //! argument and returns a borrow tied to that argument.
 //!
-//! See docs/reference/macros/cgp_auto_dispatch.md.
+//! See cgp-knowledge-base/cgp/reference/macros/cgp_auto_dispatch.md.
 
 use cgp::prelude::*;
 

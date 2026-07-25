@@ -3,7 +3,7 @@
 //! `delegate_components! { <T> new MyComponents<T> { … } }` defines
 //! `struct MyComponents<T>` and wires a family of tables at once.
 //!
-//! See docs/reference/macros/delegate_components.md.
+//! See cgp-knowledge-base/cgp/reference/macros/delegate_components.md.
 
 use core::marker::PhantomData;
 

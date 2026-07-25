@@ -8,7 +8,8 @@
 //! path-qualified trait becomes the supertrait/bound. `RectangleArea` provides the
 //! area, and `Rectangle` fixes the scalar with `UseType<f64>`.
 //!
-//! See docs/reference/attributes/use_type.md and docs/concepts/abstract-types.md.
+//! See cgp-knowledge-base/cgp/reference/attributes/use_type.md and
+//! cgp-knowledge-base/cgp/concepts/abstract-types.md.
 
 use std::ops::Mul;
 

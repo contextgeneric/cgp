@@ -4,7 +4,7 @@
 //! is both `Foo` and `Bar` automatically gets `FooBar`.
 //!
 //! This is the canonical, minimal expansion snapshot for `#[blanket_trait]`.
-//! See docs/reference/macros/blanket_trait.md.
+//! See cgp-knowledge-base/cgp/reference/macros/blanket_trait.md.
 
 use cgp_macro_test_util::snapshot_blanket_trait;
 

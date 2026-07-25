@@ -54,7 +54,7 @@ impl ItemCgpImpl {
                 // Insert the context as the leading impl generic. Position 0 is
                 // safe even when the impl already has a lifetime, because
                 // `syn::Generics::to_tokens` emits lifetimes ahead of type/const
-                // parameters. See docs/implementation/README.md,
+                // parameters. See cgp-knowledge-base/cgp/implementation/README.md,
                 // "Generic-parameter insertion and lifetime ordering".
                 item_impl
                     .generics

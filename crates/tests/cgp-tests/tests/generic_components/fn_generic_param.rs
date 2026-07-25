@@ -5,7 +5,7 @@
 //! `#[implicit]` arguments are pulled from the context's `width`/`height` fields.
 //! This is the reference snapshot for a `#[cgp_fn]` carrying a type parameter.
 //!
-//! See docs/reference/macros/cgp_fn.md.
+//! See cgp-knowledge-base/cgp/reference/macros/cgp_fn.md.
 
 use std::ops::Mul;
 

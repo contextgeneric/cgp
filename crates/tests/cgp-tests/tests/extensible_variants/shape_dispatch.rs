@@ -10,7 +10,7 @@
 //! owned by other concepts, so those macros appear plainly here; the derives are
 //! plain scaffolding. This file exercises the variant side of owned dispatch.
 //!
-//! See docs/concepts/extensible-variants.md.
+//! See cgp-knowledge-base/cgp/concepts/extensible-variants.md.
 
 use core::marker::PhantomData;
 use std::f64::consts::PI;

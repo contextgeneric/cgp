@@ -8,7 +8,8 @@
 //! parameter). The `delegate_components!` wiring and its check are incidental
 //! scaffolding and use the plain macros.
 //!
-//! See docs/reference/macros/cgp_type.md and docs/concepts/abstract-types.md.
+//! See cgp-knowledge-base/cgp/reference/macros/cgp_type.md and
+//! cgp-knowledge-base/cgp/concepts/abstract-types.md.
 
 use core::ops::Mul;
 

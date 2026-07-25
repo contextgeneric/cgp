@@ -9,8 +9,8 @@
 //! `delegate_components!` snapshots are kept; the plain `Foo` component and the
 //! provider impls are incidental scaffolding.
 //!
-//! See docs/reference/macros/cgp_namespace.md and
-//! docs/reference/macros/delegate_components.md.
+//! See cgp-knowledge-base/cgp/reference/macros/cgp_namespace.md and
+//! cgp-knowledge-base/cgp/reference/macros/delegate_components.md.
 
 use cgp::prelude::*;
 use cgp_macro_test_util::{

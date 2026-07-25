@@ -8,8 +8,8 @@
 //! and `check_components!` wiring below is written plainly (owned by the
 //! `basic_delegation` and `checking` concepts).
 //!
-//! See docs/implementation/entrypoints/cgp_component.md (Snapshots) for this
-//! type-parameter variant, and docs/reference/macros/cgp_component.md for the
+//! See cgp-knowledge-base/cgp/implementation/entrypoints/cgp_component.md (Snapshots) for this
+//! type-parameter variant, and cgp-knowledge-base/cgp/reference/macros/cgp_component.md for the
 //! user-facing semantics.
 
 use cgp::prelude::*;

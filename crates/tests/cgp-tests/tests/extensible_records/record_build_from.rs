@@ -9,8 +9,8 @@
 //! `#[derive(CgpData)]` here is plain scaffolding; its full expansion is pinned
 //! by `record_derive`.
 //!
-//! See docs/reference/traits/has_builder.md and
-//! docs/concepts/extensible-records.md.
+//! See cgp-knowledge-base/cgp/reference/traits/has_builder.md and
+//! cgp-knowledge-base/cgp/concepts/extensible-records.md.
 
 use cgp::core::field::impls::CanBuildFrom;
 use cgp::prelude::*;

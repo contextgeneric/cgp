@@ -2,7 +2,7 @@
 //! method taking a `&mut` argument and returning a borrow tied to it, dispatched
 //! over `FooBar`.
 //!
-//! See docs/reference/macros/cgp_auto_dispatch.md.
+//! See cgp-knowledge-base/cgp/reference/macros/cgp_auto_dispatch.md.
 
 use cgp::prelude::*;
 use futures::executor::block_on;

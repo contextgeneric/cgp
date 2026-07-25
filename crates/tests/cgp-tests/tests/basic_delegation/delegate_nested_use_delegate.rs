@@ -3,8 +3,8 @@
 //! This builds a two-level dispatch table inline: `BarKey` delegates to
 //! `UseDelegate<BarValue>`, and `BarValue` is its own table keyed by `BazKey`.
 //!
-//! See docs/reference/macros/delegate_components.md and
-//! docs/reference/providers/use_delegate.md.
+//! See cgp-knowledge-base/cgp/reference/macros/delegate_components.md and
+//! cgp-knowledge-base/cgp/reference/providers/use_delegate.md.
 
 use cgp::core::component::UseDelegate;
 use cgp::prelude::*;

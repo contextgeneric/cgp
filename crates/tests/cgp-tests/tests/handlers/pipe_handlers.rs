@@ -12,8 +12,8 @@
 //! `#[cgp_new_provider]`, and the wiring / check use plain `delegate_components!`
 //! / `check_components!` (those macros are owned by other concept targets).
 //!
-//! See docs/reference/providers/handler_combinators.md and
-//! docs/reference/components/handler.md.
+//! See cgp-knowledge-base/cgp/reference/providers/handler_combinators.md and
+//! cgp-knowledge-base/cgp/reference/components/handler.md.
 
 use core::convert::Infallible;
 use core::marker::PhantomData;

@@ -49,7 +49,7 @@ pub fn derive_has_fields_impls_from_struct(item_struct: &ItemStruct) -> syn::Res
 
     // These impls are all keyed on the whole struct, so aim an error on any of
     // their headers at the struct name the user wrote rather than at the whole
-    // `#[derive(...)]`. See docs/implementation/README.md#spans.
+    // `#[derive(...)]`. See cgp-knowledge-base/cgp/implementation/README.md#spans.
     [
         has_fields_impl,
         has_fields_ref_impl,

@@ -7,9 +7,9 @@
 //! This is the reference snapshot for that expansion; other concepts reuse
 //! `#[cgp_component]` without re-snapshotting it.
 //!
-//! See docs/implementation/entrypoints/cgp_component.md (Snapshots) for the index
-//! of `#[cgp_component]` expansion snapshots, and docs/reference/macros/cgp_component.md
-//! for the user-facing expansion.
+//! See cgp-knowledge-base/cgp/implementation/entrypoints/cgp_component.md (Snapshots) for the index
+//! of `#[cgp_component]` expansion snapshots, and
+//! cgp-knowledge-base/cgp/reference/macros/cgp_component.md for the user-facing expansion.
 
 use cgp_macro_test_util::snapshot_cgp_component;
 

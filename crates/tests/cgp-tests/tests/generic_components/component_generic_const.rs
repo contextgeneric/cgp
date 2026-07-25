@@ -9,7 +9,7 @@
 //! `check_components!` wiring is written plainly (owned by the `abstract_types`,
 //! `basic_delegation`, and `checking` concepts).
 //!
-//! See docs/reference/macros/cgp_component.md.
+//! See cgp-knowledge-base/cgp/reference/macros/cgp_component.md.
 
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_cgp_provider;

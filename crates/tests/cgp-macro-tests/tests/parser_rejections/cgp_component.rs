@@ -1,8 +1,9 @@
 //! `#[cgp_component]` rejects inputs it cannot lower into a component: a
 //! non-trait item, and a trait carrying a const generic parameter.
 //!
-//! See docs/implementation/entrypoints/cgp_component.md (Tests) for these failure
-//! cases, and docs/reference/macros/cgp_component.md for the user-facing semantics.
+//! See cgp-knowledge-base/cgp/implementation/entrypoints/cgp_component.md (Tests) for these failure
+//! cases, and cgp-knowledge-base/cgp/reference/macros/cgp_component.md for the user-facing
+//! semantics.
 
 use quote::quote;
 

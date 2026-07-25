@@ -2,7 +2,7 @@
 //! field named after the method and calls `.as_str()`, exposing a `String` field
 //! as `&str` without any wiring.
 //!
-//! See docs/reference/macros/cgp_auto_getter.md.
+//! See cgp-knowledge-base/cgp/reference/macros/cgp_auto_getter.md.
 
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_cgp_auto_getter;

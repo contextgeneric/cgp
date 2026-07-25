@@ -4,7 +4,8 @@
 //! plainly here (their expansions are owned by the `abstract_types` and
 //! `basic_delegation` concepts).
 //!
-//! See docs/reference/macros/cgp_getter.md and docs/reference/providers/use_field.md.
+//! See cgp-knowledge-base/cgp/reference/macros/cgp_getter.md and
+//! cgp-knowledge-base/cgp/reference/providers/use_field.md.
 
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_cgp_getter;

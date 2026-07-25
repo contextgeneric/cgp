@@ -6,8 +6,9 @@
 //!
 //! `#[cgp_new_provider]` shares this stack and rejects the same inputs.
 //!
-//! See docs/implementation/entrypoints/cgp_provider.md (Tests) for these failure
-//! cases, and docs/reference/macros/cgp_provider.md for the user-facing semantics.
+//! See cgp-knowledge-base/cgp/implementation/entrypoints/cgp_provider.md (Tests) for these failure
+//! cases, and cgp-knowledge-base/cgp/reference/macros/cgp_provider.md for the user-facing
+//! semantics.
 
 use quote::quote;
 

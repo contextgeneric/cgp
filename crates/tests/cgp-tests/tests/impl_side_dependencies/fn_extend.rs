@@ -8,8 +8,9 @@
 //! The `#[cgp_type]` scaffolding is written plainly here — its expansion is owned
 //! by the `abstract_types` concept.
 //!
-//! See docs/concepts/impl-side-dependencies.md,
-//! docs/reference/attributes/extend.md, and docs/reference/macros/cgp_fn.md.
+//! See cgp-knowledge-base/cgp/concepts/impl-side-dependencies.md,
+//! cgp-knowledge-base/cgp/reference/attributes/extend.md, and
+//! cgp-knowledge-base/cgp/reference/macros/cgp_fn.md.
 
 use std::ops::Mul;
 

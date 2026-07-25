@@ -9,7 +9,8 @@
 //! This is the reference snapshot for that expansion; other files reuse
 //! `#[cgp_type]` plainly.
 //!
-//! See docs/reference/macros/cgp_type.md and docs/concepts/abstract-types.md.
+//! See cgp-knowledge-base/cgp/reference/macros/cgp_type.md and
+//! cgp-knowledge-base/cgp/concepts/abstract-types.md.
 
 use cgp_macro_test_util::snapshot_cgp_type;
 

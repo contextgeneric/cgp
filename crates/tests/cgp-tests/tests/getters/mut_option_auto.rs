@@ -2,7 +2,7 @@
 //! the blanket impl reads an `Option<u32>` field mutably through `get_field_mut`
 //! and calls `.as_mut()`, the mutable mirror of the shared `Option<&T>` getter.
 //!
-//! See docs/reference/macros/cgp_auto_getter.md.
+//! See cgp-knowledge-base/cgp/reference/macros/cgp_auto_getter.md.
 
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_cgp_auto_getter;

@@ -22,7 +22,7 @@ impl PreprocessedCgpComponent {
             // Insert the context as the leading type argument. Position 0 sits
             // ahead of any lifetime argument, which the `parse_internal` re-parse
             // on the next line normalizes (`syn` re-emits lifetimes first). See
-            // docs/implementation/README.md, "Generic-parameter insertion and
+            // cgp-knowledge-base/cgp/implementation/README.md, "Generic-parameter insertion and
             // lifetime ordering".
             provider_type_generics
                 .generics
@@ -37,7 +37,7 @@ impl PreprocessedCgpComponent {
 
             // Insert the context as the leading impl generic. Position 0 is safe
             // with a lifetime present because `syn::Generics::to_tokens` emits
-            // lifetimes first. See docs/implementation/README.md,
+            // lifetimes first. See cgp-knowledge-base/cgp/implementation/README.md,
             // "Generic-parameter insertion and lifetime ordering".
             generics
                 .params

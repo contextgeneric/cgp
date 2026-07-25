@@ -5,6 +5,11 @@ moving, or refactoring any test here. Invoke the `/cgp` skill first — every te
 in this tree is CGP code, and the skill is the authoritative source for CGP
 semantics and vocabulary.
 
+This repository's documentation lives in the sibling
+[`cgp-knowledge-base`](https://github.com/contextgeneric/cgp-knowledge-base) repository, under its
+`cgp/` directory, so a doc pointer below names a path there (`cgp-knowledge-base/cgp/…`) rather than a
+local one. See [../../sibling-projects.md](../../sibling-projects.md) for finding that checkout.
+
 The test suite has two jobs, split across crates:
 
 - **`cgp-tests`** is the main suite: realistic example code that must **compile and
@@ -36,7 +41,7 @@ so on.
 
 The right granularity is driven by the feature, its implementation complexity, and
 how many cases are needed to cover it exhaustively — **not** by mirroring the
-concept documents under `docs/concepts/`. The names may coincide, but the split is
+concept documents under `cgp-knowledge-base/cgp/concepts/`. The names may coincide, but the split is
 chosen for coverage. **When a category accumulates too many test cases to stay
 coherent, split it into finer categories** rather than letting it sprawl; prefer
 splitting early.
@@ -71,10 +76,10 @@ that test exercises.
 
 Open every test file with a brief comment stating **what behavior it exercises**,
 and annotate individual tricky cases inline. Link to the owning **implementation
-document** — the one under `docs/implementation/` whose Tests and Snapshots
-sections index this test (for example `// see docs/implementation/entrypoints/cgp_impl.md`);
+document** — the one under `cgp-knowledge-base/cgp/implementation/` whose Tests and Snapshots
+sections index this test (for example `// see cgp-knowledge-base/cgp/implementation/entrypoints/cgp_impl.md`);
 that document is where test pointers live, since a reference document never links
-to a test (per `docs/AGENTS.md`). You may additionally link to a reference
+to a test (per the knowledge base's `cgp/AGENTS.md`). You may additionally link to a reference
 document when a reader needs the user-facing semantics. Tests link **to** the
 documentation; the reference documents never link back to a test.
 
@@ -150,9 +155,9 @@ compiles even though the code would not), with a comment explaining **why** the 
 is wrong and **what the correct output should be**.
 
 **Where a post-codegen class is documented.** Such a class is cataloged in the
-[error catalog](../../docs/errors/README.md) under `docs/errors/`, the canonical
+[error catalog](https://github.com/contextgeneric/cgp-knowledge-base/blob/main/cgp/errors/README.md) under `cgp-knowledge-base/cgp/errors/`, the canonical
 reader-facing documentation for these errors (see
-[docs/errors/AGENTS.md](../../docs/errors/AGENTS.md)): the class doc describes the raw
+[cgp-knowledge-base/cgp/errors/AGENTS.md](https://github.com/contextgeneric/cgp-knowledge-base/blob/main/cgp/errors/AGENTS.md)): the class doc describes the raw
 diagnostic *and* how cargo-cgp presents it, and links the backing `cargo-cgp` UI fixture
 as a GitHub URL. When a construct change alters such a diagnostic, the cross-project
 [sync rule](../../AGENTS.md) applies — update the `cargo-cgp` fixture and the class doc
@@ -165,10 +170,9 @@ and its `cargo-cgp` fixture rather than to a local fixture.
 ## Keep the docs in sync
 
 This suite is one of the views of CGP's truth, alongside the macro implementation
-in `cgp-macro-core`, the reference documents in `docs/reference`, the
-implementation documents in `docs/implementation`, and the `/cgp` skill (see
-`docs/AGENTS.md`). The implementation documents are the ones tightly coupled to
-this suite: each macro's implementation document has a `## Tests` section linking
+in `cgp-macro-core`, the knowledge base's `cgp/reference` and `cgp/implementation`
+documents, and the `/cgp` skill (see the knowledge base's `cgp/AGENTS.md`). The
+implementation documents are the ones tightly coupled to this suite: each macro's implementation document has a `## Tests` section linking
 every behavioral test and failure case that exercises it, and every entrypoint
 document a `## Snapshots` section indexing the expansion snapshots and calling out
 which variants are still missing. When a test reveals or pins a behavior worth

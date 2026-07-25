@@ -10,7 +10,8 @@
 //! is concrete, the compiler can prove `Send` for the produced future. This is
 //! the workaround CGP uses until Rust's Return Type Notation (RTN) is stabilized.
 //!
-//! See docs/reference/components/runner.md and docs/concepts/send-bounds.md.
+//! See cgp-knowledge-base/cgp/reference/components/runner.md and
+//! cgp-knowledge-base/cgp/concepts/send-bounds.md.
 
 use core::convert::Infallible;
 use core::future::Future;

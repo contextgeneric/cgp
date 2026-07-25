@@ -8,7 +8,8 @@
 //! any number of immutable implicits may share a `&mut self` receiver (only a
 //! `&mut` implicit is restricted to being the sole implicit argument).
 //!
-//! See docs/reference/macros/cgp_fn.md and docs/reference/attributes/implicit.md.
+//! See cgp-knowledge-base/cgp/reference/macros/cgp_fn.md and
+//! cgp-knowledge-base/cgp/reference/attributes/implicit.md.
 
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_cgp_fn;

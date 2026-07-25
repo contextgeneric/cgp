@@ -3,7 +3,7 @@
 //! by `HasFieldMut`) and calls `.as_mut_str()`, so a `String` field can be exposed
 //! as a mutable `&mut str`.
 //!
-//! See docs/reference/macros/cgp_auto_getter.md.
+//! See cgp-knowledge-base/cgp/reference/macros/cgp_auto_getter.md.
 
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_cgp_auto_getter;

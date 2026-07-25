@@ -5,9 +5,9 @@ This file provides guidance to LLM agents when working with code in this reposit
 ## Project status
 
 This working tree **is** the upcoming **v0.8.0** release. Every crate under [crates/](crates) is
-versioned `0.8.0-alpha` in its `Cargo.toml` — the pre-release of v0.8.0 — and the documentation
-under [docs/](docs) already refers to the current version as v0.8.0, so nothing needs a version edit
-when v0.8.0 ships.
+versioned `0.8.0-alpha` in its `Cargo.toml` — the pre-release of v0.8.0 — and the documentation in the
+[knowledge base](https://github.com/contextgeneric/cgp-knowledge-base/tree/main/cgp) already refers to
+the current version as v0.8.0, so nothing needs a version edit when v0.8.0 ships.
 
 The stable release on crates.io is still **v0.7.0**, and it is not compatible with this tree. v0.7.0
 carries legacy features and syntax that v0.8.0 has removed or changed, so code or documentation
@@ -18,62 +18,78 @@ Only the library crates are published. The five crates under [crates/tests/](cra
 marked `publish = false`, so `cargo publish --workspace` skips them and publishes just the real CGP
 crates.
 
-## The two projects: cgp and cargo-cgp
+## The sibling projects
 
-`cgp` and `cargo-cgp` are developed together but live in separate Git repositories, so a task in one
-routinely reads — and sometimes updates — the other. [`cargo-cgp`](https://github.com/contextgeneric/cargo-cgp)
-is CGP's **first-class toolchain**: a cargo subcommand that rewrites the compiler's diagnostics into
-readable, root-cause-first CGP errors. It is the recommended way to build and check CGP code and to
-read a CGP compile error, so recommend it wherever CGP errors are discussed, and prefer it over raw
-`cargo check` when diagnosing a wiring failure in this repository.
+`cgp` is one repository in a family that is developed together, so a task here routinely reads — and
+often updates — another one. [sibling-projects.md](sibling-projects.md) is the authoritative list:
+where each project lives, which revision of it to read, and the rules for finding a sibling locally
+versus linking to it. Three of them matter constantly.
 
-**Finding `cargo-cgp`.** Look first in the parent directory, at `../cargo-cgp`. When that sibling
-checkout is present, use it — it is the fastest reference and reflects any uncommitted work. When it
-is absent, fall back to the official repository at
-[github.com/contextgeneric/cargo-cgp](https://github.com/contextgeneric/cargo-cgp), fetching the file
-you need from there. (The mirror image applies to an agent working in `cargo-cgp` and looking for
-`cgp` at `../cgp`.)
+**This repository's documentation lives in [`cgp-knowledge-base`](https://github.com/contextgeneric/cgp-knowledge-base).**
+There is no `docs/` directory here. The construct reference, the concepts, the guides, the error
+catalog, and the macro-implementation notes are all in that repository's
+[`cgp/`](https://github.com/contextgeneric/cgp-knowledge-base/tree/main/cgp) directory, and the worked
+examples sit at its top level. It is a *consolidated* base — `cargo-cgp`'s documentation is the
+neighbouring section — which is why an error class here and the tool's handling of it are now one
+directory apart. Treat the knowledge base as part of this repository's surface: **a change to a
+construct's behavior carries its documentation change**, and when the checkout is missing, say plainly
+what needs updating there.
 
-**Writing cross-project links.** A *link* from a committed file here to a document in `cargo-cgp` — a
-Markdown link or a URL — is **always written as a GitHub URL**
-(`https://github.com/contextgeneric/cargo-cgp/blob/main/<path>`), never as a relative `../cargo-cgp/...`
-link, so the document resolves for a reader who has only this repository checked out. When *reading*
-such a link yourself, prefer the local `../cargo-cgp` checkout if it is available and fetch the GitHub
-URL only when it is not. (A bare mention of the checkout's location, like the path `../cargo-cgp`, is
-a filesystem reference rather than a link and stays relative.)
+**[`cargo-cgp`](https://github.com/contextgeneric/cargo-cgp) is CGP's first-class toolchain**: a cargo
+subcommand that rewrites the compiler's diagnostics into readable, root-cause-first CGP errors. It is
+the recommended way to build and check CGP code and to read a CGP compile error, so recommend it
+wherever CGP errors are discussed, and prefer it over raw `cargo check` when diagnosing a wiring
+failure here. When a construct change alters a diagnostic it has a UI fixture for, update the fixture
+in the same change, following that project's own conventions.
 
-**Keeping the two in sync.** When a change here affects `cargo-cgp` — most often when a construct
-change alters a compiler diagnostic that `cargo-cgp` has a UI fixture for — and `cargo-cgp` is checked
-out at `../cargo-cgp`, update it in the same change, following `cargo-cgp`'s own conventions (its
-`AGENTS.md`). When `../cargo-cgp` is not checked out, state plainly what needs updating there so it is
-not silently left to drift. The post-codegen compile-fail cases this repository used to keep in
-`cgp-compile-fail-tests` now live as `cargo-cgp` UI fixtures, and the [error catalog](docs/errors/README.md)
-links each error class to the fixture that backs it.
+**[`cgp-skills`](https://github.com/contextgeneric/cgp-skills) holds the `/cgp` skill**, the distilled
+view of the knowledge base that every agent loads first. It is the easiest view to leave stale, so a
+change to a construct's syntax, expansion, defaults, or recommended form propagates out to the matching
+sub-skill in the same change.
+
+**Finding a sibling.** Look first in the parent directory, at `../cargo-cgp`,
+`../cgp-knowledge-base`, `../cgp-skills`. When the checkout is present, use it — it is the fastest
+reference and reflects any uncommitted work. When it is absent, fetch the file you need from the
+project's repository at the revision [sibling-projects.md](sibling-projects.md) records.
+
+**Writing cross-project links.** A *link* from a committed file here to a document in another
+project — a Markdown link or a URL — is **always written as a GitHub URL** on `main`
+(`https://github.com/contextgeneric/<project>/blob/main/<path>`), never as a relative
+`../cargo-cgp/...` link, so it resolves for a reader who has only this repository checked out. When
+*reading* such a link yourself, prefer the local checkout. A bare mention of a checkout's location,
+like the path `../cargo-cgp`, is a filesystem reference rather than a link and stays relative — as is
+a doc pointer in a source comment, which names its knowledge-base path
+(`cgp-knowledge-base/cgp/implementation/entrypoints/cgp_impl.md`).
 
 **The code dependency stays one-way.** No `cgp` *crate* may depend on a `cargo-cgp` crate:
-`cargo-cgp` reads `cgp`, never the reverse. Documentation is the deliberate exception — this
-repository's docs and skill reference `cargo-cgp` as the recommended toolchain — so it is the *code*
-graph that stays acyclic, not the documentation.
+`cargo-cgp` reads `cgp`, never the reverse. Documentation is the deliberate exception — the knowledge
+base and the skill both reference `cargo-cgp` as the recommended toolchain — so it is the *code* graph
+that stays acyclic, not the documentation. The post-codegen compile-fail cases this repository used to
+keep in `cgp-compile-fail-tests` now live as `cargo-cgp` UI fixtures, and the
+[error catalog](https://github.com/contextgeneric/cgp-knowledge-base/blob/main/cgp/errors/README.md)
+links each error class to the fixture that backs it.
 
 ## Orient before any task
 
 This repository **is** the implementation of Context-Generic Programming (CGP), and its behavior is
-recorded as much in the knowledge base under [docs/](docs) as in the code. Before starting any task
-here — reading, writing, reviewing, debugging, or answering a question — load the CGP mental model
-and the documentation that covers what you are about to touch. The following steps are standing
-requirements: they apply to every task regardless of how small it looks, not just to the macro
-review workflow below.
+recorded as much in the [knowledge base](https://github.com/contextgeneric/cgp-knowledge-base/tree/main/cgp)
+as in the code. Before starting any task here — reading, writing, reviewing, debugging, or answering a
+question — load the CGP mental model and the documentation that covers what you are about to touch.
+The following steps are standing requirements: they apply to every task regardless of how small it
+looks, not just to the macro review workflow below. Prefer the local `../cgp-knowledge-base` checkout
+when reading them, and note that its [summary.md](https://github.com/contextgeneric/cgp-knowledge-base/blob/main/summary.md)
+lists every document in one page, which is the fastest way to find the few a task needs.
 
 - **Always invoke the `/cgp` skill** to load the fundamentals (consumer vs. provider traits,
   `#[cgp_component]`/`#[cgp_impl]`/`#[cgp_fn]`, `delegate_components!`, `HasField`, `UseDelegate`,
   check traits, and so on). Re-invoke it whenever you move into an unfamiliar construct — the macros
   and core traits here are the ground truth the skill describes, so read the two together.
-- **Always read [docs/README.md](docs/README.md)** to orient in the knowledge base, then follow it
+- **Always read [cgp-knowledge-base/cgp/README.md](https://github.com/contextgeneric/cgp-knowledge-base/blob/main/cgp/README.md)** to orient in the knowledge base, then follow it
   into the README of whichever section covers your task.
-- **Read [docs/reference/README.md](docs/reference/README.md) and the relevant reference documents
+- **Read [cgp-knowledge-base/cgp/reference/README.md](https://github.com/contextgeneric/cgp-knowledge-base/blob/main/cgp/reference/README.md) and the relevant reference documents
   whenever the task requires understanding a CGP construct** — what it means, what syntax it accepts,
   and what code it expands to.
-- **Read [docs/implementation/README.md](docs/implementation/README.md) and the relevant
+- **Read [cgp-knowledge-base/cgp/implementation/README.md](https://github.com/contextgeneric/cgp-knowledge-base/blob/main/cgp/implementation/README.md) and the relevant
   implementation documents whenever the task involves reading or modifying the CGP source code** —
   they map each macro to its `cgp-macro-core`/`cgp-macro-lib` internals, corner cases, and tests.
 - **Load the `/dual-reader-prose` skill whenever the task involves editing markdown documentation or
@@ -102,7 +118,7 @@ do).
   standard test harness, e.g. `cargo test -p cgp-tests --test component`
 - **Post-codegen compile failures** (input a macro accepts but whose expansion fails to compile) are
   no longer tested here: they are UI fixtures in [`cargo-cgp`](https://github.com/contextgeneric/cargo-cgp),
-  the first-class error toolchain, and cataloged in the [error catalog](docs/errors/README.md). See
+  the first-class error toolchain, and cataloged in the [error catalog](https://github.com/contextgeneric/cgp-knowledge-base/blob/main/cgp/errors/README.md). See
   [crates/tests/AGENTS.md](crates/tests/AGENTS.md) for the workflow.
 - Many "tests" are **compile-time wiring checks** (`check_components!` /
   `delegate_and_check_components!`) and **macro-expansion snapshots** — for these, a successful
@@ -171,12 +187,12 @@ as the behavior allows.
 ### Orient before touching anything
 
 Perform the standing steps in [Orient before any task](#orient-before-any-task) first, every
-iteration. Then read the documentation specific to the macro under review, in [docs/](docs): its
-reference document under [docs/reference/](docs/reference), its implementation documents under
-[docs/implementation/](docs/implementation) (the `entrypoints/` document, the `asts/` stack it
+iteration. Then read the documentation specific to the macro under review, in the [knowledge base](https://github.com/contextgeneric/cgp-knowledge-base/tree/main/cgp): its
+reference document under [cgp-knowledge-base/cgp/reference/](https://github.com/contextgeneric/cgp-knowledge-base/tree/main/cgp/reference), its implementation documents under
+[cgp-knowledge-base/cgp/implementation/](https://github.com/contextgeneric/cgp-knowledge-base/tree/main/cgp/implementation) (the `entrypoints/` document, the `asts/` stack it
 drives, and any `functions/` helpers it relies on), and the governing `AGENTS.md` files that define
-how those documents stay in sync with the code: [docs/AGENTS.md](docs/AGENTS.md),
-[docs/implementation/AGENTS.md](docs/implementation/AGENTS.md), and
+how those documents stay in sync with the code: [cgp-knowledge-base/cgp/AGENTS.md](https://github.com/contextgeneric/cgp-knowledge-base/blob/main/cgp/AGENTS.md),
+[cgp-knowledge-base/cgp/implementation/AGENTS.md](https://github.com/contextgeneric/cgp-knowledge-base/blob/main/cgp/implementation/AGENTS.md), and
 [crates/macros/cgp-macro-core/AGENTS.md](crates/macros/cgp-macro-core/AGENTS.md). These establish
 that the source is the single source of truth and that reference, implementation, snapshot, and
 skill are four views of it that must never drift.
@@ -219,7 +235,7 @@ below is a latent miscompilation — or a broken editor experience — waiting f
 **Apply every area to every macro you review**, not only the ones that already have a fixture or a
 worked example for it; these concerns recur across the whole suite, and a macro that has never been
 audited for one of them (spans especially) most likely has the bug. The areas below are the *what to
-check*; the [cross-cutting implementation notes](docs/implementation/README.md#cross-cutting-implementation-notes)
+check*; the [cross-cutting implementation notes](https://github.com/contextgeneric/cgp-knowledge-base/blob/main/cgp/implementation/README.md#cross-cutting-implementation-notes)
 explain *why the code behaves this way*, and most areas link out to the note or process doc that
 carries their full detail.
 
@@ -233,7 +249,7 @@ accepted for one attribute while rejected for another).
 #### Parsing the input
 
 Build every `syn` node from quasi-quoted tokens with
-[`parse_internal!`](docs/implementation/macros/parse_internal.md) rather than `parse2`/`parse_quote!`,
+[`parse_internal!`](https://github.com/contextgeneric/cgp-knowledge-base/blob/main/cgp/implementation/macros/parse_internal.md) rather than `parse2`/`parse_quote!`,
 and thread `syn::Result` so a malformed fragment propagates a named error instead of panicking;
 reserve the panicking `parse_quote!` for tokens trivially guaranteed to parse and `parse2` for
 re-parsing tokens already known valid. Reject malformed or unsupported input early, at the macro's
@@ -241,7 +257,7 @@ own parse stage with a spanned message, rather than letting it surface deep insi
 Walk the full input space — path-qualified types, generics, lifetimes, arrays, tuples, turbofish,
 associated-type bindings — and confirm none reaches a parser that fails obscurely; since `syn` parses
 far more leniently than Rust accepts, validate against CGP's restricted argument types. See
-[Parsing](docs/implementation/README.md#parsing-build-with-parse_internal-and-distrust-syns-leniency).
+[Parsing](https://github.com/contextgeneric/cgp-knowledge-base/blob/main/cgp/implementation/README.md#parsing-build-with-parse_internal-and-distrust-syns-leniency).
 
 #### Expanding the output
 
@@ -250,9 +266,9 @@ Rust — no conflicting `impl` blocks from a cartesian expansion, no unbound or 
 no empty expansion that checks nothing, no clash on a generated identifier. When an expansion fails to
 compile, capture it as a [`cargo-cgp` UI fixture](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/README.md)
 (post-codegen compile-fail cases live there now, filed by the quality of the output the tool produces)
-and catalog the class in the [error catalog](docs/errors/README.md); when the failure is a CGP *defect*
+and catalog the class in the [error catalog](https://github.com/contextgeneric/cgp-knowledge-base/blob/main/cgp/errors/README.md); when the failure is a CGP *defect*
 the macro should have rejected, also record it under the macro's `## Known issues`, per
-[crates/tests/AGENTS.md](crates/tests/AGENTS.md) and [docs/implementation/AGENTS.md](docs/implementation/AGENTS.md).
+[crates/tests/AGENTS.md](crates/tests/AGENTS.md) and [cgp-knowledge-base/cgp/implementation/AGENTS.md](https://github.com/contextgeneric/cgp-knowledge-base/blob/main/cgp/implementation/AGENTS.md).
 
 #### Generics
 
@@ -260,8 +276,8 @@ Keep the *kinds* (lifetime, type, const) and the *roles* (impl generics `impl<T>
 generics, the `<T>` in `Foo<T>`) distinct, render each in the right position, merge parameters from
 different sources without colliding, and bind every parameter that appears in a generated header so
 nothing is left free. See
-[Generic-parameter insertion](docs/implementation/README.md#generic-parameter-insertion-and-lifetime-ordering)
-and [keeping the kinds distinct](docs/implementation/README.md#generics-keep-the-kinds-and-roles-distinct).
+[Generic-parameter insertion](https://github.com/contextgeneric/cgp-knowledge-base/blob/main/cgp/implementation/README.md#generic-parameter-insertion-and-lifetime-ordering)
+and [keeping the kinds distinct](https://github.com/contextgeneric/cgp-knowledge-base/blob/main/cgp/implementation/README.md#generics-keep-the-kinds-and-roles-distinct).
 
 #### Qualified paths and hygiene
 
@@ -270,7 +286,7 @@ never as a bare or hand-written path — grep the codegen for any CGP name not i
 `exports` marker. Give the reserved identifiers the expansion introduces the double-underscore form
 (`__Context__`, `__Provider__`, `__Component__`, …) so they cannot clash with a user's names, and keep
 the expansion idempotent when the same entry is listed more than once. See
-[Hygiene](docs/implementation/README.md#hygiene-exports-markers-and-reserved-identifiers).
+[Hygiene](https://github.com/contextgeneric/cgp-knowledge-base/blob/main/cgp/implementation/README.md#hygiene-exports-markers-and-reserved-identifiers).
 
 #### Spans: for the compiler *and* the IDE
 
@@ -295,7 +311,7 @@ invocation), which misleads both tools, so confirm both for each macro:
 Only the caret half is pinned by a test (a `trybuild` `.stderr` fixture records each caret's exact
 position, so a regression changes the snapshot). The IDE half has no fixture and must be checked by
 hand in an editor — and cross-crate, since the derived-name leak is invisible from inside the defining
-crate. See [Spans](docs/implementation/README.md#spans-aim-generated-items-at-the-token-the-user-wrote)
+crate. See [Spans](https://github.com/contextgeneric/cgp-knowledge-base/blob/main/cgp/implementation/README.md#spans-aim-generated-items-at-the-token-the-user-wrote)
 for the full mechanism and the `delegate_components!`/`#[cgp_impl]` worked examples.
 
 ### Keep every view in sync and verify

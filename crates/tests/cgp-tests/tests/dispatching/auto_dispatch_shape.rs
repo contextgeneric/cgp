@@ -3,8 +3,8 @@
 //! mutating method (`scale`, `&mut self`). Exercises that a single enum can carry
 //! several auto-dispatched capabilities at once.
 //!
-//! See docs/reference/macros/cgp_auto_dispatch.md and
-//! docs/concepts/dispatching.md.
+//! See cgp-knowledge-base/cgp/reference/macros/cgp_auto_dispatch.md and
+//! cgp-knowledge-base/cgp/concepts/dispatching.md.
 
 use core::f64::consts::PI;
 

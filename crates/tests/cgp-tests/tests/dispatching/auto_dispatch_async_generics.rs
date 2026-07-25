@@ -2,7 +2,7 @@
 //! (`CanCall<T>`) mixing an async and a sync method, with a per-variant
 //! `T: Display` bound on `Foo`. Dispatched over `FooBar`.
 //!
-//! See docs/reference/macros/cgp_auto_dispatch.md.
+//! See cgp-knowledge-base/cgp/reference/macros/cgp_auto_dispatch.md.
 
 use core::fmt::Display;
 

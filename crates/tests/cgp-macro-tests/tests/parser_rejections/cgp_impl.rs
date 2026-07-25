@@ -2,8 +2,8 @@
 //! with no provider name, a `#[cgp_impl(Self)]` block missing its `for` clause,
 //! and a non-`impl` item.
 //!
-//! See docs/implementation/entrypoints/cgp_impl.md (Tests) for these failure
-//! cases, and docs/reference/macros/cgp_impl.md for the user-facing semantics.
+//! See cgp-knowledge-base/cgp/implementation/entrypoints/cgp_impl.md (Tests) for these failure
+//! cases, and cgp-knowledge-base/cgp/reference/macros/cgp_impl.md for the user-facing semantics.
 
 use quote::quote;
 

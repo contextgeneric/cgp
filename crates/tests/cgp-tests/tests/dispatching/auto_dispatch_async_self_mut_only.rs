@@ -1,7 +1,7 @@
 //! `#[cgp_auto_dispatch]` combined with `#[async_trait]`: a `&mut self` async
 //! method, dispatched over `FooBar`.
 //!
-//! See docs/reference/macros/cgp_auto_dispatch.md.
+//! See cgp-knowledge-base/cgp/reference/macros/cgp_auto_dispatch.md.
 
 use cgp::prelude::*;
 use futures::executor::block_on;

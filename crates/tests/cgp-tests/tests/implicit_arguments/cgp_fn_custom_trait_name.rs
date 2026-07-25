@@ -1,7 +1,7 @@
 //! `#[cgp_fn(CustomName)]` overrides the generated trait name, with two
 //! `#[implicit]` `f64` arguments read from the context (each `.clone()`d).
 //!
-//! See docs/reference/macros/cgp_fn.md.
+//! See cgp-knowledge-base/cgp/reference/macros/cgp_fn.md.
 
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_cgp_fn;

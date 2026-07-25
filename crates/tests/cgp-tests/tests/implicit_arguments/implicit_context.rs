@@ -5,7 +5,7 @@
 //! context-free one (`ValueToString`) to ones that depend on the context
 //! (`WithNamePrefix` needs `HasName`) or carry their own generics (`WithFooTag`).
 //!
-//! See docs/reference/macros/cgp_impl.md.
+//! See cgp-knowledge-base/cgp/reference/macros/cgp_impl.md.
 
 use cgp::prelude::*;
 

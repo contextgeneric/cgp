@@ -6,7 +6,8 @@
 //! `rectangle_area`/`circle_area` `#[cgp_fn]`s — apply to it. The `#[cgp_fn]`
 //! expansions are owned by `implicit_arguments`, so they are written plainly here.
 //!
-//! See docs/concepts/higher-order-providers.md and docs/reference/macros/cgp_fn.md.
+//! See cgp-knowledge-base/cgp/concepts/higher-order-providers.md and
+//! cgp-knowledge-base/cgp/reference/macros/cgp_fn.md.
 
 use core::f64::consts::PI;
 

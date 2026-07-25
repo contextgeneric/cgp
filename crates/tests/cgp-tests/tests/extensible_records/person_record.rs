@@ -11,8 +11,8 @@
 //! `Person` owns the snapshot here; `Employee`/`EmployeeId` are plain `CgpData`
 //! fixtures whose expansion is already pinned by `record_derive`.
 //!
-//! See docs/reference/derives/derive_cgp_data.md and
-//! docs/reference/traits/has_builder.md.
+//! See cgp-knowledge-base/cgp/reference/derives/derive_cgp_data.md and
+//! cgp-knowledge-base/cgp/reference/traits/has_builder.md.
 
 use core::marker::PhantomData;
 

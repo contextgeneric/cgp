@@ -1,7 +1,7 @@
 //! `#[cgp_auto_dispatch]` on a `&self` method that also takes extra by-value
 //! arguments, which are forwarded unchanged to the dispatched variant impl.
 //!
-//! See docs/reference/macros/cgp_auto_dispatch.md.
+//! See cgp-knowledge-base/cgp/reference/macros/cgp_auto_dispatch.md.
 
 use cgp::prelude::*;
 

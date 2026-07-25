@@ -37,7 +37,7 @@ impl PreprocessedCgpComponent {
 
             // Insert the provider as the leading impl generic. Position 0 is safe
             // with a lifetime present because `syn::Generics::to_tokens` emits
-            // lifetimes first. See docs/implementation/README.md,
+            // lifetimes first. See cgp-knowledge-base/cgp/implementation/README.md,
             // "Generic-parameter insertion and lifetime ordering".
             impl_generics
                 .params

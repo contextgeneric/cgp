@@ -2,8 +2,8 @@
 //! their codegen cannot lower: a variant that does not carry exactly one unnamed
 //! field, and (for `CgpVariant`) a non-enum item.
 //!
-//! See docs/implementation/entrypoints/derive_from_variant.md (Known issues,
-//! Tests) and docs/implementation/entrypoints/derive_cgp_variant.md for the
+//! See cgp-knowledge-base/cgp/implementation/entrypoints/derive_from_variant.md (Known issues,
+//! Tests) and cgp-knowledge-base/cgp/implementation/entrypoints/derive_cgp_variant.md for the
 //! user-facing semantics.
 
 use quote::quote;

@@ -9,8 +9,8 @@
 //! output this concept owns; the components and `DummyImpl` are incidental
 //! scaffolding written plainly.
 //!
-//! See docs/reference/macros/delegate_components.md and
-//! docs/reference/traits/default_namespace.md.
+//! See cgp-knowledge-base/cgp/reference/macros/delegate_components.md and
+//! cgp-knowledge-base/cgp/reference/traits/default_namespace.md.
 
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_delegate_components;

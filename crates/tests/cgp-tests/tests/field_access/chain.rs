@@ -4,8 +4,8 @@
 //! `#[derive(HasField)]` snapshots are the point of the test; the `ChainGetters`
 //! wiring is behavioral scaffolding.
 //!
-//! See docs/reference/derives/derive_has_field.md and
-//! docs/reference/traits/has_field.md.
+//! See cgp-knowledge-base/cgp/reference/derives/derive_has_field.md and
+//! cgp-knowledge-base/cgp/reference/traits/has_field.md.
 
 use core::marker::PhantomData;
 

@@ -15,7 +15,8 @@
 //! nothing else names the bound. This is the regression guard for the foreign
 //! bound being dropped from the trait.
 //!
-//! See docs/reference/attributes/use_type.md and docs/concepts/abstract-types.md.
+//! See cgp-knowledge-base/cgp/reference/attributes/use_type.md and
+//! cgp-knowledge-base/cgp/concepts/abstract-types.md.
 
 use std::convert::Infallible;
 use std::ops::Mul;

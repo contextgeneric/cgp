@@ -12,8 +12,8 @@
 //! satisfies the imported bound and gains `AlwaysTrue` — a wrong pin (a different
 //! `Error` type) would make `impl CheckApp for App` fail to compile.
 //!
-//! See docs/implementation/asts/attributes.md and
-//! docs/reference/attributes/uses.md.
+//! See cgp-knowledge-base/cgp/implementation/asts/attributes/README.md and
+//! cgp-knowledge-base/cgp/reference/attributes/uses.md.
 
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_cgp_fn;

@@ -8,8 +8,9 @@
 //! snapshots capture the namespace/default-impl wiring this concept owns; sibling
 //! `default_impls_wiring` consumes the exported items.
 //!
-//! See docs/reference/macros/cgp_namespace.md,
-//! docs/reference/traits/default_namespace.md, and docs/concepts/namespaces.md.
+//! See cgp-knowledge-base/cgp/reference/macros/cgp_namespace.md,
+//! cgp-knowledge-base/cgp/reference/traits/default_namespace.md, and
+//! cgp-knowledge-base/cgp/concepts/namespaces.md.
 
 use core::fmt::Display;
 

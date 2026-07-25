@@ -48,7 +48,7 @@ pub fn derive_has_fields_impls_from_enum(item_enum: &ItemEnum) -> syn::Result<Ve
 
     // These impls are all keyed on the whole enum, so aim an error on any of
     // their headers at the enum name the user wrote rather than at the whole
-    // `#[derive(...)]`. See docs/implementation/README.md#spans.
+    // `#[derive(...)]`. See cgp-knowledge-base/cgp/implementation/README.md#spans.
     [
         has_fields_impl,
         has_fields_ref_impl,

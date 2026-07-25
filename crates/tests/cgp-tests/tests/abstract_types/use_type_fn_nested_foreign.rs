@@ -13,7 +13,8 @@
 //! plain. `CheckRectangle` asserts the concrete `Rectangle` implements the
 //! generated trait.
 //!
-//! See docs/reference/attributes/use_type.md and docs/concepts/abstract-types.md.
+//! See cgp-knowledge-base/cgp/reference/attributes/use_type.md and
+//! cgp-knowledge-base/cgp/concepts/abstract-types.md.
 
 use std::ops::Mul;
 

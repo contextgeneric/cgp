@@ -7,7 +7,8 @@
 //!
 //! This concept owns the enum expansion of the `HasFields` derive.
 //!
-//! See docs/reference/derives/derive_has_fields.md and docs/reference/macros/sum.md.
+//! See cgp-knowledge-base/cgp/reference/derives/derive_has_fields.md and
+//! cgp-knowledge-base/cgp/reference/macros/sum.md.
 
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_derive_has_fields;

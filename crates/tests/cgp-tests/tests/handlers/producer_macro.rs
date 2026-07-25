@@ -10,7 +10,7 @@
 //! The error type wiring on `App` is incidental scaffolding, so it uses the
 //! plain `delegate_components!`.
 //!
-//! See docs/reference/components/producer.md.
+//! See cgp-knowledge-base/cgp/reference/components/producer.md.
 
 use cgp::core::error::ErrorTypeProviderComponent;
 use cgp::extra::handler::{ComputerRef, HandlerRef, TryComputerRef};

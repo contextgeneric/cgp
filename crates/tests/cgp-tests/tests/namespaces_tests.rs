@@ -13,10 +13,11 @@
 //! `delegate_components!`; incidental uses of other macros are written plainly,
 //! since their expansion is pinned in their owning target.
 //!
-//! See docs/concepts/namespaces.md, docs/reference/macros/cgp_namespace.md,
-//! docs/reference/macros/delegate_components.md,
-//! docs/reference/providers/redirect_lookup.md, and
-//! docs/reference/traits/default_namespace.md.
+//! See cgp-knowledge-base/cgp/concepts/namespaces.md,
+//! cgp-knowledge-base/cgp/reference/macros/cgp_namespace.md,
+//! cgp-knowledge-base/cgp/reference/macros/delegate_components.md,
+//! cgp-knowledge-base/cgp/reference/providers/redirect_lookup.md, and
+//! cgp-knowledge-base/cgp/reference/traits/default_namespace.md.
 #![allow(dead_code)]
 
 pub mod namespaces;

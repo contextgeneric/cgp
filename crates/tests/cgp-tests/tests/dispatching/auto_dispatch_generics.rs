@@ -1,7 +1,7 @@
 //! `#[cgp_auto_dispatch]` on a generic trait (`CanCall<T>`), where the per-variant
 //! impls may add their own bounds on `T` (here `Foo` requires `T: Display`).
 //!
-//! See docs/reference/macros/cgp_auto_dispatch.md.
+//! See cgp-knowledge-base/cgp/reference/macros/cgp_auto_dispatch.md.
 
 use core::fmt::Display;
 

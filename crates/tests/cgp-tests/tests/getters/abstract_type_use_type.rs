@@ -5,8 +5,9 @@
 //! variant are pinned. The `#[cgp_type]` scaffolding is written plainly here —
 //! its expansion is owned by the `abstract_types` concept.
 //!
-//! See docs/reference/macros/cgp_getter.md, docs/reference/macros/cgp_auto_getter.md,
-//! and docs/reference/providers/use_type.md.
+//! See cgp-knowledge-base/cgp/reference/macros/cgp_getter.md,
+//! cgp-knowledge-base/cgp/reference/macros/cgp_auto_getter.md, and
+//! cgp-knowledge-base/cgp/reference/providers/use_type.md.
 
 use cgp::prelude::*;
 use cgp_macro_test_util::{snapshot_cgp_auto_getter, snapshot_cgp_getter};

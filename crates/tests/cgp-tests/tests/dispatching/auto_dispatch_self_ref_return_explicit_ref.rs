@@ -4,7 +4,7 @@
 //! Companion to `auto_dispatch_self_ref_return_implicit_ref`, which writes the
 //! same shape with an elided lifetime.
 //!
-//! See docs/reference/macros/cgp_auto_dispatch.md.
+//! See cgp-knowledge-base/cgp/reference/macros/cgp_auto_dispatch.md.
 
 use cgp::prelude::*;
 

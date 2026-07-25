@@ -14,7 +14,8 @@
 //! `deep` takes and returns a value of the deep type, so the test asserts a
 //! concrete value flows through the fully-grounded signature at runtime.
 //!
-//! See docs/reference/attributes/use_type.md and docs/concepts/abstract-types.md.
+//! See cgp-knowledge-base/cgp/reference/attributes/use_type.md and
+//! cgp-knowledge-base/cgp/concepts/abstract-types.md.
 
 use cgp::prelude::*;
 

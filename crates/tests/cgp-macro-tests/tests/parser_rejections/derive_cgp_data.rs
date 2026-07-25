@@ -6,7 +6,7 @@
 //! confirms the umbrella propagates it; the non-struct-or-enum rejection is
 //! unique to `ItemCgpData`'s parser.
 //!
-//! See docs/implementation/entrypoints/derive_cgp_data.md (Known issues, Tests).
+//! See cgp-knowledge-base/cgp/implementation/entrypoints/derive_cgp_data.md (Known issues, Tests).
 
 use quote::quote;
 

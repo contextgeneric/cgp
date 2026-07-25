@@ -9,8 +9,8 @@
 //! receiver would be turned into a context parameter and the `Display` impl would
 //! fail to compile. The outer `self.name()` is still rewritten to the context.
 //!
-//! See docs/implementation/entrypoints/cgp_impl.md (Behavior and corner cases)
-//! and docs/reference/macros/cgp_impl.md.
+//! See cgp-knowledge-base/cgp/implementation/entrypoints/cgp_impl.md (Behavior and corner cases)
+//! and cgp-knowledge-base/cgp/reference/macros/cgp_impl.md.
 
 use core::fmt::{self, Display};
 

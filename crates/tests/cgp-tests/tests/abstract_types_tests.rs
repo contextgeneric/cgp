@@ -9,8 +9,10 @@
 //! owns the canonical `#[cgp_type]` macro-expansion snapshots and the
 //! abstract-type-rewriting snapshots for `#[use_type]`.
 //!
-//! See docs/reference/macros/cgp_type.md, docs/reference/attributes/use_type.md,
-//! docs/reference/providers/use_type.md, and docs/concepts/abstract-types.md.
+//! See cgp-knowledge-base/cgp/reference/macros/cgp_type.md,
+//! cgp-knowledge-base/cgp/reference/attributes/use_type.md,
+//! cgp-knowledge-base/cgp/reference/providers/use_type.md, and
+//! cgp-knowledge-base/cgp/concepts/abstract-types.md.
 #![allow(dead_code)]
 #![allow(clippy::disallowed_names)]
 

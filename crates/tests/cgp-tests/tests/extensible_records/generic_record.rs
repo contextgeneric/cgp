@@ -5,7 +5,7 @@
 //! parameters and forwards its `where Foo: Clone` bound, so the derive works on
 //! parameterized records just as on concrete ones.
 //!
-//! See docs/reference/derives/derive_cgp_data.md.
+//! See cgp-knowledge-base/cgp/reference/derives/derive_cgp_data.md.
 
 use cgp_macro_test_util::snapshot_derive_cgp_data;
 

@@ -2,7 +2,7 @@
 //! (`Scalar: Mul<Output = Self::Scalar>`): the bound survives onto the generated
 //! blanket impl with `Self::Scalar` rewritten to the inferred type parameter.
 //!
-//! See docs/reference/macros/cgp_auto_getter.md.
+//! See cgp-knowledge-base/cgp/reference/macros/cgp_auto_getter.md.
 
 use core::ops::Mul;
 

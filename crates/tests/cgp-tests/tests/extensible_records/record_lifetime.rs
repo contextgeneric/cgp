@@ -9,7 +9,7 @@
 //! by `record_derive` and `struct_generic_lifetime`, so this only guards that
 //! the builder round-trips at compile and run time on a borrowed record.
 //!
-//! See docs/reference/derives/derive_cgp_data.md.
+//! See cgp-knowledge-base/cgp/reference/derives/derive_cgp_data.md.
 
 use core::marker::PhantomData;
 

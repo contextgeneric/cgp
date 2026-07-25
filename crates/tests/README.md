@@ -29,7 +29,7 @@ migrated to `cargo-cgp`'s UI test suite, which snapshots the readable, root-caus
 errors `cargo-cgp` renders for each class (its `.rust.stderr` still records the raw
 compiler output as the "before"). `cargo-cgp` is CGP's first-class error toolchain, so
 those diagnostics are pinned where the tool that improves them lives; the
-[error catalog](../../docs/errors/README.md) links each class to the fixture that
+[error catalog](https://github.com/contextgeneric/cgp-knowledge-base/blob/main/cgp/errors/README.md) links each class to the fixture that
 backs it. See
 [cargo-cgp's UI tests](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/README.md).
 

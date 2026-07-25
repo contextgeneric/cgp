@@ -11,8 +11,8 @@
 //! the `UseDelegate`-table wiring. The `check_components!` scaffolding uses the
 //! plain macro (checking is owned by another target).
 //!
-//! See docs/reference/providers/use_delegate.md and
-//! docs/reference/providers/dispatch_combinators.md.
+//! See cgp-knowledge-base/cgp/reference/providers/use_delegate.md and
+//! cgp-knowledge-base/cgp/reference/providers/dispatch_combinators.md.
 
 use core::marker::PhantomData;
 

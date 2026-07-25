@@ -3,8 +3,9 @@
 //! same identifier or alias — whether across specs or within one braced list, and
 //! on any host macro.
 //!
-//! See docs/implementation/asts/attributes.md (Tests) for these failure cases and
-//! docs/reference/attributes/use_type.md for the user-facing semantics.
+//! See cgp-knowledge-base/cgp/implementation/asts/attributes/README.md (Tests) for these
+//! failure cases and cgp-knowledge-base/cgp/reference/attributes/use_type.md for the
+//! user-facing semantics.
 
 use quote::quote;
 

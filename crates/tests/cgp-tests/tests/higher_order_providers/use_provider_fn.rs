@@ -7,7 +7,8 @@
 //! component and the inner provider are written plainly (their expansions are
 //! owned elsewhere); only the `#[use_provider]` `#[cgp_fn]` is snapshotted here.
 //!
-//! See docs/reference/attributes/use_provider.md and docs/reference/macros/cgp_fn.md.
+//! See cgp-knowledge-base/cgp/reference/attributes/use_provider.md and
+//! cgp-knowledge-base/cgp/reference/macros/cgp_fn.md.
 
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_cgp_fn;

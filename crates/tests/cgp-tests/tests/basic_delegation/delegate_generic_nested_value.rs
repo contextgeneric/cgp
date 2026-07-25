@@ -4,7 +4,7 @@
 //! `<T> BarKey<T>: UseDelegate<new BarValue<T> { … }>` threads the entry generic
 //! `T` through both the outer key and the inner generated table struct.
 //!
-//! See docs/reference/macros/delegate_components.md.
+//! See cgp-knowledge-base/cgp/reference/macros/delegate_components.md.
 
 use core::marker::PhantomData;
 

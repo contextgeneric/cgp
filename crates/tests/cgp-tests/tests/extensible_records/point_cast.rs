@@ -6,8 +6,8 @@
 //! `#[derive(CgpData)]` expansion for the private `Point2d` (this concept owns
 //! the derive's expansion); `Point3d`/`Point4d` are plain `CgpData` fixtures.
 //!
-//! See docs/concepts/extensible-records.md and
-//! docs/reference/derives/derive_cgp_data.md.
+//! See cgp-knowledge-base/cgp/concepts/extensible-records.md and
+//! cgp-knowledge-base/cgp/reference/derives/derive_cgp_data.md.
 
 use cgp::extra::field::impls::CanBuildWithDefault;
 use cgp::prelude::*;

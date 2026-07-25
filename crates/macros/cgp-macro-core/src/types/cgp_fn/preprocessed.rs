@@ -94,7 +94,7 @@ impl PreprocessedItemCgpFn {
         item_impl.generics = generics.clone();
         // Insert the context as the leading impl generic. Position 0 is safe with
         // a lifetime present because `syn::Generics::to_tokens` emits lifetimes
-        // first. See docs/implementation/README.md, "Generic-parameter insertion
+        // first. See cgp-knowledge-base/cgp/implementation/README.md, "Generic-parameter insertion
         // and lifetime ordering".
         item_impl
             .generics

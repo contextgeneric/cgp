@@ -3,8 +3,8 @@
 //! stripped — so the field is addressable by the same symbol `Symbol!("type")`
 //! produces, while the accessor body still borrows `&self.r#type`.
 //!
-//! See docs/reference/derives/derive_has_field.md and
-//! docs/reference/macros/symbol.md.
+//! See cgp-knowledge-base/cgp/reference/derives/derive_has_field.md and
+//! cgp-knowledge-base/cgp/reference/macros/symbol.md.
 
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_derive_has_field;

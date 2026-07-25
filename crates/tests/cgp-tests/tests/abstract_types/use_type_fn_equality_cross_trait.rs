@@ -10,7 +10,8 @@
 //! dependencies `return_foo_or_bar` imports with `#[uses]`. All three `#[cgp_fn]`
 //! snapshots are kept because the abstract-type rewrite is the point.
 //!
-//! See docs/reference/attributes/use_type.md and docs/concepts/abstract-types.md.
+//! See cgp-knowledge-base/cgp/reference/attributes/use_type.md and
+//! cgp-knowledge-base/cgp/concepts/abstract-types.md.
 
 use std::fmt::Display;
 

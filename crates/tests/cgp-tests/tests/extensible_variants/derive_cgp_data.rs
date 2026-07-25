@@ -10,9 +10,9 @@
 //! (`CanUpcast`/`CanDowncast`) between enum shapes; the auxiliary enums are
 //! plain derives, since the primary snapshot already pins the expansion.
 //!
-//! See docs/reference/derives/derive_cgp_data.md,
-//! docs/reference/derives/derive_from_variant.md, and
-//! docs/reference/derives/derive_extract_field.md.
+//! See cgp-knowledge-base/cgp/reference/derives/derive_cgp_data.md,
+//! cgp-knowledge-base/cgp/reference/derives/derive_from_variant.md, and
+//! cgp-knowledge-base/cgp/reference/derives/derive_extract_field.md.
 
 use core::marker::PhantomData;
 

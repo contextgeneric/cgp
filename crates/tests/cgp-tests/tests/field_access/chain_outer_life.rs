@@ -2,7 +2,7 @@
 //! (`inner: &'a Inner`): the derive lifts the outer lifetime onto its impls,
 //! and `ChainGetters` still resolves `outer.inner.name` across the borrow.
 //!
-//! See docs/reference/derives/derive_has_field.md.
+//! See cgp-knowledge-base/cgp/reference/derives/derive_has_field.md.
 
 use core::marker::PhantomData;
 

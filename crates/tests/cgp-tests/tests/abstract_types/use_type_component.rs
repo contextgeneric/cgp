@@ -10,8 +10,9 @@
 //! `#[cgp_type]` scaffolding and the delegation/check are incidental here and use
 //! the plain macros; the abstract-type expansion and wiring are owned elsewhere.
 //!
-//! See docs/reference/attributes/use_type.md, docs/reference/providers/use_type.md,
-//! and docs/concepts/abstract-types.md.
+//! See cgp-knowledge-base/cgp/reference/attributes/use_type.md,
+//! cgp-knowledge-base/cgp/reference/providers/use_type.md, and
+//! cgp-knowledge-base/cgp/concepts/abstract-types.md.
 
 use std::convert::Infallible;
 use std::ops::Mul;

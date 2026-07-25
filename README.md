@@ -143,6 +143,8 @@ Learn CGP at the project website, **[contextgeneric.dev](https://contextgeneric.
 > [!NOTE]
 > The crates' API docs on `docs.rs` are still sparse. The website is the place to start while the inline documentation is filled in.
 
+Contributors and coding agents have a second, deeper source: the [CGP knowledge base](https://github.com/contextgeneric/cgp-knowledge-base), which holds the exhaustive per-construct reference, the concept overviews, the writing guides, the compile-error catalog, the worked examples, and the internals of the macros in this repository. It is written for AI agents rather than for learners, so start at the website if you are learning CGP and reach for the knowledge base when you need the exact semantics of a construct or are changing this repository. Start from [AGENTS.md](AGENTS.md) for the conventions this repository follows, and [sibling-projects.md](sibling-projects.md) for the related repositories.
+
 ## Project status
 
 CGP works today on stable Rust and already offers a broad feature set: components and providers, abstract types, extensible records and variants, a handler and computation family, namespaces, and modular error handling. It is also young — the paradigm and its ecosystem are still evolving, and v0.8.0 is a pre-release — so adopting it is a real decision rather than a foregone one.

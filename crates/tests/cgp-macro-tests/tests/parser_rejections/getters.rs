@@ -8,8 +8,9 @@
 //! allowed, only alongside exactly one method. `#[cgp_auto_getter]` additionally
 //! rejects any attribute argument, since it has no provider name or keys to accept.
 //!
-//! See docs/implementation/asts/cgp_getter.md (Tests) for these failure cases and
-//! docs/reference/macros/cgp_auto_getter.md for the user-facing getter-method rules.
+//! See cgp-knowledge-base/cgp/implementation/asts/cgp_getter.md (Tests) for these failure cases and
+//! cgp-knowledge-base/cgp/reference/macros/cgp_auto_getter.md for the user-facing getter-method
+//! rules.
 
 use quote::quote;
 

@@ -5,7 +5,7 @@
 //! generated impl, and an entry key may introduce its own extra generics
 //! (`<T2> BazKey<T1, T2>`).
 //!
-//! See docs/reference/macros/delegate_components.md.
+//! See cgp-knowledge-base/cgp/reference/macros/delegate_components.md.
 
 // The header lifts `'a` onto every generated impl, but only the `BarKey<'a, T1>`
 // entry uses it, so the `FooKey`/`BazKey` impls carry an intentionally-unused

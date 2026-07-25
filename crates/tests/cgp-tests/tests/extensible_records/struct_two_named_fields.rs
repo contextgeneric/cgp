@@ -4,7 +4,7 @@
 //! `from_fields`/`to_fields` round-trip. The derive expansion is owned by this
 //! concept; `struct_single_named_field` pins the canonical reference.
 //!
-//! See docs/reference/derives/derive_has_fields.md.
+//! See cgp-knowledge-base/cgp/reference/derives/derive_has_fields.md.
 
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_derive_has_fields;

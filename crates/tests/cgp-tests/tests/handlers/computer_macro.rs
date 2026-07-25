@@ -14,7 +14,7 @@
 //! `Handler` has an error type; it uses the plain `delegate_components!` (the
 //! error and wiring macros are owned by other concept targets).
 //!
-//! See docs/reference/components/computer.md.
+//! See cgp-knowledge-base/cgp/reference/components/computer.md.
 
 use core::fmt::Display;
 

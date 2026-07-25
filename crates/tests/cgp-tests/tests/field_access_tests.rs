@@ -9,9 +9,10 @@
 //! and nested/chained field access, plus the runtime behavior of the `Symbol!`
 //! and `Index` tags themselves (`Display` and `StaticString`).
 //!
-//! See docs/reference/traits/has_field.md,
-//! docs/reference/derives/derive_has_field.md,
-//! docs/reference/macros/symbol.md and docs/reference/types/index.md.
+//! See cgp-knowledge-base/cgp/reference/traits/has_field.md,
+//! cgp-knowledge-base/cgp/reference/derives/derive_has_field.md,
+//! cgp-knowledge-base/cgp/reference/macros/symbol.md and
+//! cgp-knowledge-base/cgp/reference/types/index.md.
 #![allow(dead_code)]
 
 pub mod field_access;

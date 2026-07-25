@@ -4,7 +4,7 @@
 //! directly (not a `Cons`/`Nil` list), and `from_fields`/`to_fields` pass the
 //! single value straight through. The derive expansion is owned by this concept.
 //!
-//! See docs/reference/derives/derive_has_fields.md.
+//! See cgp-knowledge-base/cgp/reference/derives/derive_has_fields.md.
 
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_derive_has_fields;

@@ -9,7 +9,7 @@
 //! to plain macros. This file exercises the *variant* side end-to-end: matching
 //! by field, by value (ref), and via casts.
 //!
-//! See docs/concepts/extensible-variants.md.
+//! See cgp-knowledge-base/cgp/concepts/extensible-variants.md.
 
 use core::convert::Infallible;
 use core::fmt::Display;

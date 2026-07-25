@@ -11,8 +11,8 @@
 //! The runtime test exercises the builder: start from `builder()`, set each
 //! field with `build_field`, then `finalize_build` once every field is present.
 //!
-//! See docs/reference/derives/derive_cgp_data.md and
-//! docs/reference/traits/has_builder.md.
+//! See cgp-knowledge-base/cgp/reference/derives/derive_cgp_data.md and
+//! cgp-knowledge-base/cgp/reference/traits/has_builder.md.
 
 use core::marker::PhantomData;
 

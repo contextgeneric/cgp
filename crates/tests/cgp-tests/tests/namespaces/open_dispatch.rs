@@ -10,8 +10,8 @@
 //! snapshot is the canonical `open` golden output this concept owns; the two
 //! components and their providers are incidental scaffolding written plainly.
 //!
-//! See docs/reference/macros/delegate_components.md and
-//! docs/reference/providers/redirect_lookup.md.
+//! See cgp-knowledge-base/cgp/reference/macros/delegate_components.md and
+//! cgp-knowledge-base/cgp/reference/providers/redirect_lookup.md.
 
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_delegate_components;

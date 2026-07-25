@@ -7,8 +7,9 @@
 //! context recovers the `Send` bound through a proxy `SendRunner` impl without
 //! annotating `Send` throughout the abstract code.
 //!
-//! See docs/reference/macros/async_trait.md, docs/reference/components/runner.md,
-//! and docs/concepts/send-bounds.md.
+//! See cgp-knowledge-base/cgp/reference/macros/async_trait.md,
+//! cgp-knowledge-base/cgp/reference/components/runner.md, and
+//! cgp-knowledge-base/cgp/concepts/send-bounds.md.
 #![allow(dead_code)]
 #![allow(clippy::disallowed_names)]
 

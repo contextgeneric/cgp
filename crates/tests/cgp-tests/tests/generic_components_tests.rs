@@ -8,8 +8,10 @@
 //! `IsProviderFor` params tuple, and how const generics flow onto the generated
 //! provider trait and its providers.
 //!
-//! See docs/reference/macros/cgp_component.md, docs/reference/macros/cgp_fn.md,
-//! docs/reference/types/life.md, and docs/concepts/higher-order-providers.md.
+//! See cgp-knowledge-base/cgp/reference/macros/cgp_component.md,
+//! cgp-knowledge-base/cgp/reference/macros/cgp_fn.md,
+//! cgp-knowledge-base/cgp/reference/types/life.md, and
+//! cgp-knowledge-base/cgp/concepts/higher-order-providers.md.
 #![allow(dead_code)]
 
 pub mod generic_components;

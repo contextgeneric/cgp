@@ -36,7 +36,7 @@ pub fn derive_from_variant_from_enum(item_enum: &ItemEnum) -> syn::Result<Vec<It
         // Aim a compiler error on this impl at the variant the user wrote rather
         // than at the whole `#[derive(...)]`, which is where the impl's
         // `call_site`-spanned boundary would otherwise put the caret. See
-        // docs/implementation/README.md#spans.
+        // cgp-knowledge-base/cgp/implementation/README.md#spans.
         item_impls.push(override_item_span(variant_ident.span(), &item_impl)?);
     }
 

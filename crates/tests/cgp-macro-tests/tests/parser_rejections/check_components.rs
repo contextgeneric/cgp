@@ -3,8 +3,8 @@
 //! that verifies nothing), a repeated `#[check_providers]` or `#[check_trait]`,
 //! and any unrecognized attribute.
 //!
-//! See docs/implementation/entrypoints/check_components.md (Tests) for these
-//! failure cases, and docs/reference/macros/check_components.md for the
+//! See cgp-knowledge-base/cgp/implementation/entrypoints/check_components.md (Tests) for these
+//! failure cases, and cgp-knowledge-base/cgp/reference/macros/check_components.md for the
 //! user-facing semantics.
 
 use quote::quote;

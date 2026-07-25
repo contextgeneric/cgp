@@ -6,8 +6,8 @@
 //! itself mentions the key generic and an array key mixing a generic and a
 //! non-generic component. This concept owns the macro's expansion snapshot.
 //!
-//! See docs/reference/macros/delegate_and_check_components.md and
-//! docs/reference/traits/can_use_component.md.
+//! See cgp-knowledge-base/cgp/reference/macros/delegate_and_check_components.md and
+//! cgp-knowledge-base/cgp/reference/traits/can_use_component.md.
 
 use core::marker::PhantomData;
 

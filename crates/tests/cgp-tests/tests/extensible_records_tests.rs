@@ -9,10 +9,10 @@
 //! derives on structs, and exercises named, tuple, generic, optional, and cast
 //! variations.
 //!
-//! See docs/reference/derives/derive_cgp_data.md,
-//! docs/reference/derives/derive_has_fields.md,
-//! docs/reference/traits/has_builder.md, and
-//! docs/concepts/extensible-records.md.
+//! See cgp-knowledge-base/cgp/reference/derives/derive_cgp_data.md,
+//! cgp-knowledge-base/cgp/reference/derives/derive_has_fields.md,
+//! cgp-knowledge-base/cgp/reference/traits/has_builder.md, and
+//! cgp-knowledge-base/cgp/concepts/extensible-records.md.
 #![allow(dead_code)]
 #![allow(clippy::disallowed_names)]
 

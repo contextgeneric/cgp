@@ -9,8 +9,8 @@
 //! the widening/narrowing casts against enums of different arity
 //! (`ShapePlus`/`TriangleOnly`), which are plain derives.
 //!
-//! See docs/reference/derives/derive_cgp_data.md and
-//! docs/reference/derives/derive_extract_field.md.
+//! See cgp-knowledge-base/cgp/reference/derives/derive_cgp_data.md and
+//! cgp-knowledge-base/cgp/reference/derives/derive_extract_field.md.
 
 use core::marker::PhantomData;
 use std::f64::consts::PI;

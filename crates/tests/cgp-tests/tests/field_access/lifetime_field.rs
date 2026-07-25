@@ -2,7 +2,7 @@
 //! lifts the struct's lifetime onto the generated impls and keeps the field's
 //! borrowed type (`&'a str`) as the `HasField::Value`.
 //!
-//! See docs/reference/derives/derive_has_field.md.
+//! See cgp-knowledge-base/cgp/reference/derives/derive_has_field.md.
 
 use core::marker::PhantomData;
 

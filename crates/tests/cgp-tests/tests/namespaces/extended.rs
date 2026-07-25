@@ -7,7 +7,8 @@
 //! the namespace-inheritance wiring this concept owns; sibling
 //! `extended_namespace_wiring` consumes the exported `ExtendedNamespace`.
 //!
-//! See docs/reference/macros/cgp_namespace.md and docs/concepts/namespaces.md.
+//! See cgp-knowledge-base/cgp/reference/macros/cgp_namespace.md and
+//! cgp-knowledge-base/cgp/concepts/namespaces.md.
 
 use cgp::prelude::DefaultNamespace;
 use cgp_macro_test_util::snapshot_cgp_namespace;

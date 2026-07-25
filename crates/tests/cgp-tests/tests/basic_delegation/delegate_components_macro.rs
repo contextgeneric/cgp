@@ -6,7 +6,7 @@
 //! owns the reference snapshot, including the `->` forwarding form that delegates
 //! to another table's entry.
 //!
-//! See docs/reference/macros/delegate_components.md.
+//! See cgp-knowledge-base/cgp/reference/macros/delegate_components.md.
 
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_delegate_components;

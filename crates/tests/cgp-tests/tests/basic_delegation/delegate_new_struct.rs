@@ -5,7 +5,7 @@
 //! and its `DelegateComponent` impls together. This is a compile-time check: the
 //! `CheckDelegates` bound proves the table resolves as written.
 //!
-//! See docs/reference/macros/delegate_components.md.
+//! See cgp-knowledge-base/cgp/reference/macros/delegate_components.md.
 
 use cgp::prelude::*;
 

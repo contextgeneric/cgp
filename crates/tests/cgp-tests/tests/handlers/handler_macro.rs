@@ -10,8 +10,8 @@
 //! The error wiring on `App` is incidental scaffolding, so it uses the plain
 //! `delegate_components!`.
 //!
-//! See docs/reference/components/handler.md and
-//! docs/reference/components/computer.md.
+//! See cgp-knowledge-base/cgp/reference/components/handler.md and
+//! cgp-knowledge-base/cgp/reference/components/computer.md.
 
 use core::fmt::Display;
 

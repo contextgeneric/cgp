@@ -5,7 +5,7 @@
 //! builder — is keyed by index. Otherwise the expansion mirrors the named-field
 //! case pinned by `record_derive`.
 //!
-//! See docs/reference/derives/derive_cgp_data.md.
+//! See cgp-knowledge-base/cgp/reference/derives/derive_cgp_data.md.
 
 use cgp_macro_test_util::snapshot_derive_cgp_data;
 

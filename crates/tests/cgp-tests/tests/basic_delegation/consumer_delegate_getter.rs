@@ -5,7 +5,7 @@
 //! implementing `HasCount` by hand — CGP consumer traits are ordinary traits, so
 //! both routes coexist on the same context.
 //!
-//! See docs/concepts/consumer-and-provider-traits.md.
+//! See cgp-knowledge-base/cgp/concepts/consumer-and-provider-traits.md.
 
 use cgp::prelude::*;
 

@@ -7,7 +7,7 @@
 //! owned by `basic_delegation` and `checking`); the runtime test confirms the
 //! composed results.
 //!
-//! See docs/concepts/higher-order-providers.md.
+//! See cgp-knowledge-base/cgp/concepts/higher-order-providers.md.
 
 use core::f64::consts::PI;
 

@@ -28,7 +28,7 @@ impl PreprocessedCgpComponent {
         // Insert the context as the provider trait's leading generic parameter.
         // Position 0 is safe even when the trait already has a lifetime, because
         // `syn::Generics::to_tokens` emits lifetimes ahead of type/const
-        // parameters. See docs/implementation/README.md,
+        // parameters. See cgp-knowledge-base/cgp/implementation/README.md,
         // "Generic-parameter insertion and lifetime ordering".
         provider_trait
             .generics

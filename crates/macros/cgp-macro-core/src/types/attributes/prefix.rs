@@ -32,7 +32,7 @@ impl PrefixAttribute {
         // Insert the components table as the leading generic. Position 0 sits
         // ahead of any lifetime, which the `parse_internal! { impl #type_generics
         // … }` re-parse below normalizes (`syn` re-emits lifetimes first). See
-        // docs/implementation/README.md, "Generic-parameter insertion and
+        // cgp-knowledge-base/cgp/implementation/README.md, "Generic-parameter insertion and
         // lifetime ordering".
         type_generics
             .params

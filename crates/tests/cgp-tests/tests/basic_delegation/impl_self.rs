@@ -6,8 +6,8 @@
 //! forwarding to a reusable provider. This is the direct-impl end of the
 //! modularity spectrum, where no wiring table is involved.
 //!
-//! See docs/reference/macros/cgp_impl.md and
-//! docs/reference/attributes/use_provider.md.
+//! See cgp-knowledge-base/cgp/reference/macros/cgp_impl.md and
+//! cgp-knowledge-base/cgp/reference/attributes/use_provider.md.
 
 use cgp::prelude::*;
 

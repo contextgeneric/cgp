@@ -6,7 +6,7 @@
 //! still pulled from the context's fields. This is the async variant of the
 //! `#[cgp_fn]` expansion, which the `async_and_send` concept owns.
 //!
-//! See docs/reference/macros/async_trait.md.
+//! See cgp-knowledge-base/cgp/reference/macros/async_trait.md.
 
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_cgp_fn;

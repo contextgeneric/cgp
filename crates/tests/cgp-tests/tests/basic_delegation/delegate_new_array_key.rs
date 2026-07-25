@@ -4,7 +4,7 @@
 //! This is a compile-time check that the array-key plus nested-`new` forms parse
 //! and expand together.
 //!
-//! See docs/reference/macros/delegate_components.md.
+//! See cgp-knowledge-base/cgp/reference/macros/delegate_components.md.
 
 use cgp::core::component::UseDelegate;
 use cgp::prelude::*;

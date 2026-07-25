@@ -5,8 +5,8 @@
 //! by its path without importing it. This concept owns the macro's expansion
 //! snapshot.
 //!
-//! See docs/reference/macros/check_components.md and
-//! docs/implementation/entrypoints/check_components.md.
+//! See cgp-knowledge-base/cgp/reference/macros/check_components.md and
+//! cgp-knowledge-base/cgp/implementation/entrypoints/check_components.md.
 
 use cgp_macro_test_util::snapshot_check_components;
 

@@ -11,10 +11,10 @@
 //! scaffolding are written in their plain form (their expansions are pinned in
 //! their own owning targets).
 //!
-//! See docs/reference/macros/cgp_auto_dispatch.md,
-//! docs/reference/providers/use_delegate.md,
-//! docs/reference/providers/dispatch_combinators.md, and
-//! docs/concepts/dispatching.md.
+//! See cgp-knowledge-base/cgp/reference/macros/cgp_auto_dispatch.md,
+//! cgp-knowledge-base/cgp/reference/providers/use_delegate.md,
+//! cgp-knowledge-base/cgp/reference/providers/dispatch_combinators.md, and
+//! cgp-knowledge-base/cgp/concepts/dispatching.md.
 #![allow(dead_code)]
 #![allow(clippy::needless_lifetimes)]
 

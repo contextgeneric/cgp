@@ -118,7 +118,8 @@ pub fn derive_extract_field_impls(
         };
 
         // Point an error on this per-variant impl at the variant the user wrote
-        // rather than at the whole derive. See docs/implementation/README.md#spans.
+        // rather than at the whole derive. See
+        // cgp-knowledge-base/cgp/implementation/README.md#spans.
         item_impls.push(override_item_span(
             current_variant.ident.span(),
             &item_impl,

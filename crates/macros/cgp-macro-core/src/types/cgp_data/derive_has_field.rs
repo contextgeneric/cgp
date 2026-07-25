@@ -23,7 +23,7 @@ pub fn derive_has_field_impls_from_struct(item_struct: &ItemStruct) -> syn::Resu
                 // same tag, say — at the field the user wrote rather than at the
                 // whole `#[derive(HasField)]`, which is where the impl's
                 // `call_site`-spanned `impl`/`{ … }` boundary would otherwise put
-                // the caret. See docs/implementation/README.md#spans.
+                // the caret. See cgp-knowledge-base/cgp/implementation/README.md#spans.
                 let field_span = field_ident.span();
 
                 let field_symbol = Symbol::from_ident(field_ident.clone());

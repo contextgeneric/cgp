@@ -7,7 +7,8 @@
 //! may treat the value as an `f64` while the signature still speaks the abstract
 //! alias. The `#[cgp_fn]` snapshot is kept for the rewrite; `#[cgp_type]` is plain.
 //!
-//! See docs/reference/attributes/use_type.md and docs/concepts/abstract-types.md.
+//! See cgp-knowledge-base/cgp/reference/attributes/use_type.md and
+//! cgp-knowledge-base/cgp/concepts/abstract-types.md.
 
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_cgp_fn;

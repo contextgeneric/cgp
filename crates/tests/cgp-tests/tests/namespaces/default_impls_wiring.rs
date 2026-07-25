@@ -9,8 +9,8 @@
 //! snapshots) against the reusable namespaces defined in the sibling
 //! `default_impls` module.
 //!
-//! See docs/reference/traits/default_namespace.md and
-//! docs/reference/macros/delegate_components.md.
+//! See cgp-knowledge-base/cgp/reference/traits/default_namespace.md and
+//! cgp-knowledge-base/cgp/reference/macros/delegate_components.md.
 
 use cgp::core::component::DefaultImpls1;
 use cgp::prelude::*;

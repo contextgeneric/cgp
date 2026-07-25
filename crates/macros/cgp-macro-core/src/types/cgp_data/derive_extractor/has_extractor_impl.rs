@@ -64,7 +64,7 @@ pub fn derive_has_extractor_impl(
     };
 
     // Key the error span on the enum name the user wrote, not the whole derive.
-    // See docs/implementation/README.md#spans.
+    // See cgp-knowledge-base/cgp/implementation/README.md#spans.
     override_item_span(context_ident.span(), &item_impl)
 }
 
@@ -141,7 +141,7 @@ pub fn derive_has_extractor_ref_impl(
     };
 
     // Key the error span on the enum name the user wrote, not the whole derive.
-    // See docs/implementation/README.md#spans.
+    // See cgp-knowledge-base/cgp/implementation/README.md#spans.
     override_item_span(context_ident.span(), &item_impl)
 }
 
@@ -215,6 +215,6 @@ pub fn derive_has_extractor_mut_impl(
     };
 
     // Key the error span on the enum name the user wrote, not the whole derive.
-    // See docs/implementation/README.md#spans.
+    // See cgp-knowledge-base/cgp/implementation/README.md#spans.
     override_item_span(context_ident.span(), &item_impl)
 }

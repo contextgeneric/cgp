@@ -8,8 +8,8 @@
 //! `BindErr<IdentMonadic, ..>` (inside a plain `PipeHandlers` chain) and the
 //! `PipeMonadic<ErrMonadic, ..>` combinator are exercised.
 //!
-//! See docs/concepts/monadic-handlers.md and
-//! docs/reference/providers/monad_providers.md.
+//! See cgp-knowledge-base/cgp/concepts/monadic-handlers.md and
+//! cgp-knowledge-base/cgp/reference/providers/monad_providers.md.
 
 use cgp::extra::handler::PipeHandlers;
 use cgp::extra::monad::monadic::err::{BindErr, ErrMonadic};

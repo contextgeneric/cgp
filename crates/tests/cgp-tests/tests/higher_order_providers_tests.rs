@@ -6,8 +6,8 @@
 //! (on both `#[cgp_fn]` and `#[cgp_impl]`) and exercises the scaling pattern where
 //! an outer calculator wraps an inner one.
 //!
-//! See docs/reference/attributes/use_provider.md and
-//! docs/concepts/higher-order-providers.md.
+//! See cgp-knowledge-base/cgp/reference/attributes/use_provider.md and
+//! cgp-knowledge-base/cgp/concepts/higher-order-providers.md.
 #![allow(dead_code)]
 
 pub mod higher_order_providers;

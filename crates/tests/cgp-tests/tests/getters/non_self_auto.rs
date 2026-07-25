@@ -5,7 +5,7 @@
 //! `delegate_components!` wiring are written plainly here (their expansions are
 //! owned by the `abstract_types` and `basic_delegation` concepts).
 //!
-//! See docs/reference/macros/cgp_auto_getter.md.
+//! See cgp-knowledge-base/cgp/reference/macros/cgp_auto_getter.md.
 
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_cgp_auto_getter;

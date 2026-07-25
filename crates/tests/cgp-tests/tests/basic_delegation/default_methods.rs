@@ -5,9 +5,10 @@
 //! the distinct component-expansion variant with a supertrait bound and a default
 //! method, kept alongside the plain snapshot in `component_macro`.
 //!
-//! See docs/implementation/entrypoints/cgp_component.md (Snapshots) for this
-//! supertrait-plus-default-method variant, and docs/reference/macros/cgp_component.md
-//! and docs/reference/attributes/extend.md for the user-facing semantics.
+//! See cgp-knowledge-base/cgp/implementation/entrypoints/cgp_component.md (Snapshots) for this
+//! supertrait-plus-default-method variant, and
+//! cgp-knowledge-base/cgp/reference/macros/cgp_component.md and
+//! cgp-knowledge-base/cgp/reference/attributes/extend.md for the user-facing semantics.
 
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_cgp_component;

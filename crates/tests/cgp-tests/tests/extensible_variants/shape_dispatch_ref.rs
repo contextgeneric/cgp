@@ -9,7 +9,7 @@
 //! The dispatch combinators are owned elsewhere; the derives here are plain
 //! scaffolding. This file exercises the by-reference / by-mut variant side.
 //!
-//! See docs/concepts/extensible-variants.md.
+//! See cgp-knowledge-base/cgp/concepts/extensible-variants.md.
 
 use std::f64::consts::PI;
 

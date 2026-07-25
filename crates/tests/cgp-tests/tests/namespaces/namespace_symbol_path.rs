@@ -7,8 +7,8 @@
 //! snapshots pin that encoding; the plain `Foo` component and the provider impls
 //! are incidental scaffolding written with the plain macros.
 //!
-//! See docs/reference/macros/cgp_namespace.md and
-//! docs/reference/providers/redirect_lookup.md.
+//! See cgp-knowledge-base/cgp/reference/macros/cgp_namespace.md and
+//! cgp-knowledge-base/cgp/reference/providers/redirect_lookup.md.
 
 use cgp::prelude::*;
 use cgp_macro_test_util::{

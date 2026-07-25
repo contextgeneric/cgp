@@ -6,7 +6,7 @@
 //! bounds. This concept OWNS the canonical `#[blanket_trait]` expansion
 //! snapshots.
 //!
-//! See docs/reference/macros/blanket_trait.md.
+//! See cgp-knowledge-base/cgp/reference/macros/blanket_trait.md.
 #![allow(dead_code)]
 
 pub mod blanket_traits;

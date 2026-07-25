@@ -15,8 +15,8 @@
 //! is the preferred spelling; this test exercises the more general bound `#[uses]`
 //! accepts.
 //!
-//! See docs/implementation/asts/attributes.md and
-//! docs/reference/attributes/uses.md.
+//! See cgp-knowledge-base/cgp/implementation/asts/attributes/README.md and
+//! cgp-knowledge-base/cgp/reference/attributes/uses.md.
 
 use cgp::prelude::*;
 

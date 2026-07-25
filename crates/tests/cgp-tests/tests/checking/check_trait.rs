@@ -6,8 +6,8 @@
 //! The wiring itself is set up separately with a plain `delegate_components!`.
 //! This concept owns the macro's expansion snapshot.
 //!
-//! See docs/reference/macros/check_components.md and
-//! docs/reference/traits/can_use_component.md.
+//! See cgp-knowledge-base/cgp/reference/macros/check_components.md and
+//! cgp-knowledge-base/cgp/reference/traits/can_use_component.md.
 
 use core::marker::PhantomData;
 

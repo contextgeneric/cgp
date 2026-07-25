@@ -92,7 +92,7 @@ impl LoweredCgpImpl {
         // Position 0 places it ahead of any lifetime argument, which is invalid
         // Rust ordering on its own — it is only safe because the path is
         // re-parsed through `syn` below (`parse_internal(… .to_token_stream())`),
-        // and `syn` re-emits lifetimes first. See docs/implementation/README.md,
+        // and `syn` re-emits lifetimes first. See cgp-knowledge-base/cgp/implementation/README.md,
         // "Generic-parameter insertion and lifetime ordering".
         provider_trait_path
             .type_args

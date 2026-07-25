@@ -12,8 +12,8 @@
 //! `__Components__` and no `where` clause; the wiring below proves a context
 //! resolves the provider (and its abstract-type dependency) through the namespace.
 //!
-//! See docs/implementation/asts/attributes.md (`#[default_impl]`) and
-//! docs/reference/traits/default_namespace.md.
+//! See cgp-knowledge-base/cgp/implementation/asts/attributes/README.md (`#[default_impl]`) and
+//! cgp-knowledge-base/cgp/reference/traits/default_namespace.md.
 
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_cgp_impl;

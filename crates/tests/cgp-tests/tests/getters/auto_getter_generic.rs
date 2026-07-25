@@ -2,7 +2,7 @@
 //! by a `PhantomData<Foo>` tag and reads the `foo` field, so the same getter
 //! works for any field type inferred from the generic argument.
 //!
-//! See docs/reference/macros/cgp_auto_getter.md.
+//! See cgp-knowledge-base/cgp/reference/macros/cgp_auto_getter.md.
 
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_cgp_auto_getter;

@@ -8,7 +8,8 @@
 //! more verbose counterpart to `use_type_component`; `#[use_type]` is the
 //! preferred form. Wiring/check and `#[cgp_type]` are incidental scaffolding here.
 //!
-//! See docs/reference/attributes/use_type.md and docs/concepts/abstract-types.md.
+//! See cgp-knowledge-base/cgp/reference/attributes/use_type.md and
+//! cgp-knowledge-base/cgp/concepts/abstract-types.md.
 
 use std::convert::Infallible;
 use std::ops::Mul;

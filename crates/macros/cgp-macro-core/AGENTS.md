@@ -80,7 +80,7 @@ into the existing stage rather than collapsing the pipeline.
 [src/macros/keyword.rs](src/macros/keyword.rs) and `types/keyword*.rs`).
 
 **6. Keep inline docs brief and current as you go.** When you review a file — whether to change it
-or to write its [implementation document](../../../docs/implementation/README.md) — improve the
+or to write its [implementation document](https://github.com/contextgeneric/cgp-knowledge-base/blob/main/cgp/implementation/README.md) — improve the
 inline docs in the same pass. Add a one-line `///` to any public struct, trait, or function that
 lacks one, saying what it is or does (for a pipeline stage, its role in the sequence); prefer naming
 the *why* or a corner case over restating the signature. Fix a doc that no longer matches the code,

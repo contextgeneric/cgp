@@ -4,8 +4,9 @@
 //! discarding it. It rejects an attribute on a `:` mapping key, on a `=>` redirect
 //! key, and on a key inside a `for <..> in ..` loop.
 //!
-//! See docs/implementation/entrypoints/cgp_namespace.md (Tests) for these failure
-//! cases, and docs/reference/macros/cgp_namespace.md for the user-facing semantics.
+//! See cgp-knowledge-base/cgp/implementation/entrypoints/cgp_namespace.md (Tests) for these failure
+//! cases, and cgp-knowledge-base/cgp/reference/macros/cgp_namespace.md for the user-facing
+//! semantics.
 
 use quote::quote;
 

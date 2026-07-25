@@ -6,7 +6,7 @@
 //!
 //! Snapshot variant: blanket trait re-exporting a supertrait associated type,
 //! with no bound on the local associated type.
-//! See docs/reference/macros/blanket_trait.md.
+//! See cgp-knowledge-base/cgp/reference/macros/blanket_trait.md.
 
 use cgp_macro_test_util::snapshot_blanket_trait;
 

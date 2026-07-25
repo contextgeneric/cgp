@@ -2,7 +2,8 @@
 //! `Display`s as the string it encodes, and its `StaticString::VALUE` recovers
 //! the original literal — including the empty string and multi-byte Unicode.
 //!
-//! See docs/reference/macros/symbol.md and docs/reference/traits/has_field.md.
+//! See cgp-knowledge-base/cgp/reference/macros/symbol.md and
+//! cgp-knowledge-base/cgp/reference/traits/has_field.md.
 
 use cgp::core::field::traits::StaticString;
 use cgp::prelude::*;

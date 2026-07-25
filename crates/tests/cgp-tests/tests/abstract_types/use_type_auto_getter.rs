@@ -10,7 +10,8 @@
 //! field. This pins that `#[use_type]` is supported on `#[cgp_auto_getter]`, not
 //! only on the three implementation macros.
 //!
-//! See docs/reference/attributes/use_type.md and docs/concepts/abstract-types.md.
+//! See cgp-knowledge-base/cgp/reference/attributes/use_type.md and
+//! cgp-knowledge-base/cgp/concepts/abstract-types.md.
 
 use cgp::prelude::*;
 

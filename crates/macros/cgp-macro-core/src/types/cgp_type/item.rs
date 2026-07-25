@@ -42,7 +42,7 @@ impl ItemCgpType {
         let mut generics = provider_trait.generics.clone();
         // Insert the abstract type as the leading generic. Position 0 is safe
         // with a lifetime present because `syn::Generics::to_tokens` emits
-        // lifetimes first. See docs/implementation/README.md, "Generic-parameter
+        // lifetimes first. See cgp-knowledge-base/cgp/implementation/README.md, "Generic-parameter
         // insertion and lifetime ordering".
         generics.params.insert(0, parse_internal!(#type_name));
 

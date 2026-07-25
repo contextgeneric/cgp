@@ -8,9 +8,10 @@
 //! snapshots that show how `#[uses]`/`#[extend]` land on the generated trait and
 //! impl.
 //!
-//! See docs/concepts/impl-side-dependencies.md,
-//! docs/reference/attributes/uses.md, docs/reference/attributes/extend.md, and
-//! docs/reference/attributes/extend_where.md.
+//! See cgp-knowledge-base/cgp/concepts/impl-side-dependencies.md,
+//! cgp-knowledge-base/cgp/reference/attributes/uses.md,
+//! cgp-knowledge-base/cgp/reference/attributes/extend.md, and
+//! cgp-knowledge-base/cgp/reference/attributes/extend_where.md.
 #![allow(dead_code)]
 
 pub mod impl_side_dependencies;

@@ -2,8 +2,8 @@
 //! name, so the derive keys each one by the type-level number `Index<N>`
 //! (`Index<0>` for `.0`, `Index<1>` for `.1`) instead of a `Symbol!`.
 //!
-//! See docs/reference/derives/derive_has_field.md and
-//! docs/reference/types/index.md.
+//! See cgp-knowledge-base/cgp/reference/derives/derive_has_field.md and
+//! cgp-knowledge-base/cgp/reference/types/index.md.
 
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_derive_has_field;

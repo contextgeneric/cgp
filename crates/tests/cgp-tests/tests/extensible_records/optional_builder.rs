@@ -10,8 +10,8 @@
 //! two-field record it exercises; the derive expansion itself is owned by this
 //! concept.
 //!
-//! See docs/reference/traits/has_builder.md and
-//! docs/concepts/extensible-records.md.
+//! See cgp-knowledge-base/cgp/reference/traits/has_builder.md and
+//! cgp-knowledge-base/cgp/concepts/extensible-records.md.
 
 use cgp::extra::field::impls::{
     CanFinalizeWithDefault, FinalizeOptional, HasOptionalBuilder, SetOptional,

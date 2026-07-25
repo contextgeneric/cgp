@@ -7,7 +7,7 @@
 //! This concept owns the variant expansion of `#[derive(CgpData)]`; this file is
 //! the generic-enum snapshot.
 //!
-//! See docs/reference/derives/derive_cgp_data.md.
+//! See cgp-knowledge-base/cgp/reference/derives/derive_cgp_data.md.
 
 use core::marker::PhantomData;
 

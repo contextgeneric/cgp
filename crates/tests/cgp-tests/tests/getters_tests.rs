@@ -8,8 +8,8 @@
 //! `MRef`, clone-on-`Copy`), associated getter types, generic getters, non-`self`
 //! getters, and abstract-type integration.
 //!
-//! See docs/reference/macros/cgp_getter.md and
-//! docs/reference/macros/cgp_auto_getter.md.
+//! See cgp-knowledge-base/cgp/reference/macros/cgp_getter.md and
+//! cgp-knowledge-base/cgp/reference/macros/cgp_auto_getter.md.
 #![allow(dead_code)]
 #![allow(clippy::disallowed_names)]
 

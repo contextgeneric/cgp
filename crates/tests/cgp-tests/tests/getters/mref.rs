@@ -2,7 +2,8 @@
 //! the getter reads a `String` field and wraps the borrow in `MRef::Ref`. The
 //! context binds the source field via `UseField`.
 //!
-//! See docs/reference/macros/cgp_getter.md and docs/reference/providers/use_field.md.
+//! See cgp-knowledge-base/cgp/reference/macros/cgp_getter.md and
+//! cgp-knowledge-base/cgp/reference/providers/use_field.md.
 
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_cgp_getter;
