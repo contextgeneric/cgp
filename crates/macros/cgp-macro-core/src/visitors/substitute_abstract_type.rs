@@ -95,7 +95,10 @@ impl VisitMut for SubstituteAbstractTypes<'_> {
 
                 *expr = parse_quote! { <#ty>::#rest };
                 self.is_changed = true;
-                return;
+                // Fall through to the recursion rather than returning: a later segment may carry
+                // generic arguments of its own that name an alias — `Transaction::make::<Db>()` —
+                // and those are still to be substituted. Re-visiting the rewritten node cannot
+                // loop, because it now carries a `qself` and both guards require `qself: None`.
             }
         }
         visit_mut::visit_expr_path_mut(self, expr);

@@ -38,12 +38,18 @@ pub trait CanBeginFrom<Db> {
     const LABEL: &'static str;
 
     fn begin_from(pool: &Pool<Db>) -> Self;
+
+    fn tagged<Tag>(pool: &Pool<Db>) -> Self;
 }
 
 impl CanBeginFrom<Postgres> for Tx<Postgres> {
     const LABEL: &'static str = "pg";
 
     fn begin_from(_pool: &Pool<Postgres>) -> Self {
+        Tx(core::marker::PhantomData)
+    }
+
+    fn tagged<Tag>(_pool: &Pool<Postgres>) -> Self {
         Tx(core::marker::PhantomData)
     }
 }
@@ -120,6 +126,48 @@ snapshot_cgp_fn! {
         {
             fn transaction_label(&self) -> &'static str {
                 <<Self as HasTransactionType>::Transaction>::LABEL
+            }
+        }
+        ")
+    }
+}
+
+snapshot_cgp_fn! {
+    #[cgp_fn]
+    #[use_type(HasDbType.Db, HasTransactionType.Transaction)]
+    pub fn tagged_transaction(&self, #[implicit] db: &Pool<Db>) -> Transaction
+    where
+        Transaction: CanBeginFrom<Db>,
+    {
+        // The alias appears twice: as the path qualifier, and inside a *later* segment's
+        // turbofish. Both are substituted — the rewrite recurses into the node it just
+        // replaced rather than stopping at it.
+        Transaction::tagged::<Db>(db)
+    }
+
+    expand_tagged_transaction(output) {
+        insta::assert_snapshot!(output, @"
+        pub trait TaggedTransaction: HasDbType + HasTransactionType {
+            fn tagged_transaction(&self) -> <Self as HasTransactionType>::Transaction;
+        }
+        impl<__Context__> TaggedTransaction for __Context__
+        where
+            <Self as HasTransactionType>::Transaction: CanBeginFrom<<Self as HasDbType>::Db>,
+            Self: HasField<
+                Symbol<2, Chars<'d', Chars<'b', Nil>>>,
+                Value = Pool<<Self as HasDbType>::Db>,
+            >,
+            Self: HasDbType,
+            Self: HasTransactionType,
+        {
+            fn tagged_transaction(&self) -> <Self as HasTransactionType>::Transaction {
+                let db: &Pool<<Self as HasDbType>::Db> = self
+                    .get_field(
+                        ::core::marker::PhantomData::<Symbol<2, Chars<'d', Chars<'b', Nil>>>>,
+                    );
+                <<Self as HasTransactionType>::Transaction>::tagged::<
+                    <Self as HasDbType>::Db,
+                >(db)
             }
         }
         ")
