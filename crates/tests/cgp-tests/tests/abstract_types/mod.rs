@@ -29,6 +29,8 @@ pub mod use_type_fn_alias;
 pub mod use_type_fn_deep_foreign;
 pub mod use_type_fn_equality;
 pub mod use_type_fn_equality_cross_trait;
+pub mod use_type_fn_equality_nested;
+pub mod use_type_fn_expr_path;
 pub mod use_type_fn_extend;
 pub mod use_type_fn_foreign;
 pub mod use_type_fn_foreign_equality;

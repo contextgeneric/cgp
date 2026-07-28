@@ -1,11 +1,13 @@
 use proc_macro2::TokenStream;
-use quote::{ToTokens, quote};
+use quote::quote;
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
+use syn::visit_mut::VisitMut;
 use syn::{Ident, Type, WherePredicate};
 
 use crate::functions::parse_internal;
 use crate::types::attributes::{UseTypeAttribute, UseTypeIdent};
+use crate::visitors::SubstituteAbstractTypes;
 
 /// Derive the impl-side `where` predicates a set of `#[use_type]` specs
 /// contributes: one `Context: Trait` bound per spec, carrying any type-equality
@@ -16,7 +18,7 @@ pub fn derive_use_type_predicates(specs: &[UseTypeAttribute]) -> syn::Result<Vec
     let mut predicates = Vec::new();
 
     for use_type in specs.iter() {
-        let type_equalities = find_type_equalities(use_type, specs)?;
+        let type_equalities = find_type_equalities(use_type, specs);
 
         let trait_path = &use_type.trait_path;
         let context_type = &use_type.context_type;
@@ -70,50 +72,47 @@ pub fn forbid_duplicate_aliases(specs: &[UseTypeAttribute]) -> syn::Result<()> {
 fn find_type_equalities(
     current_spec: &UseTypeAttribute,
     specs: &[UseTypeAttribute],
-) -> syn::Result<Vec<(Ident, Type)>> {
-    let mut equalities = Vec::new();
-
-    for current_type_ident in current_spec.type_idents.iter() {
-        if let Some(equality) = find_type_equality(current_type_ident, current_spec, specs)? {
-            equalities.push(equality);
-        }
-    }
-
-    Ok(equalities)
+) -> Vec<(Ident, Type)> {
+    current_spec
+        .type_idents
+        .iter()
+        .filter_map(|current_type_ident| find_type_equality(current_type_ident, specs))
+        .collect()
 }
 
+/// Ground one `= T` pin: rewrite every imported alias appearing *anywhere
+/// inside* the pin's right-hand side into its fully-qualified projection, so
+/// `{Transaction = Tx<Db>}` grounds its nested `Db` exactly as
+/// `{HashedPassword = Password}` grounds a bare one. Substituting through the
+/// shared visitor rather than comparing the whole type is what makes the two
+/// cases one rule — the right-hand side is an ordinary type, and an alias is
+/// resolved wherever it occurs in it.
+///
+/// The pinned alias itself is excluded from the substitution set, so a
+/// degenerate self-pin (`{Foo = Foo}`) stays the unresolved-name error it
+/// already was rather than silently becoming a vacuous bound.
 fn find_type_equality(
     current_ident: &UseTypeIdent,
-    current_spec: &UseTypeAttribute,
     specs: &[UseTypeAttribute],
-) -> syn::Result<Option<(Ident, Type)>> {
-    if let Some(equal_target) = current_ident.equals.clone() {
-        for spec in specs.iter() {
-            if core::ptr::eq(spec, current_spec) {
-                // Skip the current spec
-                continue;
-            }
+) -> Option<(Ident, Type)> {
+    let mut equal_target = current_ident.equals.clone()?;
 
-            for match_use_type in spec.type_idents.iter() {
-                let match_type: Type =
-                    parse_internal(match_use_type.alias_ident().to_token_stream())?;
-                if match_type == equal_target {
-                    let trait_path = &spec.trait_path;
-                    let current_type_ident = &current_ident.type_ident;
-                    let match_type_ident = &match_use_type.type_ident;
-                    let context_type = &spec.context_type;
+    let others = specs_excluding_alias(specs, current_ident.alias_ident());
+    SubstituteAbstractTypes::new(&others).visit_type_mut(&mut equal_target);
 
-                    let equal_target: Type = parse_internal! {
-                        <#context_type as #trait_path>::#match_type_ident
-                    };
+    Some((current_ident.type_ident.clone(), equal_target))
+}
 
-                    return Ok(Some((current_type_ident.clone(), equal_target)));
-                }
-            }
-        }
-
-        Ok(Some((current_ident.type_ident.clone(), equal_target)))
-    } else {
-        Ok(None)
-    }
+/// The grounded specs with one alias dropped, for substituting inside that
+/// alias's own equality pin.
+fn specs_excluding_alias(specs: &[UseTypeAttribute], alias: &Ident) -> Vec<UseTypeAttribute> {
+    specs
+        .iter()
+        .map(|spec| {
+            let mut spec = spec.clone();
+            spec.type_idents
+                .retain(|type_ident| type_ident.alias_ident() != alias);
+            spec
+        })
+        .collect()
 }
