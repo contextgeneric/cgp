@@ -1,8 +1,40 @@
 use syn::punctuated::Punctuated;
 use syn::visit_mut::VisitMut;
-use syn::{ExprPath, PathArguments, PathSegment, Token, Type, TypePath, parse_quote, visit_mut};
+use syn::{
+    ExprPath, Ident, PathArguments, PathSegment, Token, Type, TypePath, parse_quote, visit_mut,
+};
 
 use crate::types::attributes::UseTypeAttribute;
+
+/// The identifier of a **bare alias reference** — an unqualified, single-segment,
+/// argument-free type path such as `Scalar` — or `None` for any other type.
+///
+/// This is the single rule that decides whether a type position *names* an
+/// imported alias, and it is deliberately shared by everything that needs the
+/// answer: the substitution below, which rewrites such a reference, and the
+/// grounding-cycle check, which follows one as a dependency edge. Duplicating the
+/// guard would let the two disagree about what counts as a reference, and a
+/// reference the cycle check cannot see is exactly the input that grounding then
+/// fails to resolve.
+///
+/// The strictness is what keeps the rewrite from claiming syntax nobody wrote: a
+/// path that already carries a qualifier, generic arguments, or more than one
+/// segment is not a bare alias, so a genuine `Self::Error` or a `Foo<Error>` head
+/// is left alone.
+pub fn bare_alias_ident(ty: &Type) -> Option<&Ident> {
+    if let Type::Path(TypePath { qself: None, path }) = ty
+        && path.leading_colon.is_none()
+        && path.segments.len() == 1
+    {
+        let segment = &path.segments[0];
+
+        if matches!(segment.arguments, PathArguments::None) {
+            return Some(&segment.ident);
+        }
+    }
+
+    None
+}
 
 /// A single-pass `VisitMut` that rewrites every bare, single-segment,
 /// argument-free type path matching an imported alias into its fully-qualified
@@ -39,23 +71,23 @@ impl<'a> SubstituteAbstractTypes<'a> {
 
 impl VisitMut for SubstituteAbstractTypes<'_> {
     fn visit_type_mut(&mut self, ty: &mut Type) {
-        if let Type::Path(TypePath { qself: None, path }) = ty
-            && path.leading_colon.is_none()
-            && path.segments.len() == 1
-        {
-            let segment = &path.segments[0];
-            if matches!(segment.arguments, PathArguments::None) {
-                for spec in self.specs {
-                    if let Some(replacement_ident) = spec.replace_ident(&segment.ident) {
-                        let trait_path = &spec.trait_path;
-                        let context_type = &spec.context_type;
-                        *ty = parse_quote! { <#context_type as #trait_path>::#replacement_ident };
-                        self.is_changed = true;
-                        return;
-                    }
-                }
+        if let Some(ident) = bare_alias_ident(ty) {
+            // Resolve against the specs before mutating, so the replacement is not
+            // computed while the identifier it replaces is still borrowed.
+            let replacement = self.specs.iter().find_map(|spec| {
+                let replacement_ident = spec.replace_ident(ident)?;
+                let trait_path = &spec.trait_path;
+                let context_type = &spec.context_type;
+                Some(parse_quote! { <#context_type as #trait_path>::#replacement_ident })
+            });
+
+            if let Some(replacement) = replacement {
+                *ty = replacement;
+                self.is_changed = true;
+                return;
             }
         }
+
         visit_mut::visit_type_mut(self, ty);
     }
 

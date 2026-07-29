@@ -5,7 +5,7 @@ use syn::{ItemImpl, ItemTrait, Type};
 use crate::functions::parse_internal;
 use crate::types::attributes::UseTypeAttribute;
 use crate::types::attributes::use_type::type_predicates::{
-    derive_use_type_predicates, forbid_duplicate_aliases,
+    derive_use_type_predicates, forbid_duplicate_aliases, forbid_grounding_cycles,
 };
 use crate::visitors::SubstituteAbstractTypes;
 
@@ -15,18 +15,27 @@ pub struct UseTypeAttributes {
 }
 
 impl UseTypeAttributes {
-    /// Resolve every spec's context type into fully-qualified form before it is
-    /// used, so that both the body substitution and the appended bounds agree on
-    /// one grounded context.
+    /// Resolve every spec's groundable positions into fully-qualified form before
+    /// they are used, so that the body substitution and the appended bounds agree
+    /// on one grounded context and one grounded trait path.
     ///
-    /// An `in Context` suffix whose `Context` is itself imported by another spec —
-    /// as in `#[use_type(HasTypes.Types, HasScalarType.Scalar in Types)]` — is
-    /// rewritten from the bare alias `Types` to `<Self as HasTypes>::Types`.
-    /// Contexts that name a real generic parameter or `Self` are left untouched.
-    /// The pass iterates to a fixpoint so a chain of links resolves fully; each
-    /// pass grounds one more level, so `attributes.len()` passes cover any
-    /// acyclic chain, and a cyclic reference simply stops making progress and
-    /// surfaces later as an ordinary unresolved-type error rather than looping.
+    /// Grounding reaches both positions named by
+    /// [`UseTypeAttribute::groundable_types`], because an alias left bare in
+    /// either would end up inside an emitted `<Context as Trait<Args…>>::Assoc`
+    /// path, resolving to nothing. An `in Context` suffix whose `Context` is
+    /// itself imported by another spec — as in
+    /// `#[use_type(HasTypes.Types, HasScalarType.Scalar in Types)]` — is rewritten
+    /// from the bare alias `Types` to `<Self as HasTypes>::Types`, and a trait
+    /// argument that names an alias is grounded the same way, so
+    /// `#[use_type(HasDbType.Db, HasPoolType<Db>.Pool)]` projects against
+    /// `HasPoolType<<Self as HasDbType>::Db>`. A position naming a real generic
+    /// parameter or `Self` is left untouched.
+    ///
+    /// The pass iterates to a fixpoint so a chain of links resolves fully. Each
+    /// pass grounds one more level of the dependency chain, so `attributes.len()`
+    /// passes cover any acyclic graph over that many specs — which is every graph
+    /// that reaches here, since `forbid_grounding_cycles` has already rejected the
+    /// cyclic ones.
     fn grounded_specs(&self) -> Vec<UseTypeAttribute> {
         let mut grounded = self.attributes.clone();
 
@@ -36,7 +45,11 @@ impl UseTypeAttributes {
 
             for spec in grounded.iter_mut() {
                 let mut visitor = SubstituteAbstractTypes::new(&snapshot);
-                visitor.visit_type_mut(&mut spec.context_type);
+
+                for ty in spec.groundable_types_mut() {
+                    visitor.visit_type_mut(ty);
+                }
+
                 changed |= visitor.is_changed;
             }
 
@@ -54,6 +67,7 @@ impl UseTypeAttributes {
         }
 
         forbid_duplicate_aliases(&self.attributes)?;
+        forbid_grounding_cycles(&self.attributes)?;
 
         let grounded = self.grounded_specs();
 
@@ -99,6 +113,7 @@ impl UseTypeAttributes {
         }
 
         forbid_duplicate_aliases(&self.attributes)?;
+        forbid_grounding_cycles(&self.attributes)?;
 
         let grounded = self.grounded_specs();
 

@@ -4,7 +4,7 @@ use syn::{Ident, Type};
 
 use crate::parse_internal;
 use crate::types::attributes::UseTypeIdent;
-use crate::types::ident::PathWithTypeArgs;
+use crate::types::ident::{PathWithTypeArgs, TypeArg};
 
 /// One `#[use_type(...)]` import spec: the owning trait path, one or more
 /// associated types to import from it, and a rewrite target (`Self`, or a named
@@ -17,6 +17,43 @@ pub struct UseTypeAttribute {
 }
 
 impl UseTypeAttribute {
+    /// The type positions in this spec that *grounding* resolves: the context the
+    /// imported types are projected against, and the generic arguments of the
+    /// owning trait path.
+    ///
+    /// Both positions end up inside the emitted `<Context as Trait<Args…>>::Assoc`
+    /// path, so an alias left bare in either is an identifier that resolves to
+    /// nothing. Naming the set once — rather than at each of the three places that
+    /// walk it — is what keeps the grounding pass, the emitted bounds, and the
+    /// cycle check in agreement about what grounding reaches.
+    pub fn groundable_types(&self) -> impl Iterator<Item = &Type> {
+        core::iter::once(&self.context_type).chain(
+            self.trait_path
+                .type_args
+                .args
+                .iter()
+                .filter_map(|arg| match arg {
+                    TypeArg::Type(ty) => Some(ty),
+                    // A lifetime or const argument can never name an abstract type.
+                    TypeArg::Lifetime(_) | TypeArg::Const(_) => None,
+                }),
+        )
+    }
+
+    /// [`Self::groundable_types`] by mutable reference, for the grounding pass.
+    pub fn groundable_types_mut(&mut self) -> impl Iterator<Item = &mut Type> {
+        core::iter::once(&mut self.context_type).chain(
+            self.trait_path
+                .type_args
+                .args
+                .iter_mut()
+                .filter_map(|arg| match arg {
+                    TypeArg::Type(ty) => Some(ty),
+                    TypeArg::Lifetime(_) | TypeArg::Const(_) => None,
+                }),
+        )
+    }
+
     pub fn replace_ident(&self, ident: &Ident) -> Option<Ident> {
         for type_ident in &self.type_idents {
             if type_ident.alias_ident() == ident {

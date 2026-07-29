@@ -1,9 +1,11 @@
+mod collect_bare_aliases;
 mod remove_self_path;
 mod replace_provider;
 mod replace_self;
 mod self_assoc_type;
 mod substitute_abstract_type;
 
+pub use collect_bare_aliases::*;
 pub use remove_self_path::*;
 pub use replace_provider::*;
 pub use replace_self::*;
