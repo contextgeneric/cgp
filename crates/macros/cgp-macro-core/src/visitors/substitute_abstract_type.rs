@@ -12,10 +12,10 @@ use crate::types::attributes::UseTypeAttribute;
 /// This is the single rule that decides whether a type position *names* an
 /// imported alias, and it is deliberately shared by everything that needs the
 /// answer: the substitution below, which rewrites such a reference, and the
-/// grounding-cycle check, which follows one as a dependency edge. Duplicating the
-/// guard would let the two disagree about what counts as a reference, and a
-/// reference the cycle check cannot see is exactly the input that grounding then
-/// fails to resolve.
+/// dependency graph `ground_specs` builds, which treats one as an edge between two
+/// specs. Duplicating the guard would let the two disagree about what counts as a
+/// reference, and a reference the graph cannot see is exactly the one whose
+/// ordering — or cycle — grounding would then get wrong.
 ///
 /// The strictness is what keeps the rewrite from claiming syntax nobody wrote: a
 /// path that already carries a qualifier, generic arguments, or more than one
@@ -46,26 +46,19 @@ pub fn bare_alias_ident(ty: &Type) -> Option<&Ident> {
 /// `forbid_duplicate_aliases`), at most one spec can match a given identifier,
 /// so the match order among specs is irrelevant.
 ///
-/// Each spec's `context_type` must already be *grounded* — resolved to a fully
-/// qualified path (`<Self as HasTypes>::Types`) with no remaining bare alias —
-/// before the visitor runs. Grounding is what lets a single traversal suffice:
-/// the replacement a spec emits contains no bare alias, so the visitor never has
-/// to revisit its own output to finish a nested import.
-///
-/// `is_changed` records whether any replacement was made during the traversal,
-/// which the grounding fixpoint reads to decide when a further pass would be a
-/// no-op.
+/// Every spec passed in must already be *grounded* — its context and trait
+/// arguments resolved to fully qualified paths (`<Self as HasTypes>::Types`) with
+/// no remaining bare alias. That is what lets a single traversal suffice: the
+/// replacement a spec emits contains no bare alias of its own, so the visitor never
+/// has to revisit its own output to finish a nested import. `ground_specs`
+/// establishes the property by resolving each spec against its dependencies.
 pub struct SubstituteAbstractTypes<'a> {
     pub specs: &'a [UseTypeAttribute],
-    pub is_changed: bool,
 }
 
 impl<'a> SubstituteAbstractTypes<'a> {
     pub fn new(specs: &'a [UseTypeAttribute]) -> Self {
-        Self {
-            specs,
-            is_changed: false,
-        }
+        Self { specs }
     }
 }
 
@@ -83,7 +76,6 @@ impl VisitMut for SubstituteAbstractTypes<'_> {
 
             if let Some(replacement) = replacement {
                 *ty = replacement;
-                self.is_changed = true;
                 return;
             }
         }
@@ -126,7 +118,6 @@ impl VisitMut for SubstituteAbstractTypes<'_> {
                     expr.path.segments.iter().skip(1).cloned().collect();
 
                 *expr = parse_quote! { <#ty>::#rest };
-                self.is_changed = true;
                 // Fall through to the recursion rather than returning: a later segment may carry
                 // generic arguments of its own that name an alias — `Transaction::make::<Db>()` —
                 // and those are still to be substituted. Re-visiting the rewritten node cannot

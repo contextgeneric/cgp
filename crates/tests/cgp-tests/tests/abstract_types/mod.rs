@@ -23,10 +23,12 @@ pub mod use_type_trait_arg_component;
 
 // The `#[use_type]` attribute rewriting abstract types inside `#[cgp_fn]`: the
 // bare alias, alias renaming, type-equality bounds, foreign/nested type sources
-// (including a two-hop foreign chain), and the grounding of an alias that appears
-// in the imported trait's own generic arguments. These keep the `#[cgp_fn]`
-// snapshot because the abstract-type rewrite is the point (the `#[cgp_fn]`
-// expansion itself is owned by `implicit_arguments`).
+// (including a two-hop foreign chain), the grounding of an alias that appears in
+// the imported trait's own generic arguments, and the arrangements resolution must
+// be indifferent to — a reversed chain, a shared context, and specs split across
+// stacked attributes. These keep the `#[cgp_fn]` snapshot because the abstract-type
+// rewrite is the point (the `#[cgp_fn]` expansion itself is owned by
+// `implicit_arguments`).
 pub mod use_type_fn_alias;
 pub mod use_type_fn_deep_foreign;
 pub mod use_type_fn_equality;
@@ -41,6 +43,7 @@ pub mod use_type_fn_generic_trait_equality;
 pub mod use_type_fn_nested_foreign;
 pub mod use_type_fn_reverse_order;
 pub mod use_type_fn_shared_context;
+pub mod use_type_fn_stacked_attributes;
 pub mod use_type_fn_trait_arg_alias;
 pub mod use_type_foreign_getter;
 pub mod use_type_uses_supertrait;

@@ -57,6 +57,35 @@ snapshot_cgp_fn! {
     }
 }
 
+// The same nested pin with the imports written in the other order, so the pin's
+// right-hand side names an alias declared *after* it. Resolution grounds each spec
+// against the specs it depends on rather than the ones preceding it, so the emitted
+// bound is identical; only the order the bounds are listed in follows the source.
+snapshot_cgp_fn! {
+    #[cgp_fn]
+    #[use_type(HasTransactionType.{Transaction = Tx<Db>}, HasDbType.Db)]
+    pub fn begin_nested_reversed(&self) -> Transaction {
+        todo!()
+    }
+
+    expand_begin_nested_reversed(output) {
+        insta::assert_snapshot!(output, @"
+        pub trait BeginNestedReversed: HasTransactionType + HasDbType {
+            fn begin_nested_reversed(&self) -> <Self as HasTransactionType>::Transaction;
+        }
+        impl<__Context__> BeginNestedReversed for __Context__
+        where
+            Self: HasTransactionType<Transaction = Tx<<Self as HasDbType>::Db>>,
+            Self: HasDbType,
+        {
+            fn begin_nested_reversed(&self) -> <Self as HasTransactionType>::Transaction {
+                todo!()
+            }
+        }
+        ")
+    }
+}
+
 snapshot_cgp_fn! {
     #[cgp_fn]
     #[use_type(HasDbType.Db, HasTransactionType.{Transaction = <Db as Database>::Transaction})]

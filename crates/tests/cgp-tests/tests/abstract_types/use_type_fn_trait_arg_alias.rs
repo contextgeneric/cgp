@@ -85,8 +85,8 @@ pub trait HasHandleType<Pool> {
 // A three-hop chain threaded entirely through trait arguments rather than through
 // `in Context` clauses, so each hop's argument must be grounded before the next can
 // project against it. This is the trait-argument analogue of the context chain in
-// `use_type_fn_deep_foreign`, and it exercises the same grounding fixpoint over the
-// new position.
+// `use_type_fn_deep_foreign`, and it exercises the same dependency-ordered
+// resolution over the new position.
 snapshot_cgp_fn! {
     #[cgp_fn]
     #[use_type(HasDbType.Db, HasPoolType<Db>.Pool, HasHandleType<Pool>.Handle)]

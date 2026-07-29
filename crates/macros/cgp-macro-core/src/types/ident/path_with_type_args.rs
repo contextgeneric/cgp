@@ -1,6 +1,8 @@
 use proc_macro2::TokenStream;
-use quote::ToTokens;
+use quote::{ToTokens, quote};
 use syn::parse::{Parse, ParseStream};
+use syn::punctuated::Punctuated;
+use syn::token::Comma;
 use syn::{Error, Ident, Path, PathArguments, Type, parse_quote, parse2};
 
 use crate::traits::ToType;
@@ -30,6 +32,40 @@ pub struct PathWithTypeArgs {
 }
 
 impl PathWithTypeArgs {
+    /// The path rendered with `bindings` — associated-type bindings such as
+    /// `Item = u8` — appended to its own generic arguments as **one**
+    /// angle-bracketed list, for use as a trait bound.
+    ///
+    /// A generic trait carrying an associated-type binding has exactly one valid
+    /// spelling, `Trait<Arg, Item = u8>`; the path's arguments followed by a second
+    /// group, `Trait<Arg><Item = u8>`, is not a trait bound in any position. Since
+    /// [`ToTokens`] emits this type's arguments as a *trailing* group, a caller that
+    /// appended its own bindings after the whole path would produce exactly that
+    /// invalid form — so the merge belongs here, with the rendering it has to agree
+    /// with, rather than at each call site.
+    ///
+    /// Bindings are passed as token streams because [`TypeArgs`] deliberately
+    /// rejects them (they are invalid in a plain type-argument position), so there is
+    /// no argument type able to carry one.
+    pub fn to_bound_tokens(&self, bindings: &[TokenStream]) -> TokenStream {
+        if bindings.is_empty() {
+            return self.to_token_stream();
+        }
+
+        let path = &self.path;
+
+        let mut arguments: Punctuated<TokenStream, Comma> = self
+            .type_args
+            .args
+            .iter()
+            .map(ToTokens::to_token_stream)
+            .collect();
+
+        arguments.extend(bindings.iter().cloned());
+
+        quote! { #path < #arguments > }
+    }
+
     /// The identifier of the final path segment, e.g. `Foo` in
     /// `path::to::Foo<A, B>`.
     pub fn ident(&self) -> &Ident {
