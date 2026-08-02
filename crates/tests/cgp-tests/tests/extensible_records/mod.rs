@@ -25,6 +25,9 @@ pub mod cgp_record_derive;
 pub mod record_build_from;
 pub mod record_build_with_handlers;
 
+// The type-level product operations: growing, splicing, and re-marking a field list.
+pub mod product_ops;
+
 // The value-level `product!` macro: building a `Cons`/`Nil` value from expression
 // items, whose type is the matching `Product!`.
 pub mod product_value;

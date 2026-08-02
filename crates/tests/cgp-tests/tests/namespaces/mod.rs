@@ -36,6 +36,7 @@ pub mod redirect_mapping;
 // and namespace inheritance in `delegate_components!`.
 pub mod default_impl_use_type;
 pub mod default_impls;
+pub mod default_impls2;
 pub mod default_impls_wiring;
 pub mod extended;
 pub mod extended_namespace_wiring;
