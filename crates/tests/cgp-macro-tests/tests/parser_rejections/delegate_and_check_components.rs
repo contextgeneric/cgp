@@ -38,13 +38,11 @@ fn rejects_two_check_attributes_on_one_key() {
     assert_macro_rejects(
         "delegate_and_check_components with two check attributes on one key",
         || {
-            cgp_macro_lib::delegate_and_check_components(quote!(
-                MyApp {
-                    #[check_params(Rectangle)]
-                    #[check_params(Circle)]
-                    AreaCalculatorComponent: ShapeProvider,
-                }
-            ))
+            cgp_macro_lib::delegate_and_check_components(quote!(MyApp {
+                #[check_params(Rectangle)]
+                #[check_params(Circle)]
+                AreaCalculatorComponent: ShapeProvider,
+            }))
         },
     );
 }
@@ -54,12 +52,10 @@ fn rejects_skip_check_with_arguments() {
     assert_macro_rejects(
         "delegate_and_check_components with #[skip_check(..)] taking arguments",
         || {
-            cgp_macro_lib::delegate_and_check_components(quote!(
-                MyApp {
-                    #[skip_check(Rectangle)]
-                    AreaCalculatorComponent: ShapeProvider,
-                }
-            ))
+            cgp_macro_lib::delegate_and_check_components(quote!(MyApp {
+                #[skip_check(Rectangle)]
+                AreaCalculatorComponent: ShapeProvider,
+            }))
         },
     );
 }
@@ -69,12 +65,10 @@ fn rejects_unknown_entry_attribute() {
     assert_macro_rejects(
         "delegate_and_check_components with an unrecognized entry attribute",
         || {
-            cgp_macro_lib::delegate_and_check_components(quote!(
-                MyApp {
-                    #[check_provider(RectangleArea)]
-                    AreaCalculatorComponent: ShapeProvider,
-                }
-            ))
+            cgp_macro_lib::delegate_and_check_components(quote!(MyApp {
+                #[check_provider(RectangleArea)]
+                AreaCalculatorComponent: ShapeProvider,
+            }))
         },
     );
 }

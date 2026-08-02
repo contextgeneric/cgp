@@ -6,10 +6,12 @@
 pub mod sum_macro;
 
 // `#[derive(HasFields)]` snapshots for enums (this concept owns the enum
-// expansion of the derive): the plain field list of an enum, and the generic
-// variant.
+// expansion of the derive): the plain field list of an enum, the generic
+// variant, and every variant shape the derive accepts — which is all four,
+// unlike the variant derives that deconstruct an enum.
 pub mod has_fields_enum;
 pub mod has_fields_enum_generic;
+pub mod has_fields_enum_shapes;
 
 // `#[derive(CgpData)]` snapshots for enums (this concept owns the variant
 // expansion of the derive): the full extractor/extractor-ref machinery for a
@@ -19,6 +21,12 @@ pub mod derive_cgp_data;
 pub mod derive_cgp_data_empty;
 pub mod derive_cgp_data_generic;
 pub mod derive_cgp_data_shape;
+
+// The individual variant derives, each on its own: `#[derive(ExtractField)]`
+// for the extractor slice alone and `#[derive(FromVariant)]` for the
+// constructor slice alone.
+pub mod extract_field_derive;
+pub mod from_variant_derive;
 
 // Regression: `#[derive(CgpData)]` on an enum whose own lifetime is named `'a`,
 // which the borrowed extractor's reserved `'__a__` lifetime must not collide

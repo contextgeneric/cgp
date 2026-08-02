@@ -9,8 +9,15 @@ pub mod optional_builder;
 pub mod person_record;
 pub mod point_cast;
 pub mod record_derive;
+pub mod record_empty;
 pub mod record_lifetime;
 pub mod tuple_record;
+
+// The individual record derives, each on its own: `#[derive(BuildField)]` for
+// the builder slice alone, and `#[derive(CgpRecord)]` for the struct-only face
+// of `#[derive(CgpData)]`.
+pub mod build_field_derive;
+pub mod cgp_record_derive;
 
 // Behavioral record building: assembling a record from other records and from
 // handler pipelines. These reuse `#[derive(CgpData)]` as plain scaffolding —
@@ -30,3 +37,4 @@ pub mod struct_single_named_field;
 pub mod struct_single_unnamed_field;
 pub mod struct_tuple_fields;
 pub mod struct_two_named_fields;
+pub mod struct_unit_field;

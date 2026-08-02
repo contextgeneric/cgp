@@ -38,17 +38,20 @@ fn rejects_comma_separated_pairs_on_impl() {
 
 #[test]
 fn rejects_comma_separated_pairs_on_fn() {
-    assert_macro_rejects("use_provider with a comma-separated pair list on a fn", || {
-        cgp_macro_lib::cgp_fn(
-            quote!(),
-            quote!(
-                #[use_provider(InnerA: AreaCalculator, InnerB: AreaCalculator)]
-                pub fn total_area(&self) -> f64 {
-                    todo!()
-                }
-            ),
-        )
-    });
+    assert_macro_rejects(
+        "use_provider with a comma-separated pair list on a fn",
+        || {
+            cgp_macro_lib::cgp_fn(
+                quote!(),
+                quote!(
+                    #[use_provider(InnerA: AreaCalculator, InnerB: AreaCalculator)]
+                    pub fn total_area(&self) -> f64 {
+                        todo!()
+                    }
+                ),
+            )
+        },
+    );
 }
 
 #[test]

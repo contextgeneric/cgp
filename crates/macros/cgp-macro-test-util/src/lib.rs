@@ -112,3 +112,24 @@ pub fn snapshot_derive_cgp_data(body: TokenStream) -> TokenStream {
         .unwrap_or_else(syn::Error::into_compile_error)
         .into()
 }
+
+#[proc_macro]
+pub fn snapshot_derive_build_field(body: TokenStream) -> TokenStream {
+    entrypoints::snapshot_derive_build_field(body.into())
+        .unwrap_or_else(syn::Error::into_compile_error)
+        .into()
+}
+
+#[proc_macro]
+pub fn snapshot_derive_extract_field(body: TokenStream) -> TokenStream {
+    entrypoints::snapshot_derive_extract_field(body.into())
+        .unwrap_or_else(syn::Error::into_compile_error)
+        .into()
+}
+
+#[proc_macro]
+pub fn snapshot_derive_from_variant(body: TokenStream) -> TokenStream {
+    entrypoints::snapshot_derive_from_variant(body.into())
+        .unwrap_or_else(syn::Error::into_compile_error)
+        .into()
+}
