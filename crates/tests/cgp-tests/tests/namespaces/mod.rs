@@ -21,6 +21,14 @@ pub mod open_dispatch;
 pub mod prefix_default_namespace;
 pub mod redirect_lookup;
 
+// The rest of the shared `delegate_components!` body grammar: the `=>` operator
+// written on a context (and its equivalence to `open`), every form combined in one
+// block, and a nested `UseDelegate` table lifted out of a `cgp_namespace!` body.
+pub mod combined_forms;
+pub mod for_loop_nested_table;
+pub mod namespace_nested_table;
+pub mod redirect_mapping;
+
 // Namespace inheritance and per-type default impls. `default_impls` and
 // `extended` define reusable namespaces/providers (with `cgp_namespace!`,
 // `#[prefix]`, and `#[default_impl]` snapshots); the `*_wiring` modules consume
