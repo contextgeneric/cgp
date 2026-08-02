@@ -19,6 +19,7 @@ pub mod impl_self;
 pub mod owned_receiver;
 pub mod self_in_macro;
 pub mod self_in_nested_item;
+pub mod self_local_assoc_type;
 
 // `delegate_components!` shape variants (compile-time checks only).
 pub mod delegate_generic_nested_value;
