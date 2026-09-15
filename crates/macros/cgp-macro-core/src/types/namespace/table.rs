@@ -40,13 +40,11 @@ impl Parse for NamespaceTable {
         let entries = if input.is_empty() {
             Default::default()
         } else {
-
             let body;
             braced!(body in input);
 
             body.parse()?
         };
-
 
         Ok(Self {
             impl_generics,
