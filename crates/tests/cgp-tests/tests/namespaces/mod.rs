@@ -41,3 +41,7 @@ pub mod default_impls_wiring;
 pub mod extended;
 pub mod extended_namespace_wiring;
 pub mod for_where_clause;
+
+// A header with no table: `new Ns` and `new Child: Parent` written without a
+// brace pair, pinned as snapshots and consumed through a joining context.
+pub mod namespace_header_only;

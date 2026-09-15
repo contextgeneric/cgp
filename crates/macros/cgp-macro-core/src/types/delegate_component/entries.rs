@@ -10,8 +10,9 @@ use crate::types::delegate_component::{
 
 /// A table body: leading statements (`open`/`namespace`/`for`) followed by the
 /// comma-separated mappings. Statements must lead, which is why one written
-/// after a mapping fails to parse.
-#[derive(Debug, Clone)]
+/// after a mapping fails to parse. The `Default` value is the empty table, which
+/// is what a `cgp_namespace!` header written without a body parses to.
+#[derive(Debug, Clone, Default)]
 pub struct DelegateEntries {
     pub statements: Vec<DelegateStatement>,
     pub entries: Punctuated<DelegateMapping, Comma>,
