@@ -241,6 +241,7 @@ dependencies = [
  "cgp-macro-core",
  "cgp-macro-lib",
  "cgp-macro-test-util",
+ "cgp-macro-test-util-lib",
  "insta",
  "proc-macro2",
  "quote",

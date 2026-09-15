@@ -6,6 +6,7 @@ use crate::functions::parse_internal;
 use crate::traits::ParseOptionalKeyword;
 use crate::types::delegate_component::{
     DelegateEntries, EvalDelegateEntries, EvalDelegateEntry, EvalForEntry,
+    ExtractInnerDelegateTables,
 };
 use crate::types::generics::ImplGenerics;
 use crate::types::ident::{IdentWithTypeArgs, PathWithTypeArgs};
@@ -162,10 +163,23 @@ impl NamespaceTable {
             item_impls.insert(0, item_impl);
         }
 
+        // Lift out each nested `Wrapper<new Inner { … }>` value, exactly as
+        // `DelegateTable::eval` does. The entry's `Delegate` resolves to
+        // `Wrapper<Inner>`, so without emitting `Inner` and its own
+        // `DelegateComponent` impls the entry would name a type nothing declares.
+        let mut inner_structs = Vec::new();
+
+        for inner_table in self.entries.extract_inner_tables() {
+            inner_structs.push(inner_table.build_table_struct());
+
+            item_impls.extend(inner_table.build_impls()?);
+        }
+
         Ok(EvaluatedNamespaceTable {
             item_impls,
             item_trait,
             item_struct,
+            inner_structs,
         })
     }
 }

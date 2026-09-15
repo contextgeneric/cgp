@@ -15,7 +15,9 @@
 //! 3. record the limitation in the owning reference document's `## Known issues`
 //!    section (per cgp-knowledge-base/cgp/AGENTS.md), and link from the test to that document.
 //!
-//! No cases are enumerated yet; see crates/tests/AGENTS.md ("Migration status").
+//! One case is captured so far: `reserved_variant_names`, where the variant derives name their
+//! own associated types through `Self::…` and so cannot be applied to an enum with a variant of
+//! a colliding name.
 #![allow(dead_code)]
 
 pub mod invalid_expansion;

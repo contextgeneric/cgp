@@ -4,6 +4,7 @@ use syn::{ItemImpl, ItemTrait, Type};
 
 use crate::functions::parse_internal;
 use crate::types::attributes::UseTypeAttribute;
+use crate::types::attributes::use_type::grounding::ground_specs;
 use crate::types::attributes::use_type::type_predicates::{
     derive_use_type_predicates, forbid_duplicate_aliases,
 };
@@ -15,37 +16,16 @@ pub struct UseTypeAttributes {
 }
 
 impl UseTypeAttributes {
-    /// Resolve every spec's context type into fully-qualified form before it is
-    /// used, so that both the body substitution and the appended bounds agree on
-    /// one grounded context.
+    /// Validate the import list and resolve every spec into fully-qualified form,
+    /// the two steps that must precede any substitution.
     ///
-    /// An `in Context` suffix whose `Context` is itself imported by another spec —
-    /// as in `#[use_type(HasTypes.Types, HasScalarType.Scalar in Types)]` — is
-    /// rewritten from the bare alias `Types` to `<Self as HasTypes>::Types`.
-    /// Contexts that name a real generic parameter or `Self` are left untouched.
-    /// The pass iterates to a fixpoint so a chain of links resolves fully; each
-    /// pass grounds one more level, so `attributes.len()` passes cover any
-    /// acyclic chain, and a cyclic reference simply stops making progress and
-    /// surfaces later as an ordinary unresolved-type error rather than looping.
-    fn grounded_specs(&self) -> Vec<UseTypeAttribute> {
-        let mut grounded = self.attributes.clone();
+    /// Aliases are checked for uniqueness first, because [`ground_specs`] resolves a
+    /// reference through the spec that owns the alias and so needs one owner per
+    /// name; it then grounds each spec against its dependencies and rejects a cycle.
+    fn resolved_specs(&self) -> syn::Result<Vec<UseTypeAttribute>> {
+        forbid_duplicate_aliases(&self.attributes)?;
 
-        for _ in 0..grounded.len() {
-            let snapshot = grounded.clone();
-            let mut changed = false;
-
-            for spec in grounded.iter_mut() {
-                let mut visitor = SubstituteAbstractTypes::new(&snapshot);
-                visitor.visit_type_mut(&mut spec.context_type);
-                changed |= visitor.is_changed;
-            }
-
-            if !changed {
-                break;
-            }
-        }
-
-        grounded
+        ground_specs(&self.attributes)
     }
 
     pub fn transform_item_trait(&self, item_trait: &mut ItemTrait) -> syn::Result<()> {
@@ -53,9 +33,7 @@ impl UseTypeAttributes {
             return Ok(());
         }
 
-        forbid_duplicate_aliases(&self.attributes)?;
-
-        let grounded = self.grounded_specs();
+        let grounded = self.resolved_specs()?;
 
         SubstituteAbstractTypes::new(&grounded).visit_item_trait_mut(item_trait);
 
@@ -98,9 +76,7 @@ impl UseTypeAttributes {
             return Ok(());
         }
 
-        forbid_duplicate_aliases(&self.attributes)?;
-
-        let grounded = self.grounded_specs();
+        let grounded = self.resolved_specs()?;
 
         SubstituteAbstractTypes::new(&grounded).visit_item_impl_mut(item_impl);
 

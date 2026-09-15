@@ -5,8 +5,8 @@ use syn::{Ident, Type, WhereClause, braced};
 
 use crate::types::delegate_component::{
     EvalDelegateEntries, EvalDelegateKey, EvalDelegateValue, EvalForEntries,
-    EvaluatedDelegateEntry, EvaluatedForEntry, NormalDelegateMapping,
-    eval_delegate_entries_via_for,
+    EvaluatedDelegateEntry, EvaluatedForEntry, ExtractInnerDelegateTables, InnerDelegateTable,
+    NormalDelegateMapping, eval_delegate_entries_via_for,
 };
 use crate::types::ident::PathWithTypeArgs;
 
@@ -104,5 +104,17 @@ impl EvalForEntries for ForDelegateStatement {
 impl EvalDelegateEntries for ForDelegateStatement {
     fn eval_entries(&self, table_type: &Type) -> syn::Result<Vec<EvaluatedDelegateEntry>> {
         eval_delegate_entries_via_for(self, table_type)
+    }
+}
+
+impl ExtractInnerDelegateTables for ForDelegateStatement {
+    fn extract_inner_tables(&self) -> Vec<InnerDelegateTable> {
+        // A loop body holds ordinary `:` mappings, whose values may open a nested
+        // table just as a top-level mapping's can. Without this the inner table is
+        // parsed, named by the entry's `Delegate`, and never emitted.
+        self.mappings
+            .iter()
+            .flat_map(|mapping| mapping.extract_inner_tables())
+            .collect()
     }
 }

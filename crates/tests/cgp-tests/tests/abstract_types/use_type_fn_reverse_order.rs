@@ -4,12 +4,14 @@
 //! declared *after* it.
 //!
 //! This is the order-independence counterpart to `use_type_fn_deep_foreign`, which
-//! writes the same chain front-to-back. Grounding iterates to a fixpoint over all
-//! specs at once, so a spec may name a context imported by any other spec no matter
-//! where it sits in the list; the bare `C` still rewrites to the three-hop
+//! writes the same chain front-to-back. Grounding resolves each spec against the
+//! specs it depends on rather than the ones preceding it, so a spec may name a
+//! context imported by any other spec no matter where it sits in the list; the bare
+//! `C` still rewrites to the three-hop
 //! `<<<Self as HasA>::A as HasB>::B as HasC>::C`. Only a genuine *cycle* — which has
-//! no valid order at all — fails to ground; that acceptable failure is pinned in
-//! the `use_type_cyclic_context` compile-fail fixture.
+//! no valid order at all — cannot be grounded, and that is rejected at macro time
+//! rather than lowered; the rejections are pinned in `cgp-macro-tests`'
+//! `parser_rejections::use_type`.
 //!
 //! `deep` takes and returns a value of the deep type, so the test asserts a
 //! concrete value flows through the fully-grounded signature at runtime.

@@ -33,3 +33,9 @@ define_keyword!(HasField, "HasField");
 define_keyword!(HasFields, "HasFields");
 
 define_keyword!(CgpData, "CgpData");
+
+define_keyword!(BuildField, "BuildField");
+
+define_keyword!(ExtractField, "ExtractField");
+
+define_keyword!(FromVariant, "FromVariant");

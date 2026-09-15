@@ -4,8 +4,8 @@ use syn::{Error, Type};
 
 use crate::traits::PeekKeyword;
 use crate::types::delegate_component::{
-    EvalDelegateEntries, EvaluatedDelegateEntry, ForDelegateStatement, NamespaceDelegateStatement,
-    OpenDelegateStatement,
+    EvalDelegateEntries, EvaluatedDelegateEntry, ExtractInnerDelegateTables, ForDelegateStatement,
+    InnerDelegateTable, NamespaceDelegateStatement, OpenDelegateStatement,
 };
 use crate::types::keywords::{Namespace, Open};
 
@@ -49,6 +49,16 @@ impl EvalDelegateEntries for DelegateStatement {
             Self::Namespace(entry) => entry.eval_entries(table_type),
             Self::Open(entry) => entry.eval_entries(table_type),
             Self::For(entry) => entry.eval_entries(table_type),
+        }
+    }
+}
+
+impl ExtractInnerDelegateTables for DelegateStatement {
+    fn extract_inner_tables(&self) -> Vec<InnerDelegateTable> {
+        match self {
+            // `namespace` and `open` carry no values, so neither can open a table.
+            Self::Namespace(_) | Self::Open(_) => Vec::new(),
+            Self::For(statement) => statement.extract_inner_tables(),
         }
     }
 }

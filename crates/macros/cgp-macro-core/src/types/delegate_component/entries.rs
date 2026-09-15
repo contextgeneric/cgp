@@ -82,9 +82,16 @@ impl DelegateEntries {
 
 impl ExtractInnerDelegateTables for DelegateEntries {
     fn extract_inner_tables(&self) -> Vec<InnerDelegateTable> {
-        self.entries
+        // Statements are walked as well as mappings, because a `for` loop's body
+        // holds mappings whose values may open a nested table.
+        self.statements
             .iter()
-            .flat_map(|entry| entry.extract_inner_tables())
+            .flat_map(|statement| statement.extract_inner_tables())
+            .chain(
+                self.entries
+                    .iter()
+                    .flat_map(|entry| entry.extract_inner_tables()),
+            )
             .collect()
     }
 }

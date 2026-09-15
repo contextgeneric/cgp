@@ -162,8 +162,8 @@ diagnostic *and* how cargo-cgp presents it, and links the backing `cargo-cgp` UI
 as a GitHub URL. When a construct change alters such a diagnostic, the cross-project
 [sync rule](../../AGENTS.md) applies — update the `cargo-cgp` fixture and the class doc
 here together when both repos are checked out. A macro's **implementation document**
-still records the *rejection* cases it catches and its behavioral tests (its `## Known
-issues` and `## Tests` sections); the accept-then-fail classes are documented in the
+still records the *rejection* cases it catches and its behavioral tests (its
+`## Known issues` and `## Tests` sections); the accept-then-fail classes are documented in the
 error catalog, and a macro's `## Failure modes` section links out to the catalog class
 and its `cargo-cgp` fixture rather than to a local fixture.
 
