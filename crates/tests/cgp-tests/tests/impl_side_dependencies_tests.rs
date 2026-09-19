@@ -1,6 +1,6 @@
 //! Entrypoint for the `impl_side_dependencies` concept.
 //!
-//! Covers the capabilities a provider or `#[cgp_fn]` function requires but the
+//! Covers the traits a provider or `#[cgp_fn]` function requires but the
 //! consumer trait does not itself expose — CGP's form of dependency injection.
 //! These impl-side dependencies are declared with `#[uses(...)]` (import `Self`
 //! trait bounds, read like a `use` statement) and `#[extend(...)]` (add a

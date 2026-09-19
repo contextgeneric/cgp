@@ -1,5 +1,5 @@
 //! `#[uses(...)]` on a `#[cgp_impl]` provider imports a `Self` trait bound, read
-//! like a `use` statement, so the provider body can call another capability. Here
+//! like a `use` statement, so the provider body can call another trait's method. Here
 //! `RectangleAreaCalculator` declares `#[uses(RectangleArea)]` and calls
 //! `self.rectangle_area()`; the import becomes an impl-side dependency
 //! (`Self: RectangleArea`) that the `CanCalculateArea` consumer trait does not

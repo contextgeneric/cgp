@@ -1,4 +1,4 @@
-//! One `#[cgp_fn]` capability calling another through a `where Self: …` bound.
+//! One `#[cgp_fn]` trait calling another through a `where Self: …` bound.
 //!
 //! `scaled_rectangle_area` depends on `RectangleArea` (an impl-side dependency
 //! stated as an explicit `where` clause) and calls `self.rectangle_area()`. The

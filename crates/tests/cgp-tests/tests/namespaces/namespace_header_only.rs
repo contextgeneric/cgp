@@ -7,7 +7,7 @@
 //! Both snapshots belong to this concept, which owns `cgp_namespace!`. `App` then
 //! joins the header-only inheriting namespace and wires the inherited error type
 //! and raiser components under their full `@cgp.core.error.*` paths, and the
-//! `CheckApp` bundle asserts each wired capability resolves, confirming the
+//! `CheckApp` bundle asserts each wired component resolves, confirming the
 //! braceless definition is a usable namespace and not just a parse. That
 //! `delegate_components!` is written plainly, since its `namespace` form is
 //! pinned in `prefix_default_namespace`.

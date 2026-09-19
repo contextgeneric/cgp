@@ -3,7 +3,7 @@
 //! scope so that the type-level wiring of one test never leaks into another.
 
 // `#[uses(...)]` on `#[cgp_fn]`: imports a `Self` trait bound so the function can
-// call another capability. This concept owns the snapshot showing how `#[uses]`
+// call another trait's method. This concept owns the snapshot showing how `#[uses]`
 // lands on the generated impl's `where` clause.
 pub mod fn_uses;
 
@@ -18,7 +18,7 @@ pub mod fn_uses_associated_type;
 pub mod fn_extend;
 
 // `#[uses(...)]` on a `#[cgp_impl]` provider: imports a `Self` trait bound so the
-// provider can call another capability. The provider is written plainly.
+// provider can call another trait's method. The provider is written plainly.
 pub mod impl_uses;
 
 // `#[uses(...)]` with an associated-type-equality bound on a `#[cgp_impl]`

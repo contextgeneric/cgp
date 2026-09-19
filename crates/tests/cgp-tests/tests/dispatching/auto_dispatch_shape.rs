@@ -1,7 +1,7 @@
 //! A realistic `#[cgp_auto_dispatch]` example: dispatching over a `Shape` enum of
 //! `Circle`/`Rectangle`, with one immutable method (`area`, `&self`) and one
 //! mutating method (`scale`, `&mut self`). Exercises that a single enum can carry
-//! several auto-dispatched capabilities at once.
+//! several auto-dispatched operations at once.
 //!
 //! See cgp-knowledge-base/cgp/reference/macros/cgp_auto_dispatch.md and
 //! cgp-knowledge-base/cgp/concepts/dispatching.md.

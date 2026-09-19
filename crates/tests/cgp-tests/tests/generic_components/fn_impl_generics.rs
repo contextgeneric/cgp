@@ -4,7 +4,7 @@
 //! `greet` reads a `&Name` field implicitly, but `Name` is bound only where the
 //! impl needs it, so the trait stays parameter-free (`Greet`) while the impl
 //! carries `Name: Display`. A second `#[cgp_fn]` (`test_greet`) then imports the
-//! `Greet` capability with `#[uses(...)]` and drives the runtime assertion.
+//! `Greet` trait with `#[uses(...)]` and drives the runtime assertion.
 //!
 //! See cgp-knowledge-base/cgp/reference/macros/cgp_fn.md.
 
