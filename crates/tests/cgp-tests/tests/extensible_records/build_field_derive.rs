@@ -9,7 +9,7 @@
 //! `HasField` getters on the original struct and no `HasFields` representation
 //! impls, which `#[derive(HasField)]` and `#[derive(HasFields)]` supply.
 //!
-//! Two capabilities come from field-crate blanket impls over the generated
+//! Two operations come from field-crate blanket impls over the generated
 //! `UpdateField`, rather than from the derive, and this file exercises both in
 //! opposite directions: `BuildField` sets an absent field (`IsNothing` to
 //! `IsPresent`) and `TakeField` removes a present one (`IsPresent` back to

@@ -1,5 +1,5 @@
 //! `#[uses(...)]` on a `#[cgp_fn]` imports a `Self` trait bound, read like a
-//! `use` statement, so the function body can call another capability. Here
+//! `use` statement, so the function body can call another trait's method. Here
 //! `scaled_rectangle_area` declares `#[uses(RectangleArea)]` and calls
 //! `self.rectangle_area()`; the import lands as `Self: RectangleArea` in the
 //! generated impl's `where` clause — an impl-side dependency the consumer trait
