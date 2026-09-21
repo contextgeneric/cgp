@@ -46,7 +46,9 @@ edition         = "2024"
 license         = "Apache-2.0"
 repository      = "https://github.com/contextgeneric/cgp"
 authors         = ["Soares Chen <soares.chen@maybevoid.com>"]
-keywords        = ["cgp"]
+homepage        = "https://contextgeneric.dev"
+keywords        = ["cgp", "traits", "dsl", "dependency-injection", "macros"]
+categories      = ["rust-patterns", "no-std"]
 description     = "A language extension for Rust, with pluggable trait implementations at compile-time."
 
 [workspace.dependencies]
