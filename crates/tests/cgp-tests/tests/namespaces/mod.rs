@@ -18,6 +18,7 @@ pub mod multi_param_namespace;
 pub mod multi_param_open;
 pub mod namespace_group;
 pub mod open_dispatch;
+pub mod open_later_param;
 pub mod prefix_default_namespace;
 pub mod redirect_lookup;
 
