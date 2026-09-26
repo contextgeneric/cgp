@@ -220,7 +220,10 @@ fn derive_blanket_impl(item_trait: &ItemTrait) -> syn::Result<TokenStream> {
 
         let method_body = if signature.asyncness.is_some() {
             quote! {
-                #matcher::<#computer_ident>::compute_async(
+                // Name the provider trait so the call stays unambiguous when the
+                // consumer trait `CanComputeAsync` is also in scope. The `_` arguments
+                // are inferred, which avoids naming the HRTB-only `'__a__` lifetime.
+                <#matcher<#computer_ident> as AsyncComputer<_, _, _>>::compute_async(
                     &(),
                     ::core::marker::PhantomData::<()>,
                     #args,
@@ -228,7 +231,9 @@ fn derive_blanket_impl(item_trait: &ItemTrait) -> syn::Result<TokenStream> {
             }
         } else {
             quote! {
-                #matcher::<#computer_ident>::compute(
+                // As above, qualified so that an imported `CanCompute` does not make
+                // the call ambiguous.
+                <#matcher<#computer_ident> as Computer<_, _, _>>::compute(
                     &(),
                     ::core::marker::PhantomData::<()>,
                     #args,
