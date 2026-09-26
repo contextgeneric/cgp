@@ -3,14 +3,15 @@ use core::fmt::Display;
 
 use cgp::error::{ErrorRaiser, ErrorRaiserComponent, ErrorWrapper, ErrorWrapperComponent};
 use cgp::prelude::*;
-use eyre::Error;
 
+/// Raises a standard error into [`eyre::Report`] without formatting it, so the source stays
+/// available to `downcast_ref` and to the error chain, and wraps a detail with `wrap_err`.
 pub struct RaiseEyreError;
 
-#[cgp_provider]
-impl<Context, E> ErrorRaiser<Context, E> for RaiseEyreError
+#[cgp_impl(RaiseEyreError)]
+#[use_type(HasErrorType.{Error = eyre::Report})]
+impl<E> ErrorRaiser<E>
 where
-    Context: HasErrorType<Error = Error>,
     E: StdError + Send + Sync + 'static,
 {
     fn raise_error(e: E) -> Error {
@@ -18,10 +19,10 @@ where
     }
 }
 
-#[cgp_provider]
-impl<Context, Detail> ErrorWrapper<Context, Detail> for RaiseEyreError
+#[cgp_impl(RaiseEyreError)]
+#[use_type(HasErrorType.{Error = eyre::Report})]
+impl<Detail> ErrorWrapper<Detail>
 where
-    Context: HasErrorType<Error = Error>,
     Detail: Display + Send + Sync + 'static,
 {
     fn wrap_error(error: Error, detail: Detail) -> Error {

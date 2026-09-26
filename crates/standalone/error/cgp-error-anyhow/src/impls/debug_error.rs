@@ -1,27 +1,29 @@
 use alloc::format;
 use core::fmt::Debug;
 
-use anyhow::{Error, anyhow};
+use anyhow::anyhow;
 use cgp::error::{ErrorRaiser, ErrorRaiserComponent, ErrorWrapper, ErrorWrapperComponent};
 use cgp::prelude::*;
 
+/// Raises any `Debug` value into [`anyhow::Error`] as a message formatted with `{:?}`, and wraps a
+/// `Debug` detail the same way. The original value is not kept.
 pub struct DebugAnyhowError;
 
-#[cgp_provider]
-impl<Context, E> ErrorRaiser<Context, E> for DebugAnyhowError
+#[cgp_impl(DebugAnyhowError)]
+#[use_type(HasErrorType.{Error = anyhow::Error})]
+impl<E> ErrorRaiser<E>
 where
-    Context: HasErrorType<Error = Error>,
     E: Debug,
 {
     fn raise_error(e: E) -> Error {
-        anyhow!("{:?}", e)
+        anyhow!("{e:?}")
     }
 }
 
-#[cgp_provider]
-impl<Context, Detail> ErrorWrapper<Context, Detail> for DebugAnyhowError
+#[cgp_impl(DebugAnyhowError)]
+#[use_type(HasErrorType.{Error = anyhow::Error})]
+impl<Detail> ErrorWrapper<Detail>
 where
-    Context: HasErrorType<Error = Error>,
     Detail: Debug,
 {
     fn wrap_error(error: Error, detail: Detail) -> Error {

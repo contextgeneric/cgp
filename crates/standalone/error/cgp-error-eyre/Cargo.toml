@@ -1,16 +1,23 @@
 [package]
 name         = "cgp-error-eyre"
 version      = "0.8.0-alpha"
+readme       = "./README.md"
 edition      = { workspace = true }
 license      = { workspace = true }
 repository   = { workspace = true }
 authors      = { workspace = true }
 rust-version = { workspace = true }
+homepage     = { workspace = true }
 keywords     = { workspace = true }
-description  = """
-    Context-generic programming error handlers implemented using eyre
-"""
+categories   = [ "rust-patterns" ]
+description  = "CGP error providers that make eyre::Report a context's abstract error type."
 
 [dependencies]
 cgp         = { version = "0.8.0-alpha", path = "../../../main/cgp-core", package = "cgp-core" }
-eyre        = { version = "0.6.12", default-features = false }
+# `auto-install` installs eyre's default report handler on first use. Without it, building any
+# `eyre::Report` panics unless the application has called `eyre::set_hook` first.
+#
+# `track-caller` is left off: every report is built inside one of this crate's providers, behind
+# CGP's generated forwarding impls, so the location it records is always a line in this crate
+# rather than the caller's.
+eyre        = { version = "0.6.14", default-features = false, features = [ "auto-install" ] }

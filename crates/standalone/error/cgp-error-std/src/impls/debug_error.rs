@@ -5,15 +5,16 @@ use core::fmt::Debug;
 use cgp::error::{ErrorRaiser, ErrorRaiserComponent, ErrorWrapper, ErrorWrapperComponent};
 use cgp::prelude::*;
 
-use crate::WrapError;
-use crate::types::{Error, StringError};
+use crate::{StringError, WrapError};
 
+/// Raises any `Debug` value as a [`StringError`] formatted with `{:?}`, and wraps a `Debug` detail
+/// in a [`WrapError`] the same way. The original value is not kept.
 pub struct DebugBoxedStdError;
 
-#[cgp_provider(ErrorRaiserComponent)]
-impl<Context, E> ErrorRaiser<Context, E> for DebugBoxedStdError
+#[cgp_impl(DebugBoxedStdError)]
+#[use_type(HasErrorType.{Error = crate::Error})]
+impl<E> ErrorRaiser<E>
 where
-    Context: HasErrorType<Error = Error>,
     E: Debug,
 {
     fn raise_error(e: E) -> Error {
@@ -21,10 +22,10 @@ where
     }
 }
 
-#[cgp_provider(ErrorWrapperComponent)]
-impl<Context, Detail> ErrorWrapper<Context, Detail> for DebugBoxedStdError
+#[cgp_impl(DebugBoxedStdError)]
+#[use_type(HasErrorType.{Error = crate::Error})]
+impl<Detail> ErrorWrapper<Detail>
 where
-    Context: HasErrorType<Error = Error>,
     Detail: Debug,
 {
     fn wrap_error(error: Error, detail: Detail) -> Error {
