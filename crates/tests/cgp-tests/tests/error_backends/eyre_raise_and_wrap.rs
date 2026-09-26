@@ -46,14 +46,12 @@ fn test_eyre_raise_and_wrap() {
     );
     assert!(error.downcast_ref::<io::Error>().is_some());
 
-    // The default handler prints the chain, then a backtrace section when `RUST_BACKTRACE` or
-    // `RUST_LIB_BACKTRACE` is set, so only the chain is matched exactly. The crate leaves eyre's
-    // `track-caller` feature off, since the recorded location would be a line inside the backend,
-    // so no `Location:` section appears.
+    // The default handler prints the chain, then a `Location:` section, then a backtrace section
+    // when `RUST_BACKTRACE` or `RUST_LIB_BACKTRACE` is set, so only the chain is matched exactly.
+    // `eyre_location.rs` checks the location itself.
     let debug = format!("{error:?}");
     assert!(
         debug.starts_with("while starting\n\nCaused by:\n   0: while loading\n   1: no file"),
         "unexpected report: {debug}"
     );
-    assert!(!debug.contains("Location:"), "unexpected report: {debug}");
 }

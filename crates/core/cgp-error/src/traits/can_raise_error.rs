@@ -12,5 +12,8 @@ use crate::traits::has_error_type::HasErrorType;
 #[derive_delegate(UseDelegate<SourceError>)]
 #[use_type(HasErrorType.Error)]
 pub trait CanRaiseError<SourceError> {
+    /// `#[track_caller]` here applies to every provider impl and to the generated forwarding
+    /// impls, so an error library that records `Location::caller()` sees the caller's line.
+    #[track_caller]
     fn raise_error(error: SourceError) -> Error;
 }
