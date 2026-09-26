@@ -155,7 +155,9 @@ inward (core/macros) when changing fundamentals, outward (main) only to adjust t
 
 - **`crates/standalone/error/`** — pluggable error backends implementing the `cgp-error` traits:
   `cgp-error-anyhow`, `cgp-error-eyre`, `cgp-error-std`. These are opt-in and not part of the
-  default `cgp` facade.
+  default `cgp` facade. The knowledge base documents them as a project of their own, under
+  [`projects/error/`](https://github.com/contextgeneric/cgp-knowledge-base/tree/main/projects/error),
+  and their tests are the `error_backends` target of `cgp-tests`.
 
 - **`crates/tests/`** — `cgp-tests` exercises real wiring and the user-facing macros end-to-end;
   `cgp-macro-tests` covers parser corner cases plus **expansion snapshots** via the `snapshot_*`

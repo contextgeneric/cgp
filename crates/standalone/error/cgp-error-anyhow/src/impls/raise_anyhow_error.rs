@@ -1,16 +1,17 @@
 use core::error::Error as StdError;
 use core::fmt::Display;
 
-use anyhow::Error;
 use cgp::error::{ErrorRaiser, ErrorRaiserComponent, ErrorWrapper, ErrorWrapperComponent};
 use cgp::prelude::*;
 
+/// Raises a standard error into [`anyhow::Error`] without formatting it, so the source stays
+/// available to `downcast_ref` and to the error chain, and wraps a detail as anyhow context.
 pub struct RaiseAnyhowError;
 
 #[cgp_impl(RaiseAnyhowError)]
-impl<Context, E> ErrorRaiser<E> for Context
+#[use_type(HasErrorType.{Error = anyhow::Error})]
+impl<E> ErrorRaiser<E>
 where
-    Context: HasErrorType<Error = Error>,
     E: StdError + Send + Sync + 'static,
 {
     fn raise_error(e: E) -> Error {
@@ -19,9 +20,9 @@ where
 }
 
 #[cgp_impl(RaiseAnyhowError)]
-impl<Context, Detail> ErrorWrapper<Detail> for Context
+#[use_type(HasErrorType.{Error = anyhow::Error})]
+impl<Detail> ErrorWrapper<Detail>
 where
-    Context: HasErrorType<Error = Error>,
     Detail: Display + Send + Sync + 'static,
 {
     fn wrap_error(error: Error, detail: Detail) -> Error {

@@ -1,15 +1,16 @@
 [package]
 name         = "cgp-error-std"
 version      = "0.8.0-alpha"
+readme       = "./README.md"
 edition      = { workspace = true }
 license      = { workspace = true }
 repository   = { workspace = true }
 authors      = { workspace = true }
 rust-version = { workspace = true }
+homepage     = { workspace = true }
 keywords     = { workspace = true }
-description  = """
-    Context-generic programming error handlers implemented using `core::error::Error`
-"""
+categories   = { workspace = true }
+description  = "CGP error providers that make a boxed core::error::Error a context's abstract error type."
 
 [dependencies]
 cgp         = { version = "0.8.0-alpha", path = "../../../main/cgp-core", package = "cgp-core" }

@@ -1,8 +1,10 @@
 use cgp::error::{ErrorTypeProvider, ErrorTypeProviderComponent};
 use cgp::prelude::*;
-use eyre::Error;
 
-#[cgp_new_provider]
-impl<Context> ErrorTypeProvider<Context> for UseEyreError {
-    type Error = Error;
+/// Sets the context's abstract error type to [`eyre::Report`].
+pub struct UseEyreError;
+
+#[cgp_impl(UseEyreError)]
+impl ErrorTypeProvider {
+    type Error = eyre::Report;
 }

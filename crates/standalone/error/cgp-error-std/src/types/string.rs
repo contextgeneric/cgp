@@ -2,6 +2,8 @@ use alloc::string::String;
 use core::error::Error;
 use core::fmt::{Debug, Display};
 
+/// A standard error that carries only a message, produced when a provider formats a value that is
+/// not itself a standard error.
 pub struct StringError {
     pub message: String,
 }
