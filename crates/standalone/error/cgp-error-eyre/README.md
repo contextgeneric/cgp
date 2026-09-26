@@ -43,8 +43,8 @@ A `String` needs `DisplayEyreError` or `DebugEyreError`, because it is not a sta
 The crate enables eyre's `auto-install` feature, so eyre's default report handler is installed the
 first time a report is built. To use another handler, such as `color-eyre`, install it with
 `eyre::set_hook` before the first error is raised; once a report exists, `set_hook` returns an
-error. The crate leaves eyre's `track-caller` feature off, because every report is built inside one
-of its providers and the recorded location would name that line rather than the caller. eyre
-requires `std`, so this crate does too.
+error. The crate also enables eyre's `track-caller` feature, and CGP's `raise_error` is
+`#[track_caller]`, so a report's `Location:` names the line that called `raise_error`. eyre requires
+`std`, so this crate does too.
 
 The crate re-exports `eyre::Error`, eyre's alias for `Report`, as `cgp_error_eyre::Error`.

@@ -17,7 +17,7 @@ cgp         = { version = "0.8.0-alpha", path = "../../../main/cgp-core", packag
 # `auto-install` installs eyre's default report handler on first use. Without it, building any
 # `eyre::Report` panics unless the application has called `eyre::set_hook` first.
 #
-# `track-caller` is left off: every report is built inside one of this crate's providers, behind
-# CGP's generated forwarding impls, so the location it records is always a line in this crate
-# rather than the caller's.
-eyre        = { version = "0.6.14", default-features = false, features = [ "auto-install" ] }
+# `track-caller` records where a report was built. `CanRaiseError::raise_error` is
+# `#[track_caller]`, and so is every impl of it, which is what lets that location be the caller's
+# line rather than a line in this crate.
+eyre        = { version = "0.6.14", default-features = false, features = [ "auto-install", "track-caller" ] }

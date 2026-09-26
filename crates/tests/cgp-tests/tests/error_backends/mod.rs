@@ -5,6 +5,7 @@
 pub mod anyhow_formatting;
 pub mod anyhow_raise_and_wrap;
 pub mod eyre_formatting;
+pub mod eyre_location;
 pub mod eyre_raise_and_wrap;
 pub mod generic_equivalents;
 pub mod namespace_wiring;

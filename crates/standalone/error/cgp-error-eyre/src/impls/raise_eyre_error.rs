@@ -5,7 +5,8 @@ use cgp::error::{ErrorRaiser, ErrorRaiserComponent, ErrorWrapper, ErrorWrapperCo
 use cgp::prelude::*;
 
 /// Raises a standard error into [`eyre::Report`] without formatting it, so the source stays
-/// available to `downcast_ref` and to the error chain, and wraps a detail with `wrap_err`.
+/// available to `downcast_ref` and to the error chain, and wraps a detail with `wrap_err`. The
+/// report records the location that called `raise_error`.
 pub struct RaiseEyreError;
 
 #[cgp_impl(RaiseEyreError)]
