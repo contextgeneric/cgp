@@ -3,8 +3,9 @@
 //! Besides the required-field builder pinned by `record_derive`, a `CgpData`
 //! record also supports an `optional_builder()` where fields start absent and are
 //! filled with `set`. `set` returns any previously-set value, `finalize_optional`
-//! succeeds only once every field is present, and `finalize_with_default` fills
-//! any still-absent field with its `Default`.
+//! succeeds only once every field is present (otherwise it returns the name of a
+//! missing field, checking fields from last to first), and `finalize_with_default`
+//! fills any still-absent field with its `Default`.
 //!
 //! The snapshot in this file is the `#[derive(CgpData)]` expansion for the
 //! two-field record it exercises; the derive expansion itself is owned by this
@@ -242,4 +243,23 @@ fn test_optional_and_default_fields() {
 
     assert_eq!(context.foo, "foo");
     assert_eq!(context.bar, 0);
+}
+
+#[test]
+fn test_finalize_optional_missing_field() {
+    // A missing field fails the finalize and names the field.
+    let result = Context::optional_builder()
+        .set(PhantomData::<Symbol!("foo")>, "foo".to_owned())
+        .finalize_optional();
+    assert_eq!(result.err(), Some("bar"));
+
+    // The fields are checked from last to first, so with several unset the error
+    // names the last one in declaration order.
+    let result = Context::optional_builder().finalize_optional();
+    assert_eq!(result.err(), Some("bar"));
+
+    let result = Context::optional_builder()
+        .set(PhantomData::<Symbol!("bar")>, 42)
+        .finalize_optional();
+    assert_eq!(result.err(), Some("foo"));
 }
