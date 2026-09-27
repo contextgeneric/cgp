@@ -16,3 +16,6 @@ pub mod associated_type;
 
 // Same, but the associated type carries a bound (`: Clone`).
 pub mod associated_type_bounded;
+
+// Blanket trait forwarding an associated constant, under a custom context name.
+pub mod const_custom_context;
