@@ -8,6 +8,10 @@
 // proxy `SendRunner` impl on the concrete context.
 pub mod spawn;
 
+// Async `#[cgp_component]` expansion: the forwarding impls keep `async` and
+// append `.await`, with `#[async_trait]` forwarded onto every generated item.
+pub mod component_async;
+
 // Async `#[cgp_fn]` expansion: this concept owns the async variant of the
 // `#[cgp_fn]` macro snapshot (the `#[async_trait]` handling is the feature).
 pub mod cgp_fn_async;

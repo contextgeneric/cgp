@@ -1,5 +1,6 @@
 //! `#[cgp_component]` rejects inputs it cannot lower into a component: a
-//! non-trait item, and a trait carrying a const generic parameter.
+//! non-trait item, a trait carrying a const generic parameter, and attribute
+//! arguments with a repeated key, an unknown key, or no `provider` key.
 //!
 //! See cgp-knowledge-base/cgp/implementation/entrypoints/cgp_component.md (Tests) for these failure
 //! cases, and cgp-knowledge-base/cgp/reference/macros/cgp_component.md for the user-facing
@@ -33,6 +34,50 @@ fn rejects_const_generic_parameter() {
             quote!(
                 pub trait CanFoo<const N: usize> {
                     fn foo(&self) -> usize;
+                }
+            ),
+        )
+    });
+}
+
+#[test]
+fn rejects_duplicate_key() {
+    // Each of `provider`, `context`, and `name` may appear at most once.
+    assert_macro_rejects("cgp_component with a repeated key", || {
+        cgp_macro_lib::cgp_component(
+            quote!(provider: FooProvider, provider: BarProvider),
+            quote!(
+                pub trait CanFoo {
+                    fn foo(&self);
+                }
+            ),
+        )
+    });
+}
+
+#[test]
+fn rejects_unknown_key() {
+    assert_macro_rejects("cgp_component with an unknown key", || {
+        cgp_macro_lib::cgp_component(
+            quote!(provider: FooProvider, component: FooComponent),
+            quote!(
+                pub trait CanFoo {
+                    fn foo(&self);
+                }
+            ),
+        )
+    });
+}
+
+#[test]
+fn rejects_missing_provider_key() {
+    // The keyed form has no default for `provider`.
+    assert_macro_rejects("cgp_component without a provider key", || {
+        cgp_macro_lib::cgp_component(
+            quote!(context: Ctx),
+            quote!(
+                pub trait CanFoo {
+                    fn foo(&self);
                 }
             ),
         )
