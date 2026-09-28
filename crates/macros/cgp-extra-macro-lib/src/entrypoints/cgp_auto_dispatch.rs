@@ -3,6 +3,7 @@ use std::collections::BTreeSet;
 use cgp_macro_core::functions::to_camel_case_str;
 use proc_macro2::{Span, TokenStream};
 use quote::quote;
+use syn::ext::IdentExt;
 use syn::punctuated::Punctuated;
 use syn::spanned::Spanned;
 use syn::token::Comma;
@@ -64,10 +65,7 @@ fn derive_blanket_impl(item_trait: &ItemTrait) -> syn::Result<TokenStream> {
         let method_ident = &signature.ident;
         let mut hrtbs: BTreeSet<Ident> = BTreeSet::new();
 
-        let computer_ident = Ident::new(
-            &format!("Compute{}", to_camel_case_str(&method_ident.to_string())),
-            method_ident.span(),
-        );
+        let computer_ident = derive_computer_ident(method_ident);
 
         for generic_param in signature.generics.params.iter() {
             match generic_param {
@@ -396,10 +394,7 @@ fn derive_method_computer(
         TokenStream::new()
     };
 
-    let computer_ident = Ident::new(
-        &format!("Compute{}", to_camel_case_str(&method_ident.to_string())),
-        method_ident.span(),
-    );
+    let computer_ident = derive_computer_ident(method_ident);
 
     let method_generics = {
         let method_generics = method
@@ -419,9 +414,16 @@ fn derive_method_computer(
 
     let (impl_generics, _, where_clause) = generics.split_for_impl();
 
+    // The helper function takes a reserved name rather than the method's own, so it
+    // cannot collide with an item of the same name already in the caller's module.
+    let helper_ident = Ident::new(
+        &format!("__compute_{}__", method_ident.unraw()),
+        method_ident.span(),
+    );
+
     Ok(quote! {
         #[cgp_computer( #computer_ident )]
-        #async_token fn #method_ident #impl_generics (
+        #async_token fn #helper_ident #impl_generics (
             #context_ident: #context_type,
             #arg_params
         ) #return_type
@@ -430,4 +432,17 @@ fn derive_method_computer(
             #context_ident. #method_ident #method_generics ( #arg_idents ) #dot_await
         }
     })
+}
+
+/// The per-variant computer's name, `Compute` plus the method name in PascalCase. The
+/// method name is unrawed first, so `r#type` yields `ComputeType` rather than an
+/// invalid identifier.
+fn derive_computer_ident(method_ident: &Ident) -> Ident {
+    Ident::new(
+        &format!(
+            "Compute{}",
+            to_camel_case_str(&method_ident.unraw().to_string())
+        ),
+        method_ident.span(),
+    )
 }

@@ -46,7 +46,7 @@ snapshot_delegate_components! {
             'a,
             T1: Clone,
             __Context__,
-            __Params__,
+            __Params__: ?Sized,
         > IsProviderFor<FooKey<T1>, __Context__, __Params__> for Components
         where
             FooValue: IsProviderFor<FooKey<T1>, __Context__, __Params__>,
@@ -58,7 +58,7 @@ snapshot_delegate_components! {
             'a,
             T1: Clone,
             __Context__,
-            __Params__,
+            __Params__: ?Sized,
         > IsProviderFor<BarKey<'a, T1>, __Context__, __Params__> for Components
         where
             BarValue<T1>: IsProviderFor<BarKey<'a, T1>, __Context__, __Params__>,
@@ -71,7 +71,7 @@ snapshot_delegate_components! {
             T1: Clone,
             T2,
             __Context__,
-            __Params__,
+            __Params__: ?Sized,
         > IsProviderFor<BazKey<T1, T2>, __Context__, __Params__> for Components
         where
             BarValue<T1>: IsProviderFor<BazKey<T1, T2>, __Context__, __Params__>,

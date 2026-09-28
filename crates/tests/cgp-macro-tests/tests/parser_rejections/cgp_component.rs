@@ -1,6 +1,7 @@
 //! `#[cgp_component]` rejects inputs it cannot lower into a component: a
-//! non-trait item, a trait carrying a const generic parameter, and attribute
-//! arguments with a repeated key, an unknown key, or no `provider` key.
+//! non-trait item, a trait carrying a const generic parameter, attribute
+//! arguments with a repeated key, an unknown key, or no `provider` key, and a
+//! `name` whose parameters the trait does not declare.
 //!
 //! See cgp-knowledge-base/cgp/implementation/entrypoints/cgp_component.md (Tests) for these failure
 //! cases, and cgp-knowledge-base/cgp/reference/macros/cgp_component.md for the user-facing
@@ -38,6 +39,39 @@ fn rejects_const_generic_parameter() {
             ),
         )
     });
+}
+
+#[test]
+fn rejects_component_name_parameter_the_trait_lacks() {
+    // The marker struct is declared with the name's parameters while the generated
+    // impls name it with the trait's, so a parameter only the name carries would
+    // fail downstream (`E0425`); the macro rejects it with a spanned error instead.
+    assert_macro_rejects("cgp_component with an undeclared name parameter", || {
+        cgp_macro_lib::cgp_component(
+            quote!(provider: AreaCalculator, name: AreaCalculatorComponent<T>),
+            quote!(
+                pub trait CanCalculateArea {
+                    fn area(&self) -> f64;
+                }
+            ),
+        )
+    });
+}
+
+#[test]
+fn accepts_component_name_parameter_the_trait_declares() {
+    // The same `name` form with a parameter the trait does declare expands.
+    assert!(
+        cgp_macro_lib::cgp_component(
+            quote!(provider: AreaCalculator, name: AreaCalculatorComponent<Shape>),
+            quote!(
+                pub trait CanCalculateArea<Shape> {
+                    fn area(&self, shape: &Shape) -> f64;
+                }
+            ),
+        )
+        .is_ok()
+    );
 }
 
 #[test]

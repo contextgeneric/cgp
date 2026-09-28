@@ -502,7 +502,7 @@ mod derive_delegate {
             }
             impl<
                 __Context__,
-                __Params__,
+                __Params__: ?Sized,
             > IsProviderFor<FooTypeProviderAtComponent, __Context__, __Params__> for MyContext
             where
                 UseDelegate<
@@ -514,7 +514,7 @@ mod derive_delegate {
             }
             impl<
                 __Context__,
-                __Params__,
+                __Params__: ?Sized,
             > IsProviderFor<FooGetterAtComponent, __Context__, __Params__> for MyContext
             where
                 UseDelegate<
@@ -524,7 +524,7 @@ mod derive_delegate {
             impl DelegateComponent<Index<1>> for FooTypes {
                 type Delegate = UseType<u64>;
             }
-            impl<__Context__, __Params__> IsProviderFor<Index<1>, __Context__, __Params__>
+            impl<__Context__, __Params__: ?Sized> IsProviderFor<Index<1>, __Context__, __Params__>
             for FooTypes
             where
                 UseType<u64>: IsProviderFor<Index<1>, __Context__, __Params__>,
@@ -532,7 +532,7 @@ mod derive_delegate {
             impl DelegateComponent<Index<0>> for FooTypes {
                 type Delegate = UseType<String>;
             }
-            impl<__Context__, __Params__> IsProviderFor<Index<0>, __Context__, __Params__>
+            impl<__Context__, __Params__: ?Sized> IsProviderFor<Index<0>, __Context__, __Params__>
             for FooTypes
             where
                 UseType<String>: IsProviderFor<Index<0>, __Context__, __Params__>,
@@ -540,7 +540,7 @@ mod derive_delegate {
             impl DelegateComponent<Index<1>> for FooGetters {
                 type Delegate = UseField<Symbol!("foo")>;
             }
-            impl<__Context__, __Params__> IsProviderFor<Index<1>, __Context__, __Params__>
+            impl<__Context__, __Params__: ?Sized> IsProviderFor<Index<1>, __Context__, __Params__>
             for FooGetters
             where
                 UseField<Symbol!("foo")>: IsProviderFor<Index<1>, __Context__, __Params__>,
@@ -548,7 +548,7 @@ mod derive_delegate {
             impl DelegateComponent<Index<0>> for FooGetters {
                 type Delegate = UseField<Symbol!("bar")>;
             }
-            impl<__Context__, __Params__> IsProviderFor<Index<0>, __Context__, __Params__>
+            impl<__Context__, __Params__: ?Sized> IsProviderFor<Index<0>, __Context__, __Params__>
             for FooGetters
             where
                 UseField<Symbol!("bar")>: IsProviderFor<Index<0>, __Context__, __Params__>,
@@ -628,7 +628,7 @@ mod derive_delegate2 {
             }
             impl<
                 __Context__,
-                __Params__,
+                __Params__: ?Sized,
             > IsProviderFor<FooTypeProviderAtComponent, __Context__, __Params__> for MyContext
             where
                 UseDelegate2<
@@ -640,7 +640,7 @@ mod derive_delegate2 {
             }
             impl<
                 __Context__,
-                __Params__,
+                __Params__: ?Sized,
             > IsProviderFor<FooGetterAtComponent, __Context__, __Params__> for MyContext
             where
                 UseDelegate2<
@@ -652,7 +652,7 @@ mod derive_delegate2 {
             }
             impl<
                 __Context__,
-                __Params__,
+                __Params__: ?Sized,
             > IsProviderFor<(Index<1>, Index<0>), __Context__, __Params__> for FooTypes
             where
                 UseType<u64>: IsProviderFor<(Index<1>, Index<0>), __Context__, __Params__>,
@@ -662,7 +662,7 @@ mod derive_delegate2 {
             }
             impl<
                 __Context__,
-                __Params__,
+                __Params__: ?Sized,
             > IsProviderFor<(Index<0>, Index<1>), __Context__, __Params__> for FooTypes
             where
                 UseType<String>: IsProviderFor<(Index<0>, Index<1>), __Context__, __Params__>,
@@ -672,7 +672,7 @@ mod derive_delegate2 {
             }
             impl<
                 __Context__,
-                __Params__,
+                __Params__: ?Sized,
             > IsProviderFor<(Index<1>, Index<0>), __Context__, __Params__> for FooGetters
             where
                 UseField<
@@ -684,7 +684,7 @@ mod derive_delegate2 {
             }
             impl<
                 __Context__,
-                __Params__,
+                __Params__: ?Sized,
             > IsProviderFor<(Index<0>, Index<1>), __Context__, __Params__> for FooGetters
             where
                 UseField<

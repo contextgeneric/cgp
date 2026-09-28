@@ -34,7 +34,7 @@ snapshot_delegate_components! {
         impl DelegateComponent<FooKey> for Components {
             type Delegate = FooValue;
         }
-        impl<__Context__, __Params__> IsProviderFor<FooKey, __Context__, __Params__>
+        impl<__Context__, __Params__: ?Sized> IsProviderFor<FooKey, __Context__, __Params__>
         for Components
         where
             FooValue: IsProviderFor<FooKey, __Context__, __Params__>,
@@ -42,7 +42,7 @@ snapshot_delegate_components! {
         impl DelegateComponent<BarKey> for Components {
             type Delegate = BarValue;
         }
-        impl<__Context__, __Params__> IsProviderFor<BarKey, __Context__, __Params__>
+        impl<__Context__, __Params__: ?Sized> IsProviderFor<BarKey, __Context__, __Params__>
         for Components
         where
             BarValue: IsProviderFor<BarKey, __Context__, __Params__>,
@@ -50,7 +50,7 @@ snapshot_delegate_components! {
         impl DelegateComponent<BazKey> for Components {
             type Delegate = BarValue;
         }
-        impl<__Context__, __Params__> IsProviderFor<BazKey, __Context__, __Params__>
+        impl<__Context__, __Params__: ?Sized> IsProviderFor<BazKey, __Context__, __Params__>
         for Components
         where
             BarValue: IsProviderFor<BazKey, __Context__, __Params__>,
