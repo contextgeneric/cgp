@@ -43,6 +43,25 @@ fn rejects_self_provider_without_for_clause() {
 }
 
 #[test]
+fn rejects_helper_on_associated_type() {
+    // `#[helper]` marks a method that is not part of the provider trait. An
+    // associated type is a provider item, so the attribute is rejected.
+    assert_macro_rejects("cgp_impl #[helper] on an associated type", || {
+        cgp_macro_lib::cgp_impl(
+            quote!(GreetHello),
+            quote!(
+                impl Greeter {
+                    #[helper]
+                    type Name = String;
+
+                    fn greet(&self) {}
+                }
+            ),
+        )
+    });
+}
+
+#[test]
 fn rejects_non_impl_item() {
     // `#[cgp_impl]` only applies to an `impl` block, so a struct fails at the
     // `ItemImpl` parse before any lowering runs.

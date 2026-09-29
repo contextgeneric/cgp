@@ -3,9 +3,10 @@ use quote::ToTokens;
 use syn::spanned::Spanned;
 use syn::token::For;
 use syn::visit_mut::VisitMut;
-use syn::{Error, Ident, ImplItem, ItemImpl, Type};
+use syn::{Error, Ident, ImplItem, Item, ItemImpl, Type};
 
 use crate::functions::{parse_internal, to_snake_case_ident};
+use crate::types::cgp_impl::helpers::extract_helper_items;
 use crate::types::cgp_impl::{CgpProviderOrBareImpl, ImplArgs};
 use crate::types::cgp_provider::{ItemCgpProvider, ProviderArgs};
 use crate::types::ident::PathWithTypeArgs;
@@ -21,13 +22,25 @@ pub struct LoweredCgpImpl {
     pub context_type: Type,
     pub provider_trait_path: PathWithTypeArgs,
     pub default_impls: Vec<ItemImpl>,
+    /// Blanket trait and impl for `#[helper]` methods, emitted beside the
+    /// provider impl. Empty when the block has no helpers.
+    pub helper_items: Vec<Item>,
 }
 
 impl LoweredCgpImpl {
-    /// Rewrites the block into provider-trait form and hands it to
-    /// [`ItemCgpProvider`], or — for the `#[cgp_impl(Self)]` case — returns the
-    /// block unchanged as a bare consumer impl (requiring a `for` clause).
-    pub fn lower(&self) -> syn::Result<CgpProviderOrBareImpl> {
+    /// Pulls `#[helper]` methods out, then rewrites the remaining block into
+    /// provider-trait form and hands it to [`ItemCgpProvider`]. For the
+    /// `#[cgp_impl(Self)]` case, returns the block unchanged as a bare consumer
+    /// impl (requiring a `for` clause). `replace_self` runs only on the methods
+    /// left in the provider block.
+    pub fn lower(&mut self) -> syn::Result<CgpProviderOrBareImpl> {
+        self.helper_items = extract_helper_items(
+            &mut self.item_impl,
+            &self.context_type,
+            &self.args.provider_type,
+            &self.provider_trait_path,
+        )?;
+
         if self.args.provider_type == parse_internal!(Self) {
             if self.item_impl.trait_.is_none() {
                 return Err(Error::new(

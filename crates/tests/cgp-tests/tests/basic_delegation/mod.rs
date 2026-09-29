@@ -16,6 +16,7 @@ pub mod provider_macro;
 pub mod consumer_delegate_generic;
 pub mod consumer_delegate_getter;
 pub mod default_methods;
+pub mod helper_method;
 pub mod impl_self;
 pub mod owned_receiver;
 pub mod self_in_macro;

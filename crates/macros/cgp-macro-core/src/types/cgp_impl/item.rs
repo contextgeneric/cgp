@@ -71,6 +71,7 @@ impl ItemCgpImpl {
             context_type,
             provider_trait_path,
             default_impls,
+            helper_items: Vec::new(),
         })
     }
 }
