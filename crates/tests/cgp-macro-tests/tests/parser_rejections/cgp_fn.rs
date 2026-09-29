@@ -149,3 +149,59 @@ fn rejects_implicit_attr_name_value() {
         )
     });
 }
+
+#[test]
+fn field_expands_like_implicit() {
+    // `#[field]` and `#[implicit]` are one context-field read. The same function
+    // written with either attribute expands to the same items.
+    let implicit = cgp_macro_lib::cgp_fn(
+        quote!(),
+        quote!(
+            pub fn rectangle_area(&self, #[implicit] width: f64, #[implicit] height: f64) -> f64 {
+                width * height
+            }
+        ),
+    )
+    .expect("implicit form");
+    let field = cgp_macro_lib::cgp_fn(
+        quote!(),
+        quote!(
+            pub fn rectangle_area(&self, #[field] width: f64, #[field] height: f64) -> f64 {
+                width * height
+            }
+        ),
+    )
+    .expect("field form");
+
+    let implicit = cgp_macro_test_util_lib::functions::pretty_format(implicit).expect("format");
+    let field = cgp_macro_test_util_lib::functions::pretty_format(field).expect("format");
+    assert_eq!(field, implicit);
+}
+
+#[test]
+fn rejects_field_attr_with_arguments() {
+    assert_macro_rejects("cgp_fn with a `#[field(...)]` attribute", || {
+        cgp_macro_lib::cgp_fn(
+            quote!(),
+            quote!(
+                pub fn greet(&self, #[field(name)] name: &str) {
+                    let _ = name;
+                }
+            ),
+        )
+    });
+}
+
+#[test]
+fn rejects_field_arg_without_self() {
+    assert_macro_rejects("cgp_fn with a field argument but no self", || {
+        cgp_macro_lib::cgp_fn(
+            quote!(),
+            quote!(
+                pub fn rectangle_area(#[field] width: f64) -> f64 {
+                    width
+                }
+            ),
+        )
+    });
+}

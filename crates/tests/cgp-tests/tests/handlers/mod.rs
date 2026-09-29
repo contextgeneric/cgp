@@ -5,7 +5,9 @@
 // The `#[cgp_computer]` / `#[cgp_producer]` macros and the `Handler` family:
 // runtime tests that a single function definition yields a provider usable
 // across the whole computation family (compute / try_compute / produce / handle
-// and their async and by-ref variants).
+// and their async and by-ref variants), including computers whose `#[field]` /
+// `#[implicit]` arguments are read from the context.
+pub mod computer_context_args;
 pub mod computer_macro;
 pub mod handler_macro;
 pub mod producer_macro;

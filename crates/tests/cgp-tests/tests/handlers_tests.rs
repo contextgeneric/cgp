@@ -1,8 +1,8 @@
 //! Entrypoint for the `handlers` concept.
 //!
 //! Covers CGP's computation family: defining `Computer`/`Producer` providers
-//! from functions with `#[cgp_computer]`/`#[cgp_producer]`, the automatic
-//! promotion between the synchronous `Computer`, the input-free `Producer`, and
+//! from functions with `#[cgp_computer]`/`#[cgp_producer]`, reading `#[field]` and
+//! `#[implicit]` arguments from the context, the automatic promotion between the synchronous `Computer`, the input-free `Producer`, and
 //! the async, fallible `Handler`, and composing handlers into pipelines with the
 //! `PipeHandlers` combinator.
 //!

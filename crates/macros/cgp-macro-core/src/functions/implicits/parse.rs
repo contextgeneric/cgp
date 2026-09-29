@@ -50,35 +50,12 @@ pub fn extract_and_parse_implicit_args(
 }
 
 pub fn parse_implicit_arg(receiver: &Receiver, arg: &PatType) -> syn::Result<ImplicitArgField> {
-    let Pat::Ident(pat_ident) = &*arg.pat else {
-        return Err(syn::Error::new_spanned(&arg.pat, "Expected an identifier"));
-    };
-
-    if has_mut_pattern(&arg.pat) {
-        return Err(syn::Error::new_spanned(
-            &arg.pat,
-            "Mutable variables are not allowed in implicit arguments. (Explicitly clone a `&` reference if you want a mutable local copy of the value)",
-        ));
-    }
-
-    let arg_type = arg.ty.as_ref().clone();
-
     // `parse_field_type` derives the field-access mutability from the reference in
     // the argument type — the outer `&mut` of a `&mut T`/`&mut [T]`, or the inner
     // `&mut` of an `Option<&mut T>` — and rejects a mutable read without a `&mut
     // self` receiver. The receiver's own mutability never forces a mutable read of
     // an immutably-typed argument.
-    let (field_type, field_mode, field_mut) = parse_field_type(&arg_type, &receiver.mutability)?;
-
-    let spec = ImplicitArgField {
-        field_name: pat_ident.ident.clone(),
-        field_type,
-        field_mut,
-        field_mode,
-        arg_type,
-    };
-
-    Ok(spec)
+    parse_named_field_arg(arg, &receiver.mutability)
 }
 
 pub fn extract_implicit_args(args: &mut Punctuated<FnArg, Comma>) -> syn::Result<Vec<PatType>> {
@@ -109,15 +86,14 @@ pub fn is_implicit_arg(arg: &mut PatType) -> syn::Result<bool> {
     for attr in attrs {
         if is_implicit_attr(&attr) {
             res = true;
-        } else if attr.path().is_ident("implicit") {
-            // `#[implicit]` is a bare marker; a list or name-value form such as
-            // `#[implicit(...)]` or `#[implicit = ...]` is a mistake. Reject it here
-            // rather than leaving the stray attribute on the parameter, where it
-            // would surface far downstream as an obscure "cannot find attribute
-            // `implicit`" error.
+        } else if let Some(name) = context_arg_name(&attr) {
+            // `#[implicit]` and `#[field]` are bare markers for the same read.
+            // A list or name-value form is a mistake. Reject it here rather than
+            // leaving the stray attribute on the parameter, where it would surface
+            // far downstream as an obscure "cannot find attribute" error.
             return Err(syn::Error::new_spanned(
                 &attr,
-                "`#[implicit]` does not take any arguments; write it as a bare `#[implicit]`",
+                format!("`#[{name}]` does not take any arguments; write it as a bare `#[{name}]`"),
             ));
         } else {
             arg.attrs.push(attr);
@@ -127,11 +103,73 @@ pub fn is_implicit_arg(arg: &mut PatType) -> syn::Result<bool> {
     Ok(res)
 }
 
+/// `#[implicit]` and `#[field]` name the same context-field read. The bare path
+/// form is the marker; any other form of either name is rejected by
+/// [`is_implicit_arg`].
 pub fn is_implicit_attr(attr: &Attribute) -> bool {
     match &attr.meta {
-        Meta::Path(path) => path.is_ident("implicit"),
+        Meta::Path(path) => is_context_arg_ident(path.get_ident()),
         _ => false,
     }
+}
+
+fn context_arg_name(attr: &Attribute) -> Option<syn::Ident> {
+    let ident = attr.path().get_ident()?;
+    if is_context_arg_ident(Some(ident)) {
+        Some(ident.clone())
+    } else {
+        None
+    }
+}
+
+fn is_context_arg_ident(ident: Option<&syn::Ident>) -> bool {
+    match ident {
+        Some(ident) => ident == "implicit" || ident == "field",
+        None => false,
+    }
+}
+
+/// Parse a context-field argument for a provider that has no `self` receiver,
+/// such as a `#[cgp_computer]` function. The value is read from a shared
+/// `&Context`, so a mutable reference is rejected.
+pub fn parse_context_arg(arg: &PatType) -> syn::Result<ImplicitArgField> {
+    parse_named_field_arg(arg, &None).map_err(|err| {
+        if err.to_string().contains("&mut self is required") {
+            syn::Error::new(
+                err.span(),
+                "a context-field argument is read from a shared `&Context`, so it cannot be a mutable reference",
+            )
+        } else {
+            err
+        }
+    })
+}
+
+fn parse_named_field_arg(
+    arg: &PatType,
+    receiver_mut: &Option<syn::token::Mut>,
+) -> syn::Result<ImplicitArgField> {
+    let Pat::Ident(pat_ident) = &*arg.pat else {
+        return Err(syn::Error::new_spanned(&arg.pat, "Expected an identifier"));
+    };
+
+    if has_mut_pattern(&arg.pat) {
+        return Err(syn::Error::new_spanned(
+            &arg.pat,
+            "Mutable variables are not allowed in implicit arguments. (Explicitly clone a `&` reference if you want a mutable local copy of the value)",
+        ));
+    }
+
+    let arg_type = arg.ty.as_ref().clone();
+    let (field_type, field_mode, field_mut) = parse_field_type(&arg_type, receiver_mut)?;
+
+    Ok(ImplicitArgField {
+        field_name: pat_ident.ident.clone(),
+        field_type,
+        field_mut,
+        field_mode,
+        arg_type,
+    })
 }
 
 pub fn has_mut_pattern(pat: &Pat) -> bool {
