@@ -16,3 +16,7 @@ pub mod producer_macro;
 // the `Promote*` adapters that lift a simpler handler into a more capable one.
 pub mod pipe_computers;
 pub mod pipe_handlers;
+
+// `#[derive_promote]` lifts a `Computer` into a component provider.
+pub mod promote_computer;
+pub mod promote_with_input;

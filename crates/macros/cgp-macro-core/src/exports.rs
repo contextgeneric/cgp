@@ -59,4 +59,6 @@ export_constructs! {
     ErrorRaiserComponent,
     ErrorWrapper,
     ErrorWrapperComponent,
+
+    Computer,
 }

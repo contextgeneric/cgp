@@ -6,8 +6,8 @@ use syn::token::Comma;
 use syn::{Attribute, ItemTrait, TypeParamBound};
 
 use crate::types::attributes::{
-    DeriveDelegateAttribute, DeriveDelegateAttributes, PrefixAttribute, UseTypeAttribute,
-    UseTypeAttributes,
+    DeriveDelegateAttribute, DeriveDelegateAttributes, DerivePromoteAttribute, PrefixAttribute,
+    UseTypeAttribute, UseTypeAttributes,
 };
 
 #[derive(Default, Clone)]
@@ -16,6 +16,7 @@ pub struct CgpComponentAttributes {
     pub use_type: UseTypeAttributes,
     pub prefixes: Vec<PrefixAttribute>,
     pub derive_delegate_attributes: DeriveDelegateAttributes,
+    pub derive_promote: Option<DerivePromoteAttribute>,
 }
 
 impl CgpComponentAttributes {
@@ -68,6 +69,16 @@ impl CgpComponentAttributes {
                         .derive_delegate_attributes
                         .attributes
                         .push(derive_delegate_attribute);
+                } else if ident == "derive_promote" {
+                    if parsed_attributes.derive_promote.is_some() {
+                        return Err(syn::Error::new_spanned(
+                            attribute,
+                            "duplicate `#[derive_promote]`; a component promotes through one provider",
+                        ));
+                    }
+
+                    parsed_attributes.derive_promote =
+                        Some(attribute.parse_args_with(DerivePromoteAttribute::parse)?);
                 } else {
                     attributes.push(attribute);
                 }

@@ -38,3 +38,69 @@ fn rejects_const_generic_parameter() {
         )
     });
 }
+
+#[test]
+fn rejects_derive_promote_with_two_methods() {
+    assert_macro_rejects("derive_promote on a component with two methods", || {
+        cgp_macro_lib::cgp_component(
+            quote!(AreaCalculator),
+            quote!(
+                #[derive_promote(PromoteAreaCalculator)]
+                pub trait HasArea {
+                    fn area(&self) -> f64;
+                    fn perimeter(&self) -> f64;
+                }
+            ),
+        )
+    });
+}
+
+#[test]
+fn rejects_duplicate_derive_promote() {
+    assert_macro_rejects("duplicate derive_promote", || {
+        cgp_macro_lib::cgp_component(
+            quote!(AreaCalculator),
+            quote!(
+                #[derive_promote(PromoteArea)]
+                #[derive_promote(PromoteOther)]
+                pub trait HasArea {
+                    fn area(&self) -> f64;
+                }
+            ),
+        )
+    });
+}
+
+#[test]
+fn rejects_derive_promote_with_associated_type() {
+    assert_macro_rejects(
+        "derive_promote on a component with an associated type",
+        || {
+            cgp_macro_lib::cgp_component(
+                quote!(AreaCalculator),
+                quote!(
+                    #[derive_promote(PromoteAreaCalculator)]
+                    pub trait HasArea {
+                        type Unit;
+                        fn area(&self) -> f64;
+                    }
+                ),
+            )
+        },
+    );
+}
+
+#[test]
+fn rejects_derive_promote_on_async_method() {
+    assert_macro_rejects("derive_promote on an async method", || {
+        cgp_macro_lib::cgp_component(
+            quote!(AreaCalculator),
+            quote!(
+                #[derive_promote(PromoteAreaCalculator)]
+                pub trait HasArea {
+                    async fn area(&self) -> f64;
+                }
+            ),
+        )
+    });
+}

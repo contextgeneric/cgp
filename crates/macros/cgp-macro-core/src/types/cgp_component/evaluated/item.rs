@@ -30,6 +30,10 @@ impl EvaluatedCgpComponent {
             Item::Struct(self.component_struct.to_item_struct()),
         ];
 
+        if let Some(promote) = &self.attributes.derive_promote {
+            items.push(Item::Struct(promote.to_struct().to_item_struct()));
+        }
+
         let item_impls = self.to_item_impls()?.into_iter().map(Item::Impl);
 
         items.extend(item_impls);
@@ -48,7 +52,9 @@ impl EvaluatedCgpComponent {
     }
 
     /// The `UseContext` and `RedirectLookup` impls always emitted for a component,
-    /// plus one `UseDelegate` impl per `#[derive_delegate]` attribute.
+    /// plus one `UseDelegate` impl per `#[derive_delegate]` attribute and, when
+    /// `#[derive_promote]` is present, the provider impl that forwards the
+    /// component to `Computer::compute`.
     pub fn to_provider_impls(&self) -> syn::Result<ItemProviderImpls> {
         let mut provider_impls = ItemProviderImpls::default();
 
@@ -60,6 +66,14 @@ impl EvaluatedCgpComponent {
 
         let use_delegate_impls = self.to_use_delegate_impls()?;
         provider_impls.items.extend(use_delegate_impls.items);
+
+        if let Some(promote) = &self.attributes.derive_promote {
+            let item_impl = promote.to_provider_impl(&self.provider_trait)?;
+            provider_impls.items.push(ItemProviderImpl {
+                component_type: self.args.component_name.to_type(),
+                item_impl,
+            });
+        }
 
         Ok(provider_impls)
     }
