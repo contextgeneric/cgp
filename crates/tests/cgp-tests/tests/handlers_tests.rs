@@ -3,9 +3,10 @@
 //! Covers CGP's computation family: defining `Computer`/`Producer` providers
 //! from functions with `#[cgp_computer]`/`#[cgp_producer]`, reading `#[field]` and
 //! `#[implicit]` arguments from the context, wrapping a `Computer` as a component
-//! provider with `#[derive_promote]`, the automatic promotion between the synchronous `Computer`, the input-free `Producer`, and
-//! the async, fallible `Handler`, and composing handlers into pipelines with the
-//! `PipeHandlers` combinator.
+//! provider with `#[derive_promote]`, the automatic promotion between the
+//! synchronous `Computer`, the input-free `Producer`, and the async, fallible
+//! `Handler`, and composing handlers into pipelines with the `PipeHandlers`
+//! combinator.
 //!
 //! This concept does *not* own `#[cgp_component]`, `#[cgp_provider]`,
 //! `check_components!`, or `delegate_components!` snapshots — those live in their
