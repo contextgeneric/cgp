@@ -406,6 +406,46 @@ pub fn cgp_auto_impl(attr: TokenStream, item: TokenStream) -> TokenStream {
 }
 
 /**
+    `#[cgp_auto_error]` turns a small error definition into the providers for
+    `HasErrorType`, `CanRaiseError`, and `CanWrapError`.
+
+    The impl names the provider. `type Error` selects the abstract error type.
+    `raise_error` and `wrap_error` are the provider bodies: a bare `Error` in
+    type position is that abstract error. Wire the generated provider on
+    `ErrorTypeProviderComponent`, `ErrorRaiserComponent`, and
+    `ErrorWrapperComponent`.
+
+    ## Example
+
+    ```rust,ignore
+    #[cgp_auto_error]
+    impl ProvideAppError {
+        type Error = AppError;
+
+        fn raise_error<Source>(source: Source) -> Error
+        where
+            Source: core::fmt::Display,
+        {
+            AppError { message: source.to_string() }
+        }
+
+        fn wrap_error<Detail>(error: Error, detail: Detail) -> Error
+        where
+            Detail: core::fmt::Display,
+        {
+            AppError { message: format!("{detail}: {}", error.message) }
+        }
+    }
+    ```
+*/
+#[proc_macro_attribute]
+pub fn cgp_auto_error(attr: TokenStream, item: TokenStream) -> TokenStream {
+    cgp_macro_lib::cgp_auto_error(attr.into(), item.into())
+        .unwrap_or_else(syn::Error::into_compile_error)
+        .into()
+}
+
+/**
     The `delegate_components!` macro is used to define wiring of CGP components
     on a provider type.
 

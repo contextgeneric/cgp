@@ -1,4 +1,5 @@
 mod snapshot_blanket_trait;
+mod snapshot_cgp_auto_error;
 mod snapshot_cgp_auto_getter;
 mod snapshot_cgp_auto_impl;
 mod snapshot_cgp_component;
@@ -20,6 +21,7 @@ mod snapshot_derive_has_field;
 mod snapshot_derive_has_fields;
 
 pub use snapshot_blanket_trait::*;
+pub use snapshot_cgp_auto_error::*;
 pub use snapshot_cgp_auto_getter::*;
 pub use snapshot_cgp_auto_impl::*;
 pub use snapshot_cgp_component::*;

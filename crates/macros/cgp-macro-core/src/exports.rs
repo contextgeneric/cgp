@@ -51,4 +51,12 @@ export_constructs! {
     IsMut,
     MapType,
     MapTypeRef,
+
+    HasErrorType,
+    ErrorTypeProvider,
+    ErrorTypeProviderComponent,
+    ErrorRaiser,
+    ErrorRaiserComponent,
+    ErrorWrapper,
+    ErrorWrapperComponent,
 }

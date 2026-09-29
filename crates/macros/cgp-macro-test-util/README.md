@@ -45,6 +45,7 @@ so a snapshot is guaranteed to show what the production macros generate.
 | `snapshot_cgp_new_provider!`| `#[cgp_new_provider]` |
 | `snapshot_cgp_auto_getter!` | `#[cgp_auto_getter]`  |
 | `snapshot_cgp_auto_impl!`   | `#[cgp_auto_impl]`    |
+| `snapshot_cgp_auto_error!`  | `#[cgp_auto_error]`   |
 | `snapshot_cgp_getter!`      | `#[cgp_getter]`       |
 | `snapshot_cgp_fn!`          | `#[cgp_fn]`           |
 | `snapshot_cgp_type!`        | `#[cgp_type]`         |

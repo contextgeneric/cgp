@@ -1,5 +1,6 @@
 pub mod attributes;
 pub mod blanket_trait;
+pub mod cgp_auto_error;
 pub mod cgp_auto_getter;
 pub mod cgp_auto_impl;
 pub mod cgp_component;

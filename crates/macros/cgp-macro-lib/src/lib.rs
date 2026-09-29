@@ -1,4 +1,5 @@
 mod blanket_trait;
+mod cgp_auto_error;
 mod cgp_auto_getter;
 mod cgp_auto_impl;
 mod cgp_component;
@@ -29,6 +30,7 @@ mod sum;
 mod symbol;
 
 pub use blanket_trait::*;
+pub use cgp_auto_error::*;
 pub use cgp_auto_getter::*;
 pub use cgp_auto_impl::*;
 pub use cgp_component::*;
