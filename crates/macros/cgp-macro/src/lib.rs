@@ -465,6 +465,27 @@ pub fn cgp_auto_getter(attr: TokenStream, item: TokenStream) -> TokenStream {
     }
     ```
 
+    ## Type and getter shorthand
+
+    A type component whose provider is `UseType`, and a getter component whose
+    provider is `UseField`, may be written as the value alone:
+
+    ```rust,ignore
+    delegate_components! {
+        Person {
+            type Name = String,
+            getter name,
+            GreeterComponent: GreetHello,
+        }
+    }
+    ```
+
+    `type Name = String` is `NameTypeProviderComponent: UseType<String>`.
+    `getter name` is `NameGetterComponent: UseField<Symbol!("name")>`.
+    The explicit `Key: Provider` form, including `UseType` and `UseField`
+    written out, means the same thing and stays available for a provider that
+    is not the obvious one.
+
     ## Generating Mapping Struct
 
     By default, mapping types like `MyComponents` would be defined outside of `delegate_components!`

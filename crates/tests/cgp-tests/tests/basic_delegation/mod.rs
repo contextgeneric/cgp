@@ -8,6 +8,7 @@ pub mod component_macro;
 pub mod delegate_array_key;
 pub mod delegate_components_macro;
 pub mod delegate_generic_table;
+pub mod delegate_shorthand;
 pub mod provider_component_override;
 pub mod provider_macro;
 
@@ -20,6 +21,7 @@ pub mod owned_receiver;
 pub mod self_in_macro;
 pub mod self_in_nested_item;
 pub mod self_local_assoc_type;
+pub mod shorthand_wiring;
 
 // `delegate_components!` shape variants (compile-time checks only).
 pub mod delegate_generic_nested_value;

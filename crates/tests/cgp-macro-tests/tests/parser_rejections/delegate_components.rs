@@ -120,6 +120,25 @@ fn rejects_braced_path_group_followed_by_more_path() {
 }
 
 #[test]
+fn rejects_type_shorthand_without_value() {
+    assert_macro_rejects("delegate_components type shorthand without `=`", || {
+        cgp_macro_lib::delegate_components(quote!(
+            Context {
+                type Name,
+            }
+        ))
+    });
+}
+
+#[test]
+fn rejects_getter_shorthand_without_field() {
+    assert_macro_rejects(
+        "delegate_components getter shorthand without a field",
+        || cgp_macro_lib::delegate_components(quote!(Context { getter })),
+    );
+}
+
+#[test]
 fn rejects_bounded_generics_on_inner_table() {
     // A nested table's name takes a bound-free generic list; a bound belongs on
     // the entry's own generics instead. The value parser tries the nested-table

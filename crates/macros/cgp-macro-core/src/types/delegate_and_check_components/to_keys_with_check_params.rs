@@ -1,4 +1,5 @@
 use crate::types::delegate_and_check_components::{CheckParamsAttribute, KeyWithCheckParams};
+use crate::types::generics::ImplGenerics;
 use crate::types::delegate_component::{
     DelegateEntries, DelegateKey, DelegateMapping, MultiDelegateKey, SingleDelegateKey,
     ValidateAttributes,
@@ -71,7 +72,21 @@ impl ToKeysWithCheckParams for DelegateMapping {
                 mapping.key.validate_attributes()?;
                 Ok(Vec::new())
             }
+            DelegateMapping::TypeShorthand(entry) => {
+                Ok(vec![shorthand_check_key(entry.component_key())])
+            }
+            DelegateMapping::GetterShorthand(entry) => {
+                Ok(vec![shorthand_check_key(entry.component_key())])
+            }
         }
+    }
+}
+
+fn shorthand_check_key(key_type: syn::Type) -> KeyWithCheckParams {
+    KeyWithCheckParams {
+        check_params: CheckParamsAttribute::Default,
+        generics: ImplGenerics::default(),
+        key_type,
     }
 }
 
