@@ -1,3 +1,4 @@
+use proc_macro2::TokenStream;
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
@@ -5,7 +6,7 @@ use syn::{Generics, ItemImpl, Type};
 
 use crate::types::delegate_component::{
     DelegateMapping, DelegateStatement, EvalDelegateEntries, ExtractInnerDelegateTables,
-    InnerDelegateTable,
+    InnerDelegateTable, invoke_with_components,
 };
 
 /// A table body: leading statements (`open`/`namespace`/`for`) followed by the
@@ -78,6 +79,36 @@ impl DelegateEntries {
         }
 
         Ok(item_impls)
+    }
+
+    /// Expand each `preset Path` entry into a `Path::with_components!` call.
+    /// Keys already implemented by this table are excluded, so an explicit entry
+    /// overrides the preset.
+    pub fn build_preset_invocations(
+        &self,
+        table_type: &Type,
+        outer_generics: &Generics,
+    ) -> syn::Result<TokenStream> {
+        let exclude = self
+            .eval_entries(table_type)?
+            .into_iter()
+            .map(|entry| entry.key)
+            .collect::<Vec<_>>();
+
+        let mut invocations = TokenStream::new();
+
+        for entry in &self.entries {
+            if let DelegateMapping::Preset(preset) = entry {
+                invocations.extend(invoke_with_components(
+                    &preset.path,
+                    table_type,
+                    outer_generics,
+                    &exclude,
+                ));
+            }
+        }
+
+        Ok(invocations)
     }
 }
 

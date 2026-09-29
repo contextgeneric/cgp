@@ -102,8 +102,10 @@ impl ValidateAttributes for DelegateMapping {
             }
             // A Redirect value is a bare `@`-path with no inner table.
             DelegateMapping::Redirect(mapping) => mapping.key.validate_attributes(),
-            // Shorthand entries carry no attributes.
-            DelegateMapping::TypeShorthand(_) | DelegateMapping::GetterShorthand(_) => Ok(()),
+            // Shorthand and preset entries carry no attributes.
+            DelegateMapping::TypeShorthand(_)
+            | DelegateMapping::GetterShorthand(_)
+            | DelegateMapping::Preset(_) => Ok(()),
         }
     }
 }

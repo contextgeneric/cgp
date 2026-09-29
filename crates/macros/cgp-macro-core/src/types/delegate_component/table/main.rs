@@ -1,7 +1,7 @@
 use proc_macro2::TokenStream;
 use quote::ToTokens;
 use syn::parse::{Parse, ParseStream};
-use syn::{Attribute, ItemImpl, Type, braced};
+use syn::{Attribute, Generics, ItemImpl, Type, braced};
 
 use crate::functions::parse_internal;
 use crate::traits::ParseOptionalKeyword;
@@ -27,6 +27,7 @@ pub struct DelegateTable {
 pub struct EvaluatedDelegateTable {
     pub item_impls: Vec<ItemImpl>,
     pub item_structs: Vec<EmptyStruct>,
+    pub preset_invocations: TokenStream,
 }
 
 impl Parse for DelegateTable {
@@ -63,6 +64,9 @@ impl DelegateTable {
     pub fn eval(&self) -> syn::Result<EvaluatedDelegateTable> {
         let mut item_impls = Vec::new();
         let mut item_structs = Vec::new();
+        let mut preset_invocations = self
+            .entries
+            .build_preset_invocations(&self.table_type, &self.impl_generics)?;
 
         if self.new.is_some() {
             let struct_type: IdentWithTypeGenerics =
@@ -84,11 +88,20 @@ impl DelegateTable {
             item_structs.push(inner_table.build_table_struct());
 
             item_impls.extend(inner_table.build_impls()?);
+
+            let inner_type = inner_table.build_table_type()?;
+            let inner_generics: &Generics = &inner_table.table_generics;
+            preset_invocations.extend(
+                inner_table
+                    .entries
+                    .build_preset_invocations(&inner_type, inner_generics)?,
+            );
         }
 
         Ok(EvaluatedDelegateTable {
             item_impls,
             item_structs,
+            preset_invocations,
         })
     }
 }
@@ -102,5 +115,7 @@ impl ToTokens for EvaluatedDelegateTable {
         for item_impl in &self.item_impls {
             item_impl.to_tokens(tokens);
         }
+
+        self.preset_invocations.to_tokens(tokens);
     }
 }

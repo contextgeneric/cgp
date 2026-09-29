@@ -26,6 +26,7 @@ pub mod cgp_component;
 pub mod cgp_fn;
 pub mod cgp_impl;
 pub mod cgp_namespace;
+pub mod cgp_preset;
 pub mod cgp_provider;
 pub mod check_components;
 pub mod delegate_and_check_components;

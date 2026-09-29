@@ -5,9 +5,9 @@ use crate::traits::PeekKeyword;
 use crate::types::delegate_component::{
     DelegateMode, DirectDelegateMapping, EvalDelegateEntries, EvaluatedDelegateEntry,
     ExtractInnerDelegateTables, GetterDelegateShorthand, InnerDelegateTable, NormalDelegateMapping,
-    RedirectDelegateMapping, TypeDelegateShorthand,
+    PresetDelegateEntry, RedirectDelegateMapping, TypeDelegateShorthand,
 };
-use crate::types::keywords::Getter;
+use crate::types::keywords::{Getter, Preset};
 
 /// One `Key OP Value` entry, its variant chosen by the operator: `:` is Normal,
 /// `->` is Direct, `=>` is Redirect.
@@ -18,6 +18,7 @@ pub enum DelegateMapping {
     Redirect(RedirectDelegateMapping),
     TypeShorthand(TypeDelegateShorthand),
     GetterShorthand(GetterDelegateShorthand),
+    Preset(PresetDelegateEntry),
 }
 
 impl Parse for DelegateMapping {
@@ -28,6 +29,10 @@ impl Parse for DelegateMapping {
 
         if peek_bare_keyword::<Getter>(input) {
             return Ok(Self::GetterShorthand(input.parse()?));
+        }
+
+        if peek_bare_keyword::<Preset>(input) {
+            return Ok(Self::Preset(input.parse()?));
         }
 
         let key = input.parse()?;
@@ -60,6 +65,9 @@ impl EvalDelegateEntries for DelegateMapping {
             Self::Redirect(entry) => entry.eval_entries(table_type),
             Self::TypeShorthand(entry) => entry.eval_entries(table_type),
             Self::GetterShorthand(entry) => entry.eval_entries(table_type),
+            // A preset's keys are not known here; `build_preset_invocations`
+            // emits the `with_components!` call that expands them.
+            Self::Preset(_) => Ok(Vec::new()),
         }
     }
 }
@@ -69,13 +77,16 @@ impl ExtractInnerDelegateTables for DelegateMapping {
         match self {
             Self::Normal(entry) => entry.extract_inner_tables(),
             Self::Direct(entry) => entry.extract_inner_tables(),
-            Self::Redirect(_) | Self::TypeShorthand(_) | Self::GetterShorthand(_) => Vec::new(),
+            Self::Redirect(_)
+            | Self::TypeShorthand(_)
+            | Self::GetterShorthand(_)
+            | Self::Preset(_) => Vec::new(),
         }
     }
 }
 
-/// `getter name` rather than a key of that name followed by an operator.
-/// A following `:`, `->`, or `=>` keeps the explicit `Key OP Value` form.
+/// `getter name` / `preset Path` rather than a key of that name followed by an
+/// operator. A following `:`, `->`, or `=>` keeps the explicit `Key OP Value` form.
 fn peek_bare_keyword<K>(input: ParseStream) -> bool
 where
     K: crate::traits::IsKeyword,

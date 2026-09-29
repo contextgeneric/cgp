@@ -1,9 +1,9 @@
 use crate::types::delegate_and_check_components::{CheckParamsAttribute, KeyWithCheckParams};
-use crate::types::generics::ImplGenerics;
 use crate::types::delegate_component::{
     DelegateEntries, DelegateKey, DelegateMapping, MultiDelegateKey, SingleDelegateKey,
     ValidateAttributes,
 };
+use crate::types::generics::ImplGenerics;
 
 pub trait ToKeysWithCheckParams {
     fn to_keys_with_check_params(&self) -> syn::Result<Vec<KeyWithCheckParams>>;
@@ -78,6 +78,8 @@ impl ToKeysWithCheckParams for DelegateMapping {
             DelegateMapping::GetterShorthand(entry) => {
                 Ok(vec![shorthand_check_key(entry.component_key())])
             }
+            // A preset's keys are produced by `with_components!`, not by this macro.
+            DelegateMapping::Preset(_) => Ok(Vec::new()),
         }
     }
 }

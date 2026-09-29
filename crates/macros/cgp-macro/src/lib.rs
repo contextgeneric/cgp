@@ -486,6 +486,12 @@ pub fn cgp_auto_getter(attr: TokenStream, item: TokenStream) -> TokenStream {
     written out, means the same thing and stays available for a provider that
     is not the obvious one.
 
+    ## Preset entries
+
+    `preset Name` expands to one `DelegateComponent` impl for every component
+    in that preset. Two presets combine by listing both. An explicit entry for
+    the same component overrides the preset. See [`cgp_preset!`](macro@cgp_preset).
+
     ## Generating Mapping Struct
 
     By default, mapping types like `MyComponents` would be defined outside of `delegate_components!`
@@ -577,6 +583,48 @@ pub fn delegate_components(body: TokenStream) -> TokenStream {
 #[proc_macro]
 pub fn cgp_for_each(body: TokenStream) -> TokenStream {
     cgp_macro_lib::cgp_for_each(body.into())
+        .unwrap_or_else(syn::Error::into_compile_error)
+        .into()
+}
+
+/**
+    `cgp_preset!` bundles wiring entries into a module other tables can replay.
+
+    Each entry uses the same grammar as [`delegate_components!`](macro@delegate_components),
+    including the `type Name = Type` and `getter field` shorthand. The macro
+    defines `Name::Provider` and a `DelegateComponent` impl per entry, and exports
+    `Name::with_components!`, which expands one preset entry into those impls.
+
+    A preset lists parent presets after a colon. The child implements its own
+    entries and inherits the rest, so two presets combine without repeating
+    `UseType` or `UseField`.
+
+    ```rust,ignore
+    cgp_preset! {
+        Types {
+            type Name = String,
+        }
+    }
+
+    cgp_preset! {
+        PersonPreset: Types {
+            getter name,
+        }
+    }
+
+    delegate_components! {
+        Person {
+            preset PersonPreset,
+        }
+    }
+    ```
+
+    `PersonPreset` expands to the `Name` type entry and the `name` getter entry.
+    An explicit `Key: Provider` entry in the same table overrides the preset.
+*/
+#[proc_macro]
+pub fn cgp_preset(body: TokenStream) -> TokenStream {
+    cgp_macro_lib::cgp_preset(body.into())
         .unwrap_or_else(syn::Error::into_compile_error)
         .into()
 }

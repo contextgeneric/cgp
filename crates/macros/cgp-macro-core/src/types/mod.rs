@@ -7,6 +7,7 @@ pub mod cgp_fn;
 pub mod cgp_for_each;
 pub mod cgp_getter;
 pub mod cgp_impl;
+pub mod cgp_preset;
 pub mod cgp_provider;
 pub mod cgp_type;
 pub mod check_components;

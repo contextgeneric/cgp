@@ -139,6 +139,13 @@ fn rejects_getter_shorthand_without_field() {
 }
 
 #[test]
+fn rejects_preset_entry_without_path() {
+    assert_macro_rejects("delegate_components preset entry without a path", || {
+        cgp_macro_lib::delegate_components(quote!(Context { preset }))
+    });
+}
+
+#[test]
 fn rejects_bounded_generics_on_inner_table() {
     // A nested table's name takes a bound-free generic list; a bound belongs on
     // the entry's own generics instead. The value parser tries the nested-table
