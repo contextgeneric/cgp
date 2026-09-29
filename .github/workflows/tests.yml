@@ -56,7 +56,20 @@ jobs:
       # Prebuilt binary from the official nextest distribution.
       - name: Install cargo-nextest
         run: curl -LsSf https://get.nexte.st/latest/linux | tar zxf - -C ${CARGO_HOME:-~/.cargo}/bin
-      # Runs the whole workspace, including the trybuild compile-fail fixtures in
-      # cgp-compile-fail-tests (an ordinary integration test nextest picks up).
+      # Runs the whole workspace. Post-codegen compile failures live in cargo-cgp.
       - name: Run tests
         run: cargo nextest run --all-features --no-fail-fast --workspace
+
+  no-std:
+    name: no_std target
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pinned toolchain
+        run: rustup toolchain install
+      - name: Add a bare-metal target
+        run: rustup target add thumbv7m-none-eabi
+      # The facade is advertised as no_std. A dependency that omits `#![no_std]`
+      # still links `std` and fails this check for every bare-metal target.
+      - name: Check the facade without std
+        run: cargo check -p cgp --target thumbv7m-none-eabi
