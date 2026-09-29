@@ -1,13 +1,12 @@
-use quote::ToTokens;
 use syn::{ImplItem, ItemImpl, Type};
 
 use crate::exports::UseFields;
 use crate::functions::parse_internal;
 use crate::types::cgp_getter::{ItemCgpGetter, ReceiverMode};
+use crate::types::cgp_type::lift_assoc_type;
 use crate::types::field::{HasFieldBound, Symbol};
 use crate::types::getter::{ContextArg, derive_getter_method};
 use crate::types::provider_impl::ItemProviderImpl;
-use crate::visitors::get_bounds_and_replace_self_assoc_type;
 
 impl ItemCgpGetter {
     pub fn to_use_fields_impl(&self) -> syn::Result<ItemProviderImpl> {
@@ -26,24 +25,11 @@ impl ItemCgpGetter {
         let mut provider_generics = provider_trait.generics.clone();
 
         if let Some(field_assoc_type) = &field_assoc_type {
-            let field_assoc_type_ident = &field_assoc_type.ident;
-
-            provider_generics
-                .params
-                .push(parse_internal(field_assoc_type_ident.to_token_stream())?);
-
-            items.push(parse_internal! {
-                type #field_assoc_type_ident = #field_assoc_type_ident;
-            });
-
-            let field_constraints = get_bounds_and_replace_self_assoc_type(field_assoc_type);
-
-            provider_generics
-                .make_where_clause()
-                .predicates
-                .push(parse_internal! {
-                    #field_assoc_type_ident: #field_constraints
-                });
+            items.push(lift_assoc_type(
+                &mut provider_generics,
+                field_assoc_type,
+                false,
+            )?);
         }
 
         let where_clause = provider_generics.make_where_clause();

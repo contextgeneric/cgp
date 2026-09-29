@@ -10,6 +10,7 @@ use syn::{
 use crate::functions::{parse_field_type, parse_single_segment_type_path};
 use crate::parse_internal;
 use crate::types::cgp_getter::{GetterField, ReceiverMode};
+use crate::types::cgp_type::validate_assoc_type_item;
 use crate::visitors::ReplaceSelfTypeVisitor;
 
 pub fn parse_getter_fields(
@@ -29,12 +30,7 @@ pub fn parse_getter_fields(
                 ));
             }
 
-            if !item_type.generics.params.is_empty() {
-                return Err(Error::new(
-                    item_type.generics.params.span(),
-                    "associated type in getter trait must not contain generic params",
-                ));
-            }
+            validate_assoc_type_item(item_type)?;
 
             field_assoc_type = Some(item_type.clone());
         }
@@ -57,10 +53,17 @@ pub fn parse_getter_fields(
             _ => {
                 return Err(Error::new(
                     item.span(),
-                    "getter trait can only contain getter methods",
+                    "a getter must be a field method or an associated type",
                 ));
             }
         }
+    }
+
+    if fields.is_empty() && field_assoc_type.is_none() {
+        return Err(Error::new(
+            consumer_trait.ident.span(),
+            "a getter must be a field method or an associated type",
+        ));
     }
 
     match (&field_assoc_type, fields.first(), fields.len()) {

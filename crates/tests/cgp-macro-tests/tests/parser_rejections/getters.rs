@@ -4,8 +4,11 @@
 //! argument-free `cgp_auto_getter` entrypoint and hold identically for
 //! `#[cgp_getter]`. A getter method must be a plain (non-const, non-async,
 //! non-unsafe, non-generic) method whose first argument is a reference; a mutable
-//! return requires a `&mut self` receiver; and at most one associated type is
-//! allowed, only alongside exactly one method. `#[cgp_auto_getter]` additionally
+//! return requires a `&mut self` receiver. At most one associated type is
+//! allowed, and only beside exactly one getter method: `#[cgp_auto_getter]`
+//! rejects a type with no method, while `#[cgp_getter]` on a type alone is
+//! forwarded to `#[cgp_type]`. An empty trait, or any item that is neither a
+//! field method nor an associated type, is rejected. `#[cgp_auto_getter]` additionally
 //! rejects any attribute argument, since it has no provider name or keys to accept.
 //!
 //! See cgp-knowledge-base/cgp/implementation/asts/cgp_getter.md (Tests) for these failure cases and
@@ -125,6 +128,26 @@ fn rejects_multiple_associated_types() {
 }
 
 #[test]
+fn rejects_associated_type_without_method() {
+    // An auto getter binds the associated type to a field read, so the type
+    // needs exactly one getter method. A type on its own is a `#[cgp_type]`
+    // (or a `#[cgp_getter]` that takes that path).
+    assert_macro_rejects(
+        "cgp_auto_getter with an associated type and no method",
+        || {
+            cgp_macro_lib::cgp_auto_getter(
+                quote!(),
+                quote!(
+                    pub trait HasName {
+                        type Name: Display;
+                    }
+                ),
+            )
+        },
+    );
+}
+
+#[test]
 fn rejects_associated_type_with_multiple_methods() {
     // An associated return type is inferred from a single field, so a trait that
     // declares one must contain exactly one getter method.
@@ -157,6 +180,20 @@ fn rejects_associated_const_trait_item() {
                     const LIMIT: usize;
                     fn name(&self) -> &str;
                 }
+            ),
+        )
+    });
+}
+
+#[test]
+fn rejects_empty_getter_trait() {
+    // A getter trait has to contribute a field method or an associated type;
+    // an empty trait would expand to a blanket impl that checks nothing.
+    assert_macro_rejects("cgp_auto_getter with an empty trait", || {
+        cgp_macro_lib::cgp_auto_getter(
+            quote!(),
+            quote!(
+                pub trait HasName {}
             ),
         )
     });

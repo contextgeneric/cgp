@@ -3,9 +3,9 @@ use syn::{Ident, ImplItem, ItemImpl, ItemTrait, TraitItemType};
 
 use crate::functions::parse_internal;
 use crate::types::cgp_getter::{GetterField, ReceiverMode};
+use crate::types::cgp_type::lift_assoc_type;
 use crate::types::field::{FieldName, HasFieldBound};
 use crate::types::getter::{ContextArg, derive_getter_method};
-use crate::visitors::get_bounds_and_replace_self_assoc_type;
 
 pub fn derive_blanket_impl(
     context_type: &Ident,
@@ -30,24 +30,7 @@ pub fn derive_blanket_impl(
         .insert(0, parse_internal(context_type.to_token_stream())?);
 
     if let Some(field_assoc_type) = field_assoc_type {
-        let field_assoc_type_ident = &field_assoc_type.ident;
-
-        generics
-            .params
-            .push(parse_internal(field_assoc_type_ident.to_token_stream())?);
-
-        items.push(parse_internal! {
-            type #field_assoc_type_ident = #field_assoc_type_ident;
-        });
-
-        let field_constraints = get_bounds_and_replace_self_assoc_type(field_assoc_type);
-
-        generics
-            .make_where_clause()
-            .predicates
-            .push(parse_internal! {
-                #field_assoc_type_ident: #field_constraints
-            });
+        items.push(lift_assoc_type(&mut generics, field_assoc_type, false)?);
     }
 
     let where_clause = generics.make_where_clause();

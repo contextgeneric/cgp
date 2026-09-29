@@ -21,6 +21,7 @@ pub mod string_auto;
 // `#[cgp_getter]` snapshots (this concept owns the macro's expansion): the full
 // getter component, its return-type shapes, and its `provider`/`name` overrides.
 pub mod assoc_type_getter;
+pub mod assoc_type_only;
 pub mod assoc_type_self_referential;
 pub mod clone;
 pub mod mref;
