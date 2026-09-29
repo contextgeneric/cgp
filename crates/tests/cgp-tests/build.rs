@@ -23,6 +23,9 @@ fn main() {
 
         let text = fs::read_to_string(&readme)
             .unwrap_or_else(|e| panic!("cannot read {}: {e}", readme.display()));
+        // A Windows checkout may check the README out with CRLF. The splitter
+        // below matches on `\n`.
+        let text = text.replace("\r\n", "\n");
         let module =
             readme_test(backend, &text).unwrap_or_else(|e| panic!("{}: {e}", readme.display()));
 
