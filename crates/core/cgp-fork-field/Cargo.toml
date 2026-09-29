@@ -1,0 +1,17 @@
+[package]
+name         = "cgp-fork-field"
+version      = "0.9.0"
+edition      = { workspace = true }
+license      = { workspace = true }
+repository   = { workspace = true }
+authors      = { workspace = true }
+rust-version = { workspace = true }
+homepage     = { workspace = true }
+keywords     = { workspace = true }
+categories   = { workspace = true }
+description  = "CGP field access: HasField, builders, and extensible records and variants."
+
+[dependencies]
+cgp-fork-base-types      = { workspace = true }
+cgp-fork-component       = { workspace = true }
+cgp-fork-type            = { workspace = true }

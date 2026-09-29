@@ -1,0 +1,5 @@
+{"run_id":"1790520072-530391600","line":31,"new":{"module_name":"basic_delegation_tests__basic_delegation__helper_method","snapshot_name":"expand_greet_shout","metadata":{"source":"crates/tests/cgp-tests/tests/basic_delegation/helper_method.rs","assertion_line":31,"expression":"output"},"snapshot":"#[allow(non_camel_case_types)]\ntrait __Impl_GreetShout__ {\n    fn shout(&self) -> &'static str;\n}\nimpl<__Context__> __Impl_GreetShout__ for __Context__ {\n    fn shout(&self) -> &'static str {\n        \"HELLO\"\n    }\n}\nimpl<__Context__> Greeter<__Context__> for GreetShout {\n    fn greet(__context__: &__Context__) -> &'static str {\n        __context__.shout()\n    }\n}\nimpl<__Context__> IsProviderFor<GreeterComponent, __Context__, ()> for GreetShout {}\npub struct GreetShout;"},"old":{"module_name":"basic_delegation_tests__basic_delegation__helper_method","metadata":{},"snapshot":"placeholder"}}
+{"run_id":"1790520112-603466500","line":31,"new":null,"old":null}
+{"run_id":"1790522427-651077200","line":31,"new":null,"old":null}
+{"run_id":"1790524223-372545900","line":31,"new":null,"old":null}
+{"run_id":"1790702592-140623200","line":31,"new":null,"old":null}

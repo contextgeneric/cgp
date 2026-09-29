@@ -72,4 +72,4 @@ jobs:
       # The facade is advertised as no_std. A dependency that omits `#![no_std]`
       # still links `std` and fails this check for every bare-metal target.
       - name: Check the facade without std
-        run: cargo check -p cgp --target thumbv7m-none-eabi
+        run: cargo check -p cgp-fork --target thumbv7m-none-eabi

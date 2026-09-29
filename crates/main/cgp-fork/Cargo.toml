@@ -1,0 +1,17 @@
+[package]
+name         = "cgp-fork"
+version      = "0.9.0"
+readme       = "./README.md"
+edition      = { workspace = true }
+license      = { workspace = true }
+repository   = { workspace = true }
+authors      = { workspace = true }
+rust-version = { workspace = true }
+homepage     = { workspace = true }
+keywords     = { workspace = true }
+categories   = { workspace = true }
+description  = "A language extension for Rust, with pluggable trait implementations at compile-time."
+
+[dependencies]
+cgp-fork-core       = { workspace = true }
+cgp-fork-extra      = { workspace = true }

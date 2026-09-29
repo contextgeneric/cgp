@@ -1,29 +1,28 @@
-# Context-Generic Programming (CGP)
+# cgp-fork
 
-[![Apache 2.0 Licensed](https://img.shields.io/badge/license-Apache_2.0-blue.svg)](https://github.com/contextgeneric/cgp/blob/main/LICENSE)
-[![Crates.io](https://img.shields.io/crates/v/cgp.svg)](https://crates.io/crates/cgp)
-[![Tests](https://github.com/contextgeneric/cgp/actions/workflows/tests.yml/badge.svg)](https://github.com/contextgeneric/cgp/actions/workflows/tests.yml)
+[![Apache 2.0 Licensed](https://img.shields.io/badge/license-Apache_2.0-blue.svg)](https://github.com/Just-Replicant/cgp-fork/blob/main/LICENSE)
+[![Tests](https://github.com/Just-Replicant/cgp-fork/actions/workflows/tests.yml/badge.svg)](https://github.com/Just-Replicant/cgp-fork/actions/workflows/tests.yml)
 ![Rust 1.89+](https://img.shields.io/badge/rustc-1.89+-blue.svg)
 
 **Pluggable trait implementations, resolved at compile time.**
 
-CGP lets one interface have many implementations, and lets each context — an application, a test, a deployment — choose the one it uses. The choice is written in one place and compiles down to a direct call.
+This repository is **cgp-fork**, a fork of Context-Generic Programming (CGP). CGP lets one interface have many implementations, and lets each context — an application, a test, a deployment — choose the one it uses. The choice is written in one place and compiles down to a direct call.
 
-This repository is **v0.9.0**. crates.io currently publishes **v0.7.0**, a separate line. The docs here describe v0.9.0.
+The crates in this tree are **v0.9.0**. The package name is `cgp-fork`. In Rust that crate is `cgp_fork`.
 
-**[Website](https://contextgeneric.dev/) · [Changelog](CHANGELOG.md) · [crates.io](https://crates.io/crates/cgp)**
+**[Website](https://contextgeneric.dev/) · [Changelog](CHANGELOG.md) · [Repository](https://github.com/Just-Replicant/cgp-fork)**
 
 ## Install
 
 ```toml
-cgp = { git = "https://github.com/contextgeneric/cgp" }
+cgp-fork = { git = "https://github.com/Just-Replicant/cgp-fork" }
 ```
 
 ```rust
-use cgp::prelude::*;
+use cgp_fork::prelude::*;
 ```
 
-Rust **1.89+** on stable. `cargo add cgp` installs the crates.io release, v0.7.0.
+Rust **1.89+** on stable. Depend on this repository with the git line above.
 
 For readable wiring errors, install [`cargo-cgp`](https://github.com/contextgeneric/cargo-cgp) and run `cargo cgp check`.
 

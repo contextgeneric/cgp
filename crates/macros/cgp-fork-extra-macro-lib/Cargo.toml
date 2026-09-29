@@ -1,0 +1,21 @@
+[package]
+name         = "cgp-fork-extra-macro-lib"
+version      = "0.9.0"
+edition      = { workspace = true }
+license      = { workspace = true }
+repository   = { workspace = true }
+authors      = { workspace = true }
+rust-version = { workspace = true }
+homepage     = { workspace = true }
+keywords     = { workspace = true }
+categories   = { workspace = true }
+description  = "CGP implementation of the extra procedural macros, behind the proc-macro entry points."
+
+[features]
+default = []
+
+[dependencies]
+syn             = { version = "2.0.95", features = [ "full", "extra-traits" ] }
+quote           = "1.0.38"
+proc-macro2     = "1.0.92"
+cgp-fork-macro-core  = { workspace = true }
