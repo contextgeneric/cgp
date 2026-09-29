@@ -18,6 +18,7 @@ members = [
     "crates/extra/cgp-field-extra",
     "crates/extra/cgp-error-extra",
     "crates/extra/cgp-handler",
+    "crates/extra/cgp-log",
     "crates/extra/cgp-monad",
     "crates/extra/cgp-dispatch",
     "crates/extra/cgp-run",
@@ -67,6 +68,7 @@ cgp-error                   = { version = "0.9.0", path = "./crates/core/cgp-err
 cgp-field-extra             = { version = "0.9.0", path = "./crates/extra/cgp-field-extra" }
 cgp-error-extra             = { version = "0.9.0", path = "./crates/extra/cgp-error-extra" }
 cgp-handler                 = { version = "0.9.0", path = "./crates/extra/cgp-handler" }
+cgp-log                     = { version = "0.9.0", path = "./crates/extra/cgp-log" }
 cgp-monad                   = { version = "0.9.0", path = "./crates/extra/cgp-monad" }
 cgp-dispatch                = { version = "0.9.0", path = "./crates/extra/cgp-dispatch" }
 cgp-run                     = { version = "0.9.0", path = "./crates/extra/cgp-run" }

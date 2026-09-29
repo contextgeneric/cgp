@@ -10,6 +10,8 @@ define_keyword!(CgpAutoImpl, "cgp_auto_impl");
 
 define_keyword!(CgpAutoError, "cgp_auto_error");
 
+define_keyword!(CgpAutoLog, "cgp_auto_log");
+
 define_keyword!(CgpGetter, "cgp_getter");
 
 define_keyword!(CgpImpl, "cgp_impl");

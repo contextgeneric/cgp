@@ -3,6 +3,7 @@ pub mod blanket_trait;
 pub mod cgp_auto_error;
 pub mod cgp_auto_getter;
 pub mod cgp_auto_impl;
+pub mod cgp_auto_log;
 pub mod cgp_component;
 pub mod cgp_data;
 pub mod cgp_fn;

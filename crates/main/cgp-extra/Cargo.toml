@@ -23,5 +23,6 @@ cgp-field-extra = { workspace = true }
 cgp-run         = { workspace = true }
 cgp-runtime     = { workspace = true }
 cgp-handler     = { workspace = true }
+cgp-log         = { workspace = true }
 cgp-monad       = { workspace = true }
 cgp-dispatch    = { workspace = true }

@@ -65,6 +65,13 @@ pub fn snapshot_cgp_auto_error(body: TokenStream) -> TokenStream {
 }
 
 #[proc_macro]
+pub fn snapshot_cgp_auto_log(body: TokenStream) -> TokenStream {
+    entrypoints::snapshot_cgp_auto_log(body.into())
+        .unwrap_or_else(syn::Error::into_compile_error)
+        .into()
+}
+
+#[proc_macro]
 pub fn snapshot_cgp_getter(body: TokenStream) -> TokenStream {
     entrypoints::snapshot_cgp_getter(body.into())
         .unwrap_or_else(syn::Error::into_compile_error)
