@@ -103,11 +103,15 @@ genuinely distinct variants) in its owning target, and nowhere else:
 | `#[cgp_impl]` | `basic_delegation` (+ `higher_order_providers`, `implicit_arguments` variants) |
 | `#[cgp_type]` | `abstract_types` |
 | `#[cgp_getter]` / `#[cgp_auto_getter]` | `getters` |
+| `#[blanket_trait]` / `#[cgp_auto_impl]` | `blanket_traits` |
+| `#[cgp_auto_error]` | `error_definition` |
+| `#[cgp_auto_log]` | `logging` |
 | `#[cgp_fn]` | `implicit_arguments`, `impl_side_dependencies` |
-| `delegate_components!` | `basic_delegation` (basic), `namespaces` (open/namespace), `dispatching` (`UseDelegate`) |
+| `delegate_components!` | `basic_delegation` (basic, type/getter shorthand), `namespaces` (open/namespace), `dispatching` (`UseDelegate`) |
+| `cgp_preset!` | `presets` |
+| `#[derive_provider]` | `higher_order_providers` |
 | `check_components!` / `delegate_and_check_components!` | `checking` |
 | `cgp_namespace!` | `namespaces` |
-| `#[blanket_trait]` | `blanket_traits` |
 | `#[derive(HasField)]` / `HasFields` / `CgpData` | `field_access` / `extensible_records` / `extensible_variants` |
 
 When a file uses one of these macros as **incidental scaffolding** — a

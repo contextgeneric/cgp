@@ -28,10 +28,10 @@ and the crate hierarchy.
 
 - **[src/types/](src/types/)** — the bulk of the crate. One submodule per user-facing macro
   (`cgp_component`, `cgp_impl`, `cgp_provider`, `cgp_fn`, `cgp_getter`, `cgp_auto_getter`,
-  `cgp_type`, `cgp_data`, `delegate_component`, `check_components`,
+  `cgp_auto_impl`, `cgp_auto_error`, `cgp_auto_log`, `cgp_type`, `cgp_data`, `delegate_component`, `check_components`,
   `delegate_and_check_components`, `namespace`, `product`, `sum`), plus shared building-block types:
   `attributes/` (parsing of `#[uses]`, `#[use_type]`, `#[use_provider]`, `#[derive_delegate]`,
-  `#[default_impl]`), `generics/`, `field/`, `getter/`, `implicits/`, `ident/`, `path/`, `keyword`.
+  `#[derive_promote]`, `#[default_impl]`), `generics/`, `field/`, `getter/`, `implicits/`, `ident/`, `path/`, `keyword`.
 - **[src/functions/](src/functions/)** — free helper functions: identifier case conversion
   (`camel_case`/`snake_case`), `parse_internal`, generics merging, delegated-impl synthesis,
   field/getter/implicit-argument parsing, `strip`.
