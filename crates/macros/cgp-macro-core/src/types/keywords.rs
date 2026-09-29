@@ -7,3 +7,5 @@ define_keyword!(Namespace, "namespace");
 define_keyword!(Open, "open");
 
 define_keyword!(Getter, "getter");
+
+define_keyword!(Exclude, "exclude");

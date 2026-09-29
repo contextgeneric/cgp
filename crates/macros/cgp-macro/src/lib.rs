@@ -556,6 +556,31 @@ pub fn delegate_components(body: TokenStream) -> TokenStream {
         .into()
 }
 
+/**
+    `cgp_for_each!` repeats a body once per type in a list, substituting a
+    placeholder ident. Preset `with_components!` macros expand through it.
+
+    An optional `exclude [ .. ]` list drops types the caller already implements.
+
+    ```rust,ignore
+    cgp_for_each! {
+        [ FooComponent, BarComponent ],
+        exclude [ FooComponent ],
+        __Component__ => {
+            impl DelegateComponent<__Component__> for App {
+                type Delegate = Preset::Provider;
+            }
+        }
+    }
+    ```
+*/
+#[proc_macro]
+pub fn cgp_for_each(body: TokenStream) -> TokenStream {
+    cgp_macro_lib::cgp_for_each(body.into())
+        .unwrap_or_else(syn::Error::into_compile_error)
+        .into()
+}
+
 #[proc_macro]
 pub fn cgp_namespace(body: TokenStream) -> TokenStream {
     cgp_macro_lib::cgp_namespace(body.into())
