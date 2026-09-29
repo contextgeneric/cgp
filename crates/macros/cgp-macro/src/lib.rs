@@ -629,6 +629,30 @@ pub fn cgp_preset(body: TokenStream) -> TokenStream {
         .into()
 }
 
+/**
+    `#[derive_provider(WithProvider)]` derives the `WithProvider` impl for a
+    component instead of writing it by hand.
+
+    Place it outside [`#[cgp_component]`](macro@cgp_component). The `WithProvider`
+    struct already exists in `cgp-component`; this macro only generates the impl.
+    An abstract-type trait bridges through `TypeProvider`. A single-method getter
+    bridges through `FieldGetter`.
+
+    ```rust,ignore
+    #[derive_provider(WithProvider)]
+    #[cgp_component(NameTypeProvider)]
+    pub trait HasNameType {
+        type Name;
+    }
+    ```
+*/
+#[proc_macro_attribute]
+pub fn derive_provider(attr: TokenStream, item: TokenStream) -> TokenStream {
+    cgp_macro_lib::derive_provider(attr.into(), item.into())
+        .unwrap_or_else(syn::Error::into_compile_error)
+        .into()
+}
+
 #[proc_macro]
 pub fn cgp_namespace(body: TokenStream) -> TokenStream {
     cgp_macro_lib::cgp_namespace(body.into())

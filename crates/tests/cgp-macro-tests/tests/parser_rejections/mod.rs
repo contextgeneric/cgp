@@ -33,6 +33,7 @@ pub mod delegate_and_check_components;
 pub mod delegate_components;
 pub mod derive_cgp_data;
 pub mod derive_from_variant;
+pub mod derive_provider;
 pub mod getters;
 pub mod use_provider;
 pub mod use_type;

@@ -1,6 +1,7 @@
 //! One unit test per file, each self-contained at module scope.
 
 // `#[use_provider]` snapshots (this concept owns them).
+pub mod derive_with_provider;
 pub mod use_provider_fn;
 pub mod use_provider_impl;
 

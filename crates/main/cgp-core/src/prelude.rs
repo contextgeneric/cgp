@@ -19,6 +19,6 @@ pub use cgp_macro::{
     BuildField, CgpData, CgpRecord, CgpVariant, ExtractField, FromVariant, HasField, HasFields,
     Path, Product, Sum, Symbol, cgp_auto_getter, cgp_component, cgp_fn, cgp_for_each, cgp_getter, cgp_impl,
     cgp_namespace, cgp_new_provider, cgp_preset, cgp_provider, cgp_type, check_components,
-    delegate_and_check_components, delegate_components, product,
+    delegate_and_check_components, delegate_components, derive_provider, product,
 };
 pub use cgp_type::{HasType, TypeProvider, UseType};
