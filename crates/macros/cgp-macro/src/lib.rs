@@ -380,6 +380,32 @@ pub fn cgp_auto_getter(attr: TokenStream, item: TokenStream) -> TokenStream {
 }
 
 /**
+    `#[cgp_auto_impl]` turns a trait's method bodies into a blanket provider.
+
+    The trait is emitted with those bodies removed. A blanket impl for
+    `__Context__` carries the bodies, and the trait's supertraits become a
+    `where` bound on that context. Associated types on the trait are lifted to
+    generic parameters of the impl, with their bounds alongside.
+
+    ## Example
+
+    ```rust,ignore
+    #[cgp_auto_impl]
+    pub trait CanGreet: HasName {
+        fn greet(&self) -> String {
+            format!("Hello, {}!", self.name())
+        }
+    }
+    ```
+*/
+#[proc_macro_attribute]
+pub fn cgp_auto_impl(attr: TokenStream, item: TokenStream) -> TokenStream {
+    cgp_macro_lib::cgp_auto_impl(attr.into(), item.into())
+        .unwrap_or_else(syn::Error::into_compile_error)
+        .into()
+}
+
+/**
     The `delegate_components!` macro is used to define wiring of CGP components
     on a provider type.
 

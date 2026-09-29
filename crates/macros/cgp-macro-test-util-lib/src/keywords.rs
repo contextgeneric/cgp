@@ -6,6 +6,8 @@ define_keyword!(CgpComponent, "cgp_component");
 
 define_keyword!(CgpAutoGetter, "cgp_auto_getter");
 
+define_keyword!(CgpAutoImpl, "cgp_auto_impl");
+
 define_keyword!(CgpGetter, "cgp_getter");
 
 define_keyword!(CgpImpl, "cgp_impl");

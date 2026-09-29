@@ -16,3 +16,9 @@ pub mod associated_type;
 
 // Same, but the associated type carries a bound (`: Clone`).
 pub mod associated_type_bounded;
+
+// `#[cgp_auto_impl]` moves a method body onto the blanket provider.
+pub mod auto_impl_method;
+
+// `#[cgp_auto_impl]` lifting an associated type into the blanket impl.
+pub mod auto_impl_associated_type;
