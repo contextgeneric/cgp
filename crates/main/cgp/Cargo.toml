@@ -10,7 +10,7 @@ rust-version = { workspace = true }
 homepage     = { workspace = true }
 keywords     = { workspace = true }
 categories   = { workspace = true }
-description  = { workspace = true }
+description  = "A language extension for Rust, with pluggable trait implementations at compile-time."
 
 [dependencies]
 cgp-core       = { workspace = true }

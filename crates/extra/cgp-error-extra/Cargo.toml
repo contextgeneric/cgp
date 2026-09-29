@@ -9,7 +9,7 @@ rust-version = { workspace = true }
 homepage     = { workspace = true }
 keywords     = { workspace = true }
 categories   = { workspace = true }
-description  = { workspace = true }
+description  = "CGP error providers for debug, display, infallible, and discarded errors."
 
 [features]
 default = [ "alloc" ]

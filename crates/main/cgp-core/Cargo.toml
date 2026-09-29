@@ -9,7 +9,7 @@ rust-version = { workspace = true }
 homepage     = { workspace = true }
 keywords     = { workspace = true }
 categories   = { workspace = true }
-description  = { workspace = true }
+description  = "Core CGP facade: components, fields, errors, abstract types, and the core macros."
 
 [dependencies]
 cgp-base            = { workspace = true }

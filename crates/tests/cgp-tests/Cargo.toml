@@ -10,7 +10,7 @@ rust-version = { workspace = true }
 homepage     = { workspace = true }
 keywords     = { workspace = true }
 categories   = { workspace = true }
-description  = { workspace = true }
+description  = "Integration tests for CGP wiring, behavior, and macro expansions."
 
 [dependencies]
 cgp                     = { workspace = true }

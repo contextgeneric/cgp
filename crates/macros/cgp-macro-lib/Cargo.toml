@@ -9,7 +9,7 @@ rust-version = { workspace = true }
 homepage     = { workspace = true }
 keywords     = { workspace = true }
 categories   = { workspace = true }
-description  = { workspace = true }
+description  = "CGP procedural-macro implementation behind the proc-macro entry points."
 
 [dependencies]
 cgp-macro-core  = { workspace = true }

@@ -9,7 +9,7 @@ rust-version = { workspace = true }
 homepage     = { workspace = true }
 keywords     = { workspace = true }
 categories   = { workspace = true }
-description  = { workspace = true }
+description  = "CGP field access: HasField, builders, and extensible records and variants."
 
 [dependencies]
 cgp-base-types      = { workspace = true }

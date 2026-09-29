@@ -9,6 +9,6 @@ rust-version = { workspace = true }
 homepage     = { workspace = true }
 keywords     = { workspace = true }
 categories   = { workspace = true }
-description  = { workspace = true }
+description  = "CGP component wiring: DelegateComponent, IsProviderFor, and delegation providers."
 
 [dependencies]

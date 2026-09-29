@@ -9,7 +9,7 @@ rust-version = { workspace = true }
 homepage     = { workspace = true }
 keywords     = { workspace = true }
 categories   = { workspace = true }
-description  = { workspace = true }
+description  = "CGP procedural macros for computers, producers, dispatch, and logging."
 
 [lib]
 proc-macro = true

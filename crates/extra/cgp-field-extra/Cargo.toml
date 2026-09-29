@@ -9,7 +9,7 @@ rust-version = { workspace = true }
 homepage     = { workspace = true }
 keywords     = { workspace = true }
 categories   = { workspace = true }
-description  = { workspace = true }
+description  = "CGP field providers for optional values and building fields from defaults."
 
 [dependencies]
 cgp-field       = { workspace = true }
