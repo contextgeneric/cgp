@@ -16,6 +16,7 @@ pub mod handler_macro;
 pub mod macros_without_prelude;
 pub mod producer_macro;
 pub mod producer_macro_output;
+pub mod raw_function_names;
 
 // The `PipeHandlers` combinator: chaining computers, and chaining handlers with
 // the `Promote*` adapters that lift a simpler handler into a more capable one.

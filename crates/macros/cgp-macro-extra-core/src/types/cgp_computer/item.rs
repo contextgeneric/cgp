@@ -5,6 +5,7 @@ use syn::{Error, FnArg, Ident, ItemFn, parse2};
 
 use crate::functions::{derive_provider_ident, return_type};
 use crate::types::cgp_computer::{MaybeResultType, PreprocessedCgpComputer};
+use crate::visitors::find_impl_trait;
 
 /// Raw input stage: the optional provider name from the attribute and the
 /// annotated function. First stage of the `#[cgp_computer]` pipeline.
@@ -36,6 +37,13 @@ impl ItemCgpComputer {
                     ));
                 }
                 FnArg::Typed(pat_type) => {
+                    if let Some(impl_trait) = find_impl_trait(&pat_type.ty) {
+                        return Err(Error::new_spanned(
+                            impl_trait,
+                            "Computer function parameters cannot use `impl Trait`; declare a generic parameter instead",
+                        ));
+                    }
+
                     // Each input is rebound positionally, so the function's own
                     // pattern (a `mut` binding, a destructuring) is not repeated.
                     input_idents.push(Ident::new(&format!("arg_{i}"), pat_type.span()));
@@ -45,6 +53,13 @@ impl ItemCgpComputer {
         }
 
         let output = return_type(&sig.output)?;
+
+        if let Some(impl_trait) = find_impl_trait(&output) {
+            return Err(Error::new_spanned(
+                impl_trait,
+                "Computer functions cannot return `impl Trait`",
+            ));
+        }
 
         // A re-parse of the user's own return type, so its tokens keep their spans
         // and an error lands on the offending token.

@@ -1,4 +1,4 @@
-use cgp_macro_core::functions::{merge_generics, to_camel_case_str};
+use cgp_macro_core::functions::merge_generics;
 use cgp_macro_core::parse_internal;
 use proc_macro2::TokenStream;
 use quote::quote;
@@ -17,6 +17,7 @@ use crate::exports::{
     MatchFirstWithValueHandlersRef, MatchWithValueHandlers, MatchWithValueHandlersMut,
     MatchWithValueHandlersRef,
 };
+use crate::functions::derive_computer_ident;
 use crate::types::cgp_computer::ItemCgpComputer;
 use crate::visitors::{ElaborateElidedLifetimes, collect_lifetimes};
 
@@ -378,17 +379,4 @@ impl DispatchMethod {
             },
         })
     }
-}
-
-/// The per-variant computer's name, `Compute` plus the method name in PascalCase.
-/// The method name is unrawed first, so `r#type` yields `ComputeType` rather than
-/// an invalid identifier.
-fn derive_computer_ident(method_ident: &Ident) -> Ident {
-    Ident::new(
-        &format!(
-            "Compute{}",
-            to_camel_case_str(&method_ident.unraw().to_string())
-        ),
-        method_ident.span(),
-    )
 }

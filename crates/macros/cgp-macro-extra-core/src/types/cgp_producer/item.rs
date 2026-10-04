@@ -2,6 +2,7 @@ use syn::{Error, Ident, ItemFn};
 
 use crate::functions::{derive_provider_ident, return_type};
 use crate::types::cgp_producer::PreprocessedCgpProducer;
+use crate::visitors::find_impl_trait;
 
 /// Raw input stage: the optional provider name from the attribute and the
 /// annotated function. First stage of the `#[cgp_producer]` pipeline.
@@ -25,10 +26,19 @@ impl ItemCgpProducer {
             None => derive_provider_ident(&sig.ident),
         };
 
+        let output = return_type(&sig.output)?;
+
+        if let Some(impl_trait) = find_impl_trait(&output) {
+            return Err(Error::new_spanned(
+                impl_trait,
+                "Producer functions cannot return `impl Trait`",
+            ));
+        }
+
         Ok(PreprocessedCgpProducer {
             provider_ident,
             item_fn: self.item_fn.clone(),
-            output: return_type(&sig.output)?,
+            output,
         })
     }
 

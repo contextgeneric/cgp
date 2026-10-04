@@ -1,7 +1,8 @@
 //! `#[cgp_producer]` rejects every signature that is not a synchronous,
 //! non-generic function with no parameters: a parameter, a `self` receiver, an
-//! `async` function, and a generic parameter, plus a provider name that is a path
-//! rather than an identifier. Each case pins the rejection's message.
+//! `async` function, and a generic parameter, plus an `impl Trait` return type,
+//! which a provider impl cannot name, and a provider name that is a path rather
+//! than an identifier. Each case pins the rejection's message.
 //!
 //! See cgp-knowledge-base/cgp/implementation/entrypoints/cgp_producer.md (Tests) for these
 //! failure cases, and cgp-knowledge-base/cgp/reference/macros/cgp_producer.md for the
@@ -93,6 +94,24 @@ fn rejects_path_provider_name() {
                 quote!(providers::MagicNumber),
                 quote!(
                     fn magic_number() -> u64 {
+                        42
+                    }
+                ),
+            )
+        },
+    );
+}
+
+#[test]
+fn rejects_impl_trait_return() {
+    assert_macro_rejects_with(
+        "cgp_producer returning impl Trait",
+        "Producer functions cannot return `impl Trait`",
+        || {
+            cgp_macro_extra_lib::cgp_producer(
+                quote!(),
+                quote!(
+                    fn magic_number() -> impl core::fmt::Display {
                         42
                     }
                 ),
