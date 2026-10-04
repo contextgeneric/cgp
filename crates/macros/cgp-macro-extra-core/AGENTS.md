@@ -43,3 +43,9 @@ node with `parse_internal!` from quoted tokens, as any other AST node.
   dispatch items the expansions name, declared with `cgp-macro-core`'s
   `export_constructs!`. Reuse `cgp_macro_core::exports` for any item already
   declared there, such as `HasExtractor`.
+- **[src/functions/](src/functions/)**: free helpers the stages share, such as
+  the default provider and computer names (`derive_provider_ident`,
+  `derive_computer_ident`, which unraw a raw identifier) and `return_type`.
+- **[src/visitors/](src/visitors/)**: the `syn` passes over types:
+  `ElaborateElidedLifetimes` (a `VisitMut` naming a dispatch method's elided
+  lifetimes by the elision rules), `collect_lifetimes`, and `find_impl_trait`.

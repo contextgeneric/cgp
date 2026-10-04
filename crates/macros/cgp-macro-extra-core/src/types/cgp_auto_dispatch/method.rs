@@ -53,6 +53,9 @@ pub struct DispatchMethod {
 }
 
 impl DispatchMethod {
+    /// Check the method's shape and name its elided lifetimes. Rejects a type or
+    /// const generic parameter, a missing or typed receiver, and an untyped
+    /// argument, each with a spanned error.
     pub fn new(method: &TraitItemFn) -> syn::Result<Self> {
         let sig = &method.sig;
 
