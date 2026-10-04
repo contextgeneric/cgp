@@ -1,4 +1,5 @@
 use cgp_macro_core::exports::HasExtractor;
+use cgp_macro_core::functions::override_item_span;
 use cgp_macro_core::parse_internal;
 use syn::{ItemImpl, ItemTrait};
 
@@ -56,12 +57,18 @@ impl PreprocessedCgpAutoDispatch {
         let ty_generics = item_trait.generics.split_for_impl().1;
         let (impl_generics, _, where_clause) = generics.split_for_impl();
 
-        Ok(parse_internal! {
+        let blanket_impl: ItemImpl = parse_internal! {
             impl #impl_generics #trait_ident #ty_generics for __Variants__
                 #where_clause
             {
                 #(#impl_items)*
             }
-        })
+        };
+
+        // Re-span the impl's boundary tokens onto the trait name, so an error on
+        // the blanket impl (a conflict with a hand-written impl of the trait, say)
+        // points at the trait rather than the whole attribute. See
+        // cgp-knowledge-base/cgp/implementation/README.md, "Spans".
+        override_item_span(trait_ident.span(), &blanket_impl)
     }
 }

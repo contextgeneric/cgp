@@ -1,3 +1,4 @@
+use cgp_macro_core::functions::override_item_span;
 use cgp_macro_core::parse_internal;
 use cgp_macro_core::types::cgp_provider::{ItemCgpProvider, ProviderArgs};
 use cgp_macro_core::types::delegate_component::DelegateTable;
@@ -156,6 +157,12 @@ impl PreprocessedCgpComputer {
                     delegate_table,
                 )
             };
+
+        // Re-span the impl's boundary tokens onto the function name, so an error on
+        // the generated impl (a conflict with another provider of the same name,
+        // say) points at the function rather than the whole attribute. See
+        // cgp-knowledge-base/cgp/implementation/README.md, "Spans".
+        let item_impl = override_item_span(fn_ident.span(), &item_impl)?;
 
         let provider = ItemCgpProvider {
             args: ProviderArgs {
