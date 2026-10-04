@@ -13,9 +13,7 @@
 
 use std::f64::consts::PI;
 
-use cgp::extra::dispatch::{
-    MatchFirstWithValueHandlersMut, MatchFirstWithValueHandlersRef, MatchWithValueHandlersRef,
-};
+use cgp::extra::dispatch::MatchFirstWithValueHandlersMut;
 use cgp::extra::handler::NoCode;
 use cgp::prelude::*;
 
