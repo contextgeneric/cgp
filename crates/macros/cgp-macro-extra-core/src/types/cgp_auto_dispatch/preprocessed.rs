@@ -54,6 +54,17 @@ impl PreprocessedCgpAutoDispatch {
             .predicates
             .push(parse_internal!(__Variants__: #HasExtractor));
 
+        // The impl must meet the trait's supertraits, which it can only require of
+        // the enum: implementing the trait for every `__Variants__` would otherwise
+        // need each supertrait to hold for every type.
+        let supertraits = &item_trait.supertraits;
+        if !supertraits.is_empty() {
+            generics
+                .make_where_clause()
+                .predicates
+                .push(parse_internal!(__Variants__: #supertraits));
+        }
+
         let ty_generics = item_trait.generics.split_for_impl().1;
         let (impl_generics, _, where_clause) = generics.split_for_impl();
 

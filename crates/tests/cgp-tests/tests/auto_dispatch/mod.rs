@@ -24,6 +24,7 @@ pub mod self_ref_only;
 pub mod self_ref_return_explicit_ref;
 pub mod self_ref_return_implicit_ref;
 pub mod shape;
+pub mod supertrait;
 
 // Where the trait lives and what it declares: a trait used across modules, and a
 // method with a default body.
