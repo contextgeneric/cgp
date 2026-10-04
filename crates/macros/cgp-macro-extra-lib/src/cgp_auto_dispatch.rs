@@ -1,11 +1,18 @@
 use cgp_macro_extra_core::types::cgp_auto_dispatch::ItemCgpAutoDispatch;
 use proc_macro2::TokenStream;
 use quote::quote;
-use syn::{ItemTrait, parse2};
+use syn::{Error, ItemTrait, parse2};
 
 use crate::handler_fn::lower_handler_fn;
 
-pub fn cgp_auto_dispatch(_attr: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
+pub fn cgp_auto_dispatch(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
+    if !attr.is_empty() {
+        return Err(Error::new_spanned(
+            attr,
+            "`#[cgp_auto_dispatch]` takes no arguments",
+        ));
+    }
+
     let item_trait: ItemTrait = parse2(body)?;
 
     let evaluated = ItemCgpAutoDispatch { item_trait }.preprocess()?.eval()?;

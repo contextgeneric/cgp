@@ -76,6 +76,15 @@ impl DispatchMethod {
             }
         };
 
+        // A typed receiver such as `self: Box<Self>` is not the enum or a borrow of
+        // it, so no value-handler matcher can take it.
+        if receiver.colon_token.is_some() {
+            return Err(Error::new_spanned(
+                receiver,
+                "Dispatcher method receiver must be `self`, `&self`, or `&mut self`",
+            ));
+        }
+
         let mut introduced_lifetimes = Vec::new();
 
         let receiver = match &receiver.reference {
