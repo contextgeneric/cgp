@@ -32,7 +32,8 @@ cgp-macro-test-util/         # proc-macro entry points (#[proc_macro] fns)
     └── functions/           # parse_attribute, pretty_format
 ```
 
-The implementation calls the real macro logic in `cgp-macro-lib`, not a copy of it,
+The implementation calls the real macro logic in `cgp-macro-lib` and
+`cgp-macro-extra-lib`, not a copy of it,
 so a snapshot is guaranteed to show what the production macros generate.
 
 ## Available macros
@@ -54,6 +55,13 @@ so a snapshot is guaranteed to show what the production macros generate.
 | `snapshot_check_components!` | `check_components!`   |
 | `snapshot_delegate_and_check_components!` | `delegate_and_check_components!` |
 | `snapshot_cgp_namespace!`   | `cgp_namespace!`      |
+| `snapshot_blanket_trait!`   | `#[blanket_trait]`    |
+| `snapshot_derive_build_field!` | `#[derive(BuildField)]` |
+| `snapshot_derive_extract_field!` | `#[derive(ExtractField)]` |
+| `snapshot_derive_from_variant!` | `#[derive(FromVariant)]` |
+| `snapshot_cgp_computer!`    | `#[cgp_computer]`     |
+| `snapshot_cgp_producer!`    | `#[cgp_producer]`     |
+| `snapshot_cgp_auto_dispatch!` | `#[cgp_auto_dispatch]` |
 
 Each accepts the same argument forms as the macro it wraps — `snapshot_cgp_component!`
 takes both `#[cgp_component(Greeter)]` and the brace form, for instance — precisely

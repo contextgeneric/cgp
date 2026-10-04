@@ -12,10 +12,11 @@ categories   = { workspace = true }
 description  = { workspace = true }
 
 [dependencies]
-cgp-macro-lib   = { workspace = true }
-cgp-macro-core  = { workspace = true }
+cgp-macro-lib       = { workspace = true }
+cgp-macro-core      = { workspace = true }
+cgp-macro-extra-lib = { workspace = true }
 
-syn             = { version = "2.0.95" }
-quote           = { version = "1.0.38" }
-proc-macro2     = { version = "1.0.92" }
-prettyplease    = { version = "0.2.37" }
+syn                 = { version = "2.0.95" }
+quote               = { version = "1.0.38" }
+proc-macro2         = { version = "1.0.92" }
+prettyplease        = { version = "0.2.37" }

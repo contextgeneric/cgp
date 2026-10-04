@@ -137,30 +137,12 @@ dependencies = [
  "cgp-core",
  "cgp-dispatch",
  "cgp-error-extra",
- "cgp-extra-macro",
  "cgp-field-extra",
  "cgp-handler",
+ "cgp-macro-extra",
  "cgp-monad",
  "cgp-run",
  "cgp-runtime",
-]
-
-[[package]]
-name = "cgp-extra-macro"
-version = "0.8.0-alpha"
-dependencies = [
- "cgp-extra-macro-lib",
- "syn",
-]
-
-[[package]]
-name = "cgp-extra-macro-lib"
-version = "0.8.0-alpha"
-dependencies = [
- "cgp-macro-core",
- "proc-macro2",
- "quote",
- "syn",
 ]
 
 [[package]]
@@ -205,6 +187,35 @@ dependencies = [
 ]
 
 [[package]]
+name = "cgp-macro-extra"
+version = "0.8.0-alpha"
+dependencies = [
+ "cgp-macro-extra-lib",
+ "syn",
+]
+
+[[package]]
+name = "cgp-macro-extra-core"
+version = "0.8.0-alpha"
+dependencies = [
+ "cgp-macro-core",
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
+name = "cgp-macro-extra-lib"
+version = "0.8.0-alpha"
+dependencies = [
+ "cgp-macro-core",
+ "cgp-macro-extra-core",
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
 name = "cgp-macro-lib"
 version = "0.8.0-alpha"
 dependencies = [
@@ -232,6 +243,7 @@ name = "cgp-macro-test-util-lib"
 version = "0.8.0-alpha"
 dependencies = [
  "cgp-macro-core",
+ "cgp-macro-extra-lib",
  "cgp-macro-lib",
  "prettyplease",
  "proc-macro2",
@@ -244,8 +256,8 @@ name = "cgp-macro-tests"
 version = "0.8.0-alpha"
 dependencies = [
  "cgp",
- "cgp-extra-macro-lib",
  "cgp-macro-core",
+ "cgp-macro-extra-lib",
  "cgp-macro-lib",
  "cgp-macro-test-util",
  "cgp-macro-test-util-lib",

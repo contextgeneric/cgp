@@ -7,7 +7,8 @@
 //! arguments. Each is a rejection the macro makes during expansion (a returned
 //! `Err`), so it is pinned by driving the entrypoint directly here rather than by a
 //! `trybuild` compile-fail fixture, which is reserved for input the macro accepts
-//! but whose expansion then fails to compile.
+//! but whose expansion then fails to compile. One case pins a Known issue instead:
+//! a function named with a raw identifier makes the macro panic.
 //!
 //! See cgp-knowledge-base/cgp/implementation/entrypoints/cgp_fn.md (Tests) for these failure cases,
 //! and cgp-knowledge-base/cgp/reference/attributes/implicit.md for the user-facing rules on where
@@ -148,4 +149,21 @@ fn rejects_implicit_attr_name_value() {
             ),
         )
     });
+}
+
+#[test]
+#[should_panic(expected = "is not a valid Ident")]
+fn panics_on_raw_function_name() {
+    // A Known issue rather than an intended rejection: the default trait name is
+    // built from the raw spelling, so `fn r#type` yields `R#type`, which is not a
+    // valid identifier, and the macro panics instead of returning an error. The
+    // fix is to unraw the name first; this test then becomes a behavioral test.
+    let _ = cgp_macro_lib::cgp_fn(
+        quote!(),
+        quote! {
+            fn r#type(&self) -> u64 {
+                1
+            }
+        },
+    );
 }

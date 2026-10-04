@@ -19,6 +19,9 @@ and the crate hierarchy.
   `cgp-macro-core` (this crate, all the logic)**. A `cgp-macro-lib` function is thin: `syn::parse2`
   the attr/item, build a `cgp_macro_core::types::<macro>::Item*`, run its transform pipeline, and
   wrap the result in `quote!`. See `cgp-macro-lib/src/cgp_component.rs` for the canonical shape.
+  The extra-feature macros follow the same split one level up, in `cgp-macro-extra-core`, which
+  depends on this crate and lowers through its AST types (see that crate's `AGENTS.md`), so a
+  change to a type it reuses, such as `ItemCgpProvider` or `DelegateTable`, reaches them too.
 - Because it is `proc-macro`-free, its parsers and codegen are **unit-testable as plain functions**.
   Tests live in the sibling `crates/tests/cgp-macro-tests` crate (parser corner cases like
   `IdentWithTypeArgs`, plus expansion **snapshots** via the `snapshot_*` macros). Prefer adding

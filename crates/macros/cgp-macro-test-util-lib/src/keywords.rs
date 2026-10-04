@@ -39,3 +39,9 @@ define_keyword!(BuildField, "BuildField");
 define_keyword!(ExtractField, "ExtractField");
 
 define_keyword!(FromVariant, "FromVariant");
+
+define_keyword!(CgpComputer, "cgp_computer");
+
+define_keyword!(CgpProducer, "cgp_producer");
+
+define_keyword!(CgpAutoDispatch, "cgp_auto_dispatch");

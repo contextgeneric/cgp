@@ -109,6 +109,8 @@ genuinely distinct variants) in its owning target, and nowhere else:
 | `cgp_namespace!` | `namespaces` |
 | `#[blanket_trait]` | `blanket_traits` |
 | `#[derive(HasField)]` / `HasFields` / `CgpData` | `field_access` / `extensible_records` / `extensible_variants` |
+| `#[cgp_computer]` / `#[cgp_producer]` | `handlers` |
+| `#[cgp_auto_dispatch]` | `auto_dispatch` |
 
 When a file uses one of these macros as **incidental scaffolding** — a
 `#[cgp_component]` needed to set up a `delegate_components!` test, say — write the

@@ -1,0 +1,22 @@
+[package]
+name         = "cgp-macro-extra"
+version      = "0.8.0-alpha"
+edition      = { workspace = true }
+license      = { workspace = true }
+repository   = { workspace = true }
+authors      = { workspace = true }
+rust-version = { workspace = true }
+homepage     = { workspace = true }
+keywords     = { workspace = true }
+categories   = { workspace = true }
+description  = { workspace = true }
+
+[lib]
+proc-macro = true
+
+[features]
+default = []
+
+[dependencies]
+syn                     = { version = "2.0.95", features = [ "full", "extra-traits" ] }
+cgp-macro-extra-lib     = { workspace = true }

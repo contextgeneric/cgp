@@ -27,10 +27,11 @@ members = [
     "crates/macros/cgp-macro",
     "crates/macros/cgp-macro-core",
     "crates/macros/cgp-macro-lib",
+    "crates/macros/cgp-macro-extra",
+    "crates/macros/cgp-macro-extra-core",
+    "crates/macros/cgp-macro-extra-lib",
     "crates/macros/cgp-macro-test-util",
     "crates/macros/cgp-macro-test-util-lib",
-    "crates/macros/cgp-extra-macro",
-    "crates/macros/cgp-extra-macro-lib",
 
     "crates/standalone/error/cgp-error-anyhow",
     "crates/standalone/error/cgp-error-eyre",
@@ -80,8 +81,9 @@ cgp-async-macro             = { version = "0.8.0-alpha", path = "./crates/macros
 cgp-macro                   = { version = "0.8.0-alpha", path = "./crates/macros/cgp-macro" }
 cgp-macro-core              = { version = "0.8.0-alpha", path = "./crates/macros/cgp-macro-core" }
 cgp-macro-lib               = { version = "0.8.0-alpha", path = "./crates/macros/cgp-macro-lib" }
+cgp-macro-extra             = { version = "0.8.0-alpha", path = "./crates/macros/cgp-macro-extra" }
+cgp-macro-extra-core        = { version = "0.8.0-alpha", path = "./crates/macros/cgp-macro-extra-core" }
+cgp-macro-extra-lib         = { version = "0.8.0-alpha", path = "./crates/macros/cgp-macro-extra-lib" }
 cgp-macro-test-util         = { version = "0.8.0-alpha", path = "./crates/macros/cgp-macro-test-util" }
 
 cgp-macro-test-util-lib     = { version = "0.8.0-alpha", path = "./crates/macros/cgp-macro-test-util-lib" }
-cgp-extra-macro             = { version = "0.8.0-alpha", path = "./crates/macros/cgp-extra-macro" }
-cgp-extra-macro-lib         = { version = "0.8.0-alpha", path = "./crates/macros/cgp-extra-macro-lib" }

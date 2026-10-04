@@ -1,6 +1,6 @@
 //! Failure cases: inputs the CGP macros must reject.
 //!
-//! A rejection test drives a `cgp-macro-lib` or `cgp-extra-macro-lib`
+//! A rejection test drives a `cgp-macro-lib` or `cgp-macro-extra-lib`
 //! entrypoint (or a `cgp-macro-core` parser) with an invalid input and asserts it
 //! returns `Err` rather than producing tokens. This is how we pin down which code
 //! CGP deliberately refuses, and catch regressions where a macro starts accepting
@@ -8,7 +8,9 @@
 //!
 //! To add a case:
 //! 1. call the entrypoint, e.g. `cgp_macro_lib::cgp_component(attr, body)`;
-//! 2. assert the result is `Err` with [`assert_macro_rejects`];
+//! 2. assert the result is `Err` with [`assert_macro_rejects`], or with
+//!    [`assert_macro_rejects_with`] to also pin the error message, so the case
+//!    cannot start passing because the input fails for an unrelated reason;
 //! 3. if the rejection corresponds to a documented limitation, note it in the
 //!    owning reference document's `## Known issues` section and link to it here.
 
@@ -20,6 +22,29 @@ use proc_macro2::TokenStream;
 pub fn assert_macro_rejects(label: &str, run: impl FnOnce() -> syn::Result<TokenStream>) {
     if let Ok(tokens) = run() {
         panic!("expected `{label}` to be rejected, but it expanded to:\n{tokens}");
+    }
+}
+
+/// Assert that a macro entrypoint rejects its input with exactly `message`.
+///
+/// Pinning the message, not just the `Err`, keeps a rejection test honest across
+/// a refactor: an input that starts failing for a different reason (an internal
+/// parse error, say) fails the test instead of silently passing it.
+#[track_caller]
+pub fn assert_macro_rejects_with(
+    label: &str,
+    message: &str,
+    run: impl FnOnce() -> syn::Result<TokenStream>,
+) {
+    match run() {
+        Ok(tokens) => {
+            panic!("expected `{label}` to be rejected, but it expanded to:\n{tokens}")
+        }
+        Err(error) => assert_eq!(
+            error.to_string(),
+            message,
+            "`{label}` was rejected with an unexpected message"
+        ),
     }
 }
 
