@@ -1,17 +1,54 @@
 //! `#[cgp_auto_dispatch]` combined with `#[async_trait]`: a `&self` async
 //! method, dispatched over `FooBar`.
 //!
-//! See cgp-knowledge-base/cgp/reference/macros/cgp_auto_dispatch.md.
+//! See cgp-knowledge-base/cgp/implementation/entrypoints/cgp_auto_dispatch.md and
+//! cgp-knowledge-base/cgp/reference/macros/cgp_auto_dispatch.md.
 
 use cgp::prelude::*;
+use cgp_macro_test_util::snapshot_cgp_auto_dispatch;
 use futures::executor::block_on;
 
 use super::types::{Bar, Foo, FooBar};
 
-#[cgp_auto_dispatch]
-#[async_trait]
-pub trait CanCall {
-    async fn call(&self) -> &'static str;
+snapshot_cgp_auto_dispatch! {
+    #[cgp_auto_dispatch]
+    #[async_trait]
+    pub trait CanCall {
+        async fn call(&self) -> &'static str;
+    }
+
+    expand_async_self_ref_only(output) {
+        insta::assert_snapshot!(output, @"
+        #[async_trait]
+        pub trait CanCall {
+            async fn call(&self) -> &'static str;
+        }
+        impl<__Variants__> CanCall for __Variants__
+        where
+            MatchWithValueHandlersRef<
+                ComputeCall,
+            >: for<'__a__> AsyncComputer<(), (), &'__a__ __Variants__, Output = &'static str>,
+            __Variants__: HasExtractor,
+        {
+            async fn call(&self) -> &'static str {
+                <MatchWithValueHandlersRef<
+                    ComputeCall,
+                > as AsyncComputer<
+                    _,
+                    _,
+                    _,
+                >>::compute_async(&(), ::core::marker::PhantomData::<()>, self)
+                    .await
+            }
+        }
+        #[cgp_computer(ComputeCall)]
+        async fn __compute_call__<'__a__, __Variants__: CanCall>(
+            __Variants__: &'__a__ __Variants__,
+        ) -> &'static str {
+            __Variants__.call().await
+        }
+        ")
+    }
 }
 
 impl CanCall for Foo {

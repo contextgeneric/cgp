@@ -3,15 +3,44 @@
 //! The generated handler routes a `FooBar` value to the `Foo`/`Bar` variant
 //! impl of `CanCall`, consuming `self`.
 //!
-//! See cgp-knowledge-base/cgp/reference/macros/cgp_auto_dispatch.md.
+//! See cgp-knowledge-base/cgp/implementation/entrypoints/cgp_auto_dispatch.md and
+//! cgp-knowledge-base/cgp/reference/macros/cgp_auto_dispatch.md.
 
 use cgp::prelude::*;
+use cgp_macro_test_util::snapshot_cgp_auto_dispatch;
 
 use super::types::{Bar, Foo, FooBar};
 
-#[cgp_auto_dispatch]
-pub trait CanCall {
-    fn call(self) -> &'static str;
+snapshot_cgp_auto_dispatch! {
+    #[cgp_auto_dispatch]
+    pub trait CanCall {
+        fn call(self) -> &'static str;
+    }
+
+    expand_self_only(output) {
+        insta::assert_snapshot!(output, @"
+        pub trait CanCall {
+            fn call(self) -> &'static str;
+        }
+        impl<__Variants__> CanCall for __Variants__
+        where
+            MatchWithValueHandlers<
+                ComputeCall,
+            >: Computer<(), (), __Variants__, Output = &'static str>,
+            __Variants__: HasExtractor,
+        {
+            fn call(self) -> &'static str {
+                <MatchWithValueHandlers<
+                    ComputeCall,
+                > as Computer<_, _, _>>::compute(&(), ::core::marker::PhantomData::<()>, self)
+            }
+        }
+        #[cgp_computer(ComputeCall)]
+        fn __compute_call__<__Variants__: CanCall>(__Variants__: __Variants__) -> &'static str {
+            __Variants__.call()
+        }
+        ")
+    }
 }
 
 impl CanCall for Foo {

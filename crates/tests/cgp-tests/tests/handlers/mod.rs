@@ -7,8 +7,14 @@
 // across the whole computation family (compute / try_compute / produce / handle
 // and their async and by-ref variants).
 pub mod computer_macro;
+pub mod computer_macro_arity;
+pub mod computer_macro_generics;
+pub mod computer_macro_named;
+pub mod computer_macro_output;
+pub mod computer_macro_visibility;
 pub mod handler_macro;
 pub mod producer_macro;
+pub mod producer_macro_output;
 
 // The `PipeHandlers` combinator: chaining computers, and chaining handlers with
 // the `Promote*` adapters that lift a simpler handler into a more capable one.

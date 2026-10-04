@@ -10,7 +10,10 @@
 //! The error wiring on `App` is incidental scaffolding, so it uses the plain
 //! `delegate_components!`.
 //!
-//! See cgp-knowledge-base/cgp/reference/components/handler.md and
+//! The async value and `Result` expansions of `#[cgp_computer]` are pinned here.
+//!
+//! See cgp-knowledge-base/cgp/implementation/entrypoints/cgp_computer.md,
+//! cgp-knowledge-base/cgp/reference/components/handler.md, and
 //! cgp-knowledge-base/cgp/reference/components/computer.md.
 
 use core::fmt::Display;
@@ -19,16 +22,68 @@ use cgp::core::error::{ErrorRaiserComponent, ErrorTypeProviderComponent};
 use cgp::extra::error::RaiseFrom;
 use cgp::extra::handler::HandlerRef;
 use cgp::prelude::*;
+use cgp_macro_test_util::snapshot_cgp_computer;
 use futures::executor::block_on;
 
-#[cgp_computer]
-async fn add(a: u64, b: u64) -> u64 {
-    a + b
+snapshot_cgp_computer! {
+    #[cgp_computer]
+    async fn add(a: u64, b: u64) -> u64 {
+        a + b
+    }
+
+    expand_async_add(output) {
+        insta::assert_snapshot!(output, @"
+        async fn add(a: u64, b: u64) -> u64 {
+            a + b
+        }
+        #[cgp_new_provider]
+        impl<__Context__, __Code__> AsyncComputer<__Context__, __Code__, (u64, u64)> for Add {
+            type Output = u64;
+            async fn compute_async(
+                _context: &__Context__,
+                _code: PhantomData<__Code__>,
+                (arg_0, arg_1): (u64, u64),
+            ) -> Self::Output {
+                add(arg_0, arg_1).await
+            }
+        }
+        delegate_components! {
+            Add { [AsyncComputerRefComponent, HandlerComponent, HandlerRefComponent,] ->
+            PromoteAsyncComputer < Self >, }
+        }
+        ")
+    }
 }
 
-#[cgp_computer]
-async fn add_with_error(a: u64, b: u64) -> Result<u64, String> {
-    a.checked_add(b).ok_or_else(|| "Overflow".to_string())
+snapshot_cgp_computer! {
+    #[cgp_computer]
+    async fn add_with_error(a: u64, b: u64) -> Result<u64, String> {
+        a.checked_add(b).ok_or_else(|| "Overflow".to_string())
+    }
+
+    expand_async_add_with_error(output) {
+        insta::assert_snapshot!(output, @r#"
+        async fn add_with_error(a: u64, b: u64) -> Result<u64, String> {
+            a.checked_add(b).ok_or_else(|| "Overflow".to_string())
+        }
+        #[cgp_new_provider]
+        impl<__Context__, __Code__> AsyncComputer<__Context__, __Code__, (u64, u64)>
+        for AddWithError {
+            type Output = Result<u64, String>;
+            async fn compute_async(
+                _context: &__Context__,
+                _code: PhantomData<__Code__>,
+                (arg_0, arg_1): (u64, u64),
+            ) -> Self::Output {
+                add_with_error(arg_0, arg_1).await
+            }
+        }
+        delegate_components! {
+            AddWithError { [AsyncComputerRefComponent, HandlerComponent, HandlerRefComponent,] ->
+            PromoteHandler < Self >, }
+        }
+        "#)
+    }
 }
 
 pub struct App;

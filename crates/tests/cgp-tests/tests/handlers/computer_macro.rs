@@ -14,7 +14,11 @@
 //! `Handler` has an error type; it uses the plain `delegate_components!` (the
 //! error and wiring macros are owned by other concept targets).
 //!
-//! See cgp-knowledge-base/cgp/reference/components/computer.md.
+//! This target owns the `#[cgp_computer]` snapshots: the synchronous value and
+//! `Result` cases and a generic function are pinned here.
+//!
+//! See cgp-knowledge-base/cgp/implementation/entrypoints/cgp_computer.md and
+//! cgp-knowledge-base/cgp/reference/components/computer.md.
 
 use core::fmt::Display;
 
@@ -22,16 +26,70 @@ use cgp::core::error::{ErrorRaiserComponent, ErrorTypeProviderComponent};
 use cgp::extra::error::RaiseFrom;
 use cgp::extra::handler::{ComputerRef, HandlerRef, TryComputerRef};
 use cgp::prelude::*;
+use cgp_macro_test_util::snapshot_cgp_computer;
 use futures::executor::block_on;
 
-#[cgp_computer]
-fn add(a: u64, b: u64) -> u64 {
-    a + b
+snapshot_cgp_computer! {
+    #[cgp_computer]
+    fn add(a: u64, b: u64) -> u64 {
+        a + b
+    }
+
+    expand_add(output) {
+        insta::assert_snapshot!(output, @"
+        fn add(a: u64, b: u64) -> u64 {
+            a + b
+        }
+        #[cgp_new_provider]
+        impl<__Context__, __Code__> Computer<__Context__, __Code__, (u64, u64)> for Add {
+            type Output = u64;
+            fn compute(
+                _context: &__Context__,
+                _code: PhantomData<__Code__>,
+                (arg_0, arg_1): (u64, u64),
+            ) -> Self::Output {
+                add(arg_0, arg_1)
+            }
+        }
+        delegate_components! {
+            Add { [ComputerRefComponent, TryComputerComponent, TryComputerRefComponent,
+            AsyncComputerComponent, AsyncComputerRefComponent, HandlerComponent,
+            HandlerRefComponent,] -> PromoteComputer < Self >, }
+        }
+        ")
+    }
 }
 
-#[cgp_computer]
-fn add_with_error(a: u64, b: u64) -> Result<u64, String> {
-    a.checked_add(b).ok_or_else(|| "Overflow".to_string())
+snapshot_cgp_computer! {
+    #[cgp_computer]
+    fn add_with_error(a: u64, b: u64) -> Result<u64, String> {
+        a.checked_add(b).ok_or_else(|| "Overflow".to_string())
+    }
+
+    expand_add_with_error(output) {
+        insta::assert_snapshot!(output, @r#"
+        fn add_with_error(a: u64, b: u64) -> Result<u64, String> {
+            a.checked_add(b).ok_or_else(|| "Overflow".to_string())
+        }
+        #[cgp_new_provider]
+        impl<__Context__, __Code__> Computer<__Context__, __Code__, (u64, u64)>
+        for AddWithError {
+            type Output = Result<u64, String>;
+            fn compute(
+                _context: &__Context__,
+                _code: PhantomData<__Code__>,
+                (arg_0, arg_1): (u64, u64),
+            ) -> Self::Output {
+                add_with_error(arg_0, arg_1)
+            }
+        }
+        delegate_components! {
+            AddWithError { [ComputerRefComponent, TryComputerComponent, TryComputerRefComponent,
+            AsyncComputerComponent, AsyncComputerRefComponent, HandlerComponent,
+            HandlerRefComponent,] -> PromoteTryComputer < Self >, }
+        }
+        "#)
+    }
 }
 
 pub struct App;
@@ -138,7 +196,37 @@ fn test_computer_ref() {
     );
 }
 
-#[cgp_computer]
-pub fn add_generic<T: core::ops::Add<Output = T>>(a: T, b: T) -> T {
-    a + b
+snapshot_cgp_computer! {
+    #[cgp_computer]
+    pub fn add_generic<T: core::ops::Add<Output = T>>(a: T, b: T) -> T {
+        a + b
+    }
+
+    expand_add_generic(output) {
+        insta::assert_snapshot!(output, @"
+        pub fn add_generic<T: core::ops::Add<Output = T>>(a: T, b: T) -> T {
+            a + b
+        }
+        #[cgp_new_provider]
+        impl<
+            T: core::ops::Add<Output = T>,
+            __Context__,
+            __Code__,
+        > Computer<__Context__, __Code__, (T, T)> for AddGeneric {
+            type Output = T;
+            fn compute(
+                _context: &__Context__,
+                _code: PhantomData<__Code__>,
+                (arg_0, arg_1): (T, T),
+            ) -> Self::Output {
+                add_generic(arg_0, arg_1)
+            }
+        }
+        delegate_components! {
+            AddGeneric { [ComputerRefComponent, TryComputerComponent, TryComputerRefComponent,
+            AsyncComputerComponent, AsyncComputerRefComponent, HandlerComponent,
+            HandlerRefComponent,] -> PromoteComputer < Self >, }
+        }
+        ")
+    }
 }

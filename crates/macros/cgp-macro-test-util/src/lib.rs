@@ -133,3 +133,24 @@ pub fn snapshot_derive_from_variant(body: TokenStream) -> TokenStream {
         .unwrap_or_else(syn::Error::into_compile_error)
         .into()
 }
+
+#[proc_macro]
+pub fn snapshot_cgp_computer(body: TokenStream) -> TokenStream {
+    entrypoints::snapshot_cgp_computer(body.into())
+        .unwrap_or_else(syn::Error::into_compile_error)
+        .into()
+}
+
+#[proc_macro]
+pub fn snapshot_cgp_producer(body: TokenStream) -> TokenStream {
+    entrypoints::snapshot_cgp_producer(body.into())
+        .unwrap_or_else(syn::Error::into_compile_error)
+        .into()
+}
+
+#[proc_macro]
+pub fn snapshot_cgp_auto_dispatch(body: TokenStream) -> TokenStream {
+    entrypoints::snapshot_cgp_auto_dispatch(body.into())
+        .unwrap_or_else(syn::Error::into_compile_error)
+        .into()
+}

@@ -23,6 +23,11 @@ pub mod self_ref_return_explicit_ref;
 pub mod self_ref_return_implicit_ref;
 pub mod shape;
 
+// Where the trait lives and what it declares: a trait used across modules, and a
+// method with a default body.
+pub mod cross_module;
+pub mod default_method;
+
 // Combined with `#[async_trait]`: the async shapes.
 pub mod async_generics;
 pub mod async_multi_args;
@@ -32,9 +37,11 @@ pub mod async_self_mut_only;
 pub mod async_self_only;
 pub mod async_self_ref_only;
 
-// The names the macro generates: a module item sharing a method's name, a method
-// named with a raw identifier, and imported consumer traits that would make an
-// unqualified matcher call ambiguous.
+// The names and items the macro generates: the per-variant computer wired by
+// name, imported consumer traits that would make an unqualified matcher call
+// ambiguous, a module item sharing a method's name, and a method named with a
+// raw identifier.
+pub mod computer_by_name;
 pub mod consumer_traits_in_scope;
 pub mod method_name_in_scope;
 pub mod raw_method_name;

@@ -6,14 +6,16 @@
 //! the async, fallible `Handler`, and composing handlers into pipelines with the
 //! `PipeHandlers` combinator.
 //!
-//! This concept does *not* own `#[cgp_component]`, `#[cgp_provider]`,
-//! `check_components!`, or `delegate_components!` snapshots — those live in their
-//! owning targets — so the scaffolding here uses the plain macros.
+//! This concept owns the `#[cgp_computer]` and `#[cgp_producer]` snapshots. It
+//! does *not* own `#[cgp_component]`, `#[cgp_provider]`, `check_components!`, or
+//! `delegate_components!` snapshots — those live in their owning targets — so the
+//! scaffolding here uses the plain macros.
 //!
 //! See cgp-knowledge-base/cgp/reference/components/computer.md,
 //! cgp-knowledge-base/cgp/reference/components/producer.md,
 //! cgp-knowledge-base/cgp/reference/components/handler.md, and
 //! cgp-knowledge-base/cgp/reference/providers/handler_combinators.md.
 #![allow(dead_code)]
+#![allow(clippy::needless_lifetimes)]
 
 pub mod handlers;

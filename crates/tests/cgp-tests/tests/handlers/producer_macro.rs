@@ -10,16 +10,42 @@
 //! The error type wiring on `App` is incidental scaffolding, so it uses the
 //! plain `delegate_components!`.
 //!
-//! See cgp-knowledge-base/cgp/reference/components/producer.md.
+//! This target owns the `#[cgp_producer]` snapshot, pinned here.
+//!
+//! See cgp-knowledge-base/cgp/implementation/entrypoints/cgp_producer.md and
+//! cgp-knowledge-base/cgp/reference/components/producer.md.
 
 use cgp::core::error::ErrorTypeProviderComponent;
 use cgp::extra::handler::{ComputerRef, HandlerRef, TryComputerRef};
 use cgp::prelude::*;
+use cgp_macro_test_util::snapshot_cgp_producer;
 use futures::executor::block_on;
 
-#[cgp_producer]
-pub fn magic_number() -> u64 {
-    42
+snapshot_cgp_producer! {
+    #[cgp_producer]
+    pub fn magic_number() -> u64 {
+        42
+    }
+
+    expand_magic_number(output) {
+        insta::assert_snapshot!(output, @"
+        pub fn magic_number() -> u64 {
+            42
+        }
+        #[cgp_new_provider]
+        impl<__Context__, __Code__> Producer<__Context__, __Code__> for MagicNumber {
+            type Output = u64;
+            fn produce(_context: &__Context__, _code: PhantomData<__Code__>) -> Self::Output {
+                magic_number()
+            }
+        }
+        delegate_components! {
+            MagicNumber { [ComputerComponent, ComputerRefComponent, TryComputerComponent,
+            TryComputerRefComponent, AsyncComputerComponent, AsyncComputerRefComponent,
+            HandlerComponent, HandlerRefComponent,] : PromoteProducer < Self >, }
+        }
+        ")
+    }
 }
 
 pub struct App;
