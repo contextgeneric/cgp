@@ -1,9 +1,10 @@
 //! Failure cases: inputs the CGP macros must reject.
 //!
-//! A rejection test drives a `cgp-macro-lib` entrypoint (or a `cgp-macro-core`
-//! parser) with an invalid input and asserts it returns `Err` rather than
-//! producing tokens. This is how we pin down which code CGP deliberately refuses,
-//! and catch regressions where a macro starts accepting something it should not.
+//! A rejection test drives a `cgp-macro-lib` or `cgp-extra-macro-lib`
+//! entrypoint (or a `cgp-macro-core` parser) with an invalid input and asserts it
+//! returns `Err` rather than producing tokens. This is how we pin down which code
+//! CGP deliberately refuses, and catch regressions where a macro starts accepting
+//! something it should not.
 //!
 //! To add a case:
 //! 1. call the entrypoint, e.g. `cgp_macro_lib::cgp_component(attr, body)`;
@@ -22,11 +23,16 @@ pub fn assert_macro_rejects(label: &str, run: impl FnOnce() -> syn::Result<Token
     }
 }
 
+pub mod blanket_trait;
+pub mod cgp_auto_dispatch;
 pub mod cgp_component;
+pub mod cgp_computer;
 pub mod cgp_fn;
 pub mod cgp_impl;
 pub mod cgp_namespace;
+pub mod cgp_producer;
 pub mod cgp_provider;
+pub mod cgp_type;
 pub mod check_components;
 pub mod delegate_and_check_components;
 pub mod delegate_components;

@@ -4,12 +4,14 @@
 
 // `delegate_and_check_components!` snapshots (this concept owns the macro's
 // expansion): the basic wire-and-check step, its generic-context form, the
-// generic-parameter `#[check_params]` / array-key form, and the per-key generic
-// form whose key generics are threaded onto the derived check impl.
+// generic-parameter `#[check_params]` / array-key form, the per-key generic
+// form whose key generics are threaded onto the derived check impl, and a
+// `#[skip_check]` entry beside checked ones.
 pub mod delegate_and_check_basic;
 pub mod delegate_and_check_generic;
 pub mod delegate_and_check_generic_key;
 pub mod delegate_and_check_params;
+pub mod delegate_and_check_skip;
 
 // `check_components!` snapshots (this concept owns the macro's expansion): the
 // standalone check with `#[check_trait(...)]` overrides and per-entry parameter
@@ -18,4 +20,5 @@ pub mod delegate_and_check_params;
 pub mod check_generic;
 pub mod check_path_context;
 pub mod check_providers;
+pub mod check_providers_generic;
 pub mod check_trait;

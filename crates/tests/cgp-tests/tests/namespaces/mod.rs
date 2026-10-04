@@ -4,11 +4,12 @@
 
 // `cgp_namespace!` expansion snapshots (this concept owns the macro): the basic
 // form, the two path-segment shapes (`Type` vs. `symbol`), and multiple
-// namespaces attached to one component.
+// namespaces attached to one component; plus the bare `Path!` macro itself.
 pub mod namespace_basic;
 pub mod namespace_multi;
 pub mod namespace_symbol_path;
 pub mod namespace_type_path;
+pub mod path_macro;
 
 // `#[prefix(...)]` + `namespace`/`@`-path wiring snapshots (this concept owns the
 // namespace forms of `delegate_components!`): attaching components to

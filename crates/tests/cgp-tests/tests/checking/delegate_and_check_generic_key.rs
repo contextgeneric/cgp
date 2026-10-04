@@ -67,7 +67,7 @@ snapshot_delegate_and_check_components! {
         }
         impl<
             __Context__,
-            __Params__,
+            __Params__: ?Sized,
         > IsProviderFor<FooTypeProviderComponent, __Context__, __Params__> for Context
         where
             UseType<()>: IsProviderFor<FooTypeProviderComponent, __Context__, __Params__>,
@@ -77,7 +77,7 @@ snapshot_delegate_and_check_components! {
         }
         impl<
             __Context__,
-            __Params__,
+            __Params__: ?Sized,
         > IsProviderFor<BarTypeProviderComponent, __Context__, __Params__> for Context
         where
             UseType<()>: IsProviderFor<BarTypeProviderComponent, __Context__, __Params__>,
@@ -88,7 +88,7 @@ snapshot_delegate_and_check_components! {
         impl<
             I,
             __Context__,
-            __Params__,
+            __Params__: ?Sized,
         > IsProviderFor<BarGetterAtComponent<I>, __Context__, __Params__> for Context
         where
             UseField<

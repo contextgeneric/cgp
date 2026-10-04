@@ -60,7 +60,7 @@ snapshot_delegate_components! {
             T,
             Provider,
             __Context__,
-            __Params__,
+            __Params__: ?Sized,
         > IsProviderFor<
             PathCons<
                 Symbol<4, Chars<'t', Chars<'e', Chars<'s', Chars<'t', Nil>>>>>,

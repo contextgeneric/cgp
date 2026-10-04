@@ -224,7 +224,7 @@ snapshot_delegate_components! {
             __Key__,
             __Value__,
             __Context__,
-            __Params__,
+            __Params__: ?Sized,
         > IsProviderFor<__Key__, __Context__, __Params__> for App
         where
             __Key__: MyNamespace<App, Delegate = __Value__>,
@@ -238,7 +238,7 @@ snapshot_delegate_components! {
         impl<
             __Wildcard__,
             __Context__,
-            __Params__,
+            __Params__: ?Sized,
         > IsProviderFor<
             PathCons<MyApp, PathCons<MyFooComponent, __Wildcard__>>,
             __Context__,
@@ -259,7 +259,7 @@ snapshot_delegate_components! {
         impl<
             __Wildcard__,
             __Context__,
-            __Params__,
+            __Params__: ?Sized,
         > IsProviderFor<
             PathCons<MyApp, PathCons<MyBarComponent, __Wildcard__>>,
             __Context__,
@@ -309,7 +309,7 @@ snapshot_delegate_components! {
             __Key__,
             __Value__,
             __Context__,
-            __Params__,
+            __Params__: ?Sized,
         > IsProviderFor<__Key__, __Context__, __Params__> for OtherApp
         where
             __Key__: OtherNamespace<OtherApp, Delegate = __Value__>,
@@ -331,7 +331,7 @@ snapshot_delegate_components! {
         impl<
             __Wildcard__,
             __Context__,
-            __Params__,
+            __Params__: ?Sized,
         > IsProviderFor<
             PathCons<
                 Symbol<
@@ -375,7 +375,7 @@ snapshot_delegate_components! {
         impl<
             __Wildcard__,
             __Context__,
-            __Params__,
+            __Params__: ?Sized,
         > IsProviderFor<
             PathCons<
                 Symbol<

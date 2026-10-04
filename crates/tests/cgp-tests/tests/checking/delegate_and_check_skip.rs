@@ -1,10 +1,10 @@
-//! `delegate_and_check_components!` in its basic form: it wires a context to
-//! providers *and* asserts the wiring is usable in one step, generating a
-//! `CanUseComponent`-supertraited check trait (here renamed with
-//! `#[check_trait(...)]`). This concept owns the macro's expansion snapshot.
+//! `delegate_and_check_components!` with a `#[skip_check]` entry beside checked
+//! entries: the skipped key still gets its `DelegateComponent` and `IsProviderFor`
+//! impls, but no check impl. `MyContext` has no `age` field, so checking
+//! `AgeGetterComponent` would fail; the table compiling is what shows the skip
+//! took effect, while the name entries are still checked.
 //!
-//! See cgp-knowledge-base/cgp/reference/macros/delegate_and_check_components.md and
-//! cgp-knowledge-base/cgp/reference/traits/can_use_component.md.
+//! See cgp-knowledge-base/cgp/reference/macros/delegate_and_check_components.md.
 
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_delegate_and_check_components;
@@ -19,6 +19,11 @@ pub trait HasName: HasNameType {
     fn name(&self) -> &Self::Name;
 }
 
+#[cgp_getter]
+pub trait HasAge {
+    fn age(&self) -> &u8;
+}
+
 #[derive(HasField)]
 pub struct MyContext {
     pub name: String,
@@ -26,10 +31,11 @@ pub struct MyContext {
 
 snapshot_delegate_and_check_components! {
     delegate_and_check_components! {
-        #[check_trait(CheckMyContext)]
         MyContext {
             NameTypeProviderComponent: UseType<String>,
             NameGetterComponent: UseField<Symbol!("name")>,
+            #[skip_check]
+            AgeGetterComponent: UseField<Symbol!("age")>,
         }
     }
 
@@ -57,12 +63,22 @@ snapshot_delegate_and_check_components! {
                 Symbol!("name"),
             >: IsProviderFor<NameGetterComponent, __Context__, __Params__>,
         {}
-        trait CheckMyContext<
+        impl DelegateComponent<AgeGetterComponent> for MyContext {
+            type Delegate = UseField<Symbol!("age")>;
+        }
+        impl<
+            __Context__,
+            __Params__: ?Sized,
+        > IsProviderFor<AgeGetterComponent, __Context__, __Params__> for MyContext
+        where
+            UseField<Symbol!("age")>: IsProviderFor<AgeGetterComponent, __Context__, __Params__>,
+        {}
+        trait __CanUseMyContext<
             __Component__,
             __Params__: ?Sized,
         >: CanUseComponent<__Component__, __Params__> {}
-        impl CheckMyContext<NameTypeProviderComponent, ()> for MyContext {}
-        impl CheckMyContext<NameGetterComponent, ()> for MyContext {}
+        impl __CanUseMyContext<NameTypeProviderComponent, ()> for MyContext {}
+        impl __CanUseMyContext<NameGetterComponent, ()> for MyContext {}
         "#)
     }
 }

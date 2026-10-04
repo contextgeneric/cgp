@@ -244,6 +244,7 @@ name = "cgp-macro-tests"
 version = "0.8.0-alpha"
 dependencies = [
  "cgp",
+ "cgp-extra-macro-lib",
  "cgp-macro-core",
  "cgp-macro-lib",
  "cgp-macro-test-util",

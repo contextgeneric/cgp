@@ -58,7 +58,9 @@ impl EvaluatedDelegateEntry {
 
     /// Emit the forwarding `IsProviderFor<Key, __Context__, __Params__>` impl,
     /// bounded on the value being a provider for the same key so a missing
-    /// transitive dependency stays diagnosable.
+    /// transitive dependency stays diagnosable. `__Params__` is `?Sized`, as on
+    /// the trait, so a component used at an unsized parameter (`str`, making the
+    /// params tuple `(Life<'a>, str)` unsized) still resolves through the table.
     pub fn build_is_provider_for_impl(&self, outer_generics: &Generics) -> syn::Result<ItemImpl> {
         let table_type = &self.table_type;
 
@@ -68,7 +70,7 @@ impl EvaluatedDelegateEntry {
         let value = &self.value;
 
         generics.params.push(parse_internal!(__Context__));
-        generics.params.push(parse_internal!(__Params__));
+        generics.params.push(parse_internal!(__Params__: ?Sized));
 
         generics
             .make_where_clause()

@@ -25,7 +25,7 @@ snapshot_delegate_components! {
         impl DelegateComponent<Index<0>> for FooComponents {
             type Delegate = u64;
         }
-        impl<__Context__, __Params__> IsProviderFor<Index<0>, __Context__, __Params__>
+        impl<__Context__, __Params__: ?Sized> IsProviderFor<Index<0>, __Context__, __Params__>
         for FooComponents
         where
             u64: IsProviderFor<Index<0>, __Context__, __Params__>,
@@ -33,7 +33,7 @@ snapshot_delegate_components! {
         impl DelegateComponent<Index<1>> for FooComponents {
             type Delegate = String;
         }
-        impl<__Context__, __Params__> IsProviderFor<Index<1>, __Context__, __Params__>
+        impl<__Context__, __Params__: ?Sized> IsProviderFor<Index<1>, __Context__, __Params__>
         for FooComponents
         where
             String: IsProviderFor<Index<1>, __Context__, __Params__>,
@@ -60,7 +60,7 @@ snapshot_delegate_components! {
         impl DelegateComponent<Index<0>> for BarComponents {
             type Delegate = FooComponents;
         }
-        impl<__Context__, __Params__> IsProviderFor<Index<0>, __Context__, __Params__>
+        impl<__Context__, __Params__: ?Sized> IsProviderFor<Index<0>, __Context__, __Params__>
         for BarComponents
         where
             FooComponents: IsProviderFor<Index<0>, __Context__, __Params__>,
@@ -71,7 +71,7 @@ snapshot_delegate_components! {
         {
             type Delegate = <FooComponents as DelegateComponent<Index<1>>>::Delegate;
         }
-        impl<__Context__, __Params__> IsProviderFor<Index<1>, __Context__, __Params__>
+        impl<__Context__, __Params__: ?Sized> IsProviderFor<Index<1>, __Context__, __Params__>
         for BarComponents
         where
             FooComponents: DelegateComponent<Index<1>>,

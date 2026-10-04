@@ -709,16 +709,16 @@ pub fn cgp_type(attrs: TokenStream, body: TokenStream) -> TokenStream {
    Given the following:
 
    ```rust,ignore
-   #[trait_alias]
-   pub trait HasErrorType: Async + HasErrorType<Error: Async> {}
+   #[blanket_trait]
+   pub trait HasSendError: HasErrorType<Error: Send + Sync> {}
    ```
 
    automatically generates the following blanket implementation:
 
    ```rust,ignore
-   impl<Context> HasErrorType for Context
+   impl<__Context__> HasSendError for __Context__
    where
-       Context: Async + HasErrorType<Error: Async> {}
+       __Context__: HasErrorType<Error: Send + Sync> {}
    ```
 */
 #[proc_macro_attribute]

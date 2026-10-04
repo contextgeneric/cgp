@@ -16,3 +16,8 @@ pub mod component_const;
 pub mod component_generic_const;
 pub mod component_lifetime;
 pub mod component_type_param;
+
+// A `?Sized` component parameter used at an unsized argument and called through
+// `delegate_components!` wiring, which needs the table's forwarding impl to accept
+// an unsized params tuple.
+pub mod unsized_parameter;

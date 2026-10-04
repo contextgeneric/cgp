@@ -41,7 +41,7 @@ snapshot_delegate_and_check_components! {
         impl<
             T,
             __Context__,
-            __Params__,
+            __Params__: ?Sized,
         > IsProviderFor<NameTypeProviderComponent, __Context__, __Params__> for MyContext<T>
         where
             UseType<T>: IsProviderFor<NameTypeProviderComponent, __Context__, __Params__>,
@@ -52,7 +52,7 @@ snapshot_delegate_and_check_components! {
         impl<
             T,
             __Context__,
-            __Params__,
+            __Params__: ?Sized,
         > IsProviderFor<NameGetterComponent, __Context__, __Params__> for MyContext<T>
         where
             UseField<
