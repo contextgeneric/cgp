@@ -28,19 +28,19 @@ snapshot_cgp_auto_dispatch! {
         where
             MatchFirstWithValueHandlersRef<
                 ComputeCallA,
-            >: for<'__a__> Computer<
+            >: for<'__a__, '__a1__> Computer<
                 (),
                 (),
-                (&'__a__ __Variants__, (u64, &'__a__ T)),
+                (&'__a__ __Variants__, (u64, &'__a1__ T)),
                 Output = String,
             >,
             MatchFirstWithValueHandlers<
                 ComputeCallB,
-            >: for<'__a__> Computer<
+            >: for<'__a1__> Computer<
                 (),
                 (),
-                (__Variants__, (u64, &'__a__ mut T)),
-                Output = &'__a__ str,
+                (__Variants__, (u64, &'__a1__ mut T)),
+                Output = &'__a1__ str,
             >,
             __Variants__: HasExtractor,
         {
@@ -63,31 +63,33 @@ snapshot_cgp_auto_dispatch! {
                 >>::compute(&(), ::core::marker::PhantomData::<()>, (self, (arg_0, arg_1)))
             }
         }
-        fn __compute_call_a__<'__a__, __Variants__: CanCall<T>, T>(
+        fn __compute_call_a__<'__a__, '__a1__, __Variants__: CanCall<T>, T>(
             __Variants__: &'__a__ __Variants__,
-            (arg_0, arg_1): (u64, &'__a__ T),
+            (arg_0, arg_1): (u64, &'__a1__ T),
         ) -> String {
             __Variants__.call_a(arg_0, arg_1)
         }
         impl<
             '__a__,
+            '__a1__,
             __Variants__: CanCall<T>,
             T,
             __Context__,
             __Code__,
-        > Computer<__Context__, __Code__, (&'__a__ __Variants__, (u64, &'__a__ T))>
+        > Computer<__Context__, __Code__, (&'__a__ __Variants__, (u64, &'__a1__ T))>
         for ComputeCallA {
             type Output = String;
             fn compute(
                 _context: &__Context__,
                 _code: ::core::marker::PhantomData<__Code__>,
-                (arg_0, arg_1): (&'__a__ __Variants__, (u64, &'__a__ T)),
+                (arg_0, arg_1): (&'__a__ __Variants__, (u64, &'__a1__ T)),
             ) -> Self::Output {
                 __compute_call_a__(arg_0, arg_1)
             }
         }
         impl<
             '__a__,
+            '__a1__,
             __Variants__: CanCall<T>,
             T,
             __Context__,
@@ -95,7 +97,7 @@ snapshot_cgp_auto_dispatch! {
         > IsProviderFor<
             ComputerComponent,
             __Context__,
-            (__Code__, (&'__a__ __Variants__, (u64, &'__a__ T))),
+            (__Code__, (&'__a__ __Variants__, (u64, &'__a1__ T))),
         > for ComputeCallA {}
         pub struct ComputeCallA;
         impl DelegateComponent<ComputerRefComponent> for ComputeCallA
@@ -238,31 +240,31 @@ snapshot_cgp_auto_dispatch! {
                 HandlerRefComponent,
             >>::Delegate: IsProviderFor<HandlerRefComponent, __Context__, __Params__>,
         {}
-        fn __compute_call_b__<'__a__, __Variants__: CanCall<T>, T>(
+        fn __compute_call_b__<'__a1__, __Variants__: CanCall<T>, T>(
             __Variants__: __Variants__,
-            (arg_0, arg_1): (u64, &'__a__ mut T),
-        ) -> &'__a__ str {
+            (arg_0, arg_1): (u64, &'__a1__ mut T),
+        ) -> &'__a1__ str {
             __Variants__.call_b(arg_0, arg_1)
         }
         impl<
-            '__a__,
+            '__a1__,
             __Variants__: CanCall<T>,
             T,
             __Context__,
             __Code__,
-        > Computer<__Context__, __Code__, (__Variants__, (u64, &'__a__ mut T))>
+        > Computer<__Context__, __Code__, (__Variants__, (u64, &'__a1__ mut T))>
         for ComputeCallB {
-            type Output = &'__a__ str;
+            type Output = &'__a1__ str;
             fn compute(
                 _context: &__Context__,
                 _code: ::core::marker::PhantomData<__Code__>,
-                (arg_0, arg_1): (__Variants__, (u64, &'__a__ mut T)),
+                (arg_0, arg_1): (__Variants__, (u64, &'__a1__ mut T)),
             ) -> Self::Output {
                 __compute_call_b__(arg_0, arg_1)
             }
         }
         impl<
-            '__a__,
+            '__a1__,
             __Variants__: CanCall<T>,
             T,
             __Context__,
@@ -270,7 +272,7 @@ snapshot_cgp_auto_dispatch! {
         > IsProviderFor<
             ComputerComponent,
             __Context__,
-            (__Code__, (__Variants__, (u64, &'__a__ mut T))),
+            (__Code__, (__Variants__, (u64, &'__a1__ mut T))),
         > for ComputeCallB {}
         pub struct ComputeCallB;
         impl DelegateComponent<ComputerRefComponent> for ComputeCallB

@@ -11,11 +11,13 @@ pub mod types;
 
 // Method-shape coverage: one shape per file. Each defines per-variant impls and
 // dispatches them over an extensible-data enum.
+pub mod elided_lifetimes;
 pub mod generics;
 pub mod multi_args;
 pub mod multi_args_owned_self;
 pub mod multi_args_ref;
 pub mod multi_methods;
+pub mod named_lifetimes;
 pub mod self_mut_only;
 pub mod self_only;
 pub mod self_ref_only;
