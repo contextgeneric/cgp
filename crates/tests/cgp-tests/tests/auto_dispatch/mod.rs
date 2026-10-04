@@ -39,9 +39,10 @@ pub mod async_self_ref_only;
 
 // The names and items the macro generates: the per-variant computer wired by
 // name, imported consumer traits that would make an unqualified matcher call
-// ambiguous, a module item sharing a method's name, and a method named with a
-// raw identifier.
+// ambiguous, a module item sharing a method's name, a method named with a raw
+// identifier, and a module without the prelude, where only qualified paths resolve.
 pub mod computer_by_name;
 pub mod consumer_traits_in_scope;
 pub mod method_name_in_scope;
 pub mod raw_method_name;
+pub mod without_prelude;
