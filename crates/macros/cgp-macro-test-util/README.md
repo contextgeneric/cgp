@@ -33,7 +33,7 @@ cgp-macro-test-util/         # proc-macro entry points (#[proc_macro] fns)
 ```
 
 The implementation calls the real macro logic in `cgp-macro-lib` and
-`cgp-extra-macro-lib`, not a copy of it,
+`cgp-macro-extra-lib`, not a copy of it,
 so a snapshot is guaranteed to show what the production macros generate.
 
 ## Available macros

@@ -17,7 +17,7 @@ fn rejects_self_receiver() {
         "cgp_computer on a method with a receiver",
         "Computer functions cannot have a receiver",
         || {
-            cgp_extra_macro_lib::cgp_computer(
+            cgp_macro_extra_lib::cgp_computer(
                 quote!(),
                 quote!(
                     fn add(&self, b: u64) -> u64 {
@@ -37,7 +37,7 @@ fn rejects_one_argument_result_alias() {
         "cgp_computer returning a one-argument Result alias",
         "expected `,`",
         || {
-            cgp_extra_macro_lib::cgp_computer(
+            cgp_macro_extra_lib::cgp_computer(
                 quote!(),
                 quote!(
                     fn parse(value: String) -> Result<u64> {
@@ -57,7 +57,7 @@ fn rejects_path_provider_name() {
         "cgp_computer with a path as the provider name",
         "unexpected token",
         || {
-            cgp_extra_macro_lib::cgp_computer(
+            cgp_macro_extra_lib::cgp_computer(
                 quote!(providers::Add),
                 quote!(
                     fn add(a: u64, b: u64) -> u64 {

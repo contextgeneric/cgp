@@ -1,5 +1,5 @@
 [package]
-name         = "cgp-extra-macro"
+name         = "cgp-macro-extra"
 version      = "0.8.0-alpha"
 edition      = { workspace = true }
 license      = { workspace = true }
@@ -19,4 +19,4 @@ default = []
 
 [dependencies]
 syn                     = { version = "2.0.95", features = [ "full", "extra-traits" ] }
-cgp-extra-macro-lib     = { workspace = true }
+cgp-macro-extra-lib     = { workspace = true }

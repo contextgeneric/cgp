@@ -17,7 +17,7 @@ full = [ "cgp-error-extra/alloc" ]
 
 [dependencies]
 cgp-core        = { workspace = true }
-cgp-extra-macro = { workspace = true }
+cgp-macro-extra = { workspace = true }
 cgp-error-extra = { workspace = true }
 cgp-field-extra = { workspace = true }
 cgp-run         = { workspace = true }

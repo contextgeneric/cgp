@@ -135,7 +135,7 @@ inward (core/macros) when changing fundamentals, outward (main) only to adjust t
   **`cgp-macro-core`** — this is where the real parsing, AST types, and codegen live (see
   `cgp-macro-core/src/{types,functions,visitors,macros}/`). When a macro misbehaves, the logic to
   fix is almost always in `cgp-macro-core`, not the entrypoint crate. `cgp-async-macro` provides
-  `#[async_trait]`; `cgp-extra-macro{,-lib}` host the extra-feature macros.
+  `#[async_trait]`; `cgp-macro-extra{,-lib}` host the extra-feature macros.
 
 - **`crates/core/`** — the foundational runtime traits the macros expand into:
   - `cgp-component` — the wiring machinery: `DelegateComponent`, `IsProviderFor`,

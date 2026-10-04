@@ -19,7 +19,7 @@ fn rejects_associated_type() {
         "cgp_auto_dispatch with an associated type",
         "Only function items are allowed in a dispatch trait",
         || {
-            cgp_extra_macro_lib::cgp_auto_dispatch(
+            cgp_macro_extra_lib::cgp_auto_dispatch(
                 quote!(),
                 quote!(
                     pub trait HasArea {
@@ -39,7 +39,7 @@ fn rejects_method_without_receiver() {
         "cgp_auto_dispatch on a method without self",
         "Dispatcher method must have a self argument",
         || {
-            cgp_extra_macro_lib::cgp_auto_dispatch(
+            cgp_macro_extra_lib::cgp_auto_dispatch(
                 quote!(),
                 quote!(
                     pub trait HasArea {
@@ -57,7 +57,7 @@ fn rejects_generic_method() {
         "cgp_auto_dispatch on a generic method",
         "Dispatch trait methods cannot contain non-lifetime generic parameters due to the lack of quantified constraints in Rust",
         || {
-            cgp_extra_macro_lib::cgp_auto_dispatch(
+            cgp_macro_extra_lib::cgp_auto_dispatch(
                 quote!(),
                 quote!(
                     pub trait CanScale {
@@ -75,7 +75,7 @@ fn rejects_associated_const() {
         "cgp_auto_dispatch with an associated const",
         "Only function items are allowed in a dispatch trait",
         || {
-            cgp_extra_macro_lib::cgp_auto_dispatch(
+            cgp_macro_extra_lib::cgp_auto_dispatch(
                 quote!(),
                 quote!(
                     pub trait HasArea {
@@ -95,7 +95,7 @@ fn rejects_const_generic_method() {
         "cgp_auto_dispatch on a const-generic method",
         "Dispatch trait methods cannot contain non-lifetime generic parameters due to the lack of quantified constraints in Rust",
         || {
-            cgp_extra_macro_lib::cgp_auto_dispatch(
+            cgp_macro_extra_lib::cgp_auto_dispatch(
                 quote!(),
                 quote!(
                     pub trait CanScale {
