@@ -31,7 +31,6 @@ snapshot_cgp_computer! {
         {
             format!("<{value}>")
         }
-        #[cgp_new_provider]
         impl<T, __Context__, __Code__> Computer<__Context__, __Code__, (T)> for Describe
         where
             T: Display,
@@ -39,17 +38,161 @@ snapshot_cgp_computer! {
             type Output = String;
             fn compute(
                 _context: &__Context__,
-                _code: PhantomData<__Code__>,
+                _code: ::core::marker::PhantomData<__Code__>,
                 (arg_0): (T),
             ) -> Self::Output {
                 describe(arg_0)
             }
         }
-        delegate_components! {
-            Describe { [ComputerRefComponent, TryComputerComponent, TryComputerRefComponent,
-            AsyncComputerComponent, AsyncComputerRefComponent, HandlerComponent,
-            HandlerRefComponent,] -> PromoteComputer < Self >, }
+        impl<
+            T,
+            __Context__,
+            __Code__,
+        > IsProviderFor<ComputerComponent, __Context__, (__Code__, (T))> for Describe
+        where
+            T: Display,
+        {}
+        pub struct Describe;
+        impl DelegateComponent<ComputerRefComponent> for Describe
+        where
+            PromoteComputer<Self>: DelegateComponent<ComputerRefComponent>,
+        {
+            type Delegate = <PromoteComputer<
+                Self,
+            > as DelegateComponent<ComputerRefComponent>>::Delegate;
         }
+        impl<
+            __Context__,
+            __Params__: ?Sized,
+        > IsProviderFor<ComputerRefComponent, __Context__, __Params__> for Describe
+        where
+            PromoteComputer<Self>: DelegateComponent<ComputerRefComponent>,
+            <PromoteComputer<
+                Self,
+            > as DelegateComponent<
+                ComputerRefComponent,
+            >>::Delegate: IsProviderFor<ComputerRefComponent, __Context__, __Params__>,
+        {}
+        impl DelegateComponent<TryComputerComponent> for Describe
+        where
+            PromoteComputer<Self>: DelegateComponent<TryComputerComponent>,
+        {
+            type Delegate = <PromoteComputer<
+                Self,
+            > as DelegateComponent<TryComputerComponent>>::Delegate;
+        }
+        impl<
+            __Context__,
+            __Params__: ?Sized,
+        > IsProviderFor<TryComputerComponent, __Context__, __Params__> for Describe
+        where
+            PromoteComputer<Self>: DelegateComponent<TryComputerComponent>,
+            <PromoteComputer<
+                Self,
+            > as DelegateComponent<
+                TryComputerComponent,
+            >>::Delegate: IsProviderFor<TryComputerComponent, __Context__, __Params__>,
+        {}
+        impl DelegateComponent<TryComputerRefComponent> for Describe
+        where
+            PromoteComputer<Self>: DelegateComponent<TryComputerRefComponent>,
+        {
+            type Delegate = <PromoteComputer<
+                Self,
+            > as DelegateComponent<TryComputerRefComponent>>::Delegate;
+        }
+        impl<
+            __Context__,
+            __Params__: ?Sized,
+        > IsProviderFor<TryComputerRefComponent, __Context__, __Params__> for Describe
+        where
+            PromoteComputer<Self>: DelegateComponent<TryComputerRefComponent>,
+            <PromoteComputer<
+                Self,
+            > as DelegateComponent<
+                TryComputerRefComponent,
+            >>::Delegate: IsProviderFor<TryComputerRefComponent, __Context__, __Params__>,
+        {}
+        impl DelegateComponent<AsyncComputerComponent> for Describe
+        where
+            PromoteComputer<Self>: DelegateComponent<AsyncComputerComponent>,
+        {
+            type Delegate = <PromoteComputer<
+                Self,
+            > as DelegateComponent<AsyncComputerComponent>>::Delegate;
+        }
+        impl<
+            __Context__,
+            __Params__: ?Sized,
+        > IsProviderFor<AsyncComputerComponent, __Context__, __Params__> for Describe
+        where
+            PromoteComputer<Self>: DelegateComponent<AsyncComputerComponent>,
+            <PromoteComputer<
+                Self,
+            > as DelegateComponent<
+                AsyncComputerComponent,
+            >>::Delegate: IsProviderFor<AsyncComputerComponent, __Context__, __Params__>,
+        {}
+        impl DelegateComponent<AsyncComputerRefComponent> for Describe
+        where
+            PromoteComputer<Self>: DelegateComponent<AsyncComputerRefComponent>,
+        {
+            type Delegate = <PromoteComputer<
+                Self,
+            > as DelegateComponent<AsyncComputerRefComponent>>::Delegate;
+        }
+        impl<
+            __Context__,
+            __Params__: ?Sized,
+        > IsProviderFor<AsyncComputerRefComponent, __Context__, __Params__> for Describe
+        where
+            PromoteComputer<Self>: DelegateComponent<AsyncComputerRefComponent>,
+            <PromoteComputer<
+                Self,
+            > as DelegateComponent<
+                AsyncComputerRefComponent,
+            >>::Delegate: IsProviderFor<AsyncComputerRefComponent, __Context__, __Params__>,
+        {}
+        impl DelegateComponent<HandlerComponent> for Describe
+        where
+            PromoteComputer<Self>: DelegateComponent<HandlerComponent>,
+        {
+            type Delegate = <PromoteComputer<
+                Self,
+            > as DelegateComponent<HandlerComponent>>::Delegate;
+        }
+        impl<
+            __Context__,
+            __Params__: ?Sized,
+        > IsProviderFor<HandlerComponent, __Context__, __Params__> for Describe
+        where
+            PromoteComputer<Self>: DelegateComponent<HandlerComponent>,
+            <PromoteComputer<
+                Self,
+            > as DelegateComponent<
+                HandlerComponent,
+            >>::Delegate: IsProviderFor<HandlerComponent, __Context__, __Params__>,
+        {}
+        impl DelegateComponent<HandlerRefComponent> for Describe
+        where
+            PromoteComputer<Self>: DelegateComponent<HandlerRefComponent>,
+        {
+            type Delegate = <PromoteComputer<
+                Self,
+            > as DelegateComponent<HandlerRefComponent>>::Delegate;
+        }
+        impl<
+            __Context__,
+            __Params__: ?Sized,
+        > IsProviderFor<HandlerRefComponent, __Context__, __Params__> for Describe
+        where
+            PromoteComputer<Self>: DelegateComponent<HandlerRefComponent>,
+            <PromoteComputer<
+                Self,
+            > as DelegateComponent<
+                HandlerRefComponent,
+            >>::Delegate: IsProviderFor<HandlerRefComponent, __Context__, __Params__>,
+        {}
         "#)
     }
 }
@@ -65,23 +208,163 @@ snapshot_cgp_computer! {
         fn first_char<'a>(value: &'a str) -> &'a str {
             &value[..1]
         }
-        #[cgp_new_provider]
         impl<'a, __Context__, __Code__> Computer<__Context__, __Code__, (&'a str)>
         for FirstChar {
             type Output = &'a str;
             fn compute(
                 _context: &__Context__,
-                _code: PhantomData<__Code__>,
+                _code: ::core::marker::PhantomData<__Code__>,
                 (arg_0): (&'a str),
             ) -> Self::Output {
                 first_char(arg_0)
             }
         }
-        delegate_components! {
-            FirstChar { [ComputerRefComponent, TryComputerComponent, TryComputerRefComponent,
-            AsyncComputerComponent, AsyncComputerRefComponent, HandlerComponent,
-            HandlerRefComponent,] -> PromoteComputer < Self >, }
+        impl<
+            'a,
+            __Context__,
+            __Code__,
+        > IsProviderFor<ComputerComponent, __Context__, (__Code__, (&'a str))> for FirstChar {}
+        pub struct FirstChar;
+        impl DelegateComponent<ComputerRefComponent> for FirstChar
+        where
+            PromoteComputer<Self>: DelegateComponent<ComputerRefComponent>,
+        {
+            type Delegate = <PromoteComputer<
+                Self,
+            > as DelegateComponent<ComputerRefComponent>>::Delegate;
         }
+        impl<
+            __Context__,
+            __Params__: ?Sized,
+        > IsProviderFor<ComputerRefComponent, __Context__, __Params__> for FirstChar
+        where
+            PromoteComputer<Self>: DelegateComponent<ComputerRefComponent>,
+            <PromoteComputer<
+                Self,
+            > as DelegateComponent<
+                ComputerRefComponent,
+            >>::Delegate: IsProviderFor<ComputerRefComponent, __Context__, __Params__>,
+        {}
+        impl DelegateComponent<TryComputerComponent> for FirstChar
+        where
+            PromoteComputer<Self>: DelegateComponent<TryComputerComponent>,
+        {
+            type Delegate = <PromoteComputer<
+                Self,
+            > as DelegateComponent<TryComputerComponent>>::Delegate;
+        }
+        impl<
+            __Context__,
+            __Params__: ?Sized,
+        > IsProviderFor<TryComputerComponent, __Context__, __Params__> for FirstChar
+        where
+            PromoteComputer<Self>: DelegateComponent<TryComputerComponent>,
+            <PromoteComputer<
+                Self,
+            > as DelegateComponent<
+                TryComputerComponent,
+            >>::Delegate: IsProviderFor<TryComputerComponent, __Context__, __Params__>,
+        {}
+        impl DelegateComponent<TryComputerRefComponent> for FirstChar
+        where
+            PromoteComputer<Self>: DelegateComponent<TryComputerRefComponent>,
+        {
+            type Delegate = <PromoteComputer<
+                Self,
+            > as DelegateComponent<TryComputerRefComponent>>::Delegate;
+        }
+        impl<
+            __Context__,
+            __Params__: ?Sized,
+        > IsProviderFor<TryComputerRefComponent, __Context__, __Params__> for FirstChar
+        where
+            PromoteComputer<Self>: DelegateComponent<TryComputerRefComponent>,
+            <PromoteComputer<
+                Self,
+            > as DelegateComponent<
+                TryComputerRefComponent,
+            >>::Delegate: IsProviderFor<TryComputerRefComponent, __Context__, __Params__>,
+        {}
+        impl DelegateComponent<AsyncComputerComponent> for FirstChar
+        where
+            PromoteComputer<Self>: DelegateComponent<AsyncComputerComponent>,
+        {
+            type Delegate = <PromoteComputer<
+                Self,
+            > as DelegateComponent<AsyncComputerComponent>>::Delegate;
+        }
+        impl<
+            __Context__,
+            __Params__: ?Sized,
+        > IsProviderFor<AsyncComputerComponent, __Context__, __Params__> for FirstChar
+        where
+            PromoteComputer<Self>: DelegateComponent<AsyncComputerComponent>,
+            <PromoteComputer<
+                Self,
+            > as DelegateComponent<
+                AsyncComputerComponent,
+            >>::Delegate: IsProviderFor<AsyncComputerComponent, __Context__, __Params__>,
+        {}
+        impl DelegateComponent<AsyncComputerRefComponent> for FirstChar
+        where
+            PromoteComputer<Self>: DelegateComponent<AsyncComputerRefComponent>,
+        {
+            type Delegate = <PromoteComputer<
+                Self,
+            > as DelegateComponent<AsyncComputerRefComponent>>::Delegate;
+        }
+        impl<
+            __Context__,
+            __Params__: ?Sized,
+        > IsProviderFor<AsyncComputerRefComponent, __Context__, __Params__> for FirstChar
+        where
+            PromoteComputer<Self>: DelegateComponent<AsyncComputerRefComponent>,
+            <PromoteComputer<
+                Self,
+            > as DelegateComponent<
+                AsyncComputerRefComponent,
+            >>::Delegate: IsProviderFor<AsyncComputerRefComponent, __Context__, __Params__>,
+        {}
+        impl DelegateComponent<HandlerComponent> for FirstChar
+        where
+            PromoteComputer<Self>: DelegateComponent<HandlerComponent>,
+        {
+            type Delegate = <PromoteComputer<
+                Self,
+            > as DelegateComponent<HandlerComponent>>::Delegate;
+        }
+        impl<
+            __Context__,
+            __Params__: ?Sized,
+        > IsProviderFor<HandlerComponent, __Context__, __Params__> for FirstChar
+        where
+            PromoteComputer<Self>: DelegateComponent<HandlerComponent>,
+            <PromoteComputer<
+                Self,
+            > as DelegateComponent<
+                HandlerComponent,
+            >>::Delegate: IsProviderFor<HandlerComponent, __Context__, __Params__>,
+        {}
+        impl DelegateComponent<HandlerRefComponent> for FirstChar
+        where
+            PromoteComputer<Self>: DelegateComponent<HandlerRefComponent>,
+        {
+            type Delegate = <PromoteComputer<
+                Self,
+            > as DelegateComponent<HandlerRefComponent>>::Delegate;
+        }
+        impl<
+            __Context__,
+            __Params__: ?Sized,
+        > IsProviderFor<HandlerRefComponent, __Context__, __Params__> for FirstChar
+        where
+            PromoteComputer<Self>: DelegateComponent<HandlerRefComponent>,
+            <PromoteComputer<
+                Self,
+            > as DelegateComponent<
+                HandlerRefComponent,
+            >>::Delegate: IsProviderFor<HandlerRefComponent, __Context__, __Params__>,
+        {}
         ")
     }
 }
@@ -97,23 +380,163 @@ snapshot_cgp_computer! {
         fn sum_array<const N: usize>(values: [u64; N]) -> u64 {
             values.iter().sum()
         }
-        #[cgp_new_provider]
         impl<const N: usize, __Context__, __Code__> Computer<__Context__, __Code__, ([u64; N])>
         for SumArray {
             type Output = u64;
             fn compute(
                 _context: &__Context__,
-                _code: PhantomData<__Code__>,
+                _code: ::core::marker::PhantomData<__Code__>,
                 (arg_0): ([u64; N]),
             ) -> Self::Output {
                 sum_array(arg_0)
             }
         }
-        delegate_components! {
-            SumArray { [ComputerRefComponent, TryComputerComponent, TryComputerRefComponent,
-            AsyncComputerComponent, AsyncComputerRefComponent, HandlerComponent,
-            HandlerRefComponent,] -> PromoteComputer < Self >, }
+        impl<
+            const N: usize,
+            __Context__,
+            __Code__,
+        > IsProviderFor<ComputerComponent, __Context__, (__Code__, ([u64; N]))> for SumArray {}
+        pub struct SumArray;
+        impl DelegateComponent<ComputerRefComponent> for SumArray
+        where
+            PromoteComputer<Self>: DelegateComponent<ComputerRefComponent>,
+        {
+            type Delegate = <PromoteComputer<
+                Self,
+            > as DelegateComponent<ComputerRefComponent>>::Delegate;
         }
+        impl<
+            __Context__,
+            __Params__: ?Sized,
+        > IsProviderFor<ComputerRefComponent, __Context__, __Params__> for SumArray
+        where
+            PromoteComputer<Self>: DelegateComponent<ComputerRefComponent>,
+            <PromoteComputer<
+                Self,
+            > as DelegateComponent<
+                ComputerRefComponent,
+            >>::Delegate: IsProviderFor<ComputerRefComponent, __Context__, __Params__>,
+        {}
+        impl DelegateComponent<TryComputerComponent> for SumArray
+        where
+            PromoteComputer<Self>: DelegateComponent<TryComputerComponent>,
+        {
+            type Delegate = <PromoteComputer<
+                Self,
+            > as DelegateComponent<TryComputerComponent>>::Delegate;
+        }
+        impl<
+            __Context__,
+            __Params__: ?Sized,
+        > IsProviderFor<TryComputerComponent, __Context__, __Params__> for SumArray
+        where
+            PromoteComputer<Self>: DelegateComponent<TryComputerComponent>,
+            <PromoteComputer<
+                Self,
+            > as DelegateComponent<
+                TryComputerComponent,
+            >>::Delegate: IsProviderFor<TryComputerComponent, __Context__, __Params__>,
+        {}
+        impl DelegateComponent<TryComputerRefComponent> for SumArray
+        where
+            PromoteComputer<Self>: DelegateComponent<TryComputerRefComponent>,
+        {
+            type Delegate = <PromoteComputer<
+                Self,
+            > as DelegateComponent<TryComputerRefComponent>>::Delegate;
+        }
+        impl<
+            __Context__,
+            __Params__: ?Sized,
+        > IsProviderFor<TryComputerRefComponent, __Context__, __Params__> for SumArray
+        where
+            PromoteComputer<Self>: DelegateComponent<TryComputerRefComponent>,
+            <PromoteComputer<
+                Self,
+            > as DelegateComponent<
+                TryComputerRefComponent,
+            >>::Delegate: IsProviderFor<TryComputerRefComponent, __Context__, __Params__>,
+        {}
+        impl DelegateComponent<AsyncComputerComponent> for SumArray
+        where
+            PromoteComputer<Self>: DelegateComponent<AsyncComputerComponent>,
+        {
+            type Delegate = <PromoteComputer<
+                Self,
+            > as DelegateComponent<AsyncComputerComponent>>::Delegate;
+        }
+        impl<
+            __Context__,
+            __Params__: ?Sized,
+        > IsProviderFor<AsyncComputerComponent, __Context__, __Params__> for SumArray
+        where
+            PromoteComputer<Self>: DelegateComponent<AsyncComputerComponent>,
+            <PromoteComputer<
+                Self,
+            > as DelegateComponent<
+                AsyncComputerComponent,
+            >>::Delegate: IsProviderFor<AsyncComputerComponent, __Context__, __Params__>,
+        {}
+        impl DelegateComponent<AsyncComputerRefComponent> for SumArray
+        where
+            PromoteComputer<Self>: DelegateComponent<AsyncComputerRefComponent>,
+        {
+            type Delegate = <PromoteComputer<
+                Self,
+            > as DelegateComponent<AsyncComputerRefComponent>>::Delegate;
+        }
+        impl<
+            __Context__,
+            __Params__: ?Sized,
+        > IsProviderFor<AsyncComputerRefComponent, __Context__, __Params__> for SumArray
+        where
+            PromoteComputer<Self>: DelegateComponent<AsyncComputerRefComponent>,
+            <PromoteComputer<
+                Self,
+            > as DelegateComponent<
+                AsyncComputerRefComponent,
+            >>::Delegate: IsProviderFor<AsyncComputerRefComponent, __Context__, __Params__>,
+        {}
+        impl DelegateComponent<HandlerComponent> for SumArray
+        where
+            PromoteComputer<Self>: DelegateComponent<HandlerComponent>,
+        {
+            type Delegate = <PromoteComputer<
+                Self,
+            > as DelegateComponent<HandlerComponent>>::Delegate;
+        }
+        impl<
+            __Context__,
+            __Params__: ?Sized,
+        > IsProviderFor<HandlerComponent, __Context__, __Params__> for SumArray
+        where
+            PromoteComputer<Self>: DelegateComponent<HandlerComponent>,
+            <PromoteComputer<
+                Self,
+            > as DelegateComponent<
+                HandlerComponent,
+            >>::Delegate: IsProviderFor<HandlerComponent, __Context__, __Params__>,
+        {}
+        impl DelegateComponent<HandlerRefComponent> for SumArray
+        where
+            PromoteComputer<Self>: DelegateComponent<HandlerRefComponent>,
+        {
+            type Delegate = <PromoteComputer<
+                Self,
+            > as DelegateComponent<HandlerRefComponent>>::Delegate;
+        }
+        impl<
+            __Context__,
+            __Params__: ?Sized,
+        > IsProviderFor<HandlerRefComponent, __Context__, __Params__> for SumArray
+        where
+            PromoteComputer<Self>: DelegateComponent<HandlerRefComponent>,
+            <PromoteComputer<
+                Self,
+            > as DelegateComponent<
+                HandlerRefComponent,
+            >>::Delegate: IsProviderFor<HandlerRefComponent, __Context__, __Params__>,
+        {}
         ")
     }
 }

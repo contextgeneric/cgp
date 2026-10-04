@@ -4,7 +4,13 @@ use syn::parse::{Parse, ParseStream};
 use syn::token::{Comma, Gt, Lt};
 use syn::{Ident, Type};
 
+/// The return type of a `#[cgp_computer]` function, read for whether it is
+/// fallible. The check is purely syntactic: only a bare two-argument
+/// `Result<T, E>` counts, and any other type (a qualified
+/// `core::result::Result<T, E>` included) is a plain value. A type that starts
+/// with `Result` but is not that exact form is rejected.
 pub struct MaybeResultType {
+    /// The `E` of `Result<T, E>`, or `None` for a plain value.
     pub error_type: Option<Type>,
 }
 
