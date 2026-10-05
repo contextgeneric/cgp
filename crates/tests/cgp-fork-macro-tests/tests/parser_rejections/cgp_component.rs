@@ -91,6 +91,35 @@ fn rejects_derive_promote_with_associated_type() {
 }
 
 #[test]
+fn rejects_component_name_parameter_the_trait_lacks() {
+    assert_macro_rejects("cgp_component with an undeclared name parameter", || {
+        cgp_fork_macro_lib::cgp_component(
+            quote!(provider: AreaCalculator, name: AreaCalculatorComponent<T>),
+            quote!(
+                pub trait CanCalculateArea {
+                    fn area(&self) -> f64;
+                }
+            ),
+        )
+    });
+}
+
+#[test]
+fn accepts_component_name_parameter_the_trait_declares() {
+    assert!(
+        cgp_fork_macro_lib::cgp_component(
+            quote!(provider: AreaCalculator, name: AreaCalculatorComponent<Shape>),
+            quote!(
+                pub trait CanCalculateArea<Shape> {
+                    fn area(&self, shape: &Shape) -> f64;
+                }
+            ),
+        )
+        .is_ok()
+    );
+}
+
+#[test]
 fn rejects_derive_promote_on_async_method() {
     assert_macro_rejects("derive_promote on an async method", || {
         cgp_fork_macro_lib::cgp_component(
