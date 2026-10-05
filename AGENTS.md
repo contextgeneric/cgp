@@ -4,15 +4,18 @@ This file provides guidance to LLM agents when working with code in this reposit
 
 ## Project status
 
-This working tree **is** the upcoming **v0.8.0** release. Every crate under [crates/](crates) is
-versioned `0.8.0-alpha` in its `Cargo.toml` — the pre-release of v0.8.0 — and the documentation in the
-[knowledge base](https://github.com/contextgeneric/cgp-knowledge-base/tree/main/cgp) already refers to
-the current version as v0.8.0, so nothing needs a version edit when v0.8.0 ships.
+This working tree **is** the upcoming **v0.8.0** release. Its crates may carry a pre-release version
+such as `0.8.0-alpha` in their `Cargo.toml`, published to crates.io as a test run of the release
+process; that suffix is not a version anyone documents or tracks. **Every document, comment, and
+README describes this tree as v0.8.0**, as though it had already been published, per the knowledge
+base's [rule on versions](https://github.com/contextgeneric/cgp-knowledge-base/blob/main/AGENTS.md#document-official-versions-never-pre-releases):
+never name a pre-release, describe how one behaves, or compare one with the source, unless the user
+explicitly asks. The same holds for every sibling crate, `cargo-cgp` v0.1.0 included.
 
-The stable release on crates.io is still **v0.7.0**, and it is not compatible with this tree. v0.7.0
-carries legacy features and syntax that v0.8.0 has removed or changed, so code or documentation
-written against v0.7.0 will not compile here. Treat crates.io v0.7.0 as a separate, older line and
-do not reconcile this tree's syntax against it.
+The previous official release, **v0.7.0**, is not compatible with this tree. v0.7.0 carries legacy
+features and syntax that v0.8.0 has removed or changed, so code or documentation written against
+v0.7.0 will not compile here. Treat v0.7.0 as a separate, older line and do not reconcile this tree's
+syntax against it.
 
 Only the library crates are published. The five crates under [crates/tests/](crates/tests) are
 marked `publish = false`, so `cargo publish --workspace` skips them and publishes just the real CGP
@@ -170,7 +173,8 @@ inward (core/macros) when changing fundamentals, outward (main) only to adjust t
 
 ## Conventions specific to this repo
 
-- All versions are kept in lockstep at the workspace level (currently **0.8.0-alpha**); inter-crate
+- All versions are kept in lockstep at the workspace level (the release in preparation, **0.8.0**,
+  whatever pre-release suffix the manifests carry while it is tested); inter-crate
   dependencies are declared once in the root [Cargo.toml](Cargo.toml) `[workspace.dependencies]`
   and referenced with `{ workspace = true }`. Add new crates to the `members` list and the
   workspace dependency table together. A crate that exists only for testing also gets
