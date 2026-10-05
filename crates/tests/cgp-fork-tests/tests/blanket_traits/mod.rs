@@ -7,6 +7,7 @@
 
 // Plain supertrait-only blanket trait.
 pub mod basic;
+pub mod const_custom_context;
 
 // Blanket trait carrying a default method.
 pub mod with_method;
