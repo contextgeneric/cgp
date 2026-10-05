@@ -40,7 +40,7 @@ snapshot_delegate_and_check_components! {
         }
         impl<
             __Context__,
-            __Params__,
+            __Params__: ?Sized,
         > IsProviderFor<NameTypeProviderComponent, __Context__, __Params__> for MyContext
         where
             UseType<String>: IsProviderFor<NameTypeProviderComponent, __Context__, __Params__>,
@@ -48,8 +48,10 @@ snapshot_delegate_and_check_components! {
         impl DelegateComponent<NameGetterComponent> for MyContext {
             type Delegate = UseField<Symbol!("name")>;
         }
-        impl<__Context__, __Params__> IsProviderFor<NameGetterComponent, __Context__, __Params__>
-        for MyContext
+        impl<
+            __Context__,
+            __Params__: ?Sized,
+        > IsProviderFor<NameGetterComponent, __Context__, __Params__> for MyContext
         where
             UseField<
                 Symbol!("name"),

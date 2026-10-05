@@ -82,7 +82,7 @@ snapshot_delegate_components! {
         }
         impl<
             __Context__,
-            __Params__,
+            __Params__: ?Sized,
         > IsProviderFor<FooProviderComponent, __Context__, __Params__> for App
         where
             RedirectLookup<
@@ -99,7 +99,7 @@ snapshot_delegate_components! {
         impl<
             __Wildcard__,
             __Context__,
-            __Params__,
+            __Params__: ?Sized,
         > IsProviderFor<
             PathCons<FooProviderComponent, PathCons<String, __Wildcard__>>,
             __Context__,
@@ -129,7 +129,7 @@ snapshot_delegate_components! {
         }
         impl<
             __Context__,
-            __Params__,
+            __Params__: ?Sized,
         > IsProviderFor<BarProviderComponent, __Context__, __Params__> for App
         where
             RedirectLookup<
@@ -163,7 +163,7 @@ snapshot_delegate_components! {
         }
         impl<
             __Context__,
-            __Params__,
+            __Params__: ?Sized,
         > IsProviderFor<BazProviderComponent, __Context__, __Params__> for App
         where
             RedirectLookup<
@@ -196,7 +196,7 @@ snapshot_delegate_components! {
         impl<
             __Wildcard__,
             __Context__,
-            __Params__,
+            __Params__: ?Sized,
         > IsProviderFor<
             PathCons<
                 Symbol<
@@ -257,7 +257,7 @@ snapshot_delegate_components! {
         }
         impl<
             __Context__,
-            __Params__,
+            __Params__: ?Sized,
         > IsProviderFor<FooProviderComponent, __Context__, __Params__> for OpenApp
         where
             RedirectLookup<
@@ -274,7 +274,7 @@ snapshot_delegate_components! {
         impl<
             __Wildcard__,
             __Context__,
-            __Params__,
+            __Params__: ?Sized,
         > IsProviderFor<
             PathCons<FooProviderComponent, PathCons<String, __Wildcard__>>,
             __Context__,

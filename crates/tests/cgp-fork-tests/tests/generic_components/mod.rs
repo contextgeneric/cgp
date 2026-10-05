@@ -16,3 +16,4 @@ pub mod component_const;
 pub mod component_generic_const;
 pub mod component_lifetime;
 pub mod component_type_param;
+pub mod unsized_parameter;

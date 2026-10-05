@@ -60,8 +60,10 @@ snapshot_delegate_components! {
         impl DelegateComponent<DescriberComponent> for App {
             type Delegate = RedirectLookup<App, PathCons<DescriberComponent, Nil>>;
         }
-        impl<__Context__, __Params__> IsProviderFor<DescriberComponent, __Context__, __Params__>
-        for App
+        impl<
+            __Context__,
+            __Params__: ?Sized,
+        > IsProviderFor<DescriberComponent, __Context__, __Params__> for App
         where
             RedirectLookup<
                 App,
@@ -80,7 +82,7 @@ snapshot_delegate_components! {
             Code,
             __Wildcard__,
             __Context__,
-            __Params__,
+            __Params__: ?Sized,
         > IsProviderFor<
             PathCons<DescriberComponent, PathCons<Code, PathCons<u64, __Wildcard__>>>,
             __Context__,
@@ -105,7 +107,7 @@ snapshot_delegate_components! {
             Code,
             __Wildcard__,
             __Context__,
-            __Params__,
+            __Params__: ?Sized,
         > IsProviderFor<
             PathCons<DescriberComponent, PathCons<Code, PathCons<String, __Wildcard__>>>,
             __Context__,

@@ -54,7 +54,7 @@ snapshot_delegate_components! {
             __Key__,
             __Value__,
             __Context__,
-            __Params__,
+            __Params__: ?Sized,
         > IsProviderFor<__Key__, __Context__, __Params__> for App
         where
             __Key__: ExtendedNamespace<App, Delegate = __Value__>,
@@ -73,7 +73,7 @@ snapshot_delegate_components! {
         impl<
             __Wildcard__,
             __Context__,
-            __Params__,
+            __Params__: ?Sized,
         > IsProviderFor<
             PathCons<
                 Symbol<3, Chars<'a', Chars<'p', Chars<'p', Nil>>>>,
@@ -107,7 +107,7 @@ snapshot_delegate_components! {
         impl<
             __Wildcard__,
             __Context__,
-            __Params__,
+            __Params__: ?Sized,
         > IsProviderFor<
             PathCons<
                 Symbol<3, Chars<'a', Chars<'p', Chars<'p', Nil>>>>,
@@ -139,7 +139,7 @@ snapshot_delegate_components! {
         impl<
             __Wildcard__,
             __Context__,
-            __Params__,
+            __Params__: ?Sized,
         > IsProviderFor<
             PathCons<
                 Symbol<3, Chars<'a', Chars<'p', Chars<'p', Nil>>>>,
@@ -171,7 +171,7 @@ snapshot_delegate_components! {
         impl<
             __Wildcard__,
             __Context__,
-            __Params__,
+            __Params__: ?Sized,
         > IsProviderFor<
             PathCons<
                 Symbol<3, Chars<'a', Chars<'p', Chars<'p', Nil>>>>,
@@ -221,7 +221,7 @@ snapshot_delegate_components! {
         impl<
             __Wildcard__,
             __Context__,
-            __Params__,
+            __Params__: ?Sized,
         > IsProviderFor<
             PathCons<
                 Symbol<3, Chars<'c', Chars<'g', Chars<'p', Nil>>>>,

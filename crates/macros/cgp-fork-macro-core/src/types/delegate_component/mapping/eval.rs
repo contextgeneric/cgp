@@ -68,7 +68,7 @@ impl EvaluatedDelegateEntry {
         let value = &self.value;
 
         generics.params.push(parse_internal!(__Context__));
-        generics.params.push(parse_internal!(__Params__));
+        generics.params.push(parse_internal!(__Params__: ?Sized));
 
         generics
             .make_where_clause()

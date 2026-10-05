@@ -64,7 +64,7 @@ snapshot_delegate_components! {
         }
         impl<
             __Context__,
-            __Params__,
+            __Params__: ?Sized,
         > IsProviderFor<FooProviderComponent, __Context__, __Params__> for App
         where
             RedirectLookup<
@@ -77,7 +77,7 @@ snapshot_delegate_components! {
         }
         impl<
             __Context__,
-            __Params__,
+            __Params__: ?Sized,
         > IsProviderFor<BarProviderComponent, __Context__, __Params__> for App
         where
             RedirectLookup<
@@ -94,7 +94,7 @@ snapshot_delegate_components! {
         impl<
             __Wildcard__,
             __Context__,
-            __Params__,
+            __Params__: ?Sized,
         > IsProviderFor<
             PathCons<FooProviderComponent, PathCons<String, __Wildcard__>>,
             __Context__,
@@ -116,7 +116,7 @@ snapshot_delegate_components! {
         impl<
             __Wildcard__,
             __Context__,
-            __Params__,
+            __Params__: ?Sized,
         > IsProviderFor<
             PathCons<BarProviderComponent, PathCons<u32, __Wildcard__>>,
             __Context__,
@@ -138,7 +138,7 @@ snapshot_delegate_components! {
         impl<
             __Wildcard__,
             __Context__,
-            __Params__,
+            __Params__: ?Sized,
         > IsProviderFor<
             PathCons<BarProviderComponent, PathCons<u64, __Wildcard__>>,
             __Context__,
@@ -160,7 +160,7 @@ snapshot_delegate_components! {
         impl<
             __Wildcard__,
             __Context__,
-            __Params__,
+            __Params__: ?Sized,
         > IsProviderFor<
             PathCons<BarProviderComponent, PathCons<bool, __Wildcard__>>,
             __Context__,
@@ -182,7 +182,7 @@ snapshot_delegate_components! {
         impl<
             __Wildcard__,
             __Context__,
-            __Params__,
+            __Params__: ?Sized,
         > IsProviderFor<
             PathCons<BarProviderComponent, PathCons<usize, __Wildcard__>>,
             __Context__,
@@ -204,7 +204,7 @@ snapshot_delegate_components! {
         impl<
             __Wildcard__,
             __Context__,
-            __Params__,
+            __Params__: ?Sized,
         > IsProviderFor<
             PathCons<BarProviderComponent, PathCons<isize, __Wildcard__>>,
             __Context__,

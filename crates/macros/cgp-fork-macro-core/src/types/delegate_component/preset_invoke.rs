@@ -18,7 +18,9 @@ pub fn invoke_with_components(
 
     let mut check_generics = generics.clone();
     check_generics.params.push(syn::parse_quote!(__Context__));
-    check_generics.params.push(syn::parse_quote!(__Params__));
+    check_generics
+        .params
+        .push(syn::parse_quote!(__Params__: ?Sized));
     let (check_impl_generics, _, _) = check_generics.split_for_impl();
 
     let existing_predicates = generics

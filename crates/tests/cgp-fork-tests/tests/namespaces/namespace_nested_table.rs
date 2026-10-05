@@ -59,14 +59,16 @@ snapshot_cgp_namespace! {
         impl DelegateComponent<String> for FooTable {
             type Delegate = DummyFoo;
         }
-        impl<__Context__, __Params__> IsProviderFor<String, __Context__, __Params__> for FooTable
+        impl<__Context__, __Params__: ?Sized> IsProviderFor<String, __Context__, __Params__>
+        for FooTable
         where
             DummyFoo: IsProviderFor<String, __Context__, __Params__>,
         {}
         impl DelegateComponent<u64> for FooTable {
             type Delegate = DummyFoo;
         }
-        impl<__Context__, __Params__> IsProviderFor<u64, __Context__, __Params__> for FooTable
+        impl<__Context__, __Params__: ?Sized> IsProviderFor<u64, __Context__, __Params__>
+        for FooTable
         where
             DummyFoo: IsProviderFor<u64, __Context__, __Params__>,
         {}

@@ -125,7 +125,7 @@ snapshot_delegate_components! {
         }
         impl<
             __Context__,
-            __Params__,
+            __Params__: ?Sized,
         > IsProviderFor<AreaCalculatorComponent, __Context__, __Params__> for App
         where
             RedirectLookup<
@@ -141,7 +141,7 @@ snapshot_delegate_components! {
         }
         impl<
             __Context__,
-            __Params__,
+            __Params__: ?Sized,
         > IsProviderFor<BarProviderComponent, __Context__, __Params__> for App
         where
             Bundle: DelegateComponent<BarProviderComponent>,
@@ -154,7 +154,7 @@ snapshot_delegate_components! {
         }
         impl<
             __Context__,
-            __Params__,
+            __Params__: ?Sized,
         > IsProviderFor<BazProviderComponent, __Context__, __Params__> for App
         where
             DummyBaz: IsProviderFor<BazProviderComponent, __Context__, __Params__>,
@@ -164,7 +164,7 @@ snapshot_delegate_components! {
         }
         impl<
             __Context__,
-            __Params__,
+            __Params__: ?Sized,
         > IsProviderFor<QuuxProviderComponent, __Context__, __Params__> for App
         where
             DummyBaz: IsProviderFor<QuuxProviderComponent, __Context__, __Params__>,
@@ -178,7 +178,7 @@ snapshot_delegate_components! {
         impl<
             __Wildcard__,
             __Context__,
-            __Params__,
+            __Params__: ?Sized,
         > IsProviderFor<
             PathCons<AreaCalculatorComponent, PathCons<Rectangle, __Wildcard__>>,
             __Context__,
@@ -200,7 +200,7 @@ snapshot_delegate_components! {
         impl<
             __Wildcard__,
             __Context__,
-            __Params__,
+            __Params__: ?Sized,
         > IsProviderFor<
             PathCons<AreaCalculatorComponent, PathCons<Circle, __Wildcard__>>,
             __Context__,
@@ -222,7 +222,7 @@ snapshot_delegate_components! {
         impl<
             __Wildcard__,
             __Context__,
-            __Params__,
+            __Params__: ?Sized,
         > IsProviderFor<
             PathCons<AreaCalculatorComponent, PathCons<Square, __Wildcard__>>,
             __Context__,
@@ -244,7 +244,7 @@ snapshot_delegate_components! {
         impl<
             __Wildcard__,
             __Context__,
-            __Params__,
+            __Params__: ?Sized,
         > IsProviderFor<
             PathCons<AreaCalculatorComponent, PathCons<Triangle, __Wildcard__>>,
             __Context__,
@@ -270,7 +270,7 @@ snapshot_delegate_components! {
             T,
             __Wildcard__,
             __Context__,
-            __Params__,
+            __Params__: ?Sized,
         > IsProviderFor<
             PathCons<AreaCalculatorComponent, PathCons<&'a T, __Wildcard__>>,
             __Context__,

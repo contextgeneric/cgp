@@ -45,7 +45,7 @@ snapshot_delegate_components! {
         }
         impl<
             __Context__,
-            __Params__,
+            __Params__: ?Sized,
         > IsProviderFor<FooProviderComponent, __Context__, __Params__> for AppA
         where
             RedirectLookup<
@@ -63,7 +63,7 @@ snapshot_delegate_components! {
         impl<
             __Wildcard__,
             __Context__,
-            __Params__,
+            __Params__: ?Sized,
         > IsProviderFor<
             PathCons<FooProviderComponent, PathCons<String, PathCons<u32, __Wildcard__>>>,
             __Context__,
@@ -88,7 +88,7 @@ snapshot_delegate_components! {
             T,
             __Wildcard__,
             __Context__,
-            __Params__,
+            __Params__: ?Sized,
         > IsProviderFor<
             PathCons<FooProviderComponent, PathCons<bool, PathCons<T, __Wildcard__>>>,
             __Context__,

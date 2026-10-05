@@ -43,7 +43,7 @@ snapshot_delegate_components! {
         }
         impl<
             __Context__,
-            __Params__,
+            __Params__: ?Sized,
         > IsProviderFor<NameTypeProviderComponent, __Context__, __Params__> for PersonComponents
         where
             UseType<String>: IsProviderFor<NameTypeProviderComponent, __Context__, __Params__>,
@@ -53,8 +53,10 @@ snapshot_delegate_components! {
                 Symbol<4, Chars<'n', Chars<'a', Chars<'m', Chars<'e', Nil>>>>>,
             >;
         }
-        impl<__Context__, __Params__> IsProviderFor<NameGetterComponent, __Context__, __Params__>
-        for PersonComponents
+        impl<
+            __Context__,
+            __Params__: ?Sized,
+        > IsProviderFor<NameGetterComponent, __Context__, __Params__> for PersonComponents
         where
             UseField<
                 Symbol<4, Chars<'n', Chars<'a', Chars<'m', Chars<'e', Nil>>>>>,
@@ -63,8 +65,10 @@ snapshot_delegate_components! {
         impl DelegateComponent<GreeterComponent> for PersonComponents {
             type Delegate = GreetHello;
         }
-        impl<__Context__, __Params__> IsProviderFor<GreeterComponent, __Context__, __Params__>
-        for PersonComponents
+        impl<
+            __Context__,
+            __Params__: ?Sized,
+        > IsProviderFor<GreeterComponent, __Context__, __Params__> for PersonComponents
         where
             GreetHello: IsProviderFor<GreeterComponent, __Context__, __Params__>,
         {}
@@ -89,7 +93,7 @@ snapshot_delegate_components! {
         }
         impl<
             __Context__,
-            __Params__,
+            __Params__: ?Sized,
         > IsProviderFor<NameTypeProviderComponent, __Context__, __Params__>
         for ExplicitComponents
         where
@@ -98,8 +102,10 @@ snapshot_delegate_components! {
         impl DelegateComponent<NameGetterComponent> for ExplicitComponents {
             type Delegate = UseField<Symbol!("name")>;
         }
-        impl<__Context__, __Params__> IsProviderFor<NameGetterComponent, __Context__, __Params__>
-        for ExplicitComponents
+        impl<
+            __Context__,
+            __Params__: ?Sized,
+        > IsProviderFor<NameGetterComponent, __Context__, __Params__> for ExplicitComponents
         where
             UseField<
                 Symbol!("name"),
@@ -108,8 +114,10 @@ snapshot_delegate_components! {
         impl DelegateComponent<GreeterComponent> for ExplicitComponents {
             type Delegate = GreetHello;
         }
-        impl<__Context__, __Params__> IsProviderFor<GreeterComponent, __Context__, __Params__>
-        for ExplicitComponents
+        impl<
+            __Context__,
+            __Params__: ?Sized,
+        > IsProviderFor<GreeterComponent, __Context__, __Params__> for ExplicitComponents
         where
             GreetHello: IsProviderFor<GreeterComponent, __Context__, __Params__>,
         {}
