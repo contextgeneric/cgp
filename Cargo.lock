@@ -155,9 +155,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "cgp-fork-extra-macro-core"
+version = "0.9.0"
+dependencies = [
+ "cgp-fork-macro-core",
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
 name = "cgp-fork-extra-macro-lib"
 version = "0.9.0"
 dependencies = [
+ "cgp-fork-extra-macro-core",
  "cgp-fork-macro-core",
  "proc-macro2",
  "quote",

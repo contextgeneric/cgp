@@ -106,6 +106,8 @@ genuinely distinct variants) in its owning target, and nowhere else:
 | `#[blanket_trait]` / `#[cgp_auto_impl]` | `blanket_traits` |
 | `#[cgp_auto_error]` | `error_definition` |
 | `#[cgp_auto_log]` | `logging` |
+| `#[cgp_computer]` / `#[cgp_producer]` | `handlers` |
+| `#[cgp_auto_dispatch]` | `dispatching` |
 | `#[cgp_fn]` | `implicit_arguments`, `impl_side_dependencies` |
 | `delegate_components!` | `basic_delegation` (basic, type/getter shorthand), `namespaces` (open/namespace), `dispatching` (`UseDelegate`) |
 | `cgp_preset!` | `presets` |

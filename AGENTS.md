@@ -36,7 +36,7 @@ Cargo workspace, edition 2024, resolver 3, toolchain **1.98.1** ([rust-toolchain
 
 Change fundamentals in core and macros. Change [crates/main/](crates/main) only for the public surface. Versions stay `0.9.0` via root [Cargo.toml](Cargo.toml) `[workspace.dependencies]`. Add a crate to `members` and that table together. Put new functionality in the lowest layer and re-export it upward. [CHANGELOG.md](CHANGELOG.md) records current macro forms.
 
-- **`crates/macros/`** — `cgp-fork-macro` → `cgp-fork-macro-lib` → `cgp-fork-macro-core` (parse, AST, codegen). `cgp-fork-async-macro` is `#[async_trait]`. `cgp-fork-extra-macro{,-lib}` host the extra macros.
+- **`crates/macros/`** — `cgp-fork-macro` → `cgp-fork-macro-lib` → `cgp-fork-macro-core` (parse, AST, codegen). `cgp-fork-async-macro` is `#[async_trait]`. `cgp-fork-extra-macro` → `cgp-fork-extra-macro-lib` → `cgp-fork-extra-macro-core` host `#[cgp_computer]`, `#[cgp_producer]`, `#[cgp_auto_dispatch]`, and `#[cgp_auto_log]`.
 - **`crates/core/`** — `cgp-fork-component`, `cgp-fork-type`, `cgp-fork-field`, `cgp-fork-error`, `cgp-fork-base-types`.
 - **`crates/extra/`** — `cgp-fork-handler`, `cgp-fork-dispatch`, `cgp-fork-monad`, `cgp-fork-run`, `cgp-fork-runtime`, `cgp-fork-log`, `cgp-fork-field-extra`, `cgp-fork-error-extra`.
 - **`crates/main/`** — facades. Users depend on `cgp-fork`.

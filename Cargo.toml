@@ -32,6 +32,7 @@ members = [
     "crates/macros/cgp-fork-macro-test-util-lib",
     "crates/macros/cgp-fork-extra-macro",
     "crates/macros/cgp-fork-extra-macro-lib",
+    "crates/macros/cgp-fork-extra-macro-core",
 
     "crates/standalone/error/cgp-fork-error-anyhow",
     "crates/standalone/error/cgp-fork-error-eyre",
@@ -86,3 +87,4 @@ cgp-fork-macro-test-util         = { version = "0.9.0", path = "./crates/macros/
 cgp-fork-macro-test-util-lib     = { version = "0.9.0", path = "./crates/macros/cgp-fork-macro-test-util-lib" }
 cgp-fork-extra-macro             = { version = "0.9.0", path = "./crates/macros/cgp-fork-extra-macro" }
 cgp-fork-extra-macro-lib         = { version = "0.9.0", path = "./crates/macros/cgp-fork-extra-macro-lib" }
+cgp-fork-extra-macro-core        = { version = "0.9.0", path = "./crates/macros/cgp-fork-extra-macro-core" }

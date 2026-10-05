@@ -18,4 +18,5 @@ default = []
 syn             = { version = "2.0.95", features = [ "full", "extra-traits" ] }
 quote           = "1.0.38"
 proc-macro2     = "1.0.92"
-cgp-fork-macro-core  = { workspace = true }
+cgp-fork-macro-core        = { workspace = true }
+cgp-fork-extra-macro-core  = { workspace = true }
