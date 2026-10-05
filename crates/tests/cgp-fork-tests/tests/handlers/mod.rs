@@ -9,6 +9,11 @@
 // `#[implicit]` arguments are read from the context.
 pub mod computer_context_args;
 pub mod computer_macro;
+pub mod computer_macro_arity;
+pub mod computer_macro_generics;
+pub mod computer_macro_named;
+pub mod computer_macro_output;
+pub mod computer_macro_visibility;
 pub mod handler_macro;
 pub mod producer_macro;
 

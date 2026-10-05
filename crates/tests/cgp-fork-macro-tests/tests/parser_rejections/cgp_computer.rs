@@ -5,7 +5,7 @@
 
 use quote::quote;
 
-use super::assert_macro_rejects;
+use super::{assert_macro_rejects, assert_macro_rejects_with};
 
 #[test]
 fn rejects_receiver() {
@@ -33,6 +33,60 @@ fn rejects_mutable_field_argument() {
             ),
         )
     });
+}
+
+#[test]
+fn rejects_one_argument_result_alias() {
+    assert_macro_rejects_with(
+        "cgp_computer returning a one-argument Result alias",
+        "A `Result` return type must be written as `Result<T, E>`, naming its error type",
+        || {
+            cgp_fork_extra_macro_lib::cgp_computer(
+                quote!(),
+                quote!(
+                    fn parse(value: String) -> Result<u64> {
+                        todo!()
+                    }
+                ),
+            )
+        },
+    );
+}
+
+#[test]
+fn rejects_impl_trait_parameter() {
+    assert_macro_rejects_with(
+        "cgp_computer with an impl Trait parameter",
+        "Computer function parameters cannot use `impl Trait`; declare a generic parameter instead",
+        || {
+            cgp_fork_extra_macro_lib::cgp_computer(
+                quote!(),
+                quote!(
+                    fn show(values: Vec<impl core::fmt::Display>) -> usize {
+                        values.len()
+                    }
+                ),
+            )
+        },
+    );
+}
+
+#[test]
+fn rejects_impl_trait_return() {
+    assert_macro_rejects_with(
+        "cgp_computer returning impl Trait",
+        "Computer functions cannot return `impl Trait`",
+        || {
+            cgp_fork_extra_macro_lib::cgp_computer(
+                quote!(),
+                quote!(
+                    fn show(value: u64) -> impl core::fmt::Display {
+                        value
+                    }
+                ),
+            )
+        },
+    );
 }
 
 #[test]

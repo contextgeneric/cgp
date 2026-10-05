@@ -22,6 +22,29 @@ pub fn assert_macro_rejects(label: &str, run: impl FnOnce() -> syn::Result<Token
     }
 }
 
+/// Assert that a macro entrypoint rejects its input with exactly `message`.
+///
+/// Pinning the message, not just the `Err`, keeps a rejection test honest across
+/// a refactor: an input that starts failing for a different reason (an internal
+/// parse error, say) fails the test instead of silently passing it.
+#[track_caller]
+pub fn assert_macro_rejects_with(
+    label: &str,
+    message: &str,
+    run: impl FnOnce() -> syn::Result<TokenStream>,
+) {
+    match run() {
+        Ok(tokens) => {
+            panic!("expected `{label}` to be rejected, but it expanded to:\n{tokens}")
+        }
+        Err(error) => assert_eq!(
+            error.to_string(),
+            message,
+            "`{label}` was rejected with an unexpected message"
+        ),
+    }
+}
+
 pub mod blanket_trait;
 pub mod cgp_auto_error;
 pub mod cgp_auto_impl;
