@@ -22,6 +22,12 @@ define_keyword!(CgpNewProvider, "cgp_new_provider");
 
 define_keyword!(CgpFn, "cgp_fn");
 
+define_keyword!(CgpComputer, "cgp_computer");
+
+define_keyword!(CgpProducer, "cgp_producer");
+
+define_keyword!(CgpAutoDispatch, "cgp_auto_dispatch");
+
 define_keyword!(CgpType, "cgp_type");
 
 define_keyword!(CgpNamespace, "cgp_namespace");
