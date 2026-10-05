@@ -10,6 +10,7 @@ pub mod delegate_and_check_basic;
 pub mod delegate_and_check_generic;
 pub mod delegate_and_check_generic_key;
 pub mod delegate_and_check_params;
+pub mod delegate_and_check_skip;
 
 // `check_components!` snapshots (this concept owns the macro's expansion): the
 // standalone check with `#[check_trait(...)]` overrides and per-entry parameter
