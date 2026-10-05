@@ -1,4 +1,4 @@
-use quote::ToTokens;
+use quote::{ToTokens, quote};
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::spanned::Spanned;
@@ -40,9 +40,13 @@ impl CheckComponentsTable {
         let impl_generics = &self.impl_generics;
         let where_clause = &self.where_clause;
 
+        // The `#[check_providers]` form takes the context as a trait parameter rather
+        // than naming it in the supertrait, so a generic table's parameters (`<T>
+        // Wrapper<T>`) stay on the impls that declare them instead of appearing,
+        // undeclared, in the trait header.
         let item_trait: ItemTrait = if self.check_providers.is_some() {
             parse_internal! {
-                trait #trait_name <__Component__, __Params__: ?Sized>: #IsProviderFor<__Component__, #context_type, __Params__> {}
+                trait #trait_name <__Component__, __Context__, __Params__: ?Sized>: #IsProviderFor<__Component__, __Context__, __Params__> {}
             }
         } else {
             parse_internal! {
@@ -78,9 +82,16 @@ impl CheckComponentsTable {
             let impl_generics = generics.split_for_impl().0;
 
             for self_type in self_types {
+                // Only the `#[check_providers]` trait takes the context as an argument.
+                let trait_args = if self.check_providers.is_some() {
+                    quote! { #component_type, #context_type, #component_param }
+                } else {
+                    quote! { #component_type, #component_param }
+                };
+
                 let item_impl: ItemImpl = parse_internal! {
                     impl #impl_generics
-                        #trait_name < #component_type, #component_param >
+                        #trait_name < #trait_args >
                         for #self_type
                     #where_clause
                     {}

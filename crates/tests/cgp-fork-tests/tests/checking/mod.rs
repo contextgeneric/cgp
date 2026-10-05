@@ -18,4 +18,5 @@ pub mod delegate_and_check_params;
 pub mod check_generic;
 pub mod check_path_context;
 pub mod check_providers;
+pub mod check_providers_generic;
 pub mod check_trait;

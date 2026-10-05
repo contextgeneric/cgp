@@ -91,44 +91,48 @@ snapshot_check_components! {
         insta::assert_snapshot!(output, @r#"
         trait CanUseDummyField<
             __Component__,
+            __Context__,
             __Params__: ?Sized,
-        >: IsProviderFor<__Component__, Context, __Params__> {}
-        impl CanUseDummyField<FooGetterAtComponent, Index<0>> for UseField<Symbol!("dummy")> {}
-        impl CanUseDummyField<FooGetterAtComponent, Index<0>>
-        for UseField<Symbol!("extra_dummy")> {}
-        impl CanUseDummyField<FooGetterAtComponent, Index<1>> for UseField<Symbol!("dummy")> {}
-        impl CanUseDummyField<FooGetterAtComponent, Index<1>>
-        for UseField<Symbol!("extra_dummy")> {}
-        impl CanUseDummyField<FooGetterAtComponent, Index<3>> for UseField<Symbol!("dummy")> {}
-        impl CanUseDummyField<FooGetterAtComponent, Index<3>>
-        for UseField<Symbol!("extra_dummy")> {}
-        impl CanUseDummyField<BarGetterAtComponent, (Index<0>, Index<1>)>
+        >: IsProviderFor<__Component__, __Context__, __Params__> {}
+        impl CanUseDummyField<FooGetterAtComponent, Context, Index<0>>
         for UseField<Symbol!("dummy")> {}
-        impl CanUseDummyField<BarGetterAtComponent, (Index<0>, Index<1>)>
+        impl CanUseDummyField<FooGetterAtComponent, Context, Index<0>>
         for UseField<Symbol!("extra_dummy")> {}
-        impl CanUseDummyField<BarGetterAtComponent, (Index<1>, Index<0>)>
+        impl CanUseDummyField<FooGetterAtComponent, Context, Index<1>>
         for UseField<Symbol!("dummy")> {}
-        impl CanUseDummyField<BarGetterAtComponent, (Index<1>, Index<0>)>
+        impl CanUseDummyField<FooGetterAtComponent, Context, Index<1>>
         for UseField<Symbol!("extra_dummy")> {}
-        impl CanUseDummyField<BarGetterAtComponent, (Index<3>, Index<4>)>
+        impl CanUseDummyField<FooGetterAtComponent, Context, Index<3>>
         for UseField<Symbol!("dummy")> {}
-        impl CanUseDummyField<BarGetterAtComponent, (Index<3>, Index<4>)>
+        impl CanUseDummyField<FooGetterAtComponent, Context, Index<3>>
         for UseField<Symbol!("extra_dummy")> {}
-        impl CanUseDummyField<FooGetterAtComponent, (Index<5>, Index<6>)>
+        impl CanUseDummyField<BarGetterAtComponent, Context, (Index<0>, Index<1>)>
         for UseField<Symbol!("dummy")> {}
-        impl CanUseDummyField<FooGetterAtComponent, (Index<5>, Index<6>)>
+        impl CanUseDummyField<BarGetterAtComponent, Context, (Index<0>, Index<1>)>
         for UseField<Symbol!("extra_dummy")> {}
-        impl CanUseDummyField<FooGetterAtComponent, (Index<7>, Index<8>)>
+        impl CanUseDummyField<BarGetterAtComponent, Context, (Index<1>, Index<0>)>
         for UseField<Symbol!("dummy")> {}
-        impl CanUseDummyField<FooGetterAtComponent, (Index<7>, Index<8>)>
+        impl CanUseDummyField<BarGetterAtComponent, Context, (Index<1>, Index<0>)>
         for UseField<Symbol!("extra_dummy")> {}
-        impl CanUseDummyField<BarGetterAtComponent, (Index<5>, Index<6>)>
+        impl CanUseDummyField<BarGetterAtComponent, Context, (Index<3>, Index<4>)>
         for UseField<Symbol!("dummy")> {}
-        impl CanUseDummyField<BarGetterAtComponent, (Index<5>, Index<6>)>
+        impl CanUseDummyField<BarGetterAtComponent, Context, (Index<3>, Index<4>)>
         for UseField<Symbol!("extra_dummy")> {}
-        impl CanUseDummyField<BarGetterAtComponent, (Index<7>, Index<8>)>
+        impl CanUseDummyField<FooGetterAtComponent, Context, (Index<5>, Index<6>)>
         for UseField<Symbol!("dummy")> {}
-        impl CanUseDummyField<BarGetterAtComponent, (Index<7>, Index<8>)>
+        impl CanUseDummyField<FooGetterAtComponent, Context, (Index<5>, Index<6>)>
+        for UseField<Symbol!("extra_dummy")> {}
+        impl CanUseDummyField<FooGetterAtComponent, Context, (Index<7>, Index<8>)>
+        for UseField<Symbol!("dummy")> {}
+        impl CanUseDummyField<FooGetterAtComponent, Context, (Index<7>, Index<8>)>
+        for UseField<Symbol!("extra_dummy")> {}
+        impl CanUseDummyField<BarGetterAtComponent, Context, (Index<5>, Index<6>)>
+        for UseField<Symbol!("dummy")> {}
+        impl CanUseDummyField<BarGetterAtComponent, Context, (Index<5>, Index<6>)>
+        for UseField<Symbol!("extra_dummy")> {}
+        impl CanUseDummyField<BarGetterAtComponent, Context, (Index<7>, Index<8>)>
+        for UseField<Symbol!("dummy")> {}
+        impl CanUseDummyField<BarGetterAtComponent, Context, (Index<7>, Index<8>)>
         for UseField<Symbol!("extra_dummy")> {}
         "#)
     }
