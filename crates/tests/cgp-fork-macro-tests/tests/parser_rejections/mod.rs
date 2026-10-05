@@ -55,6 +55,7 @@ pub mod cgp_fn;
 pub mod cgp_impl;
 pub mod cgp_namespace;
 pub mod cgp_preset;
+pub mod cgp_producer;
 pub mod cgp_provider;
 pub mod cgp_type;
 pub mod check_components;
