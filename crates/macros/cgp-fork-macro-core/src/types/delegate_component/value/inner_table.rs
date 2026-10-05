@@ -42,10 +42,11 @@ impl Parse for DelegateValueWithInnerTable {
 impl EvalDelegateValue for DelegateValueWithInnerTable {
     fn eval(&self) -> syn::Result<Type> {
         let wrapper_ident = &self.wrapper_ident;
-        let struct_ident = &self.inner_table.table_ident;
-        let struct_generics = &self.inner_table.table_generics;
+        // The table's type arguments, not its definition list, so a
+        // `const N: usize` parameter is written as `N` in the value.
+        let table_type = self.inner_table.build_table_type()?;
 
-        let ty = parse_internal!( #wrapper_ident < #struct_ident #struct_generics > );
+        let ty = parse_internal!( #wrapper_ident < #table_type > );
         Ok(ty)
     }
 }

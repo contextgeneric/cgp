@@ -1,7 +1,7 @@
 use proc_macro2::TokenStream;
 use quote::ToTokens;
 use syn::parse::{Parse, ParseStream};
-use syn::{Attribute, Generics, ItemImpl, Type, braced};
+use syn::{Attribute, GenericParam, Generics, ItemImpl, Type, braced};
 
 use crate::functions::parse_internal;
 use crate::traits::ParseOptionalKeyword;
@@ -71,9 +71,33 @@ impl DelegateTable {
         if self.new.is_some() {
             let struct_type: IdentWithTypeGenerics =
                 parse_internal(self.table_type.to_token_stream())?;
+
+            // The target's type arguments name each parameter without its kind, so a
+            // parameter the table's generic list declares `const` is restored as a
+            // const parameter of the struct rather than read as a type parameter.
+            let mut generics = struct_type.type_generics.to_generics();
+            for param in generics.params.iter_mut() {
+                if let GenericParam::Type(type_param) = param
+                    && let Some(const_param) =
+                        self.impl_generics
+                            .generics
+                            .params
+                            .iter()
+                            .find_map(|p| match p {
+                                GenericParam::Const(c) if c.ident == type_param.ident => Some(c),
+                                _ => None,
+                            })
+                {
+                    let mut const_param = const_param.clone();
+                    const_param.eq_token = None;
+                    const_param.default = None;
+                    *param = GenericParam::Const(const_param);
+                }
+            }
+
             item_structs.push(EmptyStruct {
                 ident: struct_type.ident,
-                generics: struct_type.type_generics.to_generics(),
+                generics,
             });
         }
 

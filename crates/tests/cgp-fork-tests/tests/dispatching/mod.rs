@@ -34,6 +34,7 @@ pub mod auto_dispatch_async_self_ref_only;
 
 // `#[cgp_auto_dispatch]` beside imported `CanCompute`/`CanComputeAsync`.
 pub mod auto_dispatch_consumer_traits_in_scope;
+pub mod const_generic_tables;
 
 // The `UseDelegate` dispatch provider and the `UseDelegate`-table form of
 // `delegate_components!` (this concept owns those snapshots).

@@ -3,7 +3,7 @@ use core::ops::{Deref, DerefMut};
 use proc_macro2::TokenStream;
 use quote::ToTokens;
 use syn::parse::{Parse, ParseStream};
-use syn::{Error, Generics};
+use syn::{Error, GenericParam, Generics};
 
 use crate::functions::parse_internal;
 
@@ -39,14 +39,25 @@ impl DerefMut for TypeGenerics {
 }
 
 impl Parse for TypeGenerics {
+    /// Accept a definition-site list whose parameters carry no bounds and no
+    /// defaults: bare lifetimes, bare type parameters, and `const N: T` parameters,
+    /// whose kind is kept so a declared table struct can be const-generic.
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let generics: Generics = input.parse()?;
 
-        let (_, type_generics, _) = generics.split_for_impl();
+        for param in generics.params.iter() {
+            let valid = match param {
+                GenericParam::Lifetime(life) => life.colon_token.is_none(),
+                GenericParam::Type(ty) => ty.colon_token.is_none() && ty.default.is_none(),
+                GenericParam::Const(konst) => konst.default.is_none(),
+            };
 
-        let generics2: Generics = parse_internal(type_generics.to_token_stream())?;
+            if !valid {
+                return Err(Error::new_spanned(param, "invalid type generics syntax"));
+            }
+        }
 
-        if generics != generics2 {
+        if generics.where_clause.is_some() {
             return Err(Error::new_spanned(generics, "invalid type generics syntax"));
         }
 
