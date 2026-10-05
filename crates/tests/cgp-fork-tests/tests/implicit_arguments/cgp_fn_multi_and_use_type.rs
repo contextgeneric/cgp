@@ -6,8 +6,8 @@
 //! `#[use_type(HasFooType<X>.{Foo as FooX}, …)]`, showing how implicit reads
 //! and abstract-type imports combine in one function.
 //!
-//! See cgp-knowledge-base/cgp/reference/macros/cgp_fn.md and
-//! cgp-knowledge-base/cgp/reference/attributes/use_type.md.
+//! See cgp-knowledge-base-fork/cgp/reference/macros/cgp_fn.md and
+//! cgp-knowledge-base-fork/cgp/reference/attributes/use_type.md.
 
 use core::fmt::Display;
 

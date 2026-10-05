@@ -3,7 +3,7 @@
 //! is `for<'a> CanLog<__LogHello<'a>>`.
 //!
 //! This is the canonical expansion snapshot for `#[cgp_auto_log]`.
-//! See cgp-knowledge-base/cgp/reference/macros/cgp_auto_log.md.
+//! See cgp-knowledge-base-fork/cgp/reference/macros/cgp_auto_log.md.
 
 use std::cell::RefCell;
 

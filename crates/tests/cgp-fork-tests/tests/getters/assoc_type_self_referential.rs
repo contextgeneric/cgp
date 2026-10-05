@@ -3,8 +3,8 @@
 //! field: `Person::name()` reads the `first_name` field via
 //! `UseField<Symbol!("first_name")>`.
 //!
-//! See cgp-knowledge-base/cgp/reference/macros/cgp_getter.md and
-//! cgp-knowledge-base/cgp/reference/providers/use_field.md.
+//! See cgp-knowledge-base-fork/cgp/reference/macros/cgp_getter.md and
+//! cgp-knowledge-base-fork/cgp/reference/providers/use_field.md.
 
 use core::fmt::Display;
 

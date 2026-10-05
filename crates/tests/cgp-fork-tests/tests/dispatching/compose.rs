@@ -10,8 +10,8 @@
 //! `#[cgp_new_provider]` is incidental scaffolding here (its expansion is owned by
 //! `basic_delegation`), so it is written plainly rather than snapshotted.
 //!
-//! See cgp-knowledge-base/cgp/reference/providers/dispatch_combinators.md and
-//! cgp-knowledge-base/cgp/reference/components/computer.md.
+//! See cgp-knowledge-base-fork/cgp/reference/providers/dispatch_combinators.md and
+//! cgp-knowledge-base-fork/cgp/reference/components/computer.md.
 
 use core::fmt::Display;
 

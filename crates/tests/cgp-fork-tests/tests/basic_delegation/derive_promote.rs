@@ -1,7 +1,7 @@
 //! `#[derive_promote(Name)]` on `#[cgp_component]` emits a provider struct and an
 //! impl that forwards the component's single method to `Computer::compute`.
 //!
-//! See cgp-knowledge-base/cgp/implementation/entrypoints/cgp_component.md.
+//! See cgp-knowledge-base-fork/cgp/implementation/entrypoints/cgp_component.md.
 
 use cgp_fork_macro_test_util::snapshot_cgp_component;
 

@@ -2,7 +2,7 @@
 //! wrapper adds a `'static` detail with `wrap_err`. No test in this target installs an eyre hook,
 //! so building a report here also checks that the crate turns on eyre's `auto-install` feature.
 //!
-//! See cgp-knowledge-base/projects/error/cgp-fork-error-eyre/testing.md.
+//! See cgp-knowledge-base-fork/projects/error/cgp-fork-error-eyre/testing.md.
 
 use std::io;
 

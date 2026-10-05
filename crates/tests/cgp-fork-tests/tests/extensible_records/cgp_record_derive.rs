@@ -10,7 +10,7 @@
 //! `CgpRecord` refuses a non-struct item outright, which is what makes it worth
 //! writing when the type will always be a struct.
 //!
-//! See cgp-knowledge-base/cgp/reference/derives/derive_cgp_record.md.
+//! See cgp-knowledge-base-fork/cgp/reference/derives/derive_cgp_record.md.
 
 use core::marker::PhantomData;
 

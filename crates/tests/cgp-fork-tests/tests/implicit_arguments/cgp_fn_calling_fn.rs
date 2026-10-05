@@ -4,7 +4,7 @@
 //! stated as an explicit `where` clause) and calls `self.rectangle_area()`. The
 //! snapshots show both generated traits and how the dependency lands on the impl.
 //!
-//! See cgp-knowledge-base/cgp/reference/macros/cgp_fn.md.
+//! See cgp-knowledge-base-fork/cgp/reference/macros/cgp_fn.md.
 
 use cgp_fork::prelude::*;
 use cgp_fork_macro_test_util::snapshot_cgp_fn;

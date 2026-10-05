@@ -9,8 +9,8 @@
 //! `try_compute` (via a plain `OkMonadic` over an `ErrorOnly` context), and the
 //! async `handle` (blocked on with `futures::executor::block_on`).
 //!
-//! See cgp-knowledge-base/cgp/concepts/monadic-handlers.md and
-//! cgp-knowledge-base/cgp/reference/providers/monad_providers.md.
+//! See cgp-knowledge-base-fork/cgp/concepts/monadic-handlers.md and
+//! cgp-knowledge-base-fork/cgp/reference/providers/monad_providers.md.
 
 use cgp_fork::core::error::ErrorOnly;
 use cgp_fork::extra::monad::monadic::err::ErrMonadic;

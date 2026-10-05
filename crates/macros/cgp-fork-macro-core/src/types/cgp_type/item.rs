@@ -67,7 +67,7 @@ impl ItemCgpType {
         ) = self.prepare_type_provider()?;
 
         // Insert the provider as the new leading generic (position 0, lifetime-safe
-        // via `syn::Generics::to_tokens`). See cgp-knowledge-base/cgp/implementation/README.md,
+        // via `syn::Generics::to_tokens`). See cgp-knowledge-base-fork/cgp/implementation/README.md,
         // "Generic-parameter insertion and lifetime ordering".
         generics.params.insert(0, parse_internal!(__Provider__));
         generics
@@ -114,7 +114,7 @@ impl ItemCgpType {
         let mut generics = provider_trait.generics.clone();
         // The abstract type leads the impl generics. Position 0 is safe with a
         // lifetime present because `syn::Generics::to_tokens` emits lifetimes first.
-        // See cgp-knowledge-base/cgp/implementation/README.md, "Generic-parameter insertion and
+        // See cgp-knowledge-base-fork/cgp/implementation/README.md, "Generic-parameter insertion and
         // lifetime ordering".
         let type_item = lift_assoc_type(&mut generics, &item_type, true)?;
         let (_, type_generics, _) = provider_trait.generics.split_for_impl();

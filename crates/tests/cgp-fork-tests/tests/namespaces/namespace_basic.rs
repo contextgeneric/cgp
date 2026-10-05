@@ -9,8 +9,8 @@
 //! component and the two provider impls are incidental scaffolding, written with
 //! the plain macros (their expansion is pinned in `basic_delegation`).
 //!
-//! See cgp-knowledge-base/cgp/reference/macros/cgp_namespace.md and
-//! cgp-knowledge-base/cgp/reference/macros/delegate_components.md.
+//! See cgp-knowledge-base-fork/cgp/reference/macros/cgp_namespace.md and
+//! cgp-knowledge-base-fork/cgp/reference/macros/delegate_components.md.
 
 use cgp_fork::prelude::*;
 use cgp_fork_macro_test_util::{

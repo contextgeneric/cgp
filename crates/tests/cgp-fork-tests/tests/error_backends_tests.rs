@@ -5,8 +5,8 @@
 //! non-standard source errors through their providers, wrapping details, and the output each
 //! produces. These crates are documented as a project of their own in the knowledge base.
 //!
-//! See cgp-knowledge-base/projects/error/README.md and
-//! cgp-knowledge-base/cgp/concepts/modular-error-handling.md.
+//! See cgp-knowledge-base-fork/projects/error/README.md and
+//! cgp-knowledge-base-fork/cgp/concepts/modular-error-handling.md.
 #![allow(dead_code)]
 
 pub mod error_backends;

@@ -4,8 +4,8 @@
 //! host macro — and an import list whose contexts resolve through one another in a
 //! cycle, which has no valid grounding order.
 //!
-//! See cgp-knowledge-base/cgp/implementation/asts/attributes/use_type.md (Tests) for
-//! these failure cases and cgp-knowledge-base/cgp/reference/attributes/use_type.md for
+//! See cgp-knowledge-base-fork/cgp/implementation/asts/attributes/use_type.md (Tests) for
+//! these failure cases and cgp-knowledge-base-fork/cgp/reference/attributes/use_type.md for
 //! the user-facing semantics.
 
 use quote::quote;

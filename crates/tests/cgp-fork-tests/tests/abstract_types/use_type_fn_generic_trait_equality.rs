@@ -12,8 +12,8 @@
 //! generic trait land in the same argument list, while a plain generic import
 //! beside them keeps its bare `Self: Trait<Args>` bound.
 //!
-//! See cgp-knowledge-base/cgp/implementation/asts/attributes/use_type.md and
-//! cgp-knowledge-base/cgp/reference/attributes/use_type.md.
+//! See cgp-knowledge-base-fork/cgp/implementation/asts/attributes/use_type.md and
+//! cgp-knowledge-base-fork/cgp/reference/attributes/use_type.md.
 
 use cgp_fork_macro_test_util::snapshot_cgp_fn;
 

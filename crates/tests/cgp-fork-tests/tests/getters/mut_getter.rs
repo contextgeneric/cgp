@@ -5,8 +5,8 @@
 //! `FieldGetter`. The context binds a differently-named `value` field by wiring
 //! to `UseField`.
 //!
-//! See cgp-knowledge-base/cgp/reference/macros/cgp_getter.md and
-//! cgp-knowledge-base/cgp/reference/providers/use_field.md.
+//! See cgp-knowledge-base-fork/cgp/reference/macros/cgp_getter.md and
+//! cgp-knowledge-base-fork/cgp/reference/providers/use_field.md.
 
 use cgp_fork::prelude::*;
 use cgp_fork_macro_test_util::snapshot_cgp_getter;

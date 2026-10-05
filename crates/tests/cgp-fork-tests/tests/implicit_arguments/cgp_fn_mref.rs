@@ -14,8 +14,8 @@
 //! falls into the owned-and-cloned mode, and `MRef` is not `Clone`, so such a case
 //! cannot compile at all.
 //!
-//! See cgp-knowledge-base/cgp/reference/attributes/implicit.md and
-//! cgp-knowledge-base/cgp/reference/types/mref.md.
+//! See cgp-knowledge-base-fork/cgp/reference/attributes/implicit.md and
+//! cgp-knowledge-base-fork/cgp/reference/types/mref.md.
 
 use cgp_fork::prelude::*;
 

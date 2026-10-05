@@ -8,8 +8,8 @@
 //! kept because the abstract-type rewrite is the point; `#[cgp_type]` scaffolding
 //! is written plainly.
 //!
-//! See cgp-knowledge-base/cgp/reference/attributes/use_type.md and
-//! cgp-knowledge-base/cgp/concepts/abstract-types.md.
+//! See cgp-knowledge-base-fork/cgp/reference/attributes/use_type.md and
+//! cgp-knowledge-base-fork/cgp/concepts/abstract-types.md.
 
 use std::ops::Mul;
 

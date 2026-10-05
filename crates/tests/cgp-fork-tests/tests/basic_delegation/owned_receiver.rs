@@ -6,8 +6,8 @@
 //! owned-mutable receiver so the rewrite of every receiver shape — `&self`,
 //! `&mut self`, `self`, and `mut self` — stays covered.
 //!
-//! See cgp-knowledge-base/cgp/implementation/entrypoints/cgp_impl.md and
-//! cgp-knowledge-base/cgp/reference/macros/cgp_impl.md.
+//! See cgp-knowledge-base-fork/cgp/implementation/entrypoints/cgp_impl.md and
+//! cgp-knowledge-base-fork/cgp/reference/macros/cgp_impl.md.
 
 use cgp_fork::prelude::*;
 

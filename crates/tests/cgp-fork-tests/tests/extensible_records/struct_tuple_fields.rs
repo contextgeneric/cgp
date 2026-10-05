@@ -4,7 +4,7 @@
 //! rather than treating it as a bare newtype, producing the usual `Cons`/`Nil`
 //! spine. The derive expansion is owned by this concept.
 //!
-//! See cgp-knowledge-base/cgp/reference/derives/derive_has_fields.md.
+//! See cgp-knowledge-base-fork/cgp/reference/derives/derive_has_fields.md.
 
 use cgp_fork::prelude::*;
 use cgp_fork_macro_test_util::snapshot_derive_has_fields;

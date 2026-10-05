@@ -30,7 +30,7 @@ For readable wiring errors, install [`cargo-cgp`](https://github.com/contextgene
 
 Guides and examples: [contextgeneric.dev](https://contextgeneric.dev/).
 
-Construct reference and macro internals: [cgp-knowledge-base](https://github.com/contextgeneric/cgp-knowledge-base). Repository conventions: [AGENTS.md](AGENTS.md). Related repositories: [sibling-projects.md](sibling-projects.md).
+Construct reference and macro internals: [cgp-knowledge-base-fork](https://github.com/Just-Replicant/cgp-knowledge-base-fork). Repository conventions: [AGENTS.md](AGENTS.md). Related repositories: [sibling-projects.md](sibling-projects.md).
 
 ## License
 

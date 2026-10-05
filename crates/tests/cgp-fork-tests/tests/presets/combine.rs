@@ -2,7 +2,7 @@
 //! both preset entries on one table does the same. A later explicit entry
 //! overrides a preset component.
 //!
-//! See cgp-knowledge-base/cgp/reference/macros/cgp_preset.md.
+//! See cgp-knowledge-base-fork/cgp/reference/macros/cgp_preset.md.
 
 use cgp_fork::prelude::*;
 

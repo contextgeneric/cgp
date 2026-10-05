@@ -8,7 +8,7 @@
 //! `FooProviderComponent`, which does not exist here, so the generated
 //! `IsProviderFor` impl fails to resolve.
 //!
-//! See cgp-knowledge-base/cgp/reference/macros/cgp_impl.md.
+//! See cgp-knowledge-base-fork/cgp/reference/macros/cgp_impl.md.
 
 use cgp_fork::prelude::*;
 use cgp_fork_macro_test_util::snapshot_cgp_impl;

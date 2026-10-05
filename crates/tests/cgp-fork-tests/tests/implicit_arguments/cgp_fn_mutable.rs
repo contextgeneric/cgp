@@ -3,8 +3,8 @@
 //! A `&mut` implicit reads through `HasFieldMut`/`get_field_mut` instead of the
 //! shared `HasField` path.
 //!
-//! See cgp-knowledge-base/cgp/reference/macros/cgp_fn.md and
-//! cgp-knowledge-base/cgp/reference/traits/has_field.md.
+//! See cgp-knowledge-base-fork/cgp/reference/macros/cgp_fn.md and
+//! cgp-knowledge-base-fork/cgp/reference/traits/has_field.md.
 
 use cgp_fork::prelude::*;
 use cgp_fork_macro_test_util::snapshot_cgp_fn;

@@ -13,7 +13,7 @@
 //! None of the three is in the prelude; they are imported from `cgp_fork::core::field::traits`,
 //! as is the `IsOptional` marker's home in `cgp_fork::core::field::impls`.
 //!
-//! See cgp-knowledge-base/cgp/reference/traits/product_ops.md.
+//! See cgp-knowledge-base-fork/cgp/reference/traits/product_ops.md.
 
 use cgp_fork::core::field::impls::IsOptional;
 use cgp_fork::core::field::traits::{AppendProduct, ConcatProduct, MapFields};

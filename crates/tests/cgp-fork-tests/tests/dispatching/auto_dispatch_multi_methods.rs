@@ -2,7 +2,7 @@
 //! receiver shapes (`&self`, `&mut self`, `self`), all dispatched over the same
 //! `FooBar` enum.
 //!
-//! See cgp-knowledge-base/cgp/reference/macros/cgp_auto_dispatch.md.
+//! See cgp-knowledge-base-fork/cgp/reference/macros/cgp_auto_dispatch.md.
 
 use cgp_fork::prelude::*;
 

@@ -6,8 +6,8 @@ in this tree is CGP code, and the skill is the authoritative source for CGP
 semantics and vocabulary.
 
 This repository's documentation lives in the sibling
-[`cgp-knowledge-base`](https://github.com/contextgeneric/cgp-knowledge-base) repository, under its
-`cgp/` directory, so a doc pointer below names a path there (`cgp-knowledge-base/cgp/…`) rather than a
+[`cgp-knowledge-base-fork`](https://github.com/Just-Replicant/cgp-knowledge-base-fork) repository, under its
+`cgp/` directory, so a doc pointer below names a path there (`cgp-knowledge-base-fork/cgp/…`) rather than a
 local one. See [../../sibling-projects.md](../../sibling-projects.md) for finding that checkout.
 
 The test suite has two jobs, split across crates:
@@ -41,7 +41,7 @@ so on.
 
 The right granularity is driven by the feature, its implementation complexity, and
 how many cases are needed to cover it exhaustively — **not** by mirroring the
-concept documents under `cgp-knowledge-base/cgp/concepts/`. The names may coincide, but the split is
+concept documents under `cgp-knowledge-base-fork/cgp/concepts/`. The names may coincide, but the split is
 chosen for coverage. **When a category accumulates too many test cases to stay
 coherent, split it into finer categories** rather than letting it sprawl; prefer
 splitting early.
@@ -76,8 +76,8 @@ that test exercises.
 
 Open every test file with a brief comment stating **what behavior it exercises**,
 and annotate individual tricky cases inline. Link to the owning **implementation
-document** — the one under `cgp-knowledge-base/cgp/implementation/` whose Tests and Snapshots
-sections index this test (for example `// see cgp-knowledge-base/cgp/implementation/entrypoints/cgp_impl.md`);
+document** — the one under `cgp-knowledge-base-fork/cgp/implementation/` whose Tests and Snapshots
+sections index this test (for example `// see cgp-knowledge-base-fork/cgp/implementation/entrypoints/cgp_impl.md`);
 that document is where test pointers live, since a reference document never links
 to a test (per the knowledge base's `cgp/AGENTS.md`). You may additionally link to a reference
 document when a reader needs the user-facing semantics. Tests link **to** the
@@ -159,9 +159,9 @@ compiles even though the code would not), with a comment explaining **why** the 
 is wrong and **what the correct output should be**.
 
 **Where a post-codegen class is documented.** Such a class is cataloged in the
-[error catalog](https://github.com/contextgeneric/cgp-knowledge-base/blob/main/cgp/errors/README.md) under `cgp-knowledge-base/cgp/errors/`, the canonical
+[error catalog](https://github.com/Just-Replicant/cgp-knowledge-base-fork/blob/main/cgp/errors/README.md) under `cgp-knowledge-base-fork/cgp/errors/`, the canonical
 reader-facing documentation for these errors (see
-[cgp-knowledge-base/cgp/errors/AGENTS.md](https://github.com/contextgeneric/cgp-knowledge-base/blob/main/cgp/errors/AGENTS.md)): the class doc describes the raw
+[cgp-knowledge-base-fork/cgp/errors/AGENTS.md](https://github.com/Just-Replicant/cgp-knowledge-base-fork/blob/main/cgp/errors/AGENTS.md)): the class doc describes the raw
 diagnostic *and* how cargo-cgp presents it, and links the backing `cargo-cgp` UI fixture
 as a GitHub URL. When a construct change alters such a diagnostic, the cross-project
 [sync rule](../../AGENTS.md) applies — update the `cargo-cgp` fixture and the class doc

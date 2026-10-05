@@ -2,7 +2,7 @@
 //! source is still found by `downcast_ref`, and as a wrapper it adds a `'static` detail as anyhow
 //! context: `{}` prints the outermost detail and `{:#}` the whole chain.
 //!
-//! See cgp-knowledge-base/projects/error/cgp-fork-error-anyhow/testing.md.
+//! See cgp-knowledge-base-fork/projects/error/cgp-fork-error-anyhow/testing.md.
 
 use std::io;
 

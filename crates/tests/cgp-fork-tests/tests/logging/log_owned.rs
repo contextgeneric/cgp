@@ -2,7 +2,7 @@
 //! has no lifetime, and the context bound is `CanLog<__LogCount>` rather than a
 //! higher-ranked bound.
 //!
-//! See cgp-knowledge-base/cgp/reference/macros/cgp_auto_log.md.
+//! See cgp-knowledge-base-fork/cgp/reference/macros/cgp_auto_log.md.
 
 use std::cell::Cell;
 

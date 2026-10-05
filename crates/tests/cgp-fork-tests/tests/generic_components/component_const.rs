@@ -8,7 +8,7 @@
 //! plainly (its expansion is owned by the `basic_delegation` / `checking`
 //! concepts).
 //!
-//! See cgp-knowledge-base/cgp/reference/macros/cgp_component.md.
+//! See cgp-knowledge-base-fork/cgp/reference/macros/cgp_component.md.
 
 use cgp_fork::prelude::*;
 use cgp_fork_macro_test_util::snapshot_cgp_provider;

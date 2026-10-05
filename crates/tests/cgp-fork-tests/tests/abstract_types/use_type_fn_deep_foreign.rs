@@ -13,8 +13,8 @@
 //! generated trait. The `#[cgp_fn]` snapshot is kept because the multi-hop rewrite
 //! is the point.
 //!
-//! See cgp-knowledge-base/cgp/reference/attributes/use_type.md and
-//! cgp-knowledge-base/cgp/concepts/abstract-types.md.
+//! See cgp-knowledge-base-fork/cgp/reference/attributes/use_type.md and
+//! cgp-knowledge-base-fork/cgp/concepts/abstract-types.md.
 
 use cgp_fork::prelude::*;
 use cgp_fork_macro_test_util::snapshot_cgp_fn;

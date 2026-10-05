@@ -4,8 +4,8 @@
 //! context fields, and the generated `PromoteAreaCalculator<RectangleArea>`
 //! provider implements `AreaCalculator` by calling `Computer::compute` with `()`.
 //!
-//! See cgp-knowledge-base/cgp/reference/macros/cgp_component.md and
-//! cgp-knowledge-base/cgp/reference/macros/cgp_computer.md.
+//! See cgp-knowledge-base-fork/cgp/reference/macros/cgp_component.md and
+//! cgp-knowledge-base-fork/cgp/reference/macros/cgp_computer.md.
 
 use cgp_fork::prelude::*;
 

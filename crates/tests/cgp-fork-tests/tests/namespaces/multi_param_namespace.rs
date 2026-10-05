@@ -8,8 +8,8 @@
 //! namespace `delegate_components!` snapshot is the canonical golden output; the
 //! component and provider are incidental scaffolding.
 //!
-//! See cgp-knowledge-base/cgp/reference/traits/default_namespace.md and
-//! cgp-knowledge-base/cgp/reference/macros/delegate_components.md.
+//! See cgp-knowledge-base-fork/cgp/reference/traits/default_namespace.md and
+//! cgp-knowledge-base-fork/cgp/reference/macros/delegate_components.md.
 
 use cgp_fork::prelude::*;
 use cgp_fork_macro_test_util::snapshot_delegate_components;

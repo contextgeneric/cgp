@@ -1,7 +1,7 @@
 //! `RaiseBoxedStdError` boxes a standard error without formatting it, so the source is still found
 //! by `downcast_ref`, and as a wrapper puts a `Display` detail in a `WrapError`.
 //!
-//! See cgp-knowledge-base/projects/error/cgp-fork-error-std/testing.md.
+//! See cgp-knowledge-base-fork/projects/error/cgp-fork-error-std/testing.md.
 
 use std::io;
 

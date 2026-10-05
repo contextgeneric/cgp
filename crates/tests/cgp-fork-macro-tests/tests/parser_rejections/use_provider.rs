@@ -11,8 +11,8 @@
 //! Both hosts that collect the attribute are covered, since the rejection comes
 //! from the shared argument parser rather than from either host.
 //!
-//! See cgp-knowledge-base/cgp/reference/attributes/use_provider.md for the
-//! user-facing rule and cgp-knowledge-base/cgp/implementation/asts/attributes/use_provider.md
+//! See cgp-knowledge-base-fork/cgp/reference/attributes/use_provider.md for the
+//! user-facing rule and cgp-knowledge-base-fork/cgp/implementation/asts/attributes/use_provider.md
 //! for the parser.
 
 use quote::quote;

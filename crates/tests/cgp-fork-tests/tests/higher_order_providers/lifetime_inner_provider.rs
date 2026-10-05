@@ -18,8 +18,8 @@
 //! counterpart *is* added. The consequence is a weaker diagnostic rather than
 //! broken code, and it is recorded under Known issues in the reference.
 //!
-//! See cgp-knowledge-base/cgp/reference/macros/cgp_provider.md (Known issues) and
-//! cgp-knowledge-base/cgp/reference/types/life.md.
+//! See cgp-knowledge-base-fork/cgp/reference/macros/cgp_provider.md (Known issues) and
+//! cgp-knowledge-base-fork/cgp/reference/types/life.md.
 
 use cgp_fork::prelude::*;
 use cgp_fork_macro_test_util::snapshot_cgp_new_provider;

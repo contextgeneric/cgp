@@ -9,8 +9,8 @@
 //! enough to be worth pinning: a statement written after a mapping, a braced path
 //! group followed by more path, and a bounded generic list on a nested table.
 //!
-//! See cgp-knowledge-base/cgp/implementation/entrypoints/delegate_components.md (Tests) for these
-//! failure cases, and cgp-knowledge-base/cgp/reference/macros/delegate_components.md for the
+//! See cgp-knowledge-base-fork/cgp/implementation/entrypoints/delegate_components.md (Tests) for these
+//! failure cases, and cgp-knowledge-base-fork/cgp/reference/macros/delegate_components.md for the
 //! user-facing semantics.
 
 use quote::quote;

@@ -8,7 +8,7 @@
 //! with each element's rather than overridden by it, so the conflict only exists
 //! once the two are merged and cannot be caught by looking at either alone.
 //!
-//! See cgp-knowledge-base/cgp/reference/macros/delegate_and_check_components.md
+//! See cgp-knowledge-base-fork/cgp/reference/macros/delegate_and_check_components.md
 //! for the merge rules these enforce.
 
 use quote::quote;

@@ -3,7 +3,7 @@
 //! the providers; a bare `Error` in type position is the abstract error.
 //!
 //! This is the canonical expansion snapshot for `#[cgp_auto_error]`.
-//! See cgp-knowledge-base/cgp/reference/macros/cgp_auto_error.md.
+//! See cgp-knowledge-base-fork/cgp/reference/macros/cgp_auto_error.md.
 
 use core::fmt::Display;
 

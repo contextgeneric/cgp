@@ -2,7 +2,7 @@
 //! `String` that is not a standard error, by formatting it into a new anyhow message, and wrap a
 //! detail the same way. The original value is not kept, and `{:?}` quotes a string.
 //!
-//! See cgp-knowledge-base/projects/error/cgp-fork-error-anyhow/testing.md.
+//! See cgp-knowledge-base-fork/projects/error/cgp-fork-error-anyhow/testing.md.
 
 use cgp_fork::core::error::{
     ErrorRaiserComponent, ErrorTypeProviderComponent, ErrorWrapperComponent,

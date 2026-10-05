@@ -2,6 +2,6 @@
 //! the block `ignore` because in the crate's own doctests `cgp_fork` names `cgp-fork-core`; the build
 //! script turns the block into this module, so the README stays the only copy.
 //!
-//! See cgp-knowledge-base/projects/error/cgp-fork-error-std/testing.md.
+//! See cgp-knowledge-base-fork/projects/error/cgp-fork-error-std/testing.md.
 
 include!(concat!(env!("OUT_DIR"), "/readme_std.rs"));

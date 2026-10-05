@@ -8,8 +8,8 @@
 //! `delegate_components!` (kept as a snapshot) and confirms the wiring compiles
 //! via the `CheckApp` supertrait bundle.
 //!
-//! See cgp-knowledge-base/cgp/reference/macros/cgp_namespace.md and
-//! cgp-knowledge-base/cgp/reference/macros/delegate_components.md.
+//! See cgp-knowledge-base-fork/cgp/reference/macros/cgp_namespace.md and
+//! cgp-knowledge-base-fork/cgp/reference/macros/delegate_components.md.
 
 use cgp_fork::core::error::{
     ErrorRaiserComponent, ErrorTypeProviderComponent, ErrorWrapperComponent,

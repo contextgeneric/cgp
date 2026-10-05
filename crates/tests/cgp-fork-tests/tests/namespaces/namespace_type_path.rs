@@ -7,8 +7,8 @@
 //! and namespace `delegate_components!` snapshots pin that encoding; the plain
 //! `Foo` component and the provider impls are incidental scaffolding.
 //!
-//! See cgp-knowledge-base/cgp/reference/macros/cgp_namespace.md and
-//! cgp-knowledge-base/cgp/reference/providers/redirect_lookup.md.
+//! See cgp-knowledge-base-fork/cgp/reference/macros/cgp_namespace.md and
+//! cgp-knowledge-base-fork/cgp/reference/providers/redirect_lookup.md.
 
 use cgp_fork::prelude::*;
 use cgp_fork_macro_test_util::{

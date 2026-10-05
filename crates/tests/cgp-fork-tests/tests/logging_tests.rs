@@ -4,7 +4,7 @@
 //! narrower trait by packing each method's arguments into a detail struct and
 //! calling `log`, the same shape as `#[cgp_auto_getter]` over `HasField`.
 //!
-//! See cgp-knowledge-base/cgp/reference/macros/cgp_auto_log.md.
+//! See cgp-knowledge-base-fork/cgp/reference/macros/cgp_auto_log.md.
 #![allow(dead_code)]
 
 pub mod logging;

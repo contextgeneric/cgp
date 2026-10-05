@@ -7,8 +7,8 @@
 //! borrows the field with the *inner* reference's mutability, so the `&mut` inside
 //! the `Option` selects the mutable read and requires the `&mut self` receiver.
 //!
-//! See cgp-knowledge-base/cgp/reference/macros/cgp_fn.md and
-//! cgp-knowledge-base/cgp/reference/attributes/implicit.md.
+//! See cgp-knowledge-base-fork/cgp/reference/macros/cgp_fn.md and
+//! cgp-knowledge-base-fork/cgp/reference/attributes/implicit.md.
 
 use cgp_fork::prelude::*;
 use cgp_fork_macro_test_util::snapshot_cgp_fn;

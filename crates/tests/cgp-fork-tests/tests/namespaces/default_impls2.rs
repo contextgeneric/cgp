@@ -18,7 +18,7 @@
 //! `T: DefaultImpls2<Component, U, App, Delegate = Provider>`. The loop variable is the
 //! *key*, so the entry must mention `T` for it to be constrained.
 //!
-//! See cgp-knowledge-base/cgp/reference/traits/default_namespace.md.
+//! See cgp-knowledge-base-fork/cgp/reference/traits/default_namespace.md.
 
 use cgp_fork::core::component::DefaultImpls2;
 use cgp_fork::prelude::*;

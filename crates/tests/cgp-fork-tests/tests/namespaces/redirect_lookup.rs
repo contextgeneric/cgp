@@ -8,8 +8,8 @@
 //! `#[prefix]`-component and namespace `delegate_components!` snapshots are the
 //! canonical golden output; the `TestProvider` impl is incidental scaffolding.
 //!
-//! See cgp-knowledge-base/cgp/reference/providers/redirect_lookup.md and
-//! cgp-knowledge-base/cgp/reference/traits/default_namespace.md.
+//! See cgp-knowledge-base-fork/cgp/reference/providers/redirect_lookup.md and
+//! cgp-knowledge-base-fork/cgp/reference/traits/default_namespace.md.
 
 use cgp_fork::prelude::*;
 use cgp_fork_macro_test_util::{snapshot_cgp_component, snapshot_delegate_components};

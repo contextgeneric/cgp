@@ -3,8 +3,8 @@
 //! trait, still in consumer form (`&self`). `replace_self` runs only on the
 //! real provider method, which calls the helper through the context value.
 //!
-//! See cgp-knowledge-base/cgp/implementation/entrypoints/cgp_impl.md and
-//! cgp-knowledge-base/cgp/reference/macros/cgp_impl.md.
+//! See cgp-knowledge-base-fork/cgp/implementation/entrypoints/cgp_impl.md and
+//! cgp-knowledge-base-fork/cgp/reference/macros/cgp_impl.md.
 
 use cgp_fork::prelude::*;
 use cgp_fork_macro_test_util::snapshot_cgp_impl;

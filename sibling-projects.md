@@ -14,7 +14,7 @@ all moved there, and the worked examples sit at the knowledge base's top level.
 |---|---|---|---|
 | `cargo-cgp` | <https://github.com/contextgeneric/cargo-cgp> | `main` | CGP's first-class toolchain: the cargo subcommand that makes CGP compile errors readable and expands CGP macros. |
 | `cgp-skills` | <https://github.com/contextgeneric/cgp-skills> | `main` | The agent skills for CGP, deployed on their own — the `/cgp` skill among them. |
-| `cgp-knowledge-base` | <https://github.com/contextgeneric/cgp-knowledge-base> | `main` | The consolidated documentation for every CGP project, written by and for AI agents. |
+| `cgp-knowledge-base-fork` | <https://github.com/Just-Replicant/cgp-knowledge-base-fork> | `main` | The consolidated documentation for every CGP project, written by and for AI agents. |
 
 ## Finding a sibling
 
@@ -29,7 +29,7 @@ instead, at the revision the table records.
 Reading and linking follow different rules, and conflating them is the mistake to avoid. When you
 **read** a document or a source file from a sibling, use the branch or tag this table names, so every
 project sees the same revision of the others. When you **link** to one from a committed file here, always
-write a GitHub URL on the `main` branch (`https://github.com/contextgeneric/<project>/blob/main/<path>`)
+write a GitHub URL on the `main` branch of the repository this table records (`<repository>/blob/main/<path>`)
 rather than a relative `../<project>/...` path, so the link resolves for a reader who has only this
 repository checked out. A bare mention of a checkout's location, like the path `../cargo-cgp`, is a
 filesystem reference rather than a link and stays relative.

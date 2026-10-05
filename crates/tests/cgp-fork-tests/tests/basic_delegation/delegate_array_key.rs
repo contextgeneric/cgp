@@ -4,7 +4,7 @@
 //! An array key `[A, B]: Provider` expands to one `DelegateComponent` +
 //! `IsProviderFor` impl pair per key, all pointing at the same provider.
 //!
-//! See cgp-knowledge-base/cgp/reference/macros/delegate_components.md.
+//! See cgp-knowledge-base-fork/cgp/reference/macros/delegate_components.md.
 
 use cgp_fork::prelude::DelegateComponent;
 use cgp_fork_macro_test_util::snapshot_delegate_components;

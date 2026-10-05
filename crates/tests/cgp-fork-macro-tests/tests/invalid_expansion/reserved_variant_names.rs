@@ -26,7 +26,7 @@
 //! the code it describes would not. Only the offending lines are pinned; the surrounding items are the
 //! ordinary output the reference documents already describe.
 //!
-//! Recorded in cgp-knowledge-base/cgp/reference/derives/derive_from_variant.md and
+//! Recorded in cgp-knowledge-base-fork/cgp/reference/derives/derive_from_variant.md and
 //! derive_extract_field.md, under `## Known issues`.
 
 use cgp_fork_macro_test_util_lib::functions::pretty_format;

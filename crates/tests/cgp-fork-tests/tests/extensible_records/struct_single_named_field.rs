@@ -7,8 +7,8 @@
 //! access and no builder. This is the reference snapshot for that derive on a
 //! struct; the other `struct_*` files reuse it for the remaining field shapes.
 //!
-//! See cgp-knowledge-base/cgp/reference/derives/derive_has_fields.md and
-//! cgp-knowledge-base/cgp/reference/traits/has_fields.md.
+//! See cgp-knowledge-base-fork/cgp/reference/derives/derive_has_fields.md and
+//! cgp-knowledge-base-fork/cgp/reference/traits/has_fields.md.
 
 use cgp_fork::prelude::*;
 use cgp_fork_macro_test_util::snapshot_derive_has_fields;

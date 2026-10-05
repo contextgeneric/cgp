@@ -12,7 +12,7 @@
 //! present/absent tracking that makes a premature `finalize_build` a compile
 //! error has nothing to track.
 //!
-//! See cgp-knowledge-base/cgp/reference/derives/derive_cgp_data.md.
+//! See cgp-knowledge-base-fork/cgp/reference/derives/derive_cgp_data.md.
 
 use cgp_fork::prelude::*;
 use cgp_fork_macro_test_util::snapshot_derive_cgp_data;

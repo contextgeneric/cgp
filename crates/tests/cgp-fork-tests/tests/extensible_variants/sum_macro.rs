@@ -8,8 +8,8 @@
 //! `#[derive(HasFields)]`, and the spine every extractor/cast in this concept
 //! walks.
 //!
-//! See cgp-knowledge-base/cgp/reference/macros/sum.md and
-//! cgp-knowledge-base/cgp/reference/types/either.md.
+//! See cgp-knowledge-base-fork/cgp/reference/macros/sum.md and
+//! cgp-knowledge-base-fork/cgp/reference/types/either.md.
 
 use cgp_fork::prelude::*;
 

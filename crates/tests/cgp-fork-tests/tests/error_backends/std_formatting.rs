@@ -1,7 +1,7 @@
 //! `DebugBoxedStdError` and `DisplayBoxedStdError` raise any `Debug` or `Display` value as a
 //! `StringError` holding the formatted message, and wrap a detail in a `WrapError` the same way.
 //!
-//! See cgp-knowledge-base/projects/error/cgp-fork-error-std/testing.md.
+//! See cgp-knowledge-base-fork/projects/error/cgp-fork-error-std/testing.md.
 
 use cgp_fork::core::error::{
     ErrorRaiserComponent, ErrorTypeProviderComponent, ErrorWrapperComponent,

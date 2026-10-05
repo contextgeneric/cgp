@@ -8,8 +8,8 @@
 //! parses as an empty table. That relaxation applies only to an input that ends
 //! at the header, so any other token in the body position is still rejected.
 //!
-//! See cgp-knowledge-base/cgp/implementation/entrypoints/cgp_namespace.md (Tests) for these failure
-//! cases, and cgp-knowledge-base/cgp/reference/macros/cgp_namespace.md for the user-facing
+//! See cgp-knowledge-base-fork/cgp/implementation/entrypoints/cgp_namespace.md (Tests) for these failure
+//! cases, and cgp-knowledge-base-fork/cgp/reference/macros/cgp_namespace.md for the user-facing
 //! semantics.
 
 use quote::quote;

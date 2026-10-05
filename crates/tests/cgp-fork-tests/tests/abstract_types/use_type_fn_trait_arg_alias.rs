@@ -15,8 +15,8 @@
 //! type imported from it, since the merged argument list has to carry both the
 //! grounded argument and the binding.
 //!
-//! See cgp-knowledge-base/cgp/implementation/asts/attributes/use_type.md and
-//! cgp-knowledge-base/cgp/reference/attributes/use_type.md.
+//! See cgp-knowledge-base-fork/cgp/implementation/asts/attributes/use_type.md and
+//! cgp-knowledge-base-fork/cgp/reference/attributes/use_type.md.
 
 use cgp_fork_macro_test_util::snapshot_cgp_fn;
 

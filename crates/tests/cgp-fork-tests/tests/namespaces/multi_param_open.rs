@@ -7,7 +7,7 @@
 //! not the delegate path). The `delegate_components!` snapshot is the canonical
 //! `open` golden output; the component and provider are incidental scaffolding.
 //!
-//! See cgp-knowledge-base/cgp/reference/macros/delegate_components.md.
+//! See cgp-knowledge-base-fork/cgp/reference/macros/delegate_components.md.
 
 use cgp_fork::prelude::*;
 use cgp_fork_macro_test_util::snapshot_delegate_components;

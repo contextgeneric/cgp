@@ -7,8 +7,8 @@
 //! `Nil` — so a unit struct is a valid, if trivial, extensible record and
 //! round-trips through `to_fields`/`from_fields`.
 //!
-//! See cgp-knowledge-base/cgp/reference/derives/derive_has_field.md and
-//! cgp-knowledge-base/cgp/reference/derives/derive_has_fields.md.
+//! See cgp-knowledge-base-fork/cgp/reference/derives/derive_has_field.md and
+//! cgp-knowledge-base-fork/cgp/reference/derives/derive_has_fields.md.
 
 use cgp_fork::prelude::*;
 use cgp_fork_macro_test_util::{snapshot_derive_has_field, snapshot_derive_has_fields};

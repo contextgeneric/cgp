@@ -4,7 +4,7 @@
 //! `delegate_components!` expands to a `DelegateComponent` impl per component,
 //! and two presets combine by inheritance or by listing both.
 //!
-//! See cgp-knowledge-base/cgp/reference/macros/cgp_preset.md.
+//! See cgp-knowledge-base-fork/cgp/reference/macros/cgp_preset.md.
 #![allow(dead_code)]
 
 pub mod presets;

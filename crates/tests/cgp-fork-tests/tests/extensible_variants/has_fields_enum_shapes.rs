@@ -16,7 +16,7 @@
 //! - a multi-field tuple variant becomes a product keyed by `Index<N>`;
 //! - a named-field (struct-style) variant becomes a product keyed by `Symbol!`.
 //!
-//! See cgp-knowledge-base/cgp/reference/derives/derive_has_fields.md.
+//! See cgp-knowledge-base-fork/cgp/reference/derives/derive_has_fields.md.
 
 use cgp_fork::prelude::*;
 use cgp_fork_macro_test_util::snapshot_derive_has_fields;

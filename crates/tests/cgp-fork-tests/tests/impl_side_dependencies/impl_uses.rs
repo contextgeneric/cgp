@@ -12,9 +12,9 @@
 //! `implicit_arguments`, `basic_delegation`, and `checking` concepts), so both are
 //! written as plain macros.
 //!
-//! See cgp-knowledge-base/cgp/concepts/impl-side-dependencies.md,
-//! cgp-knowledge-base/cgp/reference/attributes/uses.md, and
-//! cgp-knowledge-base/cgp/reference/macros/cgp_impl.md.
+//! See cgp-knowledge-base-fork/cgp/concepts/impl-side-dependencies.md,
+//! cgp-knowledge-base-fork/cgp/reference/attributes/uses.md, and
+//! cgp-knowledge-base-fork/cgp/reference/macros/cgp_impl.md.
 
 use cgp_fork::prelude::*;
 

@@ -7,8 +7,8 @@
 //! snapshotted — the owning targets pin their expansions); the
 //! `delegate_components!` `for`-loop expansion is what this file captures.
 //!
-//! See cgp-knowledge-base/cgp/implementation/entrypoints/cgp_namespace.md (Tests) and
-//! cgp-knowledge-base/cgp/reference/macros/cgp_namespace.md.
+//! See cgp-knowledge-base-fork/cgp/implementation/entrypoints/cgp_namespace.md (Tests) and
+//! cgp-knowledge-base-fork/cgp/reference/macros/cgp_namespace.md.
 
 use cgp_fork::prelude::*;
 use cgp_fork_macro_test_util::snapshot_delegate_components;

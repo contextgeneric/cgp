@@ -5,8 +5,8 @@
 //! the caller passes to `compute`. The original function is unchanged apart from
 //! the attributes, so it can still be called directly.
 //!
-//! See cgp-knowledge-base/cgp/reference/macros/cgp_computer.md and
-//! cgp-knowledge-base/cgp/reference/attributes/implicit.md.
+//! See cgp-knowledge-base-fork/cgp/reference/macros/cgp_computer.md and
+//! cgp-knowledge-base-fork/cgp/reference/attributes/implicit.md.
 
 use cgp_fork::prelude::*;
 use futures::executor::block_on;

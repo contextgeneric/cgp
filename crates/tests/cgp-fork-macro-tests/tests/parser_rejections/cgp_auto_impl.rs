@@ -1,7 +1,7 @@
 //! `#[cgp_auto_impl]` rejects an attribute argument, a method with no body, and
 //! a trait item it cannot turn into a blanket provider.
 //!
-//! See cgp-knowledge-base/cgp/reference/macros/cgp_auto_impl.md.
+//! See cgp-knowledge-base-fork/cgp/reference/macros/cgp_auto_impl.md.
 
 use quote::quote;
 

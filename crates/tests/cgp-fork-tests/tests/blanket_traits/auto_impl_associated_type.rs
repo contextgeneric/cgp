@@ -3,7 +3,7 @@
 //! `Self::`. The bound on the associated type moves to the impl's where clause.
 //!
 //! Snapshot variant: blanket provider re-exporting a supertrait associated type.
-//! See cgp-knowledge-base/cgp/reference/macros/cgp_auto_impl.md.
+//! See cgp-knowledge-base-fork/cgp/reference/macros/cgp_auto_impl.md.
 
 use cgp_fork_macro_test_util::snapshot_cgp_auto_impl;
 

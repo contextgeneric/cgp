@@ -1,7 +1,7 @@
 //! `DebugEyreError` and `DisplayEyreError` raise any `Debug` or `Display` value by formatting it
 //! into a new eyre report, and wrap a detail the same way. The original value is not kept.
 //!
-//! See cgp-knowledge-base/projects/error/cgp-fork-error-eyre/testing.md.
+//! See cgp-knowledge-base-fork/projects/error/cgp-fork-error-eyre/testing.md.
 
 use cgp_fork::core::error::{
     ErrorRaiserComponent, ErrorTypeProviderComponent, ErrorWrapperComponent,

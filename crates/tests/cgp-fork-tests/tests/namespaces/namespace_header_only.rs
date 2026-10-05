@@ -12,8 +12,8 @@
 //! `delegate_components!` is written plainly, since its `namespace` form is
 //! pinned in `prefix_default_namespace`.
 //!
-//! See cgp-knowledge-base/cgp/implementation/entrypoints/cgp_namespace.md and
-//! cgp-knowledge-base/cgp/reference/macros/cgp_namespace.md.
+//! See cgp-knowledge-base-fork/cgp/implementation/entrypoints/cgp_namespace.md and
+//! cgp-knowledge-base-fork/cgp/reference/macros/cgp_namespace.md.
 
 use cgp_fork::core::error::{ErrorRaiserComponent, ErrorTypeProviderComponent};
 use cgp_fork::extra::error::RaiseFrom;

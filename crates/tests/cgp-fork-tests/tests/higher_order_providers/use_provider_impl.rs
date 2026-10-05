@@ -11,8 +11,8 @@
 //! impl. The plain `RectangleArea` below is incidental scaffolding — its
 //! `#[implicit]` expansion is snapshotted in `implicit_arguments`.
 //!
-//! See cgp-knowledge-base/cgp/reference/attributes/use_provider.md and
-//! cgp-knowledge-base/cgp/concepts/higher-order-providers.md.
+//! See cgp-knowledge-base-fork/cgp/reference/attributes/use_provider.md and
+//! cgp-knowledge-base-fork/cgp/concepts/higher-order-providers.md.
 
 use cgp_fork::prelude::*;
 use cgp_fork_macro_test_util::snapshot_cgp_impl;

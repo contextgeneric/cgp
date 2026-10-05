@@ -1,7 +1,7 @@
 //! One provider written against `CanRaiseError` and `CanWrapError` runs unchanged on three
 //! contexts that wire the three backends, and produces the same message from each.
 //!
-//! See cgp-knowledge-base/projects/error/architecture.md.
+//! See cgp-knowledge-base-fork/projects/error/architecture.md.
 
 use core::fmt::Display;
 use core::num::ParseIntError;

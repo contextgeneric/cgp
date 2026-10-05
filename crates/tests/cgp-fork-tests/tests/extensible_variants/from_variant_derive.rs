@@ -10,8 +10,8 @@
 //! below stays generic over the tag, so one function can build either variant,
 //! which a `Shape::Circle(..)` call site cannot.
 //!
-//! See cgp-knowledge-base/cgp/reference/derives/derive_from_variant.md and
-//! cgp-knowledge-base/cgp/reference/traits/from_variant.md.
+//! See cgp-knowledge-base-fork/cgp/reference/derives/derive_from_variant.md and
+//! cgp-knowledge-base-fork/cgp/reference/traits/from_variant.md.
 
 use core::marker::PhantomData;
 

@@ -5,8 +5,8 @@
 //! with `#[cgp_impl]`, wiring a context to providers with `delegate_components!`,
 //! and implementing a consumer trait directly on a context.
 //!
-//! See cgp-knowledge-base/cgp/concepts/consumer-and-provider-traits.md and
-//! cgp-knowledge-base/cgp/reference/macros/delegate_components.md.
+//! See cgp-knowledge-base-fork/cgp/concepts/consumer-and-provider-traits.md and
+//! cgp-knowledge-base-fork/cgp/reference/macros/delegate_components.md.
 #![allow(dead_code)]
 
 pub mod basic_delegation;

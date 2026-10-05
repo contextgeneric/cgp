@@ -12,7 +12,7 @@ that asserts a pretty-printed string of that same code against an inline
 changes only the golden assertion, never the compile-time or runtime coverage.
 
 Two documents carry what this README does not. The
-[implementation document](https://github.com/contextgeneric/cgp-knowledge-base/blob/main/cgp/implementation/entrypoints/snapshot_macros.md)
+[implementation document](https://github.com/Just-Replicant/cgp-knowledge-base-fork/blob/main/cgp/implementation/entrypoints/snapshot_macros.md)
 in the knowledge base explains how the macros are built and what an invocation
 expands to; [crates/tests/AGENTS.md](../../tests/AGENTS.md) sets the convention for
 *when* to snapshot — a macro's expansion is pinned only in the concept target that

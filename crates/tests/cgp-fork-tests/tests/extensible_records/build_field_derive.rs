@@ -16,8 +16,8 @@
 //! `IsNothing`). Because presence lives in the partial type's parameters, a
 //! premature `finalize_build` is a compile error rather than a runtime failure.
 //!
-//! See cgp-knowledge-base/cgp/reference/derives/derive_build_field.md and
-//! cgp-knowledge-base/cgp/reference/traits/has_builder.md.
+//! See cgp-knowledge-base-fork/cgp/reference/derives/derive_build_field.md and
+//! cgp-knowledge-base-fork/cgp/reference/traits/has_builder.md.
 
 use core::marker::PhantomData;
 

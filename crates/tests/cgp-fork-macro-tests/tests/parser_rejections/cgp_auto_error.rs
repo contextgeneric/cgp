@@ -1,7 +1,7 @@
 //! `#[cgp_auto_error]` rejects an attribute argument, a trait impl, a missing
 //! piece of the error definition, and a method that is not a provider function.
 //!
-//! See cgp-knowledge-base/cgp/reference/macros/cgp_auto_error.md.
+//! See cgp-knowledge-base-fork/cgp/reference/macros/cgp_auto_error.md.
 
 use quote::quote;
 

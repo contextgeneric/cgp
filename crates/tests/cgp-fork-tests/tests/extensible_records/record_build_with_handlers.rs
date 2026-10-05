@@ -11,8 +11,8 @@
 //! (it only fixes the context's error type); its expansion is owned by
 //! `basic_delegation`.
 //!
-//! See cgp-knowledge-base/cgp/concepts/extensible-records.md and
-//! cgp-knowledge-base/cgp/reference/traits/has_builder.md.
+//! See cgp-knowledge-base-fork/cgp/concepts/extensible-records.md and
+//! cgp-knowledge-base-fork/cgp/reference/traits/has_builder.md.
 
 use core::convert::Infallible;
 use std::marker::PhantomData;

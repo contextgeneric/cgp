@@ -19,7 +19,7 @@
 //! `Provider` the inner impl cannot see). `new LoopInner<Provider>` is what puts it
 //! in both places at once.
 //!
-//! See cgp-knowledge-base/cgp/implementation/entrypoints/delegate_components.md.
+//! See cgp-knowledge-base-fork/cgp/implementation/entrypoints/delegate_components.md.
 
 use cgp_fork::prelude::*;
 

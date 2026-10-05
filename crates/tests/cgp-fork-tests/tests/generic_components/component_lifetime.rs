@@ -9,10 +9,10 @@
 //! `delegate_components!`, and `check_components!` wiring below is written plainly
 //! (its expansion is owned by the `basic_delegation` and `checking` concepts).
 //!
-//! See cgp-knowledge-base/cgp/implementation/entrypoints/cgp_component.md (Snapshots) for this
+//! See cgp-knowledge-base-fork/cgp/implementation/entrypoints/cgp_component.md (Snapshots) for this
 //! lifetime-and-type-parameter variant, and
-//! cgp-knowledge-base/cgp/reference/macros/cgp_component.md and
-//! cgp-knowledge-base/cgp/reference/types/life.md for the user-facing semantics.
+//! cgp-knowledge-base-fork/cgp/reference/macros/cgp_component.md and
+//! cgp-knowledge-base-fork/cgp/reference/types/life.md for the user-facing semantics.
 
 use cgp_fork::prelude::*;
 use cgp_fork_macro_test_util::{snapshot_cgp_component, snapshot_cgp_provider};

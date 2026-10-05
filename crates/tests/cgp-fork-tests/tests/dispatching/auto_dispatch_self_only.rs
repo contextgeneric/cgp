@@ -3,7 +3,7 @@
 //! The generated handler routes a `FooBar` value to the `Foo`/`Bar` variant
 //! impl of `CanCall`, consuming `self`.
 //!
-//! See cgp-knowledge-base/cgp/reference/macros/cgp_auto_dispatch.md.
+//! See cgp-knowledge-base-fork/cgp/reference/macros/cgp_auto_dispatch.md.
 
 use cgp_fork::prelude::*;
 

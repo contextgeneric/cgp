@@ -13,7 +13,7 @@
 //! 2. add a code comment explaining **why** the output is wrong and **what the
 //!    correct output should be**;
 //! 3. record the limitation in the owning reference document's `## Known issues`
-//!    section (per cgp-knowledge-base/cgp/AGENTS.md), and link from the test to that document.
+//!    section (per cgp-knowledge-base-fork/cgp/AGENTS.md), and link from the test to that document.
 //!
 //! One case is captured so far: `reserved_variant_names`, where the variant derives name their
 //! own associated types through `Self::…` and so cannot be applied to an enum with a variant of

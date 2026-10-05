@@ -15,8 +15,8 @@
 //! uninhabited — which is what lets `finalize_extract_result` close the chain
 //! with no wildcard arm.
 //!
-//! See cgp-knowledge-base/cgp/reference/derives/derive_extract_field.md and
-//! cgp-knowledge-base/cgp/reference/traits/extract_field.md.
+//! See cgp-knowledge-base-fork/cgp/reference/derives/derive_extract_field.md and
+//! cgp-knowledge-base-fork/cgp/reference/traits/extract_field.md.
 
 use core::marker::PhantomData;
 

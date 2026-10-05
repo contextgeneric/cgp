@@ -9,8 +9,8 @@
 //! `#[cgp_new_provider]`, and the wiring / check use plain `delegate_components!`
 //! / `check_components!` (those macros are owned by other concept targets).
 //!
-//! See cgp-knowledge-base/cgp/reference/providers/handler_combinators.md and
-//! cgp-knowledge-base/cgp/reference/components/computer.md.
+//! See cgp-knowledge-base-fork/cgp/reference/providers/handler_combinators.md and
+//! cgp-knowledge-base-fork/cgp/reference/components/computer.md.
 
 use core::marker::PhantomData;
 

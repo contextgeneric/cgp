@@ -4,8 +4,8 @@
 //! impl gains a `HasField` bound, and the body binds the field. This file checks
 //! that a context with the named field can call the generated method.
 //!
-//! See cgp-knowledge-base/cgp/reference/macros/cgp_fn.md and
-//! cgp-knowledge-base/cgp/reference/attributes/implicit.md.
+//! See cgp-knowledge-base-fork/cgp/reference/macros/cgp_fn.md and
+//! cgp-knowledge-base-fork/cgp/reference/attributes/implicit.md.
 
 use cgp_fork::prelude::*;
 

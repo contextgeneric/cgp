@@ -5,7 +5,7 @@
 //! field while implementing `HasValue<u32>` directly. Each type argument resolves
 //! independently.
 //!
-//! See cgp-knowledge-base/cgp/reference/macros/cgp_getter.md.
+//! See cgp-knowledge-base-fork/cgp/reference/macros/cgp_getter.md.
 
 use cgp_fork::prelude::*;
 

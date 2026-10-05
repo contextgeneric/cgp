@@ -1,7 +1,7 @@
 //! `#[cgp_auto_log]` rejects an attribute argument, a method body, a missing
 //! receiver, and a trait item that is not a log method.
 //!
-//! See cgp-knowledge-base/cgp/reference/macros/cgp_auto_log.md.
+//! See cgp-knowledge-base-fork/cgp/reference/macros/cgp_auto_log.md.
 
 use quote::quote;
 

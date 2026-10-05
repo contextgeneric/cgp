@@ -8,8 +8,8 @@
 //! extend the path with `PathCons<T, Nil>`). A trailing `#[cgp_getter]` that
 //! depends on the abstract type is incidental scaffolding and is written plainly.
 //!
-//! See cgp-knowledge-base/cgp/reference/macros/cgp_type.md and
-//! cgp-knowledge-base/cgp/concepts/abstract-types.md.
+//! See cgp-knowledge-base-fork/cgp/reference/macros/cgp_type.md and
+//! cgp-knowledge-base-fork/cgp/concepts/abstract-types.md.
 
 use cgp_fork::prelude::*;
 use cgp_fork_macro_test_util::snapshot_cgp_type;

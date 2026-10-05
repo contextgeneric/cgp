@@ -1,7 +1,7 @@
 //! One preset written with the type and getter shorthand expands to the
 //! `DelegateComponent` impls a context needs.
 //!
-//! See cgp-knowledge-base/cgp/reference/macros/cgp_preset.md.
+//! See cgp-knowledge-base-fork/cgp/reference/macros/cgp_preset.md.
 
 use cgp_fork::prelude::*;
 

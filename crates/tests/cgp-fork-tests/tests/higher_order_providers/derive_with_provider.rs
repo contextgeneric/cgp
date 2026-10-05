@@ -3,7 +3,7 @@
 //! the impl. An abstract type bridges through `TypeProvider`, a getter through
 //! `FieldGetter`.
 //!
-//! See cgp-knowledge-base/cgp/reference/macros/derive_provider.md.
+//! See cgp-knowledge-base-fork/cgp/reference/macros/derive_provider.md.
 
 use cgp_fork::prelude::*;
 

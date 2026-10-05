@@ -2,7 +2,7 @@
 //! (`Inner<'a>` holding `&'a String`): both derives lift the lifetime onto their
 //! impls, and `ChainGetters` composes them to read the borrowed name.
 //!
-//! See cgp-knowledge-base/cgp/reference/derives/derive_has_field.md.
+//! See cgp-knowledge-base-fork/cgp/reference/derives/derive_has_field.md.
 
 use core::marker::PhantomData;
 

@@ -1,7 +1,7 @@
 //! A context wired with the type and getter shorthand reads the same values as
 //! one wired with explicit `UseType` and `UseField`.
 //!
-//! See cgp-knowledge-base/cgp/reference/macros/delegate_components.md.
+//! See cgp-knowledge-base-fork/cgp/reference/macros/delegate_components.md.
 
 use cgp_fork::prelude::*;
 

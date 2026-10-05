@@ -9,9 +9,9 @@
 //! expansion is owned by the `implicit_arguments` concept), so it is written
 //! without a snapshot; the snapshot here pins how `#[uses]` lands.
 //!
-//! See cgp-knowledge-base/cgp/concepts/impl-side-dependencies.md,
-//! cgp-knowledge-base/cgp/reference/attributes/uses.md, and
-//! cgp-knowledge-base/cgp/reference/macros/cgp_fn.md.
+//! See cgp-knowledge-base-fork/cgp/concepts/impl-side-dependencies.md,
+//! cgp-knowledge-base-fork/cgp/reference/attributes/uses.md, and
+//! cgp-knowledge-base-fork/cgp/reference/macros/cgp_fn.md.
 
 use cgp_fork::prelude::*;
 use cgp_fork_macro_test_util::snapshot_cgp_fn;

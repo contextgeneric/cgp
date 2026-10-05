@@ -6,9 +6,9 @@
 //! `HasField` bounds and field reads), and exercises implicit args in `#[cgp_impl]`
 //! providers, including the implicit context parameter.
 //!
-//! See cgp-knowledge-base/cgp/reference/attributes/implicit.md,
-//! cgp-knowledge-base/cgp/reference/macros/cgp_fn.md, and
-//! cgp-knowledge-base/cgp/concepts/implicit-arguments.md.
+//! See cgp-knowledge-base-fork/cgp/reference/attributes/implicit.md,
+//! cgp-knowledge-base-fork/cgp/reference/macros/cgp_fn.md, and
+//! cgp-knowledge-base-fork/cgp/concepts/implicit-arguments.md.
 #![allow(dead_code)]
 
 pub mod implicit_arguments;

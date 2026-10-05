@@ -1,7 +1,7 @@
 //! `#[cgp_computer]` rejects a receiver, a mutable context-field argument, and a
 //! `#[field]` / `#[implicit]` attribute that takes arguments.
 //!
-//! See cgp-knowledge-base/cgp/implementation/entrypoints/cgp_computer.md.
+//! See cgp-knowledge-base-fork/cgp/implementation/entrypoints/cgp_computer.md.
 
 use quote::quote;
 

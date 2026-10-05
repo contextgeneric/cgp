@@ -3,7 +3,7 @@
 //! method signature with no body, so the blanket impl is the provider.
 //!
 //! This is the canonical expansion snapshot for `#[cgp_auto_impl]`.
-//! See cgp-knowledge-base/cgp/reference/macros/cgp_auto_impl.md.
+//! See cgp-knowledge-base-fork/cgp/reference/macros/cgp_auto_impl.md.
 
 use cgp_fork_macro_test_util::snapshot_cgp_auto_impl;
 

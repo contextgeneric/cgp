@@ -8,9 +8,9 @@
 //! the `#[cgp_fn]` expansion mechanics themselves are owned by `implicit_arguments`.
 //! Two runtime contexts (`f32`/`f64`) confirm the generic result.
 //!
-//! See cgp-knowledge-base/cgp/reference/attributes/use_type.md,
-//! cgp-knowledge-base/cgp/reference/macros/cgp_fn.md, and
-//! cgp-knowledge-base/cgp/concepts/abstract-types.md.
+//! See cgp-knowledge-base-fork/cgp/reference/attributes/use_type.md,
+//! cgp-knowledge-base-fork/cgp/reference/macros/cgp_fn.md, and
+//! cgp-knowledge-base-fork/cgp/concepts/abstract-types.md.
 
 use core::f64;
 use std::ops::Mul;

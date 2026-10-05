@@ -4,8 +4,8 @@
 //! impls that carry the associated type through. The context then binds the
 //! source field by wiring the getter to `UseField`.
 //!
-//! See cgp-knowledge-base/cgp/reference/macros/cgp_getter.md and
-//! cgp-knowledge-base/cgp/reference/providers/use_field.md.
+//! See cgp-knowledge-base-fork/cgp/reference/macros/cgp_getter.md and
+//! cgp-knowledge-base-fork/cgp/reference/providers/use_field.md.
 
 use core::ops::Mul;
 

@@ -7,8 +7,8 @@
 //! builds is exactly the nested `Cons(..)`/`Nil` constructor form, that its type is
 //! the corresponding `Product!`, and that the empty and trailing-comma forms work.
 //!
-//! See cgp-knowledge-base/cgp/implementation/entrypoints/product.md and
-//! cgp-knowledge-base/cgp/reference/macros/product.md.
+//! See cgp-knowledge-base-fork/cgp/implementation/entrypoints/product.md and
+//! cgp-knowledge-base-fork/cgp/reference/macros/product.md.
 
 use cgp_fork::prelude::*;
 

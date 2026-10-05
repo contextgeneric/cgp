@@ -11,8 +11,8 @@
 //! generated trait for the concrete `Types`. The `#[cgp_fn]` snapshot is kept for
 //! the rewrite; `#[cgp_type]` is plain.
 //!
-//! See cgp-knowledge-base/cgp/reference/attributes/use_type.md and
-//! cgp-knowledge-base/cgp/concepts/abstract-types.md.
+//! See cgp-knowledge-base-fork/cgp/reference/attributes/use_type.md and
+//! cgp-knowledge-base-fork/cgp/concepts/abstract-types.md.
 
 use std::ops::Mul;
 

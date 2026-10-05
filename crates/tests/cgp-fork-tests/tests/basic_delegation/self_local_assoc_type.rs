@@ -15,8 +15,8 @@
 //! that asymmetry and the `<Provider as Trait<Self>>::CONST` form that works
 //! around it.
 //!
-//! See cgp-knowledge-base/cgp/implementation/entrypoints/cgp_impl.md (Behavior and corner cases)
-//! and cgp-knowledge-base/cgp/reference/macros/cgp_impl.md.
+//! See cgp-knowledge-base-fork/cgp/implementation/entrypoints/cgp_impl.md (Behavior and corner cases)
+//! and cgp-knowledge-base-fork/cgp/reference/macros/cgp_impl.md.
 
 use cgp_fork::prelude::*;
 

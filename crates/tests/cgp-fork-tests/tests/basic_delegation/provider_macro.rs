@@ -7,7 +7,7 @@
 //! written with a plain `#[cgp_component]` (already snapshotted in
 //! `component_macro`), and a context wires the provider and calls it.
 //!
-//! See cgp-knowledge-base/cgp/reference/macros/cgp_impl.md.
+//! See cgp-knowledge-base-fork/cgp/reference/macros/cgp_impl.md.
 
 use cgp_fork::prelude::*;
 use cgp_fork_macro_test_util::snapshot_cgp_impl;

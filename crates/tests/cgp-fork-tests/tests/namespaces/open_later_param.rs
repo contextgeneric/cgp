@@ -9,7 +9,7 @@
 //! snapshot pins the generic-first-segment expansion; the component and providers
 //! are incidental scaffolding.
 //!
-//! See cgp-knowledge-base/cgp/implementation/entrypoints/delegate_components.md.
+//! See cgp-knowledge-base-fork/cgp/implementation/entrypoints/delegate_components.md.
 
 use core::marker::PhantomData;
 

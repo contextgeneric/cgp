@@ -1,7 +1,7 @@
 //! A context that joins `DefaultNamespace` wires a backend through the full paths the error
 //! components register under, `@cgp.core.error.*`, dispatching raisers per source type.
 //!
-//! See cgp-knowledge-base/projects/error/guides/choosing-a-backend.md.
+//! See cgp-knowledge-base-fork/projects/error/guides/choosing-a-backend.md.
 
 use std::io;
 

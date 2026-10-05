@@ -9,8 +9,8 @@
 //! `PipeHandlers` chain) and the `PipeMonadic<OkMonadic, ..>` combinator are
 //! exercised.
 //!
-//! See cgp-knowledge-base/cgp/concepts/monadic-handlers.md and
-//! cgp-knowledge-base/cgp/reference/providers/monad_providers.md.
+//! See cgp-knowledge-base-fork/cgp/concepts/monadic-handlers.md and
+//! cgp-knowledge-base-fork/cgp/reference/providers/monad_providers.md.
 
 use cgp_fork::extra::handler::PipeHandlers;
 use cgp_fork::extra::monad::monadic::ident::IdentMonadic;

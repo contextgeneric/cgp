@@ -1,7 +1,7 @@
 //! `#[cgp_auto_dispatch]` on a `&mut self` method with borrowed arguments and a
 //! borrowed return, exercising the lifetime handling in the generated handler.
 //!
-//! See cgp-knowledge-base/cgp/reference/macros/cgp_auto_dispatch.md.
+//! See cgp-knowledge-base-fork/cgp/reference/macros/cgp_auto_dispatch.md.
 
 use cgp_fork::prelude::*;
 

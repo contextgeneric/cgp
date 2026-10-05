@@ -2,8 +2,8 @@
 //! `#[cgp_type]` path: the provider is `{Type}TypeProvider`, and the context
 //! fixes the type by wiring `UseType`.
 //!
-//! See cgp-knowledge-base/cgp/reference/macros/cgp_getter.md and
-//! cgp-knowledge-base/cgp/reference/macros/cgp_type.md.
+//! See cgp-knowledge-base-fork/cgp/reference/macros/cgp_getter.md and
+//! cgp-knowledge-base-fork/cgp/reference/macros/cgp_type.md.
 
 use core::fmt::Display;
 

@@ -59,7 +59,7 @@ pub fn derive_has_field_impls(
 
         // Point an error on this per-field impl at the field the user wrote
         // rather than at the whole derive. See
-        // cgp-knowledge-base/cgp/implementation/README.md#spans.
+        // cgp-knowledge-base-fork/cgp/implementation/README.md#spans.
         let field_span = current_field
             .ident
             .as_ref()

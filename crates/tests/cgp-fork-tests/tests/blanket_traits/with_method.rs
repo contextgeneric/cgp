@@ -3,7 +3,7 @@
 //! method body, which delegates to the supertrait methods (`foo`/`bar`).
 //!
 //! Snapshot variant: blanket trait with a default method body.
-//! See cgp-knowledge-base/cgp/reference/macros/blanket_trait.md.
+//! See cgp-knowledge-base-fork/cgp/reference/macros/blanket_trait.md.
 
 use cgp_fork_macro_test_util::snapshot_blanket_trait;
 

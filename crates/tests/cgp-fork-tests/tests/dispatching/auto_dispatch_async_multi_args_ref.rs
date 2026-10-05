@@ -2,7 +2,7 @@
 //! method with borrowed arguments and a borrowed return, dispatched over
 //! `FooBar`.
 //!
-//! See cgp-knowledge-base/cgp/reference/macros/cgp_auto_dispatch.md.
+//! See cgp-knowledge-base-fork/cgp/reference/macros/cgp_auto_dispatch.md.
 
 use cgp_fork::prelude::*;
 use futures::executor::block_on;

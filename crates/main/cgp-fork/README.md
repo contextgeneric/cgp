@@ -8,6 +8,6 @@ To learn more, see the website [contextgeneric.dev](https://contextgeneric.dev/)
 
 <div class="warning">
 
-The CGP constructs are still mostly undocumented within Rustdoc. The best way to learn CGP today is the book [Context-Generic Programming Patterns](https://patterns.contextgeneric.dev/); for the exhaustive per-construct semantics, see the [CGP knowledge base](https://github.com/contextgeneric/cgp-knowledge-base).
+The CGP constructs are still mostly undocumented within Rustdoc. The best way to learn CGP today is the book [Context-Generic Programming Patterns](https://patterns.contextgeneric.dev/); for the exhaustive per-construct semantics, see the [CGP knowledge base](https://github.com/Just-Replicant/cgp-knowledge-base-fork).
 
 </div>

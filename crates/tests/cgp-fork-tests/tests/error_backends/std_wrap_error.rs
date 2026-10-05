@@ -2,7 +2,7 @@
 //! walking the chain prints each message exactly once; `{:#}` and `{:?}` print the whole chain.
 //! `StringError` prints its message unquoted for both `{}` and `{:?}`.
 //!
-//! See cgp-knowledge-base/projects/error/cgp-fork-error-std/testing.md.
+//! See cgp-knowledge-base-fork/projects/error/cgp-fork-error-std/testing.md.
 
 use core::error::Error as _;
 

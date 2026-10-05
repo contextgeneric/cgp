@@ -33,7 +33,7 @@ impl ItemCgpAutoImpl {
 
         // Insert the context as the leading impl generic. Position 0 is safe with a
         // lifetime present because `syn::Generics::to_tokens` emits lifetimes first.
-        // See cgp-knowledge-base/cgp/implementation/README.md, "Generic-parameter insertion and
+        // See cgp-knowledge-base-fork/cgp/implementation/README.md, "Generic-parameter insertion and
         // lifetime ordering".
         generics.params.insert(0, parse_internal!(#context_ident));
 

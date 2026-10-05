@@ -4,8 +4,8 @@
 //! shape — a tuple, an array, or a plain path type all read a `Value = T` field.
 //! This pins that a tuple field is accepted rather than rejected.
 //!
-//! See cgp-knowledge-base/cgp/reference/macros/cgp_fn.md and
-//! cgp-knowledge-base/cgp/reference/attributes/implicit.md.
+//! See cgp-knowledge-base-fork/cgp/reference/macros/cgp_fn.md and
+//! cgp-knowledge-base-fork/cgp/reference/attributes/implicit.md.
 
 use cgp_fork::prelude::*;
 use cgp_fork_macro_test_util::snapshot_cgp_fn;

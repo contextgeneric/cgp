@@ -4,8 +4,8 @@
 //! read as `Scalar` from the context. `#[check_params(f64)]` picks the concrete
 //! `Scalar` for the wiring check.
 //!
-//! See cgp-knowledge-base/cgp/reference/macros/cgp_impl.md and
-//! cgp-knowledge-base/cgp/reference/macros/delegate_and_check_components.md.
+//! See cgp-knowledge-base-fork/cgp/reference/macros/cgp_impl.md and
+//! cgp-knowledge-base-fork/cgp/reference/macros/delegate_and_check_components.md.
 
 use core::ops::Mul;
 

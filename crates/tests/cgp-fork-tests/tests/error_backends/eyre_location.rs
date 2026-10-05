@@ -4,7 +4,7 @@
 //! called `raise_error`: through plain, `open`, and namespace-path wiring alike, for each eyre
 //! provider and for the generic `RaiseFrom`, and unchanged by wrapping.
 //!
-//! See cgp-knowledge-base/projects/error/cgp-fork-error-eyre/testing.md.
+//! See cgp-knowledge-base-fork/projects/error/cgp-fork-error-eyre/testing.md.
 
 use std::io;
 

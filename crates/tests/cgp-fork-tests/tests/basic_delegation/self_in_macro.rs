@@ -9,8 +9,8 @@
 //! left untouched. A value `self` is never followed by `::`, so the trailing
 //! `::` is what disambiguates the path form.
 //!
-//! See cgp-knowledge-base/cgp/implementation/entrypoints/cgp_impl.md and
-//! cgp-knowledge-base/cgp/reference/macros/cgp_impl.md.
+//! See cgp-knowledge-base-fork/cgp/implementation/entrypoints/cgp_impl.md and
+//! cgp-knowledge-base-fork/cgp/reference/macros/cgp_impl.md.
 
 use cgp_fork::prelude::*;
 

@@ -4,7 +4,7 @@
 //! that is already the context's error, through the reflexive `From<T> for T`, which the backend's
 //! raiser cannot do because `anyhow::Error` is not itself a standard error.
 //!
-//! See cgp-knowledge-base/projects/error/guides/choosing-a-backend.md.
+//! See cgp-knowledge-base-fork/projects/error/guides/choosing-a-backend.md.
 
 use std::io;
 

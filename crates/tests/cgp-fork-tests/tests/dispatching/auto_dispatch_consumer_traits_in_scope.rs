@@ -5,7 +5,7 @@
 //! `AsyncComputer` leaves the call unambiguous for a synchronous method with an
 //! argument and for an async `&self` method, both dispatched over `FooBar`.
 //!
-//! See cgp-knowledge-base/cgp/implementation/entrypoints/cgp_auto_dispatch.md.
+//! See cgp-knowledge-base-fork/cgp/implementation/entrypoints/cgp_auto_dispatch.md.
 
 // Only their presence in scope matters: the generated calls must not resolve to them.
 #[allow(unused_imports)]
