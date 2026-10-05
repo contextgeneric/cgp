@@ -11,3 +11,4 @@ pub mod spawn;
 // Async `#[cgp_fn]` expansion: this concept owns the async variant of the
 // `#[cgp_fn]` macro snapshot (the `#[async_trait]` handling is the feature).
 pub mod cgp_fn_async;
+pub mod component_async;

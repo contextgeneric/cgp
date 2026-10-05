@@ -4,6 +4,7 @@
 
 // The macro-expansion snapshots that this concept owns: the canonical
 // `#[cgp_component]`, `#[cgp_impl]`, and `delegate_components!` output.
+pub mod component_assoc_const;
 pub mod component_macro;
 pub mod delegate_array_key;
 pub mod delegate_components_macro;
