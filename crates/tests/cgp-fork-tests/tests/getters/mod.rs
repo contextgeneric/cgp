@@ -10,6 +10,8 @@ pub mod auto_getter_generic;
 pub mod clone_auto;
 pub mod mref_auto;
 pub mod mut_option_auto;
+pub mod mut_option_str_auto;
+pub mod mut_ref_auto;
 pub mod mut_slice_auto;
 pub mod mut_str_auto;
 pub mod non_self_auto;
