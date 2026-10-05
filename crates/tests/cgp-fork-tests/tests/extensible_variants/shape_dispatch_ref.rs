@@ -13,9 +13,7 @@
 
 use std::f64::consts::PI;
 
-use cgp_fork::extra::dispatch::{
-    MatchFirstWithValueHandlersMut, MatchFirstWithValueHandlersRef, MatchWithValueHandlersRef,
-};
+use cgp_fork::extra::dispatch::MatchFirstWithValueHandlersMut;
 use cgp_fork::extra::handler::NoCode;
 use cgp_fork::prelude::*;
 
