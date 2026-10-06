@@ -48,6 +48,12 @@ fn name_type_entries_are_named() {
         form_of(quote!(value: core::marker::PhantomData<u8>,)),
         Form::Named(vec!["value".to_owned()])
     );
+    // The field's `:` is followed by a type that itself starts with `::`, so the entry is named
+    // even though a `::` comes right after the colon.
+    assert_eq!(
+        form_of(quote!(value: ::core::primitive::u8)),
+        Form::Named(vec!["value".to_owned()])
+    );
 }
 
 #[test]
