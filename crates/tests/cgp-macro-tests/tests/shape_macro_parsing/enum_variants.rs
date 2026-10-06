@@ -51,3 +51,23 @@ fn an_empty_body_has_no_variants() {
 
     assert!(enum_type.variants.is_empty());
 }
+
+#[test]
+fn an_empty_field_list_keeps_its_delimiter_form() {
+    // `V()` and `V {}` encode to the same `Nil` payload as the unit `V`, but parse as the
+    // delimiter wrote them, as a Rust enum's variants do.
+    let enum_type: EnumType = syn::parse2(quote!(Unit, Parens(), Braces {})).unwrap();
+
+    let forms: Vec<&str> = enum_type
+        .variants
+        .iter()
+        .map(|variant| match &variant.fields {
+            Fields::Named(fields) if fields.named.is_empty() => "empty named",
+            Fields::Unnamed(fields) if fields.unnamed.is_empty() => "empty unnamed",
+            Fields::Unit => "unit",
+            _ => "non-empty",
+        })
+        .collect();
+
+    assert_eq!(forms, vec!["unit", "empty unnamed", "empty named"]);
+}

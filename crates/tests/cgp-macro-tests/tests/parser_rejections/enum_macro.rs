@@ -1,7 +1,9 @@
 //! `Enum!` rejects the parts of an enum body a type-level shape has no use for:
 //! variant attributes, variant visibility, discriminants, and a variant name
 //! given twice. A variant's fields go through the same checks as a `Struct!`
-//! body, so a rejected field is rejected inside a variant too.
+//! body, so a rejected field is rejected inside a variant too, with the same
+//! message, and a field form that contradicts the variant's delimiter is
+//! rejected with its own message.
 //!
 //! See cgp-knowledge-base/cgp/implementation/entrypoints/enum.md.
 
@@ -85,5 +87,37 @@ fn rejects_a_bad_field_inside_a_variant() {
                 width: f64
             }))
         },
+    );
+
+    let value_message = "expected a type: a type-level shape lists field types, not values";
+
+    assert_macro_rejects_with("Enum! with a positional value", value_message, || {
+        cgp_macro_lib::Enum(quote!(V(1)))
+    });
+
+    assert_macro_rejects_with("Enum! with a named value", value_message, || {
+        cgp_macro_lib::Enum(quote!(V { a: 1 }))
+    });
+
+    assert_macro_rejects_with(
+        "Enum! with a keyword variant field name",
+        "`type` is a keyword: write the field name as `r#type`",
+        || cgp_macro_lib::Enum(quote!(V { type: u8 })),
+    );
+}
+
+#[test]
+fn rejects_a_field_form_that_contradicts_the_variant_delimiter() {
+    assert_macro_rejects_with(
+        "Enum! with a bare type in braces",
+        "a variant in braces holds named fields: write each entry as `name: Type`",
+        || cgp_macro_lib::Enum(quote!(V { u8 })),
+    );
+
+    assert_macro_rejects_with(
+        "Enum! with a named field in parentheses",
+        "a variant in parentheses holds bare types: write named fields in braces, as in \
+         `Variant { name: Type }`",
+        || cgp_macro_lib::Enum(quote!(V(a: u8))),
     );
 }
