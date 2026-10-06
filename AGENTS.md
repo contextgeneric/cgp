@@ -95,7 +95,7 @@ lists every document in one page, which is the fastest way to find the few a tas
 - **Read the [implementation reference](https://github.com/contextgeneric/cgp-knowledge-base/blob/main/cgp/implementation/README.md) and the relevant
   implementation documents whenever the task involves reading or modifying the CGP source code** —
   they map each macro to its `cgp-macro-core`/`cgp-macro-lib` internals, corner cases, and tests.
-- **Load the `/dual-reader-prose` skill whenever the task involves editing markdown documentation or
+- **Load the `/point-first-writing` skill whenever the task involves editing markdown documentation or
   inline code comments**, and follow its writing convention for any prose you add.
 
 The canonical export surface for users is `cgp::prelude` — see
