@@ -23,4 +23,5 @@ pub mod namespace;
 pub mod path;
 pub mod product;
 pub mod provider_impl;
+pub mod shape;
 pub mod sum;

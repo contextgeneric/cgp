@@ -1,7 +1,4 @@
-use quote::ToTokens;
-use syn::spanned::Spanned;
-use syn::{Attribute, Error};
-
+use crate::functions::reject_non_empty_attributes;
 use crate::types::delegate_component::{
     DelegateEntries, DelegateKey, DelegateMapping, DelegateStatement, DelegateTable, DelegateValue,
     DelegateValueWithInnerTable, ForDelegateStatement, MultiDelegateKey, PathDelegateKey,
@@ -15,23 +12,6 @@ use crate::types::delegate_component::{
 */
 pub trait ValidateAttributes {
     fn validate_attributes(&self) -> syn::Result<()>;
-}
-
-/// Error with a spanned "unsupported attribute" message if any attribute is
-/// present, pointing at the first one.
-pub fn reject_non_empty_attributes(attributes: &[Attribute]) -> syn::Result<()> {
-    if !attributes.is_empty() {
-        let attribute = &attributes[0];
-        Err(Error::new(
-            attribute.span(),
-            format!(
-                "unsupported attribute: {}",
-                attribute.path().to_token_stream()
-            ),
-        ))
-    } else {
-        Ok(())
-    }
 }
 
 impl ValidateAttributes for SingleDelegateKey {

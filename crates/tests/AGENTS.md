@@ -109,6 +109,7 @@ genuinely distinct variants) in its owning target, and nowhere else:
 | `cgp_namespace!` | `namespaces` |
 | `#[blanket_trait]` | `blanket_traits` |
 | `#[derive(HasField)]` / `HasFields` / `CgpData` | `field_access` / `extensible_records` / `extensible_variants` |
+| `Struct!` / `Enum!` | `shape_macros` (type-equality tests only: each emits a single type, so neither has a snapshot) |
 | `#[cgp_computer]` / `#[cgp_producer]` | `handlers` |
 | `#[cgp_auto_dispatch]` | `auto_dispatch` |
 
