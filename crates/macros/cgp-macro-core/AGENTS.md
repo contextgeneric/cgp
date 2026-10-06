@@ -32,12 +32,15 @@ and the crate hierarchy.
 - **[src/types/](src/types/)** — the bulk of the crate. One submodule per user-facing macro
   (`cgp_component`, `cgp_impl`, `cgp_provider`, `cgp_fn`, `cgp_getter`, `cgp_auto_getter`,
   `cgp_type`, `cgp_data`, `delegate_component`, `check_components`,
-  `delegate_and_check_components`, `namespace`, `product`, `sum`), plus shared building-block types:
+  `delegate_and_check_components`, `namespace`, `product`, `sum`, and `shape` for `Struct!`/`Enum!`),
+  plus shared building-block types:
   `attributes/` (parsing of `#[uses]`, `#[use_type]`, `#[use_provider]`, `#[derive_delegate]`,
   `#[default_impl]`), `generics/`, `field/`, `getter/`, `implicits/`, `ident/`, `path/`, `keyword`.
 - **[src/functions/](src/functions/)** — free helper functions: identifier case conversion
   (`camel_case`/`snake_case`), `parse_internal`, generics merging, delegated-impl synthesis,
-  field/getter/implicit-argument parsing, `strip`.
+  field/getter/implicit-argument parsing, `strip`, the `Struct!`/`Enum!` body parsing and
+  validation in `shape/`, and `reject_non_empty_attributes`, shared by the macros that accept no
+  attributes.
 - **[src/visitors/](src/visitors/)** — `syn` `VisitMut` passes that rewrite ASTs. `replace_self`
   (receiver/type/value) is the heart of `#[cgp_impl]`: it rewrites `self`/`Self` into the explicit
   `context`/`Context`. Also `replace_provider`, `remove_self_path`, `self_assoc_type`, and
