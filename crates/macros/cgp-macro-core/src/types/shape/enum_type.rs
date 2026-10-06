@@ -3,9 +3,11 @@ use syn::ext::IdentExt;
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
 use syn::token::{Brace, Comma, Paren};
-use syn::{Attribute, Error, Fields, Ident, Token, Type, Variant, Visibility};
+use syn::{
+    Attribute, Error, Fields, Ident, Token, Type, Variant, Visibility, braced, parenthesized,
+};
 
-use crate::functions::{reject_non_empty_attributes, validate_shape_fields};
+use crate::functions::{parse_variant_fields, reject_non_empty_attributes};
 use crate::types::cgp_data::variants_to_sum_type;
 
 /// The `Enum!` macro: the body of an enum, held as the `syn::Variant` list the enum
@@ -57,8 +59,9 @@ impl Parse for EnumType {
 
 /// Parse one variant. `syn`'s own `Variant` parser silently discards a visibility and accepts
 /// a discriminant, so the variant is read here, rejecting both, and its fields are parsed with
-/// `syn`'s struct-body parsers. Unlike the `Struct!` body, a variant's delimiter is visible, so
-/// braces hold named fields and parentheses positional ones, as in a Rust enum.
+/// [`parse_variant_fields`], which applies every `Struct!` field rule. Unlike the `Struct!` body,
+/// a variant's delimiter is visible, so braces hold named fields and parentheses positional ones,
+/// as in a Rust enum.
 fn parse_variant(input: ParseStream) -> syn::Result<Variant> {
     let attrs = input.call(Attribute::parse_outer)?;
     reject_non_empty_attributes(&attrs)?;
@@ -74,14 +77,16 @@ fn parse_variant(input: ParseStream) -> syn::Result<Variant> {
     let ident: Ident = input.parse()?;
 
     let fields = if input.peek(Brace) {
-        Fields::Named(input.parse()?)
+        let content;
+        braced!(content in input);
+        parse_variant_fields(&content, true)?
     } else if input.peek(Paren) {
-        Fields::Unnamed(input.parse()?)
+        let content;
+        parenthesized!(content in input);
+        parse_variant_fields(&content, false)?
     } else {
         Fields::Unit
     };
-
-    validate_shape_fields(&fields)?;
 
     if input.peek(Token![=]) {
         return Err(Error::new(

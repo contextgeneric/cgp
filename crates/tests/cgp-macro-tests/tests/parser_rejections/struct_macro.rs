@@ -1,7 +1,8 @@
 //! `Struct!` rejects the parts of a struct body a type-level shape has no use
 //! for, each with its own message: attributes (doc comments included),
-//! visibility, the `_` field name, a field name given twice, entries that mix
-//! the named and positional forms, and a value where a type belongs.
+//! visibility, the `_` field name, a keyword field name, a field name given
+//! twice, entries that mix the named and positional forms, and a value where a
+//! type belongs.
 //!
 //! See cgp-knowledge-base/cgp/implementation/entrypoints/struct.md.
 
@@ -78,6 +79,24 @@ fn rejects_a_duplicate_field_name() {
         "Struct! with a duplicate raw field",
         "duplicate field `a`",
         || cgp_macro_lib::Struct(quote!(r#a: u8, a: u16)),
+    );
+}
+
+#[test]
+fn rejects_a_keyword_field_name() {
+    // A keyword is not an identifier, so without this check the entry would be read as a
+    // positional field and fail in the type parser with no mention of the name.
+    assert_macro_rejects_with(
+        "Struct! with a keyword field name",
+        "`type` is a keyword: write the field name as `r#type`",
+        || cgp_macro_lib::Struct(quote!(type: u8)),
+    );
+
+    // These four have no raw form to suggest.
+    assert_macro_rejects_with(
+        "Struct! with `self` as a field name",
+        "`self` cannot be a field name",
+        || cgp_macro_lib::Struct(quote!(self: u8)),
     );
 }
 
