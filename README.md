@@ -11,7 +11,7 @@
 Context-Generic Programming (CGP) is a library on stable Rust that lifts the language's one-implementation-per-type limit off your traits: it lets one interface have many interchangeable implementations and lets each *context* — an application, a test, a deployment — plug in the one it uses. The choice is written in one readable place and resolved entirely during compilation, so it compiles down to direct calls: there is no runtime container, no reflection, and nothing left in the binary for an implementation a context does not use.
 
 > [!IMPORTANT]
-> The `main` branch tracks the upcoming **v0.8.0** release (published as `0.8.0-alpha` pre-release crates). The current stable release on crates.io is **v0.7.0**, which is **not compatible** with this branch — v0.8.0 changes and removes syntax that v0.7.0 used. **All documentation in this repository describes v0.8.0 only.** For v0.7.0, refer to its published crate documentation instead.
+> This repository describes **v0.8.0**, which is **not compatible** with v0.7.0 — v0.8.0 changes and removes syntax that v0.7.0 used. **All documentation in this repository describes v0.8.0 only.** For v0.7.0, refer to its published crate documentation instead.
 
 **[Website](https://contextgeneric.dev/) · [crates.io](https://crates.io/crates/cgp)**
 
@@ -105,13 +105,6 @@ use cgp::prelude::*;
 
 CGP requires **Rust 1.89+** and runs on the **stable** toolchain — no nightly, no fork.
 
-> [!NOTE]
-> `cargo add cgp` installs the current stable release, **v0.7.0**. The examples in this repository target **v0.8.0**; to follow them today, depend on the pre-release from `main`:
-> ```toml
-> cgp = { git = "https://github.com/contextgeneric/cgp" }
-> ```
-> Once v0.8.0 is released, `cargo add cgp` will install it.
-
 ### Install cargo-cgp for readable errors
 
 CGP compiles to ordinary Rust, so a wiring mistake surfaces as a compiler error about generated types — often a wall of them with the real cause buried. **When you start with CGP, install [`cargo-cgp`](https://github.com/contextgeneric/cargo-cgp) alongside it.** cargo-cgp is CGP's error toolchain: a drop-in for `cargo check` that rewrites those errors into a compact, root-cause-first form, leading with the field or wiring that actually failed. It is the single biggest quality-of-life improvement for writing CGP, so treat it as part of your getting-started setup.
@@ -121,7 +114,7 @@ cargo install cargo-cgp     # the front-end (installs on any toolchain)
 cargo cgp setup             # provisions the compiler + driver it needs
 ```
 
-Then run `cargo cgp check` wherever you would run `cargo check`; it forces the pinned nightly that `cargo cgp setup` installed only for its own check, so your project keeps its toolchain untouched. (Prefer Nix? `nix run github:contextgeneric/cargo-cgp/v0.1.0-alpha -- check` runs it without installing.) cargo-cgp is an early pre-release that already makes the common wiring errors readable and is steadily covering more; see its [README](https://github.com/contextgeneric/cargo-cgp) for the full guide.
+Then run `cargo cgp check` wherever you would run `cargo check`; it forces the pinned nightly that `cargo cgp setup` installed only for its own check, so your project keeps its toolchain untouched. (Prefer Nix? `nix run github:contextgeneric/cargo-cgp/v0.1.0 -- check` runs it without installing.) cargo-cgp is an early release that already makes the common wiring errors readable and is steadily covering more; see its [README](https://github.com/contextgeneric/cargo-cgp) for the full guide.
 
 cargo-cgp is optional and adds only a diagnostic `check`: keep building, running, and testing with ordinary cargo — CGP is a plain library needing only stable Rust (1.89+) — and reach for `cargo cgp check` when you want a wiring error made readable. Plain `cargo check` still works too, and is fine when you are not expecting a compile error.
 
@@ -147,7 +140,7 @@ Contributors and coding agents have a second, deeper source: the [CGP knowledge 
 
 ## Project status
 
-CGP works today on stable Rust and already offers a broad feature set: components and providers, abstract types, extensible records and variants, a handler and computation family, namespaces, and modular error handling. It is also young — the paradigm and its ecosystem are still evolving, and v0.8.0 is a pre-release — so adopting it is a real decision rather than a foregone one.
+CGP works today on stable Rust and already offers a broad feature set: components and providers, abstract types, extensible records and variants, a handler and computation family, namespaces, and modular error handling. It is also young — the paradigm and its ecosystem are still evolving — so adopting it is a real decision rather than a foregone one.
 
 Two properties make it low-risk to try. Because CGP is a superset of ordinary traits, it can be introduced in one corner of a codebase and stepped back from without a rewrite; and because it imposes no runtime, it does not lock a project into a framework's lifecycle. If you are evaluating it for a team, start small, and lean on the worked examples on the [website](https://contextgeneric.dev/) to gauge the learning curve honestly.
 
