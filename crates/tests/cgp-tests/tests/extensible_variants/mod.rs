@@ -19,6 +19,7 @@ pub mod has_fields_enum_shapes;
 // payloads.
 pub mod derive_cgp_data;
 pub mod derive_cgp_data_empty;
+pub mod derive_cgp_data_empty_variants;
 pub mod derive_cgp_data_generic;
 pub mod derive_cgp_data_shape;
 
@@ -32,6 +33,10 @@ pub mod from_variant_derive;
 // which the borrowed extractor's reserved `'__a__` lifetime must not collide
 // with. A plain behavioral test — the expansion shape is pinned above.
 pub mod derive_cgp_data_lifetime;
+
+// Variants with no fields (`V`, `V()`, `V {}`), carrying the payload `Nil`
+// through construction, extraction, casts, and both kinds of dispatch.
+pub mod empty_variants;
 
 // Dispatching an extensible-variant input to per-variant handlers (the derives
 // here are plain scaffolding — the dispatch combinators are owned elsewhere).
