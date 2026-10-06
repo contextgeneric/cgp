@@ -4,7 +4,7 @@ use syn::{Arm, Ident, ItemEnum, ItemImpl};
 use crate::exports::{HasExtractor, HasExtractorMut, HasExtractorRef, IsMut, IsPresent, IsRef};
 use crate::functions::override_item_span;
 use crate::parse_internal;
-use crate::types::cgp_data::to_generic_args;
+use crate::types::cgp_data::{get_variant_payload, to_generic_args};
 
 /// Emit the owned `HasExtractor` impl: `to_extractor`/`from_extractor` map each
 /// variant to and from the all-`IsPresent` configuration of the partial enum.
@@ -28,16 +28,21 @@ pub fn derive_has_extractor_impl(
         });
 
         let variant_ident = &variant.ident;
+        let payload = get_variant_payload(variant)?;
+        let pattern = payload.match_pattern(variant);
+        let value = payload.owned_value();
+        let constructor = payload.constructor(variant);
+        let binding = payload.binding();
 
         to_match_arms.push(parse_internal! {
-            Self :: #variant_ident ( value ) => {
-                #extractor_ident:: #variant_ident ( value )
+            #pattern => {
+                #extractor_ident:: #variant_ident ( #value )
             }
         });
 
         from_match_arms.push(parse_internal! {
-            #extractor_ident:: #variant_ident ( value ) => {
-                Self :: #variant_ident ( value )
+            #extractor_ident:: #variant_ident ( #binding ) => {
+                #constructor
             }
         });
     }
@@ -111,10 +116,13 @@ pub fn derive_has_extractor_ref_impl(
         });
 
         let variant_ident = &variant.ident;
+        let payload = get_variant_payload(variant)?;
+        let pattern = payload.match_pattern(variant);
+        let value = payload.ref_value();
 
         match_arms.push(parse_internal! {
-            Self :: #variant_ident ( value ) => {
-                #extractor_ident:: #variant_ident ( value )
+            #pattern => {
+                #extractor_ident:: #variant_ident ( #value )
             }
         });
     }
@@ -185,10 +193,13 @@ pub fn derive_has_extractor_mut_impl(
         });
 
         let variant_ident = &variant.ident;
+        let payload = get_variant_payload(variant)?;
+        let pattern = payload.match_pattern(variant);
+        let value = payload.mut_value(variant);
 
         match_arms.push(parse_internal! {
-            Self :: #variant_ident ( value ) => {
-                #extractor_ident:: #variant_ident ( value )
+            #pattern => {
+                #extractor_ident:: #variant_ident ( #value )
             }
         });
     }

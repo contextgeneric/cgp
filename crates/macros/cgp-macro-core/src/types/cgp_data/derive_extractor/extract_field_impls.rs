@@ -84,7 +84,7 @@ pub fn derive_extract_field_impls(
             if is_ref {
                 parse_internal! { <__R__ as #MapTypeRef>::Map<'__a__, #value_type> }
             } else {
-                value_type.clone()
+                value_type
             }
         };
 
