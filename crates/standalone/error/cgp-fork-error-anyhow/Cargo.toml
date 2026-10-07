@@ -1,6 +1,6 @@
 [package]
 name         = "cgp-fork-error-anyhow"
-version      = "0.9.0"
+version      = { workspace = true }
 readme       = "./README.md"
 edition      = { workspace = true }
 license      = { workspace = true }
