@@ -3,7 +3,7 @@ use syn::{ItemEnum, ItemImpl};
 use crate::exports::FromVariant;
 use crate::functions::override_item_span;
 use crate::parse_internal;
-use crate::types::cgp_data::get_variant_type;
+use crate::types::cgp_data::get_variant_payload;
 use crate::types::field::Symbol;
 
 /// Emit one `FromVariant` impl per variant, each keyed by the variant name's
@@ -19,7 +19,10 @@ pub fn derive_from_variant_from_enum(item_enum: &ItemEnum) -> syn::Result<Vec<It
     for variant in item_enum.variants.iter() {
         let variant_ident = &variant.ident;
         let variant_tag = Symbol::from_ident(variant_ident.clone());
-        let variant_type = get_variant_type(variant)?;
+        let payload = get_variant_payload(variant)?;
+        let variant_type = payload.payload_type()?;
+        let constructor = payload.constructor(variant);
+        let binding = payload.binding();
 
         let item_impl: ItemImpl = parse_internal! {
             impl #impl_generics #FromVariant<#variant_tag> for #enum_ident #ty_generics
@@ -27,8 +30,8 @@ pub fn derive_from_variant_from_enum(item_enum: &ItemEnum) -> syn::Result<Vec<It
             {
                 type Value = #variant_type;
 
-                fn from_variant(_tag: ::core::marker::PhantomData<#variant_tag>, value: Self::Value) -> Self {
-                    Self::#variant_ident(value)
+                fn from_variant(_tag: ::core::marker::PhantomData<#variant_tag>, #binding: Self::Value) -> Self {
+                    #constructor
                 }
             }
         };
