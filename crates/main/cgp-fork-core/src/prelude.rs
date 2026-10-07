@@ -16,10 +16,10 @@ pub use cgp_fork_field::traits::{
 };
 pub use cgp_fork_field::types::{Chars, Cons, Either, Field, Index, Life, MRef, Nil, Symbol, Void};
 pub use cgp_fork_macro::{
-    BuildField, CgpData, CgpRecord, CgpVariant, ExtractField, FromVariant, HasField, HasFields,
-    Path, Product, Sum, Symbol, cgp_auto_error, cgp_auto_getter, cgp_auto_impl, cgp_component,
-    cgp_fn, cgp_for_each, cgp_getter, cgp_impl, cgp_namespace, cgp_new_provider, cgp_preset,
-    cgp_provider, cgp_type, check_components, delegate_and_check_components, delegate_components,
-    derive_provider, product,
+    BuildField, CgpData, CgpRecord, CgpVariant, Enum, ExtractField, FromVariant, HasField,
+    HasFields, Path, Product, Struct, Sum, Symbol, cgp_auto_error, cgp_auto_getter, cgp_auto_impl,
+    cgp_component, cgp_fn, cgp_for_each, cgp_getter, cgp_impl, cgp_namespace, cgp_new_provider,
+    cgp_preset, cgp_provider, cgp_type, check_components, delegate_and_check_components,
+    delegate_components, derive_provider, product,
 };
 pub use cgp_fork_type::{HasType, TypeProvider, UseType};

@@ -1013,6 +1013,75 @@ pub fn Sum(body: TokenStream) -> TokenStream {
         .into()
 }
 
+/**
+   The `Struct!` macro builds the type-level shape of a struct from the body of a
+   struct declaration: the same type that `#[derive(HasFields)]` gives as `Fields`.
+
+   The body is either named fields or a list of types, written as in a struct
+   declaration. The delimiter of the invocation is not significant: the form is
+   read from the entries. Named fields become `Field` entries keyed by `Symbol!`,
+   positional fields become `Field` entries keyed by `Index<N>`, and the entries
+   are chained into a `Product!`. A body with one positional field is that field's
+   type, and an empty body is `Nil`.
+
+   ## Example
+
+   Given the following shape definitions:
+
+   ```rust,ignore
+   type Person = Struct! { name: String, age: u8 };
+   type Pair = Struct!(u64, String);
+   ```
+
+   The following types would be generated:
+
+   ```rust,ignore
+   type Person = Product![Field<Symbol!("name"), String>, Field<Symbol!("age"), u8>];
+   type Pair = Product![Field<Index<0>, u64>, Field<Index<1>, String>];
+   ```
+*/
+#[proc_macro]
+#[allow(non_snake_case)]
+pub fn Struct(body: TokenStream) -> TokenStream {
+    cgp_fork_macro_lib::Struct(body.into())
+        .unwrap_or_else(syn::Error::into_compile_error)
+        .into()
+}
+
+/**
+   The `Enum!` macro builds the type-level shape of an enum from the body of an
+   enum declaration: the same type that `#[derive(HasFields)]` gives as `Fields`.
+
+   Each variant becomes a `Field` entry keyed by the variant name as a `Symbol!`,
+   and the entries are chained into a `Sum!`. A variant's payload follows the
+   `Struct!` rules for its fields, so a unit variant carries `Nil` and a variant
+   with one positional field carries that field's type. An empty body is `Void`.
+
+   ## Example
+
+   Given the following shape definition:
+
+   ```rust,ignore
+   type Shape = Enum! { Circle(f64), Rectangle { width: f64, height: f64 } };
+   ```
+
+   The following type would be generated:
+
+   ```rust,ignore
+   type Shape = Sum![
+       Field<Symbol!("Circle"), f64>,
+       Field<Symbol!("Rectangle"), Struct! { width: f64, height: f64 }>,
+   ];
+   ```
+*/
+#[proc_macro]
+#[allow(non_snake_case)]
+pub fn Enum(body: TokenStream) -> TokenStream {
+    cgp_fork_macro_lib::Enum(body.into())
+        .unwrap_or_else(syn::Error::into_compile_error)
+        .into()
+}
+
 #[proc_macro]
 #[allow(non_snake_case)]
 pub fn Path(body: TokenStream) -> TokenStream {

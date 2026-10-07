@@ -13,4 +13,5 @@ New features:
 - Allow `#[helper]` methods inside `#[cgp_impl]` that are not part of the provider trait - [#184](https://github.com/contextgeneric/cgp/issues/184)
 - Introduce `CanLog` and `#[cgp_auto_log]`, a logger component with a blanket impl parallel to `#[cgp_auto_getter]` - [#185](https://github.com/contextgeneric/cgp/issues/185)
 - Read `#[implicit]` and `#[field]` arguments from the context in `#[cgp_fn]` and `#[cgp_computer]`, and add `#[derive_promote]` to wrap a `Computer` as a component provider - [#193](https://github.com/contextgeneric/cgp/issues/193)
+- Introduce `Struct!` and `Enum!`, writing a struct or enum shape as its declaration instead of a `Product!` or `Sum!` of `Field` entries - [#276](https://github.com/contextgeneric/cgp/pull/276)
 - Accept variants with no fields in `#[derive(CgpVariant)]`, `#[derive(CgpData)]`, `#[derive(ExtractField)]`, and `#[derive(FromVariant)]`, with payload `Nil` - [#278](https://github.com/contextgeneric/cgp/pull/278)

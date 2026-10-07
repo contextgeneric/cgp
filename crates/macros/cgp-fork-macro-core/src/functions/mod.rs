@@ -8,6 +8,7 @@ mod is_provider_params;
 mod override_span;
 mod parse_internal;
 mod reject_attributes;
+mod shape;
 mod snake_case;
 mod strip;
 
@@ -21,5 +22,6 @@ pub use is_provider_params::*;
 pub use override_span::*;
 pub use parse_internal::*;
 pub use reject_attributes::*;
+pub use shape::*;
 pub use snake_case::*;
 pub use strip::*;
