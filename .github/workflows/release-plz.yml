@@ -1,0 +1,92 @@
+name: Release-plz
+
+# On every push to main:
+# - `release-pr` opens or updates one pull request with the next shared version
+#   and the changelog, when a feat, fix, perf, or breaking commit is present.
+# - `release` publishes that pull request after it is merged, tags `v<version>`,
+#   and creates the GitHub release.
+#
+# Before the first run, in the repository settings:
+# - Actions → General → Workflow permissions: read and write.
+# - Allow GitHub Actions to create and approve pull requests.
+# - Either add a `CARGO_REGISTRY_TOKEN` secret (scopes `publish-new` and
+#   `publish-update`), or configure crates.io trusted publishing for every
+#   crate. Trusted publishing cannot create a crate; publish each crate once
+#   by hand, then trust this workflow.
+# - Optional: a fine-grained `RELEASE_PLZ_TOKEN` with Contents and Pull requests
+#   read/write. The default `GITHUB_TOKEN` cannot start the Tests workflow on
+#   the release pull request. With the PAT, that pull request runs Tests.
+#
+# The binary is pinned. This workflow does not use a third-party action.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  CARGO_TERM_COLOR: always
+  CARGO_NET_RETRY: 10
+  RUSTUP_MAX_RETRIES: 10
+
+jobs:
+  release-plz-release:
+    name: Release-plz release
+    runs-on: ubuntu-latest
+    if: ${{ github.repository_owner == 'Just-Replicant' }}
+    permissions:
+      contents: write
+      pull-requests: read
+      id-token: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.RELEASE_PLZ_TOKEN || github.token }}
+      - name: Install pinned toolchain
+        run: rustup toolchain install
+      - name: Install release-plz
+        run: |
+          tmpdir=$(mktemp -d)
+          curl -fsSL -o "$tmpdir/release-plz.tar.gz" https://github.com/release-plz/release-plz/releases/download/release-plz-v0.3.169/release-plz-x86_64-unknown-linux-gnu.tar.gz
+          echo "1455106d3263712dd796ee04869eaee98b274e1e2e18011f67682b1f2840b64d  $tmpdir/release-plz.tar.gz" | sha256sum -c -
+          tar -xzf "$tmpdir/release-plz.tar.gz" -C "$tmpdir"
+          install -m 755 "$tmpdir/release-plz" "${CARGO_HOME:-$HOME/.cargo}/bin/release-plz"
+          release-plz --version
+      - name: Run release-plz release
+        run: release-plz release
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_PLZ_TOKEN || github.token }}
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+
+  release-plz-pr:
+    name: Release-plz PR
+    runs-on: ubuntu-latest
+    if: ${{ github.repository_owner == 'Just-Replicant' }}
+    permissions:
+      contents: write
+      pull-requests: write
+    concurrency:
+      group: release-plz-${{ github.ref }}
+      cancel-in-progress: false
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.RELEASE_PLZ_TOKEN || github.token }}
+      - name: Install pinned toolchain
+        run: rustup toolchain install
+      - name: Install release-plz
+        run: |
+          tmpdir=$(mktemp -d)
+          curl -fsSL -o "$tmpdir/release-plz.tar.gz" https://github.com/release-plz/release-plz/releases/download/release-plz-v0.3.169/release-plz-x86_64-unknown-linux-gnu.tar.gz
+          echo "1455106d3263712dd796ee04869eaee98b274e1e2e18011f67682b1f2840b64d  $tmpdir/release-plz.tar.gz" | sha256sum -c -
+          tar -xzf "$tmpdir/release-plz.tar.gz" -C "$tmpdir"
+          install -m 755 "$tmpdir/release-plz" "${CARGO_HOME:-$HOME/.cargo}/bin/release-plz"
+          release-plz --version
+      - name: Run release-plz release-pr
+        run: release-plz release-pr
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_PLZ_TOKEN || github.token }}

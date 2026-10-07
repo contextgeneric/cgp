@@ -1,0 +1,206 @@
+# Publish the workspace as one version.
+#
+# Every crate inherits `[workspace.package].version`. `version_group` makes
+# release-plz assign that single next version to every crate it releases, then
+# rewrite the path-dependency versions in the root `Cargo.toml` to match.
+# The facade owns the root changelog, the `v<version>` tag, and the GitHub release.
+# The other crates are published in dependency order under that same version.
+
+[workspace]
+release_always = false
+repo_url = "https://github.com/Just-Replicant/cgp-fork"
+# A release PR is opened only when a commit since the last release matches.
+# `test`, `refactor`, `docs`, and `chore` commits stay on main until a
+# `feat`, `fix`, `perf`, or breaking commit lands with them.
+release_commits = '^(feat|fix|perf)(\([^)]*\))?!?:|^\w+(\([^)]*\))?!:'
+git_release_enable = false
+git_tag_enable = false
+changelog_update = false
+publish_timeout = "30m"
+
+[changelog]
+header = """
+# Changelog
+
+"""
+protect_breaking_commits = true
+commit_parsers = [
+  { message = "^feat", group = "added" },
+  { message = "^fix", group = "fixed" },
+  { message = "^perf", group = "changed" },
+  { message = "^refactor", group = "changed" },
+  { message = "^doc", group = "documentation" },
+  { message = "^test", skip = true },
+  { message = "^chore", skip = true },
+  { message = "^ci", skip = true },
+  { message = "^style", skip = true },
+  { message = "^.*", group = "other" },
+]
+
+[[package]]
+name = "cgp-fork"
+version_group = "cgp-fork"
+changelog_update = true
+changelog_path = "CHANGELOG.md"
+changelog_include = [
+  "cgp-fork-base",
+  "cgp-fork-base-extra",
+  "cgp-fork-core",
+  "cgp-fork-extra",
+  "cgp-fork-base-types",
+  "cgp-fork-component",
+  "cgp-fork-type",
+  "cgp-fork-field",
+  "cgp-fork-error",
+  "cgp-fork-field-extra",
+  "cgp-fork-error-extra",
+  "cgp-fork-handler",
+  "cgp-fork-log",
+  "cgp-fork-monad",
+  "cgp-fork-dispatch",
+  "cgp-fork-run",
+  "cgp-fork-runtime",
+  "cgp-fork-async-macro",
+  "cgp-fork-macro",
+  "cgp-fork-macro-core",
+  "cgp-fork-macro-lib",
+  "cgp-fork-macro-test-util",
+  "cgp-fork-macro-test-util-lib",
+  "cgp-fork-extra-macro",
+  "cgp-fork-extra-macro-lib",
+  "cgp-fork-extra-macro-core",
+  "cgp-fork-error-anyhow",
+  "cgp-fork-error-eyre",
+  "cgp-fork-error-std",
+  "cgp-fork-tests",
+  "cgp-fork-macro-tests",
+]
+git_release_enable = true
+git_tag_enable = true
+git_tag_name = "v{{ version }}"
+git_release_name = "v{{ version }}"
+
+[[package]]
+name = "cgp-fork-base"
+version_group = "cgp-fork"
+
+[[package]]
+name = "cgp-fork-base-extra"
+version_group = "cgp-fork"
+
+[[package]]
+name = "cgp-fork-core"
+version_group = "cgp-fork"
+
+[[package]]
+name = "cgp-fork-extra"
+version_group = "cgp-fork"
+
+[[package]]
+name = "cgp-fork-base-types"
+version_group = "cgp-fork"
+
+[[package]]
+name = "cgp-fork-component"
+version_group = "cgp-fork"
+
+[[package]]
+name = "cgp-fork-type"
+version_group = "cgp-fork"
+
+[[package]]
+name = "cgp-fork-field"
+version_group = "cgp-fork"
+
+[[package]]
+name = "cgp-fork-error"
+version_group = "cgp-fork"
+
+[[package]]
+name = "cgp-fork-field-extra"
+version_group = "cgp-fork"
+
+[[package]]
+name = "cgp-fork-error-extra"
+version_group = "cgp-fork"
+
+[[package]]
+name = "cgp-fork-handler"
+version_group = "cgp-fork"
+
+[[package]]
+name = "cgp-fork-log"
+version_group = "cgp-fork"
+
+[[package]]
+name = "cgp-fork-monad"
+version_group = "cgp-fork"
+
+[[package]]
+name = "cgp-fork-dispatch"
+version_group = "cgp-fork"
+
+[[package]]
+name = "cgp-fork-run"
+version_group = "cgp-fork"
+
+[[package]]
+name = "cgp-fork-runtime"
+version_group = "cgp-fork"
+
+[[package]]
+name = "cgp-fork-async-macro"
+version_group = "cgp-fork"
+
+[[package]]
+name = "cgp-fork-macro"
+version_group = "cgp-fork"
+
+[[package]]
+name = "cgp-fork-macro-core"
+version_group = "cgp-fork"
+
+[[package]]
+name = "cgp-fork-macro-lib"
+version_group = "cgp-fork"
+
+[[package]]
+name = "cgp-fork-macro-test-util"
+version_group = "cgp-fork"
+
+[[package]]
+name = "cgp-fork-macro-test-util-lib"
+version_group = "cgp-fork"
+
+[[package]]
+name = "cgp-fork-extra-macro"
+version_group = "cgp-fork"
+
+[[package]]
+name = "cgp-fork-extra-macro-lib"
+version_group = "cgp-fork"
+
+[[package]]
+name = "cgp-fork-extra-macro-core"
+version_group = "cgp-fork"
+
+[[package]]
+name = "cgp-fork-error-anyhow"
+version_group = "cgp-fork"
+
+[[package]]
+name = "cgp-fork-error-eyre"
+version_group = "cgp-fork"
+
+[[package]]
+name = "cgp-fork-error-std"
+version_group = "cgp-fork"
+
+# Unpublished. They inherit the shared version and are not released on their own.
+[[package]]
+name = "cgp-fork-tests"
+release = false
+
+[[package]]
+name = "cgp-fork-macro-tests"
+release = false
