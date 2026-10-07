@@ -29,12 +29,13 @@ Cargo workspace, edition 2024, resolver 3, toolchain **1.98.1** ([rust-toolchain
 - **Format:** `cargo +nightly fmt --all`
 - **Lint:** `cargo clippy --all-features --all-targets -- -D warnings` and `cargo clippy --no-default-features --all-targets -- -D warnings`
 - **Test:** `cargo nextest run --all-features --no-fail-fast --workspace`. One crate: `cargo nextest run -p cgp-fork-tests`.
+- **Release:** a push to `main` runs [release-plz](https://release-plz.dev). A `feat`, `fix`, `perf`, or breaking commit opens a release pull request that bumps the shared version and [CHANGELOG.md](CHANGELOG.md). Merging that pull request publishes the crates and tags `v<version>`.
 - Post-codegen compile failures are UI fixtures in `cargo-cgp`. See [crates/tests/AGENTS.md](crates/tests/AGENTS.md).
 - A wiring check or expansion snapshot passes when it compiles.
 
 ## Layout
 
-Change fundamentals in core and macros. Change [crates/main/](crates/main) only for the public surface. Versions stay `0.9.0` via root [Cargo.toml](Cargo.toml) `[workspace.dependencies]`. Add a crate to `members` and that table together. Put new functionality in the lowest layer and re-export it upward. [CHANGELOG.md](CHANGELOG.md) records current macro forms.
+Change fundamentals in core and macros. Change [crates/main/](crates/main) only for the public surface. The shared version is `[workspace.package].version` in the root [Cargo.toml](Cargo.toml). Every crate sets `version.workspace = true`, and `[workspace.dependencies]` repeats that version on each path dependency. Add a crate to `members`, that table, and the `cgp-fork` version group in [release-plz.toml](release-plz.toml) together. Put new functionality in the lowest layer and re-export it upward. [CHANGELOG.md](CHANGELOG.md) records current macro forms.
 
 - **`crates/macros/`** — `cgp-fork-macro` → `cgp-fork-macro-lib` → `cgp-fork-macro-core` (parse, AST, codegen). `cgp-fork-async-macro` is `#[async_trait]`. `cgp-fork-extra-macro` → `cgp-fork-extra-macro-lib` → `cgp-fork-extra-macro-core` host `#[cgp_computer]`, `#[cgp_producer]`, `#[cgp_auto_dispatch]`, and `#[cgp_auto_log]`.
 - **`crates/core/`** — `cgp-fork-component`, `cgp-fork-type`, `cgp-fork-field`, `cgp-fork-error`, `cgp-fork-base-types`.
