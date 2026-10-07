@@ -17,5 +17,13 @@ pub mod struct_round_trip;
 pub mod struct_through_macro_rules;
 pub mod struct_tuple;
 
+// `Enum!`: the variant shapes, their equivalences with `Struct!` payloads, and
+// the parity with `#[derive(HasFields)]` on the same body.
+pub mod enum_basic;
+pub mod enum_derive_parity;
+pub mod enum_round_trip;
+pub mod enum_variant_shapes;
+pub mod enum_with_variant_derives;
+
 // A shape used as an `open` dispatch key in `delegate_components!`.
 pub mod open_dispatch_key;
