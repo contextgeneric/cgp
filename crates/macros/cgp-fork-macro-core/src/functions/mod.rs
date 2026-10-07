@@ -7,6 +7,7 @@ mod implicits;
 mod is_provider_params;
 mod override_span;
 mod parse_internal;
+mod reject_attributes;
 mod snake_case;
 mod strip;
 
@@ -19,5 +20,6 @@ pub use implicits::*;
 pub use is_provider_params::*;
 pub use override_span::*;
 pub use parse_internal::*;
+pub use reject_attributes::*;
 pub use snake_case::*;
 pub use strip::*;

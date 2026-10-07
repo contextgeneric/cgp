@@ -34,7 +34,8 @@ and the crate hierarchy.
   `#[derive_promote]`, `#[default_impl]`), `generics/`, `field/`, `getter/`, `implicits/`, `ident/`, `path/`, `keyword`.
 - **[src/functions/](src/functions/)** — free helper functions: identifier case conversion
   (`camel_case`/`snake_case`), `parse_internal`, generics merging, delegated-impl synthesis,
-  field/getter/implicit-argument parsing, `strip`.
+  field/getter/implicit-argument parsing, `strip`, and `reject_non_empty_attributes`,
+  shared by the macros that accept no attributes.
 - **[src/visitors/](src/visitors/)** — `syn` `VisitMut` passes that rewrite ASTs. `replace_self`
   (receiver/type/value) is the heart of `#[cgp_impl]`: it rewrites `self`/`Self` into the explicit
   `context`/`Context`. Also `replace_provider`, `remove_self_path`, `self_assoc_type`, and
