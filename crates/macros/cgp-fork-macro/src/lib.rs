@@ -916,11 +916,12 @@ pub fn blanket_trait(attr: TokenStream, item: TokenStream) -> TokenStream {
     The `Symbol!` macro is used to create a type-level string through the string literal
     given to the macro.
 
-    The macro constructs the type-level string through a chain of `Char` types and
-    terminated with the `Nil` type. In other words, it constructs a type-level list
-    of characters to represent them as a type-level string.
+    The macro constructs the type-level string as a chain of `Chars` types terminated with
+    the `Nil` type, wrapped in `Symbol` together with the string's byte length. In other
+    words, it constructs a type-level list of characters to represent them as a type-level
+    string.
 
-    Read more about type-level strings in the documentation for `Char`.
+    Read more about type-level strings in the documentation for `Symbol` and `Chars`.
 
     ## Example
 
@@ -933,7 +934,7 @@ pub fn blanket_trait(attr: TokenStream, item: TokenStream) -> TokenStream {
     The following type would be generated:
 
     ```rust,ignore
-    type Hello = Char<'h', Char<'e', Char<'l', Char<'l', Char<'o', Nil>>>>>;
+    type Hello = Symbol<5, Chars<'h', Chars<'e', Chars<'l', Chars<'l', Chars<'o', Nil>>>>>>;
     ```
 */
 #[proc_macro]
