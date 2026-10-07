@@ -115,6 +115,7 @@ genuinely distinct variants) in its owning target, and nowhere else:
 | `check_components!` / `delegate_and_check_components!` | `checking` |
 | `cgp_namespace!` | `namespaces` |
 | `#[derive(HasField)]` / `HasFields` / `CgpData` | `field_access` / `extensible_records` / `extensible_variants` |
+| `Struct!` / `Enum!` | `shape_macros` (type-equality tests only: each emits a single type, so neither has a snapshot) |
 
 When a file uses one of these macros as **incidental scaffolding** — a
 `#[cgp_component]` needed to set up a `delegate_components!` test, say — write the
