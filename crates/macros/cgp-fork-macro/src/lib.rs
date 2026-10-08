@@ -9,20 +9,20 @@ use proc_macro::TokenStream;
 // when the `snapshot` feature is on, which the behavior tests enable.
 mod async_impl;
 #[allow(dead_code, unused_imports)]
-#[path = "../../shared/extra_macro_core/mod.rs"]
+#[path = "../shared/extra_macro_core/mod.rs"]
 mod extra_macro_core;
 #[allow(dead_code, unused_imports)]
-#[path = "../../shared/extra_macro_lib/mod.rs"]
+#[path = "../shared/extra_macro_lib/mod.rs"]
 mod extra_macro_lib;
 #[allow(dead_code, unused_imports)]
-#[path = "../../shared/macro_core/mod.rs"]
+#[path = "../shared/macro_core/mod.rs"]
 mod macro_core;
 #[allow(dead_code, unused_imports)]
-#[path = "../../shared/macro_lib/mod.rs"]
+#[path = "../shared/macro_lib/mod.rs"]
 mod macro_lib;
 #[cfg(any(test, feature = "snapshot"))]
 #[allow(dead_code, unused_imports)]
-#[path = "../../shared/test_util_lib/mod.rs"]
+#[path = "../shared/test_util_lib/mod.rs"]
 mod test_util_lib;
 
 #[cfg(test)]
