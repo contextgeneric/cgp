@@ -1,7 +1,7 @@
 use core::marker::PhantomData;
 
-use cgp_fork::component::UseDelegate;
-use cgp_fork::prelude::*;
+use crate::core::component::UseDelegate;
+use crate::core::prelude::*;
 
 #[cgp_component(Producer)]
 #[prefix(@cgp.extra.handler in DefaultNamespace)]

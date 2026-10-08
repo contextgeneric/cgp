@@ -1,34 +1,31 @@
 use core::marker::PhantomData;
 
-use cgp_fork::component::UseDelegate;
-use cgp_fork::prelude::*;
+use crate::core::component::UseDelegate;
+use crate::core::prelude::*;
+use crate::extra::handler::UseInputDelegate;
 
-use crate::UseInputDelegate;
-
-#[async_trait]
-#[cgp_component(Handler)]
+#[cgp_component(TryComputer)]
 #[prefix(@cgp.extra.handler in DefaultNamespace)]
 #[derive_delegate(UseDelegate<Code>)]
 #[derive_delegate(UseInputDelegate<Input>)]
 #[use_type(HasErrorType.Error)]
-pub trait CanHandle<Code, Input> {
+pub trait CanTryCompute<Code, Input> {
     type Output;
 
-    async fn handle(&self, _tag: PhantomData<Code>, input: Input) -> Result<Self::Output, Error>;
+    fn try_compute(&self, _code: PhantomData<Code>, input: Input) -> Result<Self::Output, Error>;
 }
 
-#[async_trait]
-#[cgp_component(HandlerRef)]
+#[cgp_component(TryComputerRef)]
 #[prefix(@cgp.extra.handler in DefaultNamespace)]
 #[derive_delegate(UseDelegate<Code>)]
 #[derive_delegate(UseInputDelegate<Input>)]
 #[use_type(HasErrorType.Error)]
-pub trait CanHandleRef<Code, Input> {
+pub trait CanTryComputeRef<Code, Input> {
     type Output;
 
-    async fn handle_ref(
+    fn try_compute_ref(
         &self,
-        _tag: PhantomData<Code>,
+        _code: PhantomData<Code>,
         input: &Input,
     ) -> Result<Self::Output, Error>;
 }

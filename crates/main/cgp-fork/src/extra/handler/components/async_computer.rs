@@ -1,9 +1,8 @@
 use core::marker::PhantomData;
 
-use cgp_fork::component::UseDelegate;
-use cgp_fork::prelude::*;
-
-use crate::UseInputDelegate;
+use crate::core::component::UseDelegate;
+use crate::core::prelude::*;
+use crate::extra::handler::UseInputDelegate;
 
 #[async_trait]
 #[cgp_component(AsyncComputer)]

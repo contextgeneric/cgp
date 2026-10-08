@@ -1,5 +1,3 @@
-#![no_std]
-
 mod components;
 mod providers;
 mod types;

@@ -1,8 +1,7 @@
 use core::marker::PhantomData;
 
-use cgp_fork::prelude::*;
-
-use crate::ComposeHandlers;
+use crate::core::prelude::*;
+use crate::extra::handler::ComposeHandlers;
 
 pub struct PipeHandlers<Providers>(pub PhantomData<Providers>);
 
