@@ -1,9 +1,7 @@
-#![no_std]
-
 use core::future::Future;
 use core::marker::PhantomData;
 
-use cgp_fork::prelude::*;
+use crate::core::prelude::*;
 
 #[cgp_component(Runner)]
 #[async_trait]
