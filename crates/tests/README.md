@@ -8,17 +8,17 @@ the map of what is here and how to run it; [AGENTS.md](AGENTS.md) is the
 authoritative guide to the conventions, and you should read it before adding,
 moving, or refactoring a test.
 
-## The crates
+## The two trees
 
-The suite is split into two crates, each with a distinct job.
+The suite lives inside the two workspace crates.
 
-**`cgp-fork-tests`** is the main suite: realistic example code that must compile and
+**`cgp-fork` `tests/`** is the main suite: realistic example code that must compile and
 run. Because much of CGP is compile-time wiring, a test here often passes simply
 by compiling. It is also where the user-facing macros are exercised end-to-end and
 where the canonical macro-expansion snapshots live.
 
-**`cgp-fork-macro-tests`** tests the macro internals directly against `cgp-fork-macro-core`
-(the parsers and AST types), and is the home for **rejection cases** — inputs CGP
+**`cgp-fork-macro` `src/macro_tests/`** tests the macro internals directly (the parsers
+and AST types), and is the home for **rejection cases** — inputs CGP
 refuses during expansion — and for pinning the invalid tokens a macro currently
 emits.
 
@@ -30,7 +30,7 @@ so each is pinned as the readable error the tool renders for it. AGENTS.md's
 
 ## How the tests are laid out
 
-Inside `cgp-fork-tests`, each concept is one **integration test target**, which Cargo
+Inside `cgp-fork` `tests/`, each concept is one **integration test target**, which Cargo
 compiles as its own crate — and therefore its own coherence scope. A target is an
 entrypoint file `tests/<concept>_tests.rs` plus a module directory
 `tests/<concept>/` holding one `.rs` file per unit test, each self-contained so the
@@ -43,23 +43,23 @@ getters, field access, extensible records, extensible variants, checking,
 dispatching, namespaces, handlers, monadic handlers, async and Send bounds,
 blanket traits, and the standalone error backends (`error_backends`). The crate's build script
 turns the example in each error backend's README into a test module, which the `readme_*.rs` files
-in `error_backends` include, so those examples are tested without being copied. The set grows and subdivides over time. `cgp-fork-macro-tests` follows
+in `error_backends` include, so those examples are tested without being copied. The set grows and subdivides over time. `cgp-fork-macro` `src/macro_tests` follows
 the same shape, with `ident_with_type_params` for parser corner cases and the
 failure-case targets `parser_rejections` and `invalid_expansion`.
 
 ## Running the tests
 
 ```
-cargo nextest run -p cgp-fork-tests                  # the main suite
-cargo nextest run -p cgp-fork-macro-tests            # macro internals + rejection cases
-cargo nextest run --workspace                   # everything
+cargo nextest run -p cgp-fork --all-features             # the main suite
+cargo nextest run -p cgp-fork-macro                      # macro internals + rejection cases
+cargo nextest run --all-features --workspace            # everything
 
-cargo insta test -p cgp-fork-tests --review          # review snapshot diffs interactively
-cargo insta test -p cgp-fork-tests --accept          # accept intended snapshot changes
+cargo insta test -p cgp-fork --all-features --review     # review snapshot diffs interactively
+cargo insta test -p cgp-fork --all-features --accept     # accept intended snapshot changes
 ```
 
 Many tests assert the exact code a macro generates, through the `snapshot_*!`
-macros from `cgp-fork-macro-test-util`: each emits the real generated code into the
+macros on `cgp-fork-macro` (feature `snapshot`): each emits the real generated code into the
 module *and* generates a `#[test]` asserting a pretty-printed inline `insta`
 snapshot of it. So a failing snapshot prints a diff of the generated code — accept
 it with `cargo insta` only after confirming the change is intended. Which target

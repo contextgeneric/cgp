@@ -1,23 +1,23 @@
 # AGENTS.md — maintaining the CGP test suite
 
-This file governs the test crates under `crates/tests`. Read it before adding,
-moving, or refactoring any test here. Invoke the `/cgp` skill first — every test
-in this tree is CGP code, and the skill is the authoritative source for CGP
-semantics and vocabulary.
+This file governs the tests in `crates/main/cgp-fork/tests` and
+`crates/macros/cgp-fork-macro/src/macro_tests`. Read it before adding, moving, or
+refactoring any test. Invoke the `/cgp` skill first — every test in this tree is
+CGP code, and the skill is the authoritative source for CGP semantics and vocabulary.
 
 This repository's documentation lives in the sibling
 [`cgp-knowledge-base-fork`](https://github.com/Just-Replicant/cgp-knowledge-base-fork) repository, under its
 `cgp/` directory, so a doc pointer below names a path there (`cgp-knowledge-base-fork/cgp/…`) rather than a
 local one. See [../../sibling-projects.md](../../sibling-projects.md) for finding that checkout.
 
-The test suite has two jobs, split across crates:
+The test suite has two jobs, split across the two crates:
 
-- **`cgp-fork-tests`** is the main suite: realistic example code that must **compile and
+- **`cgp-fork` `tests/`** is the main suite: realistic example code that must **compile and
   run**. A passing test is often just successful compilation, because much of CGP
   is compile-time wiring. This is where behavior is verified and where the
   user-facing macros are exercised end-to-end.
-- **`cgp-fork-macro-tests`** tests the **internals** of the CGP macros by calling the
-  functions in `cgp-fork-macro-core` directly (parsers, AST types), and is the home for
+- **`cgp-fork-macro` `src/macro_tests/`** tests the **internals** of the CGP macros by calling the
+  parsers in that crate directly, and is the home for
   **inputs a macro rejects** (via `assert_macro_rejects`) and for **pinning the exact
   invalid tokens** a macro emits (`invalid_expansion` string snapshots).
 
@@ -85,7 +85,7 @@ documentation; the reference documents never link back to a test.
 
 ## Use macro snapshots sparingly
 
-`cgp-fork-macro-test-util` provides `snapshot_*!` macros (`snapshot_cgp_component!`,
+`cgp-fork-macro`'s `snapshot` feature provides `snapshot_*!` macros (`snapshot_cgp_component!`,
 `snapshot_cgp_impl!`, `snapshot_delegate_components!`, …). Each **emits the real
 generated code** into the module *and* generates a `#[test]` that asserts a
 pretty-printed inline `insta` snapshot of it — so adding or removing a snapshot
@@ -130,10 +130,10 @@ while refactoring; capture them as failing-behavior tests instead. The mechanism
 depends on *where* the failure lands — whether the macro refuses the input, or
 accepts it and emits Rust that then fails to compile.
 
-**Input a macro rejects — test the entrypoint in `cgp-fork-macro-tests`.** When a macro
+**Input a macro rejects — test the entrypoint in `cgp-fork-macro`'s `src/macro_tests`.** When a macro
 itself refuses the input by returning `Err` during expansion, assert it with the
-`assert_macro_rejects` helper in `cgp-fork-macro-tests` (see `parser_rejections`). This
-drives the `cgp-fork-macro-lib` entrypoint directly and checks the internal `Result`,
+`assert_macro_rejects` helper there (see `parser_rejections`). This
+drives the macro entrypoint directly and checks the internal `Result`,
 which is enough to pin a rejection and gives a precise check of the macro's own
 diagnostic. This is the right tool for a structural error the macro is expected to
 catch, and such a case does **not** also need a compile-fail test.
@@ -157,7 +157,7 @@ and link the fixture (below).
 **Pinning the exact invalid output** is a separate, rarer need that *does* stay here:
 only when you must *inspect* the wrong tokens a macro emits (not merely assert they fail
 to compile), capture the expanded code as an `insta` inline string snapshot in the
-`invalid_expansion` target of `cgp-fork-macro-tests` (the snapshot is a *string*, so it
+`invalid_expansion` target of `cgp-fork-macro` (the snapshot is a *string*, so it
 compiles even though the code would not), with a comment explaining **why** the output
 is wrong and **what the correct output should be**.
 
@@ -191,12 +191,12 @@ document's Tests or Snapshots section in the same change.
 ## Running the suite
 
 ```
-cargo nextest run -p cgp-fork-tests                  # the main suite
-cargo nextest run -p cgp-fork-macro-tests            # macro internals + rejection/invalid-expansion cases
-cargo nextest run --workspace                   # everything
+cargo nextest run -p cgp-fork --all-features             # the main suite
+cargo nextest run -p cgp-fork-macro                      # macro internals + rejection/invalid-expansion cases
+cargo nextest run --all-features --workspace            # everything
 
-cargo insta test -p cgp-fork-tests --review          # review snapshot diffs
-cargo insta test -p cgp-fork-tests --accept          # accept intended snapshot changes
+cargo insta test -p cgp-fork --all-features --review     # review snapshot diffs
+cargo insta test -p cgp-fork --all-features --accept     # accept intended snapshot changes
 ```
 
 A snapshot test that fails prints a diff of the generated code; accept it with
@@ -209,6 +209,6 @@ cross-project [sync rule](../../AGENTS.md).
 
 The suite was reorganized from a by-construct layout to this by-concept layout. As
 categories grow, keep splitting them per the rule above, and keep expanding rejection
-coverage in `cgp-fork-macro-tests`. Post-codegen compile-fail coverage and cross-crate
+coverage in `cgp-fork-macro`'s `src/macro_tests`. Post-codegen compile-fail coverage and cross-crate
 coverage now grow in `cargo-cgp`'s UI suite rather than here (the former
 `cgp-fork-compile-fail-tests` and `cgp-fork-test-crate-*` packages were migrated there).

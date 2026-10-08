@@ -17,8 +17,10 @@ This fork includes upstream [contextgeneric/cgp](https://github.com/contextgener
 ## Install
 
 ```toml
-cgp-fork = { git = "https://github.com/Just-Replicant/cgp-fork" }
+cgp-fork = "0.9.0"
 ```
+
+`anyhow`, `eyre`, and `std-error` are optional features of that one crate. They select `anyhow::Error`, `eyre::Report`, or a boxed `core::error::Error` as the context error.
 
 ```rust
 use cgp_fork::prelude::*;
