@@ -1,8 +1,8 @@
-use cgp_fork_extra_macro_core::types::cgp_producer::ItemCgpProducer;
 use proc_macro2::TokenStream;
 use syn::{Ident, ItemFn, parse2};
 
-use crate::handler_fn::lower_handler_fn;
+use crate::extra_macro_core::types::cgp_producer::ItemCgpProducer;
+use crate::extra_macro_lib::handler_fn::lower_handler_fn;
 
 pub fn cgp_producer(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
     let item_fn: ItemFn = parse2(body)?;

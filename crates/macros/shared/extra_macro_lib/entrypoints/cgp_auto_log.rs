@@ -1,7 +1,8 @@
-use cgp_fork_macro_core::types::cgp_auto_log::ItemCgpAutoLog;
 use proc_macro2::{Span, TokenStream};
 use quote::quote;
 use syn::{Error, ItemTrait};
+
+use crate::macro_core::types::cgp_auto_log::ItemCgpAutoLog;
 
 pub fn cgp_auto_log(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
     if !attr.is_empty() {

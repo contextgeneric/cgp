@@ -1,9 +1,9 @@
-use cgp_fork_extra_macro_core::types::cgp_auto_dispatch::ItemCgpAutoDispatch;
 use proc_macro2::TokenStream;
 use quote::quote;
 use syn::{Error, ItemTrait, parse2};
 
-use crate::handler_fn::lower_handler_fn;
+use crate::extra_macro_core::types::cgp_auto_dispatch::ItemCgpAutoDispatch;
+use crate::extra_macro_lib::handler_fn::lower_handler_fn;
 
 pub fn cgp_auto_dispatch(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
     if !attr.is_empty() {
