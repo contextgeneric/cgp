@@ -1,16 +1,16 @@
 use core::fmt::Display;
 use core::marker::PhantomData;
 
-use crate::traits::StaticFormat;
+use crate::core::base_types::traits::StaticFormat;
 
 /**
     The `Chars` type is used to represent _type-level_ list of
     `Chars`s, which are equivalent to type-level strings.
 
-    `Chars` is a specialized version of [`Cons`](crate::types::Cons), with the
+    `Chars` is a specialized version of [`Cons`](crate::core::base_types::types::Cons), with the
     `Head` type being fixed to a _const-generic_ value of type `Chars`.
     Similar to `Cons`, `Chars` is also parameterized by a `Tail` type, which is
-    expected to be either the next `Chars`, or [`Nil`](crate::types::Nil) to
+    expected to be either the next `Chars`, or [`Nil`](crate::core::base_types::types::Nil) to
     represent the end of the string.
 
     We represent type-level strings as list of `Chars`s, because it is currently

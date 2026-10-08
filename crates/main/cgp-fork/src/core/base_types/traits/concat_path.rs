@@ -1,4 +1,4 @@
-use crate::types::{Nil, PathCons};
+use crate::core::base_types::types::{Nil, PathCons};
 
 pub trait ConcatPath<Other: ?Sized> {
     type Output: ?Sized;

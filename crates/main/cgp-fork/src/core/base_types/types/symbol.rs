@@ -3,7 +3,7 @@ use core::marker::PhantomData;
 
 pub struct Symbol<const LEN: usize, Chars>(pub PhantomData<Chars>);
 
-use crate::traits::StaticFormat;
+use crate::core::base_types::traits::StaticFormat;
 
 impl<const LEN: usize, Chars> Default for Symbol<LEN, Chars> {
     fn default() -> Self {

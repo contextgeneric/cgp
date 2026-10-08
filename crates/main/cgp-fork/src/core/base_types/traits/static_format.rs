@@ -1,6 +1,6 @@
 use core::fmt::{self, Formatter};
 
-use crate::types::{Chars, Nil};
+use crate::core::base_types::types::{Chars, Nil};
 
 pub trait StaticFormat {
     fn fmt(f: &mut Formatter<'_>) -> Result<(), fmt::Error>;
