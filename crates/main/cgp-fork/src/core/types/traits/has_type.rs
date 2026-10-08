@@ -1,5 +1,6 @@
-use cgp_fork::macro_prelude::*;
 use cgp_fork_macro::cgp_component;
+
+use crate::core::base::macro_prelude::*;
 
 #[cgp_component(TypeProvider)]
 #[derive_delegate(UseDelegate<Tag>)]

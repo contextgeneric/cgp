@@ -1,10 +1,10 @@
 use core::marker::PhantomData;
 
-use cgp_fork_component::WithProvider;
 use cgp_fork_macro::cgp_provider;
 
-use crate::TypeProviderComponent;
-use crate::traits::TypeProvider;
+use crate::core::component::WithProvider;
+use crate::core::types::TypeProviderComponent;
+use crate::core::types::traits::TypeProvider;
 
 /**
     The `UseType` pattern is used to implement a CGP abstract type with the

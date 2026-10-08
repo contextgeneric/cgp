@@ -1,10 +1,10 @@
 use core::marker::PhantomData;
 
-use cgp_fork_component::{DelegateComponent, WithProvider};
 use cgp_fork_macro::cgp_provider;
 
-use crate::TypeProviderComponent;
-use crate::traits::TypeProvider;
+use crate::core::component::{DelegateComponent, WithProvider};
+use crate::core::types::TypeProviderComponent;
+use crate::core::types::traits::TypeProvider;
 
 pub struct UseDelegatedType<Components>(pub PhantomData<Components>);
 

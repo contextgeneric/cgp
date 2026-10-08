@@ -1,5 +1,3 @@
-#![no_std]
-
 mod impls;
 mod traits;
 
