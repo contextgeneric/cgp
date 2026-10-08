@@ -1,7 +1,7 @@
 use core::marker::PhantomData;
 
-use crate::traits::{BuildField, HasFields, IntoBuilder, TakeField};
-use crate::types::{Cons, Field, Nil};
+use crate::core::field::traits::{BuildField, HasFields, IntoBuilder, TakeField};
+use crate::core::field::types::{Cons, Field, Nil};
 
 pub trait CanBuildFrom<Source> {
     type Output;

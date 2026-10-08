@@ -1,4 +1,4 @@
-use crate::types::{Chars, Nil, Symbol};
+use crate::core::field::types::{Chars, Nil, Symbol};
 
 pub trait StaticString {
     const VALUE: &'static str;

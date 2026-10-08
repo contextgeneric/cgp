@@ -1,6 +1,6 @@
 use core::marker::PhantomData;
 
-use crate::traits::MapType;
+use crate::core::field::traits::MapType;
 
 pub trait UpdateField<Tag, M: MapType> {
     type Value;

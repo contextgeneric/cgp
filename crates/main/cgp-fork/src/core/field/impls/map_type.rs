@@ -1,5 +1,5 @@
-use crate::traits::MapType;
-use crate::types::Void;
+use crate::core::field::traits::MapType;
+use crate::core::field::types::Void;
 
 pub struct IsPresent;
 

@@ -1,7 +1,7 @@
 /**
     The `Either` type is used to represent an _anonymous sum type_.
 
-    Similar to [`Cons`](crate::types::Cons), `Either` is used to form a sum type
+    Similar to [`Cons`](crate::core::field::types::Cons), `Either` is used to form a sum type
     by combining a chain of `Either` types, and terminated with a [`Void`] type.
     But unlike product types, a sum type has values that belong to one
     of the variants in the list.

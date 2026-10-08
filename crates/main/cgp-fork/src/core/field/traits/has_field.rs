@@ -1,7 +1,7 @@
 use core::marker::PhantomData;
 use core::ops::Deref;
 
-use cgp_fork_component::UseContext;
+use crate::core::component::UseContext;
 
 /**
     The `HasField` trait is used to implement getter methods for a type that

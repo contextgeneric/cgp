@@ -1,7 +1,7 @@
 use core::marker::PhantomData;
 
-use crate::impls::{IsNothing, IsPresent};
-use crate::traits::{PartialData, UpdateField};
+use crate::core::field::impls::{IsNothing, IsPresent};
+use crate::core::field::traits::{PartialData, UpdateField};
 
 pub trait BuildField<Tag> {
     type Value;

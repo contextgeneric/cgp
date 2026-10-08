@@ -4,9 +4,10 @@ mod life;
 mod mref;
 mod sum;
 
-pub use cgp_fork_base_types::types::*;
 pub use field::*;
 pub use index::*;
 pub use life::*;
 pub use mref::*;
 pub use sum::*;
+
+pub use crate::core::base_types::types::*;

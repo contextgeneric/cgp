@@ -10,7 +10,7 @@ use core::marker::PhantomData;
    such as `Symbol!("name")`, or a type-level index such as `Index<0>`.
    Aside from that, `Field` is essentially a wrapper around `Value`.
 
-   `Field` is mainly used within the derived [`HasFields`](crate::traits::HasFields)
+   `Field` is mainly used within the derived [`HasFields`](crate::core::field::traits::HasFields)
    implementations, to include the field name in the generic product or sum
    representation of the given struct or enum.
 

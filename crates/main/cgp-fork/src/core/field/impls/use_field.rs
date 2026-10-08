@@ -1,9 +1,8 @@
 use core::marker::PhantomData;
 
-use cgp_fork_component::{IsProviderFor, WithProvider};
-use cgp_fork_type::{TypeProvider, TypeProviderComponent};
-
-use crate::traits::{FieldGetter, HasField, HasFieldMut, MutFieldGetter};
+use crate::core::component::{IsProviderFor, WithProvider};
+use crate::core::field::traits::{FieldGetter, HasField, HasFieldMut, MutFieldGetter};
+use crate::core::types::{TypeProvider, TypeProviderComponent};
 
 /**
     The `UseField` pattern is used to implement a CGP getter trait by reading

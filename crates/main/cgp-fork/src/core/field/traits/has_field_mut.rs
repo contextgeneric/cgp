@@ -1,7 +1,7 @@
 use core::marker::PhantomData;
 use core::ops::DerefMut;
 
-use crate::traits::{FieldGetter, HasField};
+use crate::core::field::traits::{FieldGetter, HasField};
 
 pub trait HasFieldMut<Tag>: HasField<Tag> {
     fn get_field_mut(&mut self, tag: PhantomData<Tag>) -> &mut Self::Value;

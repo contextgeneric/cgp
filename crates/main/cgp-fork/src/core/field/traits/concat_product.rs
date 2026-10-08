@@ -1,4 +1,4 @@
-use crate::types::{Cons, Nil};
+use crate::core::field::types::{Cons, Nil};
 
 pub trait ConcatProduct<Items> {
     type Output;

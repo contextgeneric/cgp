@@ -1,4 +1,4 @@
-use crate::traits::MapTypeRef;
+use crate::core::field::traits::MapTypeRef;
 
 pub struct IsRef;
 

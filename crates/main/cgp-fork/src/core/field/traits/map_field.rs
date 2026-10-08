@@ -1,6 +1,6 @@
 use core::marker::PhantomData;
 
-use crate::traits::{FieldGetter, HasField};
+use crate::core::field::traits::{FieldGetter, HasField};
 
 /**
     A helper trait to help organize the lifetime inference in Rust.
