@@ -2,8 +2,8 @@ use alloc::format;
 use alloc::string::String;
 use core::fmt::Debug;
 
-use cgp_fork::error::{ErrorRaiser, ErrorRaiserComponent, ErrorWrapper, ErrorWrapperComponent};
-use cgp_fork::prelude::*;
+use crate::core::error::{ErrorRaiser, ErrorRaiserComponent, ErrorWrapper, ErrorWrapperComponent};
+use crate::core::prelude::*;
 
 pub struct DebugError;
 

@@ -1,5 +1,5 @@
-use cgp_fork::error::{ErrorRaiser, ErrorRaiserComponent, HasErrorType};
-use cgp_fork::prelude::*;
+use crate::core::error::{ErrorRaiser, ErrorRaiserComponent, HasErrorType};
+use crate::core::prelude::*;
 
 #[cgp_new_provider]
 impl<Context, E> ErrorRaiser<Context, E> for ReturnError

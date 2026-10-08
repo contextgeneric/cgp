@@ -1,7 +1,7 @@
 use core::convert::Infallible;
 
-use cgp_fork::error::{ErrorRaiser, ErrorRaiserComponent, HasErrorType};
-use cgp_fork::prelude::*;
+use crate::core::error::{ErrorRaiser, ErrorRaiserComponent, HasErrorType};
+use crate::core::prelude::*;
 
 #[cgp_new_provider]
 impl<Context> ErrorRaiser<Context, Infallible> for RaiseInfallible
