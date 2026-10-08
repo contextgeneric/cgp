@@ -3,17 +3,16 @@ use alloc::string::ToString;
 use core::error::Error as StdError;
 use core::fmt::Display;
 
-use cgp_fork::error::{ErrorRaiser, ErrorRaiserComponent, ErrorWrapper, ErrorWrapperComponent};
-use cgp_fork::prelude::*;
-
-use crate::WrapError;
+use crate::core::error::{ErrorRaiser, ErrorRaiserComponent, ErrorWrapper, ErrorWrapperComponent};
+use crate::core::prelude::*;
+use crate::std_error::WrapError;
 
 /// Boxes a standard error without formatting it, so the source stays available to `downcast_ref`
 /// and to the error chain, and wraps a `Display` detail in a [`WrapError`].
 pub struct RaiseBoxedStdError;
 
 #[cgp_impl(RaiseBoxedStdError)]
-#[use_type(HasErrorType.{Error = crate::Error})]
+#[use_type(HasErrorType.{Error = crate::std_error::Error})]
 impl<E> ErrorRaiser<E>
 where
     E: StdError + Send + Sync + 'static,
@@ -24,7 +23,7 @@ where
 }
 
 #[cgp_impl(RaiseBoxedStdError)]
-#[use_type(HasErrorType.{Error = crate::Error})]
+#[use_type(HasErrorType.{Error = crate::std_error::Error})]
 impl<Detail> ErrorWrapper<Detail>
 where
     Detail: Display,

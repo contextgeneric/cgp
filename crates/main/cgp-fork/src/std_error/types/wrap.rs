@@ -2,7 +2,7 @@ use alloc::string::String;
 use core::error::Error as StdError;
 use core::fmt::{Debug, Display, Formatter, Result};
 
-use crate::Error;
+use crate::std_error::Error;
 
 /// A standard error that adds a detail message to the error it wraps, which it returns as its
 /// `source`.

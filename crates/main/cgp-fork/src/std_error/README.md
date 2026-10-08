@@ -7,7 +7,7 @@ raise errors into it and add context to it. It depends only on `cgp-fork` and `a
 
 | Item | Wire it to | What it does |
 |---|---|---|
-| `UseBoxedStdError` | `ErrorTypeProviderComponent` | sets the context's `Error` to `cgp_fork_error_std::Error` |
+| `UseBoxedStdError` | `ErrorTypeProviderComponent` | sets the context's `Error` to `cgp_fork::std_error::Error` |
 | `RaiseBoxedStdError` | `ErrorRaiserComponent`, `ErrorWrapperComponent` | boxes a standard error without formatting it, so `downcast_ref` still finds it; wraps a `Display` detail in a `WrapError` |
 | `DebugBoxedStdError` | `ErrorRaiserComponent`, `ErrorWrapperComponent` | raises any `Debug` value as a `StringError` formatted with `{:?}`, and wraps a `Debug` detail in a `WrapError` |
 | `DisplayBoxedStdError` | `ErrorRaiserComponent`, `ErrorWrapperComponent` | raises any `Display` value as a `StringError` formatted with `{}`, and wraps a `Display` detail in a `WrapError` |
@@ -20,7 +20,7 @@ A context usually routes each source type to the provider that suits it:
 ```rust,ignore
 use cgp_fork::core::error::{ErrorRaiserComponent, ErrorTypeProviderComponent, ErrorWrapperComponent};
 use cgp_fork::prelude::*;
-use cgp_fork_error_std::{DisplayBoxedStdError, RaiseBoxedStdError, UseBoxedStdError};
+use cgp_fork::std_error::{DisplayBoxedStdError, RaiseBoxedStdError, UseBoxedStdError};
 
 pub struct App;
 

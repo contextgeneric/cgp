@@ -2,17 +2,16 @@ use alloc::boxed::Box;
 use alloc::format;
 use core::fmt::Debug;
 
-use cgp_fork::error::{ErrorRaiser, ErrorRaiserComponent, ErrorWrapper, ErrorWrapperComponent};
-use cgp_fork::prelude::*;
-
-use crate::{StringError, WrapError};
+use crate::core::error::{ErrorRaiser, ErrorRaiserComponent, ErrorWrapper, ErrorWrapperComponent};
+use crate::core::prelude::*;
+use crate::std_error::{StringError, WrapError};
 
 /// Raises any `Debug` value as a [`StringError`] formatted with `{:?}`, and wraps a `Debug` detail
 /// in a [`WrapError`] the same way. The original value is not kept.
 pub struct DebugBoxedStdError;
 
 #[cgp_impl(DebugBoxedStdError)]
-#[use_type(HasErrorType.{Error = crate::Error})]
+#[use_type(HasErrorType.{Error = crate::std_error::Error})]
 impl<E> ErrorRaiser<E>
 where
     E: Debug,
@@ -23,7 +22,7 @@ where
 }
 
 #[cgp_impl(DebugBoxedStdError)]
-#[use_type(HasErrorType.{Error = crate::Error})]
+#[use_type(HasErrorType.{Error = crate::std_error::Error})]
 impl<Detail> ErrorWrapper<Detail>
 where
     Detail: Debug,
