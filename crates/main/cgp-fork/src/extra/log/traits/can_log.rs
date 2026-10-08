@@ -1,4 +1,4 @@
-use cgp_fork::prelude::*;
+use crate::core::prelude::*;
 
 /// Logs one `Detail` value.
 ///
