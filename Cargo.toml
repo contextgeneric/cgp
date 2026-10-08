@@ -4,42 +4,7 @@ resolver = "3"
 
 members = [
     "crates/main/cgp-fork",
-    "crates/main/cgp-fork-base",
-    "crates/main/cgp-fork-base-extra",
-    "crates/main/cgp-fork-core",
-    "crates/main/cgp-fork-extra",
-
-    "crates/core/cgp-fork-base-types",
-    "crates/core/cgp-fork-component",
-    "crates/core/cgp-fork-type",
-    "crates/core/cgp-fork-field",
-    "crates/core/cgp-fork-error",
-
-    "crates/extra/cgp-fork-field-extra",
-    "crates/extra/cgp-fork-error-extra",
-    "crates/extra/cgp-fork-handler",
-    "crates/extra/cgp-fork-log",
-    "crates/extra/cgp-fork-monad",
-    "crates/extra/cgp-fork-dispatch",
-    "crates/extra/cgp-fork-run",
-    "crates/extra/cgp-fork-runtime",
-
-    "crates/macros/cgp-fork-async-macro",
     "crates/macros/cgp-fork-macro",
-    "crates/macros/cgp-fork-macro-core",
-    "crates/macros/cgp-fork-macro-lib",
-    "crates/macros/cgp-fork-macro-test-util",
-    "crates/macros/cgp-fork-macro-test-util-lib",
-    "crates/macros/cgp-fork-extra-macro",
-    "crates/macros/cgp-fork-extra-macro-lib",
-    "crates/macros/cgp-fork-extra-macro-core",
-
-    "crates/standalone/error/cgp-fork-error-anyhow",
-    "crates/standalone/error/cgp-fork-error-eyre",
-    "crates/standalone/error/cgp-fork-error-std",
-
-    "crates/tests/cgp-fork-tests",
-    "crates/tests/cgp-fork-macro-tests",
 ]
 
 [workspace.package]
@@ -54,38 +19,5 @@ keywords        = ["cgp-fork", "traits", "dsl", "dependency-injection", "macros"
 categories      = ["rust-patterns", "no-std"]
 
 [workspace.dependencies]
-cgp-fork                         = { version = "0.9.0", path = "./crates/main/cgp-fork" }
-cgp-fork-base                    = { version = "0.9.0", path = "./crates/main/cgp-fork-base" }
-cgp-fork-base-extra              = { version = "0.9.0", path = "./crates/main/cgp-fork-base-extra" }
-cgp-fork-core                    = { version = "0.9.0", path = "./crates/main/cgp-fork-core" }
-cgp-fork-extra                   = { version = "0.9.0", path = "./crates/main/cgp-fork-extra" }
-
-cgp-fork-base-types              = { version = "0.9.0", path = "./crates/core/cgp-fork-base-types" }
-cgp-fork-component               = { version = "0.9.0", path = "./crates/core/cgp-fork-component" }
-cgp-fork-type                    = { version = "0.9.0", path = "./crates/core/cgp-fork-type" }
-cgp-fork-field                   = { version = "0.9.0", path = "./crates/core/cgp-fork-field" }
-cgp-fork-error                   = { version = "0.9.0", path = "./crates/core/cgp-fork-error" }
-
-cgp-fork-field-extra             = { version = "0.9.0", path = "./crates/extra/cgp-fork-field-extra" }
-cgp-fork-error-extra             = { version = "0.9.0", path = "./crates/extra/cgp-fork-error-extra" }
-cgp-fork-handler                 = { version = "0.9.0", path = "./crates/extra/cgp-fork-handler" }
-cgp-fork-log                     = { version = "0.9.0", path = "./crates/extra/cgp-fork-log" }
-cgp-fork-monad                   = { version = "0.9.0", path = "./crates/extra/cgp-fork-monad" }
-cgp-fork-dispatch                = { version = "0.9.0", path = "./crates/extra/cgp-fork-dispatch" }
-cgp-fork-run                     = { version = "0.9.0", path = "./crates/extra/cgp-fork-run" }
-cgp-fork-runtime                 = { version = "0.9.0", path = "./crates/extra/cgp-fork-runtime" }
-
-cgp-fork-error-anyhow            = { version = "0.9.0", path = "./crates/standalone/error/cgp-fork-error-anyhow" }
-cgp-fork-error-eyre              = { version = "0.9.0", path = "./crates/standalone/error/cgp-fork-error-eyre" }
-cgp-fork-error-std               = { version = "0.9.0", path = "./crates/standalone/error/cgp-fork-error-std" }
-
-cgp-fork-async-macro             = { version = "0.9.0", path = "./crates/macros/cgp-fork-async-macro" }
-cgp-fork-macro                   = { version = "0.9.0", path = "./crates/macros/cgp-fork-macro" }
-cgp-fork-macro-core              = { version = "0.9.0", path = "./crates/macros/cgp-fork-macro-core" }
-cgp-fork-macro-lib               = { version = "0.9.0", path = "./crates/macros/cgp-fork-macro-lib" }
-cgp-fork-macro-test-util         = { version = "0.9.0", path = "./crates/macros/cgp-fork-macro-test-util" }
-
-cgp-fork-macro-test-util-lib     = { version = "0.9.0", path = "./crates/macros/cgp-fork-macro-test-util-lib" }
-cgp-fork-extra-macro             = { version = "0.9.0", path = "./crates/macros/cgp-fork-extra-macro" }
-cgp-fork-extra-macro-lib         = { version = "0.9.0", path = "./crates/macros/cgp-fork-extra-macro-lib" }
-cgp-fork-extra-macro-core        = { version = "0.9.0", path = "./crates/macros/cgp-fork-extra-macro-core" }
+cgp-fork       = { version = "0.9.0", path = "./crates/main/cgp-fork" }
+cgp-fork-macro = { version = "0.9.0", path = "./crates/macros/cgp-fork-macro" }
