@@ -1,0 +1,37 @@
+use syn::{GenericParam, Ident, ItemStruct, Type, TypeParam};
+
+use crate::macro_core::exports::MapType;
+use crate::macro_core::parse_internal;
+use crate::macro_core::types::cgp_data::index_to_generic_ident;
+
+pub fn derive_builder_struct(
+    context_struct: &ItemStruct,
+    builder_ident: &Ident,
+) -> syn::Result<ItemStruct> {
+    let mut builder_struct = context_struct.clone();
+
+    builder_struct.attrs.clear();
+    builder_struct.ident = builder_ident.clone();
+
+    let generics = &mut builder_struct.generics;
+
+    for (i, field) in builder_struct.fields.iter_mut().enumerate() {
+        let generic_param_name = index_to_generic_ident(i);
+
+        let generic_param: TypeParam = parse_internal! {
+            #generic_param_name : #MapType
+        };
+
+        generics.params.push(GenericParam::Type(generic_param));
+
+        let field_type = &field.ty;
+
+        let mapped_type: Type = parse_internal! {
+            <#generic_param_name as #MapType>::Map<#field_type>
+        };
+
+        field.ty = mapped_type;
+    }
+
+    Ok(builder_struct)
+}

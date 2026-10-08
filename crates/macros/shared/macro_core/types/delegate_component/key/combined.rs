@@ -1,0 +1,49 @@
+use syn::Attribute;
+use syn::parse::{Parse, ParseStream};
+use syn::token::{At, Bracket};
+
+use crate::macro_core::types::delegate_component::{
+    EvalDelegateKey, EvaluatedDelegateKey, MultiDelegateKey, PathDelegateKey, SingleDelegateKey,
+};
+use crate::macro_core::types::generics::ImplGenerics;
+
+/// The left side of a mapping, dispatched on a fork: a leading `@` is a `Path`
+/// key, a leading `[` a `Multi` (array) key, otherwise a `Single` key.
+#[derive(Debug, Clone)]
+pub enum DelegateKey {
+    Single(SingleDelegateKey),
+    Multi(MultiDelegateKey),
+    Path(PathDelegateKey),
+}
+
+impl Parse for DelegateKey {
+    fn parse(input: ParseStream) -> syn::Result<Self> {
+        let fork = input.fork();
+
+        let _attributes = fork.call(Attribute::parse_outer)?;
+        let _generics: ImplGenerics = fork.parse()?;
+
+        let key = if fork.peek(At) {
+            let path = input.parse()?;
+            Self::Path(path)
+        } else if fork.peek(Bracket) {
+            let keys = input.parse()?;
+            Self::Multi(keys)
+        } else {
+            let key = input.parse()?;
+            Self::Single(key)
+        };
+
+        Ok(key)
+    }
+}
+
+impl EvalDelegateKey for DelegateKey {
+    fn eval(&self) -> syn::Result<Vec<EvaluatedDelegateKey>> {
+        match self {
+            Self::Single(key) => key.eval(),
+            Self::Multi(key) => key.eval(),
+            Self::Path(key) => key.eval(),
+        }
+    }
+}

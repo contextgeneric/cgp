@@ -1,0 +1,65 @@
+use syn::parse::{Parse, ParseStream};
+use syn::token::Semi;
+use syn::{Generics, Ident, Type};
+
+use crate::macro_core::parse_internal;
+use crate::macro_core::types::delegate_component::{
+    EvalDelegateEntries, EvalForEntries, EvalForEntry, EvaluatedDelegateEntry, EvaluatedForEntry,
+    eval_delegate_entries_via_for,
+};
+use crate::macro_core::types::keyword::Keyword;
+use crate::macro_core::types::keywords::Namespace;
+
+/// The `namespace SomeNamespace;` header. It forwards every lookup through the
+/// named namespace trait via a blanket `DelegateComponent<__Key__>` impl bounded
+/// on `__Key__: SomeNamespace<TableType, Delegate = __Value__>`.
+#[derive(Debug, Clone)]
+pub struct NamespaceDelegateStatement {
+    pub namespace: Keyword<Namespace>,
+    pub ident: Ident,
+    pub semi: Semi,
+}
+
+impl Parse for NamespaceDelegateStatement {
+    fn parse(input: ParseStream) -> syn::Result<Self> {
+        let namespace = input.parse()?;
+        let ident = input.parse()?;
+        let semi = input.parse()?;
+
+        Ok(Self {
+            namespace,
+            ident,
+            semi,
+        })
+    }
+}
+
+impl EvalForEntry for NamespaceDelegateStatement {
+    fn eval_for_entry(&self, table_type: &Type) -> syn::Result<EvaluatedForEntry> {
+        let entry = EvaluatedForEntry {
+            generics: Generics::default(),
+            table_type: table_type.clone(),
+            for_key: parse_internal!(__Key__),
+            for_value: parse_internal!(__Value__),
+            mapping_key: parse_internal!(__Key__),
+            mapping_value: parse_internal!(__Value__),
+            namespace: self.ident.clone().into(),
+            span: self.ident.span(),
+        };
+
+        Ok(entry)
+    }
+}
+
+impl EvalForEntries for NamespaceDelegateStatement {
+    fn eval_for_entries(&self, table_type: &Type) -> syn::Result<Vec<EvaluatedForEntry>> {
+        let entry = self.eval_for_entry(table_type)?;
+        Ok(vec![entry])
+    }
+}
+
+impl EvalDelegateEntries for NamespaceDelegateStatement {
+    fn eval_entries(&self, table_type: &Type) -> syn::Result<Vec<EvaluatedDelegateEntry>> {
+        eval_delegate_entries_via_for(self, table_type)
+    }
+}
