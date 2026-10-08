@@ -1,15 +1,15 @@
-use cgp_fork_macro_core::functions::{is_implicit_arg, parse_context_arg};
-use cgp_fork_macro_core::parse_internal;
-use cgp_fork_macro_core::types::implicits::{ImplicitArgField, ImplicitArgFields};
 use quote::ToTokens;
 use syn::punctuated::Punctuated;
 use syn::spanned::Spanned;
 use syn::token::Comma;
 use syn::{Error, Expr, FnArg, Ident, ItemFn, Type, parse2};
 
-use crate::functions::{derive_provider_ident, return_type};
-use crate::types::cgp_computer::{MaybeResultType, PreprocessedCgpComputer};
-use crate::visitors::find_impl_trait;
+use crate::extra_macro_core::functions::{derive_provider_ident, return_type};
+use crate::extra_macro_core::types::cgp_computer::{MaybeResultType, PreprocessedCgpComputer};
+use crate::extra_macro_core::visitors::find_impl_trait;
+use crate::macro_core::functions::{is_implicit_arg, parse_context_arg};
+use crate::macro_core::parse_internal;
+use crate::macro_core::types::implicits::{ImplicitArgField, ImplicitArgFields};
 
 /// Raw input stage: the optional provider name from the attribute and the
 /// annotated function. First stage of the `#[cgp_computer]` pipeline.

@@ -1,4 +1,4 @@
-use cgp_fork_macro_core::export_constructs;
+use crate::macro_core::export_constructs;
 
 export_constructs! {
     Computer,

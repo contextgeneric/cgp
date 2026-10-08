@@ -1,6 +1,7 @@
-use cgp_fork_macro_core::functions::to_camel_case_str;
 use syn::Ident;
 use syn::ext::IdentExt;
+
+use crate::macro_core::functions::to_camel_case_str;
 
 /// The default name of a provider defined from a function: the function name in
 /// PascalCase, so `magic_number` names `MagicNumber`. The name is spanned on the

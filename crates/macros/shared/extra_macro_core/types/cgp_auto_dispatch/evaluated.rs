@@ -1,6 +1,6 @@
 use syn::{ItemImpl, ItemTrait};
 
-use crate::types::cgp_computer::ItemCgpComputer;
+use crate::extra_macro_core::types::cgp_computer::ItemCgpComputer;
 
 /// The intermediate representation `#[cgp_auto_dispatch]` evaluates a trait
 /// into. Each entry of `computers` is what the macro would otherwise emit as a

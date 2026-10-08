@@ -1,9 +1,9 @@
-use cgp_fork_macro_core::exports::HasExtractor;
-use cgp_fork_macro_core::functions::override_item_span;
-use cgp_fork_macro_core::parse_internal;
 use syn::{ItemImpl, ItemTrait};
 
-use crate::types::cgp_auto_dispatch::{DispatchMethod, EvaluatedCgpAutoDispatch};
+use crate::extra_macro_core::types::cgp_auto_dispatch::{DispatchMethod, EvaluatedCgpAutoDispatch};
+use crate::macro_core::exports::HasExtractor;
+use crate::macro_core::functions::override_item_span;
+use crate::macro_core::parse_internal;
 
 /// The checked `#[cgp_auto_dispatch]` input: the trait and one
 /// [`DispatchMethod`] per method.

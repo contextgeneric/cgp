@@ -1,8 +1,8 @@
 use syn::{Error, Ident, ItemFn};
 
-use crate::functions::{derive_provider_ident, return_type};
-use crate::types::cgp_producer::PreprocessedCgpProducer;
-use crate::visitors::find_impl_trait;
+use crate::extra_macro_core::functions::{derive_provider_ident, return_type};
+use crate::extra_macro_core::types::cgp_producer::PreprocessedCgpProducer;
+use crate::extra_macro_core::visitors::find_impl_trait;
 
 /// Raw input stage: the optional provider name from the attribute and the
 /// annotated function. First stage of the `#[cgp_producer]` pipeline.

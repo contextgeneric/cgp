@@ -1,21 +1,21 @@
-use cgp_fork_macro_core::functions::override_item_span;
-use cgp_fork_macro_core::parse_internal;
-use cgp_fork_macro_core::traits::ToTypeParamBounds;
-use cgp_fork_macro_core::types::cgp_provider::{ItemCgpProvider, ProviderArgs};
-use cgp_fork_macro_core::types::delegate_component::DelegateTable;
-use cgp_fork_macro_core::types::implicits::ImplicitArgFields;
-use cgp_fork_macro_core::types::keyword::Keyword;
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
 use syn::{Expr, Ident, ItemFn, ItemImpl, Type};
 
-use crate::exports::{
+use crate::extra_macro_core::exports::{
     AsyncComputer, AsyncComputerComponent, AsyncComputerRefComponent, Computer, ComputerComponent,
     ComputerRefComponent, HandlerComponent, HandlerRefComponent, PromoteAsyncComputer,
     PromoteComputer, PromoteHandler, PromoteTryComputer, TryComputerComponent,
     TryComputerRefComponent,
 };
-use crate::types::handler_fn::EvaluatedHandlerFn;
+use crate::extra_macro_core::types::handler_fn::EvaluatedHandlerFn;
+use crate::macro_core::functions::override_item_span;
+use crate::macro_core::parse_internal;
+use crate::macro_core::traits::ToTypeParamBounds;
+use crate::macro_core::types::cgp_provider::{ItemCgpProvider, ProviderArgs};
+use crate::macro_core::types::delegate_component::DelegateTable;
+use crate::macro_core::types::implicits::ImplicitArgFields;
+use crate::macro_core::types::keyword::Keyword;
 
 /// The read `#[cgp_computer]` input: the resolved provider name, the function,
 /// its explicit inputs rebound as `arg_0, arg_1, …`, the arguments of the call

@@ -1,6 +1,8 @@
 use syn::{Error, ItemTrait, TraitItem};
 
-use crate::types::cgp_auto_dispatch::{DispatchMethod, PreprocessedCgpAutoDispatch};
+use crate::extra_macro_core::types::cgp_auto_dispatch::{
+    DispatchMethod, PreprocessedCgpAutoDispatch,
+};
 
 /// Raw input stage: the annotated trait. First stage of the
 /// `#[cgp_auto_dispatch]` pipeline.

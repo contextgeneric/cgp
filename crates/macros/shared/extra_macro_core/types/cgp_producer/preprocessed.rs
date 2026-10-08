@@ -1,16 +1,16 @@
-use cgp_fork_macro_core::functions::override_item_span;
-use cgp_fork_macro_core::parse_internal;
-use cgp_fork_macro_core::types::cgp_provider::{ItemCgpProvider, ProviderArgs};
-use cgp_fork_macro_core::types::delegate_component::DelegateTable;
-use cgp_fork_macro_core::types::keyword::Keyword;
 use syn::{Ident, ItemFn, ItemImpl, Type};
 
-use crate::exports::{
+use crate::extra_macro_core::exports::{
     AsyncComputerComponent, AsyncComputerRefComponent, ComputerComponent, ComputerRefComponent,
     HandlerComponent, HandlerRefComponent, Producer, ProducerComponent, PromoteProducer,
     TryComputerComponent, TryComputerRefComponent,
 };
-use crate::types::handler_fn::EvaluatedHandlerFn;
+use crate::extra_macro_core::types::handler_fn::EvaluatedHandlerFn;
+use crate::macro_core::functions::override_item_span;
+use crate::macro_core::parse_internal;
+use crate::macro_core::types::cgp_provider::{ItemCgpProvider, ProviderArgs};
+use crate::macro_core::types::delegate_component::DelegateTable;
+use crate::macro_core::types::keyword::Keyword;
 
 /// The validated `#[cgp_producer]` input: the resolved provider name, the
 /// function, and its output type.

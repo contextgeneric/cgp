@@ -1,5 +1,3 @@
-use cgp_fork_macro_core::functions::merge_generics;
-use cgp_fork_macro_core::parse_internal;
 use proc_macro2::TokenStream;
 use quote::quote;
 use syn::ext::IdentExt;
@@ -12,14 +10,16 @@ use syn::{
     ReturnType, TraitItemFn, Type, Visibility, WherePredicate,
 };
 
-use crate::exports::{
+use crate::extra_macro_core::exports::{
     AsyncComputer, Computer, MatchFirstWithValueHandlers, MatchFirstWithValueHandlersMut,
     MatchFirstWithValueHandlersRef, MatchWithValueHandlers, MatchWithValueHandlersMut,
     MatchWithValueHandlersRef,
 };
-use crate::functions::derive_computer_ident;
-use crate::types::cgp_computer::ItemCgpComputer;
-use crate::visitors::{ElaborateElidedLifetimes, collect_lifetimes};
+use crate::extra_macro_core::functions::derive_computer_ident;
+use crate::extra_macro_core::types::cgp_computer::ItemCgpComputer;
+use crate::extra_macro_core::visitors::{ElaborateElidedLifetimes, collect_lifetimes};
+use crate::macro_core::functions::merge_generics;
+use crate::macro_core::parse_internal;
 
 /// How a dispatch method takes `self`, with the lifetime a borrowed receiver
 /// carries: the one the method names, or the reserved `'__a__` when elided.
