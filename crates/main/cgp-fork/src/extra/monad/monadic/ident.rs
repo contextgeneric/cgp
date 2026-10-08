@@ -1,4 +1,4 @@
-use crate::traits::{ContainsValue, LiftValue, MonadicBind, MonadicTrans};
+use crate::extra::monad::traits::{ContainsValue, LiftValue, MonadicBind, MonadicTrans};
 
 pub struct IdentMonadic;
 

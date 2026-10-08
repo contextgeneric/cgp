@@ -1,8 +1,7 @@
-use cgp_fork::prelude::*;
-use cgp_fork_handler::{AsyncComputer, AsyncComputerComponent, Computer, ComputerComponent};
-
-use crate::monadic::ident::IdentMonadic;
-use crate::traits::{ContainsValue, LiftValue, MonadicBind, MonadicTrans};
+use crate::core::prelude::*;
+use crate::extra::handler::{AsyncComputer, AsyncComputerComponent, Computer, ComputerComponent};
+use crate::extra::monad::monadic::ident::IdentMonadic;
+use crate::extra::monad::traits::{ContainsValue, LiftValue, MonadicBind, MonadicTrans};
 
 pub struct OkMonadic;
 

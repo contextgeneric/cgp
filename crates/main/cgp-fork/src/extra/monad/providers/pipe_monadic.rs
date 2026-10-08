@@ -1,12 +1,11 @@
-use cgp_fork::field::traits::MapFields;
-use cgp_fork::prelude::*;
-use cgp_fork_handler::{
+use crate::core::field::traits::MapFields;
+use crate::core::prelude::*;
+use crate::extra::handler::{
     AsyncComputerComponent, ComposeHandlers, ComputerComponent, HandlerComponent,
     TryComputerComponent, TryPromote,
 };
-
-use crate::monadic::err::ErrMonadic;
-use crate::traits::{MonadicBind, MonadicTrans};
+use crate::extra::monad::monadic::err::ErrMonadic;
+use crate::extra::monad::traits::{MonadicBind, MonadicTrans};
 
 pub struct PipeMonadic<M, Providers>(pub PhantomData<(M, Providers)>);
 
