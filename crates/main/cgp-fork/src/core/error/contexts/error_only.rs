@@ -1,7 +1,7 @@
 use core::fmt::Debug;
 use core::marker::PhantomData;
 
-use crate::HasErrorType;
+use crate::core::error::HasErrorType;
 
 pub struct ErrorOnly<E>(pub PhantomData<E>);
 

@@ -1,5 +1,3 @@
-#![no_std]
-
 mod contexts;
 mod traits;
 

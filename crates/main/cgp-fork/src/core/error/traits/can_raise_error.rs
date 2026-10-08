@@ -1,7 +1,7 @@
-use cgp_fork::component::{DefaultNamespace, UseDelegate};
 use cgp_fork_macro::cgp_component;
 
-use crate::traits::has_error_type::HasErrorType;
+use crate::core::component::{DefaultNamespace, UseDelegate};
+use crate::core::error::traits::has_error_type::HasErrorType;
 
 /**
    The `CanRaiseError` trait is used to raise any concrete error type into

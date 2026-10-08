@@ -1,7 +1,8 @@
 use core::fmt::Debug;
 
-use cgp_fork::component::DefaultNamespace;
 use cgp_fork_macro::cgp_type;
+
+use crate::core::component::DefaultNamespace;
 
 /**
     The `HasErrorType` trait provides an abstract error type that can be used by

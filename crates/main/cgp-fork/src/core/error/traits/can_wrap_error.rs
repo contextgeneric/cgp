@@ -1,7 +1,7 @@
-use cgp_fork::component::{DefaultNamespace, UseDelegate};
 use cgp_fork_macro::cgp_component;
 
-use crate::traits::HasErrorType;
+use crate::core::component::{DefaultNamespace, UseDelegate};
+use crate::core::error::traits::HasErrorType;
 
 /**
    The `CanWrapError` trait is used to attach a detail to an abstract error
