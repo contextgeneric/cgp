@@ -17,7 +17,7 @@ A context usually routes each source type to the provider that suits it:
 ```rust,ignore
 use cgp_fork::core::error::{ErrorRaiserComponent, ErrorTypeProviderComponent, ErrorWrapperComponent};
 use cgp_fork::prelude::*;
-use cgp_fork_error_anyhow::{DisplayAnyhowError, RaiseAnyhowError, UseAnyhowError};
+use cgp_fork::anyhow::{DisplayAnyhowError, RaiseAnyhowError, UseAnyhowError};
 
 pub struct App;
 
@@ -42,4 +42,4 @@ A `String` needs `DisplayAnyhowError` or `DebugAnyhowError`, because it is not a
 feature. Enabling that feature elsewhere in the dependency graph turns on the parts of anyhow that
 need `std`, such as backtrace capture.
 
-The crate re-exports `anyhow::Error` as `cgp_fork_error_anyhow::Error`.
+The `anyhow` feature re-exports `anyhow::Error` as `cgp_fork::anyhow::Error`.

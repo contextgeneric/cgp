@@ -1,8 +1,8 @@
 use core::error::Error as StdError;
 use core::fmt::Display;
 
-use cgp_fork::error::{ErrorRaiser, ErrorRaiserComponent, ErrorWrapper, ErrorWrapperComponent};
-use cgp_fork::prelude::*;
+use crate::core::error::{ErrorRaiser, ErrorRaiserComponent, ErrorWrapper, ErrorWrapperComponent};
+use crate::core::prelude::*;
 
 /// Raises a standard error into [`anyhow::Error`] without formatting it, so the source stays
 /// available to `downcast_ref` and to the error chain, and wraps a detail as anyhow context.

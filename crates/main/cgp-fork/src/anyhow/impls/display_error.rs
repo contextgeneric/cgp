@@ -2,8 +2,9 @@ use alloc::string::ToString;
 use core::fmt::Display;
 
 use anyhow::anyhow;
-use cgp_fork::error::{ErrorRaiser, ErrorRaiserComponent, ErrorWrapper, ErrorWrapperComponent};
-use cgp_fork::prelude::*;
+
+use crate::core::error::{ErrorRaiser, ErrorRaiserComponent, ErrorWrapper, ErrorWrapperComponent};
+use crate::core::prelude::*;
 
 /// Raises any `Display` value into [`anyhow::Error`] as a message formatted with `{}`, and wraps a
 /// `Display` detail the same way. The original value is not kept.

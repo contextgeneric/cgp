@@ -1,5 +1,5 @@
-use cgp_fork::error::{ErrorTypeProvider, ErrorTypeProviderComponent};
-use cgp_fork::prelude::*;
+use crate::core::error::{ErrorTypeProvider, ErrorTypeProviderComponent};
+use crate::core::prelude::*;
 
 /// Sets the context's abstract error type to [`anyhow::Error`].
 pub struct UseAnyhowError;
