@@ -1,10 +1,10 @@
 use core::marker::PhantomData;
 
-use cgp_fork_field::impls::{IsNothing, IsOptional};
-use cgp_fork_field::traits::{
+use crate::core::field::impls::{IsNothing, IsOptional};
+use crate::core::field::traits::{
     BuildField, FinalizeBuild, HasFields, PartialData, StaticString, UpdateField,
 };
-use cgp_fork_field::types::{Cons, Field, Nil};
+use crate::core::field::types::{Cons, Field, Nil};
 
 pub trait FinalizeOptional: PartialData {
     fn finalize_optional(self) -> Result<Self::Target, &'static str>;

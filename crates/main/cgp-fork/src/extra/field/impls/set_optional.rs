@@ -1,7 +1,7 @@
 use core::marker::PhantomData;
 
-use cgp_fork_field::impls::IsOptional;
-use cgp_fork_field::traits::UpdateField;
+use crate::core::field::impls::IsOptional;
+use crate::core::field::traits::UpdateField;
 
 pub trait SetOptional<Tag> {
     type Value;

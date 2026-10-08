@@ -1,5 +1,5 @@
-use cgp_fork_field::impls::{IsNothing, IsOptional, IsPresent};
-use cgp_fork_field::traits::{HasBuilder, TransformMap, TransformMapFields};
+use crate::core::field::impls::{IsNothing, IsOptional, IsPresent};
+use crate::core::field::traits::{HasBuilder, TransformMap, TransformMapFields};
 
 pub trait HasOptionalBuilder {
     type Builder;
