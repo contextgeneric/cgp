@@ -1,6 +1,6 @@
-use cgp_fork::field::impls::CanBuildFrom;
-use cgp_fork::prelude::*;
-use cgp_fork_handler::{
+use crate::core::field::impls::CanBuildFrom;
+use crate::core::prelude::*;
+use crate::extra::handler::{
     Computer, ComputerComponent, Handler, HandlerComponent, TryComputer, TryComputerComponent,
 };
 

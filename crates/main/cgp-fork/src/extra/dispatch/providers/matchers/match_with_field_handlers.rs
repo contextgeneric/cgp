@@ -1,12 +1,15 @@
-use cgp_fork::prelude::*;
-use cgp_fork_handler::{
+use crate::core::prelude::*;
+use crate::extra::dispatch::providers::matchers::to_field_handlers::{
+    HasFieldHandlers, MapExtractFieldAndHandle,
+};
+use crate::extra::dispatch::{
+    HandleFieldValue, MatchWithHandlers, MatchWithHandlersMut, MatchWithHandlersRef,
+};
+use crate::extra::handler::{
     AsyncComputerComponent, AsyncComputerRefComponent, ComputerComponent, ComputerRefComponent,
     HandlerComponent, HandlerRefComponent, PromoteRef, TryComputerComponent,
     TryComputerRefComponent, UseInputDelegate,
 };
-
-use crate::providers::matchers::to_field_handlers::{HasFieldHandlers, MapExtractFieldAndHandle};
-use crate::{HandleFieldValue, MatchWithHandlers, MatchWithHandlersMut, MatchWithHandlersRef};
 
 pub type MatchWithFieldHandlers<Provider = UseContext> =
     UseInputDelegate<MatchWithFieldHandlersInputs<Provider>>;

@@ -1,9 +1,8 @@
 use core::marker::PhantomData;
 
-use cgp_fork::prelude::*;
-use cgp_fork_handler::{AsyncComputer, AsyncComputerComponent, Computer, ComputerComponent};
-
-use crate::DispatchMatchers;
+use crate::core::prelude::*;
+use crate::extra::dispatch::DispatchMatchers;
+use crate::extra::handler::{AsyncComputer, AsyncComputerComponent, Computer, ComputerComponent};
 
 pub struct MatchFirstWithHandlers<Handlers>(pub PhantomData<Handlers>);
 

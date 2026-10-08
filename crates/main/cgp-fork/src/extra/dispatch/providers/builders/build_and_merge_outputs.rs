@@ -1,11 +1,10 @@
-use cgp_fork::field::traits::MapFields;
-use cgp_fork::prelude::*;
-use cgp_fork_handler::{
+use crate::core::field::traits::MapFields;
+use crate::core::prelude::*;
+use crate::extra::dispatch::{BuildAndMerge, BuildWithHandlers};
+use crate::extra::handler::{
     ComputerComponent, ComputerRefComponent, HandlerComponent, HandlerRefComponent,
     TryComputerComponent, TryComputerRefComponent,
 };
-
-use crate::{BuildAndMerge, BuildWithHandlers};
 
 delegate_components! {
     <Output, Handlers: MapFields<ToBuildAndMergeHandler>>

@@ -1,6 +1,6 @@
-use cgp_fork::field::impls::CanDowncastFields;
-use cgp_fork::prelude::*;
-use cgp_fork_handler::{AsyncComputer, AsyncComputerComponent, Computer, ComputerComponent};
+use crate::core::field::impls::CanDowncastFields;
+use crate::core::prelude::*;
+use crate::extra::handler::{AsyncComputer, AsyncComputerComponent, Computer, ComputerComponent};
 
 pub struct DowncastAndHandle<Input, Provider = UseContext>(pub PhantomData<(Input, Provider)>);
 

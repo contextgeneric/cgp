@@ -1,10 +1,9 @@
 use core::marker::PhantomData;
 
-use cgp_fork::field::traits::FinalizeExtractResult;
-use cgp_fork::prelude::*;
-use cgp_fork_handler::{AsyncComputer, AsyncComputerComponent, Computer, ComputerComponent};
-
-use crate::DispatchMatchers;
+use crate::core::field::traits::FinalizeExtractResult;
+use crate::core::prelude::*;
+use crate::extra::dispatch::DispatchMatchers;
+use crate::extra::handler::{AsyncComputer, AsyncComputerComponent, Computer, ComputerComponent};
 
 pub struct MatchWithHandlers<Handlers>(pub PhantomData<Handlers>);
 

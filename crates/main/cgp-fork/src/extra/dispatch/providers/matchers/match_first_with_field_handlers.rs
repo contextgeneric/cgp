@@ -1,13 +1,12 @@
-use cgp_fork::prelude::*;
-use cgp_fork_handler::UseInputDelegate;
-
-use crate::providers::matchers::to_field_handlers::{
+use crate::core::prelude::*;
+use crate::extra::dispatch::providers::matchers::to_field_handlers::{
     HasFieldHandlers, MapExtractFirstFieldAndHandle,
 };
-use crate::{
+use crate::extra::dispatch::{
     HandleFirstFieldValue, MatchFirstWithHandlers, MatchFirstWithHandlersMut,
     MatchFirstWithHandlersRef,
 };
+use crate::extra::handler::UseInputDelegate;
 
 pub type MatchFirstWithFieldHandlers<Provider = UseContext> =
     UseInputDelegate<MatchFirstWithFieldHandlersInputs<Provider>>;

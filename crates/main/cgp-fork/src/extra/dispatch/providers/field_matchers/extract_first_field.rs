@@ -1,5 +1,5 @@
-use cgp_fork::prelude::*;
-use cgp_fork_handler::{AsyncComputer, AsyncComputerComponent, Computer, ComputerComponent};
+use crate::core::prelude::*;
+use crate::extra::handler::{AsyncComputer, AsyncComputerComponent, Computer, ComputerComponent};
 
 pub struct ExtractFirstFieldAndHandle<Tag, Provider = UseContext>(pub PhantomData<(Tag, Provider)>);
 

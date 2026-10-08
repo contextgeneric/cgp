@@ -1,6 +1,5 @@
-use cgp_fork::prelude::*;
-
-use crate::{ExtractFieldAndHandle, ExtractFirstFieldAndHandle};
+use crate::core::prelude::*;
+use crate::extra::dispatch::{ExtractFieldAndHandle, ExtractFirstFieldAndHandle};
 
 pub trait HasFieldHandlers<M> {
     type Handlers;
