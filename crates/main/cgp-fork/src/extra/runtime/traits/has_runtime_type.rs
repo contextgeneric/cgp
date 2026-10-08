@@ -1,4 +1,4 @@
-use cgp_fork::prelude::*;
+use crate::core::prelude::*;
 
 #[cgp_type]
 pub trait HasRuntimeType {

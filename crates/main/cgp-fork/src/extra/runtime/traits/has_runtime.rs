@@ -1,6 +1,5 @@
-use cgp_fork::prelude::*;
-
-use crate::HasRuntimeType;
+use crate::core::prelude::*;
+use crate::extra::runtime::HasRuntimeType;
 
 #[cgp_getter]
 #[use_type(HasRuntimeType.Runtime)]
