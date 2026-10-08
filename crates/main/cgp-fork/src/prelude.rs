@@ -1,2 +1,2 @@
-pub use cgp_fork_core::prelude::*;
-pub use cgp_fork_extra::prelude::*;
+pub use crate::core::prelude::*;
+pub use crate::extra::prelude::*;

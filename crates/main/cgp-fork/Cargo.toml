@@ -12,6 +12,29 @@ keywords     = { workspace = true }
 categories   = { workspace = true }
 description  = "A language extension for Rust, with pluggable trait implementations at compile-time."
 
+[features]
+default = ["full"]
+full = ["alloc"]
+alloc = []
+anyhow = ["dep:anyhow"]
+eyre = ["dep:eyre"]
+std-error = []
+
 [dependencies]
-cgp-fork-core       = { workspace = true }
-cgp-fork-extra      = { workspace = true }
+cgp-fork-macro = { workspace = true }
+anyhow = { version = "1.0.104", default-features = false, optional = true }
+# `auto-install` installs eyre's default report handler on first use. Without it, building any
+# `eyre::Report` panics unless the application has called `eyre::set_hook` first.
+#
+# `track-caller` records where a report was built. `CanRaiseError::raise_error` is
+# `#[track_caller]`, and so is every impl of it, which is what lets that location be the caller's
+# line rather than a line in this crate.
+eyre = { version = "0.6.14", default-features = false, features = ["auto-install", "track-caller"], optional = true }
+
+[dev-dependencies]
+cgp-fork-macro = { workspace = true, features = ["snapshot"] }
+insta = { version = "1.48.0" }
+futures = { version = "0.3.31" }
+syn = { version = "2.0.95", features = ["full", "extra-traits"] }
+quote = { version = "1.0.38" }
+proc-macro2 = { version = "1.0.92" }

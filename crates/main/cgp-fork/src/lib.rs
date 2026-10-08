@@ -1,8 +1,12 @@
 #![no_std]
 #![doc = include_str!("../README.md")]
+#![allow(mixed_script_confusables)]
 
-#[doc(inline)]
-pub use {cgp_fork_core as core, cgp_fork_extra as extra};
+extern crate alloc;
+extern crate self as cgp_fork;
+
+pub mod core;
+pub mod extra;
 
 pub mod prelude;
 
@@ -16,3 +20,15 @@ pub mod macro_prelude {
     };
     pub use crate::prelude::*;
 }
+
+#[cfg(feature = "anyhow")]
+#[doc = include_str!("anyhow/README.md")]
+pub mod anyhow;
+
+#[cfg(feature = "eyre")]
+#[doc = include_str!("eyre/README.md")]
+pub mod eyre;
+
+#[cfg(feature = "std-error")]
+#[doc = include_str!("std_error/README.md")]
+pub mod std_error;
