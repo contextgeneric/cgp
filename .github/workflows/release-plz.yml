@@ -6,13 +6,17 @@ name: Release-plz
 # - `release` publishes that pull request after it is merged, tags `v<version>`,
 #   and creates the GitHub release.
 #
-# Before the first run, in the repository settings:
+# Publishing uses crates.io trusted publishing. There is no
+# `CARGO_REGISTRY_TOKEN`: release-plz exchanges this job's OIDC token for a
+# short-lived crates.io token. `id-token: write` on the release job is required.
+#
+# Before the first run:
 # - Actions → General → Workflow permissions: read and write.
 # - Allow GitHub Actions to create and approve pull requests.
-# - Either add a `CARGO_REGISTRY_TOKEN` secret (scopes `publish-new` and
-#   `publish-update`), or configure crates.io trusted publishing for every
-#   crate. Trusted publishing cannot create a crate; publish each crate once
-#   by hand, then trust this workflow.
+# - On crates.io, add a trusted publisher for `cgp-fork` and `cgp-fork-macro`:
+#   repository `Just-Replicant/cgp-fork`, workflow `release-plz.yml`. Trusted
+#   publishing cannot create a crate; publish each crate once by hand, then
+#   trust this workflow.
 # - Optional: a fine-grained `RELEASE_PLZ_TOKEN` with Contents and Pull requests
 #   read/write. The default `GITHUB_TOKEN` cannot start the Tests workflow on
 #   the release pull request. With the PAT, that pull request runs Tests.
@@ -37,7 +41,7 @@ jobs:
     permissions:
       contents: write
       pull-requests: read
-      id-token: write
+      id-token: write # crates.io trusted publishing (OIDC)
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -58,7 +62,6 @@ jobs:
         run: release-plz release
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_PLZ_TOKEN || github.token }}
-          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
 
   release-plz-pr:
     name: Release-plz PR
