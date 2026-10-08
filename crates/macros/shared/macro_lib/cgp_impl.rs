@@ -1,0 +1,25 @@
+use proc_macro2::TokenStream;
+use quote::quote;
+use syn::{ItemImpl, parse2};
+
+use crate::macro_core::types::cgp_impl::{ImplArgs, ItemCgpImpl};
+
+pub fn cgp_impl(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
+    let args: ImplArgs = parse2(attr)?;
+    let item_impl: ItemImpl = parse2(body)?;
+
+    let item_cgp_impl = ItemCgpImpl { args, item_impl };
+
+    let mut lowered = item_cgp_impl.lower()?;
+
+    let bare_impls = lowered.lower()?;
+
+    let helper_items = &lowered.helper_items;
+    let default_impls = &lowered.default_impls;
+
+    Ok(quote! {
+        #(#helper_items)*
+        #bare_impls
+        #(#default_impls)*
+    })
+}
