@@ -1,9 +1,10 @@
 use alloc::string::ToString;
 use core::fmt::Display;
 
-use cgp_fork::error::{ErrorRaiser, ErrorRaiserComponent, ErrorWrapper, ErrorWrapperComponent};
-use cgp_fork::prelude::*;
 use eyre::eyre;
+
+use crate::core::error::{ErrorRaiser, ErrorRaiserComponent, ErrorWrapper, ErrorWrapperComponent};
+use crate::core::prelude::*;
 
 /// Raises any `Display` value into [`eyre::Report`] as a message formatted with `{}`, and wraps a
 /// `Display` detail the same way. The original value is not kept.

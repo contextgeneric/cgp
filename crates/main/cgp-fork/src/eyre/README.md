@@ -17,7 +17,7 @@ A context usually routes each source type to the provider that suits it:
 ```rust,ignore
 use cgp_fork::core::error::{ErrorRaiserComponent, ErrorTypeProviderComponent, ErrorWrapperComponent};
 use cgp_fork::prelude::*;
-use cgp_fork_error_eyre::{DisplayEyreError, RaiseEyreError, UseEyreError};
+use cgp_fork::eyre::{DisplayEyreError, RaiseEyreError, UseEyreError};
 
 pub struct App;
 
@@ -47,4 +47,4 @@ error. The crate also enables eyre's `track-caller` feature, and CGP's `raise_er
 `#[track_caller]`, so a report's `Location:` names the line that called `raise_error`. eyre requires
 `std`, so this crate does too.
 
-The crate re-exports `eyre::Error`, eyre's alias for `Report`, as `cgp_fork_error_eyre::Error`.
+The `eyre` feature re-exports `eyre::Error`, eyre's alias for `Report`, as `cgp_fork::eyre::Error`.

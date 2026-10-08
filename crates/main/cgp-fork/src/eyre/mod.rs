@@ -1,4 +1,3 @@
-#![doc = include_str!("../README.md")]
 // eyre needs `std`, so unlike the other backends this crate is not `no_std`.
 extern crate alloc;
 

@@ -1,9 +1,10 @@
 use alloc::format;
 use core::fmt::Debug;
 
-use cgp_fork::error::{ErrorRaiser, ErrorRaiserComponent, ErrorWrapper, ErrorWrapperComponent};
-use cgp_fork::prelude::*;
 use eyre::eyre;
+
+use crate::core::error::{ErrorRaiser, ErrorRaiserComponent, ErrorWrapper, ErrorWrapperComponent};
+use crate::core::prelude::*;
 
 /// Raises any `Debug` value into [`eyre::Report`] as a message formatted with `{:?}`, and wraps a
 /// `Debug` detail the same way. The original value is not kept.
