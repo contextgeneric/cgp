@@ -15,8 +15,15 @@ description  = "CGP procedural macros for defining and wiring components."
 proc-macro = true
 
 [features]
-default = []
+snapshot = ["dep:prettyplease"]
 
 [dependencies]
-syn                     = { version = "2.0.95", features = [ "full", "extra-traits" ] }
-cgp-fork-macro-lib           = { workspace = true }
+syn         = { version = "2.0.95", features = ["full", "extra-traits", "visit", "visit-mut"] }
+quote       = { version = "1.0.38" }
+proc-macro2 = { version = "1.0.92" }
+itertools   = { version = "0.14.0" }
+prettyplease = { version = "0.2.37", optional = true }
+
+[dev-dependencies]
+insta = { version = "1.48.0" }
+prettyplease = { version = "0.2.37" }

@@ -1,6 +1,6 @@
-use cgp_fork_macro_test_util_lib::entrypoints;
-use proc_macro::TokenStream;
+use crate::test_util_lib::entrypoints;
 
+#[doc(hidden)]
 #[proc_macro]
 pub fn snapshot_delegate_components(body: TokenStream) -> TokenStream {
     entrypoints::snapshot_delegate_components(body.into())
@@ -8,6 +8,7 @@ pub fn snapshot_delegate_components(body: TokenStream) -> TokenStream {
         .into()
 }
 
+#[doc(hidden)]
 #[proc_macro]
 pub fn snapshot_cgp_component(body: TokenStream) -> TokenStream {
     entrypoints::snapshot_cgp_component(body.into())
@@ -15,6 +16,7 @@ pub fn snapshot_cgp_component(body: TokenStream) -> TokenStream {
         .into()
 }
 
+#[doc(hidden)]
 #[proc_macro]
 pub fn snapshot_cgp_impl(body: TokenStream) -> TokenStream {
     entrypoints::snapshot_cgp_impl(body.into())
@@ -22,6 +24,7 @@ pub fn snapshot_cgp_impl(body: TokenStream) -> TokenStream {
         .into()
 }
 
+#[doc(hidden)]
 #[proc_macro]
 pub fn snapshot_cgp_provider(body: TokenStream) -> TokenStream {
     entrypoints::snapshot_cgp_provider(body.into())
@@ -29,6 +32,7 @@ pub fn snapshot_cgp_provider(body: TokenStream) -> TokenStream {
         .into()
 }
 
+#[doc(hidden)]
 #[proc_macro]
 pub fn snapshot_cgp_new_provider(body: TokenStream) -> TokenStream {
     entrypoints::snapshot_cgp_new_provider(body.into())
@@ -36,6 +40,7 @@ pub fn snapshot_cgp_new_provider(body: TokenStream) -> TokenStream {
         .into()
 }
 
+#[doc(hidden)]
 #[proc_macro]
 pub fn snapshot_cgp_fn(body: TokenStream) -> TokenStream {
     entrypoints::snapshot_cgp_fn(body.into())
@@ -43,6 +48,7 @@ pub fn snapshot_cgp_fn(body: TokenStream) -> TokenStream {
         .into()
 }
 
+#[doc(hidden)]
 #[proc_macro]
 pub fn snapshot_cgp_auto_getter(body: TokenStream) -> TokenStream {
     entrypoints::snapshot_cgp_auto_getter(body.into())
@@ -50,6 +56,7 @@ pub fn snapshot_cgp_auto_getter(body: TokenStream) -> TokenStream {
         .into()
 }
 
+#[doc(hidden)]
 #[proc_macro]
 pub fn snapshot_cgp_auto_impl(body: TokenStream) -> TokenStream {
     entrypoints::snapshot_cgp_auto_impl(body.into())
@@ -57,6 +64,7 @@ pub fn snapshot_cgp_auto_impl(body: TokenStream) -> TokenStream {
         .into()
 }
 
+#[doc(hidden)]
 #[proc_macro]
 pub fn snapshot_cgp_auto_error(body: TokenStream) -> TokenStream {
     entrypoints::snapshot_cgp_auto_error(body.into())
@@ -64,6 +72,7 @@ pub fn snapshot_cgp_auto_error(body: TokenStream) -> TokenStream {
         .into()
 }
 
+#[doc(hidden)]
 #[proc_macro]
 pub fn snapshot_cgp_auto_log(body: TokenStream) -> TokenStream {
     entrypoints::snapshot_cgp_auto_log(body.into())
@@ -71,6 +80,7 @@ pub fn snapshot_cgp_auto_log(body: TokenStream) -> TokenStream {
         .into()
 }
 
+#[doc(hidden)]
 #[proc_macro]
 pub fn snapshot_cgp_getter(body: TokenStream) -> TokenStream {
     entrypoints::snapshot_cgp_getter(body.into())
@@ -78,6 +88,7 @@ pub fn snapshot_cgp_getter(body: TokenStream) -> TokenStream {
         .into()
 }
 
+#[doc(hidden)]
 #[proc_macro]
 pub fn snapshot_cgp_namespace(body: TokenStream) -> TokenStream {
     entrypoints::snapshot_cgp_namespace(body.into())
@@ -85,6 +96,7 @@ pub fn snapshot_cgp_namespace(body: TokenStream) -> TokenStream {
         .into()
 }
 
+#[doc(hidden)]
 #[proc_macro]
 pub fn snapshot_cgp_type(body: TokenStream) -> TokenStream {
     entrypoints::snapshot_cgp_type(body.into())
@@ -92,6 +104,7 @@ pub fn snapshot_cgp_type(body: TokenStream) -> TokenStream {
         .into()
 }
 
+#[doc(hidden)]
 #[proc_macro]
 pub fn snapshot_check_components(body: TokenStream) -> TokenStream {
     entrypoints::snapshot_check_components(body.into())
@@ -99,6 +112,7 @@ pub fn snapshot_check_components(body: TokenStream) -> TokenStream {
         .into()
 }
 
+#[doc(hidden)]
 #[proc_macro]
 pub fn snapshot_delegate_and_check_components(body: TokenStream) -> TokenStream {
     entrypoints::snapshot_delegate_and_check_components(body.into())
@@ -106,6 +120,7 @@ pub fn snapshot_delegate_and_check_components(body: TokenStream) -> TokenStream 
         .into()
 }
 
+#[doc(hidden)]
 #[proc_macro]
 pub fn snapshot_blanket_trait(body: TokenStream) -> TokenStream {
     entrypoints::snapshot_blanket_trait(body.into())
@@ -113,6 +128,7 @@ pub fn snapshot_blanket_trait(body: TokenStream) -> TokenStream {
         .into()
 }
 
+#[doc(hidden)]
 #[proc_macro]
 pub fn snapshot_derive_has_field(body: TokenStream) -> TokenStream {
     entrypoints::snapshot_derive_has_field(body.into())
@@ -120,6 +136,7 @@ pub fn snapshot_derive_has_field(body: TokenStream) -> TokenStream {
         .into()
 }
 
+#[doc(hidden)]
 #[proc_macro]
 pub fn snapshot_derive_has_fields(body: TokenStream) -> TokenStream {
     entrypoints::snapshot_derive_has_fields(body.into())
@@ -127,6 +144,7 @@ pub fn snapshot_derive_has_fields(body: TokenStream) -> TokenStream {
         .into()
 }
 
+#[doc(hidden)]
 #[proc_macro]
 pub fn snapshot_derive_cgp_data(body: TokenStream) -> TokenStream {
     entrypoints::snapshot_derive_cgp_data(body.into())
@@ -134,6 +152,7 @@ pub fn snapshot_derive_cgp_data(body: TokenStream) -> TokenStream {
         .into()
 }
 
+#[doc(hidden)]
 #[proc_macro]
 pub fn snapshot_derive_build_field(body: TokenStream) -> TokenStream {
     entrypoints::snapshot_derive_build_field(body.into())
@@ -141,6 +160,7 @@ pub fn snapshot_derive_build_field(body: TokenStream) -> TokenStream {
         .into()
 }
 
+#[doc(hidden)]
 #[proc_macro]
 pub fn snapshot_derive_extract_field(body: TokenStream) -> TokenStream {
     entrypoints::snapshot_derive_extract_field(body.into())
@@ -148,6 +168,7 @@ pub fn snapshot_derive_extract_field(body: TokenStream) -> TokenStream {
         .into()
 }
 
+#[doc(hidden)]
 #[proc_macro]
 pub fn snapshot_cgp_computer(body: TokenStream) -> TokenStream {
     entrypoints::snapshot_cgp_computer(body.into())
@@ -155,6 +176,7 @@ pub fn snapshot_cgp_computer(body: TokenStream) -> TokenStream {
         .into()
 }
 
+#[doc(hidden)]
 #[proc_macro]
 pub fn snapshot_cgp_producer(body: TokenStream) -> TokenStream {
     entrypoints::snapshot_cgp_producer(body.into())
@@ -162,6 +184,7 @@ pub fn snapshot_cgp_producer(body: TokenStream) -> TokenStream {
         .into()
 }
 
+#[doc(hidden)]
 #[proc_macro]
 pub fn snapshot_cgp_auto_dispatch(body: TokenStream) -> TokenStream {
     entrypoints::snapshot_cgp_auto_dispatch(body.into())
@@ -169,6 +192,7 @@ pub fn snapshot_cgp_auto_dispatch(body: TokenStream) -> TokenStream {
         .into()
 }
 
+#[doc(hidden)]
 #[proc_macro]
 pub fn snapshot_derive_from_variant(body: TokenStream) -> TokenStream {
     entrypoints::snapshot_derive_from_variant(body.into())
