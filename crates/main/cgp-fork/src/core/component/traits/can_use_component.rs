@@ -1,4 +1,4 @@
-use crate::{DelegateComponent, IsProviderFor};
+use crate::core::component::{DelegateComponent, IsProviderFor};
 
 /**
     This is a convenient type alias that is used in the same way as [`IsProviderFor`],

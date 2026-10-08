@@ -1,4 +1,4 @@
-use crate::WithProvider;
+use crate::core::component::WithProvider;
 
 /**
     The `UseContext` pattern is used to define a trivial implementation of
