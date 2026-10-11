@@ -144,11 +144,11 @@ user actually sees rather than the raw cascade. Add the fixture there — a stan
 cross-crate — following
 [cargo-cgp's UI-test guide](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/README.md);
 its harness records both `cargo-cgp`'s output (`.cgp.stderr`) and the raw compiler
-baseline (`.rust.stderr`). cargo-cgp files a fixture by the **quality of the output** —
-`acceptable/` when the tool already leads with the root cause, `usability/` when the
-cause is present but buried, `ok/` for a clean compile — rather than by the
-acceptable/problematic distinction this repository formerly used. Then catalog the class
-and link the fixture (below).
+baseline (`.rust.stderr`). cargo-cgp files a fixture under its **error class**,
+mirroring the knowledge base's error catalog, and records the quality of its output in a
+`//@quality:` header (`acceptable` when the tool already leads with the root cause,
+`usability` when the cause is present but buried). Then catalog the class and link the
+fixture (below).
 
 **Pinning the exact invalid output** is a separate, rarer need that *does* stay here:
 only when you must *inspect* the wrong tokens a macro emits (not merely assert they fail
