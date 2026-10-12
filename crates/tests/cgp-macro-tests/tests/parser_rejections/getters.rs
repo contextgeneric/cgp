@@ -5,8 +5,10 @@
 //! `#[cgp_getter]`. A getter method must be a plain (non-const, non-async,
 //! non-unsafe, non-generic) method whose first argument is a reference; a mutable
 //! return requires a `&mut self` receiver; and at most one associated type is
-//! allowed, only alongside exactly one method. `#[cgp_auto_getter]` additionally
-//! rejects any attribute argument, since it has no provider name or keys to accept.
+//! allowed, only alongside exactly one method. An optional reference to a slice or a
+//! trait object is rejected too, since the `Option<&T>` form would read an unsized
+//! `Option<T>` field. `#[cgp_auto_getter]` additionally rejects any attribute argument,
+//! since it has no provider name or keys to accept.
 //!
 //! See cgp-knowledge-base/cgp/implementation/asts/cgp_getter.md (Tests) for these failure cases and
 //! cgp-knowledge-base/cgp/reference/macros/cgp_auto_getter.md for the user-facing getter-method
@@ -14,7 +16,7 @@
 
 use quote::quote;
 
-use super::assert_macro_rejects;
+use super::{assert_macro_rejects, assert_macro_rejects_with};
 
 #[test]
 fn rejects_const_getter_method() {
@@ -105,6 +107,71 @@ fn rejects_mutable_return_without_mut_self() {
             ),
         )
     });
+}
+
+#[test]
+fn rejects_optional_slice_return() {
+    // `Option<&T>` reads an `Option<T>` field, which an unsized slice cannot fill, so
+    // `Option<&[u8]>` is rejected with the sized container to read instead.
+    assert_macro_rejects_with(
+        "cgp_auto_getter returning `Option<&[u8]>`",
+        "`Option<&[T]>` would read an `Option<[T]>` field, which cannot exist because a slice is unsized; read an `Option<Vec<T>>` field as `Option<&Vec<T>>` instead",
+        || {
+            cgp_macro_lib::cgp_auto_getter(
+                quote!(),
+                quote!(
+                    pub trait HasItems {
+                        fn items(&self) -> Option<&[u8]>;
+                    }
+                ),
+            )
+        },
+    );
+}
+
+#[test]
+fn rejects_optional_mutable_slice_return() {
+    // The mutable form has the same unsized field, so it is rejected the same way,
+    // naming the mutable read.
+    assert_macro_rejects_with(
+        "cgp_auto_getter returning `Option<&mut [u8]>`",
+        "`Option<&mut [T]>` would read an `Option<[T]>` field, which cannot exist because a slice is unsized; read an `Option<Vec<T>>` field as `Option<&mut Vec<T>>` instead",
+        || {
+            cgp_macro_lib::cgp_auto_getter(
+                quote!(),
+                quote!(
+                    pub trait HasItems {
+                        fn items(&mut self) -> Option<&mut [u8]>;
+                    }
+                ),
+            )
+        },
+    );
+}
+
+#[test]
+fn rejects_optional_trait_object_return() {
+    // A trait object is unsized like a slice, so `Option<&dyn Debug>` has no field to
+    // read either; the parenthesized form is the same type.
+    for return_type in [
+        quote!(Option<&dyn core::fmt::Debug>),
+        quote!(Option<&(dyn core::fmt::Debug + Send)>),
+    ] {
+        assert_macro_rejects_with(
+            "cgp_auto_getter returning an optional trait-object reference",
+            "`Option<&dyn Trait>` would read an `Option<dyn Trait>` field, which cannot exist because a trait object is unsized; read an `Option<Box<dyn Trait>>` field as `Option<&Box<dyn Trait>>` instead",
+            || {
+                cgp_macro_lib::cgp_auto_getter(
+                    quote!(),
+                    quote!(
+                        pub trait HasLabel {
+                            fn label(&self) -> #return_type;
+                        }
+                    ),
+                )
+            },
+        );
+    }
 }
 
 #[test]

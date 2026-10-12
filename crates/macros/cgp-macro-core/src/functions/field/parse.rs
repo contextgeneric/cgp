@@ -44,6 +44,8 @@ pub fn parse_field_type(
         }
         Type::Path(type_path) => {
             if let Some(type_ref) = try_parse_option_ref(type_path) {
+                reject_unsized_option_ref(type_path, type_ref)?;
+
                 // `Option<&T>` reads an `Option<T>` field with `.as_ref()`;
                 // `Option<&mut T>` reads it with `.as_mut()`. The read borrows the
                 // field with the *inner* reference's mutability, so a `&mut` inner
@@ -81,6 +83,35 @@ pub fn parse_field_type(
         // cloned, exactly like an owned path type.
         _ => Ok((return_type.clone(), FieldMode::Copy, None)),
     }
+}
+
+/// `Option<&T>` reads an `Option<T>` field, and an `Option` holds only a sized value, so an optional
+/// reference to a slice or a trait object has no field to read. Rejected here, naming the sized
+/// container to read instead, rather than lowered to a bound over an unsized `Option`.
+fn reject_unsized_option_ref(type_path: &TypePath, type_ref: &TypeReference) -> syn::Result<()> {
+    let mut referent = type_ref.elem.as_ref();
+    while let Type::Paren(paren) = referent {
+        referent = paren.elem.as_ref();
+    }
+
+    let (written, kind, container) = match referent {
+        Type::Slice(_) => ("[T]", "a slice", "Vec<T>"),
+        Type::TraitObject(_) => ("dyn Trait", "a trait object", "Box<dyn Trait>"),
+        _ => return Ok(()),
+    };
+
+    let reference = if type_ref.mutability.is_some() {
+        "&mut "
+    } else {
+        "&"
+    };
+
+    Err(Error::new_spanned(
+        type_path,
+        format!(
+            "`Option<{reference}{written}>` would read an `Option<{written}>` field, which cannot exist because {kind} is unsized; read an `Option<{container}>` field as `Option<{reference}{container}>` instead"
+        ),
+    ))
 }
 
 /// A mutable field read borrows the whole context exclusively through
