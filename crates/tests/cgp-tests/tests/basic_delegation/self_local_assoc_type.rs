@@ -10,10 +10,7 @@
 //! that declares it. Every other `Self` in the same block, including the `Self`
 //! of an inherited abstract type, is still rewritten to the context.
 //!
-//! An associated *const* is deliberately not covered by the skip, since only
-//! `ImplItem::Type` items are collected; `#[cgp_impl]`'s Known issues records
-//! that asymmetry and the `<Provider as Trait<Self>>::CONST` form that works
-//! around it.
+//! `self_local_assoc_const` covers the same skip for an associated const.
 //!
 //! See cgp-knowledge-base/cgp/implementation/entrypoints/cgp_impl.md (Behavior and corner cases)
 //! and cgp-knowledge-base/cgp/reference/macros/cgp_impl.md.
