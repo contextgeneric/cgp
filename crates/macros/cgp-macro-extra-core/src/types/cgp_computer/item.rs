@@ -3,7 +3,7 @@ use syn::punctuated::Punctuated;
 use syn::spanned::Spanned;
 use syn::{Error, FnArg, Ident, ItemFn, parse2};
 
-use crate::functions::{derive_provider_ident, return_type};
+use crate::functions::{derive_provider_ident, reject_output_only_params, return_type};
 use crate::types::cgp_computer::{MaybeResultType, PreprocessedCgpComputer};
 use crate::visitors::find_impl_trait;
 
@@ -53,6 +53,8 @@ impl ItemCgpComputer {
         }
 
         let output = return_type(&sig.output)?;
+
+        reject_output_only_params(sig)?;
 
         if let Some(impl_trait) = find_impl_trait(&output) {
             return Err(Error::new_spanned(
