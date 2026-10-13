@@ -8,7 +8,8 @@
 //! allowed, only alongside exactly one method. An optional reference to a slice or a
 //! trait object is rejected too, since the `Option<&T>` form would read an unsized
 //! `Option<T>` field. `#[cgp_auto_getter]` additionally rejects any attribute argument,
-//! since it has no provider name or keys to accept.
+//! since it has no provider name or keys to accept, and a `#[uses]` attribute, which
+//! belongs on a provider.
 //!
 //! See cgp-knowledge-base/cgp/implementation/asts/cgp_getter.md (Tests) for these failure cases and
 //! cgp-knowledge-base/cgp/reference/macros/cgp_auto_getter.md for the user-facing getter-method
@@ -243,4 +244,25 @@ fn rejects_attribute_argument() {
             ),
         )
     });
+}
+
+/// `#[cgp_auto_getter]` shares the component's attribute parser, so it rejects a
+/// `#[uses]` the same way, naming the `#[extend]` form.
+#[test]
+fn rejects_uses_on_auto_getter() {
+    assert_macro_rejects_with(
+        "cgp_auto_getter with a #[uses] attribute",
+        "`#[uses]` declares the dependencies of a provider, not of a trait; write `#[extend(HasId)]` to make it a supertrait",
+        || {
+            cgp_macro_lib::cgp_auto_getter(
+                quote!(),
+                quote!(
+                    #[uses(HasId)]
+                    pub trait HasName {
+                        fn name(&self) -> &str;
+                    }
+                ),
+            )
+        },
+    );
 }

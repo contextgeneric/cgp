@@ -1,7 +1,8 @@
 //! `#[cgp_component]` rejects inputs it cannot lower into a component: a
 //! non-trait item, a trait carrying a const generic parameter, attribute
-//! arguments with a repeated key, an unknown key, or no `provider` key, and a
-//! `name` whose parameters the trait does not declare.
+//! arguments with a repeated key, an unknown key, or no `provider` key, a
+//! `name` whose parameters the trait does not declare, and a `#[uses]`
+//! attribute, which belongs on a provider (`#[extend]` adds a supertrait).
 //!
 //! See cgp-knowledge-base/cgp/implementation/entrypoints/cgp_component.md (Tests) for these failure
 //! cases, and cgp-knowledge-base/cgp/reference/macros/cgp_component.md for the user-facing
@@ -9,7 +10,7 @@
 
 use quote::quote;
 
-use super::assert_macro_rejects;
+use super::{assert_macro_rejects, assert_macro_rejects_with};
 
 #[test]
 fn rejects_non_trait_item() {
@@ -116,4 +117,26 @@ fn rejects_missing_provider_key() {
             ),
         )
     });
+}
+
+/// `#[uses]` declares a provider's dependencies, so on a component trait the
+/// macro rejects it and names the `#[extend]` form, rather than leaving an
+/// attribute the compiler does not know (with its `#[used]` suggestion).
+#[test]
+fn rejects_uses_attribute() {
+    assert_macro_rejects_with(
+        "cgp_component with a #[uses] attribute",
+        "`#[uses]` declares the dependencies of a provider, not of a trait; write `#[extend(HasName)]` to make it a supertrait",
+        || {
+            cgp_macro_lib::cgp_component(
+                quote!(Greeter),
+                quote!(
+                    #[uses(HasName)]
+                    pub trait CanGreet {
+                        fn greet(&self);
+                    }
+                ),
+            )
+        },
+    );
 }
