@@ -98,7 +98,7 @@ snapshot_derive_has_fields! {
                 Self: '__a;
         }
         impl FromFields for Person {
-            fn from_fields(rest: Self::Fields) -> Self {
+            fn from_fields(rest: <Self as HasFields>::Fields) -> Self {
                 match rest {
                     Either::Left(field) => {
                         let field = field.value;
@@ -117,7 +117,7 @@ snapshot_derive_has_fields! {
             }
         }
         impl ToFields for Person {
-            fn to_fields(self) -> Self::Fields {
+            fn to_fields(self) -> <Self as HasFields>::Fields {
                 match self {
                     Self::Anonymous(field) => Either::Left(field.into()),
                     Self::Named(field) => Either::Right(Either::Left(field.into())),
@@ -125,7 +125,7 @@ snapshot_derive_has_fields! {
             }
         }
         impl ToFieldsRef for Person {
-            fn to_fields_ref<'__a>(&'__a self) -> Self::FieldsRef<'__a>
+            fn to_fields_ref<'__a>(&'__a self) -> <Self as HasFieldsRef>::FieldsRef<'__a>
             where
                 Self: '__a,
             {

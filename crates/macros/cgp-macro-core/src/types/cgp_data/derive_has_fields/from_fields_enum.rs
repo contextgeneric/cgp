@@ -1,7 +1,7 @@
 use quote::quote;
 use syn::{ItemEnum, ItemImpl};
 
-use crate::exports::{Either, FromFields};
+use crate::exports::{Either, FromFields, HasFields};
 use crate::functions::parse_internal;
 use crate::types::cgp_data::derive_from_field_params;
 
@@ -37,7 +37,7 @@ pub fn derive_from_fields_for_enum(item_enum: &ItemEnum) -> syn::Result<ItemImpl
         #where_clause
         {
             fn from_fields(
-                rest: Self::Fields,
+                rest: <Self as #HasFields>::Fields,
             ) -> Self {
                 #match_expr
             }

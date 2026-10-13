@@ -155,7 +155,7 @@ snapshot_derive_cgp_data! {
                 Self: '__a;
         }
         impl FromFields for Status {
-            fn from_fields(rest: Self::Fields) -> Self {
+            fn from_fields(rest: <Self as HasFields>::Fields) -> Self {
                 match rest {
                     Either::Left(field) => {
                         let field = field.value;
@@ -190,7 +190,7 @@ snapshot_derive_cgp_data! {
             }
         }
         impl ToFields for Status {
-            fn to_fields(self) -> Self::Fields {
+            fn to_fields(self) -> <Self as HasFields>::Fields {
                 match self {
                     Self::Active(field) => Either::Left(field.into()),
                     Self::Closed => Either::Right(Either::Left(Nil.into())),
@@ -202,7 +202,7 @@ snapshot_derive_cgp_data! {
             }
         }
         impl ToFieldsRef for Status {
-            fn to_fields_ref<'__a>(&'__a self) -> Self::FieldsRef<'__a>
+            fn to_fields_ref<'__a>(&'__a self) -> <Self as HasFieldsRef>::FieldsRef<'__a>
             where
                 Self: '__a,
             {
@@ -233,7 +233,15 @@ snapshot_derive_cgp_data! {
                         >,
                     >,
                 >,
-                value: Self::Value,
+                value: <Self as FromVariant<
+                    Symbol<
+                        6,
+                        Chars<
+                            'A',
+                            Chars<'c', Chars<'t', Chars<'i', Chars<'v', Chars<'e', Nil>>>>>,
+                        >,
+                    >,
+                >>::Value,
             ) -> Self {
                 Self::Active(value)
             }
@@ -255,7 +263,15 @@ snapshot_derive_cgp_data! {
                         >,
                     >,
                 >,
-                _: Self::Value,
+                _: <Self as FromVariant<
+                    Symbol<
+                        6,
+                        Chars<
+                            'C',
+                            Chars<'l', Chars<'o', Chars<'s', Chars<'e', Chars<'d', Nil>>>>>,
+                        >,
+                    >,
+                >>::Value,
             ) -> Self {
                 Self::Closed {}
             }
@@ -277,7 +293,15 @@ snapshot_derive_cgp_data! {
                         >,
                     >,
                 >,
-                _: Self::Value,
+                _: <Self as FromVariant<
+                    Symbol<
+                        6,
+                        Chars<
+                            'P',
+                            Chars<'a', Chars<'u', Chars<'s', Chars<'e', Chars<'d', Nil>>>>>,
+                        >,
+                    >,
+                >>::Value,
             ) -> Self {
                 Self::Paused {}
             }
@@ -317,7 +341,24 @@ snapshot_derive_cgp_data! {
                         >,
                     >,
                 >,
-                _: Self::Value,
+                _: <Self as FromVariant<
+                    Symbol<
+                        8,
+                        Chars<
+                            'A',
+                            Chars<
+                                'r',
+                                Chars<
+                                    'c',
+                                    Chars<
+                                        'h',
+                                        Chars<'i', Chars<'v', Chars<'e', Chars<'d', Nil>>>>,
+                                    >,
+                                >,
+                            >,
+                        >,
+                    >,
+                >>::Value,
             ) -> Self {
                 Self::Archived {}
             }
@@ -362,7 +403,7 @@ snapshot_derive_cgp_data! {
         }
         impl HasExtractor for Status {
             type Extractor = __PartialStatus<IsPresent, IsPresent, IsPresent, IsPresent>;
-            fn to_extractor(self) -> Self::Extractor {
+            fn to_extractor(self) -> <Self as HasExtractor>::Extractor {
                 match self {
                     Self::Active(value) => __PartialStatus::Active(value),
                     Self::Closed { .. } => __PartialStatus::Closed(Nil),
@@ -370,7 +411,7 @@ snapshot_derive_cgp_data! {
                     Self::Archived { .. } => __PartialStatus::Archived(Nil),
                 }
             }
-            fn from_extractor(extractor: Self::Extractor) -> Self {
+            fn from_extractor(extractor: <Self as HasExtractor>::Extractor) -> Self {
                 match extractor {
                     __PartialStatus::Active(value) => Self::Active(value),
                     __PartialStatus::Closed(_) => Self::Closed {},
@@ -390,7 +431,9 @@ snapshot_derive_cgp_data! {
             >
             where
                 Self: '__a__;
-            fn extractor_ref<'__a__>(&'__a__ self) -> Self::ExtractorRef<'__a__> {
+            fn extractor_ref<'__a__>(
+                &'__a__ self,
+            ) -> <Self as HasExtractorRef>::ExtractorRef<'__a__> {
                 match self {
                     Self::Active(value) => __PartialRefStatus::Active(value),
                     Self::Closed { .. } => __PartialRefStatus::Closed(&Nil),
@@ -410,7 +453,9 @@ snapshot_derive_cgp_data! {
             >
             where
                 Self: '__a__;
-            fn extractor_mut<'__a__>(&'__a__ mut self) -> Self::ExtractorMut<'__a__> {
+            fn extractor_mut<'__a__>(
+                &'__a__ mut self,
+            ) -> <Self as HasExtractorMut>::ExtractorMut<'__a__> {
                 match self {
                     Self::Active(value) => __PartialRefStatus::Active(value),
                     Self::Closed { .. } => __PartialRefStatus::Closed(Box::leak(Box::new(Nil))),
@@ -455,7 +500,26 @@ snapshot_derive_cgp_data! {
                         >,
                     >,
                 >,
-            ) -> Result<Self::Value, Self::Remainder> {
+            ) -> Result<
+                <Self as ExtractField<
+                    Symbol<
+                        6,
+                        Chars<
+                            'A',
+                            Chars<'c', Chars<'t', Chars<'i', Chars<'v', Chars<'e', Nil>>>>>,
+                        >,
+                    >,
+                >>::Value,
+                <Self as ExtractField<
+                    Symbol<
+                        6,
+                        Chars<
+                            'A',
+                            Chars<'c', Chars<'t', Chars<'i', Chars<'v', Chars<'e', Nil>>>>>,
+                        >,
+                    >,
+                >>::Remainder,
+            > {
                 match self {
                     __PartialStatus::Active(value) => Ok(value),
                     __PartialStatus::Closed(value) => Err(__PartialStatus::Closed(value)),
@@ -487,7 +551,26 @@ snapshot_derive_cgp_data! {
                         >,
                     >,
                 >,
-            ) -> Result<Self::Value, Self::Remainder> {
+            ) -> Result<
+                <Self as ExtractField<
+                    Symbol<
+                        6,
+                        Chars<
+                            'C',
+                            Chars<'l', Chars<'o', Chars<'s', Chars<'e', Chars<'d', Nil>>>>>,
+                        >,
+                    >,
+                >>::Value,
+                <Self as ExtractField<
+                    Symbol<
+                        6,
+                        Chars<
+                            'C',
+                            Chars<'l', Chars<'o', Chars<'s', Chars<'e', Chars<'d', Nil>>>>>,
+                        >,
+                    >,
+                >>::Remainder,
+            > {
                 match self {
                     __PartialStatus::Active(value) => Err(__PartialStatus::Active(value)),
                     __PartialStatus::Closed(value) => Ok(value),
@@ -519,7 +602,26 @@ snapshot_derive_cgp_data! {
                         >,
                     >,
                 >,
-            ) -> Result<Self::Value, Self::Remainder> {
+            ) -> Result<
+                <Self as ExtractField<
+                    Symbol<
+                        6,
+                        Chars<
+                            'P',
+                            Chars<'a', Chars<'u', Chars<'s', Chars<'e', Chars<'d', Nil>>>>>,
+                        >,
+                    >,
+                >>::Value,
+                <Self as ExtractField<
+                    Symbol<
+                        6,
+                        Chars<
+                            'P',
+                            Chars<'a', Chars<'u', Chars<'s', Chars<'e', Chars<'d', Nil>>>>>,
+                        >,
+                    >,
+                >>::Remainder,
+            > {
                 match self {
                     __PartialStatus::Active(value) => Err(__PartialStatus::Active(value)),
                     __PartialStatus::Closed(value) => Err(__PartialStatus::Closed(value)),
@@ -569,7 +671,44 @@ snapshot_derive_cgp_data! {
                         >,
                     >,
                 >,
-            ) -> Result<Self::Value, Self::Remainder> {
+            ) -> Result<
+                <Self as ExtractField<
+                    Symbol<
+                        8,
+                        Chars<
+                            'A',
+                            Chars<
+                                'r',
+                                Chars<
+                                    'c',
+                                    Chars<
+                                        'h',
+                                        Chars<'i', Chars<'v', Chars<'e', Chars<'d', Nil>>>>,
+                                    >,
+                                >,
+                            >,
+                        >,
+                    >,
+                >>::Value,
+                <Self as ExtractField<
+                    Symbol<
+                        8,
+                        Chars<
+                            'A',
+                            Chars<
+                                'r',
+                                Chars<
+                                    'c',
+                                    Chars<
+                                        'h',
+                                        Chars<'i', Chars<'v', Chars<'e', Chars<'d', Nil>>>>,
+                                    >,
+                                >,
+                            >,
+                        >,
+                    >,
+                >>::Remainder,
+            > {
                 match self {
                     __PartialStatus::Active(value) => Err(__PartialStatus::Active(value)),
                     __PartialStatus::Closed(value) => Err(__PartialStatus::Closed(value)),
@@ -603,7 +742,26 @@ snapshot_derive_cgp_data! {
                         >,
                     >,
                 >,
-            ) -> Result<Self::Value, Self::Remainder> {
+            ) -> Result<
+                <Self as ExtractField<
+                    Symbol<
+                        6,
+                        Chars<
+                            'A',
+                            Chars<'c', Chars<'t', Chars<'i', Chars<'v', Chars<'e', Nil>>>>>,
+                        >,
+                    >,
+                >>::Value,
+                <Self as ExtractField<
+                    Symbol<
+                        6,
+                        Chars<
+                            'A',
+                            Chars<'c', Chars<'t', Chars<'i', Chars<'v', Chars<'e', Nil>>>>>,
+                        >,
+                    >,
+                >>::Remainder,
+            > {
                 match self {
                     __PartialRefStatus::Active(value) => Ok(value),
                     __PartialRefStatus::Closed(value) => Err(__PartialRefStatus::Closed(value)),
@@ -639,7 +797,26 @@ snapshot_derive_cgp_data! {
                         >,
                     >,
                 >,
-            ) -> Result<Self::Value, Self::Remainder> {
+            ) -> Result<
+                <Self as ExtractField<
+                    Symbol<
+                        6,
+                        Chars<
+                            'C',
+                            Chars<'l', Chars<'o', Chars<'s', Chars<'e', Chars<'d', Nil>>>>>,
+                        >,
+                    >,
+                >>::Value,
+                <Self as ExtractField<
+                    Symbol<
+                        6,
+                        Chars<
+                            'C',
+                            Chars<'l', Chars<'o', Chars<'s', Chars<'e', Chars<'d', Nil>>>>>,
+                        >,
+                    >,
+                >>::Remainder,
+            > {
                 match self {
                     __PartialRefStatus::Active(value) => Err(__PartialRefStatus::Active(value)),
                     __PartialRefStatus::Closed(value) => Ok(value),
@@ -675,7 +852,26 @@ snapshot_derive_cgp_data! {
                         >,
                     >,
                 >,
-            ) -> Result<Self::Value, Self::Remainder> {
+            ) -> Result<
+                <Self as ExtractField<
+                    Symbol<
+                        6,
+                        Chars<
+                            'P',
+                            Chars<'a', Chars<'u', Chars<'s', Chars<'e', Chars<'d', Nil>>>>>,
+                        >,
+                    >,
+                >>::Value,
+                <Self as ExtractField<
+                    Symbol<
+                        6,
+                        Chars<
+                            'P',
+                            Chars<'a', Chars<'u', Chars<'s', Chars<'e', Chars<'d', Nil>>>>>,
+                        >,
+                    >,
+                >>::Remainder,
+            > {
                 match self {
                     __PartialRefStatus::Active(value) => Err(__PartialRefStatus::Active(value)),
                     __PartialRefStatus::Closed(value) => Err(__PartialRefStatus::Closed(value)),
@@ -729,7 +925,44 @@ snapshot_derive_cgp_data! {
                         >,
                     >,
                 >,
-            ) -> Result<Self::Value, Self::Remainder> {
+            ) -> Result<
+                <Self as ExtractField<
+                    Symbol<
+                        8,
+                        Chars<
+                            'A',
+                            Chars<
+                                'r',
+                                Chars<
+                                    'c',
+                                    Chars<
+                                        'h',
+                                        Chars<'i', Chars<'v', Chars<'e', Chars<'d', Nil>>>>,
+                                    >,
+                                >,
+                            >,
+                        >,
+                    >,
+                >>::Value,
+                <Self as ExtractField<
+                    Symbol<
+                        8,
+                        Chars<
+                            'A',
+                            Chars<
+                                'r',
+                                Chars<
+                                    'c',
+                                    Chars<
+                                        'h',
+                                        Chars<'i', Chars<'v', Chars<'e', Chars<'d', Nil>>>>,
+                                    >,
+                                >,
+                            >,
+                        >,
+                    >,
+                >>::Remainder,
+            > {
                 match self {
                     __PartialRefStatus::Active(value) => Err(__PartialRefStatus::Active(value)),
                     __PartialRefStatus::Closed(value) => Err(__PartialRefStatus::Closed(value)),

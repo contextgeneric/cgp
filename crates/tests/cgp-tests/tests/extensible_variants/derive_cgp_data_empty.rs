@@ -29,17 +29,17 @@ snapshot_derive_cgp_data! {
             type FieldsRef<'__a> = Void where Self: '__a;
         }
         impl FromFields for Never {
-            fn from_fields(rest: Self::Fields) -> Self {
+            fn from_fields(rest: <Self as HasFields>::Fields) -> Self {
                 match rest {}
             }
         }
         impl ToFields for Never {
-            fn to_fields(self) -> Self::Fields {
+            fn to_fields(self) -> <Self as HasFields>::Fields {
                 match self {}
             }
         }
         impl ToFieldsRef for Never {
-            fn to_fields_ref<'__a>(&'__a self) -> Self::FieldsRef<'__a>
+            fn to_fields_ref<'__a>(&'__a self) -> <Self as HasFieldsRef>::FieldsRef<'__a>
             where
                 Self: '__a,
             {
@@ -56,22 +56,26 @@ snapshot_derive_cgp_data! {
         }
         impl HasExtractor for Never {
             type Extractor = __PartialNever;
-            fn to_extractor(self) -> Self::Extractor {
+            fn to_extractor(self) -> <Self as HasExtractor>::Extractor {
                 match self {}
             }
-            fn from_extractor(extractor: Self::Extractor) -> Self {
+            fn from_extractor(extractor: <Self as HasExtractor>::Extractor) -> Self {
                 match extractor {}
             }
         }
         impl HasExtractorRef for Never {
             type ExtractorRef<'__a__> = __PartialRefNever where Self: '__a__;
-            fn extractor_ref<'__a__>(&'__a__ self) -> Self::ExtractorRef<'__a__> {
+            fn extractor_ref<'__a__>(
+                &'__a__ self,
+            ) -> <Self as HasExtractorRef>::ExtractorRef<'__a__> {
                 match *self {}
             }
         }
         impl HasExtractorMut for Never {
             type ExtractorMut<'__a__> = __PartialRefNever where Self: '__a__;
-            fn extractor_mut<'__a__>(&'__a__ mut self) -> Self::ExtractorMut<'__a__> {
+            fn extractor_mut<'__a__>(
+                &'__a__ mut self,
+            ) -> <Self as HasExtractorMut>::ExtractorMut<'__a__> {
                 match *self {}
             }
         }

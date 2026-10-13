@@ -109,7 +109,10 @@ pub fn derive_extract_field_impls(
 
                 type Remainder = #output_type;
 
-                fn extract_field(self, _tag: ::core::marker::PhantomData< #tag_type >) -> Result<Self::Value, Self::Remainder> {
+                fn extract_field(self, _tag: ::core::marker::PhantomData< #tag_type >) -> Result<
+                    <Self as #ExtractField< #tag_type >>::Value,
+                    <Self as #ExtractField< #tag_type >>::Remainder,
+                > {
                     match self {
                         #(#match_arms)*
                     }

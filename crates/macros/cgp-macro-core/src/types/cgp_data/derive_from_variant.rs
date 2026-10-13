@@ -30,7 +30,7 @@ pub fn derive_from_variant_from_enum(item_enum: &ItemEnum) -> syn::Result<Vec<It
             {
                 type Value = #variant_type;
 
-                fn from_variant(_tag: ::core::marker::PhantomData<#variant_tag>, #binding: Self::Value) -> Self {
+                fn from_variant(_tag: ::core::marker::PhantomData<#variant_tag>, #binding: <Self as #FromVariant<#variant_tag>>::Value) -> Self {
                     #constructor
                 }
             }

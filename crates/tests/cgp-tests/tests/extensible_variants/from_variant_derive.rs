@@ -56,7 +56,15 @@ snapshot_derive_from_variant! {
                         >,
                     >,
                 >,
-                value: Self::Value,
+                value: <Self as FromVariant<
+                    Symbol<
+                        6,
+                        Chars<
+                            'C',
+                            Chars<'i', Chars<'r', Chars<'c', Chars<'l', Chars<'e', Nil>>>>>,
+                        >,
+                    >,
+                >>::Value,
             ) -> Self {
                 Self::Circle(value)
             }
@@ -102,7 +110,27 @@ snapshot_derive_from_variant! {
                         >,
                     >,
                 >,
-                value: Self::Value,
+                value: <Self as FromVariant<
+                    Symbol<
+                        9,
+                        Chars<
+                            'R',
+                            Chars<
+                                'e',
+                                Chars<
+                                    'c',
+                                    Chars<
+                                        't',
+                                        Chars<
+                                            'a',
+                                            Chars<'n', Chars<'g', Chars<'l', Chars<'e', Nil>>>>,
+                                        >,
+                                    >,
+                                >,
+                            >,
+                        >,
+                    >,
+                >>::Value,
             ) -> Self {
                 Self::Rectangle(value)
             }

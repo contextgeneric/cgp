@@ -34,6 +34,11 @@ pub mod from_variant_derive;
 // with. A plain behavioral test — the expansion shape is pinned above.
 pub mod derive_cgp_data_lifetime;
 
+// Variants named after the associated types the variant derives implement
+// (`Value`, `Remainder`, `Extractor`, …), which the derives' qualified
+// projections keep unambiguous.
+pub mod reserved_variant_names;
+
 // Variants with no fields (`V`, `V()`, `V {}`), carrying the payload `Nil`
 // through construction, extraction, casts, and both kinds of dispatch.
 pub mod empty_variants;
