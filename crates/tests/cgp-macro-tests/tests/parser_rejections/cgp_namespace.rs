@@ -4,6 +4,8 @@
 //! discarding it. It rejects an attribute on a `:` mapping key, on a `=>` redirect
 //! key, and on a key inside a `for <..> in ..` loop.
 //!
+//! A namespace naming itself as its parent (`new Ns: Ns`) is rejected.
+//!
 //! The header may stand alone: `new Ns` or `new Child: Parent` with no brace pair
 //! parses as an empty table. That relaxation applies only to an input that ends
 //! at the header, so any other token in the body position is still rejected.
@@ -14,7 +16,7 @@
 
 use quote::quote;
 
-use super::assert_macro_rejects;
+use super::{assert_macro_rejects, assert_macro_rejects_with};
 
 #[test]
 fn rejects_attribute_on_mapping_key() {
@@ -77,4 +79,22 @@ fn rejects_stray_token_after_name() {
             new MyNamespace foo
         ))
     });
+}
+
+/// A namespace that names itself as its parent is a cycle visible in one
+/// invocation, so the macro rejects it, with or without type arguments, rather
+/// than emitting impls the compiler rejects with an unconstrained `__Value__`.
+#[test]
+fn rejects_self_inheritance() {
+    assert_macro_rejects_with(
+        "cgp_namespace inheriting itself",
+        "the namespace `SelfNs` cannot inherit from itself; name another namespace as its parent, or omit the parent",
+        || cgp_macro_lib::cgp_namespace(quote!(new SelfNs: SelfNs {})),
+    );
+
+    assert_macro_rejects_with(
+        "cgp_namespace with type arguments inheriting itself",
+        "the namespace `SelfNs` cannot inherit from itself; name another namespace as its parent, or omit the parent",
+        || cgp_macro_lib::cgp_namespace(quote!(<T> new SelfNs<T>: SelfNs<T> {})),
+    );
 }

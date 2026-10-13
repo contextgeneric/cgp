@@ -1,6 +1,7 @@
+use quote::ToTokens;
 use syn::parse::{Parse, ParseStream};
 use syn::token::Colon;
-use syn::{Ident, ItemImpl, ItemStruct, ItemTrait, Type, braced};
+use syn::{Error, Ident, ItemImpl, ItemStruct, ItemTrait, Type, braced};
 
 use crate::functions::parse_internal;
 use crate::traits::ParseOptionalKeyword;
@@ -32,6 +33,7 @@ impl Parse for NamespaceTable {
         let parent_namespace = if input.peek(Colon) {
             let colon: Colon = input.parse()?;
             let parent_namespace_type = input.parse()?;
+            reject_self_inheritance(&namespace_type, &parent_namespace_type)?;
             Some((colon, parent_namespace_type))
         } else {
             None
@@ -54,6 +56,31 @@ impl Parse for NamespaceTable {
             entries,
         })
     }
+}
+
+/// Reject a namespace that names itself as its parent, `new Ns: Ns`, a cycle visible in this one
+/// invocation. A cycle across several namespaces is not visible here.
+fn reject_self_inheritance(
+    namespace: &IdentWithTypeArgs,
+    parent: &PathWithTypeArgs,
+) -> syn::Result<()> {
+    let names_itself = parent.path.leading_colon.is_none()
+        && parent.path.segments.len() == 1
+        && parent.path.segments[0].ident == namespace.ident
+        && parent.type_args.to_token_stream().to_string()
+            == namespace.type_args.to_token_stream().to_string();
+
+    if names_itself {
+        return Err(Error::new_spanned(
+            parent,
+            format!(
+                "the namespace `{}` cannot inherit from itself; name another namespace as its parent, or omit the parent",
+                namespace.ident
+            ),
+        ));
+    }
+
+    Ok(())
 }
 
 impl NamespaceTable {
