@@ -2,7 +2,8 @@
 //! entry or `#[prefix]` attribute. Each `assert_same_type` call compiles only if
 //! the two types are identical, pinning the segment classification: a lowercase
 //! segment becomes a `Symbol!`, a capitalized segment stays a type, a primitive
-//! name such as `u32` stays the primitive, and the chain ends in `Nil`.
+//! name such as `u32` stays the primitive while a near miss such as `f` or `u2`
+//! becomes a symbol, and the chain ends in `Nil`.
 //!
 //! See cgp-knowledge-base/cgp/reference/macros/path.md.
 
@@ -34,5 +35,17 @@ fn test_path_macro_segments() {
     assert_same_type(
         PhantomData::<Path!(@app.u32.bool)>,
         PhantomData::<PathCons<Symbol!("app"), PathCons<u32, PathCons<bool, Nil>>>>,
+    );
+
+    // Only real primitive names stay types: `f`, `u2`, and `i7` look like
+    // primitives but are none, so each becomes a symbol.
+    assert_same_type(
+        PhantomData::<Path!(@f.u2.i7.f64)>,
+        PhantomData::<
+            PathCons<
+                Symbol!("f"),
+                PathCons<Symbol!("u2"), PathCons<Symbol!("i7"), PathCons<f64, Nil>>>,
+            >,
+        >,
     );
 }
