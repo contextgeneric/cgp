@@ -1,8 +1,10 @@
 use proc_macro2::Span;
-use syn::{Generics, ItemImpl, Type};
+use syn::{GenericParam, Generics, ItemImpl, Type, WherePredicate};
 
 use crate::exports::{DelegateComponent, IsProviderFor};
-use crate::functions::{merge_generics, override_item_span, parse_internal};
+use crate::functions::{
+    merge_generics, override_item_span, override_synthesized_span, parse_internal,
+};
 
 /// The flat form every key, value, and statement collapses to; it renders the
 /// impl pair for one wiring entry.
@@ -15,6 +17,17 @@ pub struct EvaluatedDelegateEntry {
     /// reported on the entry the user wrote. Sourced from the key's original token
     /// rather than the (possibly synthesized) `key` type — see `respan_impl`.
     pub span: Span,
+    /// Where the synthesized tokens of the `type Delegate = …;` item and of the
+    /// `IsProviderFor` impl's bound on the value go, when the value mixes them with the
+    /// user's: a `->` entry's projection, whose errors (the table lacking the key) would
+    /// otherwise span the whole block. `None` leaves them as built.
+    pub delegate_span: Option<Span>,
+    /// Where the `IsProviderFor` impl's `__Context__` and `__Params__: ?Sized` parameters go
+    /// for a `->` entry. rustc reports a false global bound at the first `where` predicate
+    /// whose span contains it, and an inline parameter bound is such a predicate, so this
+    /// span must not contain `delegate_span`, or the parameter would claim the entry's
+    /// errors. `None` leaves the parameters as built.
+    pub params_span: Option<Span>,
 }
 
 /// Lower a construct into a single evaluated entry.
@@ -43,7 +56,7 @@ impl EvaluatedDelegateEntry {
 
         let (impl_generics, _, where_clause) = generics.split_for_impl();
 
-        let item_impl = parse_internal! {
+        let mut item_impl: ItemImpl = parse_internal! {
             impl #impl_generics
                 #DelegateComponent< #key >
                 for #table_type
@@ -52,6 +65,12 @@ impl EvaluatedDelegateEntry {
                 type Delegate = #value;
             }
         };
+
+        if let Some(delegate_span) = self.delegate_span {
+            for item in item_impl.items.iter_mut() {
+                *item = override_synthesized_span(delegate_span, item)?;
+            }
+        }
 
         self.respan_impl(item_impl)
     }
@@ -69,15 +88,30 @@ impl EvaluatedDelegateEntry {
         let key = &self.key;
         let value = &self.value;
 
-        generics.params.push(parse_internal!(__Context__));
-        generics.params.push(parse_internal!(__Params__: ?Sized));
+        let mut context_param: GenericParam = parse_internal!(__Context__);
+        let mut params_param: GenericParam = parse_internal!(__Params__: ?Sized);
 
-        generics
-            .make_where_clause()
-            .predicates
-            .push(parse_internal! {
-                #value: #IsProviderFor<#key, __Context__, __Params__>
-            });
+        // Left spanning the whole block, `__Params__: ?Sized` would claim a `->` entry's
+        // false-bound errors; see `params_span`.
+        if let Some(params_span) = self.params_span {
+            context_param = override_synthesized_span(params_span, &context_param)?;
+            params_param = override_synthesized_span(params_span, &params_param)?;
+        }
+
+        generics.params.push(context_param);
+        generics.params.push(params_param);
+
+        let mut provider_bound: WherePredicate = parse_internal! {
+            #value: #IsProviderFor<#key, __Context__, __Params__>
+        };
+
+        // A `->` entry's bound is ill-formed when the table lacks the key, so its
+        // synthesized tokens go where the `type Delegate` item's do.
+        if let Some(delegate_span) = self.delegate_span {
+            provider_bound = override_synthesized_span(delegate_span, &provider_bound)?;
+        }
+
+        generics.make_where_clause().predicates.push(provider_bound);
 
         let (impl_generics, _, where_clause) = generics.split_for_impl();
 

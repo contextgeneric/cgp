@@ -65,6 +65,8 @@ impl EvalDelegateEntries for OpenDelegateStatement {
                 table_type: table_type.clone(),
                 generics: Default::default(),
                 span: component.span(),
+                delegate_span: None,
+                params_span: None,
                 key,
                 value,
             })
