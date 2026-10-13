@@ -1,8 +1,10 @@
 //! `#[cgp_component]` rejects inputs it cannot lower into a component: a
 //! non-trait item, a trait carrying a const generic parameter, attribute
 //! arguments with a repeated key, an unknown key, or no `provider` key, a
-//! `name` whose parameters the trait does not declare, and a `#[uses]`
-//! attribute, which belongs on a provider (`#[extend]` adds a supertrait).
+//! `name` whose parameters the trait does not declare, a `#[uses]`
+//! attribute, which belongs on a provider (`#[extend]` adds a supertrait), and
+//! a method parameter that is not a plain name, which the generated impls could
+//! not forward.
 //!
 //! See cgp-knowledge-base/cgp/implementation/entrypoints/cgp_component.md (Tests) for these failure
 //! cases, and cgp-knowledge-base/cgp/reference/macros/cgp_component.md for the user-facing
@@ -134,6 +136,51 @@ fn rejects_uses_attribute() {
                     #[uses(HasName)]
                     pub trait CanGreet {
                         fn greet(&self);
+                    }
+                ),
+            )
+        },
+    );
+}
+
+const UNNAMED_PARAMETER: &str = "a component method parameter needs a plain name, since the generated impls forward each argument by name; write a name such as `_value`, and destructure inside a default body";
+
+/// The generated impls forward each argument to the provider by name, so a `_`
+/// parameter, which Rust allows in a method without a body, is rejected with a
+/// message saying what to write rather than an internal parse error.
+#[test]
+fn rejects_unnamed_parameter() {
+    assert_macro_rejects_with(
+        "cgp_component with a `_` parameter",
+        UNNAMED_PARAMETER,
+        || {
+            cgp_macro_lib::cgp_component(
+                quote!(Counter),
+                quote!(
+                    pub trait CanCount {
+                        fn count(&self, _: u32) -> u32;
+                    }
+                ),
+            )
+        },
+    );
+}
+
+/// A destructuring pattern in a default method has no single name to forward
+/// either.
+#[test]
+fn rejects_destructuring_parameter() {
+    assert_macro_rejects_with(
+        "cgp_component with a destructuring parameter",
+        UNNAMED_PARAMETER,
+        || {
+            cgp_macro_lib::cgp_component(
+                quote!(Adder),
+                quote!(
+                    pub trait CanAdd {
+                        fn add(&self, (a, b): (u32, u32)) -> u32 {
+                            a + b
+                        }
                     }
                 ),
             )
