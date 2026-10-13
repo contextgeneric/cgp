@@ -39,6 +39,10 @@ pub mod derive_cgp_data_lifetime;
 // projections keep unambiguous.
 pub mod reserved_variant_names;
 
+// A variant helper attribute of another derive, which the extractor's companion
+// enums must not copy.
+pub mod variant_helper_attribute;
+
 // Variants with no fields (`V`, `V()`, `V {}`), carrying the payload `Nil`
 // through construction, extraction, casts, and both kinds of dispatch.
 pub mod empty_variants;

@@ -2,7 +2,7 @@ use syn::{GenericParam, Ident, ItemStruct, Type, TypeParam};
 
 use crate::exports::MapType;
 use crate::parse_internal;
-use crate::types::cgp_data::index_to_generic_ident;
+use crate::types::cgp_data::{index_to_generic_ident, retain_companion_attrs};
 
 pub fn derive_builder_struct(
     context_struct: &ItemStruct,
@@ -16,6 +16,8 @@ pub fn derive_builder_struct(
     let generics = &mut builder_struct.generics;
 
     for (i, field) in builder_struct.fields.iter_mut().enumerate() {
+        retain_companion_attrs(&mut field.attrs);
+
         let generic_param_name = index_to_generic_ident(i);
 
         let generic_param: TypeParam = parse_internal! {
