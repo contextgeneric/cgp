@@ -2,8 +2,8 @@
 //! entry or `#[prefix]` attribute. Each `assert_same_type` call compiles only if
 //! the two types are identical, pinning the segment classification: a lowercase
 //! segment becomes a `Symbol!`, a capitalized segment stays a type, a primitive
-//! name such as `u32` stays the primitive while a near miss such as `f` or `u2`
-//! becomes a symbol, and the chain ends in `Nil`.
+//! name such as `u32` stays the primitive (each of the seventeen is asserted) while a near miss
+//! such as `f` or `u2` becomes a symbol, and the chain ends in `Nil`.
 //!
 //! See cgp-knowledge-base/cgp/reference/macros/path.md.
 
@@ -13,7 +13,18 @@ use cgp::prelude::*;
 
 pub struct ErrorRaiserComponent;
 
-fn assert_same_type<T>(_: PhantomData<T>, _: PhantomData<T>) {}
+fn assert_same_type<T: ?Sized>(_: PhantomData<T>, _: PhantomData<T>) {}
+
+macro_rules! assert_primitive_segments {
+    ($($primitive:ident),*) => {
+        $(
+            assert_same_type(
+                PhantomData::<Path!(@$primitive)>,
+                PhantomData::<PathCons<$primitive, Nil>>,
+            );
+        )*
+    };
+}
 
 #[test]
 fn test_path_macro_segments() {
@@ -47,5 +58,10 @@ fn test_path_macro_segments() {
                 PathCons<Symbol!("u2"), PathCons<Symbol!("i7"), PathCons<f64, Nil>>>,
             >,
         >,
+    );
+
+    // Every primitive name stays the primitive type, `str` included.
+    assert_primitive_segments!(
+        u8, u16, u32, u64, u128, usize, i8, i16, i32, i64, i128, isize, f32, f64, char, bool, str
     );
 }
