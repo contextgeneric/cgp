@@ -4,7 +4,8 @@
 //! discarding it. It rejects an attribute on a `:` mapping key, on a `=>` redirect
 //! key, and on a key inside a `for <..> in ..` loop.
 //!
-//! A namespace naming itself as its parent (`new Ns: Ns`) is rejected.
+//! A namespace naming itself as its parent (`new Ns: Ns`, or another instance of itself such as
+//! `Ns<u32>`) is rejected.
 //!
 //! The header may stand alone: `new Ns` or `new Child: Parent` with no brace pair
 //! parses as an empty table. That relaxation applies only to an input that ends
@@ -97,4 +98,14 @@ fn rejects_self_inheritance() {
         "the namespace `SelfNs` cannot inherit from itself; name another namespace as its parent, or omit the parent",
         || cgp_macro_lib::cgp_namespace(quote!(<T> new SelfNs<T>: SelfNs<T> {})),
     );
+
+    // Another instance of the namespace is the same parent rule again, at a fixed or a growing
+    // type, so the arguments do not matter.
+    for parent in [quote!(SelfNs<u32>), quote!(SelfNs<Vec<T>>)] {
+        assert_macro_rejects_with(
+            "cgp_namespace inheriting another instance of itself",
+            "the namespace `SelfNs` cannot inherit from itself; name another namespace as its parent, or omit the parent",
+            || cgp_macro_lib::cgp_namespace(quote!(<T> new SelfNs<T>: #parent {})),
+        );
+    }
 }

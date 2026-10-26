@@ -1,4 +1,3 @@
-use quote::ToTokens;
 use syn::parse::{Parse, ParseStream};
 use syn::token::Colon;
 use syn::{Error, Ident, ItemImpl, ItemStruct, ItemTrait, Type, braced};
@@ -59,20 +58,22 @@ impl Parse for NamespaceTable {
 }
 
 /// Reject a namespace that names itself as its parent, `new Ns: Ns`, a cycle visible in this one
-/// invocation. A cycle across several namespaces is not visible here.
+/// invocation. The parent's arguments do not matter: every instance of the namespace has the same
+/// parent rule, so `<T> new Ns<T>: Ns<u32>` asks `Ns<u32>` again for a key its table lacks, and
+/// `Ns<Vec<T>>` asks an ever larger instance. A cycle across several namespaces is not visible here.
 fn reject_self_inheritance(
     namespace: &IdentWithTypeArgs,
     parent: &PathWithTypeArgs,
 ) -> syn::Result<()> {
     let names_itself = parent.path.leading_colon.is_none()
         && parent.path.segments.len() == 1
-        && parent.path.segments[0].ident == namespace.ident
-        && parent.type_args.to_token_stream().to_string()
-            == namespace.type_args.to_token_stream().to_string();
+        && parent.path.segments[0].ident == namespace.ident;
 
     if names_itself {
+        // On the path alone: the parent's `<…>` is rebuilt from its arguments with the macro's
+        // span, which would widen the caret to the whole invocation.
         return Err(Error::new_spanned(
-            parent,
+            &parent.path,
             format!(
                 "the namespace `{}` cannot inherit from itself; name another namespace as its parent, or omit the parent",
                 namespace.ident
