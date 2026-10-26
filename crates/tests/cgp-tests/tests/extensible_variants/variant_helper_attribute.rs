@@ -1,9 +1,9 @@
 //! A variant helper attribute of another derive, here `Default`'s `#[default]`, on an enum that also
 //! derives `CgpData`.
 //!
-//! The extractor's companion enums copy the input's variants, but keep only their `#[cfg]` and
-//! documentation attributes, so the `#[default]` stays on `Mode` alone and does not reach a
-//! companion that lacks `#[derive(Default)]`.
+//! The extractor's companion enums copy the input's variants, but keep only their documentation,
+//! so the `#[default]` stays on `Mode` alone and does not reach a companion that lacks
+//! `#[derive(Default)]`.
 //!
 //! See cgp-knowledge-base/cgp/implementation/entrypoints/derive_extract_field.md.
 
