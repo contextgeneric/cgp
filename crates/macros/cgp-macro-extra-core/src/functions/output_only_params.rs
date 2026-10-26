@@ -1,5 +1,6 @@
+use proc_macro2::{TokenStream, TokenTree};
 use syn::visit::{self, Visit};
-use syn::{Error, FnArg, GenericParam, Ident, Signature, WherePredicate};
+use syn::{Error, FnArg, GenericParam, Ident, Macro, Signature, WherePredicate};
 
 /// Reject a type or const parameter that no argument type names and no other bound names.
 ///
@@ -101,4 +102,21 @@ impl<'ast> Visit<'ast> for FindIdent<'_> {
 
         visit::visit_ident(self, ident);
     }
+
+    /// A type macro such as `Product![T, u32]` is only tokens to `syn`, so its tokens are searched
+    /// for the name; a token of that name counts as naming the parameter, which leaves any doubt
+    /// to the compiler.
+    fn visit_macro(&mut self, mac: &'ast Macro) {
+        if tokens_name(&mac.tokens, self.target) {
+            self.found = true;
+        }
+    }
+}
+
+fn tokens_name(tokens: &TokenStream, target: &Ident) -> bool {
+    tokens.clone().into_iter().any(|tree| match tree {
+        TokenTree::Ident(ident) => ident == *target,
+        TokenTree::Group(group) => tokens_name(&group.stream(), target),
+        _ => false,
+    })
 }

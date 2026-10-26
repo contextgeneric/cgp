@@ -3,8 +3,9 @@
 //!
 //! The function's generics and `where` clause move onto the generated impl, ahead
 //! of the reserved `__Context__` and `__Code__` parameters. Each parameter here
-//! appears in an input type, or is bound through one (`first_item`'s `T`), which
-//! is what keeps it constrained by the impl.
+//! appears in an input type, inside a type macro there (`first_of_pair`'s `T`), or
+//! is bound through one (`first_item`'s `T`), which is what keeps it constrained by
+//! the impl.
 //!
 //! See cgp-knowledge-base/cgp/implementation/entrypoints/cgp_computer.md and
 //! cgp-knowledge-base/cgp/reference/macros/cgp_computer.md.
@@ -549,6 +550,14 @@ fn first_item<I: IntoIterator<Item = T>, T>(items: I) -> Option<T> {
     items.into_iter().next()
 }
 
+// `T` appears in the input only inside a type macro, `Product![T, T]`, whose tokens the macro
+// reads as well, so it accepts it.
+#[cgp_computer]
+fn first_of_pair<T>(pair: Product![T, T]) -> T {
+    let Cons(first, _) = pair;
+    first
+}
+
 pub struct App;
 
 #[test]
@@ -559,4 +568,5 @@ fn test_computer_generics() {
     assert_eq!(FirstChar::compute(&App, code, "abc"), "a");
     assert_eq!(SumArray::compute(&App, code, [1, 2, 3]), 6);
     assert_eq!(FirstItem::compute(&App, code, vec![4, 5]), Some(4));
+    assert_eq!(FirstOfPair::compute(&App, code, product![6, 7]), 6);
 }
