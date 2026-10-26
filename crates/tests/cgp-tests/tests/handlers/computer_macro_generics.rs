@@ -550,11 +550,20 @@ fn first_item<I: IntoIterator<Item = T>, T>(items: I) -> Option<T> {
     items.into_iter().next()
 }
 
-// `T` appears in the input only inside a type macro, `Product![T, T]`, whose tokens the macro
+// The same binding written as a `where` predicate.
+#[cgp_computer]
+fn last_item<I, T>(items: I) -> Option<T>
+where
+    I: IntoIterator<Item = T>,
+{
+    items.into_iter().last()
+}
+
+// `T` appears in the input only inside a type macro, in a tuple there, whose tokens the macro
 // reads as well, so it accepts it.
 #[cgp_computer]
-fn first_of_pair<T>(pair: Product![T, T]) -> T {
-    let Cons(first, _) = pair;
+fn first_of_pair<T>(pair: Product![(T, T)]) -> T {
+    let Cons((first, _), _) = pair;
     first
 }
 
@@ -568,5 +577,6 @@ fn test_computer_generics() {
     assert_eq!(FirstChar::compute(&App, code, "abc"), "a");
     assert_eq!(SumArray::compute(&App, code, [1, 2, 3]), 6);
     assert_eq!(FirstItem::compute(&App, code, vec![4, 5]), Some(4));
-    assert_eq!(FirstOfPair::compute(&App, code, product![6, 7]), 6);
+    assert_eq!(LastItem::compute(&App, code, vec![4, 5]), Some(5));
+    assert_eq!(FirstOfPair::compute(&App, code, product![(6, 7)]), 6);
 }

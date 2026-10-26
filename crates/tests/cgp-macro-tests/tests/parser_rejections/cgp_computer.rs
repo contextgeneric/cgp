@@ -113,20 +113,29 @@ fn rejects_impl_trait_return() {
 /// macro rejects it on the parameter rather than emitting an `E0207`.
 #[test]
 fn rejects_output_only_type_parameter() {
-    assert_macro_rejects_with(
-        "cgp_computer with a type parameter only the return type uses",
-        "the parameter `T` appears in no argument type, so the generated `Computer` impl cannot determine it; take an argument whose type names `T`, or write the provider by hand as a `Computer` impl on a provider generic over `T`",
-        || {
-            cgp_macro_extra_lib::cgp_computer(
-                quote!(),
-                quote!(
-                    fn parse<T: core::str::FromStr>(value: String) -> Option<T> {
-                        value.parse().ok()
-                    }
-                ),
-            )
-        },
-    );
+    // A bound on the parameter itself, inline or in a `where` clause, names it but does not
+    // determine it.
+    for function in [
+        quote!(
+            fn parse<T: core::str::FromStr>(value: String) -> Option<T> {
+                value.parse().ok()
+            }
+        ),
+        quote!(
+            fn parse<T>(value: String) -> Option<T>
+            where
+                T: core::str::FromStr,
+            {
+                value.parse().ok()
+            }
+        ),
+    ] {
+        assert_macro_rejects_with(
+            "cgp_computer with a type parameter only the return type uses",
+            "the parameter `T` appears in no argument type, so the generated `Computer` impl cannot determine it; take an argument whose type names `T`, or write the provider by hand as a `Computer` impl on a provider generic over `T`",
+            || cgp_macro_extra_lib::cgp_computer(quote!(), function.clone()),
+        );
+    }
 }
 
 /// A const parameter only the return type uses is just as undetermined.
