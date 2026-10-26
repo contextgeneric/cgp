@@ -28,11 +28,22 @@ pub fn signature_to_delegated_impl_item_fn(
         ) #await_expr
     });
 
+    // A `mut` on a parameter belongs to the default body that mutates it; the forwarding body
+    // only passes the argument on, where the `mut` would be unused.
+    let mut sig = signature.clone();
+    for input in sig.inputs.iter_mut() {
+        if let FnArg::Typed(arg) = input
+            && let Pat::Ident(pat) = arg.pat.as_mut()
+        {
+            pat.mutability = None;
+        }
+    }
+
     let item = ImplItemFn {
         attrs: Vec::new(),
         vis: Visibility::Inherited,
         defaultness: None,
-        sig: signature.clone(),
+        sig,
         block: body,
     };
 
@@ -43,15 +54,14 @@ fn signature_to_idents(sig: &Signature) -> syn::Result<Punctuated<Ident, Comma>>
     sig.inputs.iter().map(arg_to_ident).collect()
 }
 
-/// The name an argument is forwarded by. A parameter that is not a plain name (`_`, `mut value`,
-/// a destructuring pattern) has none, so it is rejected with a message saying what to write.
+/// The name an argument is forwarded by, a `mut value` parameter's included. A parameter without a
+/// name of its own (`_`, `ref value`, a destructuring pattern) has none, so it is rejected with a
+/// message saying what to write.
 fn arg_to_ident(arg: &FnArg) -> syn::Result<Ident> {
     match arg {
         FnArg::Receiver(_) => Ok(Ident::new("self", Span::call_site())),
         FnArg::Typed(arg) => match arg.pat.as_ref() {
-            Pat::Ident(pat)
-                if pat.by_ref.is_none() && pat.mutability.is_none() && pat.subpat.is_none() =>
-            {
+            Pat::Ident(pat) if pat.by_ref.is_none() && pat.subpat.is_none() => {
                 Ok(pat.ident.clone())
             }
             pat => Err(Error::new_spanned(

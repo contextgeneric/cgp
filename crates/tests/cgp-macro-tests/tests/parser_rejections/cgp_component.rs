@@ -166,6 +166,31 @@ fn rejects_unnamed_parameter() {
     );
 }
 
+/// A `ref` binding and a binding with a subpattern are no plain name either: the
+/// forwarding impls would pass a reference, or leave the subpattern's bindings
+/// unused.
+#[test]
+fn rejects_ref_and_subpattern_parameters() {
+    for parameter in [quote!(ref count: u32), quote!(pair @ (a, b): (u32, u32))] {
+        assert_macro_rejects_with(
+            "cgp_component with a `ref` or `@` parameter",
+            UNNAMED_PARAMETER,
+            || {
+                cgp_macro_lib::cgp_component(
+                    quote!(Counter),
+                    quote!(
+                        pub trait CanCount {
+                            fn count(&self, #parameter) -> u32 {
+                                0
+                            }
+                        }
+                    ),
+                )
+            },
+        );
+    }
+}
+
 /// A destructuring pattern in a default method has no single name to forward
 /// either.
 #[test]
