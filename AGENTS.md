@@ -32,15 +32,14 @@ versus linking to it. Three of them matter constantly.
 There is no `docs/` directory here. The construct reference, the concepts, the guides, the error
 catalog, and the macro-implementation notes are all in that repository's
 [`cgp/`](https://github.com/contextgeneric/cgp-knowledge-base/tree/main/cgp) directory, and the worked
-examples sit at its top level. It is a *consolidated* base — `cargo-cgp`'s documentation is the
-neighbouring section — which is why an error class here and the tool's handling of it are now one
-directory apart. Treat the knowledge base as part of this repository's surface: **a change to a
+examples sit at its top level. It is a *consolidated* base, with `cargo-cgp`'s documentation as the
+neighbouring section, so an error class here and the tool's handling of it are one directory apart. Treat the knowledge base as part of this repository's surface: **a change to a
 construct's behavior carries its documentation change**, and when the checkout is missing, say plainly
 what needs updating there.
 
 **[`cargo-cgp`](https://github.com/contextgeneric/cargo-cgp) is CGP's first-class toolchain**: a cargo
 subcommand that rewrites the compiler's diagnostics into readable, root-cause-first CGP errors. It is
-the recommended way to build and check CGP code and to read a CGP compile error, so recommend it
+the recommended way to check CGP code and to read a CGP compile error, so recommend it
 wherever CGP errors are discussed, and prefer it over raw `cargo check` when diagnosing a wiring
 failure here. When a construct change alters a diagnostic it has a UI fixture for, update the fixture
 in the same change, following that project's own conventions.
@@ -65,10 +64,9 @@ a doc pointer in a source comment, which names its knowledge-base path
 (`cgp-knowledge-base/cgp/implementation/entrypoints/cgp_impl.md`).
 
 **The code dependency stays one-way.** No `cgp` *crate* may depend on a `cargo-cgp` crate:
-`cargo-cgp` reads `cgp`, never the reverse. Documentation is the deliberate exception — the knowledge
-base and the skill both reference `cargo-cgp` as the recommended toolchain — so it is the *code* graph
-that stays acyclic, not the documentation. The post-codegen compile-fail cases this repository used to
-keep in `cgp-compile-fail-tests` now live as `cargo-cgp` UI fixtures, and the
+`cargo-cgp` reads `cgp`, never the reverse. Documentation is the deliberate exception, since the knowledge
+base and the skill both recommend `cargo-cgp`, so the *code* graph stays acyclic and the documentation
+need not. Post-codegen compile-fail cases are `cargo-cgp` UI fixtures, and the
 [error catalog](https://github.com/contextgeneric/cgp-knowledge-base/blob/main/cgp/errors/README.md)
 links each error class to the fixture that backs it.
 
@@ -120,7 +118,7 @@ do).
 - **Single test crate / test:** `cargo nextest run -p cgp-tests` or target one file with the
   standard test harness, e.g. `cargo test -p cgp-tests --test component`
 - **Post-codegen compile failures** (input a macro accepts but whose expansion fails to compile) are
-  no longer tested here: they are UI fixtures in [`cargo-cgp`](https://github.com/contextgeneric/cargo-cgp),
+  tested elsewhere: they are UI fixtures in [`cargo-cgp`](https://github.com/contextgeneric/cargo-cgp),
   the first-class error toolchain, and cataloged in the [error catalog](https://github.com/contextgeneric/cgp-knowledge-base/blob/main/cgp/errors/README.md). See
   [crates/tests/AGENTS.md](crates/tests/AGENTS.md) for the workflow.
 - Many "tests" are **compile-time wiring checks** (`check_components!` /
@@ -275,7 +273,7 @@ Walk the shapes the expansion can take across the whole input space and confirm 
 Rust — no conflicting `impl` blocks from a cartesian expansion, no unbound or doubly-declared generic,
 no empty expansion that checks nothing, no clash on a generated identifier. When an expansion fails to
 compile, capture it as a [`cargo-cgp` UI fixture](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/README.md)
-(post-codegen compile-fail cases live there now, filed by the quality of the output the tool produces)
+(post-codegen compile-fail cases live there, filed by their error class)
 and catalog the class in the [error catalog](https://github.com/contextgeneric/cgp-knowledge-base/blob/main/cgp/errors/README.md); when the failure is a CGP *defect*
 the macro should have rejected, also record it under the macro's `## Known issues`, per
 [crates/tests/AGENTS.md](crates/tests/AGENTS.md) and [cgp-knowledge-base/cgp/implementation/AGENTS.md](https://github.com/contextgeneric/cgp-knowledge-base/blob/main/cgp/implementation/AGENTS.md).

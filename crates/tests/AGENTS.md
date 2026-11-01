@@ -22,12 +22,11 @@ The test suite has two jobs, split across crates:
   invalid tokens** a macro emits (`invalid_expansion` string snapshots).
 
 **Post-codegen compile failures are tested in `cargo-cgp`, not here.** The cases where a
-macro *accepts* input but its *expansion* then fails to compile — and the cross-crate
-coherence and orphan-rule fixtures that once lived in `cgp-test-crate-a`/`-b` — were
-migrated to `cargo-cgp`'s UI test suite, which pins the readable errors the tool renders
-for each class. `cargo-cgp` is CGP's first-class error toolchain, so those diagnostics
-belong where the tool that improves them lives; see "Adding a failure case" for the new
-workflow.
+macro *accepts* input but its *expansion* then fails to compile, and the cross-crate
+coherence and orphan-rule fixtures, are in `cargo-cgp`'s UI test suite, which pins the
+readable errors the tool renders for each class. `cargo-cgp` is CGP's first-class error
+toolchain, so those diagnostics belong where the tool that improves them lives; see
+"Adding a failure case" for the workflow.
 
 ## Organize by concept, not by construct
 
@@ -134,20 +133,20 @@ which is enough to pin a rejection and gives a precise check of the macro's own
 diagnostic. This is the right tool for a structural error the macro is expected to
 catch, and such a case does **not** also need a compile-fail test.
 
-**Input a macro accepts whose expansion fails to compile — a UI fixture in
+**Input a macro accepts whose expansion fails to compile: a UI fixture in
 `cargo-cgp`.** Reserve these for input a CGP macro *accepts* but whose *expansion* then
-fails to type- or borrow-check — the failure lands on the emitted Rust, not inside the
-macro. These **no longer live in this repository**: they are UI fixtures in `cargo-cgp`,
+fails to type- or borrow-check, so the failure lands on the emitted Rust, not inside the
+macro. These **live in another repository**: they are UI fixtures in `cargo-cgp`,
 the tool that rewrites such errors into readable form, so the pinned snapshot is what a
-user actually sees rather than the raw cascade. Add the fixture there — a standalone
+user actually sees rather than the raw cascade. Add the fixture there, a standalone
 `.rs` program with `fn main`, plus a `//@aux-build: <crate>` directive when the case is
-cross-crate — following
+cross-crate, following
 [cargo-cgp's UI-test guide](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/README.md);
 its harness records both `cargo-cgp`'s output (`.cgp.stderr`) and the raw compiler
 baseline (`.rust.stderr`). cargo-cgp files a fixture under its **error class**,
 mirroring the knowledge base's error catalog, and records the quality of its output in a
-`//@quality:` header (`acceptable` when the tool already leads with the root cause,
-`usability` when the cause is present but buried). Then catalog the class and link the
+`//@quality:` header (`acceptable` when the tool leads with the root cause, `usability`
+when the cause is present but buried, `hidden` when it is absent). Then catalog the class and link the
 fixture (below).
 
 **Pinning the exact invalid output** is a separate, rarer need that *does* stay here:
@@ -163,7 +162,7 @@ reader-facing documentation for these errors (see
 [cgp-knowledge-base/cgp/errors/AGENTS.md](https://github.com/contextgeneric/cgp-knowledge-base/blob/main/cgp/errors/AGENTS.md)): the class doc describes the raw
 diagnostic *and* how cargo-cgp presents it, and links the backing `cargo-cgp` UI fixture
 as a GitHub URL. When a construct change alters such a diagnostic, the cross-project
-[sync rule](../../AGENTS.md) applies — update the `cargo-cgp` fixture and the class doc
+[sync rule](../../AGENTS.md) applies: update the `cargo-cgp` fixture and the class doc
 here together when both repos are checked out. A macro's **implementation document**
 still records the *rejection* cases it catches and its behavioral tests (its
 `## Known issues` and `## Tests` sections); the accept-then-fail classes are documented in the
@@ -201,10 +200,8 @@ macro's accepted input or its *expansion*, also check the post-codegen behavior 
 `cargo-cgp`'s UI suite (its fixtures compile CGP code through the tool), per the
 cross-project [sync rule](../../AGENTS.md).
 
-## Migration status
+## Growing the suite
 
-The suite was reorganized from a by-construct layout to this by-concept layout. As
-categories grow, keep splitting them per the rule above, and keep expanding rejection
-coverage in `cgp-macro-tests`. Post-codegen compile-fail coverage and cross-crate
-coverage now grow in `cargo-cgp`'s UI suite rather than here (the former
-`cgp-compile-fail-tests` and `cgp-test-crate-*` packages were migrated there).
+As categories grow, keep splitting them per the rule above, and keep expanding rejection coverage in
+`cgp-macro-tests`. Post-codegen compile-fail coverage and cross-crate coverage grow in `cargo-cgp`'s UI
+suite rather than here.
