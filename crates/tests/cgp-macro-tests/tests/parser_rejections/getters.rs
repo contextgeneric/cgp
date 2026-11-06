@@ -113,10 +113,11 @@ fn rejects_mutable_return_without_mut_self() {
 #[test]
 fn rejects_optional_slice_return() {
     // `Option<&T>` reads an `Option<T>` field, which an unsized slice cannot fill, so
-    // `Option<&[u8]>` is rejected with the sized container to read instead.
+    // `Option<&[u8]>` is rejected with the sized container to read instead, both named with
+    // the element type the getter wrote.
     assert_macro_rejects_with(
         "cgp_auto_getter returning `Option<&[u8]>`",
-        "`Option<&[T]>` would read an `Option<[T]>` field, which cannot exist because a slice is unsized; read an `Option<Vec<T>>` field as `Option<&Vec<T>>` instead",
+        "`Option<&[u8]>` would read an `Option<[u8]>` field, which cannot exist because a slice is unsized; read an `Option<Vec<u8>>` field as `Option<&Vec<u8>>` instead",
         || {
             cgp_macro_lib::cgp_auto_getter(
                 quote!(),
@@ -136,7 +137,7 @@ fn rejects_optional_mutable_slice_return() {
     // naming the mutable read.
     assert_macro_rejects_with(
         "cgp_auto_getter returning `Option<&mut [u8]>`",
-        "`Option<&mut [T]>` would read an `Option<[T]>` field, which cannot exist because a slice is unsized; read an `Option<Vec<T>>` field as `Option<&mut Vec<T>>` instead",
+        "`Option<&mut [u8]>` would read an `Option<[u8]>` field, which cannot exist because a slice is unsized; read an `Option<Vec<u8>>` field as `Option<&mut Vec<u8>>` instead",
         || {
             cgp_macro_lib::cgp_auto_getter(
                 quote!(),
@@ -153,14 +154,21 @@ fn rejects_optional_mutable_slice_return() {
 #[test]
 fn rejects_optional_trait_object_return() {
     // A trait object is unsized like a slice, so `Option<&dyn Debug>` has no field to
-    // read either; the parenthesized form is the same type.
-    for return_type in [
-        quote!(Option<&dyn core::fmt::Debug>),
-        quote!(Option<&(dyn core::fmt::Debug + Send)>),
+    // read either; the parenthesized form is the same type, which the message quotes as
+    // written and names inside the containers without its parentheses.
+    for (return_type, message) in [
+        (
+            quote!(Option<&dyn core::fmt::Debug>),
+            "`Option<&dyn core::fmt::Debug>` would read an `Option<dyn core::fmt::Debug>` field, which cannot exist because a trait object is unsized; read an `Option<Box<dyn core::fmt::Debug>>` field as `Option<&Box<dyn core::fmt::Debug>>` instead",
+        ),
+        (
+            quote!(Option<&(dyn core::fmt::Debug + Send)>),
+            "`Option<&(dyn core::fmt::Debug + Send)>` would read an `Option<dyn core::fmt::Debug + Send>` field, which cannot exist because a trait object is unsized; read an `Option<Box<dyn core::fmt::Debug + Send>>` field as `Option<&Box<dyn core::fmt::Debug + Send>>` instead",
+        ),
     ] {
         assert_macro_rejects_with(
             "cgp_auto_getter returning an optional trait-object reference",
-            "`Option<&dyn Trait>` would read an `Option<dyn Trait>` field, which cannot exist because a trait object is unsized; read an `Option<Box<dyn Trait>>` field as `Option<&Box<dyn Trait>>` instead",
+            message,
             || {
                 cgp_macro_lib::cgp_auto_getter(
                     quote!(),

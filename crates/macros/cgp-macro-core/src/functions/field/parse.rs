@@ -87,16 +87,19 @@ pub fn parse_field_type(
 
 /// `Option<&T>` reads an `Option<T>` field, and an `Option` holds only a sized value, so an optional
 /// reference to a slice or a trait object has no field to read. Rejected here, naming the sized
-/// container to read instead, rather than lowered to a bound over an unsized `Option`.
+/// container to read instead, rather than lowered to a bound over an unsized `Option`. The message
+/// quotes the reference as written and names the referent inside each container, so
+/// `Option<&[u8]>` points to an `Option<Vec<u8>>` field and `Option<&(dyn Debug + Send)>` to an
+/// `Option<Box<dyn Debug + Send>>` field.
 fn reject_unsized_option_ref(type_path: &TypePath, type_ref: &TypeReference) -> syn::Result<()> {
     let mut referent = type_ref.elem.as_ref();
     while let Type::Paren(paren) = referent {
         referent = paren.elem.as_ref();
     }
 
-    let (written, kind, container) = match referent {
-        Type::Slice(_) => ("[T]", "a slice", "Vec<T>"),
-        Type::TraitObject(_) => ("dyn Trait", "a trait object", "Box<dyn Trait>"),
+    let (kind, container) = match referent {
+        Type::Slice(slice) => ("a slice", format!("Vec<{}>", type_text(&slice.elem))),
+        Type::TraitObject(_) => ("a trait object", format!("Box<{}>", type_text(referent))),
         _ => return Ok(()),
     };
 
@@ -109,9 +112,34 @@ fn reject_unsized_option_ref(type_path: &TypePath, type_ref: &TypeReference) -> 
     Err(Error::new_spanned(
         type_path,
         format!(
-            "`Option<{reference}{written}>` would read an `Option<{written}>` field, which cannot exist because {kind} is unsized; read an `Option<{container}>` field as `Option<{reference}{container}>` instead"
+            "`Option<{}>` would read an `Option<{}>` field, which cannot exist because {kind} is unsized; read an `Option<{container}>` field as `Option<{reference}{container}>` instead",
+            type_text(type_ref),
+            type_text(referent),
         ),
     ))
+}
+
+/// A type as the reader writes it, from its tokens: the spaces the token printer puts around `::`,
+/// `<`, `>`, `,`, brackets, parentheses, and after `&` removed, so `core :: fmt :: Debug` reads
+/// `core::fmt::Debug` and `& mut [u8]` reads `&mut [u8]`.
+fn type_text(ty: &impl ToTokens) -> String {
+    let mut text = ty.to_token_stream().to_string();
+    for (spaced, tight) in [
+        (" :: ", "::"),
+        (" < ", "<"),
+        ("< ", "<"),
+        (" <", "<"),
+        (" >", ">"),
+        (" ,", ","),
+        ("[ ", "["),
+        (" ]", "]"),
+        ("( ", "("),
+        (" )", ")"),
+        ("& ", "&"),
+    ] {
+        text = text.replace(spaced, tight);
+    }
+    text
 }
 
 /// A mutable field read borrows the whole context exclusively through

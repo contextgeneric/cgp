@@ -124,7 +124,7 @@ fn rejects_optional_slice_implicit() {
     // is rejected the same way: it would read an unsized `Option<[u8]>` field.
     assert_macro_rejects_with(
         "cgp_fn with an `Option<&[u8]>` implicit",
-        "`Option<&[T]>` would read an `Option<[T]>` field, which cannot exist because a slice is unsized; read an `Option<Vec<T>>` field as `Option<&Vec<T>>` instead",
+        "`Option<&[u8]>` would read an `Option<[u8]>` field, which cannot exist because a slice is unsized; read an `Option<Vec<u8>>` field as `Option<&Vec<u8>>` instead",
         || {
             cgp_macro_lib::cgp_fn(
                 quote!(),
