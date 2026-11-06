@@ -99,6 +99,14 @@ fn rejects_self_inheritance() {
         || cgp_macro_lib::cgp_namespace(quote!(<T> new SelfNs<T>: SelfNs<T> {})),
     );
 
+    // A `self::` path names the namespace in the module the macro expands in, so it is the same
+    // cycle as the bare name.
+    assert_macro_rejects_with(
+        "cgp_namespace inheriting itself through a self:: path",
+        "the namespace `SelfNs` cannot inherit from itself; name another namespace as its parent, or omit the parent",
+        || cgp_macro_lib::cgp_namespace(quote!(new SelfNs: self::SelfNs {})),
+    );
+
     // Another instance of the namespace is the same parent rule again, at a fixed or a growing
     // type, so the arguments do not matter.
     for parent in [quote!(SelfNs<u32>), quote!(SelfNs<Vec<T>>)] {

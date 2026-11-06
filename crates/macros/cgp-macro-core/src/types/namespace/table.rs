@@ -57,17 +57,25 @@ impl Parse for NamespaceTable {
     }
 }
 
-/// Reject a namespace that names itself as its parent, `new Ns: Ns`, a cycle visible in this one
-/// invocation. The parent's arguments do not matter: every instance of the namespace has the same
-/// parent rule, so `<T> new Ns<T>: Ns<u32>` asks `Ns<u32>` again for a key its table lacks, and
-/// `Ns<Vec<T>>` asks an ever larger instance. A cycle across several namespaces is not visible here.
+/// Reject a namespace that names itself as its parent, `new Ns: Ns` or `new Ns: self::Ns`, a cycle
+/// visible in this one invocation. The parent's arguments do not matter: every instance of the
+/// namespace has the same parent rule, so `<T> new Ns<T>: Ns<u32>` asks `Ns<u32>` again for a key
+/// its table lacks, and `Ns<Vec<T>>` asks an ever larger instance. Any other qualified parent, such
+/// as `crate::Ns` or `super::Ns`, is not checked, since the macro cannot tell which item the path
+/// resolves to; the compiler then rejects a cycle with an unconstrained `__Value__`. A cycle across
+/// several namespaces is not visible here.
 fn reject_self_inheritance(
     namespace: &IdentWithTypeArgs,
     parent: &PathWithTypeArgs,
 ) -> syn::Result<()> {
+    let segments = &parent.path.segments;
+    let name = match segments.len() {
+        1 => Some(&segments[0]),
+        2 if segments[0].ident == "self" => Some(&segments[1]),
+        _ => None,
+    };
     let names_itself = parent.path.leading_colon.is_none()
-        && parent.path.segments.len() == 1
-        && parent.path.segments[0].ident == namespace.ident;
+        && name.is_some_and(|segment| segment.ident == namespace.ident);
 
     if names_itself {
         // On the path alone: the parent's `<…>` is rebuilt from its arguments with the macro's
