@@ -15,3 +15,7 @@ pub mod component_async;
 // Async `#[cgp_fn]` expansion: this concept owns the async variant of the
 // `#[cgp_fn]` macro snapshot (the `#[async_trait]` handling is the feature).
 pub mod cgp_fn_async;
+
+// A default `async` body: `#[async_trait]` turns it into the returned future,
+// which owns the by-value parameters.
+pub mod default_body;

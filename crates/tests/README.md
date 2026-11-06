@@ -44,7 +44,8 @@ dispatching, namespaces, handlers, monadic handlers, async and Send bounds,
 blanket traits, and the standalone error backends (`error_backends`). The crate's build script
 turns the example in each error backend's README into a test module, which the `readme_*.rs` files
 in `error_backends` include, so those examples are tested without being copied. The set grows and subdivides over time. `cgp-macro-tests` follows
-the same shape, with `ident_with_type_params` for parser corner cases and the
+the same shape, with `ident_with_type_params` and `shape_macro_parsing` for parser corner cases,
+`companion_attrs` for the attributes the data derives copy onto their companion types, and the
 failure-case targets `parser_rejections` and `invalid_expansion`.
 
 ## Running the tests

@@ -1,3 +1,4 @@
+mod companion_attrs;
 mod derive_builder;
 mod derive_extractor;
 mod derive_from_variant;
@@ -7,6 +8,7 @@ mod item;
 mod record;
 mod variant;
 
+pub use companion_attrs::*;
 pub use derive_builder::*;
 pub use derive_extractor::*;
 pub use derive_from_variant::*;

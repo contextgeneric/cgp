@@ -44,6 +44,8 @@ pub fn parse_field_type(
         }
         Type::Path(type_path) => {
             if let Some(type_ref) = try_parse_option_ref(type_path) {
+                reject_unsized_option_ref(type_path, type_ref)?;
+
                 // `Option<&T>` reads an `Option<T>` field with `.as_ref()`;
                 // `Option<&mut T>` reads it with `.as_mut()`. The read borrows the
                 // field with the *inner* reference's mutability, so a `&mut` inner
@@ -81,6 +83,89 @@ pub fn parse_field_type(
         // cloned, exactly like an owned path type.
         _ => Ok((return_type.clone(), FieldMode::Copy, None)),
     }
+}
+
+/// `Option<&T>` reads an `Option<T>` field, and an `Option` holds only a sized value, so an optional
+/// reference to a slice or a trait object has no field to read. Rejected here, naming the sized
+/// container to read instead, rather than lowered to a bound over an unsized `Option`. The message
+/// quotes the reference as written and names the referent inside each container, so
+/// `Option<&[u8]>` points to an `Option<Vec<u8>>` field and `Option<&(dyn Debug + Send)>` to an
+/// `Option<Box<dyn Debug + Send>>` field.
+fn reject_unsized_option_ref(type_path: &TypePath, type_ref: &TypeReference) -> syn::Result<()> {
+    let mut referent = type_ref.elem.as_ref();
+    while let Type::Paren(paren) = referent {
+        referent = paren.elem.as_ref();
+    }
+
+    let (kind, container) = match referent {
+        Type::Slice(slice) => ("a slice", format!("Vec<{}>", type_text(&slice.elem))),
+        Type::TraitObject(_) => ("a trait object", format!("Box<{}>", type_text(referent))),
+        _ => return Ok(()),
+    };
+
+    let reference = if type_ref.mutability.is_some() {
+        "&mut "
+    } else {
+        "&"
+    };
+
+    Err(Error::new_spanned(
+        type_path,
+        format!(
+            "`Option<{}>` would read an `Option<{}>` field, which cannot exist because {kind} is unsized; read an `Option<{container}>` field as `Option<{reference}{container}>` instead",
+            type_text(type_ref),
+            type_text(referent),
+        ),
+    ))
+}
+
+/// A type as the reader writes it, from its tokens: the spaces the token printer puts around `::`,
+/// `<`, `>`, `,`, `;`, brackets, parentheses, and after `&` removed, so `core :: fmt :: Debug` reads
+/// `core::fmt::Debug`, `& mut [u8 ; 4]` reads `&mut [u8; 4]`, and `Fn (u8)` reads `Fn(u8)`.
+fn type_text(ty: &impl ToTokens) -> String {
+    let mut text = ty.to_token_stream().to_string();
+    for (spaced, tight) in [
+        (" :: ", "::"),
+        (" < ", "<"),
+        ("< ", "<"),
+        (" <", "<"),
+        (" >", ">"),
+        (" ,", ","),
+        (" ;", ";"),
+        ("[ ", "["),
+        (" ]", "]"),
+        ("( ", "("),
+        (" )", ")"),
+        ("& ", "&"),
+    ] {
+        text = text.replace(spaced, tight);
+    }
+    join_argument_lists(&text)
+}
+
+/// Removes the space before a parenthesized argument list, which follows a name, as in `Fn (u8)`.
+/// A parenthesized type keeps its space, so `-> (u8, u16)`, `&'a (dyn Debug)`, and
+/// `&mut (dyn Debug)` are unchanged: after a lifetime or the keyword `mut`, `dyn`, or `impl`, the
+/// group is not an argument list.
+fn join_argument_lists(text: &str) -> String {
+    let mut joined = String::with_capacity(text.len());
+    let mut rest = text;
+    while let Some(at) = rest.find(" (") {
+        let before = &rest[..at];
+        let prefix = before.trim_end_matches(|c: char| c.is_alphanumeric() || c == '_');
+        let word = &before[prefix.len()..];
+        let is_argument_list =
+            !word.is_empty() && !prefix.ends_with('\'') && !matches!(word, "mut" | "dyn" | "impl");
+
+        joined.push_str(before);
+        if !is_argument_list {
+            joined.push(' ');
+        }
+        joined.push('(');
+        rest = &rest[at + 2..];
+    }
+    joined.push_str(rest);
+    joined
 }
 
 /// A mutable field read borrows the whole context exclusively through

@@ -3,8 +3,9 @@
 //! implicit argument, a `&mut` implicit argument that is not the sole implicit
 //! (its exclusive borrow of the context would conflict with reading any other
 //! field), a `&mut`-reference implicit under a `&self` receiver (a mutable field
-//! read requires `&mut self`), and a malformed `#[implicit]` attribute carrying
-//! arguments. Each is a rejection the macro makes during expansion (a returned
+//! read requires `&mut self`), an optional slice reference (the `Option<&T>` form
+//! would read an unsized `Option<[T]>` field), and a malformed `#[implicit]`
+//! attribute carrying arguments. Each is a rejection the macro makes during expansion (a returned
 //! `Err`), so it is pinned by driving the entrypoint directly here rather than by a
 //! `trybuild` compile-fail fixture, which is reserved for input the macro accepts
 //! but whose expansion then fails to compile. One case pins a Known issue instead:
@@ -16,7 +17,7 @@
 
 use quote::quote;
 
-use super::assert_macro_rejects;
+use super::{assert_macro_rejects, assert_macro_rejects_with};
 
 #[test]
 fn rejects_implicit_arg_without_self() {
@@ -110,6 +111,26 @@ fn rejects_mut_option_implicit_without_mut_self() {
                 quote!(
                     fn take_slot(&self, #[implicit] slot: Option<&mut u8>) {
                         let _ = slot;
+                    }
+                ),
+            )
+        },
+    );
+}
+
+#[test]
+fn rejects_optional_slice_implicit() {
+    // An implicit argument shares the getters' field-type forms, so `Option<&[u8]>`
+    // is rejected the same way: it would read an unsized `Option<[u8]>` field.
+    assert_macro_rejects_with(
+        "cgp_fn with an `Option<&[u8]>` implicit",
+        "`Option<&[u8]>` would read an `Option<[u8]>` field, which cannot exist because a slice is unsized; read an `Option<Vec<u8>>` field as `Option<&Vec<u8>>` instead",
+        || {
+            cgp_macro_lib::cgp_fn(
+                quote!(),
+                quote!(
+                    fn count_items(&self, #[implicit] items: Option<&[u8]>) -> usize {
+                        items.map_or(0, |items| items.len())
                     }
                 ),
             )

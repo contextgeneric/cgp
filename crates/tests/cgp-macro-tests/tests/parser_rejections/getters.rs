@@ -5,8 +5,11 @@
 //! `#[cgp_getter]`. A getter method must be a plain (non-const, non-async,
 //! non-unsafe, non-generic) method whose first argument is a reference; a mutable
 //! return requires a `&mut self` receiver; and at most one associated type is
-//! allowed, only alongside exactly one method. `#[cgp_auto_getter]` additionally
-//! rejects any attribute argument, since it has no provider name or keys to accept.
+//! allowed, only alongside exactly one method. An optional reference to a slice or a
+//! trait object is rejected too, since the `Option<&T>` form would read an unsized
+//! `Option<T>` field. `#[cgp_auto_getter]` additionally rejects any attribute argument,
+//! since it has no provider name or keys to accept, and a `#[uses]` attribute, which
+//! belongs on a provider.
 //!
 //! See cgp-knowledge-base/cgp/implementation/asts/cgp_getter.md (Tests) for these failure cases and
 //! cgp-knowledge-base/cgp/reference/macros/cgp_auto_getter.md for the user-facing getter-method
@@ -14,7 +17,7 @@
 
 use quote::quote;
 
-use super::assert_macro_rejects;
+use super::{assert_macro_rejects, assert_macro_rejects_with};
 
 #[test]
 fn rejects_const_getter_method() {
@@ -108,6 +111,124 @@ fn rejects_mutable_return_without_mut_self() {
 }
 
 #[test]
+fn rejects_optional_slice_return() {
+    // `Option<&T>` reads an `Option<T>` field, which an unsized slice cannot fill, so
+    // `Option<&[u8]>` is rejected with the sized container to read instead, both named with
+    // the element type the getter wrote.
+    assert_macro_rejects_with(
+        "cgp_auto_getter returning `Option<&[u8]>`",
+        "`Option<&[u8]>` would read an `Option<[u8]>` field, which cannot exist because a slice is unsized; read an `Option<Vec<u8>>` field as `Option<&Vec<u8>>` instead",
+        || {
+            cgp_macro_lib::cgp_auto_getter(
+                quote!(),
+                quote!(
+                    pub trait HasItems {
+                        fn items(&self) -> Option<&[u8]>;
+                    }
+                ),
+            )
+        },
+    );
+}
+
+#[test]
+fn rejects_optional_mutable_slice_return() {
+    // The mutable form has the same unsized field, so it is rejected the same way,
+    // naming the mutable read.
+    assert_macro_rejects_with(
+        "cgp_auto_getter returning `Option<&mut [u8]>`",
+        "`Option<&mut [u8]>` would read an `Option<[u8]>` field, which cannot exist because a slice is unsized; read an `Option<Vec<u8>>` field as `Option<&mut Vec<u8>>` instead",
+        || {
+            cgp_macro_lib::cgp_auto_getter(
+                quote!(),
+                quote!(
+                    pub trait HasItems {
+                        fn items(&mut self) -> Option<&mut [u8]>;
+                    }
+                ),
+            )
+        },
+    );
+}
+
+#[test]
+fn rejects_optional_trait_object_return() {
+    // A trait object is unsized like a slice, so `Option<&dyn Debug>` has no field to
+    // read either; the parenthesized form is the same type, which the message quotes as
+    // written and names inside the containers without its parentheses.
+    for (return_type, message) in [
+        (
+            quote!(Option<&dyn core::fmt::Debug>),
+            "`Option<&dyn core::fmt::Debug>` would read an `Option<dyn core::fmt::Debug>` field, which cannot exist because a trait object is unsized; read an `Option<Box<dyn core::fmt::Debug>>` field as `Option<&Box<dyn core::fmt::Debug>>` instead",
+        ),
+        (
+            quote!(Option<&(dyn core::fmt::Debug + Send)>),
+            "`Option<&(dyn core::fmt::Debug + Send)>` would read an `Option<dyn core::fmt::Debug + Send>` field, which cannot exist because a trait object is unsized; read an `Option<Box<dyn core::fmt::Debug + Send>>` field as `Option<&Box<dyn core::fmt::Debug + Send>>` instead",
+        ),
+    ] {
+        assert_macro_rejects_with(
+            "cgp_auto_getter returning an optional trait-object reference",
+            message,
+            || {
+                cgp_macro_lib::cgp_auto_getter(
+                    quote!(),
+                    quote!(
+                        pub trait HasLabel {
+                            fn label(&self) -> #return_type;
+                        }
+                    ),
+                )
+            },
+        );
+    }
+}
+
+#[test]
+fn quotes_written_type_with_its_spacing() {
+    // Property: the rejection quotes each type as Rust code spells it. A parenthesized
+    // argument list joins its name (`Fn(u8)`) and `;` joins its element (`[u8; 4]`), while a
+    // parenthesized type keeps its space after `->`, a lifetime, and `mut`. The container is
+    // borrowed as the getter's reference, `&` or `&mut`, without the written lifetime.
+    for (receiver, return_type, message) in [
+        (
+            quote!(&self),
+            quote!(Option<&[[u8; 4]]>),
+            "`Option<&[[u8; 4]]>` would read an `Option<[[u8; 4]]>` field, which cannot exist because a slice is unsized; read an `Option<Vec<[u8; 4]>>` field as `Option<&Vec<[u8; 4]>>` instead",
+        ),
+        (
+            quote!(&self),
+            quote!(Option<&dyn Fn(u8) -> (u8, u16)>),
+            "`Option<&dyn Fn(u8) -> (u8, u16)>` would read an `Option<dyn Fn(u8) -> (u8, u16)>` field, which cannot exist because a trait object is unsized; read an `Option<Box<dyn Fn(u8) -> (u8, u16)>>` field as `Option<&Box<dyn Fn(u8) -> (u8, u16)>>` instead",
+        ),
+        (
+            quote!(&mut self),
+            quote!(Option<&mut (dyn FnMut(u8) + Send)>),
+            "`Option<&mut (dyn FnMut(u8) + Send)>` would read an `Option<dyn FnMut(u8) + Send>` field, which cannot exist because a trait object is unsized; read an `Option<Box<dyn FnMut(u8) + Send>>` field as `Option<&mut Box<dyn FnMut(u8) + Send>>` instead",
+        ),
+        (
+            quote!(&self),
+            quote!(Option<&'a (dyn core::fmt::Debug)>),
+            "`Option<&'a (dyn core::fmt::Debug)>` would read an `Option<dyn core::fmt::Debug>` field, which cannot exist because a trait object is unsized; read an `Option<Box<dyn core::fmt::Debug>>` field as `Option<&Box<dyn core::fmt::Debug>>` instead",
+        ),
+    ] {
+        assert_macro_rejects_with(
+            "cgp_auto_getter returning an optional unsized reference",
+            message,
+            || {
+                cgp_macro_lib::cgp_auto_getter(
+                    quote!(),
+                    quote!(
+                        pub trait HasValue {
+                            fn value(#receiver) -> #return_type;
+                        }
+                    ),
+                )
+            },
+        );
+    }
+}
+
+#[test]
 fn rejects_multiple_associated_types() {
     // A getter trait may declare at most one associated return type.
     assert_macro_rejects("cgp_auto_getter with two associated types", || {
@@ -176,4 +297,25 @@ fn rejects_attribute_argument() {
             ),
         )
     });
+}
+
+/// `#[cgp_auto_getter]` shares the component's attribute parser, so it rejects a
+/// `#[uses]` the same way, naming the `#[extend]` form.
+#[test]
+fn rejects_uses_on_auto_getter() {
+    assert_macro_rejects_with(
+        "cgp_auto_getter with a #[uses] attribute",
+        "`#[uses]` declares the dependencies of a provider, not of a trait; write `#[extend(HasId)]` to make it a supertrait",
+        || {
+            cgp_macro_lib::cgp_auto_getter(
+                quote!(),
+                quote!(
+                    #[uses(HasId)]
+                    pub trait HasName {
+                        fn name(&self) -> &str;
+                    }
+                ),
+            )
+        },
+    );
 }

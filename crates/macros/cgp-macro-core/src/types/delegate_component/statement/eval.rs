@@ -88,6 +88,8 @@ impl EvalDelegateEntry for EvaluatedForEntry {
             key: self.mapping_key.clone(),
             value: self.mapping_value.clone(),
             span: self.span,
+            delegate_span: None,
+            params_span: None,
         };
 
         Ok(entry)

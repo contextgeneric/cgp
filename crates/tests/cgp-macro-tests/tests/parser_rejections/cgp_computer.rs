@@ -1,8 +1,10 @@
 //! `#[cgp_computer]` rejects a function with a `self` receiver, since a handler
 //! provider has no receiver, a one-argument `Result<T>` alias, which its
 //! syntactic `Result` detection cannot read, `impl Trait` in a parameter or the
-//! return type, which a provider impl cannot name, and a provider name that is a
-//! path rather than an identifier. Each case pins the rejection's message.
+//! return type, which a provider impl cannot name, a provider name that is a
+//! path rather than an identifier, and a type or const parameter only the return
+//! type uses, which the generated impl cannot determine. Each case pins the
+//! rejection's message.
 //!
 //! See cgp-knowledge-base/cgp/implementation/entrypoints/cgp_computer.md (Tests) for these
 //! failure cases, and cgp-knowledge-base/cgp/reference/macros/cgp_computer.md for the
@@ -99,6 +101,55 @@ fn rejects_impl_trait_return() {
                 quote!(
                     fn show(value: u64) -> impl core::fmt::Display {
                         value
+                    }
+                ),
+            )
+        },
+    );
+}
+
+/// The generated `Computer` impl's trait arguments carry only the input types, so
+/// a parameter that only the return type names is constrained by nothing; the
+/// macro rejects it on the parameter rather than emitting an `E0207`.
+#[test]
+fn rejects_output_only_type_parameter() {
+    // A bound on the parameter itself, inline or in a `where` clause, names it but does not
+    // determine it.
+    for function in [
+        quote!(
+            fn parse<T: core::str::FromStr>(value: String) -> Option<T> {
+                value.parse().ok()
+            }
+        ),
+        quote!(
+            fn parse<T>(value: String) -> Option<T>
+            where
+                T: core::str::FromStr,
+            {
+                value.parse().ok()
+            }
+        ),
+    ] {
+        assert_macro_rejects_with(
+            "cgp_computer with a type parameter only the return type uses",
+            "the parameter `T` appears in no argument type, so the generated `Computer` impl cannot determine it; take an argument whose type names `T`, or write the provider by hand as a `Computer` impl on a provider generic over `T`",
+            || cgp_macro_extra_lib::cgp_computer(quote!(), function.clone()),
+        );
+    }
+}
+
+/// A const parameter only the return type uses is just as undetermined.
+#[test]
+fn rejects_output_only_const_parameter() {
+    assert_macro_rejects_with(
+        "cgp_computer with a const parameter only the return type uses",
+        "the parameter `N` appears in no argument type, so the generated `Computer` impl cannot determine it; take an argument whose type names `N`, or write the provider by hand as a `Computer` impl on a provider generic over `N`",
+        || {
+            cgp_macro_extra_lib::cgp_computer(
+                quote!(),
+                quote!(
+                    fn zeros<const N: usize>(value: u8) -> [u8; N] {
+                        [value; N]
                     }
                 ),
             )

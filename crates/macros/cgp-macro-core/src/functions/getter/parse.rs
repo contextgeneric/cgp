@@ -239,7 +239,7 @@ fn parse_receiver(context_ident: &Ident, arg: &FnArg) -> syn::Result<(ReceiverMo
 
                 ReplaceSelfTypeVisitor {
                     replaced_type: &parse_internal!(#context_ident),
-                    skip_assoc_types: &Vec::new(),
+                    skip_assoc_items: &Vec::new(),
                 }
                 .visit_type_mut(&mut receiver);
 
@@ -264,7 +264,7 @@ fn parse_return_type(
 
             ReplaceSelfTypeVisitor {
                 replaced_type: &parse_internal!(#context_type),
-                skip_assoc_types: &Vec::from_iter(field_assoc_type.clone()),
+                skip_assoc_items: &Vec::from_iter(field_assoc_type.clone()),
             }
             .visit_type_mut(&mut replaced_type);
 

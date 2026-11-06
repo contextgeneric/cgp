@@ -54,13 +54,13 @@ pub fn derive_has_extractor_impl(
         {
             type Extractor = #extractor_ident #extractor_generics;
 
-            fn to_extractor(self) -> Self::Extractor {
+            fn to_extractor(self) -> <Self as #HasExtractor>::Extractor {
                 match self {
                     #(#to_match_arms)*
                 }
             }
 
-            fn from_extractor(extractor: Self::Extractor) -> Self {
+            fn from_extractor(extractor: <Self as #HasExtractor>::Extractor) -> Self {
                 match extractor {
                     #(#from_match_arms)*
                 }
@@ -142,7 +142,7 @@ pub fn derive_has_extractor_ref_impl(
             where
                 Self: '__a__;
 
-            fn extractor_ref<'__a__>(&'__a__ self) -> Self::ExtractorRef<'__a__> {
+            fn extractor_ref<'__a__>(&'__a__ self) -> <Self as #HasExtractorRef>::ExtractorRef<'__a__> {
                 #body
             }
         }
@@ -219,7 +219,7 @@ pub fn derive_has_extractor_mut_impl(
             where
                 Self: '__a__;
 
-            fn extractor_mut<'__a__>(&'__a__ mut self) -> Self::ExtractorMut<'__a__> {
+            fn extractor_mut<'__a__>(&'__a__ mut self) -> <Self as #HasExtractorMut>::ExtractorMut<'__a__> {
                 #body
             }
         }

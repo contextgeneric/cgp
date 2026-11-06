@@ -35,15 +35,15 @@ impl PreprocessedCgpComponent {
             .params
             .insert(0, parse_internal!(#context_type_ident));
 
-        let local_assoc_types: Vec<Ident> = provider_trait
+        // A default body's `Self::Item` naming the trait's own associated type or
+        // const means the provider's item, so the rewrite leaves it alone.
+        let local_assoc_items: Vec<Ident> = provider_trait
             .items
             .iter()
-            .filter_map(|item| {
-                if let TraitItem::Type(assoc_type) = item {
-                    Some(assoc_type.ident.clone())
-                } else {
-                    None
-                }
+            .filter_map(|item| match item {
+                TraitItem::Type(assoc_type) => Some(assoc_type.ident.clone()),
+                TraitItem::Const(assoc_const) => Some(assoc_const.ident.clone()),
+                _ => None,
             })
             .collect();
 
@@ -72,7 +72,7 @@ impl PreprocessedCgpComponent {
 
         ReplaceSelfTypeVisitor {
             replaced_type: &context_type,
-            skip_assoc_types: &local_assoc_types,
+            skip_assoc_items: &local_assoc_items,
         }
         .visit_item_trait_mut(&mut provider_trait);
 

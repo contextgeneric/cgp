@@ -3,7 +3,9 @@ use syn::{GenericParam, Ident, ItemEnum, Lifetime, LifetimeParam, Type, TypePara
 
 use crate::exports::{MapType, MapTypeRef};
 use crate::parse_internal;
-use crate::types::cgp_data::{get_variant_type, index_to_generic_ident, type_to_variant_fields};
+use crate::types::cgp_data::{
+    get_variant_type, index_to_generic_ident, retain_companion_attrs, type_to_variant_fields,
+};
 
 /// Build the owned `__Partial{Name}` enum: a clone of the input enum that gains
 /// one `__F{i}__: MapType` parameter per variant, wrapping each payload so a
@@ -21,6 +23,8 @@ pub fn derive_extractor_enum(
     let generics = &mut extractor_enum.generics;
 
     for (i, variant) in extractor_enum.variants.iter_mut().enumerate() {
+        retain_companion_attrs(&mut variant.attrs);
+
         let generic_param_name = index_to_generic_ident(i);
 
         let generic_param: TypeParam = parse_internal! {
@@ -99,6 +103,8 @@ pub fn derive_extractor_enum_ref(
     );
 
     for (i, variant) in extractor_enum.variants.iter_mut().enumerate() {
+        retain_companion_attrs(&mut variant.attrs);
+
         let generic_param_name = index_to_generic_ident(i);
 
         let generic_param: TypeParam = parse_internal! {

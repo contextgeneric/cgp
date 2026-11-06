@@ -1,6 +1,6 @@
 use syn::parse::{Parse, ParseStream};
 use syn::token::Colon;
-use syn::{Ident, ItemImpl, ItemStruct, ItemTrait, Type, braced};
+use syn::{Error, Ident, ItemImpl, ItemStruct, ItemTrait, Type, braced};
 
 use crate::functions::parse_internal;
 use crate::traits::ParseOptionalKeyword;
@@ -32,6 +32,7 @@ impl Parse for NamespaceTable {
         let parent_namespace = if input.peek(Colon) {
             let colon: Colon = input.parse()?;
             let parent_namespace_type = input.parse()?;
+            reject_self_inheritance(&namespace_type, &parent_namespace_type)?;
             Some((colon, parent_namespace_type))
         } else {
             None
@@ -54,6 +55,41 @@ impl Parse for NamespaceTable {
             entries,
         })
     }
+}
+
+/// Reject a namespace that names itself as its parent, `new Ns: Ns` or `new Ns: self::Ns`, a cycle
+/// visible in this one invocation. The parent's arguments do not matter: every instance of the
+/// namespace has the same parent rule, so `<T> new Ns<T>: Ns<u32>` asks `Ns<u32>` again for a key
+/// its table lacks, and `Ns<Vec<T>>` asks an ever larger instance. Any other qualified parent, such
+/// as `crate::Ns` or `super::Ns`, is not checked, since the macro cannot tell which item the path
+/// resolves to; the compiler then rejects a cycle with an unconstrained `__Value__`. A cycle across
+/// several namespaces is not visible here.
+fn reject_self_inheritance(
+    namespace: &IdentWithTypeArgs,
+    parent: &PathWithTypeArgs,
+) -> syn::Result<()> {
+    let segments = &parent.path.segments;
+    let name = match segments.len() {
+        1 => Some(&segments[0]),
+        2 if segments[0].ident == "self" => Some(&segments[1]),
+        _ => None,
+    };
+    let names_itself = parent.path.leading_colon.is_none()
+        && name.is_some_and(|segment| segment.ident == namespace.ident);
+
+    if names_itself {
+        // On the path alone: the parent's `<…>` is rebuilt from its arguments with the macro's
+        // span, which would widen the caret to the whole invocation.
+        return Err(Error::new_spanned(
+            &parent.path,
+            format!(
+                "the namespace `{}` cannot inherit from itself; name another namespace as its parent, or omit the parent",
+                namespace.ident
+            ),
+        ));
+    }
+
+    Ok(())
 }
 
 impl NamespaceTable {

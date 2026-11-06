@@ -15,11 +15,14 @@ pub mod provider_macro;
 // Behavioral wiring: a consumer trait becomes usable once its component is wired.
 pub mod consumer_delegate_generic;
 pub mod consumer_delegate_getter;
+pub mod default_method_mut_parameter;
 pub mod default_methods;
 pub mod impl_self;
 pub mod owned_receiver;
 pub mod self_in_macro;
 pub mod self_in_nested_item;
+pub mod self_local_assoc_const;
+pub mod self_local_assoc_const_scope;
 pub mod self_local_assoc_type;
 
 // `delegate_components!` shape variants (compile-time checks only).

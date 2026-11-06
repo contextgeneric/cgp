@@ -5,11 +5,11 @@ use syn::visit_mut::{self, VisitMut};
 use syn::{Item, Macro, Path, Type};
 
 /// Rewrites the `Self` type (and `Self::Foo` paths) to the context type,
-/// skipping any `Self::Assoc` whose associated type is declared locally in the
-/// block so the trait's own associated types are left intact.
+/// skipping any `Self::Item` whose associated type or const is declared locally
+/// in the block, so the block's own associated items are left intact.
 pub struct ReplaceSelfTypeVisitor<'a> {
     pub replaced_type: &'a Type,
-    pub skip_assoc_types: &'a Vec<Ident>,
+    pub skip_assoc_items: &'a Vec<Ident>,
 }
 
 impl<'a> ReplaceSelfTypeVisitor<'a> {
@@ -20,7 +20,7 @@ impl<'a> ReplaceSelfTypeVisitor<'a> {
         if first.ident != "Self" {
             return;
         }
-        if path.segments.len() >= 2 && self.skip_assoc_types.contains(&path.segments[1].ident) {
+        if path.segments.len() >= 2 && self.skip_assoc_items.contains(&path.segments[1].ident) {
             return;
         }
         if let Type::Path(replaced) = self.replaced_type
@@ -60,7 +60,7 @@ impl VisitMut for ReplaceSelfTypeVisitor<'_> {
         mac.tokens = replace_self_type_in_token_stream(
             core::mem::take(&mut mac.tokens),
             self.replaced_type.to_token_stream(),
-            self.skip_assoc_types,
+            self.skip_assoc_items,
         );
     }
 
@@ -74,7 +74,7 @@ impl VisitMut for ReplaceSelfTypeVisitor<'_> {
 pub fn replace_self_type_in_token_stream(
     stream: TokenStream,
     replaced_ident: TokenStream,
-    local_assoc_types: &Vec<Ident>,
+    local_assoc_items: &Vec<Ident>,
 ) -> TokenStream {
     let self_type = format_ident!("Self");
 
@@ -88,14 +88,14 @@ pub fn replace_self_type_in_token_stream(
                 if ident == self_type {
                     let replaced_ident = replaced_ident.clone();
 
-                    // Do not replace self if it is an associated type expression that refers to local associated type
+                    // Do not replace `Self` in a `Self::Item` path naming a local associated type or const
                     let replaced = match token_iter.peek() {
                         Some(TokenTree::Punct(p)) if p.as_char() == ':' => {
                             match token_iter.peek() {
                                 Some(TokenTree::Punct(p)) if p.as_char() == ':' => {
                                     match token_iter.peek() {
                                         Some(TokenTree::Ident(assoc_type))
-                                            if local_assoc_types.contains(assoc_type) =>
+                                            if local_assoc_items.contains(assoc_type) =>
                                         {
                                             ident.to_token_stream()
                                         }
@@ -117,7 +117,7 @@ pub fn replace_self_type_in_token_stream(
                 let replaced_stream = replace_self_type_in_token_stream(
                     group.stream(),
                     replaced_ident.clone(),
-                    local_assoc_types,
+                    local_assoc_items,
                 );
                 let replaced_group = Group::new(group.delimiter(), replaced_stream);
 

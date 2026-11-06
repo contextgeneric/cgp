@@ -3,7 +3,8 @@
 //!
 //! The function's generics and `where` clause move onto the generated impl, ahead
 //! of the reserved `__Context__` and `__Code__` parameters. Each parameter here
-//! appears in an input type, which is what keeps it constrained by the impl.
+//! appears in an input type, inside a type macro there (`first_of_pair`'s `T`), or
+//! is bound through one (`first_item`'s `T`), so the impl constrains it.
 //!
 //! See cgp-knowledge-base/cgp/implementation/entrypoints/cgp_computer.md and
 //! cgp-knowledge-base/cgp/reference/macros/cgp_computer.md.
@@ -541,6 +542,30 @@ snapshot_cgp_computer! {
     }
 }
 
+// `T` appears in no input type, but the bound `I: IntoIterator<Item = T>` binds it
+// through the input `I`, so the macro accepts it and the impl compiles.
+#[cgp_computer]
+fn first_item<I: IntoIterator<Item = T>, T>(items: I) -> Option<T> {
+    items.into_iter().next()
+}
+
+// The same binding written as a `where` predicate.
+#[cgp_computer]
+fn last_item<I, T>(items: I) -> Option<T>
+where
+    I: IntoIterator<Item = T>,
+{
+    items.into_iter().last()
+}
+
+// `T` appears in the input only inside a type macro, in a tuple there, whose tokens the macro
+// reads as well, so it accepts it.
+#[cgp_computer]
+fn first_of_pair<T>(pair: Product![(T, T)]) -> T {
+    let Cons((first, _), _) = pair;
+    first
+}
+
 pub struct App;
 
 #[test]
@@ -550,4 +575,7 @@ fn test_computer_generics() {
     assert_eq!(Describe::compute(&App, code, 1), "<1>");
     assert_eq!(FirstChar::compute(&App, code, "abc"), "a");
     assert_eq!(SumArray::compute(&App, code, [1, 2, 3]), 6);
+    assert_eq!(FirstItem::compute(&App, code, vec![4, 5]), Some(4));
+    assert_eq!(LastItem::compute(&App, code, vec![4, 5]), Some(5));
+    assert_eq!(FirstOfPair::compute(&App, code, product![(6, 7)]), 6);
 }

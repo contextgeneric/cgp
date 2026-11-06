@@ -77,6 +77,33 @@ where
     parse2(trees.into_iter().collect())
 }
 
+/// Re-span every *synthesized* top-level token of `body` onto `span`, leaving the user's tokens at
+/// their own spans, and re-parse into `T`.
+///
+/// This is for a fragment whose own span a diagnostic reads, such as a `where` bound or a type,
+/// when the fragment mixes user tokens with synthesized ones: the synthesized ends otherwise widen
+/// the fragment's span to the whole invocation. `span` must be a user token no resolvable name
+/// shares (an operator such as `->`), since a synthesized reference moved onto it becomes, for an
+/// editor, that token.
+pub fn override_synthesized_span<T>(span: Span, body: &T) -> syn::Result<T>
+where
+    T: Parse + ToTokens,
+{
+    let call_site_text = Span::call_site().source_text();
+
+    parse2(
+        body.to_token_stream()
+            .into_iter()
+            .map(|mut tree| {
+                if is_synthesized(tree.span(), &call_site_text) {
+                    tree.set_span(span);
+                }
+                tree
+            })
+            .collect(),
+    )
+}
+
 /// Whether `token_span` was stamped by `quote!`/`parse_internal!` rather than
 /// carried in from user input. A synthesized token carries the macro's
 /// `call_site` span, whose source text is the entire invocation; a user token's
