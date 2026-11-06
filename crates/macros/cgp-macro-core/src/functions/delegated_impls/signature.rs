@@ -28,14 +28,22 @@ pub fn signature_to_delegated_impl_item_fn(
         ) #await_expr
     });
 
-    // A `mut` on a parameter belongs to the default body that mutates it; the forwarding body
-    // only passes the argument on, where the `mut` would be unused.
+    // A `mut` on a parameter or a by-value receiver belongs to the default body that mutates it;
+    // the forwarding body only passes the argument on, where the `mut` would be unused. A
+    // `&mut self` receiver also carries `mutability`, as part of its type, so it is kept.
     let mut sig = signature.clone();
     for input in sig.inputs.iter_mut() {
-        if let FnArg::Typed(arg) = input
-            && let Pat::Ident(pat) = arg.pat.as_mut()
-        {
-            pat.mutability = None;
+        match input {
+            FnArg::Typed(arg) => {
+                if let Pat::Ident(pat) = arg.pat.as_mut() {
+                    pat.mutability = None;
+                }
+            }
+            FnArg::Receiver(receiver) => {
+                if receiver.reference.is_none() {
+                    receiver.mutability = None;
+                }
+            }
         }
     }
 

@@ -4,8 +4,7 @@
 //! The function's generics and `where` clause move onto the generated impl, ahead
 //! of the reserved `__Context__` and `__Code__` parameters. Each parameter here
 //! appears in an input type, inside a type macro there (`first_of_pair`'s `T`), or
-//! is bound through one (`first_item`'s `T`), which is what keeps it constrained by
-//! the impl.
+//! is bound through one (`first_item`'s `T`), so the impl constrains it.
 //!
 //! See cgp-knowledge-base/cgp/implementation/entrypoints/cgp_computer.md and
 //! cgp-knowledge-base/cgp/reference/macros/cgp_computer.md.
