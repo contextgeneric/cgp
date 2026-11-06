@@ -120,8 +120,8 @@ fn reject_unsized_option_ref(type_path: &TypePath, type_ref: &TypeReference) -> 
 }
 
 /// A type as the reader writes it, from its tokens: the spaces the token printer puts around `::`,
-/// `<`, `>`, `,`, brackets, parentheses, and after `&` removed, so `core :: fmt :: Debug` reads
-/// `core::fmt::Debug` and `& mut [u8]` reads `&mut [u8]`.
+/// `<`, `>`, `,`, `;`, brackets, parentheses, and after `&` removed, so `core :: fmt :: Debug` reads
+/// `core::fmt::Debug`, `& mut [u8 ; 4]` reads `&mut [u8; 4]`, and `Fn (u8)` reads `Fn(u8)`.
 fn type_text(ty: &impl ToTokens) -> String {
     let mut text = ty.to_token_stream().to_string();
     for (spaced, tight) in [
@@ -131,6 +131,7 @@ fn type_text(ty: &impl ToTokens) -> String {
         (" <", "<"),
         (" >", ">"),
         (" ,", ","),
+        (" ;", ";"),
         ("[ ", "["),
         (" ]", "]"),
         ("( ", "("),
@@ -139,7 +140,32 @@ fn type_text(ty: &impl ToTokens) -> String {
     ] {
         text = text.replace(spaced, tight);
     }
-    text
+    join_argument_lists(&text)
+}
+
+/// Removes the space before a parenthesized argument list, which follows a name, as in `Fn (u8)`.
+/// A parenthesized type keeps its space, so `-> (u8, u16)`, `&'a (dyn Debug)`, and
+/// `&mut (dyn Debug)` are unchanged: after a lifetime or the keyword `mut`, `dyn`, or `impl`, the
+/// group is not an argument list.
+fn join_argument_lists(text: &str) -> String {
+    let mut joined = String::with_capacity(text.len());
+    let mut rest = text;
+    while let Some(at) = rest.find(" (") {
+        let before = &rest[..at];
+        let prefix = before.trim_end_matches(|c: char| c.is_alphanumeric() || c == '_');
+        let word = &before[prefix.len()..];
+        let is_argument_list =
+            !word.is_empty() && !prefix.ends_with('\'') && !matches!(word, "mut" | "dyn" | "impl");
+
+        joined.push_str(before);
+        if !is_argument_list {
+            joined.push(' ');
+        }
+        joined.push('(');
+        rest = &rest[at + 2..];
+    }
+    joined.push_str(rest);
+    joined
 }
 
 /// A mutable field read borrows the whole context exclusively through

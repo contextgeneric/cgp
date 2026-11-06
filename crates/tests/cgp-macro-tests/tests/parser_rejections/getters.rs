@@ -184,6 +184,51 @@ fn rejects_optional_trait_object_return() {
 }
 
 #[test]
+fn quotes_written_type_with_its_spacing() {
+    // Property: the rejection quotes each type as Rust code spells it. A parenthesized
+    // argument list joins its name (`Fn(u8)`) and `;` joins its element (`[u8; 4]`), while a
+    // parenthesized type keeps its space after `->`, a lifetime, and `mut`. The container is
+    // borrowed as the getter's reference, `&` or `&mut`, without the written lifetime.
+    for (receiver, return_type, message) in [
+        (
+            quote!(&self),
+            quote!(Option<&[[u8; 4]]>),
+            "`Option<&[[u8; 4]]>` would read an `Option<[[u8; 4]]>` field, which cannot exist because a slice is unsized; read an `Option<Vec<[u8; 4]>>` field as `Option<&Vec<[u8; 4]>>` instead",
+        ),
+        (
+            quote!(&self),
+            quote!(Option<&dyn Fn(u8) -> (u8, u16)>),
+            "`Option<&dyn Fn(u8) -> (u8, u16)>` would read an `Option<dyn Fn(u8) -> (u8, u16)>` field, which cannot exist because a trait object is unsized; read an `Option<Box<dyn Fn(u8) -> (u8, u16)>>` field as `Option<&Box<dyn Fn(u8) -> (u8, u16)>>` instead",
+        ),
+        (
+            quote!(&mut self),
+            quote!(Option<&mut (dyn FnMut(u8) + Send)>),
+            "`Option<&mut (dyn FnMut(u8) + Send)>` would read an `Option<dyn FnMut(u8) + Send>` field, which cannot exist because a trait object is unsized; read an `Option<Box<dyn FnMut(u8) + Send>>` field as `Option<&mut Box<dyn FnMut(u8) + Send>>` instead",
+        ),
+        (
+            quote!(&self),
+            quote!(Option<&'a (dyn core::fmt::Debug)>),
+            "`Option<&'a (dyn core::fmt::Debug)>` would read an `Option<dyn core::fmt::Debug>` field, which cannot exist because a trait object is unsized; read an `Option<Box<dyn core::fmt::Debug>>` field as `Option<&Box<dyn core::fmt::Debug>>` instead",
+        ),
+    ] {
+        assert_macro_rejects_with(
+            "cgp_auto_getter returning an optional unsized reference",
+            message,
+            || {
+                cgp_macro_lib::cgp_auto_getter(
+                    quote!(),
+                    quote!(
+                        pub trait HasValue {
+                            fn value(#receiver) -> #return_type;
+                        }
+                    ),
+                )
+            },
+        );
+    }
+}
+
+#[test]
 fn rejects_multiple_associated_types() {
     // A getter trait may declare at most one associated return type.
     assert_macro_rejects("cgp_auto_getter with two associated types", || {
