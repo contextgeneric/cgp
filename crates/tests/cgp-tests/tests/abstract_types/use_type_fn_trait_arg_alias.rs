@@ -37,7 +37,9 @@ snapshot_cgp_fn! {
 
     expand_get_pool(output) {
         insta::assert_snapshot!(output, @"
+        ///The trait for the `get_pool` operation.
         pub trait GetPool: HasDbType + HasPoolType<<Self as HasDbType>::Db> {
+            ///The `get_pool` operation.
             fn get_pool(&self) -> <Self as HasPoolType<<Self as HasDbType>::Db>>::Pool;
         }
         impl<__Context__> GetPool for __Context__
@@ -62,7 +64,9 @@ snapshot_cgp_fn! {
 
     expand_get_pinned_pool(output) {
         insta::assert_snapshot!(output, @"
+        ///The trait for the `get_pinned_pool` operation.
         pub trait GetPinnedPool: HasDbType + HasPoolType<<Self as HasDbType>::Db> {
+            ///The `get_pinned_pool` operation.
             fn get_pinned_pool(&self) -> <Self as HasPoolType<<Self as HasDbType>::Db>>::Pool;
         }
         impl<__Context__> GetPinnedPool for __Context__
@@ -96,9 +100,11 @@ snapshot_cgp_fn! {
 
     expand_get_handle(output) {
         insta::assert_snapshot!(output, @"
+        ///The trait for the `get_handle` operation.
         pub trait GetHandle: HasDbType + HasPoolType<
                 <Self as HasDbType>::Db,
             > + HasHandleType<<Self as HasPoolType<<Self as HasDbType>::Db>>::Pool> {
+            ///The `get_handle` operation.
             fn get_handle(
                 &self,
             ) -> <Self as HasHandleType<

@@ -23,7 +23,9 @@ snapshot_cgp_fn! {
 
     expand_clear_slot(output) {
         insta::assert_snapshot!(output, @"
+        ///The trait for the `clear_slot` operation.
         pub trait ClearSlot {
+            ///The `clear_slot` operation.
             fn clear_slot(&mut self);
         }
         impl<__Context__> ClearSlot for __Context__

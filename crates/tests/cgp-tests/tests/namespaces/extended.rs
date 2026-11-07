@@ -23,8 +23,11 @@ snapshot_cgp_namespace! {
 
     expand_extended_namespace(output) {
         insta::assert_snapshot!(output, @"
+        ///Wiring table for the `ExtendedNamespace` namespace.
         pub struct __ExtendedNamespaceComponents;
+        ///The `ExtendedNamespace` namespace's wiring table.
         pub trait ExtendedNamespace<__Table__> {
+            ///The provider table the `ExtendedNamespace` namespace delegates to.
             type Delegate;
         }
         impl<__Table__, __Key__, __Value__> ExtendedNamespace<__Table__> for __Key__

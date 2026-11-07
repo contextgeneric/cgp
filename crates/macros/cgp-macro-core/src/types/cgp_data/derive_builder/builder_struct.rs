@@ -13,6 +13,14 @@ pub fn derive_builder_struct(
     builder_struct.attrs.clear();
     builder_struct.ident = builder_ident.clone();
 
+    // The companion type carries a doc line, so a crate that enables
+    // `missing_docs` does not report it.
+    let context_ident = &context_struct.ident;
+    let builder_doc = format!("The partial builder for [`{context_ident}`].");
+    builder_struct
+        .attrs
+        .push(syn::parse_quote!(#[doc = #builder_doc]));
+
     let generics = &mut builder_struct.generics;
 
     for (i, field) in builder_struct.fields.iter_mut().enumerate() {

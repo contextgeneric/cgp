@@ -46,7 +46,9 @@ snapshot_derive_cgp_data! {
                 match *self {}
             }
         }
+        ///The partial extractor for [`Never`].
         pub enum __PartialNever {}
+        ///The borrowed partial extractor for [`Never`].
         pub enum __PartialRefNever {}
         impl PartialData for __PartialNever {
             type Target = Never;

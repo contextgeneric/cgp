@@ -36,7 +36,9 @@ snapshot_cgp_fn! {
 
     expand_get_foo(output) {
         insta::assert_snapshot!(output, @"
+        ///The trait for the `get_foo` operation.
         pub trait GetFoo: HasFooType<u8> {
+            ///The `get_foo` operation.
             fn get_foo(&self) -> <Self as HasFooType<u8>>::Foo;
         }
         impl<__Context__> GetFoo for __Context__
@@ -60,7 +62,9 @@ snapshot_cgp_fn! {
 
     expand_get_pair(output) {
         insta::assert_snapshot!(output, @"
+        ///The trait for the `get_pair` operation.
         pub trait GetPair: HasPairType<u8> + HasFooType<bool> {
+            ///The `get_pair` operation.
             fn get_pair(
                 &self,
             ) -> (
@@ -105,7 +109,9 @@ snapshot_cgp_fn! {
 
     expand_get_ref(output) {
         insta::assert_snapshot!(output, @"
+        ///The trait for the `get_ref` operation.
         pub trait GetRef<'a>: HasRefType<'a> {
+            ///The `get_ref` operation.
             fn get_ref(&self) -> <Self as HasRefType<'a>>::Ref;
         }
         impl<'a, __Context__> GetRef<'a> for __Context__

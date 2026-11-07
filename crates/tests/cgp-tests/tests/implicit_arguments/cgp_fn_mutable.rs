@@ -23,7 +23,9 @@ snapshot_cgp_fn! {
 
     expand_capitalize_name(output) {
         insta::assert_snapshot!(output, @"
+        ///The trait for the `capitalize_name` operation.
         pub trait CapitalizeName {
+            ///The `capitalize_name` operation.
             fn capitalize_name(&mut self);
         }
         impl<__Context__> CapitalizeName for __Context__

@@ -169,6 +169,7 @@ snapshot_derive_cgp_data! {
                 Cons((&self.foo).into(), Cons((&self.bar).into(), Cons((&self.baz).into(), Nil)))
             }
         }
+        ///The partial builder for [`Context`].
         pub struct __PartialContext<
             Foo,
             Bar,

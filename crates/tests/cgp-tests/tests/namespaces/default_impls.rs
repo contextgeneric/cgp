@@ -55,6 +55,7 @@ snapshot_cgp_component! {
                 >>::Delegate::show(__context__, value)
             }
         }
+        ///Component marker for [`Show`].
         pub struct ShowImplComponent;
         impl<__Context__, T> ShowImpl<__Context__, T> for UseContext
         where
@@ -133,6 +134,7 @@ snapshot_cgp_impl! {
         }
         impl<__Context__> IsProviderFor<ShowImplComponent, __Context__, (String)>
         for ShowString {}
+        ///Provider `ShowString` for [`ShowImpl`].
         pub struct ShowString;
         impl<__Components__> DefaultImpls1<ShowImplComponent, __Components__> for String {
             type Delegate = ShowString;
@@ -158,6 +160,7 @@ snapshot_cgp_impl! {
         }
         impl<__Context__, T: Display> IsProviderFor<ShowImplComponent, __Context__, (T)>
         for ShowWithDisplay {}
+        ///Provider `ShowWithDisplay` for [`ShowImpl`].
         pub struct ShowWithDisplay;
         ")
     }
@@ -176,8 +179,11 @@ snapshot_cgp_namespace! {
 
     expand_default_show_components(output) {
         insta::assert_snapshot!(output, @"
+        ///Wiring table for the `DefaultShowComponents` namespace.
         pub struct __DefaultShowComponentsComponents;
+        ///The `DefaultShowComponents` namespace's wiring table.
         pub trait DefaultShowComponents<__Table__> {
+            ///The provider table the `DefaultShowComponents` namespace delegates to.
             type Delegate;
         }
         impl<__Table__> DefaultShowComponents<__Table__> for String {
@@ -198,8 +204,11 @@ snapshot_cgp_namespace! {
 
     expand_default_impls_extended_namespace(output) {
         insta::assert_snapshot!(output, @"
+        ///Wiring table for the `ExtendedNamespace` namespace.
         pub struct __ExtendedNamespaceComponents;
+        ///The `ExtendedNamespace` namespace's wiring table.
         pub trait ExtendedNamespace<__Table__> {
+            ///The provider table the `ExtendedNamespace` namespace delegates to.
             type Delegate;
         }
         impl<__Table__, __Key__, __Value__> ExtendedNamespace<__Table__> for __Key__
@@ -230,6 +239,7 @@ snapshot_cgp_impl! {
             }
         }
         impl<__Context__> IsProviderFor<ShowImplComponent, __Context__, (u32)> for ShowU32 {}
+        ///Provider `ShowU32` for [`ShowImpl`].
         pub struct ShowU32;
         impl<__Components__> ExtendedNamespace<__Components__>
         for PathCons<

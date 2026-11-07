@@ -363,6 +363,7 @@ snapshot_derive_cgp_data! {
                 Self::Archived {}
             }
         }
+        ///The partial extractor for [`Status`].
         pub enum __PartialStatus<
             __F0__: MapType,
             __F1__: MapType,
@@ -374,6 +375,7 @@ snapshot_derive_cgp_data! {
             Paused(<__F2__ as MapType>::Map<Nil>),
             Archived(<__F3__ as MapType>::Map<Nil>),
         }
+        ///The borrowed partial extractor for [`Status`].
         pub enum __PartialRefStatus<
             '__a__,
             __R__: MapTypeRef,

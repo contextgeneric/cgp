@@ -89,6 +89,7 @@ snapshot_derive_cgp_data! {
                 Cons((&self.x).into(), Cons((&self.y).into(), Nil))
             }
         }
+        ///The partial builder for [`Point2d`].
         struct __PartialPoint2d<__F0__: MapType, __F1__: MapType> {
             x: <__F0__ as MapType>::Map<u64>,
             y: <__F1__ as MapType>::Map<u64>,

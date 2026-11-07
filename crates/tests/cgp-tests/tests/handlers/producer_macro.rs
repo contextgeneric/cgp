@@ -43,6 +43,7 @@ snapshot_cgp_producer! {
         }
         impl<__Context__, __Code__> IsProviderFor<ProducerComponent, __Context__, (__Code__)>
         for MagicNumber {}
+        ///Provider `MagicNumber` for [`Producer`].
         pub struct MagicNumber;
         impl DelegateComponent<ComputerComponent> for MagicNumber {
             type Delegate = PromoteProducer<Self>;

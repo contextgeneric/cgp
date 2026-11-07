@@ -94,6 +94,7 @@ snapshot_cgp_auto_dispatch! {
             __Context__,
             (__Code__, (&'__a__ __Variants__, (&'__a1__ str))),
         > for ComputeLabel {}
+        ///Provider `ComputeLabel` for [`Computer`].
         pub struct ComputeLabel;
         impl DelegateComponent<ComputerRefComponent> for ComputeLabel
         where

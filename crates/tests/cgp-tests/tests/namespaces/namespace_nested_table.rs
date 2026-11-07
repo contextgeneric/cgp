@@ -48,10 +48,14 @@ snapshot_cgp_namespace! {
 
     expand_nested_table_namespace(output) {
         insta::assert_snapshot!(output, @"
+        ///Wiring table for the `NestedNs` namespace.
         pub struct __NestedNsComponents;
+        ///The `NestedNs` namespace's wiring table.
         pub trait NestedNs<__Table__> {
+            ///The provider table the `NestedNs` namespace delegates to.
             type Delegate;
         }
+        ///Wiring table `FooTable`.
         pub struct FooTable;
         impl<__Table__> NestedNs<__Table__> for FooProviderComponent {
             type Delegate = UseDelegate<FooTable>;

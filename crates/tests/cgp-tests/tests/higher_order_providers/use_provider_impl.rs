@@ -150,6 +150,7 @@ snapshot_cgp_impl! {
             Inner: IsProviderFor<AreaCalculatorComponent, __Context__, ()>
                 + AreaCalculator<__Context__>,
         {}
+        ///Provider `ScaledArea` for [`AreaCalculator`].
         pub struct ScaledArea<Inner>(pub ::core::marker::PhantomData<Inner>);
         ")
     }

@@ -94,6 +94,7 @@ snapshot_cgp_impl! {
                     Value = f64,
                 >,
         {}
+        ///Provider `RectangleArea` for [`AreaCalculator`].
         pub struct RectangleArea;
         ")
     }

@@ -33,7 +33,9 @@ snapshot_cgp_fn! {
 
     expand_do_foo(output) {
         insta::assert_snapshot!(output, @"
+        ///The trait for the `do_foo` operation.
         pub trait DoFoo: HasFooType {
+            ///The `do_foo` operation.
             fn do_foo(&self) -> <Self as HasFooType>::Foo;
         }
         impl<__Context__> DoFoo for __Context__
@@ -57,10 +59,12 @@ snapshot_cgp_fn! {
 
     expand_do_bar(output) {
         insta::assert_snapshot!(output, @"
+        ///The trait for the `do_bar` operation.
         pub trait DoBar: HasBarType
         where
             <Self as HasBarType>::Bar: HasFooType,
         {
+            ///The `do_bar` operation.
             fn do_bar(&self) -> <<Self as HasBarType>::Bar as HasFooType>::Foo;
         }
         impl<__Context__> DoBar for __Context__
@@ -96,10 +100,12 @@ snapshot_cgp_fn! {
 
     expand_return_foo_or_bar(output) {
         insta::assert_snapshot!(output, @"
+        ///The trait for the `return_foo_or_bar` operation.
         trait ReturnFooOrBar: HasFooType + HasBarType
         where
             <Self as HasBarType>::Bar: HasFooType,
         {
+            ///The `return_foo_or_bar` operation.
             fn return_foo_or_bar(&self, flag: bool) -> <Self as HasFooType>::Foo;
         }
         impl<__Context__> ReturnFooOrBar for __Context__

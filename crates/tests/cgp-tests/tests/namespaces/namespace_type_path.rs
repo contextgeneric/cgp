@@ -33,8 +33,11 @@ snapshot_cgp_namespace! {
 
     expand_type_path_my_namespace(output) {
         insta::assert_snapshot!(output, @"
+        ///Wiring table for the `MyNamespace` namespace.
         pub struct __MyNamespaceComponents;
+        ///The `MyNamespace` namespace's wiring table.
         pub trait MyNamespace<__Table__> {
+            ///The provider table the `MyNamespace` namespace delegates to.
             type Delegate;
         }
         impl<__Table__> MyNamespace<__Table__> for FooProviderComponent {
@@ -86,6 +89,7 @@ snapshot_cgp_component! {
                 >>::Delegate::bar(__context__)
             }
         }
+        ///Component marker for [`Bar`].
         pub struct BarProviderComponent;
         impl<__Context__> BarProvider<__Context__> for UseContext
         where

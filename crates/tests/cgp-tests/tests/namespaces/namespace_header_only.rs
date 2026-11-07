@@ -27,8 +27,11 @@ snapshot_cgp_namespace! {
 
     expand_header_only_namespace(output) {
         insta::assert_snapshot!(output, @"
+        ///Wiring table for the `HeaderOnlyNamespace` namespace.
         pub struct __HeaderOnlyNamespaceComponents;
+        ///The `HeaderOnlyNamespace` namespace's wiring table.
         pub trait HeaderOnlyNamespace<__Table__> {
+            ///The provider table the `HeaderOnlyNamespace` namespace delegates to.
             type Delegate;
         }
         ")
@@ -42,8 +45,11 @@ snapshot_cgp_namespace! {
 
     expand_header_only_extended_namespace(output) {
         insta::assert_snapshot!(output, @"
+        ///Wiring table for the `HeaderOnlyExtendedNamespace` namespace.
         pub struct __HeaderOnlyExtendedNamespaceComponents;
+        ///The `HeaderOnlyExtendedNamespace` namespace's wiring table.
         pub trait HeaderOnlyExtendedNamespace<__Table__> {
+            ///The provider table the `HeaderOnlyExtendedNamespace` namespace delegates to.
             type Delegate;
         }
         impl<__Table__, __Key__, __Value__> HeaderOnlyExtendedNamespace<__Table__> for __Key__

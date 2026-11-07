@@ -52,6 +52,7 @@ snapshot_cgp_type! {
                 TypesTypeProviderComponent,
             >>::Delegate as TypesTypeProvider<__Context__>>::Types;
         }
+        ///Component marker for [`HasTypes`].
         pub struct TypesTypeProviderComponent;
         impl<__Context__> TypesTypeProvider<__Context__> for UseContext
         where

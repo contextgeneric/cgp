@@ -27,7 +27,9 @@ snapshot_cgp_fn! {
 
     expand_rectangle_area(output) {
         insta::assert_snapshot!(output, @"
+        ///The trait for the `rectangle_area` operation.
         pub trait RectangleArea<Scalar> {
+            ///The `rectangle_area` operation.
             fn rectangle_area(&self) -> Scalar;
         }
         impl<__Context__, Scalar> RectangleArea<Scalar> for __Context__

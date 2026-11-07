@@ -60,6 +60,7 @@ snapshot_cgp_type! {
                 FooTypeProviderAtComponent,
             >>::Delegate as FooTypeProviderAt<__Context__, I, J>>::Foo;
         }
+        ///Component marker for [`HasFooTypeAt`].
         pub struct FooTypeProviderAtComponent;
         impl<__Context__, I, J> FooTypeProviderAt<__Context__, I, J> for UseContext
         where
@@ -238,6 +239,7 @@ snapshot_cgp_getter! {
                 >>::Delegate::foo_at(__context__, _tag)
             }
         }
+        ///Component marker for [`HasFooAt`].
         pub struct FooGetterAtComponent;
         impl<__Context__, I, J> FooGetterAt<__Context__, I, J> for UseContext
         where
@@ -495,7 +497,9 @@ mod derive_delegate {
 
         expand_my_context(output) {
             insta::assert_snapshot!(output, @r#"
+            ///Wiring table `FooTypes`.
             pub struct FooTypes;
+            ///Wiring table `FooGetters`.
             pub struct FooGetters;
             impl DelegateComponent<FooTypeProviderAtComponent> for MyContext {
                 type Delegate = UseDelegate<FooTypes>;
@@ -621,7 +625,9 @@ mod derive_delegate2 {
 
         expand_my_context(output) {
             insta::assert_snapshot!(output, @r#"
+            ///Wiring table `FooTypes`.
             pub struct FooTypes;
+            ///Wiring table `FooGetters`.
             pub struct FooGetters;
             impl DelegateComponent<FooTypeProviderAtComponent> for MyContext {
                 type Delegate = UseDelegate2<FooTypes>;

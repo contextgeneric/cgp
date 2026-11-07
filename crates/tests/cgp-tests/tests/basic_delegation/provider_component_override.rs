@@ -37,6 +37,7 @@ snapshot_cgp_impl! {
             }
         }
         impl<__Context__> IsProviderFor<HasFooComponent, __Context__, ()> for FortyTwo {}
+        ///Provider `FortyTwo` for [`FooProvider`].
         pub struct FortyTwo;
         ")
     }

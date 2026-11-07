@@ -99,6 +99,7 @@ snapshot_cgp_auto_dispatch! {
             __Context__,
             (__Code__, (&'__a__ __Variants__, (u64, &'__a1__ T))),
         > for ComputeCallA {}
+        ///Provider `ComputeCallA` for [`Computer`].
         pub struct ComputeCallA;
         impl DelegateComponent<ComputerRefComponent> for ComputeCallA
         where
@@ -274,6 +275,7 @@ snapshot_cgp_auto_dispatch! {
             __Context__,
             (__Code__, (__Variants__, (u64, &'__a1__ mut T))),
         > for ComputeCallB {}
+        ///Provider `ComputeCallB` for [`Computer`].
         pub struct ComputeCallB;
         impl DelegateComponent<ComputerRefComponent> for ComputeCallB
         where

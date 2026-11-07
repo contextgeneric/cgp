@@ -47,7 +47,9 @@ snapshot_cgp_fn! {
         insta::assert_snapshot!(output, @"
         #[allow(unused)]
         #[async_trait]
+        ///The trait for the `do_foo_bar` operation.
         pub trait DoFooBar<X, Y>: HasFooType<X> + HasFooType<Y> + HasBarType {
+            ///The `do_foo_bar` operation.
             async fn do_foo_bar(&self, x: X, y: Y) -> Option<<Self as HasBarType>::Baz>;
         }
         #[allow(unused)]

@@ -50,6 +50,7 @@ snapshot_cgp_type! {
                 ProvideFooTypeComponent,
             >>::Delegate as ProvideFooType<__Context__, T>>::Foo;
         }
+        ///Component marker for [`HasFooType`].
         pub struct ProvideFooTypeComponent;
         impl<__Context__, T: ?Sized> ProvideFooType<__Context__, T> for UseContext
         where

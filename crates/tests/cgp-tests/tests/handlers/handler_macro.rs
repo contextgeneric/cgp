@@ -50,6 +50,7 @@ snapshot_cgp_computer! {
             __Context__,
             __Code__,
         > IsProviderFor<AsyncComputerComponent, __Context__, (__Code__, (u64, u64))> for Add {}
+        ///Provider `Add` for [`AsyncComputer`].
         pub struct Add;
         impl DelegateComponent<AsyncComputerRefComponent> for Add
         where
@@ -142,6 +143,7 @@ snapshot_cgp_computer! {
             __Code__,
         > IsProviderFor<AsyncComputerComponent, __Context__, (__Code__, (u64, u64))>
         for AddWithError {}
+        ///Provider `AddWithError` for [`AsyncComputer`].
         pub struct AddWithError;
         impl DelegateComponent<AsyncComputerRefComponent> for AddWithError
         where

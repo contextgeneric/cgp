@@ -21,6 +21,7 @@ snapshot_delegate_components! {
 
     expand_foo_component(output) {
         insta::assert_snapshot!(output, @"
+        ///Wiring table `FooComponents`.
         pub struct FooComponents;
         impl DelegateComponent<Index<0>> for FooComponents {
             type Delegate = u64;
@@ -56,6 +57,7 @@ snapshot_delegate_components! {
 
     expand_bar_component(output) {
         insta::assert_snapshot!(output, @"
+        ///Wiring table `BarComponents`.
         pub struct BarComponents;
         impl DelegateComponent<Index<0>> for BarComponents {
             type Delegate = FooComponents;

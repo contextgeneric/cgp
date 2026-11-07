@@ -20,6 +20,14 @@ pub fn derive_extractor_enum(
 
     extractor_enum.ident = extractor_ident.clone();
 
+    // The companion type carries a doc line, so a crate that enables
+    // `missing_docs` does not report it.
+    let context_ident = &context_enum.ident;
+    let extractor_doc = format!("The partial extractor for [`{context_ident}`].");
+    extractor_enum
+        .attrs
+        .push(syn::parse_quote!(#[doc = #extractor_doc]));
+
     let generics = &mut extractor_enum.generics;
 
     for (i, variant) in extractor_enum.variants.iter_mut().enumerate() {
@@ -58,6 +66,14 @@ pub fn derive_extractor_enum_ref(
     extractor_enum.attrs.clear();
 
     extractor_enum.ident = extractor_ident.clone();
+
+    // The companion type carries a doc line, so a crate that enables
+    // `missing_docs` does not report it.
+    let context_ident = &context_enum.ident;
+    let extractor_doc = format!("The borrowed partial extractor for [`{context_ident}`].");
+    extractor_enum
+        .attrs
+        .push(syn::parse_quote!(#[doc = #extractor_doc]));
 
     // A variantless enum borrows nothing, so the `'__a__` lifetime and the
     // `__R__: MapTypeRef` selector would be unused parameters (`E0392`). Emit the

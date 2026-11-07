@@ -43,11 +43,13 @@ snapshot_cgp_fn! {
 
     expand_deep(output) {
         insta::assert_snapshot!(output, @"
+        ///The trait for the `deep` operation.
         pub trait Deep: HasA
         where
             <Self as HasA>::A: HasB,
             <<Self as HasA>::A as HasB>::B: HasC,
         {
+            ///The `deep` operation.
             fn deep(&self) -> <<<Self as HasA>::A as HasB>::B as HasC>::C;
         }
         impl<__Context__> Deep for __Context__

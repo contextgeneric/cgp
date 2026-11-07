@@ -58,6 +58,7 @@ snapshot_cgp_getter! {
                 >>::Delegate::scalar(__context__)
             }
         }
+        ///Component marker for [`HasScalar`].
         pub struct ScalarGetterComponent;
         impl<__Context__> ScalarGetter<__Context__> for UseContext
         where

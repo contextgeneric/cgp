@@ -31,3 +31,7 @@ pub mod delegate_nested_use_delegate;
 pub mod delegate_new_array_key;
 pub mod delegate_new_generic_struct;
 pub mod delegate_new_struct;
+
+// Where a user's doc comment lands: copied onto the derived items, with a generated
+// line on the marker struct.
+pub mod doc_comment_on_cgp_component;

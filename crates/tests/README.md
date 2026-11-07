@@ -45,7 +45,13 @@ getters, field access, extensible records, extensible variants, checking,
 dispatching, namespaces, handlers, monadic handlers, async and Send bounds,
 blanket traits, and the standalone error backends (`error_backends`). The crate's build script
 turns the example in each error backend's README into a test module, which the `readme_*.rs` files
-in `error_backends` include, so those examples are tested without being copied. The set grows and subdivides over time. `cgp-macro-tests` follows
+in `error_backends` include, so those examples are tested without being copied.
+
+The library crate's `generated_docs` module denies `missing_docs` while using every macro, so a
+generated item that loses its doc line fails the build. The `implicit_arguments` and
+`basic_delegation` targets pin where a user's own doc comment lands.
+
+The set grows and subdivides over time. `cgp-macro-tests` follows
 the same shape, with `ident_with_type_params` and `shape_macro_parsing` for parser corner cases,
 `companion_attrs` for the attributes the data derives copy onto their companion types, and the
 failure-case targets `parser_rejections` and `invalid_expansion`.

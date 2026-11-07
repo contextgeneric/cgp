@@ -51,6 +51,7 @@ snapshot_cgp_component! {
                 <__Provider__ as DelegateComponent<FooProviderComponent>>::Delegate::foo()
             }
         }
+        ///Component marker for [`CanDoFoo`].
         pub struct FooProviderComponent;
         impl<__Context__> FooProvider<__Context__> for UseContext
         where

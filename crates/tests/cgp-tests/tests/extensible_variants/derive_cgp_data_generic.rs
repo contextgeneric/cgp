@@ -139,6 +139,7 @@ snapshot_derive_cgp_data! {
                 Self::Baz(value)
             }
         }
+        ///The partial extractor for [`FooBarBazGeneric`].
         pub enum __PartialFooBarBazGeneric<
             Foo,
             Bar,
@@ -151,6 +152,7 @@ snapshot_derive_cgp_data! {
             Bar(<__F1__ as MapType>::Map<Bar>),
             Baz(<__F2__ as MapType>::Map<Baz>),
         }
+        ///The borrowed partial extractor for [`FooBarBazGeneric`].
         pub enum __PartialRefFooBarBazGeneric<
             '__a__,
             __R__: MapTypeRef,

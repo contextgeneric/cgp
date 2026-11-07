@@ -44,6 +44,7 @@ snapshot_cgp_getter! {
                 >>::Delegate::foo(__context__)
             }
         }
+        ///Component marker for [`HasFoo`].
         pub struct GetStringComponent;
         impl<__Context__> GetString<__Context__> for UseContext
         where

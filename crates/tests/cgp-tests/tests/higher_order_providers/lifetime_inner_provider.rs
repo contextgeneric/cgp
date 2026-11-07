@@ -55,6 +55,7 @@ snapshot_cgp_new_provider! {
         where
             Inner: ReferenceGetter<'a, Context>,
         {}
+        ///Provider `ForwardReference` for [`ReferenceGetter`].
         pub struct ForwardReference<Inner>(pub ::core::marker::PhantomData<Inner>);
         ")
     }
