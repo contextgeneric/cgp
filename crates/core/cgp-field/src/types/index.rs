@@ -1,33 +1,9 @@
 use core::fmt::{Debug, Display};
 
-/**
-    The `Index` type is used to represent a `usize` value at
-    the _type level_.
-
-    `Index` is simply defined to be parameterized by a _const-generic_ value
-    of type `usize`. It is most often used to access generic fields by their
-    _index_, instead of by their _name_.
-
-    ## Example
-
-    Given the following struct definition:
-
-    ```rust,ignore
-    pub struct MyContext(pub u32);
-    ```
-
-    The following `HasField` implementation would be generated, with use of
-    `Index<0>` as the field tag:
-
-    ```rust,ignore
-    impl HasField<Index<0>> for MyContext {
-        type Value = u32;
-
-        fn get_field(&self) -> &u32 {
-            &self.0
-        }
-    }
-*/
+/// A number lifted into a type, so a tuple-struct field can be named by its position the way
+/// Symbol! names a field by its string.
+///
+/// See [`Index`](https://contextgeneric.dev/docs/reference/types/index_type).
 #[derive(Eq, PartialEq, Clone, Copy, Default)]
 pub struct Index<const I: usize>;
 

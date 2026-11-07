@@ -2,9 +2,12 @@ use cgp::field::impls::CanDowncastFields;
 use cgp::prelude::*;
 use cgp_handler::{AsyncComputer, AsyncComputerComponent, Computer, ComputerComponent};
 
-/// Downcasts a value and handles it.
+/// The matcher adapter that narrows an enum to a smaller enum of some of its variants and hands
+/// that whole group to one inner provider.
 ///
-/// See [`DowncastAndHandle`](https://contextgeneric.dev/docs/reference/providers/dispatch/downcast_and_handle).
+/// See
+/// [`DowncastAndHandle`](https://contextgeneric.dev/docs/reference/providers/dispatch/downcast_and_handle)
+/// .
 pub struct DowncastAndHandle<Input, Provider = UseContext>(pub PhantomData<(Input, Provider)>);
 
 #[cgp_provider]

@@ -8,5 +8,6 @@
 pub mod macro_prelude;
 /// The type-level traits: [`traits::StaticFormat`] and [`traits::ConcatPath`].
 pub mod traits;
-/// The type-level types: [`types::Symbol`], [`types::Chars`], [`types::Cons`], [`types::Nil`], and [`types::PathCons`].
+/// The type-level types: [`types::Symbol`], [`types::Chars`], [`types::Cons`], [`types::Nil`], and
+/// [`types::PathCons`].
 pub mod types;

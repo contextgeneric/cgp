@@ -1,4 +1,5 @@
-/// Lifts a value into a monad.
+/// The monad trait that puts a value into a step's output on either branch: lift_value for a
+/// short-circuit, lift_output for a continuation's result.
 ///
 /// See [`LiftValue`](https://contextgeneric.dev/docs/reference/traits/monad/lift_value).
 pub trait LiftValue<Value, Output> {

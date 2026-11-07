@@ -3,7 +3,8 @@ use core::marker::PhantomData;
 use cgp_field::impls::IsOptional;
 use cgp_field::traits::UpdateField;
 
-/// Sets a field that may be absent.
+/// Set one field of an all-optional builder, as many times as you like, optionally getting back the
+/// value it replaced.
 ///
 /// See [`SetOptional`](https://contextgeneric.dev/docs/reference/traits/optional/set_optional).
 pub trait SetOptional<Tag> {

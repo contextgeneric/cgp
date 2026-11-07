@@ -2,7 +2,8 @@ use core::fmt::{self, Formatter};
 
 use crate::types::{Chars, Nil};
 
-/// Formats a type-level string.
+/// Write a type-level string's characters into a formatter without a value to format; the trait
+/// behind Display on Symbol and Chars.
 ///
 /// See [`StaticFormat`](https://contextgeneric.dev/docs/reference/traits/formatting/static_format).
 pub trait StaticFormat {

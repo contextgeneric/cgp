@@ -8,7 +8,8 @@ use cgp_handler::{
 use crate::monadic::err::ErrMonadic;
 use crate::traits::{MonadicBind, MonadicTrans};
 
-/// Pipes handlers through a monad.
+/// The provider that composes a Product! list of handlers under a monad marker, so each step runs
+/// only on the previous step's continue case.
 ///
 /// See [`PipeMonadic`](https://contextgeneric.dev/docs/reference/providers/monad/pipe_monadic).
 pub struct PipeMonadic<M, Providers>(pub PhantomData<(M, Providers)>);

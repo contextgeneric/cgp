@@ -6,9 +6,12 @@ use cgp_field::traits::{
 };
 use cgp_field::types::{Cons, Field, Nil};
 
-/// Finalizes a builder whose fields are optional.
+/// End an optional build at run time: the concrete struct if every field holds a value, or the name
+/// of a missing field as an Err.
 ///
-/// See [`FinalizeOptional`](https://contextgeneric.dev/docs/reference/traits/optional/finalize_optional).
+/// See
+/// [`FinalizeOptional`](https://contextgeneric.dev/docs/reference/traits/optional/finalize_optional)
+/// .
 pub trait FinalizeOptional: PartialData {
     /// Finalizes the builder, or names the missing field.
     fn finalize_optional(self) -> Result<Self::Target, &'static str>;

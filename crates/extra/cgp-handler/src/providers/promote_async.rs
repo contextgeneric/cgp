@@ -4,7 +4,8 @@ use crate::{
     AsyncComputer, AsyncComputerComponent, Computer, Handler, HandlerComponent, TryComputer,
 };
 
-/// Lifts a computer into an async computer.
+/// The single-step lift that runs a synchronous Computer or TryComputer inside an async method, to
+/// serve an AsyncComputer or Handler slot.
 ///
 /// See [`PromoteAsync`](https://contextgeneric.dev/docs/reference/providers/handler/promote_async).
 pub struct PromoteAsync<Provider>(pub PhantomData<Provider>);

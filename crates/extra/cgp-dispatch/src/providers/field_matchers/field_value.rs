@@ -1,9 +1,12 @@
 use cgp::prelude::*;
 use cgp_handler::{AsyncComputer, AsyncComputerComponent, Computer, ComputerComponent};
 
-/// Handles a field's value.
+/// The adapter that unwraps the tagged Field a matcher arm delivers and passes the bare payload to
+/// an inner provider, so an ordinary computer can handle it.
 ///
-/// See [`HandleFieldValue`](https://contextgeneric.dev/docs/reference/providers/dispatch/handle_field_value).
+/// See
+/// [`HandleFieldValue`](https://contextgeneric.dev/docs/reference/providers/dispatch/handle_field_value)
+/// .
 pub struct HandleFieldValue<Provider = UseContext>(pub PhantomData<Provider>);
 
 #[cgp_provider]

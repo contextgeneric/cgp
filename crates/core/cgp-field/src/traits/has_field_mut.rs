@@ -3,17 +3,22 @@ use core::ops::DerefMut;
 
 use crate::traits::{FieldGetter, HasField};
 
-/// Mutably reads a field by its type-level tag.
+/// Mutable tag-keyed field access, letting an implementation change a field of a context it cannot
+/// name, as the mutable counterpart of HasField.
 ///
-/// See [`HasFieldMut`](https://contextgeneric.dev/docs/reference/traits/field-access/has_field_mut).
+/// See [`HasFieldMut`](https://contextgeneric.dev/docs/reference/traits/field-access/has_field_mut)
+/// .
 pub trait HasFieldMut<Tag>: HasField<Tag> {
     /// Mutably reads the field.
     fn get_field_mut(&mut self, tag: PhantomData<Tag>) -> &mut Self::Value;
 }
 
-/// Mutably reads a field from a context through a provider.
+/// The provider-side form of HasFieldMut: a getter with a &mut self method takes any MutFieldGetter
+/// provider, such as UseField, through WithProvider.
 ///
-/// See [`MutFieldGetter`](https://contextgeneric.dev/docs/reference/traits/field-access/mut_field_getter).
+/// See
+/// [`MutFieldGetter`](https://contextgeneric.dev/docs/reference/traits/field-access/mut_field_getter)
+/// .
 pub trait MutFieldGetter<Context, Tag>: FieldGetter<Context, Tag> {
     /// Mutably reads the field.
     fn get_field_mut(context: &mut Context, tag: PhantomData<Tag>) -> &mut Self::Value;

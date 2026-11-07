@@ -1,6 +1,7 @@
 use core::ops::Deref;
 
-/// An owned or borrowed value.
+/// A value that is either a borrow of a T or an owned T, so one getter signature serves both the
+/// context that stores a value and the one that computes it.
 ///
 /// See [`MRef`](https://contextgeneric.dev/docs/reference/types/mref).
 pub enum MRef<'a, T> {

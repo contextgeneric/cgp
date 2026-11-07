@@ -1,8 +1,10 @@
 use crate::types::{Cons, Nil};
 
-/// Appends one item to a type-level list.
+/// Name the type-level product list with one more entry at the end, so generic code can describe in
+/// a signature the shape it will produce.
 ///
-/// See [`AppendProduct`](https://contextgeneric.dev/docs/reference/traits/type-level/append_product).
+/// See
+/// [`AppendProduct`](https://contextgeneric.dev/docs/reference/traits/type-level/append_product) .
 pub trait AppendProduct<Item: ?Sized> {
     /// The list with the item appended.
     type Output;

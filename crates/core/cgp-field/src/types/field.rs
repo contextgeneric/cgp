@@ -1,39 +1,10 @@
 use core::fmt::Debug;
 use core::marker::PhantomData;
 
-/**
-   The `Field` type is used to represent a _named_ field entry
-   within a product type or a sum type.
-
-   `Field` is parameterized by a phantom `Tag` type, which is used to represent
-   the field name as type. Typically, this would either be a type-level string
-   such as `Symbol!("name")`, or a type-level index such as `Index<0>`.
-   Aside from that, `Field` is essentially a wrapper around `Value`.
-
-   `Field` is mainly used within the derived [`HasFields`](crate::traits::HasFields)
-   implementations, to include the field name in the generic product or sum
-   representation of the given struct or enum.
-
-   ## Example
-
-   Given the following struct definition:
-
-   ```rust,ignore
-   #[derive(HasFields)]
-   pub struct MyContext {
-       pub name: String,
-       pub age: u8,
-   }
-   ```
-
-   The following `HasFields` implementation would be generated:
-
-   ```rust,ignore
-   impl HasFields for MyContext {
-       type Fields = Product![Field<Symbol!("name"), String>, Field<Symbol!("age"), u8>];
-   }
-   ```
-*/
+/// A value paired with its type-level name tag, so a struct's fields and an enum's variants can be
+/// described one named entry at a time.
+///
+/// See [`Field`](https://contextgeneric.dev/docs/reference/types/field).
 pub struct Field<Tag, Value> {
     /// The field's value.
     pub value: Value,

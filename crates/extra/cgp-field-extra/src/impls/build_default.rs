@@ -1,17 +1,23 @@
 use cgp_field::impls::{CanBuildFrom, IsNothing, IsOptional, IsPresent};
 use cgp_field::traits::{FinalizeBuild, HasBuilder, TransformMap, TransformMapFields};
 
-/// Builds a value from a source, filling missing fields with their defaults.
+/// Build a wider record from a narrower one in one call, copying the source's fields by name and
+/// filling the rest from Default.
 ///
-/// See [`CanBuildWithDefault`](https://contextgeneric.dev/docs/reference/traits/optional/can_build_with_default).
+/// See
+/// [`CanBuildWithDefault`](https://contextgeneric.dev/docs/reference/traits/optional/can_build_with_default)
+/// .
 pub trait CanBuildWithDefault<Source> {
     /// Builds the value.
     fn build_with_default(source: Source) -> Self;
 }
 
-/// Finalizes a builder, filling missing fields with their defaults.
+/// End a build by filling every unset field from Default, for an optional builder or a core one,
+/// then finalizing through the strict impl.
 ///
-/// See [`CanFinalizeWithDefault`](https://contextgeneric.dev/docs/reference/traits/optional/can_finalize_with_default).
+/// See
+/// [`CanFinalizeWithDefault`](https://contextgeneric.dev/docs/reference/traits/optional/can_finalize_with_default)
+/// .
 pub trait CanFinalizeWithDefault {
     /// The finalized value.
     type Output;
@@ -43,9 +49,12 @@ where
     }
 }
 
-/// Maps a missing field to its default value.
+/// The transform marker behind the defaulting finalize: three per-field conversions that leave
+/// every field present, filling gaps from Default.
 ///
-/// See [`TransformMapDefault`](https://contextgeneric.dev/docs/reference/traits/optional/transform_map_default).
+/// See
+/// [`TransformMapDefault`](https://contextgeneric.dev/docs/reference/traits/optional/transform_map_default)
+/// .
 pub struct TransformMapDefault;
 
 impl<T> TransformMap<IsPresent, IsPresent, T> for TransformMapDefault {

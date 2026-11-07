@@ -5,7 +5,8 @@ use crate::traits::{
 };
 use crate::types::{Either, Field, Void};
 
-/// Widens a smaller enum into a larger one.
+/// Convert a narrow enum into a wider one that has every one of its variants, routing each by name
+/// at the type level; the cast cannot fail.
 ///
 /// See [`CanUpcast`](https://contextgeneric.dev/docs/reference/traits/casting/can_upcast).
 pub trait CanUpcast<Target> {
@@ -13,7 +14,8 @@ pub trait CanUpcast<Target> {
     fn upcast(self, _tag: PhantomData<Target>) -> Target;
 }
 
-/// Narrows an enum into a smaller one.
+/// Try to convert a wide enum into a narrower one, getting the narrowed value or a remainder with
+/// the attempted variants ruled out for the next attempt.
 ///
 /// See [`CanDowncast`](https://contextgeneric.dev/docs/reference/traits/casting/can_downcast).
 pub trait CanDowncast<Target> {
@@ -24,9 +26,12 @@ pub trait CanDowncast<Target> {
     fn downcast(self, _tag: PhantomData<Target>) -> Result<Target, Self::Remainder>;
 }
 
-/// Narrows a field list into a smaller one.
+/// Continue narrowing on the remainder a failed downcast hands back, so a value can be tried
+/// against a second target and a third. Never used on its own.
 ///
-/// See [`CanDowncastFields`](https://contextgeneric.dev/docs/reference/traits/casting/can_downcast_fields).
+/// See
+/// [`CanDowncastFields`](https://contextgeneric.dev/docs/reference/traits/casting/can_downcast_fields)
+/// .
 pub trait CanDowncastFields<Target> {
     /// The fields left when the target does not match.
     type Remainder;

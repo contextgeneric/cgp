@@ -1,7 +1,7 @@
 use core::fmt::Display;
 use core::marker::PhantomData;
 
-/// A type-level string.
+/// A type-level string, used as the tag that names a struct field in CGP's field-access traits.
 ///
 /// See [`Symbol!`](https://contextgeneric.dev/docs/reference/macros/symbol).
 pub struct Symbol<const LEN: usize, Chars>(pub PhantomData<Chars>);

@@ -1,9 +1,12 @@
 use cgp_field::impls::{IsNothing, IsOptional, IsPresent};
 use cgp_field::traits::{HasBuilder, TransformMap, TransformMapFields};
 
-/// A type whose builder has optional fields.
+/// Start a builder whose every field is an Option, set in any order and as often as you like, with
+/// the choice of ending deferred to the finalize call.
 ///
-/// See [`HasOptionalBuilder`](https://contextgeneric.dev/docs/reference/traits/optional/has_optional_builder).
+/// See
+/// [`HasOptionalBuilder`](https://contextgeneric.dev/docs/reference/traits/optional/has_optional_builder)
+/// .
 pub trait HasOptionalBuilder {
     /// The optional builder type.
     type Builder;
@@ -24,7 +27,8 @@ where
     }
 }
 
-/// Converts a builder into one with optional fields.
+/// Re-mark every field of a core builder as optional, keeping set fields as Some, so the rest can
+/// arrive in any order and the build can end either way.
 ///
 /// See [`ToOptional`](https://contextgeneric.dev/docs/reference/traits/optional/to_optional).
 pub trait ToOptional {
@@ -46,9 +50,12 @@ where
     }
 }
 
-/// Maps a present field to an optional one.
+/// The transform marker behind ToOptional: two per-field conversions that wrap a present field in
+/// Some and turn an absent one into None.
 ///
-/// See [`TransformOptional`](https://contextgeneric.dev/docs/reference/traits/optional/transform_optional).
+/// See
+/// [`TransformOptional`](https://contextgeneric.dev/docs/reference/traits/optional/transform_optional)
+/// .
 pub struct TransformOptional;
 
 impl<T> TransformMap<IsPresent, IsOptional, T> for TransformOptional {

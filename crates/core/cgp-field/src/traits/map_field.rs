@@ -2,7 +2,8 @@ use core::marker::PhantomData;
 
 use crate::traits::{FieldGetter, HasField};
 
-/// Maps a field's value through a closure.
+/// A blanket helper on every HasField that passes a borrowed field to a closure, so generic code
+/// can read a field of a field without a lifetime bound.
 ///
 /// See [`MapField`](https://contextgeneric.dev/docs/reference/traits/field-access/map_field).
 pub trait MapField<Tag>: HasField<Tag> {
@@ -28,7 +29,8 @@ where
     }
 }
 
-/// The provider trait equivalent of [`MapField`].
+/// The provider-side mirror of MapField, a blanket impl over every field getter that lets a getter
+/// provider read through the field another provider returns.
 ///
 /// See [`FieldMapper`](https://contextgeneric.dev/docs/reference/traits/field-access/field_mapper).
 pub trait FieldMapper<Context, Tag>: FieldGetter<Context, Tag> {

@@ -5,7 +5,8 @@ use crate::{
     TryComputerComponent,
 };
 
-/// Lifts a producer into a computer.
+/// The single-step lift that turns a Producer into a Computer, a Computer into a TryComputer, and
+/// an AsyncComputer into a Handler, adding no behavior.
 ///
 /// See [`Promote`](https://contextgeneric.dev/docs/reference/providers/handler/promote).
 pub struct Promote<Provider>(pub PhantomData<Provider>);

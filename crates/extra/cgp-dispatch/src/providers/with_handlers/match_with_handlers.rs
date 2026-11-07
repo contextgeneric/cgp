@@ -6,9 +6,12 @@ use cgp_handler::{AsyncComputer, AsyncComputerComponent, Computer, ComputerCompo
 
 use crate::DispatchMatchers;
 
-/// Matches a value's variant with handlers.
+/// The matcher that runs a spelled-out list of per-variant handlers over an enum, stopping at the
+/// first match and needing no wildcard arm.
 ///
-/// See [`MatchWithHandlers`](https://contextgeneric.dev/docs/reference/providers/dispatch/match_with_handlers).
+/// See
+/// [`MatchWithHandlers`](https://contextgeneric.dev/docs/reference/providers/dispatch/match_with_handlers)
+/// .
 pub struct MatchWithHandlers<Handlers>(pub PhantomData<Handlers>);
 
 #[cgp_provider]

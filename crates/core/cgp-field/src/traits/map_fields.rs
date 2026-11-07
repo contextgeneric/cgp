@@ -1,7 +1,8 @@
 use crate::traits::MapType;
 use crate::types::{Cons, Either, Nil, Void};
 
-/// Maps every field in a list through a type mapper.
+/// Rewrite every entry of a type-level product or sum through one MapType marker, as CGP does to
+/// wrap each provider in a pipeline's list.
 ///
 /// See [`MapFields`](https://contextgeneric.dev/docs/reference/traits/type-level/map_fields).
 pub trait MapFields<Mapper> {

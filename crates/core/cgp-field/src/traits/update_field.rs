@@ -2,7 +2,8 @@ use core::marker::PhantomData;
 
 use crate::traits::MapType;
 
-/// Updates one field of a value.
+/// The per-field primitive of the builder family: change one field's presence marker and hand back
+/// what was stored there before.
 ///
 /// See [`UpdateField`](https://contextgeneric.dev/docs/reference/traits/builder/update_field).
 pub trait UpdateField<Tag, M: MapType> {

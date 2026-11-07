@@ -5,7 +5,8 @@ use crate::{
     TryComputer, TryComputerComponent,
 };
 
-/// A handler that returns its input unchanged.
+/// The handler that returns its input unchanged, the neutral stage of a pipeline, as a Computer,
+/// TryComputer, AsyncComputer, or Handler.
 ///
 /// See [`ReturnInput`](https://contextgeneric.dev/docs/reference/providers/handler/return_input).
 pub struct ReturnInput;

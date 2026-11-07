@@ -3,12 +3,13 @@ use core::marker::PhantomData;
 use cgp::component::UseDelegate;
 use cgp::prelude::*;
 
+/// The input-free handler-family component: a synchronous, infallible provider that produces an
+/// Output from the context and a Code tag alone.
+///
+/// See [`CanProduce`](https://contextgeneric.dev/docs/reference/components/handler/producer).
 #[cgp_component(Producer)]
 #[prefix(@cgp.extra.handler in DefaultNamespace)]
 #[derive_delegate(UseDelegate<Code>)]
-/// An input-free production.
-///
-/// See [`CanProduce`](https://contextgeneric.dev/docs/reference/components/handler/producer).
 pub trait CanProduce<Code> {
     /// The produced output.
     type Output;

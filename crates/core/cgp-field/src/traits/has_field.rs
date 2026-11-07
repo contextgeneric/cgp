@@ -3,7 +3,8 @@ use core::ops::Deref;
 
 use cgp_component::UseContext;
 
-/// Reads a field by its type-level tag.
+/// The trait for reading one field of a context by its name as a type, so generic code can bound on
+/// a field of a type it cannot name.
 ///
 /// See [`HasField`](https://contextgeneric.dev/docs/reference/traits/field-access/has_field).
 pub trait HasField<Tag> {
@@ -14,7 +15,8 @@ pub trait HasField<Tag> {
     fn get_field(&self, _tag: PhantomData<Tag>) -> &Self::Value;
 }
 
-/// Reads a field from a context through a provider.
+/// The provider-side form of HasField: a getter component takes any FieldGetter provider, such as
+/// UseField, through WithProvider.
 ///
 /// See [`FieldGetter`](https://contextgeneric.dev/docs/reference/traits/field-access/field_getter).
 pub trait FieldGetter<Context, Tag> {

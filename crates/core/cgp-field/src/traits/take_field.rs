@@ -3,7 +3,8 @@ use core::marker::PhantomData;
 use crate::impls::{IsNothing, IsPresent};
 use crate::traits::UpdateField;
 
-/// Takes one field out of a value.
+/// Take a present field out of a partial record, getting the value and a remainder that cannot be
+/// finalized until the field is put back.
 ///
 /// See [`TakeField`](https://contextgeneric.dev/docs/reference/traits/builder/take_field).
 pub trait TakeField<Tag> {

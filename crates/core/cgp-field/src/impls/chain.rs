@@ -3,7 +3,8 @@ use core::marker::PhantomData;
 use crate::traits::{FieldGetter, FieldMapper};
 use crate::types::{Cons, Nil};
 
-/// Chains several getters into one.
+/// The foundational getter that chains a list of field getters, so a getter component reads a field
+/// several hops inside its context.
 ///
 /// See [`ChainGetters`](https://contextgeneric.dev/docs/reference/providers/chain_getters).
 pub struct ChainGetters<Getters>(pub PhantomData<Getters>);

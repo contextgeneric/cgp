@@ -1,6 +1,7 @@
 use crate::traits::HasFields;
 
-/// Builds a value from its field list.
+/// Rebuild a concrete struct or enum from the anonymous shape ToFields produced, as the return
+/// journey of a structural operation.
 ///
 /// See [`FromFields`](https://contextgeneric.dev/docs/reference/traits/shape/from_fields).
 pub trait FromFields: HasFields {

@@ -3,7 +3,8 @@ use core::marker::PhantomData;
 use crate::impls::{IsNothing, IsPresent};
 use crate::traits::{PartialData, UpdateField};
 
-/// Builds one field of a record.
+/// Set a currently-absent field on a partial record, which is the direction of the builder family
+/// you write most when assembling a struct field by field.
 ///
 /// See [`BuildField`](https://contextgeneric.dev/docs/reference/traits/builder/build_field).
 pub trait BuildField<Tag> {
@@ -30,7 +31,8 @@ where
     }
 }
 
-/// Finalizes a builder into its target.
+/// Turn a partial record with every field present back into the concrete struct; the impl exists
+/// only at that configuration.
 ///
 /// See [`FinalizeBuild`](https://contextgeneric.dev/docs/reference/traits/builder/finalize_build).
 pub trait FinalizeBuild: PartialData {

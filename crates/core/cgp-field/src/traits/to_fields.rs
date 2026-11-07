@@ -1,6 +1,7 @@
 use crate::traits::{HasFields, HasFieldsRef};
 
-/// Converts a value into its field list.
+/// Produce a value in the shape HasFields names, taking a struct or enum apart into an anonymous
+/// list of named entries.
 ///
 /// See [`ToFields`](https://contextgeneric.dev/docs/reference/traits/shape/to_fields).
 pub trait ToFields: HasFields {
@@ -8,7 +9,8 @@ pub trait ToFields: HasFields {
     fn to_fields(self) -> Self::Fields;
 }
 
-/// Borrows a value as its field list.
+/// Walk a value's shape without consuming it, for code that only reads the fields of a struct or
+/// enum it cannot name.
 ///
 /// See [`ToFieldsRef`](https://contextgeneric.dev/docs/reference/traits/shape/to_fields_ref).
 pub trait ToFieldsRef: HasFieldsRef {

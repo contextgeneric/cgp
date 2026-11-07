@@ -9,9 +9,12 @@ use crate::{
     MatchFirstWithHandlersRef,
 };
 
-/// Matches the first field of a value with field handlers.
+/// The matcher for an (Input, Args) input: it matches the enum in the first element and passes the
+/// extra arguments to every per-variant handler.
 ///
-/// See [`MatchFirstWithFieldHandlers`](https://contextgeneric.dev/docs/reference/providers/dispatch/match_first_with_handlers).
+/// See
+/// [`MatchFirstWithFieldHandlers`](https://contextgeneric.dev/docs/reference/providers/dispatch/match_first_with_handlers)
+/// .
 pub type MatchFirstWithFieldHandlers<Provider = UseContext> =
     UseInputDelegate<MatchFirstWithFieldHandlersInputs<Provider>>;
 

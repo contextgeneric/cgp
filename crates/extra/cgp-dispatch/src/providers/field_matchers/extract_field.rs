@@ -1,9 +1,12 @@
 use cgp::prelude::*;
 use cgp_handler::{AsyncComputer, AsyncComputerComponent, Computer, ComputerComponent};
 
-/// Extracts a field and handles it.
+/// The matcher adapter that tries one variant, hands its payload to an inner provider on a match,
+/// and passes the remainder on when the variant does not match.
 ///
-/// See [`ExtractFieldAndHandle`](https://contextgeneric.dev/docs/reference/providers/dispatch/extract_field_and_handle).
+/// See
+/// [`ExtractFieldAndHandle`](https://contextgeneric.dev/docs/reference/providers/dispatch/extract_field_and_handle)
+/// .
 pub struct ExtractFieldAndHandle<Tag, Provider = UseContext>(pub PhantomData<(Tag, Provider)>);
 
 #[cgp_provider]

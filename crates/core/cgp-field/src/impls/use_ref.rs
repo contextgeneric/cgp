@@ -4,12 +4,14 @@ use cgp_component::WithProvider;
 
 use crate::traits::{FieldGetter, HasField, HasFieldMut, MutFieldGetter};
 
-/// A getter that reads a field through `AsRef`.
+/// The foundational field getter that borrows a field through AsRef or AsMut as a different type,
+/// wired to a getter through the WithFieldRef alias.
 ///
 /// See [`UseFieldRef`](https://contextgeneric.dev/docs/reference/providers/use_field_ref).
 pub struct UseFieldRef<Tag, Value>(pub PhantomData<(Tag, Value)>);
 
-/// A provider that wraps a field getter.
+/// The alias WithProvider`<UseFieldRef<Tag, Value>`>: a getter returning &Value reads a field whose
+/// stored type implements AsRef`<Value>`.
 ///
 /// See [`WithFieldRef`](https://contextgeneric.dev/docs/reference/providers/with_field_ref).
 pub type WithFieldRef<Tag, Value> = WithProvider<UseFieldRef<Tag, Value>>;

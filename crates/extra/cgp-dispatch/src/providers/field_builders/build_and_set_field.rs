@@ -3,9 +3,12 @@ use cgp_handler::{
     Computer, ComputerComponent, Handler, HandlerComponent, TryComputer, TryComputerComponent,
 };
 
-/// Builds a value and sets it into a field.
+/// The builder step that computes one field's value from a provider, which can read the fields
+/// already set, and sets it on the partial record.
 ///
-/// See [`BuildAndSetField`](https://contextgeneric.dev/docs/reference/providers/dispatch/build_and_set_field).
+/// See
+/// [`BuildAndSetField`](https://contextgeneric.dev/docs/reference/providers/dispatch/build_and_set_field)
+/// .
 pub struct BuildAndSetField<Tag, Provider = UseContext>(pub PhantomData<(Tag, Provider)>);
 
 #[cgp_provider]

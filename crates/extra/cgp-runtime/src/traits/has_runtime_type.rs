@@ -1,9 +1,10 @@
 use cgp::prelude::*;
 
-#[cgp_type]
-/// A type the context chooses as its async runtime.
+/// The abstract-type component that declares the runtime type a context runs against, chosen by
+/// wiring, for code that names the type but not a value.
 ///
 /// See [`HasRuntimeType`](https://contextgeneric.dev/docs/reference/components/has_runtime_type).
+#[cgp_type]
 pub trait HasRuntimeType {
     /// The context's runtime type.
     type Runtime;

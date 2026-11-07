@@ -3,7 +3,8 @@ use core::marker::PhantomData;
 
 use crate::types::Void;
 
-/// Converts a value into an extractor and back.
+/// Turn an enum into the extractor the variant-narrowing traits operate on, and back, since
+/// ExtractField narrows an extractor rather than an enum.
 ///
 /// See [`HasExtractor`](https://contextgeneric.dev/docs/reference/traits/variant/has_extractor).
 pub trait HasExtractor {
@@ -17,9 +18,12 @@ pub trait HasExtractor {
     fn from_extractor(extractor: Self::Extractor) -> Self;
 }
 
-/// Borrows a value as an extractor.
+/// Obtain an extractor that borrows an enum, so its variants can be matched by name with payloads
+/// as shared references and the value left intact.
 ///
-/// See [`HasExtractorRef`](https://contextgeneric.dev/docs/reference/traits/variant/has_extractor_ref).
+/// See
+/// [`HasExtractorRef`](https://contextgeneric.dev/docs/reference/traits/variant/has_extractor_ref)
+/// .
 pub trait HasExtractorRef {
     /// The borrowed extractor type.
     type ExtractorRef<'a>
@@ -30,9 +34,12 @@ pub trait HasExtractorRef {
     fn extractor_ref(&self) -> Self::ExtractorRef<'_>;
 }
 
-/// Borrows a value mutably as an extractor.
+/// Obtain an extractor that borrows an enum mutably, so a named variant's payload can be changed in
+/// place without consuming or rebuilding the value.
 ///
-/// See [`HasExtractorMut`](https://contextgeneric.dev/docs/reference/traits/variant/has_extractor_mut).
+/// See
+/// [`HasExtractorMut`](https://contextgeneric.dev/docs/reference/traits/variant/has_extractor_mut)
+/// .
 pub trait HasExtractorMut {
     /// The mutably borrowed extractor type.
     type ExtractorMut<'a>
@@ -43,7 +50,8 @@ pub trait HasExtractorMut {
     fn extractor_mut(&mut self) -> Self::ExtractorMut<'_>;
 }
 
-/// Extracts one field from a value.
+/// Try one named variant of an enum's extractor, getting its payload or a remainder with that
+/// variant ruled out, so a chain ends in a proven-exhaustive match.
 ///
 /// See [`ExtractField`](https://contextgeneric.dev/docs/reference/traits/variant/extract_field).
 pub trait ExtractField<Tag> {
@@ -57,9 +65,11 @@ pub trait ExtractField<Tag> {
     fn extract_field(self, _tag: PhantomData<Tag>) -> Result<Self::Value, Self::Remainder>;
 }
 
-/// Finalizes an extraction that cannot fail.
+/// Discharge an extractor with every variant ruled out: its type is uninhabited, so the method
+/// returns any type and closes the match without a wildcard.
 ///
-/// See [`FinalizeExtract`](https://contextgeneric.dev/docs/reference/traits/variant/finalize_extract).
+/// See
+/// [`FinalizeExtract`](https://contextgeneric.dev/docs/reference/traits/variant/finalize_extract) .
 pub trait FinalizeExtract {
     /// Finalizes the extraction.
     fn finalize_extract<T>(self) -> T;
@@ -77,9 +87,12 @@ impl FinalizeExtract for Infallible {
     }
 }
 
-/// Finalizes an extraction result.
+/// Collapse the Result the last step of an extraction chain returns, returning the payload and
+/// discharging the uninhabited remainder at the type level.
 ///
-/// See [`FinalizeExtractResult`](https://contextgeneric.dev/docs/reference/traits/variant/finalize_extract_result).
+/// See
+/// [`FinalizeExtractResult`](https://contextgeneric.dev/docs/reference/traits/variant/finalize_extract_result)
+/// .
 pub trait FinalizeExtractResult {
     /// The extracted value.
     type Output;

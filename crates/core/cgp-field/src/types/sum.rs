@@ -1,28 +1,7 @@
-/**
-    The `Either` type is used to represent an _anonymous sum type_.
-
-    Similar to [`Cons`](crate::types::Cons), `Either` is used to form a sum type
-    by combining a chain of `Either` types, and terminated with a [`Void`] type.
-    But unlike product types, a sum type has values that belong to one
-    of the variants in the list.
-
-    `Either` is most often used through the `Sum!` macro, which accepts a list of
-    types and turns them into a chain of `Either` types.
-
-    ## Example
-
-    Given the following sum type definition:
-
-    ```rust,ignore
-    type MyUnion = Sum![u32, String, bool];
-    ```
-
-    The following type would be generated:
-
-    ```rust,ignore
-    type MyUnion = Either<u32, Either<String, Either<bool, Void>>>;
-    ```
-*/
+/// The head-or-rest cell of the type-level sum list, which describes an enum one variant at a time
+/// so generic code can match any enum's variants.
+///
+/// See [`Either`](https://contextgeneric.dev/docs/reference/types/either).
 #[derive(Eq, PartialEq, Debug, Clone)]
 pub enum Either<Head, Tail> {
     /// The first alternative.
@@ -31,21 +10,9 @@ pub enum Either<Head, Tail> {
     Right(Tail),
 }
 
-/**
-    The `Void` type is used to represent the end of an _anonymous sum type_,
-    or an _empty_ sum type.
-
-    `Void` is commonly used as the `Tail` of a [`Either`] type, to terminate the list.
-    When used on its own, it represents an empty sum type, which can _never be constructed_.
-
-    `Void` is functionally the same as the
-    [_never_ type](https://doc.rust-lang.org/std/primitive.never.html), `!`,
-    or otherwise
-    [`Infallible`](https://doc.rust-lang.org/std/convert/enum.Infallible.html).
-    However, we define a separate `Void` type, to make it more clear that it is
-    specifically used for terminating a sum type.
-
-    Read more about sum types in [`Either`].
-*/
+/// The uninhabited end marker of the sum list: an empty enum that can never be constructed, which
+/// lets a complete variant match end without a runtime branch.
+///
+/// See [`Void`](https://contextgeneric.dev/docs/reference/types/void).
 #[derive(Eq, PartialEq, Debug, Clone)]
 pub enum Void {}
