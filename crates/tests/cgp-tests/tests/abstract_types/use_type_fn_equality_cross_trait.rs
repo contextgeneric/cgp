@@ -115,18 +115,18 @@ snapshot_cgp_fn! {
             Self: HasFooType,
         {
             fn return_foo_or_bar(&self, flag: bool) -> <Self as HasFooType>::Foo {
-                let foo: &<Self as HasFooType>::Foo = self
-                    .get_field(
-                        ::core::marker::PhantomData::<
-                            Symbol<3, Chars<'f', Chars<'o', Chars<'o', Nil>>>>,
-                        >,
-                    );
-                let bar: &<Self as HasBarType>::Bar = self
-                    .get_field(
-                        ::core::marker::PhantomData::<
-                            Symbol<3, Chars<'b', Chars<'a', Chars<'r', Nil>>>>,
-                        >,
-                    );
+                let foo: &<Self as HasFooType>::Foo = HasField::get_field(
+                    self,
+                    ::core::marker::PhantomData::<
+                        Symbol<3, Chars<'f', Chars<'o', Chars<'o', Nil>>>>,
+                    >,
+                );
+                let bar: &<Self as HasBarType>::Bar = HasField::get_field(
+                    self,
+                    ::core::marker::PhantomData::<
+                        Symbol<3, Chars<'b', Chars<'a', Chars<'r', Nil>>>>,
+                    >,
+                );
                 if flag {
                     let res: <Self as HasFooType>::Foo = self.do_foo();
                     if &res < foo { res } else { foo.clone() }

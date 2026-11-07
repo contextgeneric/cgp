@@ -127,7 +127,13 @@ snapshot_derive_cgp_data! {
             }
             impl ToFields for FooBarBaz {
                 fn to_fields(self) -> Self::Fields {
-                    Cons(self.foo.into(), Cons(self.bar.into(), Cons(self.baz.into(), Nil)))
+                    Cons(
+                        ::core::convert::Into::into(self.foo),
+                        Cons(
+                            ::core::convert::Into::into(self.bar),
+                            Cons(::core::convert::Into::into(self.baz), Nil),
+                        ),
+                    )
                 }
             }
             impl ToFieldsRef for FooBarBaz {
@@ -135,7 +141,13 @@ snapshot_derive_cgp_data! {
                 where
                     Self: '__a,
                 {
-                    Cons((&self.foo).into(), Cons((&self.bar).into(), Cons((&self.baz).into(), Nil)))
+                    Cons(
+                        ::core::convert::Into::into(&self.foo),
+                        Cons(
+                            ::core::convert::Into::into(&self.bar),
+                            Cons(::core::convert::Into::into(&self.baz), Nil),
+                        ),
+                    )
                 }
             }
             ///The partial builder for [`FooBarBaz`].

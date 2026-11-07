@@ -70,18 +70,20 @@ snapshot_cgp_fn! {
             Types: HasScalarType,
         {
             fn rectangle_area(&self) -> <Types as HasScalarType>::Scalar {
-                let width: <Types as HasScalarType>::Scalar = self
-                    .get_field(
+                let width: <Types as HasScalarType>::Scalar = ::core::clone::Clone::clone(
+                    HasField::get_field(
+                        self,
                         ::core::marker::PhantomData::<
                             Symbol<
                                 5,
                                 Chars<'w', Chars<'i', Chars<'d', Chars<'t', Chars<'h', Nil>>>>>,
                             >,
                         >,
-                    )
-                    .clone();
-                let height: <Types as HasScalarType>::Scalar = self
-                    .get_field(
+                    ),
+                );
+                let height: <Types as HasScalarType>::Scalar = ::core::clone::Clone::clone(
+                    HasField::get_field(
+                        self,
                         ::core::marker::PhantomData::<
                             Symbol<
                                 6,
@@ -94,8 +96,8 @@ snapshot_cgp_fn! {
                                 >,
                             >,
                         >,
-                    )
-                    .clone();
+                    ),
+                );
                 let res: <Types as HasScalarType>::Scalar = width * height;
                 res
             }

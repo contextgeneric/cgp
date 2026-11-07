@@ -27,7 +27,8 @@ snapshot_cgp_auto_getter! {
             >,
         {
             fn count(&mut self) -> &mut u32 {
-                self.get_field_mut(
+                HasFieldMut::get_field_mut(
+                    self,
                     ::core::marker::PhantomData::<
                         Symbol<
                             5,

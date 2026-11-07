@@ -23,16 +23,18 @@ snapshot_cgp_auto_getter! {
         where
             __Context__: HasFieldMut<
                 Symbol<3, Chars<'f', Chars<'o', Chars<'o', Nil>>>>,
-                Value: AsMut<[u32]> + 'static,
+                Value: ::core::convert::AsMut<[u32]> + 'static,
             >,
         {
             fn foo(&mut self) -> &mut [u32] {
-                self.get_field_mut(
+                ::core::convert::AsMut::as_mut(
+                    HasFieldMut::get_field_mut(
+                        self,
                         ::core::marker::PhantomData::<
                             Symbol<3, Chars<'f', Chars<'o', Chars<'o', Nil>>>>,
                         >,
-                    )
-                    .as_mut()
+                    ),
+                )
             }
         }
         ")

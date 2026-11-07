@@ -11,8 +11,8 @@ pub use cgp_field::impls::{IsMut, IsNothing, IsPresent, IsRef, IsVoid, UseField}
 pub use cgp_field::traits::{
     BuildField, ExtractField, FieldGetter, FinalizeBuild, FinalizeExtract, FromFields, FromVariant,
     HasBuilder, HasExtractor, HasExtractorMut, HasExtractorRef, HasField, HasFieldMut, HasFields,
-    HasFieldsRef, IntoBuilder, MapType, MapTypeRef, MutFieldGetter, PartialData, ToFields,
-    ToFieldsRef, UpdateField,
+    HasFieldsRef, IntoBuilder, MapType, MapTypeRef, MutFieldGetter, OptionAsRef, PartialData,
+    ToFields, ToFieldsRef, UpdateField,
 };
 pub use cgp_field::types::{Chars, Cons, Either, Field, Index, Life, MRef, Nil, Symbol, Void};
 pub use cgp_macro::{

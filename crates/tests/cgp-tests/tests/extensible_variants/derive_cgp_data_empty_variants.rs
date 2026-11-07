@@ -192,11 +192,19 @@ snapshot_derive_cgp_data! {
         impl ToFields for Status {
             fn to_fields(self) -> <Self as HasFields>::Fields {
                 match self {
-                    Self::Active(field) => Either::Left(field.into()),
-                    Self::Closed => Either::Right(Either::Left(Nil.into())),
-                    Self::Paused() => Either::Right(Either::Right(Either::Left(Nil.into()))),
+                    Self::Active(field) => Either::Left(::core::convert::Into::into(field)),
+                    Self::Closed => Either::Right(Either::Left(::core::convert::Into::into(Nil))),
+                    Self::Paused() => {
+                        Either::Right(
+                            Either::Right(Either::Left(::core::convert::Into::into(Nil))),
+                        )
+                    }
                     Self::Archived {} => {
-                        Either::Right(Either::Right(Either::Right(Either::Left(Nil.into()))))
+                        Either::Right(
+                            Either::Right(
+                                Either::Right(Either::Left(::core::convert::Into::into(Nil))),
+                            ),
+                        )
                     }
                 }
             }
@@ -207,11 +215,19 @@ snapshot_derive_cgp_data! {
                 Self: '__a,
             {
                 match self {
-                    Self::Active(field) => Either::Left(field.into()),
-                    Self::Closed => Either::Right(Either::Left(Nil.into())),
-                    Self::Paused() => Either::Right(Either::Right(Either::Left(Nil.into()))),
+                    Self::Active(field) => Either::Left(::core::convert::Into::into(field)),
+                    Self::Closed => Either::Right(Either::Left(::core::convert::Into::into(Nil))),
+                    Self::Paused() => {
+                        Either::Right(
+                            Either::Right(Either::Left(::core::convert::Into::into(Nil))),
+                        )
+                    }
                     Self::Archived {} => {
-                        Either::Right(Either::Right(Either::Right(Either::Left(Nil.into()))))
+                        Either::Right(
+                            Either::Right(
+                                Either::Right(Either::Left(::core::convert::Into::into(Nil))),
+                            ),
+                        )
                     }
                 }
             }

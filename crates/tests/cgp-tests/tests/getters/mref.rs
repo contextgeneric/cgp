@@ -90,12 +90,12 @@ snapshot_cgp_getter! {
         {
             fn foo(__context__: &__Context__) -> MRef<'_, String> {
                 MRef::Ref(
-                    __context__
-                        .get_field(
-                            ::core::marker::PhantomData::<
-                                Symbol<3, Chars<'f', Chars<'o', Chars<'o', Nil>>>>,
-                            >,
-                        ),
+                    HasField::get_field(
+                        __context__,
+                        ::core::marker::PhantomData::<
+                            Symbol<3, Chars<'f', Chars<'o', Chars<'o', Nil>>>>,
+                        >,
+                    ),
                 )
             }
         }
@@ -111,7 +111,9 @@ snapshot_cgp_getter! {
             __Context__: HasField<__Tag__, Value = String>,
         {
             fn foo(__context__: &__Context__) -> MRef<'_, String> {
-                MRef::Ref(__context__.get_field(::core::marker::PhantomData::<__Tag__>))
+                MRef::Ref(
+                    HasField::get_field(__context__, ::core::marker::PhantomData::<__Tag__>),
+                )
             }
         }
         impl<__Context__, __Tag__> IsProviderFor<FooGetterComponent, __Context__, ()>

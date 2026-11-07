@@ -76,8 +76,9 @@ snapshot_cgp_impl! {
             Inner: AreaCalculator<__Context__>,
         {
             fn area(__context__: &__Context__) -> f64 {
-                let scale_factor: f64 = __context__
-                    .get_field(
+                let scale_factor: f64 = ::core::clone::Clone::clone(
+                    HasField::get_field(
+                        __context__,
                         ::core::marker::PhantomData::<
                             Symbol<
                                 12,
@@ -108,8 +109,8 @@ snapshot_cgp_impl! {
                                 >,
                             >,
                         >,
-                    )
-                    .clone();
+                    ),
+                );
                 Inner::area(__context__) * scale_factor * scale_factor
             }
         }

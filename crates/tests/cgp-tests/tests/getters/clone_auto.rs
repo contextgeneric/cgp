@@ -34,12 +34,14 @@ snapshot_cgp_auto_getter! {
             >,
         {
             fn name(&self) -> __Context__::Name {
-                self.get_field(
+                ::core::clone::Clone::clone(
+                    HasField::get_field(
+                        self,
                         ::core::marker::PhantomData::<
                             Symbol<4, Chars<'n', Chars<'a', Chars<'m', Chars<'e', Nil>>>>>,
                         >,
-                    )
-                    .clone()
+                    ),
+                )
             }
         }
         ")

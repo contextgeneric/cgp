@@ -39,12 +39,12 @@ snapshot_cgp_fn! {
             >,
         {
             fn greet(&self) -> String {
-                let name: &Name = self
-                    .get_field(
-                        ::core::marker::PhantomData::<
-                            Symbol<4, Chars<'n', Chars<'a', Chars<'m', Chars<'e', Nil>>>>>,
-                        >,
-                    );
+                let name: &Name = HasField::get_field(
+                    self,
+                    ::core::marker::PhantomData::<
+                        Symbol<4, Chars<'n', Chars<'a', Chars<'m', Chars<'e', Nil>>>>>,
+                    >,
+                );
                 format!("Hello, {}!", name)
             }
         }

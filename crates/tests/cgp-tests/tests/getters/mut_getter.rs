@@ -94,15 +94,15 @@ snapshot_cgp_getter! {
             >,
         {
             fn count(__context__: &mut __Context__) -> &mut u32 {
-                __context__
-                    .get_field_mut(
-                        ::core::marker::PhantomData::<
-                            Symbol<
-                                5,
-                                Chars<'c', Chars<'o', Chars<'u', Chars<'n', Chars<'t', Nil>>>>>,
-                            >,
+                HasFieldMut::get_field_mut(
+                    __context__,
+                    ::core::marker::PhantomData::<
+                        Symbol<
+                            5,
+                            Chars<'c', Chars<'o', Chars<'u', Chars<'n', Chars<'t', Nil>>>>>,
                         >,
-                    )
+                    >,
+                )
             }
         }
         impl<__Context__> IsProviderFor<CountGetterComponent, __Context__, ()> for UseFields
@@ -117,7 +117,7 @@ snapshot_cgp_getter! {
             __Context__: HasFieldMut<__Tag__, Value = u32>,
         {
             fn count(__context__: &mut __Context__) -> &mut u32 {
-                __context__.get_field_mut(::core::marker::PhantomData::<__Tag__>)
+                HasFieldMut::get_field_mut(__context__, ::core::marker::PhantomData::<__Tag__>)
             }
         }
         impl<__Context__, __Tag__> IsProviderFor<CountGetterComponent, __Context__, ()>

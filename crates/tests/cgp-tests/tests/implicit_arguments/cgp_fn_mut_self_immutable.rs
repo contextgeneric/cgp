@@ -37,7 +37,7 @@ snapshot_cgp_fn! {
                             Chars<'r', Chars<'e', Chars<'f', Chars<'i', Chars<'x', Nil>>>>>,
                         >,
                     >,
-                    Value = String,
+                    Value: ::core::convert::AsRef<str> + 'static,
                 >
                 + HasField<
                     Symbol<
@@ -47,12 +47,13 @@ snapshot_cgp_fn! {
                             Chars<'u', Chars<'f', Chars<'f', Chars<'i', Chars<'x', Nil>>>>>,
                         >,
                     >,
-                    Value = String,
+                    Value: ::core::convert::AsRef<str> + 'static,
                 >,
         {
             fn format_label(&mut self) -> String {
-                let prefix: &str = self
-                    .get_field(
+                let prefix: &str = ::core::convert::AsRef::as_ref(
+                    HasField::get_field(
+                        self,
                         ::core::marker::PhantomData::<
                             Symbol<
                                 6,
@@ -65,10 +66,11 @@ snapshot_cgp_fn! {
                                 >,
                             >,
                         >,
-                    )
-                    .as_str();
-                let suffix: &str = self
-                    .get_field(
+                    ),
+                );
+                let suffix: &str = ::core::convert::AsRef::as_ref(
+                    HasField::get_field(
+                        self,
                         ::core::marker::PhantomData::<
                             Symbol<
                                 6,
@@ -81,8 +83,8 @@ snapshot_cgp_fn! {
                                 >,
                             >,
                         >,
-                    )
-                    .as_str();
+                    ),
+                );
                 format!("{prefix}-{suffix}")
             }
         }

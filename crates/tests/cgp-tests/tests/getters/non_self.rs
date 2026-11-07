@@ -123,24 +123,24 @@ snapshot_cgp_getter! {
             >,
         {
             fn foo_bar(__context__: &__Context__::Foo) -> &__Context__::Bar {
-                __context__
-                    .get_field(
-                        ::core::marker::PhantomData::<
-                            Symbol<
-                                7,
+                HasField::get_field(
+                    __context__,
+                    ::core::marker::PhantomData::<
+                        Symbol<
+                            7,
+                            Chars<
+                                'f',
                                 Chars<
-                                    'f',
+                                    'o',
                                     Chars<
                                         'o',
-                                        Chars<
-                                            'o',
-                                            Chars<'_', Chars<'b', Chars<'a', Chars<'r', Nil>>>>,
-                                        >,
+                                        Chars<'_', Chars<'b', Chars<'a', Chars<'r', Nil>>>>,
                                     >,
                                 >,
                             >,
                         >,
-                    )
+                    >,
+                )
             }
         }
         impl<__Context__> IsProviderFor<FooBarGetterComponent, __Context__, ()> for UseFields
@@ -166,7 +166,7 @@ snapshot_cgp_getter! {
             __Context__::Foo: HasField<__Tag__, Value = __Context__::Bar>,
         {
             fn foo_bar(__context__: &__Context__::Foo) -> &__Context__::Bar {
-                __context__.get_field(::core::marker::PhantomData::<__Tag__>)
+                HasField::get_field(__context__, ::core::marker::PhantomData::<__Tag__>)
             }
         }
         impl<__Context__, __Tag__> IsProviderFor<FooBarGetterComponent, __Context__, ()>

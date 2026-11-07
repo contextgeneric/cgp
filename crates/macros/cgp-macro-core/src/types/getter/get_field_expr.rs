@@ -3,6 +3,7 @@ use quote::{ToTokens, quote};
 use syn::Expr;
 use syn::token::Mut;
 
+use crate::exports::{HasField, HasFieldMut};
 use crate::types::field::FieldName;
 
 pub struct GetFieldExpr {
@@ -16,14 +17,17 @@ impl ToTokens for GetFieldExpr {
         let receiver = &self.receiver;
         let field_name = &self.field_name;
 
-        let method = if self.field_mut.is_none() {
-            quote!(get_field)
+        // A fully qualified trait call, so an inherent method of the same name on the
+        // context cannot capture the read.
+        let (field_trait, method) = if self.field_mut.is_none() {
+            (quote!(#HasField), quote!(get_field))
         } else {
-            quote!(get_field_mut)
+            (quote!(#HasFieldMut), quote!(get_field_mut))
         };
 
         tokens.extend(quote! {
-            #receiver.#method(
+            #field_trait::#method(
+                #receiver,
                 ::core::marker::PhantomData::<#field_name>
             )
         })

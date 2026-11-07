@@ -37,18 +37,20 @@ snapshot_cgp_fn! {
                 >,
         {
             fn rectangle_area(&self) -> f64 {
-                let width: f64 = self
-                    .get_field(
+                let width: f64 = ::core::clone::Clone::clone(
+                    HasField::get_field(
+                        self,
                         ::core::marker::PhantomData::<
                             Symbol<
                                 5,
                                 Chars<'w', Chars<'i', Chars<'d', Chars<'t', Chars<'h', Nil>>>>>,
                             >,
                         >,
-                    )
-                    .clone();
-                let height: f64 = self
-                    .get_field(
+                    ),
+                );
+                let height: f64 = ::core::clone::Clone::clone(
+                    HasField::get_field(
+                        self,
                         ::core::marker::PhantomData::<
                             Symbol<
                                 6,
@@ -61,8 +63,8 @@ snapshot_cgp_fn! {
                                 >,
                             >,
                         >,
-                    )
-                    .clone();
+                    ),
+                );
                 width * height
             }
         }

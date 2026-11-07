@@ -16,6 +16,18 @@ pub fn parse_field_type(
     return_type: &Type,
     receiver_mut: &Option<Mut>,
 ) -> syn::Result<(Type, FieldMode, Option<Mut>)> {
+    parse_field_type_with(return_type, receiver_mut, false)
+}
+
+/// Like [`parse_field_type`], but `borrow_str` decides how a `&str` is read. An
+/// `#[implicit]` argument sets it, so the field may be any `AsRef<str>` and needs no
+/// allocator; a getter leaves it off, because its `HasField` bound is also used by
+/// the `WithProvider` adapter, which expects the field type itself.
+pub fn parse_field_type_with(
+    return_type: &Type,
+    receiver_mut: &Option<Mut>,
+    borrow_str: bool,
+) -> syn::Result<(Type, FieldMode, Option<Mut>)> {
     match &return_type {
         Type::Reference(type_ref) => {
             require_mut_receiver(type_ref, receiver_mut)?;
@@ -23,11 +35,21 @@ pub fn parse_field_type(
             let field_mut = type_ref.mutability;
 
             if type_ref.elem.as_ref() == &parse_internal! { str } {
-                // Special case to handle &str as String field
+                if borrow_str {
+                    // A `&str` reads any `AsRef<str>` field with `.as_ref()`, so a
+                    // `String`, a `Cow<str>`, or a `Box<str>` field all work, and
+                    // none of them needs an allocator.
+                    let field_type: Type = parse_internal! { str };
 
-                let field_type: Type = parse_internal! { String };
+                    Ok((field_type, FieldMode::Str, field_mut))
+                } else {
+                    // A getter's `HasField` bound is also used by the `WithProvider`
+                    // adapter, which expects the field type itself, so it keeps the
+                    // `String` field.
+                    let field_type: Type = parse_internal! { String };
 
-                Ok((field_type, FieldMode::Str, field_mut))
+                    Ok((field_type, FieldMode::Str, field_mut))
+                }
             } else if let Type::Slice(slice) = type_ref.elem.as_ref() {
                 // A shared `&[T]` reads any `AsRef<[T]>` field with `.as_ref()`; a
                 // `&mut [T]` reads any `AsMut<[T]>` field with `.as_mut()`. Both use
@@ -56,14 +78,21 @@ pub fn parse_field_type(
                 let field_type = type_ref.elem.as_ref();
 
                 if field_type == &parse_internal! { str } {
-                    // `Option<&str>` is backed by an `Option<String>` field and read
-                    // with `.as_deref()` (or `.as_deref_mut()` for `Option<&mut str>`),
-                    // mirroring the `&str`/`String` special case for a plain reference.
-                    Ok((
-                        parse_internal! { Option< String > },
-                        FieldMode::OptionStr,
-                        field_mut,
-                    ))
+                    if borrow_str {
+                        // An `#[implicit]` argument reads any `Option<U>` whose `U`
+                        // implements `AsRef<str>` through `OptionAsRef`, so a
+                        // `String`, a `Cow<str>`, or a `Box<str>` field all work and
+                        // none needs an allocator.
+                        Ok((parse_internal! { str }, FieldMode::OptionStr, field_mut))
+                    } else {
+                        // A getter keeps the `Option<String>` field, because its bound
+                        // is also used by the `WithProvider` adapter.
+                        Ok((
+                            parse_internal! { Option< String > },
+                            FieldMode::OptionStr,
+                            field_mut,
+                        ))
+                    }
                 } else {
                     Ok((
                         parse_internal! { Option< #field_type > },

@@ -74,30 +74,30 @@ snapshot_cgp_fn! {
             Self: HasBarType,
         {
             async fn do_foo_bar(&self, x: X, y: Y) -> Option<<Self as HasBarType>::Baz> {
-                let foo_x: &<Self as HasFooType<X>>::Foo = self
-                    .get_field(
-                        ::core::marker::PhantomData::<
-                            Symbol<
-                                5,
-                                Chars<'f', Chars<'o', Chars<'o', Chars<'_', Chars<'x', Nil>>>>>,
-                            >,
+                let foo_x: &<Self as HasFooType<X>>::Foo = HasField::get_field(
+                    self,
+                    ::core::marker::PhantomData::<
+                        Symbol<
+                            5,
+                            Chars<'f', Chars<'o', Chars<'o', Chars<'_', Chars<'x', Nil>>>>>,
                         >,
-                    );
-                let foo_y: &<Self as HasFooType<Y>>::Foo = self
-                    .get_field(
-                        ::core::marker::PhantomData::<
-                            Symbol<
-                                5,
-                                Chars<'f', Chars<'o', Chars<'o', Chars<'_', Chars<'y', Nil>>>>>,
-                            >,
+                    >,
+                );
+                let foo_y: &<Self as HasFooType<Y>>::Foo = HasField::get_field(
+                    self,
+                    ::core::marker::PhantomData::<
+                        Symbol<
+                            5,
+                            Chars<'f', Chars<'o', Chars<'o', Chars<'_', Chars<'y', Nil>>>>>,
                         >,
-                    );
-                let bar: &<Self as HasBarType>::Bar = self
-                    .get_field(
-                        ::core::marker::PhantomData::<
-                            Symbol<3, Chars<'b', Chars<'a', Chars<'r', Nil>>>>,
-                        >,
-                    );
+                    >,
+                );
+                let bar: &<Self as HasBarType>::Bar = HasField::get_field(
+                    self,
+                    ::core::marker::PhantomData::<
+                        Symbol<3, Chars<'b', Chars<'a', Chars<'r', Nil>>>>,
+                    >,
+                );
                 None
             }
         }

@@ -119,8 +119,10 @@ snapshot_derive_has_fields! {
         impl ToFields for Person {
             fn to_fields(self) -> <Self as HasFields>::Fields {
                 match self {
-                    Self::Anonymous(field) => Either::Left(field.into()),
-                    Self::Named(field) => Either::Right(Either::Left(field.into())),
+                    Self::Anonymous(field) => Either::Left(::core::convert::Into::into(field)),
+                    Self::Named(field) => {
+                        Either::Right(Either::Left(::core::convert::Into::into(field)))
+                    }
                 }
             }
         }
@@ -130,8 +132,10 @@ snapshot_derive_has_fields! {
                 Self: '__a,
             {
                 match self {
-                    Self::Anonymous(field) => Either::Left(field.into()),
-                    Self::Named(field) => Either::Right(Either::Left(field.into())),
+                    Self::Anonymous(field) => Either::Left(::core::convert::Into::into(field)),
+                    Self::Named(field) => {
+                        Either::Right(Either::Left(::core::convert::Into::into(field)))
+                    }
                 }
             }
         }

@@ -5,7 +5,7 @@ use syn::token::Comma;
 use syn::visit::{self, Visit};
 use syn::{Attribute, FnArg, Meta, Pat, PatIdent, PatType, Receiver};
 
-use crate::functions::parse_field_type;
+use crate::functions::parse_field_type_with;
 use crate::types::implicits::{ImplicitArgField, ImplicitArgFields};
 
 pub fn extract_and_parse_implicit_args(
@@ -68,7 +68,8 @@ pub fn parse_implicit_arg(receiver: &Receiver, arg: &PatType) -> syn::Result<Imp
     // `&mut` of an `Option<&mut T>` — and rejects a mutable read without a `&mut
     // self` receiver. The receiver's own mutability never forces a mutable read of
     // an immutably-typed argument.
-    let (field_type, field_mode, field_mut) = parse_field_type(&arg_type, &receiver.mutability)?;
+    let (field_type, field_mode, field_mut) =
+        parse_field_type_with(&arg_type, &receiver.mutability, true)?;
 
     let spec = ImplicitArgField {
         field_name: pat_ident.ident.clone(),

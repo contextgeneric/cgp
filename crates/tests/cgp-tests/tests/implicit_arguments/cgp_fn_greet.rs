@@ -1,7 +1,7 @@
 //! `#[cgp_fn]` with a single `#[implicit]` `&str` argument.
 //!
 //! The implicit `name` is dropped from the signature and read from the context's
-//! `name` field via `HasField`, with `.as_str()` applied automatically. The
+//! `name` field via `HasField`, with `.as_ref()` applied automatically. The
 //! `CheckPerson` bound proves any context with a `name: String` field implements
 //! the generated trait.
 //!
@@ -28,17 +28,18 @@ snapshot_cgp_fn! {
         where
             Self: HasField<
                 Symbol<4, Chars<'n', Chars<'a', Chars<'m', Chars<'e', Nil>>>>>,
-                Value = String,
+                Value: ::core::convert::AsRef<str> + 'static,
             >,
         {
             fn greet(&self) {
-                let name: &str = self
-                    .get_field(
+                let name: &str = ::core::convert::AsRef::as_ref(
+                    HasField::get_field(
+                        self,
                         ::core::marker::PhantomData::<
                             Symbol<4, Chars<'n', Chars<'a', Chars<'m', Chars<'e', Nil>>>>>,
                         >,
-                    )
-                    .as_str();
+                    ),
+                );
                 println!("Hello, {}!", name);
             }
         }

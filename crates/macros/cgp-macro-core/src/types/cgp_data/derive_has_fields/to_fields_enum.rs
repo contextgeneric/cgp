@@ -45,13 +45,13 @@ pub fn derive_to_fields_match_arms(
 
         let constructor = derive_to_fields_constructor(&variant.fields, |label| match label {
             FieldLabel::Named(label) => quote! {
-                #label .into()
+                ::core::convert::Into::into(#label)
             },
             FieldLabel::Unnamed(label) => {
                 let field_name = Ident::new(&format!("field_{label}"), label.span());
 
                 quote! {
-                    #field_name .into()
+                    ::core::convert::Into::into(#field_name)
                 }
             }
             FieldLabel::None => quote! { field },
@@ -60,7 +60,7 @@ pub fn derive_to_fields_match_arms(
         let variant_args = extract_variant_args(&variant.fields)?;
 
         let inject_variant = inject_prefix(quote! {
-            #Either::Left( #constructor .into() )
+            #Either::Left( ::core::convert::Into::into(#constructor) )
         });
 
         inject_prefix = Box::new(move |inner| {

@@ -15,7 +15,7 @@ pub fn derive_to_fields_ref_for_struct(item_struct: &ItemStruct) -> syn::Result<
                 &self.0
             },
             _ => quote! {
-                ( &self #field_name ) .into()
+                ::core::convert::Into::into(&self #field_name)
             },
         })?;
 

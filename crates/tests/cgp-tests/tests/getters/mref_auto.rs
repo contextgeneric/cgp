@@ -27,12 +27,12 @@ snapshot_cgp_auto_getter! {
         {
             fn foo(&self) -> MRef<'_, String> {
                 MRef::Ref(
-                    self
-                        .get_field(
-                            ::core::marker::PhantomData::<
-                                Symbol<3, Chars<'f', Chars<'o', Chars<'o', Nil>>>>,
-                            >,
-                        ),
+                    HasField::get_field(
+                        self,
+                        ::core::marker::PhantomData::<
+                            Symbol<3, Chars<'f', Chars<'o', Chars<'o', Nil>>>>,
+                        >,
+                    ),
                 )
             }
         }

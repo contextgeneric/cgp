@@ -351,7 +351,10 @@ snapshot_derive_cgp_data! {
         }
         impl ToFields for Person {
             fn to_fields(self) -> Self::Fields {
-                Cons(self.first_name.into(), Cons(self.last_name.into(), Nil))
+                Cons(
+                    ::core::convert::Into::into(self.first_name),
+                    Cons(::core::convert::Into::into(self.last_name), Nil),
+                )
             }
         }
         impl ToFieldsRef for Person {
@@ -359,7 +362,10 @@ snapshot_derive_cgp_data! {
             where
                 Self: '__a,
             {
-                Cons((&self.first_name).into(), Cons((&self.last_name).into(), Nil))
+                Cons(
+                    ::core::convert::Into::into(&self.first_name),
+                    Cons(::core::convert::Into::into(&self.last_name), Nil),
+                )
             }
         }
         ///The partial builder for [`Person`].

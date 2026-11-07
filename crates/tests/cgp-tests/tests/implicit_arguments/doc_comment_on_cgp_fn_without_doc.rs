@@ -28,17 +28,18 @@ snapshot_cgp_fn! {
         where
             Self: HasField<
                 Symbol<4, Chars<'n', Chars<'a', Chars<'m', Chars<'e', Nil>>>>>,
-                Value = String,
+                Value: ::core::convert::AsRef<str> + 'static,
             >,
         {
             fn greet_fn(&self) -> String {
-                let name: &str = self
-                    .get_field(
+                let name: &str = ::core::convert::AsRef::as_ref(
+                    HasField::get_field(
+                        self,
                         ::core::marker::PhantomData::<
                             Symbol<4, Chars<'n', Chars<'a', Chars<'m', Chars<'e', Nil>>>>>,
                         >,
-                    )
-                    .as_str();
+                    ),
+                );
                 name.to_owned()
             }
         }

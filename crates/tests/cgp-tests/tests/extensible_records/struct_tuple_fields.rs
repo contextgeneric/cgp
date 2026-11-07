@@ -34,7 +34,10 @@ snapshot_derive_has_fields! {
         }
         impl ToFields for Person {
             fn to_fields(self) -> Self::Fields {
-                Cons(self.0.into(), Cons(self.1.into(), Nil))
+                Cons(
+                    ::core::convert::Into::into(self.0),
+                    Cons(::core::convert::Into::into(self.1), Nil),
+                )
             }
         }
         impl ToFieldsRef for Person {
@@ -42,7 +45,10 @@ snapshot_derive_has_fields! {
             where
                 Self: '__a,
             {
-                Cons((&self.0).into(), Cons((&self.1).into(), Nil))
+                Cons(
+                    ::core::convert::Into::into(&self.0),
+                    Cons(::core::convert::Into::into(&self.1), Nil),
+                )
             }
         }
         ")

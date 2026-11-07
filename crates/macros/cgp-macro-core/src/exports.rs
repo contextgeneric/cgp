@@ -28,6 +28,7 @@ export_constructs! {
     HasFields,
     HasFieldsRef,
     HasFieldMut,
+    OptionAsRef,
     FieldGetter,
     MutFieldGetter,
     FromFields,

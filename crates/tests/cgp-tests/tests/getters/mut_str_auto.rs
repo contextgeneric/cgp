@@ -1,6 +1,6 @@
 //! `#[cgp_auto_getter]` with a `&mut self` receiver returning `&mut str`: the
 //! blanket impl reads the `String` field mutably through `get_field_mut` (bounded
-//! by `HasFieldMut`) and calls `.as_mut_str()`, so a `String` field can be exposed
+//! by `HasFieldMut`) and calls `.as_mut()`, so a `String` field can be exposed
 //! as a mutable `&mut str`.
 //!
 //! See cgp-knowledge-base/cgp/reference/macros/cgp_auto_getter.md.
@@ -27,12 +27,14 @@ snapshot_cgp_auto_getter! {
             >,
         {
             fn foo(&mut self) -> &mut str {
-                self.get_field_mut(
+                ::core::convert::AsMut::as_mut(
+                    HasFieldMut::get_field_mut(
+                        self,
                         ::core::marker::PhantomData::<
                             Symbol<3, Chars<'f', Chars<'o', Chars<'o', Nil>>>>,
                         >,
-                    )
-                    .as_mut_str()
+                    ),
+                )
             }
         }
         ")

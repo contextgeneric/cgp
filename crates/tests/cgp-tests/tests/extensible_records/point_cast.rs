@@ -78,7 +78,10 @@ snapshot_derive_cgp_data! {
         }
         impl ToFields for Point2d {
             fn to_fields(self) -> Self::Fields {
-                Cons(self.x.into(), Cons(self.y.into(), Nil))
+                Cons(
+                    ::core::convert::Into::into(self.x),
+                    Cons(::core::convert::Into::into(self.y), Nil),
+                )
             }
         }
         impl ToFieldsRef for Point2d {
@@ -86,7 +89,10 @@ snapshot_derive_cgp_data! {
             where
                 Self: '__a,
             {
-                Cons((&self.x).into(), Cons((&self.y).into(), Nil))
+                Cons(
+                    ::core::convert::Into::into(&self.x),
+                    Cons(::core::convert::Into::into(&self.y), Nil),
+                )
             }
         }
         ///The partial builder for [`Point2d`].

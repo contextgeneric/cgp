@@ -112,21 +112,18 @@ snapshot_cgp_getter! {
         {
             type Scalar = Scalar;
             fn scalar(__context__: &__Context__) -> &Self::Scalar {
-                __context__
-                    .get_field(
-                        ::core::marker::PhantomData::<
-                            Symbol<
-                                6,
-                                Chars<
-                                    's',
-                                    Chars<
-                                        'c',
-                                        Chars<'a', Chars<'l', Chars<'a', Chars<'r', Nil>>>>,
-                                    >,
-                                >,
+                HasField::get_field(
+                    __context__,
+                    ::core::marker::PhantomData::<
+                        Symbol<
+                            6,
+                            Chars<
+                                's',
+                                Chars<'c', Chars<'a', Chars<'l', Chars<'a', Chars<'r', Nil>>>>>,
                             >,
                         >,
-                    )
+                    >,
+                )
             }
         }
         impl<__Context__, Scalar> IsProviderFor<ScalarGetterComponent, __Context__, ()>
@@ -148,7 +145,7 @@ snapshot_cgp_getter! {
         {
             type Scalar = Scalar;
             fn scalar(__context__: &__Context__) -> &Self::Scalar {
-                __context__.get_field(::core::marker::PhantomData::<__Tag__>)
+                HasField::get_field(__context__, ::core::marker::PhantomData::<__Tag__>)
             }
         }
         impl<__Context__, Scalar, __Tag__> IsProviderFor<ScalarGetterComponent, __Context__, ()>

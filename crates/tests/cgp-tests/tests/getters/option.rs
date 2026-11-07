@@ -89,13 +89,14 @@ snapshot_cgp_getter! {
             >,
         {
             fn foo(__context__: &__Context__) -> Option<&String> {
-                __context__
-                    .get_field(
+                ::core::option::Option::as_ref(
+                    HasField::get_field(
+                        __context__,
                         ::core::marker::PhantomData::<
                             Symbol<3, Chars<'f', Chars<'o', Chars<'o', Nil>>>>,
                         >,
-                    )
-                    .as_ref()
+                    ),
+                )
             }
         }
         impl<__Context__> IsProviderFor<FooGetterComponent, __Context__, ()> for UseFields
@@ -110,7 +111,9 @@ snapshot_cgp_getter! {
             __Context__: HasField<__Tag__, Value = Option<String>>,
         {
             fn foo(__context__: &__Context__) -> Option<&String> {
-                __context__.get_field(::core::marker::PhantomData::<__Tag__>).as_ref()
+                ::core::option::Option::as_ref(
+                    HasField::get_field(__context__, ::core::marker::PhantomData::<__Tag__>),
+                )
             }
         }
         impl<__Context__, __Tag__> IsProviderFor<FooGetterComponent, __Context__, ()>
@@ -123,11 +126,12 @@ snapshot_cgp_getter! {
             __Provider__: FieldGetter<__Context__, FooGetterComponent, Value = Option<String>>,
         {
             fn foo(__context__: &__Context__) -> Option<&String> {
-                __Provider__::get_field(
+                ::core::option::Option::as_ref(
+                    __Provider__::get_field(
                         __context__,
                         ::core::marker::PhantomData::<FooGetterComponent>,
-                    )
-                    .as_ref()
+                    ),
+                )
             }
         }
         impl<__Context__, __Provider__> IsProviderFor<FooGetterComponent, __Context__, ()>

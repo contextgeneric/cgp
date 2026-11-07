@@ -22,16 +22,18 @@ snapshot_cgp_auto_getter! {
         where
             __Context__: HasField<
                 Symbol<3, Chars<'f', Chars<'o', Chars<'o', Nil>>>>,
-                Value: AsRef<[u8]> + 'static,
+                Value: ::core::convert::AsRef<[u8]> + 'static,
             >,
         {
             fn foo(&self) -> &[u8] {
-                self.get_field(
+                ::core::convert::AsRef::as_ref(
+                    HasField::get_field(
+                        self,
                         ::core::marker::PhantomData::<
                             Symbol<3, Chars<'f', Chars<'o', Chars<'o', Nil>>>>,
                         >,
-                    )
-                    .as_ref()
+                    ),
+                )
             }
         }
         ")
