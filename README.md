@@ -152,6 +152,22 @@ CGP is a collection of small, layered crates, arranged so that low-level primiti
 
 Contributions, questions, and bug reports are welcome. Open an [issue](https://github.com/contextgeneric/cgp/issues) or a pull request, and see the [website](https://contextgeneric.dev/) to get oriented first. Unless stated otherwise, contributions are made under the terms of the Apache-2.0 license below.
 
+### Development
+
+Run the checks from the repository root. The toolchain is pinned in `rust-toolchain.toml`, and most
+crates are `#![no_std]`, so keep new code `no_std`-compatible.
+
+```sh
+cargo +nightly fmt --all
+cargo clippy --all-features --all-targets -- -D warnings
+cargo clippy --no-default-features --all-targets -- -D warnings
+cargo nextest run --all-features --no-fail-fast --workspace
+```
+
+The suite covers `cgp-tests` for behavior and expansion snapshots and `cgp-macro-tests` for the macro
+internals. Post-codegen compile failures are UI fixtures in
+[`cargo-cgp`](https://github.com/contextgeneric/cargo-cgp).
+
 ## License
 
 Licensed under the [Apache License, Version 2.0](LICENSE).
