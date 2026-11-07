@@ -4,8 +4,8 @@ use crate::parse_internal;
 use crate::types::delegate_component::{EvalForEntry, EvaluatedForEntry};
 use crate::types::ident::PathWithTypeArgs;
 
-#[derive(Debug, Clone)]
 /// A namespace's inheritance from its parent.
+#[derive(Debug, Clone)]
 pub struct InheritNamespaceStatement {
     /// The parent namespace.
     pub namespace: PathWithTypeArgs,

@@ -8,8 +8,8 @@ use crate::functions::parse_internal;
 use crate::traits::ToType;
 use crate::types::field::Symbol;
 
-#[derive(Debug, Clone)]
 /// One segment of a type-level path.
+#[derive(Debug, Clone)]
 pub enum PathElement {
     /// A type segment.
     Type(Type),

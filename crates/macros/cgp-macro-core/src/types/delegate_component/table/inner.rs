@@ -8,7 +8,6 @@ use crate::types::generics::TypeGenerics;
 
 /// Collect every nested `UseDelegate<new Inner { .. }>` table reachable from a
 /// construct, so `DelegateTable::eval` can emit each inner table's own items.
-/// Collects the nested tables a construct contains.
 pub trait ExtractInnerDelegateTables {
     /// The nested tables.
     fn extract_inner_tables(&self) -> Vec<InnerDelegateTable>;

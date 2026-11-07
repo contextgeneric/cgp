@@ -3,10 +3,10 @@ use proc_macro2::TokenStream;
 use quote::ToTokens;
 use syn::parse2;
 
-#[allow(non_snake_case)]
 /// A type-level list and its value-level counterpart, used for the field lists of a record and for handler pipelines.
 ///
 /// See [`Product`](https://contextgeneric.dev/docs/reference/macros/product).
+#[allow(non_snake_case)]
 pub fn Product(body: TokenStream) -> syn::Result<TokenStream> {
     let product_type: ProductType = parse2(body)?;
 

@@ -7,8 +7,8 @@ use syn::{Error, Ident, ItemImpl, ItemTrait, Path, parenthesized};
 use crate::exports::DelegateComponent;
 use crate::functions::{parse_internal, trait_items_to_delegated_impl_items};
 
-#[derive(Clone)]
 /// One `#[derive_delegate]` table.
+#[derive(Clone)]
 pub struct DeriveDelegateAttribute {
     /// The wrapper provider's name.
     pub wrapper: Ident,

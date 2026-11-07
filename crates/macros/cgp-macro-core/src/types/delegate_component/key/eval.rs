@@ -16,7 +16,6 @@ pub struct EvaluatedDelegateKey {
 }
 
 /// Lower a key form into its evaluated keys.
-/// Lowers a key form into its evaluated keys.
 pub trait EvalDelegateKey {
     /// Lowers the key.
     fn eval(&self) -> syn::Result<Vec<EvaluatedDelegateKey>>;

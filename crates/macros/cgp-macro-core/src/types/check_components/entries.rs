@@ -4,8 +4,8 @@ use syn::token::Comma;
 
 use crate::types::check_components::{CheckEntry, EvaluatedCheckEntry};
 
-#[derive(Default)]
 /// The entries of a `check_components!` table.
+#[derive(Default)]
 pub struct CheckEntries {
     /// The entries.
     pub entries: Punctuated<CheckEntry, Comma>,

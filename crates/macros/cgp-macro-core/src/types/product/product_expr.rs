@@ -9,7 +9,6 @@ use crate::functions::parse_internal;
 
 /// The value-level `product!` macro: a list of expression items that folds into a
 /// `Cons(..)`/`Nil` value expression. The type-level counterpart is `ProductType`.
-/// The parsed value-level `product!` list.
 pub struct ProductExpr {
     /// The entries.
     pub exprs: Punctuated<Expr, Comma>,

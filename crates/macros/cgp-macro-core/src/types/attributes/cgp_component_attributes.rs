@@ -10,8 +10,8 @@ use crate::types::attributes::{
     UseTypeAttributes,
 };
 
-#[derive(Default, Clone)]
 /// The modifier attributes a `#[cgp_component]` trait carries.
+#[derive(Default, Clone)]
 pub struct CgpComponentAttributes {
     /// The `#[extend]` supertraits.
     pub extend: Vec<TypeParamBound>,

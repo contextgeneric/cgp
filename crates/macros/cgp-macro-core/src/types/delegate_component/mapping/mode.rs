@@ -3,7 +3,6 @@ use syn::token::{Colon, FatArrow, RArrow};
 
 /// The operator between a key and its value, peeked to select the mapping
 /// variant: `:` Normal, `->` Direct, `=>` Redirect.
-/// The operator between a key and its value.
 pub enum DelegateMode {
     /// `:`.
     Normal(Colon),

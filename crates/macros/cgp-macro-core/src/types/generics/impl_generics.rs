@@ -7,8 +7,8 @@ use syn::{Error, Generics};
 
 use crate::functions::parse_internal;
 
-#[derive(Debug, Clone, Default)]
 /// The generic parameters of an impl block.
+#[derive(Debug, Clone, Default)]
 pub struct ImplGenerics {
     /// The parameters.
     pub generics: Generics,

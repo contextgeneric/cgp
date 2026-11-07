@@ -7,8 +7,8 @@ use crate::parse_internal;
 use crate::traits::ToTypeParamBounds;
 use crate::types::implicits::ImplicitArgField;
 
-#[derive(Default)]
 /// The `#[implicit]` arguments of a function or impl block.
+#[derive(Default)]
 pub struct ImplicitArgFields {
     /// The arguments.
     pub fields: Vec<ImplicitArgField>,

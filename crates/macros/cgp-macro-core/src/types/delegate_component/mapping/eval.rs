@@ -35,7 +35,6 @@ pub struct EvaluatedDelegateEntry {
 }
 
 /// Lower a construct into a single evaluated entry.
-/// Lowers a construct into a single evaluated entry.
 pub trait EvalDelegateEntry {
     /// Lowers the construct.
     fn eval_entry(&self, table_type: &Type) -> syn::Result<EvaluatedDelegateEntry>;
@@ -43,7 +42,6 @@ pub trait EvalDelegateEntry {
 
 /// Lower a construct into a flat list of evaluated entries (a key or statement
 /// may expand to several).
-/// Lowers a construct into a flat list of evaluated entries.
 pub trait EvalDelegateEntries {
     /// Lowers the construct.
     fn eval_entries(&self, table_type: &Type) -> syn::Result<Vec<EvaluatedDelegateEntry>>;

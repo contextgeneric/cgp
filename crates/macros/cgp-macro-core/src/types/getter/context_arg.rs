@@ -1,7 +1,7 @@
 use syn::Type;
 
-#[derive(Clone)]
 /// How a getter takes its context.
+#[derive(Clone)]
 pub enum ContextArg {
     /// The getter takes `self`.
     SelfArg,

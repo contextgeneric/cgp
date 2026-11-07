@@ -6,8 +6,8 @@ use crate::types::attributes::{
     UseProviderAttribute, UseProviderAttributes, UseTypeAttribute, UseTypeAttributes,
 };
 
-#[derive(Default)]
 /// The modifier attributes a `#[cgp_fn]` or `#[cgp_impl]` function carries.
+#[derive(Default)]
 pub struct FunctionAttributes {
     /// The `#[extend]` supertraits.
     pub extend: Vec<TypeParamBound>,

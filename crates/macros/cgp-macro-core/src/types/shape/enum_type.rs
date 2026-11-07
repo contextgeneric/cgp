@@ -15,7 +15,6 @@ use crate::types::cgp_data::variants_to_sum_type;
 ///
 /// As with [`StructType`](super::StructType), holding the derive's input form lets
 /// [`eval`](Self::eval) run the `#[derive(HasFields)]` encoder unchanged.
-/// The parsed `Enum!` shape.
 pub struct EnumType {
     /// The variants.
     pub variants: Punctuated<Variant, Comma>,

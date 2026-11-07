@@ -2,8 +2,8 @@ use syn::{Generics, ItemImpl, Type};
 
 use crate::types::attributes::DefaultImplAttribute;
 
-#[derive(Default)]
 /// The `#[default_impl]` registrations of an impl block.
+#[derive(Default)]
 pub struct DefaultImplAttributes {
     /// The registrations.
     pub attributes: Vec<DefaultImplAttribute>,

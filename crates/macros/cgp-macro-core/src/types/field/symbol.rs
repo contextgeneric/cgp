@@ -6,8 +6,8 @@ use syn::{Ident, LitStr, Type, parse_quote};
 
 use crate::traits::ToType;
 
-#[derive(Debug, Clone)]
 /// A type-level string parsed from an identifier or a string literal.
+#[derive(Debug, Clone)]
 pub struct Symbol {
     /// The string's value.
     pub ident: String,

@@ -8,8 +8,8 @@ use crate::types::attributes::{
     UseTypeAttribute, UseTypeAttributes, UsesAttributes,
 };
 
-#[derive(Default)]
 /// The modifier attributes a `#[cgp_impl]` block carries.
+#[derive(Default)]
 pub struct CgpImplAttributes {
     /// The `#[uses]` imports.
     pub uses: UsesAttributes,

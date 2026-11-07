@@ -3,8 +3,8 @@ use syn::{Ident, Type};
 
 use crate::types::getter::FieldMode;
 
-#[derive(Clone)]
 /// One getter method parsed into the field it reads.
+#[derive(Clone)]
 pub struct GetterField {
     /// The field's name.
     pub field_name: Ident,
@@ -22,8 +22,8 @@ pub struct GetterField {
     pub receiver_mode: ReceiverMode,
 }
 
-#[derive(Clone)]
 /// How a getter takes its receiver.
+#[derive(Clone)]
 pub enum ReceiverMode {
     /// The getter takes `self`.
     SelfReceiver,

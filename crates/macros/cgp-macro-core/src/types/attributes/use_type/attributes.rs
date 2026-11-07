@@ -10,8 +10,8 @@ use crate::types::attributes::use_type::type_predicates::{
 };
 use crate::visitors::SubstituteAbstractTypes;
 
-#[derive(Default, Clone)]
 /// The `#[use_type]` imports of a function or impl block.
+#[derive(Default, Clone)]
 pub struct UseTypeAttributes {
     /// The imports.
     pub attributes: Vec<UseTypeAttribute>,

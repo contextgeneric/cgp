@@ -22,8 +22,8 @@ pub fn derive_is_provider_for(
     .to_is_provider_for_impl()
 }
 
-#[derive(Default)]
 /// A list of provider impls.
+#[derive(Default)]
 pub struct ItemProviderImpls {
     /// The provider impls.
     pub items: Vec<ItemProviderImpl>,

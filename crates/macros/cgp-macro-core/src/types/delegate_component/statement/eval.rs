@@ -6,14 +6,12 @@ use crate::types::delegate_component::{EvalDelegateEntry, EvaluatedDelegateEntry
 use crate::types::ident::PathWithTypeArgs;
 
 /// Lower a `namespace`/`for` statement into intermediate for-entries.
-/// Lowers a `namespace`/`for` statement into intermediate for-entries.
 pub trait EvalForEntries {
     /// Lowers the statement's entries.
     fn eval_for_entries(&self, table_type: &Type) -> syn::Result<Vec<EvaluatedForEntry>>;
 }
 
 /// Lower a construct into a single for-entry.
-/// Lowers a construct into a single for-entry.
 pub trait EvalForEntry {
     /// Lowers the construct.
     fn eval_for_entry(&self, table_type: &Type) -> syn::Result<EvaluatedForEntry>;
@@ -45,7 +43,6 @@ pub struct EvaluatedForEntry {
 
 /// Lower every for-entry a `namespace`/`for` statement produces into evaluated
 /// delegate entries.
-/// Lowers every for-entry a statement produces into evaluated entries.
 pub fn eval_delegate_entries_via_for<Entry>(
     entry: &Entry,
     table_type: &Type,

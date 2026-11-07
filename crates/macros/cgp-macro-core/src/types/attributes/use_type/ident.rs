@@ -2,8 +2,8 @@ use syn::parse::{Parse, ParseStream};
 use syn::token::{As, Eq};
 use syn::{Ident, Type};
 
-#[derive(Clone)]
 /// One imported abstract type, with its optional alias and equality.
+#[derive(Clone)]
 pub struct UseTypeIdent {
     /// The type's name.
     pub type_ident: Ident,

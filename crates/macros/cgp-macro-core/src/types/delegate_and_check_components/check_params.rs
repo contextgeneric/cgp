@@ -3,8 +3,8 @@ use syn::spanned::Spanned;
 use syn::token::Comma;
 use syn::{Attribute, Error, Type};
 
-#[derive(Clone)]
 /// The `#[check_params]` or `#[skip_check]` attribute on an entry.
+#[derive(Clone)]
 pub enum CheckParamsAttribute {
     /// No attribute.
     Default,

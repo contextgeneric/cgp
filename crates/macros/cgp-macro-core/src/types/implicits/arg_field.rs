@@ -5,8 +5,8 @@ use crate::parse_internal;
 use crate::types::field::{FieldName, HasFieldBound};
 use crate::types::getter::{FieldMode, GetFieldExpr, GetFieldWithModeExpr};
 
-#[derive(Clone, Eq, PartialEq)]
 /// One `#[implicit]` argument parsed into the field it reads.
+#[derive(Clone, Eq, PartialEq)]
 pub struct ImplicitArgField {
     /// The field's name.
     pub field_name: Ident,

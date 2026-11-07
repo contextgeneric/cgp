@@ -7,8 +7,8 @@ use syn::token::Dot;
 use crate::exports::PathCons;
 use crate::types::path::PathElement;
 
-#[derive(Debug, Clone)]
 /// A path prefix with a suffix appended.
+#[derive(Debug, Clone)]
 pub struct PrefixPath {
     /// The path's elements.
     pub elements: Punctuated<PathElement, Dot>,

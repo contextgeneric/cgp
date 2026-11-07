@@ -6,8 +6,8 @@ use syn::{braced, bracketed};
 use crate::types::generics::ImplGenerics;
 use crate::types::path::{PathElementWithGenerics, UniPath};
 
-#[derive(Debug, Clone)]
 /// A parsed path head, with its alternatives.
+#[derive(Debug, Clone)]
 pub enum PathHead {
     /// A path element followed by the rest of the path.
     Type(Box<PathElementWithGenerics>, Box<PathHead>),

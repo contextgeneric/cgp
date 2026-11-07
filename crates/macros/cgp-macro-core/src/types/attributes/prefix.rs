@@ -7,8 +7,8 @@ use crate::functions::parse_internal;
 use crate::types::ident::{IdentWithTypeGenerics, PathWithTypeArgs};
 use crate::types::path::UniPath;
 
-#[derive(Clone)]
 /// One `#[prefix]` registration.
+#[derive(Clone)]
 pub struct PrefixAttribute {
     /// The path the component registers under.
     pub path: UniPath,
