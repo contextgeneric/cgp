@@ -40,18 +40,20 @@ snapshot_cgp_fn! {
                 >,
         {
             fn rectangle_area(&self) -> f64 {
-                let width: f64 = self
-                    .get_field(
+                let width: f64 = ::core::clone::Clone::clone(
+                    HasField::get_field(
+                        self,
                         ::core::marker::PhantomData::<
                             Symbol<
                                 5,
                                 Chars<'w', Chars<'i', Chars<'d', Chars<'t', Chars<'h', Nil>>>>>,
                             >,
                         >,
-                    )
-                    .clone();
-                let height: f64 = self
-                    .get_field(
+                    ),
+                );
+                let height: f64 = ::core::clone::Clone::clone(
+                    HasField::get_field(
+                        self,
                         ::core::marker::PhantomData::<
                             Symbol<
                                 6,
@@ -64,8 +66,8 @@ snapshot_cgp_fn! {
                                 >,
                             >,
                         >,
-                    )
-                    .clone();
+                    ),
+                );
                 width * height
             }
         }
@@ -125,8 +127,9 @@ snapshot_cgp_fn! {
             >,
         {
             fn scaled_rectangle_area(&self) -> f64 {
-                let scale_factor: f64 = self
-                    .get_field(
+                let scale_factor: f64 = ::core::clone::Clone::clone(
+                    HasField::get_field(
+                        self,
                         ::core::marker::PhantomData::<
                             Symbol<
                                 12,
@@ -157,8 +160,8 @@ snapshot_cgp_fn! {
                                 >,
                             >,
                         >,
-                    )
-                    .clone();
+                    ),
+                );
                 self.rectangle_area() * scale_factor * scale_factor
             }
         }

@@ -43,12 +43,13 @@ snapshot_cgp_fn! {
                         >,
                     >,
                 >,
-                Value = Option<String>,
+                Value: OptionAsRef<str> + 'static,
             >,
         {
             fn describe(&self) -> String {
-                let nickname: Option<&str> = self
-                    .get_field(
+                let nickname: Option<&str> = OptionAsRef::option_as_ref(
+                    HasField::get_field(
+                        self,
                         ::core::marker::PhantomData::<
                             Symbol<
                                 8,
@@ -67,8 +68,8 @@ snapshot_cgp_fn! {
                                 >,
                             >,
                         >,
-                    )
-                    .as_deref();
+                    ),
+                );
                 match nickname {
                     Some(name) => format!("aka {name}"),
                     None => "anonymous".to_owned(),

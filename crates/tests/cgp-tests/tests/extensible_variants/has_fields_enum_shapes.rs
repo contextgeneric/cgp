@@ -259,13 +259,20 @@ snapshot_derive_has_fields! {
         impl ToFields for Shape {
             fn to_fields(self) -> <Self as HasFields>::Fields {
                 match self {
-                    Self::Empty => Either::Left(Nil.into()),
-                    Self::Circle(field) => Either::Right(Either::Left(field.into())),
+                    Self::Empty => Either::Left(::core::convert::Into::into(Nil)),
+                    Self::Circle(field) => {
+                        Either::Right(Either::Left(::core::convert::Into::into(field)))
+                    }
                     Self::Rectangle(field_0, field_1) => {
                         Either::Right(
                             Either::Right(
                                 Either::Left(
-                                    Cons(field_0.into(), Cons(field_1.into(), Nil)).into(),
+                                    ::core::convert::Into::into(
+                                        Cons(
+                                            ::core::convert::Into::into(field_0),
+                                            Cons(::core::convert::Into::into(field_1), Nil),
+                                        ),
+                                    ),
                                 ),
                             ),
                         )
@@ -275,7 +282,12 @@ snapshot_derive_has_fields! {
                             Either::Right(
                                 Either::Right(
                                     Either::Left(
-                                        Cons(base.into(), Cons(height.into(), Nil)).into(),
+                                        ::core::convert::Into::into(
+                                            Cons(
+                                                ::core::convert::Into::into(base),
+                                                Cons(::core::convert::Into::into(height), Nil),
+                                            ),
+                                        ),
                                     ),
                                 ),
                             ),
@@ -290,13 +302,20 @@ snapshot_derive_has_fields! {
                 Self: '__a,
             {
                 match self {
-                    Self::Empty => Either::Left(Nil.into()),
-                    Self::Circle(field) => Either::Right(Either::Left(field.into())),
+                    Self::Empty => Either::Left(::core::convert::Into::into(Nil)),
+                    Self::Circle(field) => {
+                        Either::Right(Either::Left(::core::convert::Into::into(field)))
+                    }
                     Self::Rectangle(field_0, field_1) => {
                         Either::Right(
                             Either::Right(
                                 Either::Left(
-                                    Cons(field_0.into(), Cons(field_1.into(), Nil)).into(),
+                                    ::core::convert::Into::into(
+                                        Cons(
+                                            ::core::convert::Into::into(field_0),
+                                            Cons(::core::convert::Into::into(field_1), Nil),
+                                        ),
+                                    ),
                                 ),
                             ),
                         )
@@ -306,7 +325,12 @@ snapshot_derive_has_fields! {
                             Either::Right(
                                 Either::Right(
                                     Either::Left(
-                                        Cons(base.into(), Cons(height.into(), Nil)).into(),
+                                        ::core::convert::Into::into(
+                                            Cons(
+                                                ::core::convert::Into::into(base),
+                                                Cons(::core::convert::Into::into(height), Nil),
+                                            ),
+                                        ),
                                     ),
                                 ),
                             ),

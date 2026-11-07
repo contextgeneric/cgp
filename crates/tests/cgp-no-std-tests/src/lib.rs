@@ -35,12 +35,23 @@ impl Greeter {
 }
 
 /// A function-style trait, so the build exercises `#[cgp_fn]`.
-///
-/// The implicit argument is a `u32` rather than a `&str`, because the `&str` form
-/// lowers to a `String` field bound, which needs `alloc`.
 #[cgp_fn]
 pub fn double_count(&self, #[implicit] count: u32) -> u32 {
     count * 2
+}
+
+/// A `&str` implicit argument, which reads any `AsRef<str>` field and so needs no
+/// allocator.
+#[cgp_fn]
+pub fn greet_name(&self, #[implicit] name: &str) -> &str {
+    name
+}
+
+/// An `Option<&str>` implicit argument, which reads any `Option<U>` whose `U`
+/// implements `AsRef<str>` through `OptionAsRef`, so it needs no allocator either.
+#[cgp_fn]
+pub fn greet_nickname(&self, #[implicit] nickname: Option<&str>) -> Option<&str> {
+    nickname
 }
 
 /// A context that wires the component.

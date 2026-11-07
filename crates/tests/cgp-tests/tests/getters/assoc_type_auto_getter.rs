@@ -33,7 +33,8 @@ snapshot_cgp_auto_getter! {
         {
             type Name = Name;
             fn name(&self) -> &Self::Name {
-                self.get_field(
+                HasField::get_field(
+                    self,
                     ::core::marker::PhantomData::<
                         Symbol<4, Chars<'n', Chars<'a', Chars<'m', Chars<'e', Nil>>>>>,
                     >,

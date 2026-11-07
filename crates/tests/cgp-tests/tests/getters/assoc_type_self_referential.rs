@@ -106,12 +106,12 @@ snapshot_cgp_getter! {
         {
             type Name = Name;
             fn name(__context__: &__Context__) -> &Self::Name {
-                __context__
-                    .get_field(
-                        ::core::marker::PhantomData::<
-                            Symbol<4, Chars<'n', Chars<'a', Chars<'m', Chars<'e', Nil>>>>>,
-                        >,
-                    )
+                HasField::get_field(
+                    __context__,
+                    ::core::marker::PhantomData::<
+                        Symbol<4, Chars<'n', Chars<'a', Chars<'m', Chars<'e', Nil>>>>>,
+                    >,
+                )
             }
         }
         impl<__Context__, Name> IsProviderFor<NameGetterComponent, __Context__, ()> for UseFields
@@ -129,7 +129,7 @@ snapshot_cgp_getter! {
         {
             type Name = Name;
             fn name(__context__: &__Context__) -> &Self::Name {
-                __context__.get_field(::core::marker::PhantomData::<__Tag__>)
+                HasField::get_field(__context__, ::core::marker::PhantomData::<__Tag__>)
             }
         }
         impl<__Context__, Name, __Tag__> IsProviderFor<NameGetterComponent, __Context__, ()>

@@ -30,17 +30,18 @@ snapshot_cgp_fn! {
         where
             Self: HasField<
                 Symbol<4, Chars<'d', Chars<'a', Chars<'t', Chars<'a', Nil>>>>>,
-                Value: AsRef<[u8]> + 'static,
+                Value: ::core::convert::AsRef<[u8]> + 'static,
             >,
         {
             fn count_matches(&mut self, byte: u8) -> usize {
-                let data: &[u8] = self
-                    .get_field(
+                let data: &[u8] = ::core::convert::AsRef::as_ref(
+                    HasField::get_field(
+                        self,
                         ::core::marker::PhantomData::<
                             Symbol<4, Chars<'d', Chars<'a', Chars<'t', Chars<'a', Nil>>>>>,
                         >,
-                    )
-                    .as_ref();
+                    ),
+                );
                 data.iter().filter(|b| **b == byte).count()
             }
         }

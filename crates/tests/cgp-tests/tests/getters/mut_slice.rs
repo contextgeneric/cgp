@@ -92,41 +92,47 @@ snapshot_cgp_getter! {
         where
             __Context__: HasFieldMut<
                 Symbol<5, Chars<'i', Chars<'t', Chars<'e', Chars<'m', Chars<'s', Nil>>>>>>,
-                Value: AsMut<[u32]> + 'static,
+                Value: ::core::convert::AsMut<[u32]> + 'static,
             >,
         {
             fn items(__context__: &mut __Context__) -> &mut [u32] {
-                __context__
-                    .get_field_mut(
+                ::core::convert::AsMut::as_mut(
+                    HasFieldMut::get_field_mut(
+                        __context__,
                         ::core::marker::PhantomData::<
                             Symbol<
                                 5,
                                 Chars<'i', Chars<'t', Chars<'e', Chars<'m', Chars<'s', Nil>>>>>,
                             >,
                         >,
-                    )
-                    .as_mut()
+                    ),
+                )
             }
         }
         impl<__Context__> IsProviderFor<ItemsGetterComponent, __Context__, ()> for UseFields
         where
             __Context__: HasFieldMut<
                 Symbol<5, Chars<'i', Chars<'t', Chars<'e', Chars<'m', Chars<'s', Nil>>>>>>,
-                Value: AsMut<[u32]> + 'static,
+                Value: ::core::convert::AsMut<[u32]> + 'static,
             >,
         {}
         impl<__Context__, __Tag__> ItemsGetter<__Context__> for UseField<__Tag__>
         where
-            __Context__: HasFieldMut<__Tag__, Value: AsMut<[u32]> + 'static>,
+            __Context__: HasFieldMut<__Tag__, Value: ::core::convert::AsMut<[u32]> + 'static>,
         {
             fn items(__context__: &mut __Context__) -> &mut [u32] {
-                __context__.get_field_mut(::core::marker::PhantomData::<__Tag__>).as_mut()
+                ::core::convert::AsMut::as_mut(
+                    HasFieldMut::get_field_mut(
+                        __context__,
+                        ::core::marker::PhantomData::<__Tag__>,
+                    ),
+                )
             }
         }
         impl<__Context__, __Tag__> IsProviderFor<ItemsGetterComponent, __Context__, ()>
         for UseField<__Tag__>
         where
-            __Context__: HasFieldMut<__Tag__, Value: AsMut<[u32]> + 'static>,
+            __Context__: HasFieldMut<__Tag__, Value: ::core::convert::AsMut<[u32]> + 'static>,
         {}
         impl<__Context__, __Provider__> ItemsGetter<__Context__> for WithProvider<__Provider__>
         where
@@ -137,11 +143,12 @@ snapshot_cgp_getter! {
             >,
         {
             fn items(__context__: &mut __Context__) -> &mut [u32] {
-                __Provider__::get_field_mut(
+                ::core::convert::AsMut::as_mut(
+                    __Provider__::get_field_mut(
                         __context__,
                         ::core::marker::PhantomData::<ItemsGetterComponent>,
-                    )
-                    .as_mut()
+                    ),
+                )
             }
         }
         impl<__Context__, __Provider__> IsProviderFor<ItemsGetterComponent, __Context__, ()>

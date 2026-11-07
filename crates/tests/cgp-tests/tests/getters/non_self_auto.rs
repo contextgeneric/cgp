@@ -49,24 +49,24 @@ snapshot_cgp_auto_getter! {
             >,
         {
             fn foo_bar(__context__: &__Context__::Foo) -> &__Context__::Bar {
-                __context__
-                    .get_field(
-                        ::core::marker::PhantomData::<
-                            Symbol<
-                                7,
+                HasField::get_field(
+                    __context__,
+                    ::core::marker::PhantomData::<
+                        Symbol<
+                            7,
+                            Chars<
+                                'f',
                                 Chars<
-                                    'f',
+                                    'o',
                                     Chars<
                                         'o',
-                                        Chars<
-                                            'o',
-                                            Chars<'_', Chars<'b', Chars<'a', Chars<'r', Nil>>>>,
-                                        >,
+                                        Chars<'_', Chars<'b', Chars<'a', Chars<'r', Nil>>>>,
                                     >,
                                 >,
                             >,
                         >,
-                    )
+                    >,
+                )
             }
         }
         ")

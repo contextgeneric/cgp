@@ -132,8 +132,10 @@ snapshot_derive_cgp_data! {
         impl ToFields for Shape {
             fn to_fields(self) -> <Self as HasFields>::Fields {
                 match self {
-                    Self::Circle(field) => Either::Left(field.into()),
-                    Self::Rectangle(field) => Either::Right(Either::Left(field.into())),
+                    Self::Circle(field) => Either::Left(::core::convert::Into::into(field)),
+                    Self::Rectangle(field) => {
+                        Either::Right(Either::Left(::core::convert::Into::into(field)))
+                    }
                 }
             }
         }
@@ -143,8 +145,10 @@ snapshot_derive_cgp_data! {
                 Self: '__a,
             {
                 match self {
-                    Self::Circle(field) => Either::Left(field.into()),
-                    Self::Rectangle(field) => Either::Right(Either::Left(field.into())),
+                    Self::Circle(field) => Either::Left(::core::convert::Into::into(field)),
+                    Self::Rectangle(field) => {
+                        Either::Right(Either::Left(::core::convert::Into::into(field)))
+                    }
                 }
             }
         }

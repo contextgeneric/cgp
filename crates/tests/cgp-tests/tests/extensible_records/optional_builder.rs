@@ -95,7 +95,10 @@ snapshot_derive_cgp_data! {
         }
         impl ToFields for Context {
             fn to_fields(self) -> Self::Fields {
-                Cons(self.foo.into(), Cons(self.bar.into(), Nil))
+                Cons(
+                    ::core::convert::Into::into(self.foo),
+                    Cons(::core::convert::Into::into(self.bar), Nil),
+                )
             }
         }
         impl ToFieldsRef for Context {
@@ -103,7 +106,10 @@ snapshot_derive_cgp_data! {
             where
                 Self: '__a,
             {
-                Cons((&self.foo).into(), Cons((&self.bar).into(), Nil))
+                Cons(
+                    ::core::convert::Into::into(&self.foo),
+                    Cons(::core::convert::Into::into(&self.bar), Nil),
+                )
             }
         }
         ///The partial builder for [`Context`].

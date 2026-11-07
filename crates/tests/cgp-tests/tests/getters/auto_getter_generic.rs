@@ -26,7 +26,8 @@ snapshot_cgp_auto_getter! {
             >,
         {
             fn foo(&self, _phantom: PhantomData<Foo>) -> &Foo {
-                self.get_field(
+                HasField::get_field(
+                    self,
                     ::core::marker::PhantomData::<
                         Symbol<3, Chars<'f', Chars<'o', Chars<'o', Nil>>>>,
                     >,

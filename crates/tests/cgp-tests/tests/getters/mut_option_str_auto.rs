@@ -27,12 +27,14 @@ snapshot_cgp_auto_getter! {
             >,
         {
             fn name(&mut self) -> Option<&mut str> {
-                self.get_field_mut(
+                ::core::option::Option::as_deref_mut(
+                    HasFieldMut::get_field_mut(
+                        self,
                         ::core::marker::PhantomData::<
                             Symbol<4, Chars<'n', Chars<'a', Chars<'m', Chars<'e', Nil>>>>>,
                         >,
-                    )
-                    .as_deref_mut()
+                    ),
+                )
             }
         }
         ")

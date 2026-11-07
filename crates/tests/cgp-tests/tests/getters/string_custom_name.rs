@@ -89,13 +89,14 @@ snapshot_cgp_getter! {
             >,
         {
             fn foo(__context__: &__Context__) -> &str {
-                __context__
-                    .get_field(
+                ::core::convert::AsRef::as_ref(
+                    HasField::get_field(
+                        __context__,
                         ::core::marker::PhantomData::<
                             Symbol<3, Chars<'f', Chars<'o', Chars<'o', Nil>>>>,
                         >,
-                    )
-                    .as_str()
+                    ),
+                )
             }
         }
         impl<__Context__> IsProviderFor<GetStringComponent, __Context__, ()> for UseFields
@@ -110,7 +111,9 @@ snapshot_cgp_getter! {
             __Context__: HasField<__Tag__, Value = String>,
         {
             fn foo(__context__: &__Context__) -> &str {
-                __context__.get_field(::core::marker::PhantomData::<__Tag__>).as_str()
+                ::core::convert::AsRef::as_ref(
+                    HasField::get_field(__context__, ::core::marker::PhantomData::<__Tag__>),
+                )
             }
         }
         impl<__Context__, __Tag__> IsProviderFor<GetStringComponent, __Context__, ()>
@@ -123,11 +126,12 @@ snapshot_cgp_getter! {
             __Provider__: FieldGetter<__Context__, GetStringComponent, Value = String>,
         {
             fn foo(__context__: &__Context__) -> &str {
-                __Provider__::get_field(
+                ::core::convert::AsRef::as_ref(
+                    __Provider__::get_field(
                         __context__,
                         ::core::marker::PhantomData::<GetStringComponent>,
-                    )
-                    .as_str()
+                    ),
+                )
             }
         }
         impl<__Context__, __Provider__> IsProviderFor<GetStringComponent, __Context__, ()>

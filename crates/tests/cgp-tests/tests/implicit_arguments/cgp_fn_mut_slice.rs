@@ -32,17 +32,18 @@ snapshot_cgp_fn! {
         where
             Self: HasFieldMut<
                 Symbol<4, Chars<'d', Chars<'a', Chars<'t', Chars<'a', Nil>>>>>,
-                Value: AsMut<[u8]> + 'static,
+                Value: ::core::convert::AsMut<[u8]> + 'static,
             >,
         {
             fn zero_all(&mut self) {
-                let data: &mut [u8] = self
-                    .get_field_mut(
+                let data: &mut [u8] = ::core::convert::AsMut::as_mut(
+                    HasFieldMut::get_field_mut(
+                        self,
                         ::core::marker::PhantomData::<
                             Symbol<4, Chars<'d', Chars<'a', Chars<'t', Chars<'a', Nil>>>>>,
                         >,
-                    )
-                    .as_mut();
+                    ),
+                );
                 for byte in data.iter_mut() {
                     *byte = 0;
                 }

@@ -31,16 +31,17 @@ snapshot_cgp_fn! {
             >,
         {
             fn origin_distance(&self) -> f64 {
-                let point: (f64, f64) = self
-                    .get_field(
+                let point: (f64, f64) = ::core::clone::Clone::clone(
+                    HasField::get_field(
+                        self,
                         ::core::marker::PhantomData::<
                             Symbol<
                                 5,
                                 Chars<'p', Chars<'o', Chars<'i', Chars<'n', Chars<'t', Nil>>>>>,
                             >,
                         >,
-                    )
-                    .clone();
+                    ),
+                );
                 (point.0 * point.0 + point.1 * point.1).sqrt()
             }
         }

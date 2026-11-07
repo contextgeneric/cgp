@@ -47,18 +47,22 @@ snapshot_cgp_auto_getter! {
             >,
         {
             fn width(&self) -> __Context__::Scalar {
-                self.get_field(
+                ::core::clone::Clone::clone(
+                    HasField::get_field(
+                        self,
                         ::core::marker::PhantomData::<
                             Symbol<
                                 5,
                                 Chars<'w', Chars<'i', Chars<'d', Chars<'t', Chars<'h', Nil>>>>>,
                             >,
                         >,
-                    )
-                    .clone()
+                    ),
+                )
             }
             fn height(&self) -> __Context__::Scalar {
-                self.get_field(
+                ::core::clone::Clone::clone(
+                    HasField::get_field(
+                        self,
                         ::core::marker::PhantomData::<
                             Symbol<
                                 6,
@@ -71,8 +75,8 @@ snapshot_cgp_auto_getter! {
                                 >,
                             >,
                         >,
-                    )
-                    .clone()
+                    ),
+                )
             }
         }
         ")
@@ -201,20 +205,22 @@ snapshot_cgp_getter! {
             >,
         {
             fn width(__context__: &__Context__) -> __Context__::Scalar {
-                __context__
-                    .get_field(
+                ::core::clone::Clone::clone(
+                    HasField::get_field(
+                        __context__,
                         ::core::marker::PhantomData::<
                             Symbol<
                                 5,
                                 Chars<'w', Chars<'i', Chars<'d', Chars<'t', Chars<'h', Nil>>>>>,
                             >,
                         >,
-                    )
-                    .clone()
+                    ),
+                )
             }
             fn height(__context__: &__Context__) -> __Context__::Scalar {
-                __context__
-                    .get_field(
+                ::core::clone::Clone::clone(
+                    HasField::get_field(
+                        __context__,
                         ::core::marker::PhantomData::<
                             Symbol<
                                 6,
@@ -227,8 +233,8 @@ snapshot_cgp_getter! {
                                 >,
                             >,
                         >,
-                    )
-                    .clone()
+                    ),
+                )
             }
         }
         impl<__Context__> IsProviderFor<RectangleFieldsGetterComponent, __Context__, ()>

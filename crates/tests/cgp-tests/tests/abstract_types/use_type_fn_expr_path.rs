@@ -91,10 +91,10 @@ snapshot_cgp_fn! {
             Self: HasTransactionType,
         {
             fn begin_transaction(&self) -> <Self as HasTransactionType>::Transaction {
-                let db: &Pool<<Self as HasDbType>::Db> = self
-                    .get_field(
-                        ::core::marker::PhantomData::<Symbol<2, Chars<'d', Chars<'b', Nil>>>>,
-                    );
+                let db: &Pool<<Self as HasDbType>::Db> = HasField::get_field(
+                    self,
+                    ::core::marker::PhantomData::<Symbol<2, Chars<'d', Chars<'b', Nil>>>>,
+                );
                 let started: <Self as HasTransactionType>::Transaction = <<Self as HasTransactionType>::Transaction>::begin_from(
                     db,
                 );
@@ -167,10 +167,10 @@ snapshot_cgp_fn! {
             Self: HasTransactionType,
         {
             fn tagged_transaction(&self) -> <Self as HasTransactionType>::Transaction {
-                let db: &Pool<<Self as HasDbType>::Db> = self
-                    .get_field(
-                        ::core::marker::PhantomData::<Symbol<2, Chars<'d', Chars<'b', Nil>>>>,
-                    );
+                let db: &Pool<<Self as HasDbType>::Db> = HasField::get_field(
+                    self,
+                    ::core::marker::PhantomData::<Symbol<2, Chars<'d', Chars<'b', Nil>>>>,
+                );
                 <<Self as HasTransactionType>::Transaction>::tagged::<
                     <Self as HasDbType>::Db,
                 >(db)
@@ -206,10 +206,10 @@ snapshot_cgp_fn! {
             Self: HasDbType,
         {
             fn unit_struct_untouched(&self) -> Marker2 {
-                let db: &Pool<<Self as HasDbType>::Db> = self
-                    .get_field(
-                        ::core::marker::PhantomData::<Symbol<2, Chars<'d', Chars<'b', Nil>>>>,
-                    );
+                let db: &Pool<<Self as HasDbType>::Db> = HasField::get_field(
+                    self,
+                    ::core::marker::PhantomData::<Symbol<2, Chars<'d', Chars<'b', Nil>>>>,
+                );
                 let _ = db;
                 Marker.into()
             }

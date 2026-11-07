@@ -47,18 +47,20 @@ snapshot_cgp_impl! {
                 >,
         {
             fn area(__context__: &__Context__) -> f64 {
-                let width: f64 = __context__
-                    .get_field(
+                let width: f64 = ::core::clone::Clone::clone(
+                    HasField::get_field(
+                        __context__,
                         ::core::marker::PhantomData::<
                             Symbol<
                                 5,
                                 Chars<'w', Chars<'i', Chars<'d', Chars<'t', Chars<'h', Nil>>>>>,
                             >,
                         >,
-                    )
-                    .clone();
-                let height: f64 = __context__
-                    .get_field(
+                    ),
+                );
+                let height: f64 = ::core::clone::Clone::clone(
+                    HasField::get_field(
+                        __context__,
                         ::core::marker::PhantomData::<
                             Symbol<
                                 6,
@@ -71,8 +73,8 @@ snapshot_cgp_impl! {
                                 >,
                             >,
                         >,
-                    )
-                    .clone();
+                    ),
+                );
                 width * height
             }
         }

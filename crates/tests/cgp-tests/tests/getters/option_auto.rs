@@ -26,12 +26,14 @@ snapshot_cgp_auto_getter! {
             >,
         {
             fn foo(&self) -> Option<&String> {
-                self.get_field(
+                ::core::option::Option::as_ref(
+                    HasField::get_field(
+                        self,
                         ::core::marker::PhantomData::<
                             Symbol<3, Chars<'f', Chars<'o', Chars<'o', Nil>>>>,
                         >,
-                    )
-                    .as_ref()
+                    ),
+                )
             }
         }
         ")

@@ -86,38 +86,41 @@ snapshot_cgp_getter! {
         where
             __Context__: HasField<
                 Symbol<3, Chars<'f', Chars<'o', Chars<'o', Nil>>>>,
-                Value: AsRef<[u8]> + 'static,
+                Value: ::core::convert::AsRef<[u8]> + 'static,
             >,
         {
             fn foo(__context__: &__Context__) -> &[u8] {
-                __context__
-                    .get_field(
+                ::core::convert::AsRef::as_ref(
+                    HasField::get_field(
+                        __context__,
                         ::core::marker::PhantomData::<
                             Symbol<3, Chars<'f', Chars<'o', Chars<'o', Nil>>>>,
                         >,
-                    )
-                    .as_ref()
+                    ),
+                )
             }
         }
         impl<__Context__> IsProviderFor<FooGetterComponent, __Context__, ()> for UseFields
         where
             __Context__: HasField<
                 Symbol<3, Chars<'f', Chars<'o', Chars<'o', Nil>>>>,
-                Value: AsRef<[u8]> + 'static,
+                Value: ::core::convert::AsRef<[u8]> + 'static,
             >,
         {}
         impl<__Context__, __Tag__> FooGetter<__Context__> for UseField<__Tag__>
         where
-            __Context__: HasField<__Tag__, Value: AsRef<[u8]> + 'static>,
+            __Context__: HasField<__Tag__, Value: ::core::convert::AsRef<[u8]> + 'static>,
         {
             fn foo(__context__: &__Context__) -> &[u8] {
-                __context__.get_field(::core::marker::PhantomData::<__Tag__>).as_ref()
+                ::core::convert::AsRef::as_ref(
+                    HasField::get_field(__context__, ::core::marker::PhantomData::<__Tag__>),
+                )
             }
         }
         impl<__Context__, __Tag__> IsProviderFor<FooGetterComponent, __Context__, ()>
         for UseField<__Tag__>
         where
-            __Context__: HasField<__Tag__, Value: AsRef<[u8]> + 'static>,
+            __Context__: HasField<__Tag__, Value: ::core::convert::AsRef<[u8]> + 'static>,
         {}
         impl<__Context__, __Provider__> FooGetter<__Context__> for WithProvider<__Provider__>
         where
@@ -128,11 +131,12 @@ snapshot_cgp_getter! {
             >,
         {
             fn foo(__context__: &__Context__) -> &[u8] {
-                __Provider__::get_field(
+                ::core::convert::AsRef::as_ref(
+                    __Provider__::get_field(
                         __context__,
                         ::core::marker::PhantomData::<FooGetterComponent>,
-                    )
-                    .as_ref()
+                    ),
+                )
             }
         }
         impl<__Context__, __Provider__> IsProviderFor<FooGetterComponent, __Context__, ()>

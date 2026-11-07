@@ -25,3 +25,11 @@ pub mod implicit_context;
 pub mod doc_comment_on_cgp_fn;
 // The gap-filling half: a function with no doc leaves the method with a generated line.
 pub mod doc_comment_on_cgp_fn_without_doc;
+
+pub mod str_field_probe;
+
+// `#[cgp_impl]` reads a `&str` and an `Option<&str>` implicit the same way
+// `#[cgp_fn]` does, and the runtime test covers the three field types.
+pub mod cgp_impl_implicit_option_str;
+pub mod cgp_impl_implicit_str;
+pub mod cgp_impl_implicit_str_fields;
