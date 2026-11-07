@@ -9,7 +9,7 @@ rust-version = { workspace = true }
 homepage     = { workspace = true }
 keywords     = { workspace = true }
 categories   = { workspace = true }
-description  = { workspace = true }
+description  = "The shared core of CGP's procedural macros: the AST types, parsers, visitors, and code-generation helpers the macro crates build on."
 
 [dependencies]
 syn                 = { version = "2.0.95", features = [ "full", "extra-traits", "visit", "visit-mut" ] }

@@ -9,7 +9,7 @@ rust-version = { workspace = true }
 homepage     = { workspace = true }
 keywords     = { workspace = true }
 categories   = { workspace = true }
-description  = { workspace = true }
+description  = "CGP's field access: the field traits, the field tags, the type-level lists, and the structural casts."
 
 [dependencies]
 cgp-base-types      = { workspace = true }

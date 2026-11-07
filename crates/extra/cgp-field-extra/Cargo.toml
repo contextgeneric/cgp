@@ -9,7 +9,7 @@ rust-version = { workspace = true }
 homepage     = { workspace = true }
 keywords     = { workspace = true }
 categories   = { workspace = true }
-description  = { workspace = true }
+description  = "CGP's optional-field layer, for a builder whose fields are set in any order."
 
 [dependencies]
 cgp-field       = { workspace = true }

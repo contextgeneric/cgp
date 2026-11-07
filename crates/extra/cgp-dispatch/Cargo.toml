@@ -9,7 +9,7 @@ rust-version = { workspace = true }
 homepage     = { workspace = true }
 keywords     = { workspace = true }
 categories   = { workspace = true }
-description  = { workspace = true }
+description  = "CGP's dispatch providers, which match, extract, and build a value on the way to a handler."
 
 [dependencies]
 cgp         = { version = "0.8.0-alpha", path = "../../main/cgp-core", package = "cgp-core" }

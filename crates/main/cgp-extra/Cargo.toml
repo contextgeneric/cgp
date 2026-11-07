@@ -9,7 +9,7 @@ rust-version = { workspace = true }
 homepage     = { workspace = true }
 keywords     = { workspace = true }
 categories   = { workspace = true }
-description  = { workspace = true }
+description  = "CGP's extra layer through cgp::extra: handlers, monads, dispatch, runtime, runners, the optional-field layer, and the generic error providers."
 
 [features]
 default = [ "full" ]

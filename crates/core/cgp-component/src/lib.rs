@@ -1,9 +1,8 @@
 #![no_std]
-
-/*!
-   This crate defines the core CGP types and traits used to enable the core
-   CGP component implementation.
-*/
+//! This crate provides CGP's component machinery: delegation, provider lookup, and the built-in
+//! providers.
+//!
+//! See [`DelegateComponent`](https://contextgeneric.dev/docs/reference/traits/wiring/delegate_component), [`IsProviderFor`](https://contextgeneric.dev/docs/reference/traits/wiring/is_provider_for), [`CanUseComponent`](https://contextgeneric.dev/docs/reference/traits/wiring/can_use_component), [`UseContext`](https://contextgeneric.dev/docs/reference/providers/use_context), [`UseDefault`](https://contextgeneric.dev/docs/reference/providers/use_default), [`UseDelegate`](https://contextgeneric.dev/docs/reference/providers/use_delegate), and [`RedirectLookup`](https://contextgeneric.dev/docs/reference/providers/redirect_lookup).
 
 pub mod macro_prelude;
 

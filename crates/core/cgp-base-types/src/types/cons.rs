@@ -2,7 +2,7 @@
     The `Cons` type is used to represent the head of a _type-level list_,
     also known as an _anonymous product type_.
 
-    `Cons` is used together with [`Nil`] to produce a type-level list using
+    `Cons` is used together with [`Nil`](crate::types::Nil) to produce a type-level list using
     the `Product!` macro.
 
     ## Example

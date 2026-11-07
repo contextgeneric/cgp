@@ -1,4 +1,8 @@
 #![no_std]
+//! This crate re-exports CGP's extra layer through `cgp::extra`: handlers, monads, dispatch,
+//! runtime, runners, the optional-field layer, and the generic error providers.
+//!
+//! See [`CanHandle`](https://contextgeneric.dev/docs/reference/components/handler/handler), [`PipeHandlers`](https://contextgeneric.dev/docs/reference/providers/handler/pipe_handlers), and [`RaiseFrom`](https://contextgeneric.dev/docs/reference/providers/error/raise_from).
 
 pub mod prelude;
 

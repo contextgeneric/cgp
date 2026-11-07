@@ -194,11 +194,12 @@ for a team, start small, and use the worked examples on the
 
 The [website](https://contextgeneric.dev/) is the main documentation: the quickstart, the tutorials,
 the concepts, the construct reference, the comparisons, and the project pages. The crates' API
-documentation on [docs.rs](https://docs.rs/cgp) covers the items themselves.
+documentation on [docs.rs](https://docs.rs/cgp) is the place to look up an item.
 
 > [!NOTE]
-> The crates' API docs on `docs.rs` are still sparse. The website is the place to start while the
-> inline documentation is filled in.
+> Each crate's `docs.rs` page says what that crate provides and links the reference page for its
+> constructs. The per-item documentation is still being filled in, so the website remains the place
+> to start.
 
 Contributors and coding agents have a second, deeper source: the
 [CGP knowledge base](https://github.com/contextgeneric/cgp-knowledge-base), which holds the

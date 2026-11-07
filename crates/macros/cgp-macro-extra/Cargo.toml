@@ -9,7 +9,7 @@ rust-version = { workspace = true }
 homepage     = { workspace = true }
 keywords     = { workspace = true }
 categories   = { workspace = true }
-description  = { workspace = true }
+description  = "CGP's extra procedural macros, which define handler providers from functions and dispatch a trait over an enum."
 
 [lib]
 proc-macro = true

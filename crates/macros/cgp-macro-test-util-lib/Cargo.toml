@@ -9,7 +9,7 @@ rust-version = { workspace = true }
 homepage     = { workspace = true }
 keywords     = { workspace = true }
 categories   = { workspace = true }
-description  = { workspace = true }
+description  = "The implementation of CGP's snapshot-testing macros."
 
 [dependencies]
 cgp-macro-lib       = { workspace = true }

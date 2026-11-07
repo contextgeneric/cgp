@@ -9,7 +9,7 @@ rust-version = { workspace = true }
 homepage     = { workspace = true }
 keywords     = { workspace = true }
 categories   = { workspace = true }
-description  = { workspace = true }
+description  = "CGP's core layer through cgp::core: the base layer, the macros, the async trait macro, and the error, field, and type components."
 
 [dependencies]
 cgp-base            = { workspace = true }

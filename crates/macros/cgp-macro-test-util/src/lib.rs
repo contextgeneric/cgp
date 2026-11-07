@@ -1,3 +1,6 @@
+//! This crate provides CGP's snapshot-testing macros, which emit the real generated code and pin it
+//! as an inline `insta` snapshot.
+
 use cgp_macro_test_util_lib::entrypoints;
 use proc_macro::TokenStream;
 
