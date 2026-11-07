@@ -21,7 +21,9 @@ snapshot_cgp_fn! {
 
     expand_count_matches(output) {
         insta::assert_snapshot!(output, @"
+        ///The trait for the `count_matches` operation.
         pub trait CountMatches {
+            ///The `count_matches` operation.
             fn count_matches(&mut self, byte: u8) -> usize;
         }
         impl<__Context__> CountMatches for __Context__

@@ -54,6 +54,7 @@ snapshot_cgp_computer! {
             __Context__,
             __Code__,
         > IsProviderFor<ComputerComponent, __Context__, (__Code__, (u64, u64))> for Add {}
+        ///Provider `Add` for [`Computer`].
         pub struct Add;
         impl DelegateComponent<ComputerRefComponent> for Add
         where
@@ -226,6 +227,7 @@ snapshot_cgp_computer! {
             __Code__,
         > IsProviderFor<ComputerComponent, __Context__, (__Code__, (u64, u64))>
         for AddWithError {}
+        ///Provider `AddWithError` for [`Computer`].
         pub struct AddWithError;
         impl DelegateComponent<ComputerRefComponent> for AddWithError
         where
@@ -505,6 +507,7 @@ snapshot_cgp_computer! {
             __Context__,
             __Code__,
         > IsProviderFor<ComputerComponent, __Context__, (__Code__, (T, T))> for AddGeneric {}
+        ///Provider `AddGeneric` for [`Computer`].
         pub struct AddGeneric;
         impl DelegateComponent<ComputerRefComponent> for AddGeneric
         where

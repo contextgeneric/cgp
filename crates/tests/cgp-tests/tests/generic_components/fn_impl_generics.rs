@@ -25,7 +25,9 @@ snapshot_cgp_fn! {
 
     expand_greet(output) {
         insta::assert_snapshot!(output, @r#"
+        ///The trait for the `greet` operation.
         pub trait Greet {
+            ///The `greet` operation.
             fn greet(&self) -> String;
         }
         impl<__Context__, Name: Display> Greet for __Context__
@@ -59,7 +61,9 @@ snapshot_cgp_fn! {
 
     expand_test_greet(output) {
         insta::assert_snapshot!(output, @r#"
+        ///The trait for the `test_greet` operation.
         pub trait TestGreet {
+            ///The `test_greet` operation.
             fn test_greet(&self);
         }
         impl<__Context__> TestGreet for __Context__

@@ -41,7 +41,9 @@ snapshot_cgp_fn! {
 
     expand_begin_nested(output) {
         insta::assert_snapshot!(output, @"
+        ///The trait for the `begin_nested` operation.
         pub trait BeginNested: HasDbType + HasTransactionType {
+            ///The `begin_nested` operation.
             fn begin_nested(&self) -> <Self as HasTransactionType>::Transaction;
         }
         impl<__Context__> BeginNested for __Context__
@@ -70,7 +72,9 @@ snapshot_cgp_fn! {
 
     expand_begin_nested_reversed(output) {
         insta::assert_snapshot!(output, @"
+        ///The trait for the `begin_nested_reversed` operation.
         pub trait BeginNestedReversed: HasTransactionType + HasDbType {
+            ///The `begin_nested_reversed` operation.
             fn begin_nested_reversed(&self) -> <Self as HasTransactionType>::Transaction;
         }
         impl<__Context__> BeginNestedReversed for __Context__
@@ -95,7 +99,9 @@ snapshot_cgp_fn! {
 
     expand_begin_projected(output) {
         insta::assert_snapshot!(output, @"
+        ///The trait for the `begin_projected` operation.
         pub trait BeginProjected: HasDbType + HasTransactionType {
+            ///The `begin_projected` operation.
             fn begin_projected(&self) -> <Self as HasTransactionType>::Transaction;
         }
         impl<__Context__> BeginProjected for __Context__

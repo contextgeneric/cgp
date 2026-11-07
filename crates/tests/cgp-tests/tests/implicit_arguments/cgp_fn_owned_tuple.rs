@@ -18,7 +18,9 @@ snapshot_cgp_fn! {
 
     expand_origin_distance(output) {
         insta::assert_snapshot!(output, @"
+        ///The trait for the `origin_distance` operation.
         pub trait OriginDistance {
+            ///The `origin_distance` operation.
             fn origin_distance(&self) -> f64;
         }
         impl<__Context__> OriginDistance for __Context__

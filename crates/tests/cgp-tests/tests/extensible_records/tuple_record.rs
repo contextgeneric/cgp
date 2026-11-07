@@ -91,6 +91,7 @@ snapshot_derive_cgp_data! {
                 Cons((&self.0).into(), Cons((&self.1).into(), Cons((&self.2).into(), Nil)))
             }
         }
+        ///The partial builder for [`Context`].
         pub struct __PartialContext<__F0__: MapType, __F1__: MapType, __F2__: MapType>(
             pub <__F0__ as MapType>::Map<u64>,
             pub <__F1__ as MapType>::Map<String>,

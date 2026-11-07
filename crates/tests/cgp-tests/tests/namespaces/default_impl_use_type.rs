@@ -69,6 +69,7 @@ snapshot_cgp_impl! {
             >,
             __Context__: HasNameType,
         {}
+        ///Provider `GreetByName` for [`Greeter`].
         pub struct GreetByName;
         impl<__Components__> AppNamespace<__Components__>
         for PathCons<

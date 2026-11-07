@@ -55,6 +55,7 @@ snapshot_cgp_impl! {
         }
         impl<__Context__> IsProviderFor<RateLimiterComponent, __Context__, ()>
         for AllowUnderLimit {}
+        ///Provider `AllowUnderLimit` for [`RateLimiter`].
         pub struct AllowUnderLimit;
         ")
     }

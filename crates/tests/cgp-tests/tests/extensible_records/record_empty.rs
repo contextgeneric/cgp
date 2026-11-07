@@ -48,6 +48,7 @@ snapshot_derive_cgp_data! {
                 Nil
             }
         }
+        ///The partial builder for [`NoConfig`].
         pub struct __PartialNoConfig {}
         impl HasBuilder for NoConfig {
             type Builder = __PartialNoConfig;

@@ -19,7 +19,9 @@ snapshot_cgp_fn! {
 
     expand_greet(output) {
         insta::assert_snapshot!(output, @r#"
+        ///The trait for the `greet` operation.
         pub trait Greet {
+            ///The `greet` operation.
             fn greet(&self);
         }
         impl<__Context__> Greet for __Context__

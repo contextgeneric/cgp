@@ -8,6 +8,9 @@ use crate::exports::Life;
 pub struct EmptyStruct {
     pub ident: Ident,
     pub generics: Generics,
+    /// The doc line emitted above the struct, so a crate that enables
+    /// `missing_docs` does not report the generated item.
+    pub doc: Option<String>,
 }
 
 impl EmptyStruct {
@@ -20,6 +23,10 @@ impl ToTokens for EmptyStruct {
     fn to_tokens(&self, tokens: &mut proc_macro2::TokenStream) {
         let struct_ident = &self.ident;
         let struct_generics = &self.generics;
+        let struct_doc = self
+            .doc
+            .as_ref()
+            .map(|doc| quote_spanned! { struct_ident.span() => #[doc = #doc] });
 
         // Stamp the synthesized `pub struct … ;` tokens with the struct ident's
         // span rather than the macro `call_site`, so a redefinition error
@@ -30,6 +37,7 @@ impl ToTokens for EmptyStruct {
 
         if struct_generics.params.is_empty() {
             tokens.extend(quote_spanned! { span =>
+                #struct_doc
                 pub struct #struct_ident;
             });
         } else {
@@ -68,6 +76,7 @@ impl ToTokens for EmptyStruct {
             };
 
             tokens.extend(quote_spanned! { span =>
+                #struct_doc
                 pub struct #struct_ident < #generic_params > (
                     pub ::core::marker::PhantomData< #phantom_type >
                 );

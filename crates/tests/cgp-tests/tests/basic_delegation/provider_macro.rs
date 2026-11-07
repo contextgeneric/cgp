@@ -33,6 +33,7 @@ snapshot_cgp_impl! {
             }
         }
         impl<Context> IsProviderFor<FooProviderComponent, Context, ()> for ValueToString {}
+        ///Provider `ValueToString` for [`FooProvider`].
         pub struct ValueToString;
         ")
     }

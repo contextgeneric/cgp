@@ -17,9 +17,11 @@ impl PreprocessedCgpComponent {
     /// Build the zero-sized `{Provider}Component` marker struct.
     pub fn to_component_struct(&self) -> EmptyStruct {
         let component_name = &self.args.component_name;
+        let consumer_trait = &self.item_trait.ident;
         EmptyStruct {
             ident: component_name.ident.clone(),
             generics: component_name.type_generics.to_generics(),
+            doc: Some(format!("Component marker for [`{consumer_trait}`].")),
         }
     }
 

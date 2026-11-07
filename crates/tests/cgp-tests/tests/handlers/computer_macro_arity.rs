@@ -36,6 +36,7 @@ snapshot_cgp_computer! {
         }
         impl<__Context__, __Code__> IsProviderFor<ComputerComponent, __Context__, (__Code__, ())>
         for Zero {}
+        ///Provider `Zero` for [`Computer`].
         pub struct Zero;
         impl DelegateComponent<ComputerRefComponent> for Zero
         where
@@ -206,6 +207,7 @@ snapshot_cgp_computer! {
             __Context__,
             __Code__,
         > IsProviderFor<ComputerComponent, __Context__, (__Code__, (u64))> for Increment {}
+        ///Provider `Increment` for [`Computer`].
         pub struct Increment;
         impl DelegateComponent<ComputerRefComponent> for Increment
         where

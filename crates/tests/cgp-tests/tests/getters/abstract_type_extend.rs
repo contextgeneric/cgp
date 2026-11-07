@@ -135,6 +135,7 @@ snapshot_cgp_getter! {
                 >>::Delegate::height(__context__)
             }
         }
+        ///Component marker for [`HasRectangleFields`].
         pub struct RectangleFieldsGetterComponent;
         impl<__Context__> RectangleFieldsGetter<__Context__> for UseContext
         where

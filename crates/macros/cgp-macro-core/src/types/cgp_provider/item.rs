@@ -80,9 +80,22 @@ impl ItemCgpProvider {
 
         let provider_type: IdentWithTypeGenerics = parse_internal!( #impl_self_type );
 
+        let provider_trait = provider_impl
+            .trait_
+            .as_ref()
+            .and_then(|(_, path, _)| path.segments.last().map(|s| s.ident.to_string()))
+            .unwrap_or_default();
+        let provider_ident = &provider_type.ident;
+        let doc = if provider_trait.is_empty() {
+            format!("Provider `{provider_ident}`.")
+        } else {
+            format!("Provider `{provider_ident}` for [`{provider_trait}`].")
+        };
+
         let provider_struct = EmptyStruct {
             ident: provider_type.ident.clone(),
             generics: provider_type.type_generics.to_generics(),
+            doc: Some(doc),
         };
 
         Ok(Some(provider_struct))

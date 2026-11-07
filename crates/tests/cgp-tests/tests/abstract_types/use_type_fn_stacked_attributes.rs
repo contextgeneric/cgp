@@ -38,7 +38,9 @@ snapshot_cgp_fn! {
 
     expand_get_foo(output) {
         insta::assert_snapshot!(output, @"
+        ///The trait for the `get_foo` operation.
         pub trait GetFoo: HasFooType + HasBarType {
+            ///The `get_foo` operation.
             fn get_foo(&self) -> <Self as HasFooType>::Foo;
         }
         impl<__Context__> GetFoo for __Context__
@@ -65,7 +67,9 @@ snapshot_cgp_fn! {
 
     expand_get_foo_reversed(output) {
         insta::assert_snapshot!(output, @"
+        ///The trait for the `get_foo_reversed` operation.
         pub trait GetFooReversed: HasBarType + HasFooType {
+            ///The `get_foo_reversed` operation.
             fn get_foo_reversed(&self) -> <Self as HasFooType>::Foo;
         }
         impl<__Context__> GetFooReversed for __Context__

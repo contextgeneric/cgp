@@ -22,7 +22,9 @@ snapshot_cgp_fn! {
 
     expand_format_label(output) {
         insta::assert_snapshot!(output, @r#"
+        ///The trait for the `format_label` operation.
         pub trait FormatLabel {
+            ///The `format_label` operation.
             fn format_label(&mut self) -> String;
         }
         impl<__Context__> FormatLabel for __Context__

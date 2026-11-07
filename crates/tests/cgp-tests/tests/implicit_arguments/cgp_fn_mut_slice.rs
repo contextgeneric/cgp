@@ -23,7 +23,9 @@ snapshot_cgp_fn! {
 
     expand_zero_all(output) {
         insta::assert_snapshot!(output, @"
+        ///The trait for the `zero_all` operation.
         pub trait ZeroAll {
+            ///The `zero_all` operation.
             fn zero_all(&mut self);
         }
         impl<__Context__> ZeroAll for __Context__

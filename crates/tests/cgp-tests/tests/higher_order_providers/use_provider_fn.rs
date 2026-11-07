@@ -34,7 +34,9 @@ snapshot_cgp_fn! {
 
     expand_rectangle_area(output) {
         insta::assert_snapshot!(output, @"
+        ///The trait for the `rectangle_area` operation.
         trait RectangleArea {
+            ///The `rectangle_area` operation.
             fn rectangle_area(&self) -> f64;
         }
         impl<__Context__> RectangleArea for __Context__

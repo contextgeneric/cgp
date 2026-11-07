@@ -21,7 +21,9 @@ snapshot_cgp_fn! {
     expand_greet(output) {
         insta::assert_snapshot!(output, @r#"
         #[async_trait]
+        ///The trait for the `greet` operation.
         pub trait Greet {
+            ///The `greet` operation.
             async fn greet(&self) -> String;
         }
         #[async_trait]

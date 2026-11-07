@@ -27,7 +27,9 @@ snapshot_cgp_fn! {
 
     expand_always_true(output) {
         insta::assert_snapshot!(output, @"
+        ///The trait for the `always_true` operation.
         pub trait AlwaysTrue {
+            ///The `always_true` operation.
             fn always_true(&self) -> bool;
         }
         impl<__Context__> AlwaysTrue for __Context__

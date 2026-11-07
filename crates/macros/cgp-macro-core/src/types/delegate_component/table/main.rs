@@ -91,9 +91,11 @@ impl DelegateTable {
                 }
             }
 
+            let doc = Some(format!("Wiring table `{}`.", struct_type.ident));
             item_structs.push(EmptyStruct {
                 ident: struct_type.ident,
                 generics,
+                doc,
             });
         }
 

@@ -22,7 +22,9 @@ snapshot_cgp_fn! {
 
     expand_describe(output) {
         insta::assert_snapshot!(output, @r#"
+        ///The trait for the `describe` operation.
         pub trait Describe {
+            ///The `describe` operation.
             fn describe(&self) -> String;
         }
         impl<__Context__> Describe for __Context__

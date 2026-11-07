@@ -20,3 +20,8 @@ pub mod cgp_fn_mut_self_immutable;
 pub mod cgp_impl_implicit;
 pub mod cgp_impl_implicit_generic;
 pub mod implicit_context;
+
+// Where a user's doc comment lands: on the method, with a generated line on the trait.
+pub mod doc_comment_on_cgp_fn;
+// The gap-filling half: a function with no doc leaves the method with a generated line.
+pub mod doc_comment_on_cgp_fn_without_doc;

@@ -138,6 +138,7 @@ snapshot_derive_cgp_data! {
                     Cons((&self.foo).into(), Cons((&self.bar).into(), Cons((&self.baz).into(), Nil)))
                 }
             }
+            ///The partial builder for [`FooBarBaz`].
             pub struct __PartialFooBarBaz<__F0__: MapType, __F1__: MapType, __F2__: MapType> {
                 pub foo: <__F0__ as MapType>::Map<u64>,
                 pub bar: <__F1__ as MapType>::Map<String>,

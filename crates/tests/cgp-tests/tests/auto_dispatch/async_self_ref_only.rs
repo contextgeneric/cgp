@@ -68,6 +68,7 @@ snapshot_cgp_auto_dispatch! {
             __Code__,
         > IsProviderFor<AsyncComputerComponent, __Context__, (__Code__, (&'__a__ __Variants__))>
         for ComputeCall {}
+        ///Provider `ComputeCall` for [`AsyncComputer`].
         pub struct ComputeCall;
         impl DelegateComponent<AsyncComputerRefComponent> for ComputeCall
         where

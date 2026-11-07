@@ -106,8 +106,14 @@ impl NamespaceTable {
         let namespace_trait = self.build_namespace_trait()?;
 
         let item_trait: Option<ItemTrait> = if self.new.is_some() {
+            let namespace_ident = &self.namespace.ident;
+            let trait_doc = format!("The `{namespace_ident}` namespace's wiring table.");
+            let delegate_doc =
+                format!("The provider table the `{namespace_ident}` namespace delegates to.");
             let item_trait = parse_internal! {
+                #[doc = #trait_doc]
                 pub trait #namespace_trait {
+                    #[doc = #delegate_doc]
                     type Delegate;
                 }
             };
@@ -153,7 +159,9 @@ impl NamespaceTable {
             namespace_ident.span(),
         );
 
+        let namespace_doc = format!("Wiring table for the `{namespace_ident}` namespace.");
         let namespace_struct: ItemStruct = parse_internal! {
+            #[doc = #namespace_doc]
             pub struct #namespace_struct_ident;
         };
 
