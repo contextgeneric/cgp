@@ -20,3 +20,6 @@ default = []
 [dependencies]
 syn                     = { version = "2.0.95", features = [ "full", "extra-traits" ] }
 cgp-macro-lib           = { workspace = true }
+
+[package.metadata.docs.rs]
+all-features = true
