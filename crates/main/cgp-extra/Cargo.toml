@@ -25,3 +25,6 @@ cgp-runtime     = { workspace = true }
 cgp-handler     = { workspace = true }
 cgp-monad       = { workspace = true }
 cgp-dispatch    = { workspace = true }
+
+[package.metadata.docs.rs]
+all-features = true
