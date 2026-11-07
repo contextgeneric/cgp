@@ -1,13 +1,41 @@
-# `cgp` — Context-Generic Programming in Rust
+# `cgp`: Context-Generic Programming in Rust
 
-## Overview
+**A language extension for Rust, with pluggable trait implementations at compile-time.**
 
-Context-Generic Programming (CGP) is a language extension for Rust, with pluggable trait implementations at compile-time. In ordinary Rust a trait has one implementation per type; CGP lets one trait have many interchangeable implementations and lets each *context* choose which one it uses, through a small wiring table the compiler resolves statically — so the flexibility costs nothing at runtime. The `cgp` crate is the facade over a collection of micro crates that provide it, and it re-exports everything through `cgp::prelude`.
+The `cgp` crate is the facade over the collection of crates that provide CGP, and it re-exports
+everything through `cgp::prelude`. In ordinary Rust a trait has one implementation per type; CGP lets
+one trait have many interchangeable implementations and lets each *context* choose which one it uses,
+through a small wiring table the compiler resolves statically, so provider selection adds nothing at
+runtime.
 
-To learn more, see the website [contextgeneric.dev](https://contextgeneric.dev/) and the book [Context-Generic Programming Patterns](https://patterns.contextgeneric.dev/).
+## Learn CGP
 
-<div class="warning">
+The documentation lives on the website, [contextgeneric.dev](https://contextgeneric.dev/):
 
-The `cgp` constructs are still mostly undocumented within Rustdoc. The best way to learn CGP today is the book [Context-Generic Programming Patterns](https://patterns.contextgeneric.dev/); for the exhaustive per-construct semantics, see the [CGP knowledge base](https://github.com/contextgeneric/cgp-knowledge-base).
+- [Quickstart](https://contextgeneric.dev/docs/quickstart): install it and run a first program.
+- [Tutorials](https://contextgeneric.dev/docs/tutorials/hello): learn by building.
+- [Concepts](https://contextgeneric.dev/docs/concepts/): why CGP works the way it does.
+- [Reference](https://contextgeneric.dev/docs/reference/): one page per construct.
 
-</div>
+The API documentation here covers the items themselves; the website explains how to use them. For the
+exhaustive per-construct semantics, the
+[CGP knowledge base](https://github.com/contextgeneric/cgp-knowledge-base) is written for agents and
+records the internals.
+
+## Install
+
+```bash
+cargo add cgp
+```
+
+```rust
+use cgp::prelude::*;
+```
+
+CGP requires Rust 1.89+ and runs on the stable toolchain. When you start with CGP, install
+[`cargo-cgp`](https://github.com/contextgeneric/cargo-cgp) alongside it: `cargo cgp check` leads with
+the root cause for the classes it recognizes, and the tool does not yet reshape every class.
+
+## License
+
+Licensed under the [Apache License, Version 2.0](https://github.com/contextgeneric/cgp/blob/main/LICENSE).

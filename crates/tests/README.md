@@ -1,12 +1,14 @@
-# CGP test suite
+# CGP test suite: the tests organized by CGP concept
 
 This directory holds the test suite for Context-Generic Programming, organized **by
-CGP concept** — basic delegation, abstract types, implicit arguments, namespaces,
-and so on — rather than by the macro that implements each concept, because a single
+CGP concept**, such as basic delegation, abstract types, implicit arguments, or namespaces,
+rather than by the macro that implements each concept, because a single
 macro such as `delegate_components!` serves many concepts at once. This README is
 the map of what is here and how to run it; [AGENTS.md](AGENTS.md) is the
 authoritative guide to the conventions, and you should read it before adding,
 moving, or refactoring a test.
+
+**[Website](https://contextgeneric.dev/) · [Reference](https://contextgeneric.dev/docs/reference/) · [Implementation record](https://github.com/contextgeneric/cgp-knowledge-base/blob/main/cgp/implementation/README.md)**
 
 ## The crates
 
@@ -18,8 +20,8 @@ by compiling. It is also where the user-facing macros are exercised end-to-end a
 where the canonical macro-expansion snapshots live.
 
 **`cgp-macro-tests`** tests the macro internals directly against `cgp-macro-core`
-(the parsers and AST types), and is the home for **rejection cases** — inputs CGP
-refuses during expansion — and for pinning the invalid tokens a macro currently
+(the parsers and AST types), and is the home for **rejection cases**, the inputs CGP
+refuses during expansion, and for pinning the invalid tokens a macro currently
 emits.
 
 A third category lives in another repository: the cases where a macro *accepts*
@@ -31,7 +33,7 @@ so each is pinned as the readable error the tool renders for it. AGENTS.md's
 ## How the tests are laid out
 
 Inside `cgp-tests`, each concept is one **integration test target**, which Cargo
-compiles as its own crate — and therefore its own coherence scope. A target is an
+compiles as its own crate, and therefore its own coherence scope. A target is an
 entrypoint file `tests/<concept>_tests.rs` plus a module directory
 `tests/<concept>/` holding one `.rs` file per unit test, each self-contained so the
 type-level wiring of one test never leaks into another. `tests/basic_delegation/`
@@ -62,6 +64,6 @@ cargo insta test -p cgp-tests --accept          # accept intended snapshot chang
 Many tests assert the exact code a macro generates, through the `snapshot_*!`
 macros from `cgp-macro-test-util`: each emits the real generated code into the
 module *and* generates a `#[test]` asserting a pretty-printed inline `insta`
-snapshot of it. So a failing snapshot prints a diff of the generated code — accept
+snapshot of it. A failing snapshot prints a diff of the generated code, so accept
 it with `cargo insta` only after confirming the change is intended. Which target
 owns a given macro's snapshot is a convention AGENTS.md sets out.

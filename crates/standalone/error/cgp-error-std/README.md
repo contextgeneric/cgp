@@ -1,9 +1,15 @@
-# cgp-error-std
+[![Crates.io](https://img.shields.io/crates/v/cgp-error-std.svg)](https://crates.io/crates/cgp-error-std)
+[![Docs.rs](https://docs.rs/cgp-error-std/badge.svg)](https://docs.rs/cgp-error-std)
+![License](https://img.shields.io/badge/license-Apache_2.0-blue.svg)
+
+# cgp-error-std: a boxed standard error as a context's error type
 
 `cgp-error-std` makes a boxed standard error, `Box<dyn core::error::Error + Send + Sync>`, the
 abstract error type of a [CGP](https://contextgeneric.dev) context, and supplies the providers that
 raise errors into it and add context to it. It depends only on `cgp` and `alloc`, so it suits a
 `no_std` context that still wants an open-ended error type.
+
+**[Website](https://contextgeneric.dev/) · [Modular error handling](https://contextgeneric.dev/docs/concepts/modular-error-handling) · [The error components](https://contextgeneric.dev/docs/reference/components/has_error_type) · [Project record](https://github.com/contextgeneric/cgp-knowledge-base/blob/main/projects/error/README.md)**
 
 | Item | Wire it to | What it does |
 |---|---|---|
@@ -45,3 +51,7 @@ A `WrapError` prints its detail alone with `{}`, so a reporter that walks `sourc
 message once, and prints the whole chain with `{:#}` or `{:?}`. A `String` needs
 `DisplayBoxedStdError` or `DebugBoxedStdError`, because it is not a standard error, and
 `DebugBoxedStdError` prints it with quotes.
+
+## License
+
+Licensed under the [Apache License, Version 2.0](https://github.com/contextgeneric/cgp/blob/main/LICENSE).
