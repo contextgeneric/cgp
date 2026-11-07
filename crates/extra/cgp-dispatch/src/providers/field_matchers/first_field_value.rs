@@ -1,6 +1,7 @@
 use cgp::prelude::*;
 use cgp_handler::{AsyncComputer, AsyncComputerComponent, Computer, ComputerComponent};
 
+/// Handles the first field of a pair.
 pub struct HandleFirstFieldValue<Provider = UseContext>(pub PhantomData<Provider>);
 
 #[cgp_provider]

@@ -5,6 +5,9 @@ use crate::{
     TryComputer, TryComputerComponent,
 };
 
+/// Composes two handlers, nesting the second inside the first.
+///
+/// See [`ComposeHandlers`](https://contextgeneric.dev/docs/reference/providers/handler/compose_handlers).
 pub struct ComposeHandlers<ProviderA, ProviderB>(pub PhantomData<(ProviderA, ProviderB)>);
 
 #[cgp_provider]

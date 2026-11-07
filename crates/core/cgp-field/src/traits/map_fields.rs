@@ -1,7 +1,11 @@
 use crate::traits::MapType;
 use crate::types::{Cons, Either, Nil, Void};
 
+/// Maps every field in a list through a type mapper.
+///
+/// See [`MapFields`](https://contextgeneric.dev/docs/reference/traits/type-level/map_fields).
 pub trait MapFields<Mapper> {
+    /// The mapped field list.
     type Mapped;
 }
 

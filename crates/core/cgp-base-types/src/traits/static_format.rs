@@ -2,7 +2,11 @@ use core::fmt::{self, Formatter};
 
 use crate::types::{Chars, Nil};
 
+/// Formats a type-level string.
+///
+/// See [`StaticFormat`](https://contextgeneric.dev/docs/reference/traits/formatting/static_format).
 pub trait StaticFormat {
+    /// Writes the string to the formatter.
     fn fmt(f: &mut Formatter<'_>) -> Result<(), fmt::Error>;
 }
 

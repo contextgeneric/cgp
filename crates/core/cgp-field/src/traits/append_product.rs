@@ -1,6 +1,10 @@
 use crate::types::{Cons, Nil};
 
+/// Appends one item to a type-level list.
+///
+/// See [`AppendProduct`](https://contextgeneric.dev/docs/reference/traits/type-level/append_product).
 pub trait AppendProduct<Item: ?Sized> {
+    /// The list with the item appended.
     type Output;
 }
 

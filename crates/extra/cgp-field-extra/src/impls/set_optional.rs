@@ -3,11 +3,17 @@ use core::marker::PhantomData;
 use cgp_field::impls::IsOptional;
 use cgp_field::traits::UpdateField;
 
+/// Sets a field that may be absent.
+///
+/// See [`SetOptional`](https://contextgeneric.dev/docs/reference/traits/optional/set_optional).
 pub trait SetOptional<Tag> {
+    /// The field's value type.
     type Value;
 
+    /// Sets the field.
     fn set(self, _tag: PhantomData<Tag>, value: Self::Value) -> Self;
 
+    /// Sets the field and returns the previous value.
     fn set_optional(
         self,
         _tag: PhantomData<Tag>,

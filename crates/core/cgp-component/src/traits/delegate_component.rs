@@ -40,5 +40,6 @@
    ```
 */
 pub trait DelegateComponent<Key: ?Sized> {
+    /// The provider the context delegates the component to.
     type Delegate;
 }

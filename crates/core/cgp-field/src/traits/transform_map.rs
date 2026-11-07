@@ -4,14 +4,22 @@ use crate::impls::IsNothing;
 use crate::traits::{HasFields, MapType, PartialData, UpdateField};
 use crate::types::{Cons, Field, Nil};
 
-/// Natural transformation from `M1::Map<T>` to `M2::Map<T>`
+/// Natural transformation from `M1::Map<T>` to `M2::Map<T>`.
+///
+/// See [`TransformMap`](https://contextgeneric.dev/docs/reference/traits/type-level/transform_map).
 pub trait TransformMap<M1: MapType, M2: MapType, T> {
+    /// Transforms the mapped value.
     fn transform_mapped(value: M1::Map<T>) -> M2::Map<T>;
 }
 
+/// Transforms every field in a list through a natural transformation.
+///
+/// See [`TransformMapFields`](https://contextgeneric.dev/docs/reference/traits/type-level/transform_map_fields).
 pub trait TransformMapFields<Transform, TargetMap> {
+    /// The transformed value.
     type Output;
 
+    /// Transforms the fields.
     fn transform_map_fields(self) -> Self::Output;
 }
 

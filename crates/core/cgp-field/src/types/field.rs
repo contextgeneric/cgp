@@ -35,7 +35,9 @@ use core::marker::PhantomData;
    ```
 */
 pub struct Field<Tag, Value> {
+    /// The field's value.
     pub value: Value,
+    /// The field's type-level tag.
     pub phantom: PhantomData<Tag>,
 }
 

@@ -1,6 +1,10 @@
 use crate::types::{Nil, PathCons};
 
+/// Concatenates two type-level paths.
+///
+/// See [`ConcatPath`](https://contextgeneric.dev/docs/reference/traits/formatting/concat_path).
 pub trait ConcatPath<Other: ?Sized> {
+    /// The concatenated path.
     type Output: ?Sized;
 }
 

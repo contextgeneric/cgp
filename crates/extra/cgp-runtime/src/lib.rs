@@ -2,6 +2,7 @@
 //!
 //! See [`HasRuntime`](https://contextgeneric.dev/docs/reference/components/has_runtime) and [`HasRuntimeType`](https://contextgeneric.dev/docs/reference/components/has_runtime_type).
 #![no_std]
+#![warn(missing_docs)]
 
 mod traits;
 

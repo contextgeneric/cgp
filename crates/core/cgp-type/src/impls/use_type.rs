@@ -36,6 +36,9 @@ use crate::traits::TypeProvider;
 */
 pub struct UseType<Type>(pub PhantomData<Type>);
 
+/// A provider that fixes an abstract type to a concrete type.
+///
+/// See [`WithType`](https://contextgeneric.dev/docs/reference/providers/with_type).
 pub type WithType<Type> = WithProvider<UseType<Type>>;
 
 #[cgp_provider(TypeProviderComponent)]

@@ -1,6 +1,10 @@
 use crate::types::{Chars, Nil, Symbol};
 
+/// A type-level string as a `&'static str`.
+///
+/// See [`StaticString`](https://contextgeneric.dev/docs/reference/traits/formatting/static_string).
 pub trait StaticString {
+    /// The string's value.
     const VALUE: &'static str;
 }
 

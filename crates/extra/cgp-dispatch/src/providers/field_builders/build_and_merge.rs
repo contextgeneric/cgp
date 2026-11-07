@@ -4,6 +4,9 @@ use cgp_handler::{
     Computer, ComputerComponent, Handler, HandlerComponent, TryComputer, TryComputerComponent,
 };
 
+/// Builds a value and merges the result into it.
+///
+/// See [`BuildAndMerge`](https://contextgeneric.dev/docs/reference/providers/dispatch/build_and_merge).
 pub struct BuildAndMerge<Provider = UseContext>(pub PhantomData<Provider>);
 
 #[cgp_provider]

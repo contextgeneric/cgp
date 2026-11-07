@@ -3,6 +3,9 @@ use core::marker::PhantomData;
 use crate::traits::{FieldGetter, FieldMapper};
 use crate::types::{Cons, Nil};
 
+/// Chains several getters into one.
+///
+/// See [`ChainGetters`](https://contextgeneric.dev/docs/reference/providers/chain_getters).
 pub struct ChainGetters<Getters>(pub PhantomData<Getters>);
 
 impl<Context, Tag, Getter, RestGetters, ValueA, ValueB> FieldGetter<Context, Tag>

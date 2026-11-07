@@ -9,9 +9,14 @@ use crate::UseInputDelegate;
 #[prefix(@cgp.extra.handler in DefaultNamespace)]
 #[derive_delegate(UseDelegate<Code>)]
 #[derive_delegate(UseInputDelegate<Input>)]
+/// A synchronous, infallible transform.
+///
+/// See [`CanCompute`](https://contextgeneric.dev/docs/reference/components/handler/computer).
 pub trait CanCompute<Code, Input> {
+    /// The transform's output.
     type Output;
 
+    /// Computes the output from the input.
     fn compute(&self, _code: PhantomData<Code>, input: Input) -> Self::Output;
 }
 
@@ -19,9 +24,14 @@ pub trait CanCompute<Code, Input> {
 #[prefix(@cgp.extra.handler in DefaultNamespace)]
 #[derive_delegate(UseDelegate<Code>)]
 #[derive_delegate(UseInputDelegate<Input>)]
+/// A synchronous, infallible transform that borrows its input.
+///
+/// See [`CanComputeRef`](https://contextgeneric.dev/docs/reference/components/handler/computer_ref).
 pub trait CanComputeRef<Code, Input> {
+    /// The transform's output.
     type Output;
 
+    /// Computes the output from the borrowed input.
     fn compute_ref(&self, _code: PhantomData<Code>, input: &Input) -> Self::Output;
 }
 

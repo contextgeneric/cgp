@@ -2,6 +2,9 @@ use cgp::field::impls::CanDowncastFields;
 use cgp::prelude::*;
 use cgp_handler::{AsyncComputer, AsyncComputerComponent, Computer, ComputerComponent};
 
+/// Downcasts a value and handles it.
+///
+/// See [`DowncastAndHandle`](https://contextgeneric.dev/docs/reference/providers/dispatch/downcast_and_handle).
 pub struct DowncastAndHandle<Input, Provider = UseContext>(pub PhantomData<(Input, Provider)>);
 
 #[cgp_provider]

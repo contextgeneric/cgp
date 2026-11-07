@@ -5,6 +5,7 @@ use cgp_handler::{AsyncComputer, AsyncComputerComponent, Computer, ComputerCompo
 
 use crate::DispatchMatchers;
 
+/// Matches the first variant of a borrowed value with handlers.
 pub struct MatchFirstWithHandlersRef<Handlers>(pub PhantomData<Handlers>);
 
 #[cgp_provider]

@@ -57,6 +57,9 @@ use crate::traits::{FieldGetter, HasField, HasFieldMut, MutFieldGetter};
 */
 pub struct UseField<Tag>(pub PhantomData<Tag>);
 
+/// A provider that wraps a field getter.
+///
+/// See [`WithField`](https://contextgeneric.dev/docs/reference/providers/with_field).
 pub type WithField<Tag> = WithProvider<UseField<Tag>>;
 
 impl<Context, TypeTag, FieldTag, Field> TypeProvider<Context, TypeTag> for UseField<FieldTag>

@@ -5,6 +5,9 @@ use crate::{
     TryComputerComponent,
 };
 
+/// Lifts a producer into a computer.
+///
+/// See [`Promote`](https://contextgeneric.dev/docs/reference/providers/handler/promote).
 pub struct Promote<Provider>(pub PhantomData<Provider>);
 
 #[cgp_provider]

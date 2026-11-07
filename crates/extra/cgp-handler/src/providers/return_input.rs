@@ -5,6 +5,9 @@ use crate::{
     TryComputer, TryComputerComponent,
 };
 
+/// A handler that returns its input unchanged.
+///
+/// See [`ReturnInput`](https://contextgeneric.dev/docs/reference/providers/handler/return_input).
 pub struct ReturnInput;
 
 #[cgp_provider]

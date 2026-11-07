@@ -1,6 +1,9 @@
 use cgp::prelude::*;
 use cgp_handler::{AsyncComputer, AsyncComputerComponent, Computer, ComputerComponent};
 
+/// Handles a field's value.
+///
+/// See [`HandleFieldValue`](https://contextgeneric.dev/docs/reference/providers/dispatch/handle_field_value).
 pub struct HandleFieldValue<Provider = UseContext>(pub PhantomData<Provider>);
 
 #[cgp_provider]

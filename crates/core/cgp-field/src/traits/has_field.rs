@@ -3,55 +3,25 @@ use core::ops::Deref;
 
 use cgp_component::UseContext;
 
-/**
-    The `HasField` trait is used to implement getter methods for a type that
-    derives the trait.
-
-    When a struct uses `#[derive(HasField)]`, the macro would generate a `HasField`
-    implementation for each field in the struct, with the field name becoming a
-    type-level string to be used in the generic `Tag` parameter.
-
-    ## Example
-
-    Given the following struct:
-
-    ```rust,ignore
-    #[derive(HasField)]
-    pub struct Person {
-        pub name: String,
-        pub age: u8,
-    }
-    ```
-
-    The macro would generate the following implementation:
-
-    ```rust,ignore
-    impl HasField<Symbol!("name")> for Person {
-        type Value = String;
-
-        fn get_field(&self, _tag: PhantomData<Symbol!("name")>) -> &Self::Value {
-            &self.name
-        }
-    }
-
-    impl HasField<Symbol!("age")> for Person {
-        type Value = u8;
-
-        fn get_field(&self, _tag: PhantomData<Symbol!("age")>) -> &Self::Value {
-            &self.age
-        }
-    }
-    ```
-*/
+/// Reads a field by its type-level tag.
+///
+/// See [`HasField`](https://contextgeneric.dev/docs/reference/traits/field-access/has_field).
 pub trait HasField<Tag> {
+    /// The field's value type.
     type Value;
 
+    /// Reads the field.
     fn get_field(&self, _tag: PhantomData<Tag>) -> &Self::Value;
 }
 
+/// Reads a field from a context through a provider.
+///
+/// See [`FieldGetter`](https://contextgeneric.dev/docs/reference/traits/field-access/field_getter).
 pub trait FieldGetter<Context, Tag> {
+    /// The field's value type.
     type Value;
 
+    /// Reads the field.
     fn get_field(context: &Context, _tag: PhantomData<Tag>) -> &Self::Value;
 }
 

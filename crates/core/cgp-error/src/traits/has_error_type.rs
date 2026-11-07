@@ -25,7 +25,9 @@ use cgp_macro::cgp_type;
 #[cgp_type]
 #[prefix(@cgp.core.error in DefaultNamespace)]
 pub trait HasErrorType {
+    /// The context's error type.
     type Error: Debug;
 }
 
+/// The error type a context chooses.
 pub type ErrorOf<Context> = <Context as HasErrorType>::Error;

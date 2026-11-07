@@ -3,9 +3,14 @@ use core::marker::PhantomData;
 use crate::traits::{BuildField, HasFields, IntoBuilder, TakeField};
 use crate::types::{Cons, Field, Nil};
 
+/// Builds a target from a source that holds a superset of its fields.
+///
+/// See [`CanBuildFrom`](https://contextgeneric.dev/docs/reference/traits/casting/can_build_from).
 pub trait CanBuildFrom<Source> {
+    /// The built target.
     type Output;
 
+    /// Builds the target from the source.
     fn build_from(self, source: Source) -> Self::Output;
 }
 

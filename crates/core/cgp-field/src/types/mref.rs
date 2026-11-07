@@ -1,7 +1,12 @@
 use core::ops::Deref;
 
+/// An owned or borrowed value.
+///
+/// See [`MRef`](https://contextgeneric.dev/docs/reference/types/mref).
 pub enum MRef<'a, T> {
+    /// A borrowed value.
     Ref(&'a T),
+    /// An owned value.
     Owned(T),
 }
 
@@ -38,6 +43,7 @@ impl<T> MRef<'_, T>
 where
     T: Clone,
 {
+    /// Returns the value, cloning it when it is borrowed.
     pub fn get_or_clone(self) -> T {
         match self {
             Self::Ref(value) => value.clone(),

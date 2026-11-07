@@ -9,6 +9,9 @@ use crate::{
     TryComputerRefComponent,
 };
 
+/// Lifts a by-reference handler into an owned-input handler.
+///
+/// See [`PromoteRef`](https://contextgeneric.dev/docs/reference/providers/handler/promote_ref).
 pub struct PromoteRef<Provider>(pub PhantomData<Provider>);
 
 #[cgp_provider]

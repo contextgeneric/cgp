@@ -22,6 +22,7 @@ delegate_components! {
     }
 }
 
+/// Maps each handler to a [`BuildAndMerge`] wrapper.
 pub struct ToBuildAndMergeHandler;
 
 impl MapType for ToBuildAndMergeHandler {

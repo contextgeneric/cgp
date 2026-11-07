@@ -11,9 +11,14 @@ use crate::UseInputDelegate;
 #[derive_delegate(UseDelegate<Code>)]
 #[derive_delegate(UseInputDelegate<Input>)]
 #[use_type(HasErrorType.Error)]
+/// An asynchronous, fallible, error-aware computation.
+///
+/// See [`CanHandle`](https://contextgeneric.dev/docs/reference/components/handler/handler).
 pub trait CanHandle<Code, Input> {
+    /// The handler's output.
     type Output;
 
+    /// Handles the input.
     async fn handle(&self, _tag: PhantomData<Code>, input: Input) -> Result<Self::Output, Error>;
 }
 
@@ -23,9 +28,14 @@ pub trait CanHandle<Code, Input> {
 #[derive_delegate(UseDelegate<Code>)]
 #[derive_delegate(UseInputDelegate<Input>)]
 #[use_type(HasErrorType.Error)]
+/// An asynchronous, fallible, error-aware computation that borrows its input.
+///
+/// See [`CanHandleRef`](https://contextgeneric.dev/docs/reference/components/handler/handler_ref).
 pub trait CanHandleRef<Code, Input> {
+    /// The handler's output.
     type Output;
 
+    /// Handles the borrowed input.
     async fn handle_ref(
         &self,
         _tag: PhantomData<Code>,

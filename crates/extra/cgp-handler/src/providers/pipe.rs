@@ -4,6 +4,9 @@ use cgp::prelude::*;
 
 use crate::ComposeHandlers;
 
+/// Chains handlers left to right.
+///
+/// See [`PipeHandlers`](https://contextgeneric.dev/docs/reference/providers/handler/pipe_handlers).
 pub struct PipeHandlers<Providers>(pub PhantomData<Providers>);
 
 delegate_components! {

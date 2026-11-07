@@ -5,19 +5,33 @@ use crate::traits::{
 };
 use crate::types::{Either, Field, Void};
 
+/// Widens a smaller enum into a larger one.
+///
+/// See [`CanUpcast`](https://contextgeneric.dev/docs/reference/traits/casting/can_upcast).
 pub trait CanUpcast<Target> {
+    /// Widens the value into the target.
     fn upcast(self, _tag: PhantomData<Target>) -> Target;
 }
 
+/// Narrows an enum into a smaller one.
+///
+/// See [`CanDowncast`](https://contextgeneric.dev/docs/reference/traits/casting/can_downcast).
 pub trait CanDowncast<Target> {
+    /// The value left when the target does not match.
     type Remainder;
 
+    /// Narrows the value into the target.
     fn downcast(self, _tag: PhantomData<Target>) -> Result<Target, Self::Remainder>;
 }
 
+/// Narrows a field list into a smaller one.
+///
+/// See [`CanDowncastFields`](https://contextgeneric.dev/docs/reference/traits/casting/can_downcast_fields).
 pub trait CanDowncastFields<Target> {
+    /// The fields left when the target does not match.
     type Remainder;
 
+    /// Narrows the fields into the target.
     fn downcast_fields(self, _tag: PhantomData<Target>) -> Result<Target, Self::Remainder>;
 }
 
@@ -57,9 +71,12 @@ where
     }
 }
 
+/// Extracts a target's fields from a source.
 pub trait FieldsExtractor<Source, Target> {
+    /// The source left when the target does not match.
     type Remainder;
 
+    /// Extracts the target from the source.
     fn extract_from(source: Source) -> Result<Target, Self::Remainder>;
 }
 

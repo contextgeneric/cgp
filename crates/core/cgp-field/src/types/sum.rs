@@ -25,7 +25,9 @@
 */
 #[derive(Eq, PartialEq, Debug, Clone)]
 pub enum Either<Head, Tail> {
+    /// The first alternative.
     Left(Head),
+    /// The remaining alternatives.
     Right(Tail),
 }
 

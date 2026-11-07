@@ -45,4 +45,7 @@ use crate::WithProvider;
 */
 pub struct UseContext;
 
+/// A provider that routes a component back through the context's own impl.
+///
+/// See [`WithContext`](https://contextgeneric.dev/docs/reference/providers/with_context).
 pub type WithContext = WithProvider<UseContext>;

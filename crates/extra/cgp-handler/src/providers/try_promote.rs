@@ -5,6 +5,9 @@ use crate::{
     TryComputer, TryComputerComponent,
 };
 
+/// Lifts a computer that returns a `Result` into a try computer.
+///
+/// See [`TryPromote`](https://contextgeneric.dev/docs/reference/providers/handler/try_promote).
 pub struct TryPromote<Provider>(pub PhantomData<Provider>);
 
 #[cgp_provider]

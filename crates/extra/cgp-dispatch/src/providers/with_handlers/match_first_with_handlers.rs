@@ -5,6 +5,9 @@ use cgp_handler::{AsyncComputer, AsyncComputerComponent, Computer, ComputerCompo
 
 use crate::DispatchMatchers;
 
+/// Matches the first variant of a value with handlers.
+///
+/// See [`MatchFirstWithHandlers`](https://contextgeneric.dev/docs/reference/providers/dispatch/match_first_with_handlers).
 pub struct MatchFirstWithHandlers<Handlers>(pub PhantomData<Handlers>);
 
 #[cgp_provider]

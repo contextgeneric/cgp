@@ -3,6 +3,9 @@ use cgp_handler::{
     Computer, ComputerComponent, Handler, HandlerComponent, TryComputer, TryComputerComponent,
 };
 
+/// Builds a value and sets it into a field.
+///
+/// See [`BuildAndSetField`](https://contextgeneric.dev/docs/reference/providers/dispatch/build_and_set_field).
 pub struct BuildAndSetField<Tag, Provider = UseContext>(pub PhantomData<(Tag, Provider)>);
 
 #[cgp_provider]

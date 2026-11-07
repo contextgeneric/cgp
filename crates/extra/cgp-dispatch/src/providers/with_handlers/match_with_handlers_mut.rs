@@ -6,6 +6,7 @@ use cgp_handler::{AsyncComputer, AsyncComputerComponent, Computer, ComputerCompo
 
 use crate::DispatchMatchers;
 
+/// Matches a mutably borrowed value's variant with handlers.
 pub struct MatchWithHandlersMut<Handlers>(pub PhantomData<Handlers>);
 
 #[cgp_provider]

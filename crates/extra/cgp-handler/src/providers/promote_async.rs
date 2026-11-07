@@ -4,6 +4,9 @@ use crate::{
     AsyncComputer, AsyncComputerComponent, Computer, Handler, HandlerComponent, TryComputer,
 };
 
+/// Lifts a computer into an async computer.
+///
+/// See [`PromoteAsync`](https://contextgeneric.dev/docs/reference/providers/handler/promote_async).
 pub struct PromoteAsync<Provider>(pub PhantomData<Provider>);
 
 #[cgp_provider]

@@ -4,6 +4,9 @@ use cgp_handler::{
     TryComputerComponent,
 };
 
+/// Builds a value with a pipeline of handlers.
+///
+/// See [`BuildWithHandlers`](https://contextgeneric.dev/docs/reference/providers/dispatch/build_with_handlers).
 pub struct BuildWithHandlers<Output, Handlers>(pub PhantomData<(Output, Handlers)>);
 
 #[cgp_provider]

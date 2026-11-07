@@ -4,6 +4,7 @@
 //! `alloc` feature.
 //!
 //! See [`RaiseFrom`](https://contextgeneric.dev/docs/reference/providers/error/raise_from), [`ReturnError`](https://contextgeneric.dev/docs/reference/providers/error/return_error), [`RaiseInfallible`](https://contextgeneric.dev/docs/reference/providers/error/raise_infallible), [`PanicOnError`](https://contextgeneric.dev/docs/reference/providers/error/panic_on_error), [`DiscardDetail`](https://contextgeneric.dev/docs/reference/providers/error/discard_detail), [`DebugError`](https://contextgeneric.dev/docs/reference/providers/error/debug_error), and [`DisplayError`](https://contextgeneric.dev/docs/reference/providers/error/display_error).
+#![warn(missing_docs)]
 
 #[cfg(feature = "alloc")]
 extern crate alloc;

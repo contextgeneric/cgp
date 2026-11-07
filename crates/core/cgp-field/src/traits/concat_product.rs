@@ -1,6 +1,10 @@
 use crate::types::{Cons, Nil};
 
+/// Concatenates two type-level lists.
+///
+/// See [`ConcatProduct`](https://contextgeneric.dev/docs/reference/traits/type-level/concat_product).
 pub trait ConcatProduct<Items> {
+    /// The concatenated list.
     type Output;
 }
 
