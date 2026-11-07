@@ -9,7 +9,7 @@ rust-version = { workspace = true }
 homepage     = { workspace = true }
 keywords     = { workspace = true }
 categories   = { workspace = true }
-description  = { workspace = true }
+description  = "CGP's base layer with the abstract-type layer added."
 
 [dependencies]
 cgp-base   = { workspace = true }

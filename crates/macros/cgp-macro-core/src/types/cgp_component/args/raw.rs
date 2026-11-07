@@ -5,7 +5,7 @@ use syn::{Error, Ident};
 use crate::types::ident::IdentWithTypeGenerics;
 
 /// The attribute args exactly as written, before defaults are applied. Parses
-/// either a bare provider identifier or the `key: value` form; [`CgpComponentArgs`]
+/// either a bare provider identifier or the `key: value` form; [`CgpComponentArgs`](crate::types::cgp_component::CgpComponentArgs)
 /// resolves the defaults via `TryFrom`.
 #[derive(Default)]
 pub struct CgpComponentRawArgs {

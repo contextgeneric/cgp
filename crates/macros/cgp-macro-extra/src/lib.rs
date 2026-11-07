@@ -1,11 +1,8 @@
 #![no_std]
-
-/*!
-   This crate provides the proc macros that define handler providers from
-   functions, `#[cgp_computer]` and `#[cgp_producer]`, and the
-   `#[cgp_auto_dispatch]` macro that extends a per-type trait to extensible
-   enums. Each one forwards to `cgp-macro-extra-lib`.
-*/
+//! This crate provides CGP's extra procedural macros, which define handler providers from functions
+//! and dispatch a trait over an enum.
+//!
+//! See [`#[cgp_computer]`](https://contextgeneric.dev/docs/reference/macros/cgp_computer), [`#[cgp_producer]`](https://contextgeneric.dev/docs/reference/macros/cgp_producer), and [`#[cgp_auto_dispatch]`](https://contextgeneric.dev/docs/reference/macros/cgp_auto_dispatch).
 
 use proc_macro::TokenStream;
 

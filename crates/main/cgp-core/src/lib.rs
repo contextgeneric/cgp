@@ -1,5 +1,9 @@
 #![no_std]
 #![allow(mixed_script_confusables)]
+//! This crate re-exports CGP's core layer through `cgp::core`: the base layer, the macros, the
+//! async trait macro, and the error, field, and type components.
+//!
+//! See [`#[cgp_component]`](https://contextgeneric.dev/docs/reference/macros/cgp_component), [`HasField`](https://contextgeneric.dev/docs/reference/traits/field-access/has_field), and [`HasErrorType`](https://contextgeneric.dev/docs/reference/components/has_error_type).
 
 pub mod prelude;
 

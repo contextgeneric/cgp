@@ -1,4 +1,7 @@
 #![no_std]
+//! This crate provides CGP's task runners, which run a task named by a type-level code.
+//!
+//! See [`CanRun`](https://contextgeneric.dev/docs/reference/components/runner) and [`CanSendRun`](https://contextgeneric.dev/docs/reference/components/send_runner).
 
 use core::future::Future;
 use core::marker::PhantomData;

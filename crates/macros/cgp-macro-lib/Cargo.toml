@@ -9,7 +9,7 @@ rust-version = { workspace = true }
 homepage     = { workspace = true }
 keywords     = { workspace = true }
 categories   = { workspace = true }
-description  = { workspace = true }
+description  = "The implementation of CGP's procedural macros, one module per macro."
 
 [dependencies]
 cgp-macro-core  = { workspace = true }

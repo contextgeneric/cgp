@@ -9,7 +9,7 @@ rust-version = { workspace = true }
 homepage     = { workspace = true }
 keywords     = { workspace = true }
 categories   = { workspace = true }
-description  = { workspace = true }
+description  = "CGP's #[async_trait] macro, which rewrites a trait's async fn to return impl Future."
 
 [lib]
 proc-macro = true

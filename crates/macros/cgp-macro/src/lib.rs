@@ -1,8 +1,8 @@
 #![no_std]
-
-/*!
-   This crate provides the proc macros used for defining CGP components.
-*/
+//! This crate provides CGP's procedural macros, from defining a component to wiring and checking a
+//! context.
+//!
+//! See [`#[cgp_component]`](https://contextgeneric.dev/docs/reference/macros/cgp_component), [`#[cgp_impl]`](https://contextgeneric.dev/docs/reference/macros/cgp_impl), [`delegate_components!`](https://contextgeneric.dev/docs/reference/macros/delegate_components), and [`check_components!`](https://contextgeneric.dev/docs/reference/macros/check_components).
 
 use proc_macro::TokenStream;
 

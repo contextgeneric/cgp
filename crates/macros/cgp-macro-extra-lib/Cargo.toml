@@ -9,7 +9,7 @@ rust-version = { workspace = true }
 homepage     = { workspace = true }
 keywords     = { workspace = true }
 categories   = { workspace = true }
-description  = { workspace = true }
+description  = "The implementation of CGP's extra procedural macros, which lower through cgp-macro-core's AST types."
 
 [dependencies]
 cgp-macro-core          = { workspace = true }

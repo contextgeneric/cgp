@@ -1,8 +1,8 @@
 #![no_std]
-
-/*!
-   This library provides helper macros for using async functions in traits.
-*/
+//! This crate provides CGP's `#[async_trait]` macro, which rewrites a trait's `async fn` to return
+//! `impl Future`.
+//!
+//! See [`#[async_trait]`](https://contextgeneric.dev/docs/reference/macros/async_trait).
 
 extern crate alloc;
 extern crate proc_macro;
