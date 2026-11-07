@@ -16,6 +16,9 @@ and the worked examples sit at the knowledge base's top level.
 | `cgp-skills` | <https://github.com/contextgeneric/cgp-skills> | `main` | The agent skills for CGP, deployed on their own, the `/cgp` skill among them. |
 | `cgp-knowledge-base` | <https://github.com/contextgeneric/cgp-knowledge-base> | `main` | The consolidated documentation for every CGP project, written by and for AI agents. |
 
+The knowledge base's [sibling-projects.md](https://github.com/contextgeneric/cgp-knowledge-base/blob/main/sibling-projects.md) is the authoritative list of the whole ecosystem,
+including the projects that are not part of the core.
+
 ## Finding a sibling
 
 Look for a sibling in the parent directory first, at `../<project>`. Every project in this list,

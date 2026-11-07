@@ -1,9 +1,15 @@
-# cgp-error-eyre
+[![Crates.io](https://img.shields.io/crates/v/cgp-error-eyre.svg)](https://crates.io/crates/cgp-error-eyre)
+[![Docs.rs](https://docs.rs/cgp-error-eyre/badge.svg)](https://docs.rs/cgp-error-eyre)
+![License](https://img.shields.io/badge/license-Apache_2.0-blue.svg)
+
+# cgp-error-eyre: eyre as a context's error type
 
 `cgp-error-eyre` makes [`eyre::Report`](https://docs.rs/eyre) the abstract error type of a
 [CGP](https://contextgeneric.dev) context, and supplies the providers that raise errors into it and
 add context to it. Code written against `HasErrorType`, `CanRaiseError`, and `CanWrapError` stays
 generic; only the context's wiring names eyre.
+
+**[Website](https://contextgeneric.dev/) · [Modular error handling](https://contextgeneric.dev/docs/concepts/modular-error-handling) · [The error components](https://contextgeneric.dev/docs/reference/components/has_error_type) · [Project record](https://github.com/contextgeneric/cgp-knowledge-base/blob/main/projects/error/README.md)**
 
 | Provider | Wire it to | What it does |
 |---|---|---|
@@ -48,3 +54,7 @@ error. The crate also enables eyre's `track-caller` feature, and CGP's `raise_er
 `std`, so this crate does too.
 
 The crate re-exports `eyre::Error`, eyre's alias for `Report`, as `cgp_error_eyre::Error`.
+
+## License
+
+Licensed under the [Apache License, Version 2.0](https://github.com/contextgeneric/cgp/blob/main/LICENSE).
