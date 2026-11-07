@@ -4,7 +4,9 @@
 //! turns on the providers that need an allocator.
 //!
 //! See [`CanHandle`](https://contextgeneric.dev/docs/reference/components/handler/handler), [`PipeHandlers`](https://contextgeneric.dev/docs/reference/providers/handler/pipe_handlers), and [`RaiseFrom`](https://contextgeneric.dev/docs/reference/providers/error/raise_from).
+#![warn(missing_docs)]
 
+/// The prelude, re-exported as `cgp_extra::prelude`.
 pub mod prelude;
 
 pub use cgp_dispatch as dispatch;
