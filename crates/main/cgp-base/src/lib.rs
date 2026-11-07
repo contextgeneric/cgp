@@ -2,6 +2,7 @@
 //! the macros.
 //!
 //! See [`#[cgp_component]`](https://contextgeneric.dev/docs/reference/macros/cgp_component), [`Symbol!`](https://contextgeneric.dev/docs/reference/macros/symbol), and [`Cons`](https://contextgeneric.dev/docs/reference/types/cons).
+#![no_std]
 
 pub mod macro_prelude;
 

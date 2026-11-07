@@ -24,7 +24,11 @@ where the canonical macro-expansion snapshots live.
 refuses during expansion, and for pinning the invalid tokens a macro currently
 emits.
 
-A third category lives in another repository: the cases where a macro *accepts*
+**`cgp-no-std-tests`** builds the `cgp` crate for a target without `std`, so a `std` or `alloc` leak
+in the dependency tree fails the build. It is `#![no_std]`, uses the macros, and gates an alloc-using
+provider behind its `alloc` feature.
+
+A fourth category lives in another repository: the cases where a macro *accepts*
 input whose *expansion* then fails to compile are UI fixtures in
 [`cargo-cgp`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/README.md),
 so each is pinned as the readable error the tool renders for it. AGENTS.md's
@@ -66,6 +70,19 @@ cargo nextest run --workspace                   # everything
 cargo insta test -p cgp-tests --review          # review snapshot diffs interactively
 cargo insta test -p cgp-tests --accept          # accept intended snapshot changes
 ```
+
+The `no_std` check builds for a target whose sysroot has no `std`, so it fails if any crate in the
+tree needs one. Install the target once, then run both paths:
+
+```sh
+rustup target add x86_64-unknown-none
+cargo check -p cgp-no-std-tests --target x86_64-unknown-none
+cargo check -p cgp-no-std-tests --features alloc --target x86_64-unknown-none
+```
+
+The first proves that `cgp` with default features needs neither `std` nor `alloc`; the second turns on
+the `alloc` feature and compiles the provider that needs an allocator. A `std` use planted in the
+crate fails the first command with "cannot find module or crate `std`".
 
 Many tests assert the exact code a macro generates, through the `snapshot_*!`
 macros from `cgp-macro-test-util`: each emits the real generated code into the

@@ -12,8 +12,12 @@ categories   = { workspace = true }
 description  = "CGP's extra layer through cgp::extra: handlers, monads, dispatch, runtime, runners, the optional-field layer, and the generic error providers."
 
 [features]
-default = [ "full" ]
-full = [ "cgp-error-extra/alloc" ]
+default = []
+# The `alloc` feature turns on the providers that need an allocator, such as
+# `DebugError` and `DisplayError`. A `no_std` build without an allocator leaves it
+# off, and `default-features = false` needs neither `std` nor `alloc`.
+alloc = [ "cgp-error-extra/alloc" ]
+full = [ "alloc" ]
 
 [dependencies]
 cgp-core        = { workspace = true }

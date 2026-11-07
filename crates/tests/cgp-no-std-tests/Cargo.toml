@@ -1,0 +1,22 @@
+[package]
+name         = "cgp-no-std-tests"
+version      = "0.8.0-alpha"
+edition      = { workspace = true }
+rust-version = { workspace = true }
+license      = { workspace = true }
+repository   = { workspace = true }
+authors      = { workspace = true }
+homepage     = { workspace = true }
+keywords     = { workspace = true }
+categories   = { workspace = true }
+description  = "Builds the cgp crate for a target without std, with and without alloc."
+publish      = false
+
+[features]
+default = []
+# Turn on the providers that need an allocator, so the same crate checks the
+# `alloc` path as well as the plain `no_std` one.
+alloc = [ "cgp/alloc" ]
+
+[dependencies]
+cgp = { workspace = true }
