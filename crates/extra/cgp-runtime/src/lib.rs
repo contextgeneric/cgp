@@ -1,6 +1,7 @@
 //! This crate provides CGP's runtime abstraction, which lets a context choose its async runtime.
 //!
 //! See [`HasRuntime`](https://contextgeneric.dev/docs/reference/components/has_runtime) and [`HasRuntimeType`](https://contextgeneric.dev/docs/reference/components/has_runtime_type).
+#![no_std]
 
 mod traits;
 

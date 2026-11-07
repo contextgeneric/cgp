@@ -39,6 +39,7 @@ members = [
 
     "crates/tests/cgp-tests",
     "crates/tests/cgp-macro-tests",
+    "crates/tests/cgp-no-std-tests",
 ]
 
 [workspace.package]

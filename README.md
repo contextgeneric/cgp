@@ -34,6 +34,20 @@ use cgp::prelude::*;
 CGP requires **Rust 1.89+** and runs on the **stable** toolchain, and needs neither a nightly toolchain nor a fork. The
 [quickstart](https://contextgeneric.dev/docs/quickstart) takes it from there.
 
+### `no_std`
+
+The `cgp` crate builds for a target without `std`, and its default features need neither `std` nor
+`alloc`. Turn on the `alloc` feature for the providers that need an allocator, such as
+`DebugError` and `DisplayError`:
+
+```toml
+[dependencies]
+cgp = { version = "0.8.0", default-features = false, features = ["alloc"] }
+```
+
+The error backends are separate crates: `cgp-error-anyhow` and `cgp-error-std` need `alloc`, and
+`cgp-error-eyre` needs `std`.
+
 ## A quick look
 
 Real operations depend on infrastructure such as a database or object storage, and the usual ways of

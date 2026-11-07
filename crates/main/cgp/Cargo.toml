@@ -12,6 +12,12 @@ keywords     = { workspace = true }
 categories   = { workspace = true }
 description  = { workspace = true }
 
+[features]
+default = []
+# Turn on the providers that need an allocator. A `no_std` build without one leaves
+# this off, and `default-features = false` needs neither `std` nor `alloc`.
+alloc = [ "cgp-extra/alloc" ]
+
 [dependencies]
 cgp-core       = { workspace = true }
 cgp-extra      = { workspace = true }

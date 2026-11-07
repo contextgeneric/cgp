@@ -12,7 +12,9 @@ categories   = { workspace = true }
 description  = "CGP's generic error providers, which raise, return, discard, and format an error."
 
 [features]
-default = [ "alloc" ]
+default = []
+# The `DebugError` and `DisplayError` providers need an allocator, so they are
+# behind this feature. A `no_std` build without one leaves it off.
 alloc = []
 
 [dependencies]
