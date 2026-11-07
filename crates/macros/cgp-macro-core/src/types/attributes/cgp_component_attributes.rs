@@ -10,15 +10,21 @@ use crate::types::attributes::{
     UseTypeAttributes,
 };
 
+/// The modifier attributes a `#[cgp_component]` trait carries.
 #[derive(Default, Clone)]
 pub struct CgpComponentAttributes {
+    /// The `#[extend]` supertraits.
     pub extend: Vec<TypeParamBound>,
+    /// The `#[use_type]` imports.
     pub use_type: UseTypeAttributes,
+    /// The `#[prefix]` registrations.
     pub prefixes: Vec<PrefixAttribute>,
+    /// The `#[derive_delegate]` tables.
     pub derive_delegate_attributes: DeriveDelegateAttributes,
 }
 
 impl CgpComponentAttributes {
+    /// Parses the attributes and applies them to the trait.
     pub fn preprocess(item_trait: &ItemTrait) -> syn::Result<(Self, ItemTrait)> {
         let mut item_trait = item_trait.clone();
 
@@ -31,6 +37,7 @@ impl CgpComponentAttributes {
         Ok((attributes, item_trait))
     }
 
+    /// Parses the trait's modifier attributes.
     pub fn parse(attributes: &mut Vec<Attribute>) -> syn::Result<Self> {
         let mut parsed_attributes = CgpComponentAttributes::default();
 

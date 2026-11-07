@@ -4,10 +4,19 @@ use cgp_handler::{AsyncComputer, AsyncComputerComponent, Computer, ComputerCompo
 use crate::monadic::ident::IdentMonadic;
 use crate::traits::{ContainsValue, LiftValue, MonadicBind, MonadicTrans};
 
+/// The per-step provider of the ok monad: run the continuation on a step's Err value and stop on
+/// Ok. PipeMonadic composes it under OkMonadic.
+///
+/// See [`BindOk`](https://contextgeneric.dev/docs/reference/providers/monad/bind_ok).
 pub struct OkMonadic;
 
+/// The `Ok` monad transformer.
 pub struct OkMonadicTrans<M>(pub PhantomData<M>);
 
+/// The per-step provider of the ok monad: run the continuation on a step's Err value and stop on
+/// Ok. PipeMonadic composes it under OkMonadic.
+///
+/// See [`BindOk`](https://contextgeneric.dev/docs/reference/providers/monad/bind_ok).
 pub struct BindOk<M, Cont>(pub PhantomData<(M, Cont)>);
 
 impl<M> MonadicTrans<M> for OkMonadic {

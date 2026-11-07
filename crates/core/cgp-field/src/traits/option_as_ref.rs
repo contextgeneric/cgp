@@ -1,9 +1,12 @@
-/// Borrows the value inside an `Option` as a `&T`.
+/// Borrow the value inside an Option as a &T, the bound an Option`<&str>` implicit argument
+/// generates so the field may be a String, a Cow`<str>`, or a Box`<str>`.
 ///
 /// The blanket impl covers any `Option<U>` whose `U` implements `AsRef<T>`, so an
-/// `#[implicit] nickname: Option<&str>` argument reads an `Option<String>`, an
-/// `Option<Cow<str>>`, or an `Option<Box<str>>` field without needing an allocator
-/// of its own.
+/// `#[implicit] nickname: Option<&str>` argument reads an `Option<String>` field
+/// without needing an allocator.
+///
+/// See [`OptionAsRef`](https://contextgeneric.dev/docs/reference/traits/field-access/option_as_ref)
+/// .
 pub trait OptionAsRef<T: ?Sized> {
     /// Borrows the contained value, or `None` when the option is empty.
     fn option_as_ref(&self) -> Option<&T>;

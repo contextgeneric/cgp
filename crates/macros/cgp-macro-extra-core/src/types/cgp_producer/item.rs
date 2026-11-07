@@ -7,7 +7,9 @@ use crate::visitors::find_impl_trait;
 /// Raw input stage: the optional provider name from the attribute and the
 /// annotated function. First stage of the `#[cgp_producer]` pipeline.
 pub struct ItemCgpProducer {
+    /// The provider name from the attribute, if given.
     pub ident: Option<Ident>,
+    /// The annotated function.
     pub item_fn: ItemFn,
 }
 

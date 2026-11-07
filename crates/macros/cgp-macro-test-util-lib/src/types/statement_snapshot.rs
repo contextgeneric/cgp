@@ -9,9 +9,13 @@ use syn::token::Not;
 
 use crate::types::MacroSnapshot;
 
+/// The input of a statement-macro snapshot: the body and the assertion.
 pub struct StatementMacroSnapshot<Keyword> {
+    /// The macro's body tokens.
     pub body: TokenStream,
+    /// The snapshot's test name and assertion.
     pub snapshot: MacroSnapshot,
+    /// The keyword marker.
     pub phantom: PhantomData<Keyword>,
 }
 

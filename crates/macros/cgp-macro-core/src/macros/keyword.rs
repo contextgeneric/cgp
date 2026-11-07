@@ -3,6 +3,7 @@
 #[macro_export]
 macro_rules! define_keyword {
     ( $struct_ident:ident, $value:literal ) => {
+        #[doc = concat!("The `", $value, "` keyword marker.")]
         pub struct $struct_ident;
 
         impl $crate::traits::IsKeyword for $struct_ident {

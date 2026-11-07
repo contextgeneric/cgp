@@ -10,6 +10,7 @@ use crate::types::cgp_data::{
     item_fields_to_product_type,
 };
 
+/// Derives the `HasFields` impls for a struct.
 pub fn derive_has_fields_impls_from_struct(item_struct: &ItemStruct) -> syn::Result<Vec<ItemImpl>> {
     let struct_name = &item_struct.ident;
     let (impl_generics, type_generics, where_clause) = item_struct.generics.split_for_impl();

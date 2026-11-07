@@ -1,7 +1,9 @@
 use syn::visit_mut::{VisitMut, visit_type_mut};
 use syn::{Ident, PathArguments, Type, TypePath};
 
+/// Removes a `Self::` prefix from the associated items the block declares.
 pub struct RemoveSelfPathVisitor<'a> {
+    /// The associated items to strip the prefix from.
     pub assoc_idents: &'a [Ident],
 }
 

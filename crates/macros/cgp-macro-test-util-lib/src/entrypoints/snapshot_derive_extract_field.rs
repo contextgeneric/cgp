@@ -5,6 +5,7 @@ use syn::{ItemEnum, parse2};
 use crate::keywords::ExtractField;
 use crate::types::DeriveMacroSnapshot;
 
+/// Snapshots the expansion of `derive_extract_field`.
 pub fn snapshot_derive_extract_field(body: TokenStream) -> syn::Result<TokenStream> {
     let item: DeriveMacroSnapshot<ExtractField, ItemEnum> = parse2(body)?;
 

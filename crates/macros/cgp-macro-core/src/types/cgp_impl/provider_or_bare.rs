@@ -8,7 +8,9 @@ use crate::types::cgp_provider::LoweredCgpProvider;
 /// (`Provider`) or, for the `#[cgp_impl(Self)]` passthrough, the untouched
 /// consumer impl (`Bare`).
 pub enum CgpProviderOrBareImpl {
+    /// A bare consumer impl.
     Bare(Box<ItemImpl>),
+    /// A lowered provider.
     Provider(Box<LoweredCgpProvider>),
 }
 

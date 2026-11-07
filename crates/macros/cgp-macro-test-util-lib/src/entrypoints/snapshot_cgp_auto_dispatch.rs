@@ -5,6 +5,7 @@ use syn::{ItemTrait, parse2};
 use crate::keywords::CgpAutoDispatch;
 use crate::types::AttributeMacroSnapshot;
 
+/// Snapshots the expansion of `cgp_auto_dispatch`.
 pub fn snapshot_cgp_auto_dispatch(body: TokenStream) -> syn::Result<TokenStream> {
     let item: AttributeMacroSnapshot<CgpAutoDispatch, ItemTrait> = parse2(body)?;
 

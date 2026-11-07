@@ -6,7 +6,9 @@ use syn::{FnArg, Item, Receiver, Signature, Type, parse_quote};
 /// preserving the reference and mutability shape (`&self` → `ctx: &Context`,
 /// `&mut self` → `ctx: &mut Context`, `self` → `ctx: Context`).
 pub struct ReplaceSelfReceiverVisitor<'a> {
+    /// The identifier the receiver becomes.
     pub replaced_ident: &'a Ident,
+    /// The type the receiver becomes.
     pub replaced_type: &'a Type,
 }
 
@@ -26,6 +28,7 @@ impl<'a> VisitMut for ReplaceSelfReceiverVisitor<'a> {
     }
 }
 
+/// Rewrites one receiver into an explicit context parameter.
 pub fn replace_self_receiver(
     receiver: &mut Receiver,
     replaced_ident: &Ident,

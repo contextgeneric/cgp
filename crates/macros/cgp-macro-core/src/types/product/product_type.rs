@@ -7,11 +7,14 @@ use syn::token::Comma;
 use crate::exports::{Cons, Nil};
 use crate::functions::parse_internal;
 
+/// The parsed `Product!` list.
 pub struct ProductType {
+    /// The entries.
     pub types: Punctuated<Type, Comma>,
 }
 
 impl ProductType {
+    /// Expands the list into nested `Cons` types.
     pub fn eval(&self) -> syn::Result<Type> {
         let mut out = quote!(#Nil);
 

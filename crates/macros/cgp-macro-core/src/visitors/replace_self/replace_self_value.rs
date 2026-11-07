@@ -8,6 +8,7 @@ use syn::{Expr, Ident, Item, Macro, Path};
 /// at nested items (which introduce their own `self` and do not capture the
 /// outer one) and leaving `self::` module paths inside macro bodies intact.
 pub struct ReplaceSelfValueVisitor<'a> {
+    /// The identifier `self` becomes.
     pub replaced_ident: &'a Ident,
 }
 
@@ -35,6 +36,7 @@ impl VisitMut for ReplaceSelfValueVisitor<'_> {
     }
 }
 
+/// Replaces `self` in a macro body's tokens.
 pub fn replace_self_value_in_token_stream(
     stream: TokenStream,
     replaced_ident: &Ident,

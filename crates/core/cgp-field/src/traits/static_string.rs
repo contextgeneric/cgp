@@ -1,6 +1,11 @@
 use crate::types::{Chars, Nil, Symbol};
 
+/// Decode a Symbol into a compile-time &'static str constant, the eager way to recover a field or
+/// variant name as data.
+///
+/// See [`StaticString`](https://contextgeneric.dev/docs/reference/traits/formatting/static_string).
 pub trait StaticString {
+    /// The string's value.
     const VALUE: &'static str;
 }
 

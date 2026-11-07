@@ -10,8 +10,10 @@ use crate::types::attributes::use_type::type_predicates::{
 };
 use crate::visitors::SubstituteAbstractTypes;
 
+/// The `#[use_type]` imports of a function or impl block.
 #[derive(Default, Clone)]
 pub struct UseTypeAttributes {
+    /// The imports.
     pub attributes: Vec<UseTypeAttribute>,
 }
 
@@ -28,6 +30,7 @@ impl UseTypeAttributes {
         ground_specs(&self.attributes)
     }
 
+    /// Substitutes the imports in a trait and adds their bounds.
     pub fn transform_item_trait(&self, item_trait: &mut ItemTrait) -> syn::Result<()> {
         if self.attributes.is_empty() {
             return Ok(());
@@ -71,6 +74,7 @@ impl UseTypeAttributes {
         Ok(())
     }
 
+    /// Substitutes the imports in an impl and adds their bounds.
     pub fn transform_item_impl(&self, item_impl: &mut ItemImpl) -> syn::Result<()> {
         if self.attributes.is_empty() {
             return Ok(());

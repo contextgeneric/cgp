@@ -10,6 +10,7 @@ use crate::traits::ToTypeParamBounds;
 /// is accepted in addition to the plain `Trait<Params>` form.
 #[derive(Default)]
 pub struct UsesAttributes {
+    /// The imported bounds.
     pub imports: Vec<TypeParamBound>,
 }
 

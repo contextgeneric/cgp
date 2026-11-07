@@ -1,3 +1,4 @@
+/// Converts a snake-case name to PascalCase.
 pub fn to_camel_case_str(val: &str) -> String {
     val.split('_')
         .filter(|word| !word.is_empty())

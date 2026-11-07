@@ -4,6 +4,7 @@ use syn::parse2;
 use crate::keywords::CheckComponents;
 use crate::types::StatementMacroSnapshot;
 
+/// Snapshots the expansion of `check_components`.
 pub fn snapshot_check_components(body: TokenStream) -> syn::Result<TokenStream> {
     let item: StatementMacroSnapshot<CheckComponents> = parse2(body)?;
 

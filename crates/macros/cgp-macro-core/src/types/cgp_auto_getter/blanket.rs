@@ -7,6 +7,7 @@ use crate::types::field::{FieldName, HasFieldBound};
 use crate::types::getter::{ContextArg, derive_getter_method};
 use crate::visitors::get_bounds_and_replace_self_assoc_type;
 
+/// Derives the blanket impl over `HasField` for a getter trait.
 pub fn derive_blanket_impl(
     context_type: &Ident,
     consumer_trait: &ItemTrait,

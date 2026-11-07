@@ -7,6 +7,7 @@ use crate::functions::parse_internal;
 use crate::types::cgp_getter::GetterField;
 use crate::types::getter::ContextArg;
 
+/// Builds a getter method's body from its field.
 pub fn derive_getter_method(
     context_arg: &ContextArg,
     getter_field: &GetterField,
@@ -22,14 +23,20 @@ pub fn derive_getter_method(
     .to_item_fn()
 }
 
+/// A getter method to generate.
 pub struct GetterMethod {
+    /// How the getter takes its context.
     pub context_arg: ContextArg,
+    /// The field the getter reads.
     pub getter_field: GetterField,
+    /// The field's tag type.
     pub tag_type: Type,
+    /// The provider to call, when the getter is wired.
     pub provider_ident: Option<Ident>,
 }
 
 impl GetterMethod {
+    /// Builds the getter method.
     pub fn to_item_fn(&self) -> syn::Result<ImplItemFn> {
         let Self {
             context_arg,

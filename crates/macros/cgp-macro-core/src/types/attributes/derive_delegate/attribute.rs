@@ -7,13 +7,17 @@ use syn::{Error, Ident, ItemImpl, ItemTrait, Path, parenthesized};
 use crate::exports::DelegateComponent;
 use crate::functions::{parse_internal, trait_items_to_delegated_impl_items};
 
+/// One `#[derive_delegate]` table.
 #[derive(Clone)]
 pub struct DeriveDelegateAttribute {
+    /// The wrapper provider's name.
     pub wrapper: Ident,
+    /// The dispatch parameters.
     pub params: Punctuated<Ident, Comma>,
 }
 
 impl DeriveDelegateAttribute {
+    /// Emits the `UseDelegate` provider impl.
     pub fn to_provider_impl(&self, provider_trait: &ItemTrait) -> syn::Result<ItemImpl> {
         let provider_trait_ident = &provider_trait.ident;
 

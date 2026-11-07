@@ -9,8 +9,11 @@ use crate::types::generics::ImplGenerics;
 /// keyed impl carrying those generics.
 #[derive(Debug, Clone)]
 pub struct SingleDelegateKey {
+    /// The key's attributes.
     pub attributes: Vec<Attribute>,
+    /// The key's generics.
     pub generics: ImplGenerics,
+    /// The key's type.
     pub ty: Type,
 }
 

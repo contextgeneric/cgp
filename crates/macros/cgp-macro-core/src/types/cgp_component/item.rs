@@ -7,12 +7,15 @@ use crate::types::ident::TypeGenericParam;
 /// Raw input stage: the parsed attribute args and trait, before CGP attributes
 /// are stripped. First stage of the `#[cgp_component]` pipeline.
 pub struct ItemCgpComponent {
+    /// The component's arguments.
     pub args: CgpComponentArgs,
+    /// The annotated trait.
     pub item_trait: ItemTrait,
 }
 
 impl ItemCgpComponent {
     /// Split the CGP modifier attributes off the trait, yielding the next stage.
+    /// Splits the modifier attributes off the trait.
     pub fn preprocess(&self) -> syn::Result<PreprocessedCgpComponent> {
         self.check_component_name_params()?;
 

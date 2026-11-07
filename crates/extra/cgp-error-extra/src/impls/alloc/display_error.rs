@@ -7,6 +7,9 @@ use cgp::error::{
 };
 use cgp::prelude::*;
 
+/// Raises an error by formatting its source with `Display`.
+///
+/// See [`DisplayError`](https://contextgeneric.dev/docs/reference/providers/error/display_error).
 pub struct DisplayError;
 
 #[cgp_provider]

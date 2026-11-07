@@ -4,6 +4,9 @@ use proc_macro2::TokenStream;
 use quote::quote;
 use syn::{Ident, ItemTrait, parse2};
 
+/// Define a getter as a full CGP component, so the field it reads is chosen when a context is wired rather than fixed to the method name.
+///
+/// See [`cgp_getter`](https://contextgeneric.dev/docs/reference/macros/cgp_getter).
 pub fn cgp_getter(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
     let mut raw_args: CgpComponentRawArgs = parse2(attr.clone())?;
 

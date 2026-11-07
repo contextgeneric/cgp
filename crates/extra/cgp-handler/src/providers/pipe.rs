@@ -4,6 +4,10 @@ use cgp::prelude::*;
 
 use crate::ComposeHandlers;
 
+/// The combinator that folds a Product! list of handlers into nested ComposeHandlers, so the input
+/// flows through each stage in turn.
+///
+/// See [`PipeHandlers`](https://contextgeneric.dev/docs/reference/providers/handler/pipe_handlers).
 pub struct PipeHandlers<Providers>(pub PhantomData<Providers>);
 
 delegate_components! {

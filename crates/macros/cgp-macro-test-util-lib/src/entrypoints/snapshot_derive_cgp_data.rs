@@ -5,6 +5,7 @@ use syn::{Item, parse2};
 use crate::keywords::CgpData;
 use crate::types::DeriveMacroSnapshot;
 
+/// Snapshots the expansion of `derive_cgp_data`.
 pub fn snapshot_derive_cgp_data(body: TokenStream) -> syn::Result<TokenStream> {
     let item: DeriveMacroSnapshot<CgpData, Item> = parse2(body)?;
 

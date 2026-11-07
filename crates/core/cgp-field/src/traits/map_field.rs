@@ -2,13 +2,12 @@ use core::marker::PhantomData;
 
 use crate::traits::{FieldGetter, HasField};
 
-/**
-    A helper trait to help organize the lifetime inference in Rust.
-    Without this, `Self::Value` would need to be `'static`, as Rust couldn't
-    infer the correct lifetime when calling chained field getters, such as
-    `context.get_field().get_field()`.
-*/
+/// A blanket helper on every HasField that passes a borrowed field to a closure, so generic code
+/// can read a field of a field without a lifetime bound.
+///
+/// See [`MapField`](https://contextgeneric.dev/docs/reference/traits/field-access/map_field).
 pub trait MapField<Tag>: HasField<Tag> {
+    /// Maps the field's value.
     fn map_field<T>(
         &self,
         _tag: PhantomData<Tag>,
@@ -30,10 +29,12 @@ where
     }
 }
 
-/**
-    The provider trait equivalent of [`MapField`].
-*/
+/// The provider-side mirror of MapField, a blanket impl over every field getter that lets a getter
+/// provider read through the field another provider returns.
+///
+/// See [`FieldMapper`](https://contextgeneric.dev/docs/reference/traits/field-access/field_mapper).
 pub trait FieldMapper<Context, Tag>: FieldGetter<Context, Tag> {
+    /// Maps the field's value.
     fn map_field<T>(
         context: &Context,
         _tag: PhantomData<Tag>,

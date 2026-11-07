@@ -16,8 +16,11 @@ use crate::types::keywords::Open;
 /// the `@Component.Key` mappings that follow dispatch on the redirect path.
 #[derive(Debug, Clone)]
 pub struct OpenDelegateStatement {
+    /// The `open` keyword.
     pub open: Keyword<Open>,
+    /// The components to open.
     pub components: Punctuated<Type, Comma>,
+    /// The statement's semicolon.
     pub semi: Semi,
 }
 

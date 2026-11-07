@@ -8,7 +8,9 @@ use syn::{Item, Macro, Path, Type};
 /// skipping any `Self::Item` whose associated type or const is declared locally
 /// in the block, so the block's own associated items are left intact.
 pub struct ReplaceSelfTypeVisitor<'a> {
+    /// The type `Self` becomes.
     pub replaced_type: &'a Type,
+    /// The associated items to leave alone.
     pub skip_assoc_items: &'a Vec<Ident>,
 }
 
@@ -71,6 +73,7 @@ impl VisitMut for ReplaceSelfTypeVisitor<'_> {
     }
 }
 
+/// Replaces `Self` in a macro body's tokens.
 pub fn replace_self_type_in_token_stream(
     stream: TokenStream,
     replaced_ident: TokenStream,

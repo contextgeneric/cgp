@@ -16,12 +16,14 @@ use crate::types::cgp_data::variants_to_sum_type;
 /// As with [`StructType`](super::StructType), holding the derive's input form lets
 /// [`eval`](Self::eval) run the `#[derive(HasFields)]` encoder unchanged.
 pub struct EnumType {
+    /// The variants.
     pub variants: Punctuated<Variant, Comma>,
 }
 
 impl EnumType {
     /// Encode the variants as the derive does: a sum of `Field<Symbol!("Variant"), Payload>`
     /// entries ending in `Void`, each payload encoded by the `Struct!` rules.
+    /// Expands the shape into a `Fields` type.
     pub fn eval(&self) -> syn::Result<Type> {
         variants_to_sum_type(&self.variants, &TokenStream::new())
     }

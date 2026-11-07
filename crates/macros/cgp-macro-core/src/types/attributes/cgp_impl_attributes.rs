@@ -8,16 +8,23 @@ use crate::types::attributes::{
     UseTypeAttribute, UseTypeAttributes, UsesAttributes,
 };
 
+/// The modifier attributes a `#[cgp_impl]` block carries.
 #[derive(Default)]
 pub struct CgpImplAttributes {
+    /// The `#[uses]` imports.
     pub uses: UsesAttributes,
+    /// The `#[use_type]` imports.
     pub use_type: UseTypeAttributes,
+    /// The `#[use_provider]` imports.
     pub use_provider: UseProviderAttributes,
+    /// The `#[default_impl]` registrations.
     pub default_impls: DefaultImplAttributes,
+    /// The attributes the macro passes through.
     pub raw_attributes: Vec<Attribute>,
 }
 
 impl CgpImplAttributes {
+    /// Parses the block's modifier attributes.
     pub fn parse(attributes: &Vec<Attribute>) -> syn::Result<CgpImplAttributes> {
         let mut parsed_attributes = CgpImplAttributes::default();
 

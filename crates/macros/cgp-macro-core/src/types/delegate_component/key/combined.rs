@@ -11,8 +11,11 @@ use crate::types::generics::ImplGenerics;
 /// key, a leading `[` a `Multi` (array) key, otherwise a `Single` key.
 #[derive(Debug, Clone)]
 pub enum DelegateKey {
+    /// A single key.
     Single(SingleDelegateKey),
+    /// An array key.
     Multi(MultiDelegateKey),
+    /// An `@`-path key.
     Path(PathDelegateKey),
 }
 

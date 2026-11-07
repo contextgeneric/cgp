@@ -11,8 +11,11 @@ use crate::types::delegate_component::{
 /// value type directly.
 #[derive(Debug, Clone)]
 pub struct NormalDelegateMapping {
+    /// The key.
     pub key: DelegateKey,
+    /// The colon.
     pub colon: Colon,
+    /// The provider value.
     pub value: DelegateValue,
 }
 

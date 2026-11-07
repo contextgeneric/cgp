@@ -8,16 +8,31 @@ use cgp_handler::{
 use crate::providers::matchers::to_field_handlers::{HasFieldHandlers, MapExtractFieldAndHandle};
 use crate::{HandleFieldValue, MatchWithHandlers, MatchWithHandlersMut, MatchWithHandlersRef};
 
+/// The convenience matcher that builds the per-variant handler list from an enum's variants and
+/// passes each payload as a Field tagged with its variant name.
+///
+/// See
+/// [`MatchWithFieldHandlers`](https://contextgeneric.dev/docs/reference/providers/dispatch/match_with_field_handlers)
+/// .
 pub type MatchWithFieldHandlers<Provider = UseContext> =
     UseInputDelegate<MatchWithFieldHandlersInputs<Provider>>;
 
+/// The convenience matcher that builds the per-variant handler list from an enum's own variants and
+/// passes each payload to one provider as a bare value.
+///
+/// See
+/// [`MatchWithValueHandlers`](https://contextgeneric.dev/docs/reference/providers/dispatch/match_with_value_handlers)
+/// .
 pub type MatchWithValueHandlers<Provider = UseContext> =
     UseInputDelegate<MatchWithFieldHandlersInputs<HandleFieldValue<Provider>>>;
 
+/// Matches a borrowed value with field handlers.
 pub struct MatchWithFieldHandlersRef<Provider = UseContext>(pub PhantomData<Provider>);
 
+/// Matches a borrowed value with value handlers.
 pub struct MatchWithValueHandlersRef<Provider = UseContext>(pub PhantomData<Provider>);
 
+/// Matches a mutably borrowed value with value handlers.
 pub struct MatchWithValueHandlersMut<Provider = UseContext>(pub PhantomData<Provider>);
 
 delegate_components! {

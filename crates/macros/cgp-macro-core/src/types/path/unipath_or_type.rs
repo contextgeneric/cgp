@@ -6,8 +6,11 @@ use syn::token::At;
 
 use crate::types::path::UniPath;
 
+/// A type-level path or a plain type.
 pub enum UniPathOrType {
+    /// A plain type.
     Type(Type),
+    /// A type-level path.
     Path(UniPath),
 }
 

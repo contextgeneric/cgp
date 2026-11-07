@@ -10,8 +10,11 @@ use crate::types::delegate_component::{
 /// `->` is Direct, `=>` is Redirect.
 #[derive(Debug, Clone)]
 pub enum DelegateMapping {
+    /// A `Key: Value` mapping.
     Normal(NormalDelegateMapping),
+    /// A `Key -> Value` mapping.
     Direct(DirectDelegateMapping),
+    /// A `Key => @path` mapping.
     Redirect(RedirectDelegateMapping),
 }
 

@@ -9,12 +9,16 @@ use crate::types::empty_struct::EmptyStruct;
 use crate::types::ident::{IdentWithTypeGenerics, PathWithTypeArgs};
 use crate::types::provider_impl::ItemProviderImpl;
 
+/// The parsed `#[cgp_provider]` input.
 pub struct ItemCgpProvider {
+    /// The provider's arguments.
     pub args: ProviderArgs,
+    /// The provider impl.
     pub item_impl: ItemImpl,
 }
 
 impl ItemCgpProvider {
+    /// Lowers the provider into its impl, `IsProviderFor` impl, and struct.
     pub fn lower(&self) -> syn::Result<LoweredCgpProvider> {
         let provider_struct = self.to_provider_struct()?;
 
@@ -31,6 +35,7 @@ impl ItemCgpProvider {
         })
     }
 
+    /// The component the provider implements.
     pub fn component_type(&self) -> syn::Result<Type> {
         // An explicit `#[cgp_provider(Component)]` / `#[cgp_impl(Provider: Component)]`
         // override names the component directly; it is a user-written type, so it
@@ -69,6 +74,7 @@ impl ItemCgpProvider {
         parse_internal(component_ident.to_token_stream())
     }
 
+    /// Builds the provider struct, when the attribute declares one.
     pub fn to_provider_struct(&self) -> syn::Result<Option<EmptyStruct>> {
         if self.args.new.is_none() {
             return Ok(None);

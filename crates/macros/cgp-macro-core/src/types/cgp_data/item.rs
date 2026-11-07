@@ -3,12 +3,16 @@ use syn::{Error, Item};
 
 use crate::types::cgp_data::{ItemCgpRecord, ItemCgpVariant};
 
+/// The parsed `#[derive(CgpData)]` input.
 pub enum ItemCgpData {
+    /// A struct.
     Record(ItemCgpRecord),
+    /// An enum.
     Variant(ItemCgpVariant),
 }
 
 impl ItemCgpData {
+    /// Emits the data's items.
     pub fn to_items(&self) -> syn::Result<Vec<Item>> {
         match self {
             ItemCgpData::Record(record) => record.to_items(),

@@ -7,11 +7,14 @@ use crate::types::cgp_component::EvaluatedCgpComponent;
 use crate::types::provider_impl::{ItemProviderImpl, ItemProviderImpls};
 use crate::visitors::get_bounds_and_replace_self_assoc_type;
 
+/// The evaluated `#[cgp_type]` component.
 pub struct ItemCgpType {
+    /// The component's items.
     pub item_component: EvaluatedCgpComponent,
 }
 
 impl ItemCgpType {
+    /// Emits the component's items.
     pub fn to_items(&self) -> syn::Result<Vec<Item>> {
         let mut items = self.item_component.to_items()?;
 
@@ -22,10 +25,12 @@ impl ItemCgpType {
         Ok(items)
     }
 
+    /// Extracts the trait's associated type.
     pub fn to_trait_item_type(&self) -> syn::Result<TraitItemType> {
         extract_item_type_from_trait(&self.item_component.consumer_trait)
     }
 
+    /// Emits the `UseType` and `WithProvider` impls.
     pub fn to_item_provider_impls(&self) -> syn::Result<ItemProviderImpls> {
         let context_name = &self.item_component.args.context_ident;
         let component_type = self.item_component.args.component_name.to_type();
@@ -106,6 +111,7 @@ impl ItemCgpType {
     }
 }
 
+/// Extracts the single associated type from a type trait.
 pub fn extract_item_type_from_trait(consumer_trait: &ItemTrait) -> syn::Result<TraitItemType> {
     if consumer_trait.items.len() != 1 {
         return Err(Error::new(

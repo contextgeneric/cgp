@@ -5,6 +5,10 @@ use crate::{
     TryComputer, TryComputerComponent,
 };
 
+/// The single-step lift, in both directions, between a computer whose output is a Result and a
+/// genuinely fallible TryComputer or Handler.
+///
+/// See [`TryPromote`](https://contextgeneric.dev/docs/reference/providers/handler/try_promote).
 pub struct TryPromote<Provider>(pub PhantomData<Provider>);
 
 #[cgp_provider]

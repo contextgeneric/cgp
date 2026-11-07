@@ -3,6 +3,9 @@ use proc_macro2::TokenStream;
 use quote::quote;
 use syn::parse2;
 
+/// Generate a structural representation, constructors, and an extractor for an enum, as the variant half of the extensible-data derives.
+///
+/// See [`CgpVariant`](https://contextgeneric.dev/docs/reference/derives/derive_cgp_variant).
 pub fn derive_cgp_variant(body: TokenStream) -> syn::Result<TokenStream> {
     let variant: ItemCgpVariant = parse2(body)?;
 

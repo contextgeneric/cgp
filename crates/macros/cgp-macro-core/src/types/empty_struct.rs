@@ -5,8 +5,11 @@ use syn::{GenericParam, Generics, Ident, ItemStruct, Type, parse_quote};
 
 use crate::exports::Life;
 
+/// A generated empty struct, with its optional doc line.
 pub struct EmptyStruct {
+    /// The struct's name.
     pub ident: Ident,
+    /// The struct's generics.
     pub generics: Generics,
     /// The doc line emitted above the struct, so a crate that enables
     /// `missing_docs` does not report the generated item.
@@ -14,6 +17,7 @@ pub struct EmptyStruct {
 }
 
 impl EmptyStruct {
+    /// Renders the struct as an `ItemStruct`.
     pub fn to_item_struct(&self) -> ItemStruct {
         parse_quote!(#self)
     }

@@ -11,8 +11,11 @@ use crate::types::ident::{PathWithTypeArgs, TypeArg};
 /// type set by a trailing `in Context`).
 #[derive(Clone)]
 pub struct UseTypeAttribute {
+    /// The context the types are projected against.
     pub context_type: Type,
+    /// The owning trait's path.
     pub trait_path: PathWithTypeArgs,
+    /// The imported associated types.
     pub type_idents: Vec<UseTypeIdent>,
 }
 
@@ -26,6 +29,7 @@ impl UseTypeAttribute {
     /// nothing. Naming the set once — rather than at each of the three places that
     /// walk it — is what keeps the grounding pass, the emitted bounds, and the
     /// cycle check in agreement about what grounding reaches.
+    /// The type positions grounding resolves.
     pub fn groundable_types(&self) -> impl Iterator<Item = &Type> {
         core::iter::once(&self.context_type).chain(
             self.trait_path
@@ -41,6 +45,7 @@ impl UseTypeAttribute {
     }
 
     /// [`Self::groundable_types`] by mutable reference, for the grounding pass.
+    /// The type positions grounding resolves, mutably.
     pub fn groundable_types_mut(&mut self) -> impl Iterator<Item = &mut Type> {
         core::iter::once(&mut self.context_type).chain(
             self.trait_path
@@ -54,6 +59,7 @@ impl UseTypeAttribute {
         )
     }
 
+    /// Resolves an alias to the type it imports.
     pub fn replace_ident(&self, ident: &Ident) -> Option<Ident> {
         for type_ident in &self.type_idents {
             if type_ident.alias_ident() == ident {

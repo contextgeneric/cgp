@@ -5,6 +5,12 @@ use cgp_handler::{AsyncComputer, AsyncComputerComponent, Computer, ComputerCompo
 
 use crate::DispatchMatchers;
 
+/// The matcher for an (Input, Args) input: it matches the enum in the first element and passes the
+/// extra arguments to every per-variant handler.
+///
+/// See
+/// [`MatchFirstWithHandlers`](https://contextgeneric.dev/docs/reference/providers/dispatch/match_first_with_handlers)
+/// .
 pub struct MatchFirstWithHandlers<Handlers>(pub PhantomData<Handlers>);
 
 #[cgp_provider]

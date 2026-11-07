@@ -21,6 +21,7 @@ use crate::functions::parse_internal;
 /// [`TypeGenericParams`]: crate::types::ident::TypeGenericParams
 #[derive(Debug, Clone, Default)]
 pub struct TypeGenerics {
+    /// The parameters.
     pub generics: Generics,
 }
 

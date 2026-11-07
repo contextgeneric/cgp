@@ -8,10 +8,15 @@ use syn::token::Pound;
 use crate::functions::parse_attribute_with_keyword;
 use crate::types::MacroSnapshot;
 
+/// The input of an attribute-macro snapshot: the attribute, the item, and the assertion.
 pub struct AttributeMacroSnapshot<Keyword, Item> {
+    /// The attribute's inner tokens.
     pub attr: TokenStream,
+    /// The annotated item.
     pub body: Item,
+    /// The snapshot's test name and assertion.
     pub snapshot: MacroSnapshot,
+    /// The keyword marker.
     pub phantom: PhantomData<Keyword>,
 }
 

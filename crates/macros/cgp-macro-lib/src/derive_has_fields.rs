@@ -3,6 +3,9 @@ use proc_macro2::TokenStream;
 use quote::quote;
 use syn::{Error, Item, parse2};
 
+/// Generate a structural representation of a struct or enum and the conversions to and from it, exposing its whole field or variant list to generic code.
+///
+/// See [`HasFields`](https://contextgeneric.dev/docs/reference/derives/derive_has_fields).
 pub fn derive_has_fields(body: TokenStream) -> syn::Result<TokenStream> {
     let item: Item = parse2(body)?;
 

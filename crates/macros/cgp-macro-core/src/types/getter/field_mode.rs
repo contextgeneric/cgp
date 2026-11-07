@@ -8,12 +8,19 @@ use crate::exports::{MRef, OptionAsRef};
 /// getter method's return type by [`parse_field_type`](crate::functions::parse_field_type).
 #[derive(Clone, Eq, PartialEq)]
 pub enum FieldMode {
+    /// Return the field by reference.
     Reference,
+    /// Return an `Option` field by reference.
     OptionRef,
+    /// Return an `Option` field as an `Option<&str>`.
     OptionStr,
+    /// Return the field as an [`MRef`].
     MRef,
+    /// Return the field as a `&str`.
     Str,
+    /// Return a copy of the field.
     Copy,
+    /// Return the field as a slice.
     Slice,
 }
 

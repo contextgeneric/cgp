@@ -10,9 +10,13 @@ use crate::functions::parse_attribute_with_keyword;
 use crate::keywords::Derive;
 use crate::types::MacroSnapshot;
 
+/// The input of a derive-macro snapshot: the item and the assertion.
 pub struct DeriveMacroSnapshot<Keyword, Item> {
+    /// The annotated item.
     pub body: Item,
+    /// The snapshot's test name and assertion.
     pub snapshot: MacroSnapshot,
+    /// The keyword marker.
     pub phantom: PhantomData<Keyword>,
 }
 

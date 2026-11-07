@@ -14,7 +14,9 @@ use crate::types::delegate_component::{
 /// is what a `cgp_namespace!` header written without a body parses to.
 #[derive(Debug, Clone, Default)]
 pub struct DelegateEntries {
+    /// The leading statements.
     pub statements: Vec<DelegateStatement>,
+    /// The mappings.
     pub entries: Punctuated<DelegateMapping, Comma>,
 }
 

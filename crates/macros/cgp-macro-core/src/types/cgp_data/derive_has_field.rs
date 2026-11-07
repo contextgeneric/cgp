@@ -6,6 +6,7 @@ use crate::functions::override_item_span;
 use crate::parse_internal;
 use crate::types::field::{Index, Symbol};
 
+/// Derives the `HasField` impls for a struct.
 pub fn derive_has_field_impls_from_struct(item_struct: &ItemStruct) -> syn::Result<Vec<ItemImpl>> {
     let struct_ident = &item_struct.ident;
 

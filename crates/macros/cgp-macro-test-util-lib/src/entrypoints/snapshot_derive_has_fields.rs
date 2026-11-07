@@ -5,6 +5,7 @@ use syn::{Item, parse2};
 use crate::keywords::HasFields;
 use crate::types::DeriveMacroSnapshot;
 
+/// Snapshots the expansion of `derive_has_fields`.
 pub fn snapshot_derive_has_fields(body: TokenStream) -> syn::Result<TokenStream> {
     let item: DeriveMacroSnapshot<HasFields, Item> = parse2(body)?;
 

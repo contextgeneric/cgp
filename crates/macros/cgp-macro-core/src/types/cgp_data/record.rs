@@ -8,11 +8,14 @@ use crate::types::cgp_data::{
     derive_partial_data_impl_from_struct, derive_update_field_impls,
 };
 
+/// The parsed `#[derive(CgpRecord)]` input.
 pub struct ItemCgpRecord {
+    /// The annotated struct.
     pub item_struct: ItemStruct,
 }
 
 impl ItemCgpRecord {
+    /// Emits the record's items.
     pub fn to_items(&self) -> syn::Result<Vec<Item>> {
         let has_field_impls = self.to_has_field_impls()?;
         let has_fields_impls = self.to_has_fields_impls()?;
@@ -27,14 +30,17 @@ impl ItemCgpRecord {
         Ok(items)
     }
 
+    /// Emits the `HasField` impls.
     pub fn to_has_field_impls(&self) -> syn::Result<Vec<ItemImpl>> {
         derive_has_field_impls_from_struct(&self.item_struct)
     }
 
+    /// Emits the `HasFields` impls.
     pub fn to_has_fields_impls(&self) -> syn::Result<Vec<ItemImpl>> {
         derive_has_fields_impls_from_struct(&self.item_struct)
     }
 
+    /// Emits the builder and its impls.
     pub fn to_build_field_items(&self) -> syn::Result<Vec<Item>> {
         let item_struct = &self.item_struct;
 

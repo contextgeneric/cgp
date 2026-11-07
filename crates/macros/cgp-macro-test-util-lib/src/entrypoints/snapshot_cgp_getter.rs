@@ -5,6 +5,7 @@ use syn::{ItemTrait, parse2};
 use crate::keywords::CgpGetter;
 use crate::types::AttributeMacroSnapshot;
 
+/// Snapshots the expansion of `cgp_getter`.
 pub fn snapshot_cgp_getter(body: TokenStream) -> syn::Result<TokenStream> {
     let item: AttributeMacroSnapshot<CgpGetter, ItemTrait> = parse2(body)?;
 

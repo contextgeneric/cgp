@@ -7,12 +7,16 @@ use syn::{
 use crate::parse_internal;
 use crate::visitors::RemoveSelfPathVisitor;
 
+/// The parsed `#[blanket_trait]` input.
 pub struct ItemBlanketTrait {
+    /// The context parameter's name.
     pub context_ident: Ident,
+    /// The annotated trait.
     pub item_trait: ItemTrait,
 }
 
 impl ItemBlanketTrait {
+    /// Emits the trait and its blanket impl.
     pub fn to_items(&self) -> syn::Result<Vec<Item>> {
         let item_trait = self.item_trait.clone();
         let item_impl = self.to_item_impl()?;
@@ -20,6 +24,7 @@ impl ItemBlanketTrait {
         Ok(vec![item_trait.into(), item_impl.into()])
     }
 
+    /// Emits the blanket impl from the trait's default bodies.
     pub fn to_item_impl(&self) -> syn::Result<ItemImpl> {
         let context_ident = &self.context_ident;
         let mut item_trait = self.item_trait.clone();

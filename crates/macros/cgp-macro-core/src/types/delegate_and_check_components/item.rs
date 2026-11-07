@@ -8,11 +8,14 @@ use crate::types::check_components::{
 use crate::types::delegate_and_check_components::ToKeysWithCheckParams;
 use crate::types::delegate_component::DelegateTable;
 
+/// The parsed `delegate_and_check_components!` input.
 pub struct ItemDelegateAndCheckComponents {
+    /// The wiring table.
     pub table: DelegateTable,
 }
 
 impl ItemDelegateAndCheckComponents {
+    /// Builds the check table for the wiring.
     pub fn to_check_components(&self) -> syn::Result<CheckComponentsTable> {
         let trait_name = self.check_trait_ident()?;
         let check_entries = self.to_check_entries()?;
@@ -29,6 +32,7 @@ impl ItemDelegateAndCheckComponents {
         Ok(check_table)
     }
 
+    /// Builds the check entries for the wiring.
     pub fn to_check_entries(&self) -> syn::Result<CheckEntries> {
         let keys = self.table.entries.to_keys_with_check_params()?;
 
@@ -41,6 +45,7 @@ impl ItemDelegateAndCheckComponents {
         Ok(entries)
     }
 
+    /// The check trait's name.
     pub fn check_trait_ident(&self) -> syn::Result<Ident> {
         let attributes = &self.table.attributes;
 

@@ -10,7 +10,9 @@ use crate::types::delegate_component::{EvalDelegateKey, EvaluatedDelegateKey, Si
 /// several components share a single value.
 #[derive(Debug, Clone)]
 pub struct MultiDelegateKey {
+    /// The key's attributes.
     pub attributes: Vec<Attribute>,
+    /// The bracketed keys.
     pub keys: Punctuated<SingleDelegateKey, Comma>,
 }
 

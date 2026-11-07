@@ -4,12 +4,15 @@ use syn::token::Comma;
 
 use crate::types::check_components::{CheckEntry, EvaluatedCheckEntry};
 
+/// The entries of a `check_components!` table.
 #[derive(Default)]
 pub struct CheckEntries {
+    /// The entries.
     pub entries: Punctuated<CheckEntry, Comma>,
 }
 
 impl CheckEntries {
+    /// Expands the entries into their evaluated form.
     pub fn eval(&self) -> Vec<EvaluatedCheckEntry> {
         let mut evaluated_entries = Vec::new();
 

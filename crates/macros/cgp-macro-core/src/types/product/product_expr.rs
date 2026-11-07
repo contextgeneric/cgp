@@ -10,12 +10,14 @@ use crate::functions::parse_internal;
 /// The value-level `product!` macro: a list of expression items that folds into a
 /// `Cons(..)`/`Nil` value expression. The type-level counterpart is `ProductType`.
 pub struct ProductExpr {
+    /// The entries.
     pub exprs: Punctuated<Expr, Comma>,
 }
 
 impl ProductExpr {
     /// Fold the items right-to-left onto `Nil` with the `Cons` tuple-struct
     /// constructor, yielding a value expression (not a type).
+    /// Expands the list into nested `Cons` values.
     pub fn eval(&self) -> syn::Result<Expr> {
         let mut out = quote!(#Nil);
 

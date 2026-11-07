@@ -6,10 +6,15 @@ use syn::token::Mut;
 use crate::exports::{HasField, HasFieldMut, OptionAsRef};
 use crate::types::getter::FieldMode;
 
+/// The `HasField` or `HasFieldMut` bound a field read requires.
 pub struct HasFieldBound {
+    /// The field's type.
     pub field_type: Type,
+    /// The `mut` of a mutable read.
     pub field_mut: Option<Mut>,
+    /// How the field is read.
     pub field_mode: FieldMode,
+    /// The field's tag type.
     pub tag_type: Type,
 }
 

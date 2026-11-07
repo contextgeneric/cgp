@@ -4,14 +4,26 @@ use crate::impls::IsNothing;
 use crate::traits::{HasFields, MapType, PartialData, UpdateField};
 use crate::types::{Cons, Field, Nil};
 
-/// Natural transformation from `M1::Map<T>` to `M2::Map<T>`
+/// The per-field function converting a value from one marker's storage to another's, and the
+/// extension point for a new way to re-mark a record.
+///
+/// See [`TransformMap`](https://contextgeneric.dev/docs/reference/traits/type-level/transform_map).
 pub trait TransformMap<M1: MapType, M2: MapType, T> {
+    /// Transforms the mapped value.
     fn transform_mapped(value: M1::Map<T>) -> M2::Map<T>;
 }
 
+/// Apply one per-field transform across a whole partial record, re-marking every field to a target
+/// marker in one call; the optional layer is built on it.
+///
+/// See
+/// [`TransformMapFields`](https://contextgeneric.dev/docs/reference/traits/type-level/transform_map_fields)
+/// .
 pub trait TransformMapFields<Transform, TargetMap> {
+    /// The transformed value.
     type Output;
 
+    /// Transforms the fields.
     fn transform_map_fields(self) -> Self::Output;
 }
 

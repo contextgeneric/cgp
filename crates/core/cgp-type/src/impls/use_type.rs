@@ -6,36 +6,16 @@ use cgp_macro::cgp_provider;
 use crate::TypeProviderComponent;
 use crate::traits::TypeProvider;
 
-/**
-    The `UseType` pattern is used to implement a CGP abstract type with the
-    specified `Type`.
-
-    When a CGP type component is defined using the `#[cgp_type]` macro, a
-    provider implementation of `UseType` is automatically generated.
-    With `UseType`, users can instantiate an abstract type with the specified
-    `Type` without having to manually implement the given provider trait.
-
-    ## Example
-
-    Given the following type component definition:
-
-    ```rust,ignore
-    #[cgp_type]
-    pub trait HasNameType {
-        type Name;
-    }
-    ```
-
-    The following `UseType` implementation would be generated:
-
-    ```rust,ignore
-    impl<Context, Type> NameTypeProvider<Context> for UseType<Type> {
-        type Name = Type;
-    }
-    ```
-*/
+/// The provider that sets an abstract-type component to a concrete type, so a context chooses its
+/// error, scalar, or runtime type with one wiring line.
+///
+/// See [`UseType`](https://contextgeneric.dev/docs/reference/providers/use_type).
 pub struct UseType<Type>(pub PhantomData<Type>);
 
+/// The alias WithProvider`<UseType<T>`>, which binds an abstract-type component to a concrete type
+/// exactly as the plain UseType`<T>` does.
+///
+/// See [`WithType`](https://contextgeneric.dev/docs/reference/providers/with_type).
 pub type WithType<Type> = WithProvider<UseType<Type>>;
 
 #[cgp_provider(TypeProviderComponent)]

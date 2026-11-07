@@ -40,9 +40,13 @@ pub enum TypeGenericParam {
 /// `Bar<const N: usize>`. Defaults (`= 0`) are deliberately not represented.
 #[derive(Debug, Clone)]
 pub struct ConstGenericParam {
+    /// The `const` keyword.
     pub const_token: Const,
+    /// The parameter's name.
     pub ident: Ident,
+    /// The colon before the type.
     pub colon: Colon,
+    /// The parameter's type.
     pub ty: Type,
 }
 
@@ -146,10 +150,12 @@ impl ToTokens for TypeGenericParam {
 /// so a parsed `<>` round-trips back to no angle brackets.
 #[derive(Debug, Clone, Default)]
 pub struct TypeGenericParams {
+    /// The parameters.
     pub params: Punctuated<TypeGenericParam, Comma>,
 }
 
 impl TypeGenericParams {
+    /// Returns whether the list is empty.
     pub fn is_empty(&self) -> bool {
         self.params.is_empty()
     }

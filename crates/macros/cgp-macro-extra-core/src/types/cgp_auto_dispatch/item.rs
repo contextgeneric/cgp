@@ -5,6 +5,7 @@ use crate::types::cgp_auto_dispatch::{DispatchMethod, PreprocessedCgpAutoDispatc
 /// Raw input stage: the annotated trait. First stage of the
 /// `#[cgp_auto_dispatch]` pipeline.
 pub struct ItemCgpAutoDispatch {
+    /// The annotated trait.
     pub item_trait: ItemTrait,
 }
 

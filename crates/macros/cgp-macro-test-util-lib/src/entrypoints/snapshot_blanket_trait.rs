@@ -5,6 +5,7 @@ use syn::{ItemTrait, parse2};
 use crate::keywords::BlanketTrait;
 use crate::types::AttributeMacroSnapshot;
 
+/// Snapshots the expansion of `blanket_trait`.
 pub fn snapshot_blanket_trait(body: TokenStream) -> syn::Result<TokenStream> {
     let item: AttributeMacroSnapshot<BlanketTrait, ItemTrait> = parse2(body)?;
 

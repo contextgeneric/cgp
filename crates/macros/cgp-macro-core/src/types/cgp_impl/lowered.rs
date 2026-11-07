@@ -17,10 +17,15 @@ use crate::visitors::{
 /// The header-normalized stage of `#[cgp_impl]`, carrying the resolved context
 /// type and provider trait path. It owns the consumer-to-provider rewrite.
 pub struct LoweredCgpImpl {
+    /// The impl's arguments.
     pub args: ImplArgs,
+    /// The impl block.
     pub item_impl: ItemImpl,
+    /// The context type.
     pub context_type: Type,
+    /// The provider trait's path.
     pub provider_trait_path: PathWithTypeArgs,
+    /// The `#[default_impl]` impls.
     pub default_impls: Vec<ItemImpl>,
 }
 
@@ -28,6 +33,7 @@ impl LoweredCgpImpl {
     /// Rewrites the block into provider-trait form and hands it to
     /// [`ItemCgpProvider`], or — for the `#[cgp_impl(Self)]` case — returns the
     /// block unchanged as a bare consumer impl (requiring a `for` clause).
+    /// Lowers the block into a provider or a bare consumer impl.
     pub fn lower(&self) -> syn::Result<CgpProviderOrBareImpl> {
         if self.args.provider_type == parse_internal!(Self) {
             if self.item_impl.trait_.is_none() {
@@ -60,6 +66,7 @@ impl LoweredCgpImpl {
     /// Performs the consumer-to-provider rewrite: swaps `Self` to the provider,
     /// inserts the context as the provider trait's leading argument, and runs the
     /// three `replace_self` visitors to rewrite `self`/`Self` in the body.
+    /// Rewrites the block into provider-trait form.
     pub fn to_raw_item_impl(&self) -> syn::Result<ItemImpl> {
         let item_impl = &self.item_impl;
         let context_type = &self.context_type;

@@ -10,16 +10,24 @@ use crate::traits::AddTypeParamBounds;
 use crate::types::attributes::FunctionAttributes;
 use crate::types::implicits::ImplicitArgFields;
 
+/// The checked `#[cgp_fn]` input: the function, its implicits, and its attributes.
 pub struct PreprocessedItemCgpFn {
+    /// The trait's name.
     pub ident: Ident,
+    /// The annotated function.
     pub item_fn: ItemFn,
+    /// The `#[implicit]` arguments.
     pub implicit_args: ImplicitArgFields,
+    /// The function's modifier attributes.
     pub attributes: FunctionAttributes,
+    /// The function's visibility.
     pub visibility: Visibility,
+    /// The function's generics.
     pub generics: Generics,
 }
 
 impl PreprocessedItemCgpFn {
+    /// Generates the trait, the blanket impl, and the companion items.
     pub fn to_items(&self) -> syn::Result<Vec<Item>> {
         let item_trait = self.to_item_trait()?;
         let item_impl = self.to_item_impl()?;
@@ -27,6 +35,7 @@ impl PreprocessedItemCgpFn {
         Ok(vec![item_trait.into(), item_impl.into()])
     }
 
+    /// Generates the trait the function becomes.
     pub fn to_item_trait(&self) -> syn::Result<ItemTrait> {
         let Self {
             ident,
@@ -92,6 +101,7 @@ impl PreprocessedItemCgpFn {
         Ok(item_trait)
     }
 
+    /// Generates the blanket impl that calls the function.
     pub fn to_item_impl(&self) -> syn::Result<ItemImpl> {
         let Self {
             ident,

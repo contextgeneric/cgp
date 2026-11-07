@@ -4,6 +4,12 @@ use cgp_handler::{
     TryComputerComponent,
 };
 
+/// The builder that starts an empty partial record, runs a list of steps that each fill fields, and
+/// finalizes the record once every field is set.
+///
+/// See
+/// [`BuildWithHandlers`](https://contextgeneric.dev/docs/reference/providers/dispatch/build_with_handlers)
+/// .
 pub struct BuildWithHandlers<Output, Handlers>(pub PhantomData<(Output, Handlers)>);
 
 #[cgp_provider]

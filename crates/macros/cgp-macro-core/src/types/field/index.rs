@@ -4,8 +4,11 @@ use syn::LitInt;
 
 use crate::exports::Index as Delta;
 
+/// A tuple field's position as a type-level index.
 pub struct Index {
+    /// The position.
     pub index: usize,
+    /// The source span.
     pub span: Span,
 }
 

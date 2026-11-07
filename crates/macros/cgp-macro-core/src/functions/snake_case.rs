@@ -1,6 +1,7 @@
 use proc_macro2::Span;
 use syn::Ident;
 
+/// Converts a PascalCase name to snake_case.
 pub fn to_snake_case_str(val: &str) -> String {
     let mut acc = String::new();
     let mut prev = '_';
@@ -16,6 +17,7 @@ pub fn to_snake_case_str(val: &str) -> String {
     acc.to_lowercase()
 }
 
+/// Converts an identifier to a reserved snake-case identifier.
 pub fn to_snake_case_ident(val: &Ident) -> Ident {
     let str_val = val.to_string();
     let mut snake_case_val = to_snake_case_str(&str_val);

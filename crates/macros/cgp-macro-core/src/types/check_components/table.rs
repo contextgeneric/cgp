@@ -12,16 +12,24 @@ use crate::types::check_components::{CheckEntries, EvaluatedCheckEntry, TypeWith
 use crate::types::generics::ImplGenerics;
 use crate::types::ident::PathWithTypeArgs;
 
+/// The parsed `check_components!` table.
 pub struct CheckComponentsTable {
+    /// The providers to check, when the table uses `#[check_providers]`.
     pub check_providers: Option<Punctuated<Type, Comma>>,
+    /// The table's generic parameters.
     pub impl_generics: ImplGenerics,
+    /// The check trait's name.
     pub trait_name: Ident,
+    /// The context to check.
     pub context_type: Type,
+    /// The table's optional `where` clause.
     pub where_clause: Option<WhereClause>,
+    /// The components to check.
     pub check_entries: CheckEntries,
 }
 
 impl CheckComponentsTable {
+    /// Generates the check trait and its impls.
     pub fn to_items(&self) -> syn::Result<Vec<Item>> {
         let (item_trait, item_impls) = self.eval()?;
 
@@ -31,6 +39,7 @@ impl CheckComponentsTable {
         Ok(items)
     }
 
+    /// Evaluates the table into the check trait and its impls.
     pub fn eval(&self) -> syn::Result<(ItemTrait, Vec<ItemImpl>)> {
         let mut item_impls = Vec::new();
         let unit: Type = parse_internal!(());

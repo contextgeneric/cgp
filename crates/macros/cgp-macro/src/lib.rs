@@ -3,6 +3,7 @@
 //! context.
 //!
 //! See [`#[cgp_component]`](https://contextgeneric.dev/docs/reference/macros/cgp_component), [`#[cgp_impl]`](https://contextgeneric.dev/docs/reference/macros/cgp_impl), [`delegate_components!`](https://contextgeneric.dev/docs/reference/macros/delegate_components), and [`check_components!`](https://contextgeneric.dev/docs/reference/macros/check_components).
+#![warn(missing_docs)]
 
 use proc_macro::TokenStream;
 
@@ -204,6 +205,9 @@ pub fn cgp_impl(attr: TokenStream, item: TokenStream) -> TokenStream {
         .into()
 }
 
+/// Turn a plain Rust function into a trait with a single blanket implementation, so it runs on any context that supplies the fields it needs.
+///
+/// See [`cgp_fn`](https://contextgeneric.dev/docs/reference/macros/cgp_fn).
 #[proc_macro_attribute]
 pub fn cgp_fn(attr: TokenStream, item: TokenStream) -> TokenStream {
     cgp_macro_lib::cgp_fn(attr.into(), item.into())
@@ -535,6 +539,9 @@ pub fn delegate_components(body: TokenStream) -> TokenStream {
         .into()
 }
 
+/// Define a reusable, inheritable wiring table that many contexts can join, so a configuration stays short as the component count grows.
+///
+/// See [`cgp_namespace`](https://contextgeneric.dev/docs/reference/macros/cgp_namespace).
 #[proc_macro]
 pub fn cgp_namespace(body: TokenStream) -> TokenStream {
     cgp_macro_lib::cgp_namespace(body.into())
@@ -791,6 +798,9 @@ pub fn Product(body: TokenStream) -> TokenStream {
         .into()
 }
 
+/// A type-level list and its value-level counterpart, used for the field lists of a record and for handler pipelines.
+///
+/// See [`product`](https://contextgeneric.dev/docs/reference/macros/product).
 #[proc_macro]
 pub fn product(body: TokenStream) -> TokenStream {
     cgp_macro_lib::product(body.into())
@@ -898,6 +908,9 @@ pub fn Enum(body: TokenStream) -> TokenStream {
         .into()
 }
 
+/// A type-level path, used by CGP namespaces and by component lookups that are redirected along one.
+///
+/// See [`path`](https://contextgeneric.dev/docs/reference/macros/path).
 #[proc_macro]
 #[allow(non_snake_case)]
 pub fn Path(body: TokenStream) -> TokenStream {
@@ -906,6 +919,9 @@ pub fn Path(body: TokenStream) -> TokenStream {
         .into()
 }
 
+/// Generate shared and mutable accessors for every field of a struct, keyed by type-level tags, which is what lets an implicit argument find a field.
+///
+/// See [`derive_has_field`](https://contextgeneric.dev/docs/reference/derives/derive_has_field).
 #[proc_macro_derive(HasField)]
 pub fn derive_fields(item: TokenStream) -> TokenStream {
     cgp_macro_lib::derive_has_field(item.into())
@@ -913,6 +929,9 @@ pub fn derive_fields(item: TokenStream) -> TokenStream {
         .into()
 }
 
+/// Generate a structural representation of a struct or enum and the conversions to and from it, exposing its whole field or variant list to generic code.
+///
+/// See [`derive_has_fields`](https://contextgeneric.dev/docs/reference/derives/derive_has_fields).
 #[proc_macro_derive(HasFields)]
 pub fn derive_has_fields(item: TokenStream) -> TokenStream {
     cgp_macro_lib::derive_has_fields(item.into())
@@ -920,6 +939,9 @@ pub fn derive_has_fields(item: TokenStream) -> TokenStream {
         .into()
 }
 
+/// Generate a builder that tracks in its own type which fields of a struct have been supplied, so an incomplete record cannot be finalized.
+///
+/// See [`derive_build_field`](https://contextgeneric.dev/docs/reference/derives/derive_build_field).
 #[proc_macro_derive(BuildField)]
 pub fn derive_builder(item: TokenStream) -> TokenStream {
     cgp_macro_lib::derive_build_field(item.into())
@@ -927,6 +949,9 @@ pub fn derive_builder(item: TokenStream) -> TokenStream {
         .into()
 }
 
+/// Generate an extractor that tracks in its own type which variants of an enum remain, so exhaustiveness is checked without a wildcard arm.
+///
+/// See [`derive_extract_field`](https://contextgeneric.dev/docs/reference/derives/derive_extract_field).
 #[proc_macro_derive(ExtractField)]
 pub fn derive_extractor(item: TokenStream) -> TokenStream {
     cgp_macro_lib::derive_extract_field(item.into())
@@ -934,6 +959,9 @@ pub fn derive_extractor(item: TokenStream) -> TokenStream {
         .into()
 }
 
+/// Let generic code construct an enum variant selected by a type-level tag, without naming the variant or the enum.
+///
+/// See [`derive_from_variant`](https://contextgeneric.dev/docs/reference/derives/derive_from_variant).
 #[proc_macro_derive(FromVariant)]
 pub fn derive_from_variant(item: TokenStream) -> TokenStream {
     cgp_macro_lib::derive_from_variant(item.into())
@@ -941,6 +969,9 @@ pub fn derive_from_variant(item: TokenStream) -> TokenStream {
         .into()
 }
 
+/// Generate a structural representation, constructors, and an extractor for an enum, as the variant half of the extensible-data derives.
+///
+/// See [`derive_cgp_variant`](https://contextgeneric.dev/docs/reference/derives/derive_cgp_variant).
 #[proc_macro_derive(CgpVariant)]
 pub fn derive_cgp_variant(item: TokenStream) -> TokenStream {
     cgp_macro_lib::derive_cgp_variant(item.into())
@@ -948,6 +979,9 @@ pub fn derive_cgp_variant(item: TokenStream) -> TokenStream {
         .into()
 }
 
+/// Generate field access, a structural representation, and a builder for a struct, as the record half of the extensible-data derives.
+///
+/// See [`derive_cgp_record`](https://contextgeneric.dev/docs/reference/derives/derive_cgp_record).
 #[proc_macro_derive(CgpRecord)]
 pub fn derive_cgp_record(item: TokenStream) -> TokenStream {
     cgp_macro_lib::derive_cgp_record(item.into())
@@ -955,6 +989,9 @@ pub fn derive_cgp_record(item: TokenStream) -> TokenStream {
         .into()
 }
 
+/// Generate structural access and the incremental building and extraction operations for a struct or enum, as the umbrella over the narrower derives.
+///
+/// See [`derive_cgp_data`](https://contextgeneric.dev/docs/reference/derives/derive_cgp_data).
 #[proc_macro_derive(CgpData)]
 pub fn derive_cgp_data(item: TokenStream) -> TokenStream {
     cgp_macro_lib::derive_cgp_data(item.into())

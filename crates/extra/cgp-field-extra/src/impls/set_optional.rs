@@ -3,11 +3,18 @@ use core::marker::PhantomData;
 use cgp_field::impls::IsOptional;
 use cgp_field::traits::UpdateField;
 
+/// Set one field of an all-optional builder, as many times as you like, optionally getting back the
+/// value it replaced.
+///
+/// See [`SetOptional`](https://contextgeneric.dev/docs/reference/traits/optional/set_optional).
 pub trait SetOptional<Tag> {
+    /// The field's value type.
     type Value;
 
+    /// Sets the field.
     fn set(self, _tag: PhantomData<Tag>, value: Self::Value) -> Self;
 
+    /// Sets the field and returns the previous value.
     fn set_optional(
         self,
         _tag: PhantomData<Tag>,

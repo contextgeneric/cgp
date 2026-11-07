@@ -7,8 +7,11 @@ use syn::{Error, Ident};
 
 use crate::traits::IsKeyword;
 
+/// A parsed keyword, carrying its span.
 pub struct Keyword<K: IsKeyword> {
+    /// The keyword's span.
     pub span: Span,
+    /// The keyword marker.
     pub phantom: PhantomData<K>,
 }
 

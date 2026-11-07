@@ -5,12 +5,16 @@ use syn::token::{Bracket, Comma};
 
 use crate::types::check_components::TypeWithGenerics;
 
+/// The parameters a check entry asserts.
 pub enum CheckValue {
+    /// One parameter.
     Single(Box<TypeWithGenerics>),
+    /// Several parameters.
     Multi(Punctuated<TypeWithGenerics, Comma>),
 }
 
 impl CheckValue {
+    /// The parameters as a list.
     pub fn to_values(&self) -> Vec<TypeWithGenerics> {
         match self {
             Self::Single(value) => vec![value.as_ref().clone()],

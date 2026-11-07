@@ -11,6 +11,7 @@ use crate::types::cgp_data::{
     field_to_member, field_to_tag, field_value_expr, index_to_generic_ident, to_generic_args,
 };
 
+/// Derives the `UpdateField` impls for a builder.
 pub fn derive_update_field_impls(
     context_struct: &ItemStruct,
     builder_ident: &Ident,

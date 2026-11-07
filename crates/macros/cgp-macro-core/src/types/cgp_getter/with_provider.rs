@@ -10,6 +10,7 @@ use crate::types::provider_impl::ItemProviderImpl;
 use crate::visitors::get_bounds_and_replace_self_assoc_type;
 
 impl ItemCgpGetter {
+    /// Emits the `WithProvider` impl, for a single-field getter.
     pub fn to_with_provider_impl(&self) -> syn::Result<Option<ItemProviderImpl>> {
         if self.fields.len() == 1 {
             let field = &self.fields[0];
@@ -29,6 +30,7 @@ impl ItemCgpGetter {
         }
     }
 
+    /// Derives the `WithProvider` impl for one field.
     pub fn derive_with_provider_impl(&self, field: &GetterField) -> syn::Result<ItemImpl> {
         let args = &self.item_component.args;
         let provider_trait = &self.item_component.provider_trait;

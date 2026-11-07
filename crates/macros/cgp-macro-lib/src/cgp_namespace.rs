@@ -4,6 +4,9 @@ use proc_macro2::TokenStream;
 use quote::ToTokens;
 use syn::parse2;
 
+/// Define a reusable, inheritable wiring table that many contexts can join, so a configuration stays short as the component count grows.
+///
+/// See [`cgp_namespace`](https://contextgeneric.dev/docs/reference/macros/cgp_namespace).
 pub fn cgp_namespace(body: TokenStream) -> syn::Result<TokenStream> {
     let namespace_table: NamespaceTable = parse2(body)?;
 

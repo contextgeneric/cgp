@@ -5,6 +5,7 @@ use syn::parse::ParseStream;
 use syn::token::Paren;
 use syn::{braced, bracketed, parenthesized};
 
+/// Parses `#[keyword(...)]` or `#[keyword{...}]` and returns the inner tokens.
 pub fn parse_attribute_with_keyword<K: IsKeyword>(input: ParseStream) -> syn::Result<TokenStream> {
     let outer_body;
     bracketed!(outer_body in input);

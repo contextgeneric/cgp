@@ -10,6 +10,7 @@ use crate::types::provider_impl::ItemProviderImpl;
 use crate::visitors::get_bounds_and_replace_self_assoc_type;
 
 impl ItemCgpGetter {
+    /// Emits the `UseFields` provider impl.
     pub fn to_use_fields_impl(&self) -> syn::Result<ItemProviderImpl> {
         let provider_trait = &self.item_component.provider_trait;
 

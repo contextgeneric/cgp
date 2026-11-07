@@ -6,14 +6,20 @@ use syn::{Type, TypeParamBound, WherePredicate};
 use crate::parse_internal;
 use crate::types::ident::PathWithTypeArgs;
 
+/// One `#[use_provider]` import.
 pub struct UseProviderAttribute {
+    /// The context type.
     pub context_type: Type,
+    /// The provider type.
     pub provider_type: Type,
+    /// The colon between the provider and its bounds.
     pub colon: Colon,
+    /// The provider trait bounds.
     pub provider_trait_bounds: Punctuated<PathWithTypeArgs, Plus>,
 }
 
 impl UseProviderAttribute {
+    /// Builds the bounds with the context as the leading argument.
     pub fn to_type_param_bounds(
         &self,
         context_type: &Type,
@@ -38,6 +44,7 @@ impl UseProviderAttribute {
         Ok(bounds)
     }
 
+    /// Builds the `where` predicate for the provider.
     pub fn to_provider_bounds(&self, context_type: &Type) -> syn::Result<WherePredicate> {
         let provider_type = &self.provider_type;
         let bounds = self.to_type_param_bounds(context_type)?;

@@ -3,6 +3,9 @@ use proc_macro2::TokenStream;
 use quote::ToTokens;
 use syn::parse2;
 
+/// The type-level shape of a struct, written as the body of a struct declaration.
+///
+/// See [`Struct`](https://contextgeneric.dev/docs/reference/macros/struct).
 #[allow(non_snake_case)]
 pub fn Struct(body: TokenStream) -> syn::Result<TokenStream> {
     let struct_type: StructType = parse2(body)?;

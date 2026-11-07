@@ -9,6 +9,10 @@ use crate::{
     TryComputerRefComponent,
 };
 
+/// The single-step lift between a handler family member and its …Ref companion: deref an owned
+/// input for a …Ref provider, or pass a borrow as the input.
+///
+/// See [`PromoteRef`](https://contextgeneric.dev/docs/reference/providers/handler/promote_ref).
 pub struct PromoteRef<Provider>(pub PhantomData<Provider>);
 
 #[cgp_provider]

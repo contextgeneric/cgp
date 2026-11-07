@@ -24,8 +24,11 @@ use crate::visitors::{ElaborateElidedLifetimes, collect_lifetimes};
 /// How a dispatch method takes `self`, with the lifetime a borrowed receiver
 /// carries: the one the method names, or the reserved `'__a__` when elided.
 pub enum DispatchReceiver {
+    /// A by-value `self`.
     Owned,
+    /// A shared borrow of `self`.
     Ref(Lifetime),
+    /// A mutable borrow of `self`.
     Mut(Lifetime),
 }
 
@@ -38,10 +41,12 @@ pub enum DispatchReceiver {
 /// and an elided output lifetime is the receiver's, or, for a by-value `self`,
 /// the single lifetime the arguments use.
 pub struct DispatchMethod {
+    /// The trait method.
     pub method: TraitItemFn,
     /// The per-variant computer's name: `Compute` plus the method name in
     /// PascalCase.
     pub computer_ident: Ident,
+    /// How the method takes `self`.
     pub receiver: DispatchReceiver,
     /// The argument types after the receiver, with elided lifetimes named.
     pub arg_types: Vec<Type>,

@@ -8,13 +8,18 @@ use crate::parse_internal;
 use crate::types::ident::PathWithTypeArgs;
 use crate::types::path::UniPathOrType;
 
+/// One `#[default_impl]` registration.
 pub struct DefaultImplAttribute {
+    /// The key the default is registered for.
     pub key_type: UniPathOrType,
+    /// The `in` keyword.
     pub in_token: In,
+    /// The namespace the default registers into.
     pub namespace: PathWithTypeArgs,
 }
 
 impl DefaultImplAttribute {
+    /// Emits the namespace impl that registers the default.
     pub fn to_item_impl(
         &self,
         provider_generics: &Generics,

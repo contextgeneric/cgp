@@ -4,12 +4,16 @@ use syn::token::Colon;
 
 use crate::types::check_components::{CheckKey, CheckValue, EvaluatedCheckEntry, TypeWithGenerics};
 
+/// One parsed check entry.
 pub struct CheckEntry {
+    /// The components.
     pub key: CheckKey,
+    /// The parameters.
     pub value: Option<CheckValue>,
 }
 
 impl CheckEntry {
+    /// Expands the entry into its evaluated entries.
     pub fn eval(&self) -> Vec<EvaluatedCheckEntry> {
         let mut entries = Vec::new();
 

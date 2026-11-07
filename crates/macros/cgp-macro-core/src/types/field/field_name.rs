@@ -4,8 +4,11 @@ use syn::Ident;
 
 use crate::types::field::{Index, Symbol};
 
+/// A field's type-level name.
 pub enum FieldName {
+    /// A named field.
     Ident(Symbol),
+    /// A tuple field.
     Index(Index),
 }
 

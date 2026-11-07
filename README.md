@@ -211,8 +211,8 @@ the concepts, the construct reference, the comparisons, and the project pages. T
 documentation on [docs.rs](https://docs.rs/cgp) is the place to look up an item.
 
 > [!NOTE]
-> Each crate's `docs.rs` page says what that crate provides and links the reference page for its
-> constructs. The per-item documentation is still being filled in, so the website remains the place
+> Each crate's `docs.rs` page says what that crate provides, and every public item carries a short
+> doc. Each construct's doc links the reference page that explains it. The website remains the place
 > to start.
 
 Contributors and coding agents have a second, deeper source: the

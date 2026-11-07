@@ -15,8 +15,11 @@ use crate::types::keywords::Namespace;
 /// on `__Key__: SomeNamespace<TableType, Delegate = __Value__>`.
 #[derive(Debug, Clone)]
 pub struct NamespaceDelegateStatement {
+    /// The `namespace` keyword.
     pub namespace: Keyword<Namespace>,
+    /// The namespace's name.
     pub ident: Ident,
+    /// The statement's semicolon.
     pub semi: Semi,
 }
 

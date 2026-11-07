@@ -2,12 +2,15 @@ use syn::{Generics, ItemImpl, Type};
 
 use crate::types::attributes::DefaultImplAttribute;
 
+/// The `#[default_impl]` registrations of an impl block.
 #[derive(Default)]
 pub struct DefaultImplAttributes {
+    /// The registrations.
     pub attributes: Vec<DefaultImplAttribute>,
 }
 
 impl DefaultImplAttributes {
+    /// Emits the namespace impls for the registrations.
     pub fn to_item_impls(
         &self,
         provider_generics: &Generics,

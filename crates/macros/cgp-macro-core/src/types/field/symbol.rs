@@ -6,13 +6,17 @@ use syn::{Ident, LitStr, Type, parse_quote};
 
 use crate::traits::ToType;
 
+/// A type-level string parsed from an identifier or a string literal.
 #[derive(Debug, Clone)]
 pub struct Symbol {
+    /// The string's value.
     pub ident: String,
+    /// The source span.
     pub span: Span,
 }
 
 impl Symbol {
+    /// Builds a symbol from an identifier.
     pub fn from_ident(ident: Ident) -> Self {
         Self {
             // `unraw` strips a raw identifier's `r#` prefix so a field written

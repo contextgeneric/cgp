@@ -1,5 +1,6 @@
 use crate::traits::{ContainsValue, LiftValue, MonadicBind, MonadicTrans};
 
+/// The identity monad.
 pub struct IdentMonadic;
 
 impl<M> MonadicTrans<M> for IdentMonadic {

@@ -5,6 +5,12 @@ use crate::{
     TryComputer, TryComputerComponent,
 };
 
+/// The combinator that runs one handler and feeds its output to a second, as a Computer,
+/// TryComputer, AsyncComputer, or Handler.
+///
+/// See
+/// [`ComposeHandlers`](https://contextgeneric.dev/docs/reference/providers/handler/compose_handlers)
+/// .
 pub struct ComposeHandlers<ProviderA, ProviderB>(pub PhantomData<(ProviderA, ProviderB)>);
 
 #[cgp_provider]

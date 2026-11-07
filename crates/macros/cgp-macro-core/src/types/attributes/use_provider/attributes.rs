@@ -3,8 +3,10 @@ use syn::{Generics, Type};
 use crate::traits::AddTypeParamBounds;
 use crate::types::attributes::UseProviderAttribute;
 
+/// The `#[use_provider]` imports of a function or impl block.
 #[derive(Default)]
 pub struct UseProviderAttributes {
+    /// The imports.
     pub attributes: Vec<UseProviderAttribute>,
 }
 

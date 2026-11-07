@@ -1,18 +1,10 @@
 use crate::{DelegateComponent, IsProviderFor};
 
-/**
-    This is a convenient type alias that is used in the same way as [`IsProviderFor`],
-    but with the `Self` type being the `Context` type rather than the `Provider` type
-    that implements the provider trait.
-
-    The `CanUseComponent` trait is automatically implemented for any CGP `Context` type
-    that implements the `DelegateComponent<Component>` trait, and when `Contex::Delegate`
-    implements `IsProviderFor<Component, Context, Params>`.
-
-    This trait is used by `check_components!` to check whether a `Context` implements
-    a given `Component` through its provider. When there are unsatisfied constraints,
-    Rust would show the error messages from the `IsProviderFor` implementation.
-*/
+/// The check a check_components! entry asserts: the context wires the component, and the provider
+/// it chose has every dependency met for that context.
+///
+/// See
+/// [`CanUseComponent`](https://contextgeneric.dev/docs/reference/traits/wiring/can_use_component) .
 pub trait CanUseComponent<Component, Params: ?Sized = ()> {}
 
 impl<Context, Component, Params: ?Sized> CanUseComponent<Component, Params> for Context

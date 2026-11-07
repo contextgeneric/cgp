@@ -9,6 +9,7 @@ use syn::{ExprPath, Ident, Item, Macro, parse_quote};
 /// Once the block's `Self` is the provider, a bare `Self::CONST` is ambiguous:
 /// the consumer trait's blanket impl gives the provider the same const.
 pub struct QualifySelfConstVisitor<'a> {
+    /// The consts the block declares.
     pub local_consts: &'a Vec<Ident>,
     /// The qualified self, `<Provider as ProviderTrait<Context>>`.
     pub qualified_self: &'a TokenStream,

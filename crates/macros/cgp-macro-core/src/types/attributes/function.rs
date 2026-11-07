@@ -6,18 +6,27 @@ use crate::types::attributes::{
     UseProviderAttribute, UseProviderAttributes, UseTypeAttribute, UseTypeAttributes,
 };
 
+/// The modifier attributes a `#[cgp_fn]` or `#[cgp_impl]` function carries.
 #[derive(Default)]
 pub struct FunctionAttributes {
+    /// The `#[extend]` supertraits.
     pub extend: Vec<TypeParamBound>,
+    /// The `#[extend_where]` predicates.
     pub extend_where: Vec<WherePredicate>,
+    /// The `#[uses]` trait bounds.
     pub uses: Vec<TypeParamBound>,
+    /// The `#[use_type]` imports.
     pub use_type: UseTypeAttributes,
+    /// The `#[use_provider]` imports.
     pub use_provider: UseProviderAttributes,
+    /// The `#[impl_generics]` parameters.
     pub impl_generics: Vec<GenericParam>,
+    /// The attributes the macro passes through.
     pub raw_attributes: Vec<Attribute>,
 }
 
 impl FunctionAttributes {
+    /// Parses the function's modifier attributes.
     pub fn parse(attributes: Vec<Attribute>) -> syn::Result<Self> {
         let mut parsed_attributes = FunctionAttributes::default();
 

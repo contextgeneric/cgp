@@ -10,8 +10,11 @@ use crate::types::keywords::New;
 /// the provider type, and an optional `: ComponentType` override.
 #[derive(Clone)]
 pub struct ImplArgs {
+    /// The `new` keyword, when the provider struct is declared.
     pub new: Option<Keyword<New>>,
+    /// The provider type.
     pub provider_type: Type,
+    /// The component override, when given.
     pub component_type: Option<Type>,
 }
 

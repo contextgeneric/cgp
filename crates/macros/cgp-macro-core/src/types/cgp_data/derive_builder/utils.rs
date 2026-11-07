@@ -7,6 +7,7 @@ use syn::{AngleBracketedGenericArguments, Field, FieldValue, Generics, Ident, Me
 use crate::functions::parse_internal;
 use crate::types::field::{FieldName, Index, Symbol};
 
+/// Renders a generic list as angle-bracketed arguments.
 pub fn to_generic_args(generics: &Generics) -> syn::Result<AngleBracketedGenericArguments> {
     if generics.params.is_empty() {
         parse2(quote! { < > })
@@ -15,6 +16,7 @@ pub fn to_generic_args(generics: &Generics) -> syn::Result<AngleBracketedGeneric
     }
 }
 
+/// The member a field is accessed by.
 pub fn field_to_member(index: usize, field: &Field) -> Member {
     match &field.ident {
         Some(ident) => Member::Named(ident.clone()),
@@ -22,6 +24,7 @@ pub fn field_to_member(index: usize, field: &Field) -> Member {
     }
 }
 
+/// The type-level tag a field is named by.
 pub fn field_to_tag(index: usize, field: &Field) -> FieldName {
     match &field.ident {
         Some(ident) => FieldName::Ident(Symbol::from_ident(ident.clone())),
@@ -32,10 +35,12 @@ pub fn field_to_tag(index: usize, field: &Field) -> FieldName {
     }
 }
 
+/// The generic identifier for a field's index.
 pub fn index_to_generic_ident(index: usize) -> Ident {
     Ident::new(&format!("__F{index}__"), Span::call_site())
 }
 
+/// Builds a field-value expression.
 pub fn field_value_expr(field_member: Member, expr: TokenStream) -> syn::Result<FieldValue> {
     Ok(FieldValue {
         attrs: Vec::new(),

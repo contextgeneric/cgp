@@ -9,18 +9,26 @@ use crate::types::provider_impl::{ItemProviderImpl, ItemProviderImpls};
 /// to render the standard provider impls (`UseContext`, `RedirectLookup`, and the
 /// per-attribute `UseDelegate`/prefix impls).
 pub struct EvaluatedCgpComponent {
+    /// The component marker struct.
     pub component_struct: EmptyStruct,
+    /// The consumer trait.
     pub consumer_trait: ItemTrait,
+    /// The consumer trait's blanket impl.
     pub consumer_impl: ItemImpl,
+    /// The provider trait.
     pub provider_trait: ItemTrait,
+    /// The provider trait's blanket impl.
     pub provider_impl: ItemImpl,
+    /// The component's arguments.
     pub args: CgpComponentArgs,
+    /// The component's attributes.
     pub attributes: CgpComponentAttributes,
 }
 
 impl EvaluatedCgpComponent {
     /// Emit the five core items in fixed order (consumer trait, consumer impl,
     /// provider trait, provider impl, marker struct), then the provider impls.
+    /// Emits the component's items.
     pub fn to_items(&self) -> syn::Result<Vec<Item>> {
         let mut items = vec![
             Item::Trait(self.consumer_trait.clone()),
@@ -39,6 +47,7 @@ impl EvaluatedCgpComponent {
 
     /// The standard provider impls (`UseContext`, `RedirectLookup`, per-attribute
     /// `UseDelegate`) followed by one namespace prefix impl per `#[prefix]`.
+    /// Emits the component's provider impls.
     pub fn to_item_impls(&self) -> syn::Result<Vec<ItemImpl>> {
         let mut item_impls = self.to_provider_impls()?.to_item_impls()?;
 
@@ -49,6 +58,7 @@ impl EvaluatedCgpComponent {
 
     /// The `UseContext` and `RedirectLookup` impls always emitted for a component,
     /// plus one `UseDelegate` impl per `#[derive_delegate]` attribute.
+    /// Emits the standard provider impls.
     pub fn to_provider_impls(&self) -> syn::Result<ItemProviderImpls> {
         let mut provider_impls = ItemProviderImpls::default();
 
@@ -65,6 +75,7 @@ impl EvaluatedCgpComponent {
     }
 
     /// One `UseDelegate` provider impl per `#[derive_delegate]` attribute.
+    /// Emits one `UseDelegate` impl per `#[derive_delegate]`.
     pub fn to_use_delegate_impls(&self) -> syn::Result<ItemProviderImpls> {
         let provider_trait = &self.provider_trait;
         let component_type = self.args.component_name.to_type();
@@ -82,6 +93,7 @@ impl EvaluatedCgpComponent {
     }
 
     /// One namespace prefix impl per `#[prefix]` attribute (from `#[cgp_namespace]`).
+    /// Emits one namespace prefix impl per `#[prefix]`.
     pub fn to_prefix_impls(&self) -> syn::Result<Vec<ItemImpl>> {
         let component_name = &self.args.component_name;
         let mut provider_impls = Vec::new();

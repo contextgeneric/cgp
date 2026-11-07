@@ -15,7 +15,9 @@ use crate::types::ident::TypeArgs;
 /// [`PathWithTypeArgs`]: crate::types::ident::PathWithTypeArgs
 #[derive(Debug, Clone)]
 pub struct IdentWithTypeArgs {
+    /// The identifier.
     pub ident: Ident,
+    /// The type arguments.
     pub type_args: TypeArgs,
 }
 

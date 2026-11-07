@@ -5,6 +5,9 @@ use core::fmt::Debug;
 use cgp::error::{ErrorRaiser, ErrorRaiserComponent, ErrorWrapper, ErrorWrapperComponent};
 use cgp::prelude::*;
 
+/// Raises an error by formatting its source with `Debug`.
+///
+/// See [`DebugError`](https://contextgeneric.dev/docs/reference/providers/error/debug_error).
 pub struct DebugError;
 
 #[cgp_provider]

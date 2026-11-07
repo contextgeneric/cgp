@@ -13,6 +13,7 @@ use crate::types::provider_impl::ItemProviderImpl;
 use crate::visitors::get_bounds_and_replace_self_assoc_type;
 
 impl ItemCgpGetter {
+    /// Emits the `UseField` provider impl, for a single-field getter.
     pub fn to_use_field_impl(&self) -> syn::Result<Option<ItemProviderImpl>> {
         if self.fields.len() == 1 {
             let field = &self.fields[0];

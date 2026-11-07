@@ -12,12 +12,16 @@ use crate::types::generics::ImplGenerics;
 /// a key that introduces its own parameters (`<I> FooKey<I>`) binds them on the
 /// generated check impl rather than referencing them unbound.
 pub struct KeyWithCheckParams {
+    /// The key's type.
     pub key_type: Type,
+    /// The key's generics.
     pub generics: ImplGenerics,
+    /// The check control from the key's attributes.
     pub check_params: CheckParamsAttribute,
 }
 
 impl KeyWithCheckParams {
+    /// Builds the check entries for the key.
     pub fn to_check_entries(&self) -> CheckEntries {
         match &self.check_params {
             CheckParamsAttribute::Default => {

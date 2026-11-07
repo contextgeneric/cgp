@@ -3,9 +3,15 @@ use core::marker::PhantomData;
 use crate::traits::{BuildField, HasFields, IntoBuilder, TakeField};
 use crate::types::{Cons, Field, Nil};
 
+/// Move every field of one record into another record's builder by field name, so several sources
+/// can be merged before the target is finalized.
+///
+/// See [`CanBuildFrom`](https://contextgeneric.dev/docs/reference/traits/casting/can_build_from).
 pub trait CanBuildFrom<Source> {
+    /// The built target.
     type Output;
 
+    /// Builds the target from the source.
     fn build_from(self, source: Source) -> Self::Output;
 }
 

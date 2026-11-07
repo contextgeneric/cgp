@@ -5,6 +5,7 @@ use crate::functions::override_item_span;
 use crate::parse_internal;
 use crate::types::cgp_data::index_to_generic_ident;
 
+/// Derives the `PartialData` impl for a builder.
 pub fn derive_partial_data_impl_from_struct(
     context_struct: &ItemStruct,
     builder_ident: &Ident,

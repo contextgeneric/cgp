@@ -4,8 +4,13 @@ use cgp_handler::{AsyncComputer, AsyncComputerComponent, Computer, ComputerCompo
 use crate::monadic::ident::IdentMonadic;
 use crate::traits::{ContainsValue, LiftValue, MonadicBind, MonadicTrans};
 
+/// The per-step provider of the err monad: run the continuation on a step's Ok value and stop on
+/// Err. PipeMonadic composes it under ErrMonadic.
+///
+/// See [`BindErr`](https://contextgeneric.dev/docs/reference/providers/monad/bind_err).
 pub struct ErrMonadic;
 
+/// The `Err` monad transformer.
 pub struct ErrMonadicTrans<M>(pub PhantomData<M>);
 
 impl<M> MonadicTrans<M> for ErrMonadic {
@@ -29,6 +34,10 @@ where
 impl<Provider> MonadicBind<Provider> for ErrMonadic {
     type Provider = BindErr<IdentMonadic, Provider>;
 }
+/// The per-step provider of the err monad: run the continuation on a step's Ok value and stop on
+/// Err. PipeMonadic composes it under ErrMonadic.
+///
+/// See [`BindErr`](https://contextgeneric.dev/docs/reference/providers/monad/bind_err).
 pub struct BindErr<M, Cont>(pub PhantomData<(M, Cont)>);
 
 impl<T, E> ContainsValue<Result<T, E>> for ErrMonadic {

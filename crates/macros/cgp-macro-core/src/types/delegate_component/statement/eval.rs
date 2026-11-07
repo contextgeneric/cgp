@@ -7,11 +7,13 @@ use crate::types::ident::PathWithTypeArgs;
 
 /// Lower a `namespace`/`for` statement into intermediate for-entries.
 pub trait EvalForEntries {
+    /// Lowers the statement's entries.
     fn eval_for_entries(&self, table_type: &Type) -> syn::Result<Vec<EvaluatedForEntry>>;
 }
 
 /// Lower a construct into a single for-entry.
 pub trait EvalForEntry {
+    /// Lowers the construct.
     fn eval_for_entry(&self, table_type: &Type) -> syn::Result<EvaluatedForEntry>;
 }
 
@@ -19,12 +21,19 @@ pub trait EvalForEntry {
 /// `__Key__: Namespace<.., Delegate = __Value__>` bound and the final
 /// `EvaluatedDelegateEntry` are built.
 pub struct EvaluatedForEntry {
+    /// The entry's generics.
     pub generics: Generics,
+    /// The table type.
     pub table_type: Type,
+    /// The loop's key parameter.
     pub for_key: Ident,
+    /// The loop's value parameter.
     pub for_value: Ident,
+    /// The namespace the entry reads from.
     pub namespace: PathWithTypeArgs,
+    /// The mapping's key.
     pub mapping_key: Type,
+    /// The mapping's value.
     pub mapping_value: Type,
     /// The diagnostic span carried through to the entry's impls; sourced from the
     /// user token behind the statement (the `namespace` name, or a `for` mapping's

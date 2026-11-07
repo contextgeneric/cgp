@@ -53,10 +53,12 @@ pub fn bare_alias_ident(ty: &Type) -> Option<&Ident> {
 /// has to revisit its own output to finish a nested import. `ground_specs`
 /// establishes the property by resolving each spec against its dependencies.
 pub struct SubstituteAbstractTypes<'a> {
+    /// The imported abstract types.
     pub specs: &'a [UseTypeAttribute],
 }
 
 impl<'a> SubstituteAbstractTypes<'a> {
+    /// Creates a visitor over the given imports.
     pub fn new(specs: &'a [UseTypeAttribute]) -> Self {
         Self { specs }
     }

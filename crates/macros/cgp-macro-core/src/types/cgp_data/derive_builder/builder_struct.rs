@@ -4,6 +4,7 @@ use crate::exports::MapType;
 use crate::parse_internal;
 use crate::types::cgp_data::{index_to_generic_ident, retain_companion_attrs};
 
+/// Derives the builder struct for a record.
 pub fn derive_builder_struct(
     context_struct: &ItemStruct,
     builder_ident: &Ident,
