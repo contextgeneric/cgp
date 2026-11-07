@@ -15,8 +15,11 @@ use crate::types::delegate_component::{
 /// matching `Value: DelegateComponent<Key>` bound.
 #[derive(Debug, Clone)]
 pub struct DirectDelegateMapping {
+    /// The key.
     pub key: DelegateKey,
+    /// The `->` arrow.
     pub arrow: RArrow,
+    /// The table to forward to.
     pub value: DelegateValue,
 }
 

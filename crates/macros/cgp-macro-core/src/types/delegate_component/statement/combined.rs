@@ -13,14 +13,18 @@ use crate::types::keywords::{Namespace, Open};
 /// lower into the same flat entry list as ordinary mappings.
 #[derive(Debug, Clone)]
 pub enum DelegateStatement {
+    /// A `namespace` statement.
     Namespace(NamespaceDelegateStatement),
+    /// An `open` statement.
     Open(OpenDelegateStatement),
+    /// A `for` statement.
     For(Box<ForDelegateStatement>),
 }
 
 impl DelegateStatement {
     /// Peek whether the input begins with a statement keyword, so all leading
     /// statements are consumed before the mappings.
+    /// Returns whether the input begins with a statement keyword.
     pub fn peek_statement(input: ParseStream) -> bool {
         input.peek_keyword::<Namespace>() || input.peek_keyword::<Open>() || input.peek(For)
     }

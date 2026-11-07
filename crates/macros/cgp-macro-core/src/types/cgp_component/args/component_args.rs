@@ -10,8 +10,11 @@ use crate::types::ident::IdentWithTypeGenerics;
 /// the component marker name (`{Provider}Component` by default).
 #[derive(Clone)]
 pub struct CgpComponentArgs {
+    /// The context identifier.
     pub context_ident: Ident,
+    /// The provider trait's name.
     pub provider_ident: Ident,
+    /// The component marker's name.
     pub component_name: IdentWithTypeGenerics,
 }
 

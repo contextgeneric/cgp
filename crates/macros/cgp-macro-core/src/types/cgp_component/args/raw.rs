@@ -9,8 +9,11 @@ use crate::types::ident::IdentWithTypeGenerics;
 /// resolves the defaults via `TryFrom`.
 #[derive(Default)]
 pub struct CgpComponentRawArgs {
+    /// The context identifier, when given.
     pub context_ident: Option<Ident>,
+    /// The provider trait's name, when given.
     pub provider_ident: Option<Ident>,
+    /// The component marker's name, when given.
     pub component_name: Option<IdentWithTypeGenerics>,
 }
 

@@ -14,9 +14,13 @@ use crate::types::path::{PathElement, PathHead};
 /// time; a brace group in the path expands to one key per element.
 #[derive(Debug, Clone)]
 pub struct PathDelegateKey {
+    /// The key's attributes.
     pub attributes: Vec<Attribute>,
+    /// The key's generics.
     pub generics: ImplGenerics,
+    /// The `@` token.
     pub at: At,
+    /// The path head.
     pub path: PathHead,
 }
 

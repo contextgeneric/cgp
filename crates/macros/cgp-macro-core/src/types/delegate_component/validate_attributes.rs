@@ -10,7 +10,9 @@ use crate::types::delegate_component::{
 
     At the moment, no attribute is supported, so all attributes are rejected.
 */
+/// Rejects attributes a construct does not support.
 pub trait ValidateAttributes {
+    /// Rejects the unsupported attributes.
     fn validate_attributes(&self) -> syn::Result<()>;
 }
 

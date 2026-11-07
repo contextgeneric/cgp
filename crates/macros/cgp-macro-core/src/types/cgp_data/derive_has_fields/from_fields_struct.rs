@@ -6,6 +6,7 @@ use syn::{Error, Fields, Ident, ItemImpl, ItemStruct};
 use crate::exports::{Cons, FromFields, Nil};
 use crate::parse_internal;
 
+/// Derives the `FromFields` impl for a struct.
 pub fn derive_from_fields_for_struct(item_struct: &ItemStruct) -> syn::Result<ItemImpl> {
     let struct_name = &item_struct.ident;
     let (impl_generics, type_generics, where_clause) = item_struct.generics.split_for_impl();
@@ -28,6 +29,7 @@ pub fn derive_from_fields_for_struct(item_struct: &ItemStruct) -> syn::Result<It
     Ok(item_impl)
 }
 
+/// Builds the field list and the constructor arguments.
 pub fn derive_from_field_params(fields: &Fields) -> syn::Result<(TokenStream, TokenStream)> {
     match fields {
         Fields::Named(fields) => {

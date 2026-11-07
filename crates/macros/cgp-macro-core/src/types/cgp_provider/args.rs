@@ -15,7 +15,9 @@ use crate::types::keywords::New;
 /// carried in from [`#[cgp_impl(new …)]`](../cgp_impl/lowered.rs).
 #[derive(Clone)]
 pub struct ProviderArgs {
+    /// The `new` keyword, when the provider struct is declared.
     pub new: Option<Keyword<New>>,
+    /// The component override, when given.
     pub component_type: Option<Type>,
 }
 

@@ -8,11 +8,14 @@ use crate::traits::ToTypeParamBounds;
 use crate::types::implicits::ImplicitArgField;
 
 #[derive(Default)]
+/// The `#[implicit]` arguments of a function or impl block.
 pub struct ImplicitArgFields {
+    /// The arguments.
     pub fields: Vec<ImplicitArgField>,
 }
 
 impl ImplicitArgFields {
+    /// Creates the list from its fields.
     pub fn new(fields: Vec<ImplicitArgField>) -> Self {
         Self { fields }
     }
@@ -32,6 +35,7 @@ impl ToTypeParamBounds for ImplicitArgFields {
 }
 
 impl ImplicitArgFields {
+    /// Prepends the field reads to a block.
     pub fn prepend_to_block(&self, block: &mut Block) -> syn::Result<()> {
         let block_statements = core::mem::take(&mut block.stmts);
 
@@ -45,6 +49,7 @@ impl ImplicitArgFields {
         Ok(())
     }
 
+    /// Extracts the implicit arguments from an impl block's methods.
     pub fn extract_from_impl_items(impl_items: &mut [ImplItem]) -> syn::Result<Self> {
         let mut all_fields = Vec::new();
 

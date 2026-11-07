@@ -99,10 +99,12 @@ impl ToTokens for TypeArg {
 /// an empty list always renders as nothing.
 #[derive(Debug, Clone, Default)]
 pub struct TypeArgs {
+    /// The arguments.
     pub args: Punctuated<TypeArg, Comma>,
 }
 
 impl TypeArgs {
+    /// Returns whether the list is empty.
     pub fn is_empty(&self) -> bool {
         self.args.is_empty()
     }

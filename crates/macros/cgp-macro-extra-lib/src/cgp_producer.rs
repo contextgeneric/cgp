@@ -4,6 +4,9 @@ use syn::{Ident, ItemFn, parse2};
 
 use crate::handler_fn::lower_handler_fn;
 
+/// Define a Producer provider from an input-free function, for a computation that takes only a context and a code tag.
+///
+/// See [`cgp_producer`](https://contextgeneric.dev/docs/reference/macros/cgp_producer).
 pub fn cgp_producer(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
     let item_fn: ItemFn = parse2(body)?;
 

@@ -7,11 +7,14 @@ use syn::token::Comma;
 use crate::exports::{Either, Void};
 use crate::functions::parse_internal;
 
+/// The parsed `Sum!` list.
 pub struct SumType {
+    /// The alternatives.
     pub types: Punctuated<Type, Comma>,
 }
 
 impl SumType {
+    /// Expands the list into nested `Either` types.
     pub fn eval(&self) -> syn::Result<Type> {
         let mut out = quote!(#Void);
 

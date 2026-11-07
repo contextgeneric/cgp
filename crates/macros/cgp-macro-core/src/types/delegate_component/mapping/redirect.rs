@@ -12,8 +12,11 @@ use crate::types::path::UniPath;
 /// `Delegate` becomes `RedirectLookup<TableType, Path>`.
 #[derive(Debug, Clone)]
 pub struct RedirectDelegateMapping {
+    /// The key.
     pub key: DelegateKey,
+    /// The `=>` arrow.
     pub arrow: FatArrow,
+    /// The path to redirect along.
     pub value: UniPath,
 }
 

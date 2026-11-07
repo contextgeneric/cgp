@@ -15,15 +15,25 @@ use crate::types::ident::PathWithTypeArgs;
 /// with the table type and a `Delegate =` binding appended.
 #[derive(Debug, Clone)]
 pub struct ForDelegateStatement {
+    /// The `for` keyword.
     pub for_token: For,
+    /// The `<` of the loop's parameters.
     pub lt: Lt,
+    /// The key parameter.
     pub key: Ident,
+    /// The comma between the parameters.
     pub comma: Comma,
+    /// The value parameter.
     pub value: Ident,
+    /// The `>` of the loop's parameters.
     pub gt: Gt,
+    /// The `in` keyword.
     pub in_token: In,
+    /// The table the loop reads from.
     pub namespace: PathWithTypeArgs,
+    /// The loop's optional `where` clause.
     pub where_clause: Option<WhereClause>,
+    /// The mappings the loop emits.
     pub mappings: Punctuated<NormalDelegateMapping, Comma>,
 }
 

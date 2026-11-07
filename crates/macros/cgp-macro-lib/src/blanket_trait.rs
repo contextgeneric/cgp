@@ -3,6 +3,9 @@ use proc_macro2::{Span, TokenStream};
 use quote::quote;
 use syn::{Ident, ItemTrait, parse2};
 
+/// Generate a blanket implementation from a Rust trait with default methods and supertrait dependencies.
+///
+/// See [`blanket_trait`](https://contextgeneric.dev/docs/reference/macros/blanket_trait).
 pub fn blanket_trait(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
     let context_ident: Ident = if attr.is_empty() {
         Ident::new("__Context__", Span::call_site())

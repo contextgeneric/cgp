@@ -19,10 +19,15 @@ use crate::types::handler_fn::EvaluatedHandlerFn;
 /// its inputs rebound as `arg_0, arg_1, …`, its output type, and the two facts
 /// that choose the expansion.
 pub struct PreprocessedCgpComputer {
+    /// The resolved provider name.
     pub provider_ident: Ident,
+    /// The annotated function.
     pub item_fn: ItemFn,
+    /// The function's inputs, rebound as `arg_0`, `arg_1`, and so on.
     pub input_idents: Punctuated<Ident, Comma>,
+    /// The function's input types.
     pub input_types: Punctuated<Type, Comma>,
+    /// The function's output type.
     pub output: Type,
     /// An `async` function implements `AsyncComputer` rather than `Computer`.
     pub is_async: bool,

@@ -7,6 +7,7 @@ use crate::exports::{Cons, Field, Index, Nil};
 use crate::functions::parse_internal;
 use crate::types::field::Symbol;
 
+/// Builds the `Product!` type of a struct's fields.
 pub fn item_fields_to_product_type(fields: &Fields, reference: &TokenStream) -> syn::Result<Type> {
     let mut fields_type = quote! { #Nil };
 

@@ -5,6 +5,7 @@ use syn::{ItemStruct, parse2};
 use crate::keywords::BuildField;
 use crate::types::DeriveMacroSnapshot;
 
+/// Snapshots the expansion of `derive_build_field`.
 pub fn snapshot_derive_build_field(body: TokenStream) -> syn::Result<TokenStream> {
     let item: DeriveMacroSnapshot<BuildField, ItemStruct> = parse2(body)?;
 

@@ -1,6 +1,8 @@
+/// Declares a marker struct that prints a `cgp` item's path when it is quoted.
 #[macro_export]
 macro_rules! export_construct {
     ( $from:ident => $to:ident ) => {
+        #[doc = concat!("A re-export of `", stringify!($to), "`.")]
         pub struct $from;
 
         impl ::quote::ToTokens for $from {
@@ -14,6 +16,7 @@ macro_rules! export_construct {
     };
 }
 
+/// Declares several marker structs with [`export_construct!`].
 #[macro_export]
 macro_rules! export_constructs {
     ( $( $from:ident $( => $to:ident )? ),* $(,)? ) => {

@@ -5,6 +5,7 @@ use crate::exports::ToFieldsRef;
 use crate::parse_internal;
 use crate::types::cgp_data::{FieldLabel, derive_to_fields_constructor};
 
+/// Derives the `ToFieldsRef` impl for a struct.
 pub fn derive_to_fields_ref_for_struct(item_struct: &ItemStruct) -> syn::Result<ItemImpl> {
     let struct_name = &item_struct.ident;
     let (impl_generics, type_generics, where_clause) = item_struct.generics.split_for_impl();

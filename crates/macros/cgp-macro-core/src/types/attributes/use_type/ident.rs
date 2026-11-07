@@ -3,13 +3,18 @@ use syn::token::{As, Eq};
 use syn::{Ident, Type};
 
 #[derive(Clone)]
+/// One imported abstract type, with its optional alias and equality.
 pub struct UseTypeIdent {
+    /// The type's name.
     pub type_ident: Ident,
+    /// The `as` alias, when given.
     pub as_alias: Option<Ident>,
+    /// The `= Type` equality, when given.
     pub equals: Option<Type>,
 }
 
 impl UseTypeIdent {
+    /// The name the type is written as.
     pub fn alias_ident(&self) -> &Ident {
         self.as_alias.as_ref().unwrap_or(&self.type_ident)
     }

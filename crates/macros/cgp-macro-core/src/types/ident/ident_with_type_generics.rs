@@ -9,11 +9,14 @@ use crate::types::ident::TypeGenericParams;
 /// list, e.g. `Foo`, `Foo<A, B>`, or `Bar<'a, C>`.
 #[derive(Debug, Clone)]
 pub struct IdentWithTypeGenerics {
+    /// The identifier.
     pub ident: Ident,
+    /// The definition-site generic parameters.
     pub type_generics: TypeGenericParams,
 }
 
 impl IdentWithTypeGenerics {
+    /// Renders the identifier and its generics as a type.
     pub fn to_type(&self) -> Type {
         parse_quote!(#self)
     }

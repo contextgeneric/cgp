@@ -8,8 +8,11 @@ use crate::exports::PathCons;
 use crate::types::path::PathElement;
 
 #[derive(Debug, Clone)]
+/// A path prefix with a suffix appended.
 pub struct PrefixPath {
+    /// The path's elements.
     pub elements: Punctuated<PathElement, Dot>,
+    /// The type appended after the elements.
     pub suffix: Type,
 }
 

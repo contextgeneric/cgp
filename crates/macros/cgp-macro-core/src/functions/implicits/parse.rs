@@ -8,6 +8,7 @@ use syn::{Attribute, FnArg, Meta, Pat, PatIdent, PatType, Receiver};
 use crate::functions::parse_field_type_with;
 use crate::types::implicits::{ImplicitArgField, ImplicitArgFields};
 
+/// Extracts the `#[implicit]` arguments and parses them into fields.
 pub fn extract_and_parse_implicit_args(
     args: &mut Punctuated<FnArg, Comma>,
 ) -> syn::Result<ImplicitArgFields> {
@@ -49,6 +50,7 @@ pub fn extract_and_parse_implicit_args(
     Ok(ImplicitArgFields::new(implicit_args))
 }
 
+/// Parses one `#[implicit]` argument into a field.
 pub fn parse_implicit_arg(receiver: &Receiver, arg: &PatType) -> syn::Result<ImplicitArgField> {
     let Pat::Ident(pat_ident) = &*arg.pat else {
         return Err(syn::Error::new_spanned(&arg.pat, "Expected an identifier"));
@@ -82,6 +84,7 @@ pub fn parse_implicit_arg(receiver: &Receiver, arg: &PatType) -> syn::Result<Imp
     Ok(spec)
 }
 
+/// Removes the `#[implicit]` arguments from a signature and returns them.
 pub fn extract_implicit_args(args: &mut Punctuated<FnArg, Comma>) -> syn::Result<Vec<PatType>> {
     let mut implicit_args = Vec::new();
 
@@ -102,6 +105,7 @@ pub fn extract_implicit_args(args: &mut Punctuated<FnArg, Comma>) -> syn::Result
     Ok(implicit_args)
 }
 
+/// Returns whether an argument carries `#[implicit]`, rejecting a malformed form.
 pub fn is_implicit_arg(arg: &mut PatType) -> syn::Result<bool> {
     let mut res = false;
 
@@ -128,6 +132,7 @@ pub fn is_implicit_arg(arg: &mut PatType) -> syn::Result<bool> {
     Ok(res)
 }
 
+/// Returns whether an attribute is the bare `#[implicit]` marker.
 pub fn is_implicit_attr(attr: &Attribute) -> bool {
     match &attr.meta {
         Meta::Path(path) => path.is_ident("implicit"),
@@ -135,6 +140,7 @@ pub fn is_implicit_attr(attr: &Attribute) -> bool {
     }
 }
 
+/// Returns whether a pattern binds a mutable variable.
 pub fn has_mut_pattern(pat: &Pat) -> bool {
     let mut checker = MutChecker { has_mut: false };
     checker.visit_pat(pat);

@@ -9,9 +9,13 @@ use crate::functions::{
 /// The flat form every key, value, and statement collapses to; it renders the
 /// impl pair for one wiring entry.
 pub struct EvaluatedDelegateEntry {
+    /// The table type.
     pub table_type: Type,
+    /// The entry's generics.
     pub generics: Generics,
+    /// The component key.
     pub key: Type,
+    /// The provider value.
     pub value: Type,
     /// The span the entry's impls are re-spanned onto, so a coherence conflict is
     /// reported on the entry the user wrote. Sourced from the key's original token
@@ -31,18 +35,23 @@ pub struct EvaluatedDelegateEntry {
 }
 
 /// Lower a construct into a single evaluated entry.
+/// Lowers a construct into a single evaluated entry.
 pub trait EvalDelegateEntry {
+    /// Lowers the construct.
     fn eval_entry(&self, table_type: &Type) -> syn::Result<EvaluatedDelegateEntry>;
 }
 
 /// Lower a construct into a flat list of evaluated entries (a key or statement
 /// may expand to several).
+/// Lowers a construct into a flat list of evaluated entries.
 pub trait EvalDelegateEntries {
+    /// Lowers the construct.
     fn eval_entries(&self, table_type: &Type) -> syn::Result<Vec<EvaluatedDelegateEntry>>;
 }
 
 impl EvaluatedDelegateEntry {
     /// Emit `impl DelegateComponent<Key> for TableType { type Delegate = Value; }`.
+    /// Emits the `DelegateComponent` impl for the entry.
     pub fn build_delegate_component_impl(
         &self,
         outer_generics: &Generics,
@@ -80,6 +89,7 @@ impl EvaluatedDelegateEntry {
     /// transitive dependency stays diagnosable. `__Params__` is `?Sized`, as on
     /// the trait, so a component used at an unsized parameter (`str`, making the
     /// params tuple `(Life<'a>, str)` unsized) still resolves through the table.
+    /// Emits the forwarding `IsProviderFor` impl for the entry.
     pub fn build_is_provider_for_impl(&self, outer_generics: &Generics) -> syn::Result<ItemImpl> {
         let table_type = &self.table_type;
 
@@ -149,6 +159,7 @@ impl EvaluatedDelegateEntry {
 
     /// Emit `impl namespace_trait for Key { type Delegate = Value; }`, used by
     /// the namespace preset machinery instead of a direct `DelegateComponent` impl.
+    /// Emits the namespace trait impl for the entry.
     pub fn build_namespace_impl(
         &self,
         namespace_trait: &Type,

@@ -6,6 +6,7 @@ use syn::{Error, Fields, Ident, ItemImpl, ItemStruct, LitInt};
 use crate::exports::{Cons, Nil, ToFields};
 use crate::parse_internal;
 
+/// Derives the `ToFields` impl for a struct.
 pub fn derive_to_fields_for_struct(item_struct: &ItemStruct) -> syn::Result<ItemImpl> {
     let struct_name = &item_struct.ident;
     let (impl_generics, type_generics, where_clause) = item_struct.generics.split_for_impl();
@@ -36,9 +37,13 @@ pub fn derive_to_fields_for_struct(item_struct: &ItemStruct) -> syn::Result<Item
     Ok(item_impl)
 }
 
+/// A field's label in a struct's shape.
 pub enum FieldLabel {
+    /// A named field.
     Named(Ident),
+    /// A tuple field.
     Unnamed(LitInt),
+    /// A single-field tuple struct.
     None,
 }
 
@@ -52,6 +57,7 @@ impl ToTokens for FieldLabel {
     }
 }
 
+/// Builds the constructor that turns a struct into its field list.
 pub fn derive_to_fields_constructor(
     fields: &Fields,
     construct_field: impl Fn(FieldLabel) -> TokenStream,

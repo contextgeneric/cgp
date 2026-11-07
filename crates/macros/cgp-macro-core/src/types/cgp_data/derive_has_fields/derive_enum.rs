@@ -10,6 +10,7 @@ use crate::types::cgp_data::{
     variants_to_sum_type,
 };
 
+/// Derives the `HasFields` impls for an enum.
 pub fn derive_has_fields_impls_from_enum(item_enum: &ItemEnum) -> syn::Result<Vec<ItemImpl>> {
     let struct_name = &item_enum.ident;
     let (impl_generics, type_generics, where_clause) = item_enum.generics.split_for_impl();

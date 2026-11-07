@@ -4,6 +4,7 @@ use syn::parse2;
 use crate::keywords::DelegateComponents;
 use crate::types::StatementMacroSnapshot;
 
+/// Snapshots the expansion of `delegate_components`.
 pub fn snapshot_delegate_components(body: TokenStream) -> syn::Result<TokenStream> {
     let item: StatementMacroSnapshot<DelegateComponents> = parse2(body)?;
 

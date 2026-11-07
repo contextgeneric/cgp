@@ -5,6 +5,7 @@ use syn::{ItemImpl, parse2};
 use crate::keywords::CgpNewProvider;
 use crate::types::AttributeMacroSnapshot;
 
+/// Snapshots the expansion of `cgp_new_provider`.
 pub fn snapshot_cgp_new_provider(body: TokenStream) -> syn::Result<TokenStream> {
     let item: AttributeMacroSnapshot<CgpNewProvider, ItemImpl> = parse2(body)?;
 

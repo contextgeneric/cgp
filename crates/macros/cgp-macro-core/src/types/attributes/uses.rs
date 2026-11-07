@@ -8,8 +8,10 @@ use crate::traits::ToTypeParamBounds;
 /// `Self`. Each import is a full [`syn::TypeParamBound`], so an associated-type
 /// binding (`HasErrorType<Error = anyhow::Error>`), an HRTB, or a lifetime bound
 /// is accepted in addition to the plain `Trait<Params>` form.
+/// The `#[uses]` imports of a function or impl block.
 #[derive(Default)]
 pub struct UsesAttributes {
+    /// The imported bounds.
     pub imports: Vec<TypeParamBound>,
 }
 

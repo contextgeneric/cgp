@@ -3,6 +3,9 @@ use proc_macro2::TokenStream;
 use quote::quote;
 use syn::parse2;
 
+/// Wire a context and check that wiring in one macro, for getting started and for plain Component: Provider tables. Wrong for an aggregate provider.
+///
+/// See [`delegate_and_check_components`](https://contextgeneric.dev/docs/reference/macros/delegate_and_check_components).
 pub fn delegate_and_check_components(body: TokenStream) -> syn::Result<TokenStream> {
     let item: ItemDelegateAndCheckComponents = parse2(body)?;
 

@@ -9,6 +9,7 @@ use crate::functions::parse_internal;
 use crate::types::cgp_data::item_fields_to_product_type;
 use crate::types::field::Symbol;
 
+/// Builds the `Sum!` type of an enum's variants.
 pub fn variants_to_sum_type(
     variants: &Punctuated<Variant, Comma>,
     reference: &TokenStream,

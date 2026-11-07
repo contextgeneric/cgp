@@ -8,13 +8,17 @@ use crate::types::empty_struct::EmptyStruct;
 /// attributes, carrying the methods that derive the provider trait, the blanket
 /// impls, and the component marker.
 pub struct PreprocessedCgpComponent {
+    /// The component's arguments.
     pub args: CgpComponentArgs,
+    /// The annotated trait.
     pub item_trait: ItemTrait,
+    /// The trait's modifier attributes.
     pub attributes: CgpComponentAttributes,
 }
 
 impl PreprocessedCgpComponent {
     /// Build the zero-sized `{Provider}Component` marker struct.
+    /// Builds the component marker struct.
     pub fn to_component_struct(&self) -> EmptyStruct {
         let component_name = &self.args.component_name;
         let consumer_trait = &self.item_trait.ident;
@@ -27,6 +31,7 @@ impl PreprocessedCgpComponent {
 
     /// Derive the marker struct, provider trait, and both blanket impls, yielding
     /// the final stage.
+    /// Derives the component's items.
     pub fn eval(&self) -> syn::Result<EvaluatedCgpComponent> {
         let component_struct = self.to_component_struct();
 

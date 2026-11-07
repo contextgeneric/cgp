@@ -9,8 +9,11 @@ use crate::traits::ToType;
 use crate::types::field::Symbol;
 
 #[derive(Debug, Clone)]
+/// One segment of a type-level path.
 pub enum PathElement {
+    /// A type segment.
     Type(Type),
+    /// A symbol segment.
     Symbol(Symbol),
 }
 

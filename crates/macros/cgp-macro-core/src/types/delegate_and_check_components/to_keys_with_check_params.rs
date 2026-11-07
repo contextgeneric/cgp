@@ -4,7 +4,9 @@ use crate::types::delegate_component::{
     ValidateAttributes,
 };
 
+/// Converts a construct into keys paired with their check control.
 pub trait ToKeysWithCheckParams {
+    /// The keys and their check control.
     fn to_keys_with_check_params(&self) -> syn::Result<Vec<KeyWithCheckParams>>;
 }
 

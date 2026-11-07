@@ -3,11 +3,14 @@ use syn::parse::{Parse, ParseStream};
 
 use crate::types::check_components::CheckComponentsTable;
 
+/// The parsed `check_components!` tables.
 pub struct CheckComponentsTables {
+    /// The tables.
     pub tables: Vec<CheckComponentsTable>,
 }
 
 impl CheckComponentsTables {
+    /// Generates the items for every table.
     pub fn to_items(&self) -> syn::Result<Vec<Item>> {
         let mut items = Vec::new();
 

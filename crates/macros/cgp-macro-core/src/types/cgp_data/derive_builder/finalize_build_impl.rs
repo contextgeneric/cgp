@@ -8,6 +8,7 @@ use crate::functions::override_item_span;
 use crate::parse_internal;
 use crate::types::cgp_data::{field_to_member, field_value_expr, to_generic_args};
 
+/// Derives the `FinalizeBuild` impl for a builder.
 pub fn derive_finalize_build_impl(
     context_struct: &ItemStruct,
     builder_ident: &Ident,

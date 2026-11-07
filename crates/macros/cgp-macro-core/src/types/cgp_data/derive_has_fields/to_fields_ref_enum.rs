@@ -5,6 +5,7 @@ use crate::exports::{HasFieldsRef, ToFieldsRef};
 use crate::functions::parse_internal;
 use crate::types::cgp_data::derive_to_fields_match_arms;
 
+/// Derives the `ToFieldsRef` impl for an enum.
 pub fn derive_to_fields_ref_for_enum(item_enum: &ItemEnum) -> syn::Result<ItemImpl> {
     let struct_name = &item_enum.ident;
     let (impl_generics, type_generics, where_clause) = item_enum.generics.split_for_impl();

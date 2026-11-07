@@ -5,6 +5,7 @@ use syn::token::Plus;
 use syn::visit_mut::{VisitMut, visit_type_mut, visit_type_param_bound_mut};
 use syn::{Ident, TraitItemType, Type, TypeParamBound, parse_quote};
 
+/// Returns an associated type's bounds with `Self::Type` replaced by `Type`.
 pub fn get_bounds_and_replace_self_assoc_type(
     item_type: &TraitItemType,
 ) -> Punctuated<TypeParamBound, Plus> {
@@ -20,7 +21,9 @@ pub fn get_bounds_and_replace_self_assoc_type(
     bounds
 }
 
+/// Replaces `Self::Type` with `Type` in a bound.
 pub struct ReplaceSelfAssocTypeVisitor {
+    /// The associated type's name.
     pub type_ident: Ident,
 }
 

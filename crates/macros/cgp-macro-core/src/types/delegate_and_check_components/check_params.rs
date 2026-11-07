@@ -4,13 +4,18 @@ use syn::token::Comma;
 use syn::{Attribute, Error, Type};
 
 #[derive(Clone)]
+/// The `#[check_params]` or `#[skip_check]` attribute on an entry.
 pub enum CheckParamsAttribute {
+    /// No attribute.
     Default,
+    /// `#[skip_check]`.
     Skip,
+    /// `#[check_params(...)]`.
     Multi(Punctuated<Type, Comma>),
 }
 
 impl CheckParamsAttribute {
+    /// Merges two attributes, rejecting a skip combined with params.
     pub fn merge(&self, other: &Self) -> syn::Result<Self> {
         let res = match (self, other) {
             (Self::Default, other) => other.clone(),
@@ -30,6 +35,7 @@ impl CheckParamsAttribute {
         Ok(res)
     }
 
+    /// Parses the entry's check attribute.
     pub fn parse_attributes(attributes: &[Attribute]) -> syn::Result<Self> {
         if attributes.is_empty() {
             return Ok(Self::Default);

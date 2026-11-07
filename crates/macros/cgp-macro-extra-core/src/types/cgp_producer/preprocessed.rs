@@ -15,8 +15,11 @@ use crate::types::handler_fn::EvaluatedHandlerFn;
 /// The validated `#[cgp_producer]` input: the resolved provider name, the
 /// function, and its output type.
 pub struct PreprocessedCgpProducer {
+    /// The resolved provider name.
     pub provider_ident: Ident,
+    /// The annotated function.
     pub item_fn: ItemFn,
+    /// The function's output type.
     pub output: Type,
 }
 

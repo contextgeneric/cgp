@@ -6,13 +6,18 @@ use syn::{Ident, LitStr, braced, parenthesized};
 
 use crate::functions::pretty_format;
 
+/// The test name, the identifier the snapshot is bound to, and the assertion.
 pub struct MacroSnapshot {
+    /// The generated test's name.
     pub test_name: Ident,
+    /// The identifier the snapshot string is bound to.
     pub arg_ident: Ident,
+    /// The assertion that checks the snapshot.
     pub expr: TokenStream,
 }
 
 impl MacroSnapshot {
+    /// Wraps the generated code and a test that pins its formatted form.
     pub fn wrap_output(&self, output: TokenStream) -> syn::Result<TokenStream> {
         let Self {
             test_name,

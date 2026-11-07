@@ -12,6 +12,7 @@ use crate::parse_internal;
 use crate::types::cgp_getter::{GetterField, ReceiverMode};
 use crate::visitors::ReplaceSelfTypeVisitor;
 
+/// Parses a getter trait's methods into fields and an optional associated type.
 pub fn parse_getter_fields(
     context_type: &Ident,
     consumer_trait: &ItemTrait,

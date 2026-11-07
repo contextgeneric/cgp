@@ -5,6 +5,9 @@ use syn::{Error, ItemTrait, parse2};
 
 use crate::handler_fn::lower_handler_fn;
 
+/// Generate a handler that dispatches over an extensible-data input from a per-type trait, routing each variant to its own implementation.
+///
+/// See [`cgp_auto_dispatch`](https://contextgeneric.dev/docs/reference/macros/cgp_auto_dispatch).
 pub fn cgp_auto_dispatch(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
     if !attr.is_empty() {
         return Err(Error::new_spanned(

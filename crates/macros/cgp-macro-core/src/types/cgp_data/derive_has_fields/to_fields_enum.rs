@@ -9,6 +9,7 @@ use crate::exports::{Either, HasFields, ToFields};
 use crate::functions::parse_internal;
 use crate::types::cgp_data::{FieldLabel, derive_to_fields_constructor};
 
+/// Derives the `ToFields` impl for an enum.
 pub fn derive_to_fields_for_enum(item_enum: &ItemEnum) -> syn::Result<ItemImpl> {
     let enum_name = &item_enum.ident;
     let (impl_generics, type_generics, where_clause) = item_enum.generics.split_for_impl();
@@ -33,6 +34,7 @@ pub fn derive_to_fields_for_enum(item_enum: &ItemEnum) -> syn::Result<ItemImpl> 
     parse_internal(item_impl)
 }
 
+/// Builds the match arms that turn each variant into its field list.
 pub fn derive_to_fields_match_arms(
     variants: &Punctuated<Variant, Comma>,
 ) -> syn::Result<TokenStream> {
@@ -82,6 +84,7 @@ pub fn derive_to_fields_match_arms(
     Ok(match_arms)
 }
 
+/// Builds the pattern that binds a variant's fields.
 pub fn extract_variant_args(fields: &Fields) -> syn::Result<TokenStream> {
     match fields {
         Fields::Named(fields) => {

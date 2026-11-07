@@ -4,9 +4,13 @@ use syn::ItemImpl;
 
 use crate::types::empty_struct::EmptyStruct;
 
+/// The lowered `#[cgp_provider]` items.
 pub struct LoweredCgpProvider {
+    /// The provider impl.
     pub item_impl: ItemImpl,
+    /// The `IsProviderFor` impl.
     pub is_provider_for_impl: ItemImpl,
+    /// The provider struct, when declared.
     pub provider_struct: Option<EmptyStruct>,
 }
 

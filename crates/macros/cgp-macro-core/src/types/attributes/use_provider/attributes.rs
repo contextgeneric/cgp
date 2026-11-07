@@ -4,7 +4,9 @@ use crate::traits::AddTypeParamBounds;
 use crate::types::attributes::UseProviderAttribute;
 
 #[derive(Default)]
+/// The `#[use_provider]` imports of a function or impl block.
 pub struct UseProviderAttributes {
+    /// The imports.
     pub attributes: Vec<UseProviderAttribute>,
 }
 

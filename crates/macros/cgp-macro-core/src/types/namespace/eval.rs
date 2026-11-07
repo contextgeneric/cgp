@@ -4,9 +4,13 @@ use syn::{ItemImpl, ItemStruct, ItemTrait};
 
 use crate::types::empty_struct::EmptyStruct;
 
+/// The evaluated `cgp_namespace!` table.
 pub struct EvaluatedNamespaceTable {
+    /// The generated impls.
     pub item_impls: Vec<ItemImpl>,
+    /// The namespace trait, when declared.
     pub item_trait: Option<ItemTrait>,
+    /// The namespace struct, when declared.
     pub item_struct: Option<ItemStruct>,
     /// The structs declared for nested `Wrapper<new Inner { … }>` values lifted out
     /// of the body, mirroring `EvaluatedDelegateTable::item_structs`. Their

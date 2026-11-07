@@ -3,6 +3,9 @@ use proc_macro2::{Span, TokenStream};
 use quote::quote;
 use syn::{Error, ItemTrait};
 
+/// Define a getter as a blanket implementation over HasField, keyed by the method name, for reading a field from any context that has one.
+///
+/// See [`cgp_auto_getter`](https://contextgeneric.dev/docs/reference/macros/cgp_auto_getter).
 pub fn cgp_auto_getter(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
     if !attr.is_empty() {
         return Err(Error::new(

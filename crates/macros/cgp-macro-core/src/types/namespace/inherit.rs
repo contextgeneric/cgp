@@ -5,8 +5,11 @@ use crate::types::delegate_component::{EvalForEntry, EvaluatedForEntry};
 use crate::types::ident::PathWithTypeArgs;
 
 #[derive(Debug, Clone)]
+/// A namespace's inheritance from its parent.
 pub struct InheritNamespaceStatement {
+    /// The parent namespace.
     pub namespace: PathWithTypeArgs,
+    /// The local table's name.
     pub local_table_ident: Ident,
 }
 

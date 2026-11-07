@@ -4,6 +4,9 @@ use proc_macro2::TokenStream;
 use quote::quote;
 use syn::{Ident, ItemTrait, parse2};
 
+/// Define an abstract-type component whose concrete type each context chooses for itself, for an error type, a runtime, or any type generic code has to name.
+///
+/// See [`cgp_type`](https://contextgeneric.dev/docs/reference/macros/cgp_type).
 pub fn cgp_type(attrs: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
     let mut raw_args: CgpComponentRawArgs = parse2(attrs.clone())?;
 

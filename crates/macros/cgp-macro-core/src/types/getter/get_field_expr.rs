@@ -6,9 +6,13 @@ use syn::token::Mut;
 use crate::exports::{HasField, HasFieldMut};
 use crate::types::field::FieldName;
 
+/// A fully qualified field read.
 pub struct GetFieldExpr {
+    /// The receiver.
     pub receiver: Expr,
+    /// The `mut` of a mutable read.
     pub field_mut: Option<Mut>,
+    /// The field's name.
     pub field_name: FieldName,
 }
 

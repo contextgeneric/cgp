@@ -4,6 +4,9 @@ use syn::{Ident, ItemFn, parse2};
 
 use crate::handler_fn::lower_handler_fn;
 
+/// Define a Computer provider from a plain Rust function, with the promotion tables that let one function answer the rest of the handler family.
+///
+/// See [`cgp_computer`](https://contextgeneric.dev/docs/reference/macros/cgp_computer).
 pub fn cgp_computer(attr: TokenStream, body: TokenStream) -> syn::Result<TokenStream> {
     let item_fn: ItemFn = parse2(body)?;
 

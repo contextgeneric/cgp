@@ -14,8 +14,11 @@ use crate::types::keywords::New;
 /// out to become its own struct and impls.
 #[derive(Debug, Clone)]
 pub struct DelegateValueWithInnerTable {
+    /// The `new` keyword.
     pub new: Keyword<New>,
+    /// The wrapper provider's name.
     pub wrapper_ident: Ident,
+    /// The nested table.
     pub inner_table: InnerDelegateTable,
 }
 

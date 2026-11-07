@@ -3,6 +3,7 @@
 //! `impl Future`.
 //!
 //! See [`#[async_trait]`](https://contextgeneric.dev/docs/reference/macros/async_trait).
+#![warn(missing_docs)]
 
 extern crate alloc;
 extern crate proc_macro;

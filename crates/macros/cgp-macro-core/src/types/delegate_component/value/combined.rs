@@ -10,7 +10,9 @@ use crate::types::delegate_component::{
 /// a legacy `Wrapper<new Inner { .. }>` value that opens a nested table.
 #[derive(Debug, Clone)]
 pub enum DelegateValue {
+    /// A plain provider type.
     Type(Type),
+    /// A legacy nested table.
     WithTable(DelegateValueWithInnerTable),
 }
 

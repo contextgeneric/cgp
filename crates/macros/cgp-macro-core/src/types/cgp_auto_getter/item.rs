@@ -5,16 +5,20 @@ use crate::functions::parse_getter_fields;
 use crate::types::attributes::CgpComponentAttributes;
 use crate::types::cgp_auto_getter::derive_blanket_impl;
 
+/// The parsed `#[cgp_auto_getter]` input.
 pub struct ItemCgpAutoGetter {
+    /// The annotated trait.
     pub item_trait: ItemTrait,
 }
 
 impl ItemCgpAutoGetter {
+    /// Parses the trait's attributes.
     pub fn preprocess(item_trait: &ItemTrait) -> syn::Result<Self> {
         let (_attributes, item_trait) = CgpComponentAttributes::preprocess(item_trait)?;
         Ok(Self { item_trait })
     }
 
+    /// Emits the trait and its blanket impl.
     pub fn to_items(&self) -> syn::Result<Vec<Item>> {
         let item_trait = self.item_trait.clone().into();
         let item_impl = self.to_blanket_impl()?.into();
@@ -22,6 +26,7 @@ impl ItemCgpAutoGetter {
         Ok(vec![item_trait, item_impl])
     }
 
+    /// Emits the blanket impl over `HasField`.
     pub fn to_blanket_impl(&self) -> syn::Result<ItemImpl> {
         let context_type = Ident::new("__Context__", Span::call_site());
 

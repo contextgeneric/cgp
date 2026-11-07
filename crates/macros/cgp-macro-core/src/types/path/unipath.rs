@@ -9,7 +9,9 @@ use crate::exports::{Nil, PathCons};
 use crate::types::path::{PathElement, PrefixPath};
 
 #[derive(Debug, Clone, Default)]
+/// A type-level path.
 pub struct UniPath {
+    /// The path's elements.
     pub elements: Punctuated<PathElement, Dot>,
 }
 
@@ -22,10 +24,12 @@ impl FromIterator<PathElement> for UniPath {
 }
 
 impl UniPath {
+    /// Appends a type to the path.
     pub fn append_type(&mut self, ty: Type) {
         self.elements.push(PathElement::Type(ty));
     }
 
+    /// Appends a suffix type to the path.
     pub fn to_prefix(self, suffix: Type) -> PrefixPath {
         PrefixPath {
             elements: self.elements,

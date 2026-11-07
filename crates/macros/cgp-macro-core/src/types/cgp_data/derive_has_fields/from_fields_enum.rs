@@ -5,6 +5,7 @@ use crate::exports::{Either, FromFields, HasFields};
 use crate::functions::parse_internal;
 use crate::types::cgp_data::derive_from_field_params;
 
+/// Derives the `FromFields` impl for an enum.
 pub fn derive_from_fields_for_enum(item_enum: &ItemEnum) -> syn::Result<ItemImpl> {
     let enum_name = &item_enum.ident;
     let (impl_generics, type_generics, where_clause) = item_enum.generics.split_for_impl();

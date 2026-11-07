@@ -231,6 +231,7 @@ fn try_parse_option_ref(type_path: &TypePath) -> Option<&TypeReference> {
     None
 }
 
+/// Requires a type path to have exactly one segment and returns it.
 pub fn parse_single_segment_type_path(type_path: &TypePath) -> syn::Result<&PathSegment> {
     let [segment]: [&PathSegment; 1] = type_path
         .path

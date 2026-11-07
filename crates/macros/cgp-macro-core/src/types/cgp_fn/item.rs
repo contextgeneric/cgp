@@ -4,12 +4,16 @@ use crate::functions::{extract_and_parse_implicit_args, to_camel_case_str};
 use crate::types::attributes::FunctionAttributes;
 use crate::types::cgp_fn::PreprocessedItemCgpFn;
 
+/// The parsed `#[cgp_fn]` input.
 pub struct ItemCgpFn {
+    /// The trait name from the attribute, if given.
     pub ident: Option<Ident>,
+    /// The annotated function.
     pub item_fn: ItemFn,
 }
 
 impl ItemCgpFn {
+    /// Extracts the implicits and attributes and resolves the trait name.
     pub fn preprocess(&self) -> syn::Result<PreprocessedItemCgpFn> {
         let mut item_fn = self.item_fn.clone();
 

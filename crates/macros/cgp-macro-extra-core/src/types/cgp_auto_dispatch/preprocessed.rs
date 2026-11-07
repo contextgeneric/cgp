@@ -8,7 +8,9 @@ use crate::types::cgp_auto_dispatch::{DispatchMethod, EvaluatedCgpAutoDispatch};
 /// The checked `#[cgp_auto_dispatch]` input: the trait and one
 /// [`DispatchMethod`] per method.
 pub struct PreprocessedCgpAutoDispatch {
+    /// The annotated trait.
     pub item_trait: ItemTrait,
+    /// One entry per method.
     pub methods: Vec<DispatchMethod>,
 }
 

@@ -8,11 +8,14 @@ use crate::types::cgp_data::{
     derive_has_fields_impls_from_enum, derive_partial_data_impl_from_enum,
 };
 
+/// The parsed `#[derive(CgpVariant)]` input.
 pub struct ItemCgpVariant {
+    /// The annotated enum.
     pub item_enum: ItemEnum,
 }
 
 impl ItemCgpVariant {
+    /// Emits the variant's items.
     pub fn to_items(&self) -> syn::Result<Vec<Item>> {
         let has_fields = self.to_has_fields_impls()?;
         let from_variant_impls = self.to_from_variant_impls()?;
@@ -27,14 +30,17 @@ impl ItemCgpVariant {
         Ok(items)
     }
 
+    /// Emits the `FromVariant` impls.
     pub fn to_from_variant_impls(&self) -> syn::Result<Vec<ItemImpl>> {
         derive_from_variant_from_enum(&self.item_enum)
     }
 
+    /// Emits the `HasFields` impls.
     pub fn to_has_fields_impls(&self) -> syn::Result<Vec<ItemImpl>> {
         derive_has_fields_impls_from_enum(&self.item_enum)
     }
 
+    /// Emits the extractor and its impls.
     pub fn to_extract_field_items(&self) -> syn::Result<Vec<Item>> {
         let item_enum = &self.item_enum;
 

@@ -14,11 +14,17 @@ use crate::types::keyword::Keyword;
 use crate::types::keywords::New;
 use crate::types::namespace::{EvaluatedNamespaceTable, InheritNamespaceStatement};
 
+/// The parsed `cgp_namespace!` table.
 pub struct NamespaceTable {
+    /// The namespace's generic parameters.
     pub impl_generics: ImplGenerics,
+    /// The `new` keyword, when the namespace declares its struct.
     pub new: Option<Keyword<New>>,
+    /// The namespace's name and arguments.
     pub namespace: IdentWithTypeArgs,
+    /// The parent namespace, when the namespace inherits one.
     pub parent_namespace: Option<(Colon, PathWithTypeArgs)>,
+    /// The namespace's wiring entries.
     pub entries: DelegateEntries,
 }
 
@@ -93,6 +99,7 @@ fn reject_self_inheritance(
 }
 
 impl NamespaceTable {
+    /// Builds the namespace trait's type with the table parameter.
     pub fn build_namespace_trait(&self) -> syn::Result<Type> {
         let mut namespace = self.namespace.clone();
 
@@ -102,6 +109,7 @@ impl NamespaceTable {
         Ok(namespace_trait)
     }
 
+    /// Builds the namespace trait, when the namespace declares one.
     pub fn build_item_trait(&self) -> syn::Result<Option<ItemTrait>> {
         let namespace_trait = self.build_namespace_trait()?;
 
@@ -126,6 +134,7 @@ impl NamespaceTable {
         Ok(item_trait)
     }
 
+    /// Builds the namespace trait's impls, one per entry.
     pub fn build_item_impls(&self) -> syn::Result<Vec<ItemImpl>> {
         let mut impl_generics = self.impl_generics.clone();
         impl_generics.params.push(parse_internal!(__Table__));
@@ -147,6 +156,7 @@ impl NamespaceTable {
         Ok(item_impls)
     }
 
+    /// Builds the namespace's marker struct, when it declares one.
     pub fn build_namespace_struct(&self) -> syn::Result<Option<ItemStruct>> {
         if self.new.is_none() {
             return Ok(None);
@@ -168,6 +178,7 @@ impl NamespaceTable {
         Ok(Some(namespace_struct))
     }
 
+    /// Builds the impl that inherits the parent namespace's entries.
     pub fn build_parent_namespace_impl(&self) -> syn::Result<Option<ItemImpl>> {
         let Some((_, parent_namespace)) = &self.parent_namespace else {
             return Ok(None);
@@ -200,6 +211,7 @@ impl NamespaceTable {
         Ok(Some(item_impl))
     }
 
+    /// Evaluates the table into its generated items.
     pub fn eval(&self) -> syn::Result<EvaluatedNamespaceTable> {
         let item_trait = self.build_item_trait()?;
         let mut item_impls = self.build_item_impls()?;

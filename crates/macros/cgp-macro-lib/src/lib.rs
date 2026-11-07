@@ -1,6 +1,7 @@
 //! This crate implements CGP's procedural macros, one module per macro.
 //!
 //! See [`#[cgp_component]`](https://contextgeneric.dev/docs/reference/macros/cgp_component), [`#[cgp_impl]`](https://contextgeneric.dev/docs/reference/macros/cgp_impl), and [`delegate_components!`](https://contextgeneric.dev/docs/reference/macros/delegate_components).
+#![warn(missing_docs)]
 
 mod blanket_trait;
 mod cgp_auto_getter;

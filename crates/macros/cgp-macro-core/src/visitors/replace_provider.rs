@@ -10,6 +10,7 @@ use syn::{
 
 use crate::exports::IsProviderFor;
 
+/// Replaces each provider parameter with its concrete type in the bounds.
 pub fn replace_provider_in_generics(provider_map: &BTreeMap<Ident, Type>, generics: &mut Generics) {
     let mut visitor = ReplaceProviderVisitor { provider_map };
     visit_generics_mut(&mut visitor, generics);

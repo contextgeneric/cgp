@@ -2,6 +2,7 @@ use syn::punctuated::Punctuated;
 use syn::token::Comma;
 use syn::{Generics, WhereClause, WherePredicate};
 
+/// Merges two generic parameter lists and their `where` clauses.
 pub fn merge_generics(generics_a: &Generics, generics_b: &Generics) -> Generics {
     let mut params = generics_a.params.clone();
     params.extend(generics_b.params.clone());

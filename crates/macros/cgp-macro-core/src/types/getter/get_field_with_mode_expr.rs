@@ -3,8 +3,11 @@ use quote::ToTokens;
 
 use crate::types::getter::{FieldMode, GetFieldExpr};
 
+/// A field read with its conversion applied.
 pub struct GetFieldWithModeExpr {
+    /// The field read.
     pub get_field: GetFieldExpr,
+    /// The conversion to apply.
     pub field_mode: FieldMode,
 }
 

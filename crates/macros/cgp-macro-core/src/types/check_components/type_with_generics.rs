@@ -5,8 +5,11 @@ use syn::token::Lt;
 use crate::types::generics::ImplGenerics;
 
 #[derive(Clone)]
+/// A type with its own generics.
 pub struct TypeWithGenerics {
+    /// The type.
     pub ty: Type,
+    /// The type's generics.
     pub generics: ImplGenerics,
 }
 

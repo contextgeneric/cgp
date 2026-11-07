@@ -4,6 +4,7 @@ use syn::parse2;
 use crate::keywords::CgpNamespace;
 use crate::types::StatementMacroSnapshot;
 
+/// Snapshots the expansion of `cgp_namespace`.
 pub fn snapshot_cgp_namespace(body: TokenStream) -> syn::Result<TokenStream> {
     let item: StatementMacroSnapshot<CgpNamespace> = parse2(body)?;
 

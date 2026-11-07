@@ -5,6 +5,7 @@ use syn::{ItemEnum, parse2};
 use crate::keywords::FromVariant;
 use crate::types::DeriveMacroSnapshot;
 
+/// Snapshots the expansion of `derive_from_variant`.
 pub fn snapshot_derive_from_variant(body: TokenStream) -> syn::Result<TokenStream> {
     let item: DeriveMacroSnapshot<FromVariant, ItemEnum> = parse2(body)?;
 

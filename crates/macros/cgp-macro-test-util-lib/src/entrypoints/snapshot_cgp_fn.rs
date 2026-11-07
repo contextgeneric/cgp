@@ -5,6 +5,7 @@ use syn::{ItemFn, parse2};
 use crate::keywords::CgpFn;
 use crate::types::AttributeMacroSnapshot;
 
+/// Snapshots the expansion of `cgp_fn`.
 pub fn snapshot_cgp_fn(body: TokenStream) -> syn::Result<TokenStream> {
     let item: AttributeMacroSnapshot<CgpFn, ItemFn> = parse2(body)?;
 

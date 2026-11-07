@@ -8,13 +8,18 @@ use crate::types::ident::{IdentWithTypeGenerics, PathWithTypeArgs};
 use crate::types::path::UniPath;
 
 #[derive(Clone)]
+/// One `#[prefix]` registration.
 pub struct PrefixAttribute {
+    /// The path the component registers under.
     pub path: UniPath,
+    /// The `in` keyword.
     pub _in_token: In,
+    /// The namespace the component registers into.
     pub namespace: PathWithTypeArgs,
 }
 
 impl PrefixAttribute {
+    /// Emits the namespace impl that redirects the component's lookup.
     pub fn to_namespace_impl(
         &self,
         component_name: &IdentWithTypeGenerics,

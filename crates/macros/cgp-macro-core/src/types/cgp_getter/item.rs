@@ -5,13 +5,18 @@ use crate::types::cgp_component::EvaluatedCgpComponent;
 use crate::types::cgp_getter::GetterField;
 use crate::types::provider_impl::ItemProviderImpls;
 
+/// The evaluated `#[cgp_getter]` component.
 pub struct ItemCgpGetter {
+    /// The component's items.
     pub item_component: EvaluatedCgpComponent,
+    /// The getter's fields.
     pub fields: Vec<GetterField>,
+    /// The getter's associated type, when it declares one.
     pub field_assoc_type: Option<TraitItemType>,
 }
 
 impl ItemCgpGetter {
+    /// Emits the component's items.
     pub fn to_items(&self) -> syn::Result<Vec<Item>> {
         let mut items = self.item_component.to_items()?;
 
@@ -21,6 +26,7 @@ impl ItemCgpGetter {
         Ok(items)
     }
 
+    /// Emits the `UseFields`, `UseField`, and `WithProvider` impls.
     pub fn to_item_provider_impls(&self) -> syn::Result<ItemProviderImpls> {
         let mut items = ItemProviderImpls::default();
 

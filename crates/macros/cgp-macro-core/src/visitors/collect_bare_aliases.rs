@@ -18,6 +18,7 @@ use crate::visitors::bare_alias_ident;
 /// its caret on the offending alias rather than on the whole macro block.
 #[derive(Default)]
 pub struct CollectBareAliases<'ast> {
+    /// The aliases found, in source order.
     pub idents: Vec<&'ast Ident>,
 }
 

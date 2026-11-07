@@ -7,14 +7,20 @@ use crate::types::generics::ImplGenerics;
 use crate::types::path::{PathElementWithGenerics, UniPath};
 
 #[derive(Debug, Clone)]
+/// A parsed path head, with its alternatives.
 pub enum PathHead {
+    /// A path element followed by the rest of the path.
     Type(Box<PathElementWithGenerics>, Box<PathHead>),
+    /// A brace group of alternative paths.
     Nested(Punctuated<PathHead, Comma>),
+    /// A bracket group of alternatives for one segment.
     Group(Punctuated<PathElementWithGenerics, Comma>, Box<PathHead>),
+    /// The end of the path.
     End,
 }
 
 impl PathHead {
+    /// Expands the alternatives into concrete paths.
     pub fn into_paths(&self) -> Vec<(ImplGenerics, UniPath)> {
         match self {
             Self::Type(path_element, tail) => {

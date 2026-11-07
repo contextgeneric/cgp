@@ -8,6 +8,7 @@ use crate::functions::override_item_span;
 use crate::parse_internal;
 use crate::types::cgp_data::{field_to_member, field_value_expr, to_generic_args};
 
+/// Derives the `HasBuilder` impl for a struct.
 pub fn derive_has_builder_impl(
     context_struct: &ItemStruct,
     builder_ident: &Ident,

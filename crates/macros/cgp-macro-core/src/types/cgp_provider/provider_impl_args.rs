@@ -8,17 +8,24 @@ use syn::{Error, Lifetime, Type};
 use crate::exports::Life;
 use crate::types::ident::{TypeArg, TypeArgs};
 
+/// The context and remaining arguments of a provider impl's trait path.
 pub struct ProviderImplArgs {
+    /// The context type.
     pub context_type: Type,
+    /// The remaining arguments.
     pub impl_args: Punctuated<ProviderImplArg, Comma>,
 }
 
+/// One argument of a provider impl's trait path.
 pub enum ProviderImplArg {
+    /// A type argument.
     Type(Type),
+    /// A lifetime argument.
     Life(Lifetime),
 }
 
 impl ProviderImplArgs {
+    /// Splits the trait path's arguments into the context and the rest.
     pub fn from_generic_args(generic_args: &TypeArgs) -> syn::Result<Self> {
         let mut impl_args: Punctuated<ProviderImplArg, Comma> = Punctuated::new();
         let mut context_type: Option<Type> = None;

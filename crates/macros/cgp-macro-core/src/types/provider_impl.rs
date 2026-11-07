@@ -10,6 +10,7 @@ use crate::types::cgp_provider::ProviderImplArgs;
 use crate::types::ident::PathWithTypeArgs;
 use crate::visitors::replace_provider_in_generics;
 
+/// Derives the `IsProviderFor` impl for a provider impl.
 pub fn derive_is_provider_for(
     component_type: &Type,
     item_impl: &ItemImpl,
@@ -22,11 +23,15 @@ pub fn derive_is_provider_for(
 }
 
 #[derive(Default)]
+/// A list of provider impls.
 pub struct ItemProviderImpls {
+    /// The provider impls.
     pub items: Vec<ItemProviderImpl>,
 }
 
 impl ItemProviderImpls {
+    /// Generates every provider impl and its `IsProviderFor` impl.
+    /// Generates the provider impl and its `IsProviderFor` impl.
     pub fn to_item_impls(&self) -> syn::Result<Vec<ItemImpl>> {
         let mut item_impls = Vec::new();
 
@@ -38,17 +43,22 @@ impl ItemProviderImpls {
     }
 }
 
+/// One provider impl and the component it implements.
 pub struct ItemProviderImpl {
+    /// The component's type.
     pub component_type: Type,
+    /// The provider impl.
     pub item_impl: ItemImpl,
 }
 
 impl ItemProviderImpl {
+    /// Generates the provider impl and its `IsProviderFor` impl.
     pub fn to_item_impls(&self) -> syn::Result<Vec<ItemImpl>> {
         let is_provider_impl = self.to_is_provider_for_impl()?;
         Ok(vec![self.item_impl.clone(), is_provider_impl])
     }
 
+    /// Generates the `IsProviderFor` impl under the provider's bounds.
     pub fn to_is_provider_for_impl(&self) -> syn::Result<ItemImpl> {
         let component_type = &self.component_type;
         let item_impl = &self.item_impl;

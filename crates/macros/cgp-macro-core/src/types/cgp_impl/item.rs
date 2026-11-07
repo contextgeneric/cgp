@@ -10,7 +10,9 @@ use crate::types::implicits::ImplicitArgFields;
 /// The raw input stage of `#[cgp_impl]`: the parsed attribute args and the
 /// `impl` block, before any lowering.
 pub struct ItemCgpImpl {
+    /// The impl's arguments.
     pub args: ImplArgs,
+    /// The impl block.
     pub item_impl: ItemImpl,
 }
 

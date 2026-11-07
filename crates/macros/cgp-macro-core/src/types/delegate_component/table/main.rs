@@ -15,17 +15,24 @@ use crate::types::keywords::New;
 /// The whole parsed `delegate_components!` body: an optional generic list and
 /// `new` keyword, the target type, and its braced table of entries.
 pub struct DelegateTable {
+    /// The table's outer attributes.
     pub attributes: Vec<Attribute>,
+    /// The table's generic parameters.
     pub impl_generics: ImplGenerics,
+    /// The `new` keyword, when the table declares its struct.
     pub new: Option<Keyword<New>>,
+    /// The target type.
     pub table_type: Type,
+    /// The table's entries.
     pub entries: DelegateEntries,
 }
 
 /// The lowered table: the generated impls and any structs (`new` target and
 /// lifted inner tables). Its `ToTokens` emits the structs first, then the impls.
 pub struct EvaluatedDelegateTable {
+    /// The generated impls.
     pub item_impls: Vec<ItemImpl>,
+    /// The generated structs.
     pub item_structs: Vec<EmptyStruct>,
 }
 

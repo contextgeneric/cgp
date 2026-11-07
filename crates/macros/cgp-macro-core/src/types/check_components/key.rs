@@ -3,12 +3,16 @@ use syn::punctuated::Punctuated;
 use syn::token::{Bracket, Comma};
 use syn::{Type, bracketed};
 
+/// The components a check entry asserts.
 pub enum CheckKey {
+    /// One component.
     Single(Type),
+    /// Several components.
     Multi(Punctuated<Type, Comma>),
 }
 
 impl CheckKey {
+    /// The components as a list.
     pub fn to_keys(&self) -> Vec<Type> {
         match self {
             Self::Single(key) => vec![key.clone()],
