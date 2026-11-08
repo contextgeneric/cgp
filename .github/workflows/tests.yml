@@ -62,12 +62,17 @@ jobs:
       - name: Install the pinned toolchain
         run: rustup toolchain install
       # The official nextest distribution, at a pinned version: a prebuilt binary,
-      # so the job needs no compiler for it. The host answers 504 under load, so
-      # curl retries the whole request rather than leaving a partial stream to tar.
+      # so the job needs no compiler for it. The host intermittently answers 504,
+      # so a failed download builds the same pinned version from crates.io instead
+      # of failing the job.
       - name: Install cargo-nextest from the official distribution
         run: |
-          curl -LsSf --retry 5 --retry-delay 2 --retry-all-errors \
-            https://get.nexte.st/0.9.151/linux | tar zxf - -C "${CARGO_HOME:-$HOME/.cargo}/bin"
+          set -o pipefail
+          if ! curl -LsSf --retry 3 --retry-delay 2 --retry-all-errors \
+            https://get.nexte.st/0.9.151/linux | tar zxf - -C "${CARGO_HOME:-$HOME/.cargo}/bin"; then
+            echo "the official distribution did not answer; building 0.9.151 from crates.io" >&2
+            cargo install --locked cargo-nextest --version 0.9.151
+          fi
       # The suite covers `cgp-tests` for behavior and expansion snapshots and
       # `cgp-macro-tests` for the macro internals. Post-codegen compile failures
       # are UI fixtures in `cargo-cgp`, not tests here.
