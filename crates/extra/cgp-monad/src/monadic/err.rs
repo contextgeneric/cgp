@@ -4,13 +4,15 @@ use cgp_handler::{AsyncComputer, AsyncComputerComponent, Computer, ComputerCompo
 use crate::monadic::ident::IdentMonadic;
 use crate::traits::{ContainsValue, LiftValue, MonadicBind, MonadicTrans};
 
-/// The per-step provider of the err monad: run the continuation on a step's Ok value and stop on
-/// Err. PipeMonadic composes it under ErrMonadic.
+/// The monad that continues on a step's Ok value and stops on the first Err, as `?` does;
+/// PipeMonadic folds a pipeline under it with BindErr.
 ///
-/// See [`BindErr`](https://contextgeneric.dev/docs/reference/providers/monad/bind_err).
+/// See [`ErrMonadic`](https://contextgeneric.dev/docs/reference/providers/monad#the-monad-markers).
 pub struct ErrMonadic;
 
-/// The `Err` monad transformer.
+/// The `Err` monad as a transformer over a base monad `M`, so monads stack over nested results.
+///
+/// See [`ErrMonadicTrans`](https://contextgeneric.dev/docs/reference/providers/monad#the-monad-markers).
 pub struct ErrMonadicTrans<M>(pub PhantomData<M>);
 
 impl<M> MonadicTrans<M> for ErrMonadic {
