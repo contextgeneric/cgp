@@ -45,7 +45,7 @@ update this block to match.
 - Treat [CHANGELOG.md](CHANGELOG.md) as the record of which macro forms are current and which are
   removed.
 - Add a `///` to every public item that lacks one, and keep inline docs brief.
-- Run the repository's checks before committing; the commands are in [README.md](README.md).
+- Run the repository's checks before committing; [`.github/workflows/tests.yml`](.github/workflows/tests.yml) lists them, and CI runs the same commands.
 - Put a post-codegen compile failure in a `cargo-cgp` UI fixture, not in this repository, and update the
   matching fixture when a construct change alters a diagnostic.
 
