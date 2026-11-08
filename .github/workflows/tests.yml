@@ -21,11 +21,11 @@ permissions:
   contents: read
 
 # To minimize supply-chain exposure this workflow uses only GitHub's own
-# first-party actions; every toolchain and tool is installed from rustup,
-# crates.io, or the checked-in sources.
+# first-party actions; every toolchain and tool is installed from rustup, the
+# tool's official distribution, or the checked-in sources.
 #
-# Every job runs a command the README's Development section lists, so a
-# contributor can reproduce any job from the README.
+# Every job runs one of the repository's checks, and this file is where that
+# list lives, so a contributor can reproduce any job from here.
 jobs:
   fmt:
     name: Rustfmt (nightly-2026-11-05)
@@ -61,19 +61,11 @@ jobs:
       - uses: actions/checkout@v4
       - name: Install the pinned toolchain
         run: rustup toolchain install
-      # nextest comes from crates.io at a pinned version, into its own root so the
-      # cache holds nothing but nextest and its dependencies.
-      - name: Cache cargo-nextest
-        uses: actions/cache@v4
-        with:
-          path: ~/.local/cargo-nextest
-          key: ${{ runner.os }}-cargo-nextest-0.9.151
-      - name: Install cargo-nextest from crates.io
+      # The official nextest distribution, at a pinned version: a prebuilt binary,
+      # so the job needs no compiler for it.
+      - name: Install cargo-nextest from the official distribution
         run: |
-          if [ ! -x "$HOME/.local/cargo-nextest/bin/cargo-nextest" ]; then
-            cargo install --locked cargo-nextest --version 0.9.151 --root "$HOME/.local/cargo-nextest"
-          fi
-          echo "$HOME/.local/cargo-nextest/bin" >> "$GITHUB_PATH"
+          curl -LsSf https://get.nexte.st/0.9.151/linux | tar zxf - -C "${CARGO_HOME:-$HOME/.cargo}/bin"
       # The suite covers `cgp-tests` for behavior and expansion snapshots and
       # `cgp-macro-tests` for the macro internals. Post-codegen compile failures
       # are UI fixtures in `cargo-cgp`, not tests here.
