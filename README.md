@@ -248,11 +248,20 @@ Run the checks from the repository root. The toolchain is pinned in `rust-toolch
 crates are `#![no_std]`, so keep new code `no_std`-compatible.
 
 ```sh
-cargo +nightly fmt --all
+cargo +nightly-2026-11-05 fmt --all
 cargo clippy --all-features --all-targets -- -D warnings
 cargo clippy --no-default-features --all-targets -- -D warnings
 cargo nextest run --all-features --no-fail-fast --workspace
+RUSTDOCFLAGS="-D warnings" cargo doc --no-deps --workspace --all-features
+cargo +1.89 check --workspace --all-features
+rustup target add x86_64-unknown-none
+cargo check -p cgp-no-std-tests --target x86_64-unknown-none
+cargo check -p cgp-no-std-tests --target x86_64-unknown-none --features alloc
 ```
+
+The first command needs the `nightly-2026-11-05` toolchain, because `.rustfmt.toml` sets unstable
+options; CI installs that exact channel. The last five check the docs, the declared minimum Rust
+version, and both `no_std` paths, and CI runs each of them.
 
 The suite covers `cgp-tests` for behavior and expansion snapshots and `cgp-macro-tests` for the macro
 internals. Post-codegen compile failures are UI fixtures in

@@ -1,1 +1,4 @@
 /target
+# A build artifact that was committed once; keep the next one out.
+*.rlib
+*.rmeta
