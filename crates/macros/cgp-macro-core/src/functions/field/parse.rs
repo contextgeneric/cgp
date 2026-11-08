@@ -19,10 +19,12 @@ pub fn parse_field_type(
     parse_field_type_with(return_type, receiver_mut, false)
 }
 
-/// Like [`parse_field_type`], but `borrow_str` decides how a `&str` is read. An
-/// `#[implicit]` argument sets it, so the field may be any `AsRef<str>` and needs no
-/// allocator; a getter leaves it off, because its `HasField` bound is also used by
-/// the `WithProvider` adapter, which expects the field type itself.
+/// Like [`parse_field_type`], but `borrow_str` lets a *shared* `&str` or
+/// `Option<&str>` read any `AsRef<str>` field, so an `#[implicit]` argument needs
+/// no allocator; a getter leaves it off, because its `HasField` bound is also used
+/// by the `WithProvider` adapter, which expects the field type itself. A mutable
+/// `Option<&mut str>` keeps the `Option<String>` field either way, because the
+/// shared-borrowing `OptionAsRef` has no mutable counterpart.
 pub fn parse_field_type_with(
     return_type: &Type,
     receiver_mut: &Option<Mut>,
@@ -78,15 +80,20 @@ pub fn parse_field_type_with(
                 let field_type = type_ref.elem.as_ref();
 
                 if field_type == &parse_internal! { str } {
-                    if borrow_str {
-                        // An `#[implicit]` argument reads any `Option<U>` whose `U`
-                        // implements `AsRef<str>` through `OptionAsRef`, so a
+                    if borrow_str && field_mut.is_none() {
+                        // A shared `Option<&str>` implicit reads any `Option<U>` whose
+                        // `U` implements `AsRef<str>` through `OptionAsRef`, so a
                         // `String`, a `Cow<str>`, or a `Box<str>` field all work and
-                        // none needs an allocator.
+                        // none needs an allocator. `OptionAsRef` borrows the field
+                        // shared, so it has no mutable counterpart: a mutable
+                        // `Option<&mut str>` keeps the `Option<String>` field below
+                        // and reads it with `.as_deref_mut()`.
                         Ok((parse_internal! { str }, FieldMode::OptionStr, field_mut))
                     } else {
                         // A getter keeps the `Option<String>` field, because its bound
-                        // is also used by the `WithProvider` adapter.
+                        // is also used by the `WithProvider` adapter. A mutable
+                        // `Option<&mut str>` implicit does the same, and reads the
+                        // field with `.as_deref_mut()`.
                         Ok((
                             parse_internal! { Option< String > },
                             FieldMode::OptionStr,

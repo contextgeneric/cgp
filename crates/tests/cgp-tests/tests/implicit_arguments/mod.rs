@@ -10,6 +10,7 @@ pub mod cgp_fn_multi_and_use_type;
 pub mod cgp_fn_mut_slice;
 pub mod cgp_fn_mutable;
 pub mod cgp_fn_option_mut;
+pub mod cgp_fn_option_mut_str;
 pub mod cgp_fn_option_str;
 pub mod cgp_fn_owned_tuple;
 pub mod cgp_fn_slice;
