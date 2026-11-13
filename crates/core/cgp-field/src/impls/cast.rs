@@ -26,8 +26,8 @@ pub trait CanDowncast<Target> {
     fn downcast(self, _tag: PhantomData<Target>) -> Result<Target, Self::Remainder>;
 }
 
-/// Continue narrowing on the remainder a failed downcast hands back, so a value can be tried
-/// against a second target and a third. Never used on its own.
+/// Narrow an extractor into a target enum, most often the remainder a failed downcast hands
+/// back, so a value can be tried against a second target and a third.
 ///
 /// See
 /// [`CanDowncastFields`](https://contextgeneric.dev/docs/reference/traits/casting/can_downcast_fields)

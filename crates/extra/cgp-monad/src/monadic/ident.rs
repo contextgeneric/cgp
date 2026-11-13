@@ -1,6 +1,8 @@
 use crate::traits::{ContainsValue, LiftValue, MonadicBind, MonadicTrans};
 
-/// The identity monad.
+/// The identity monad: it threads every value forward and never short-circuits.
+///
+/// See [`IdentMonadic`](https://contextgeneric.dev/docs/reference/providers/monad#the-monad-markers).
 pub struct IdentMonadic;
 
 impl<M> MonadicTrans<M> for IdentMonadic {
