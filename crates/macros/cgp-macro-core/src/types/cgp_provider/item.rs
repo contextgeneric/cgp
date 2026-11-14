@@ -1,7 +1,6 @@
-use proc_macro2::Span;
 use quote::ToTokens;
 use syn::spanned::Spanned;
-use syn::{Error, Ident, ItemImpl, Type};
+use syn::{Error, Ident, ItemImpl, Path, Type};
 
 use crate::functions::parse_internal;
 use crate::types::cgp_provider::{LoweredCgpProvider, ProviderArgs};
@@ -54,24 +53,22 @@ impl ItemCgpProvider {
         let provider_trait: PathWithTypeArgs =
             parse_internal(provider_trait_path.to_token_stream())?;
 
-        // Span the synthesized `{Provider}Component` reference on `call_site`, not
-        // the provider trait's span. The derived component appears only as the
-        // first type argument of the generated `IsProviderFor<..>` impl — an
-        // interior token that anchors no error caret — so giving it the provider
-        // trait's span buys nothing at the compiler, and it actively harms the
-        // editor: rust-analyzer maps a source token to its expansion by source
-        // range, so a component reference sharing the provider trait's range makes
-        // go-to-definition on the provider trait offer the component struct too.
-        // A `call_site` span shares no narrow user token's range, so it stays out
-        // of the way. (This is the reference-side dual of the `#[cgp_component]`
-        // marker struct, whose *definition* is instead spanned on the provider
-        // identifier so navigation lands there cleanly.)
-        let component_ident = Ident::new(
-            &format!("{}Component", provider_trait.ident()),
-            Span::call_site(),
-        );
+        // The key keeps the trait's path, so `impl crate::components::Greeter`
+        // names `crate::components::GreeterComponent` and needs no import. Its last
+        // segment takes the trait identifier's span, so an unresolved key is reported
+        // on the trait's name in the header rather than on the whole attribute; with
+        // both names resolved, Rust Analyzer's hover there shows the key beside the
+        // trait. See cgp-knowledge-base/cgp/reference/macros/cgp_impl.md.
+        let provider_ident = provider_trait.ident();
 
-        parse_internal(component_ident.to_token_stream())
+        let mut component_path: Path = provider_trait.path.clone();
+
+        if let Some(last_segment) = component_path.segments.last_mut() {
+            last_segment.ident =
+                Ident::new(&format!("{provider_ident}Component"), provider_ident.span());
+        }
+
+        parse_internal(component_path.to_token_stream())
     }
 
     /// Builds the provider struct, when the attribute declares one.
