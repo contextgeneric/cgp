@@ -13,7 +13,8 @@
 //! 2. add a code comment explaining **why** the output is wrong and **what the
 //!    correct output should be**;
 //! 3. record the limitation in the owning reference document's `## Known issues`
-//!    section (per cgp-knowledge-base/cgp/AGENTS.md), and link from the test to that document.
+//!    section (per cgp-knowledge-base/cgp/writing-guide.md), and link from the
+//!    test to that document.
 //!
 //! No case is captured at present.
 #![allow(dead_code)]

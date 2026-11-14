@@ -224,7 +224,7 @@ knowledge base when you need the exact semantics of a construct or are changing 
 [`/cgp` agent skill](https://contextgeneric.dev/docs/ai/skills/) teaches an assistant to read and
 write CGP; it does not remove the reviewer's need to understand the code.
 
-Start from [AGENTS.md](AGENTS.md) for the conventions this repository follows, and
+Start from [AGENTS.md](AGENTS.md) for the rules agents follow in this repository, and
 [sibling-projects.md](sibling-projects.md) for the related repositories.
 
 ## How the project is organized
