@@ -13,8 +13,9 @@
 
 use std::f64::consts::PI;
 
+use cgp::core::field::traits::HasExtractorMut;
 use cgp::extra::dispatch::MatchFirstWithValueHandlersMut;
-use cgp::extra::handler::NoCode;
+use cgp::extra::handler::{Computer, NoCode};
 use cgp::prelude::*;
 
 #[derive(Debug, PartialEq, CgpData)]

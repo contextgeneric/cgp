@@ -9,6 +9,7 @@
 //!
 //! See cgp-knowledge-base/cgp/implementation/entrypoints/struct.md.
 
+use cgp::core::field::traits::{HasFields, HasFieldsRef};
 use cgp::prelude::*;
 
 use crate::shape_macros::assertions::assert_same_type;

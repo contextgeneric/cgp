@@ -7,6 +7,7 @@
 //!
 //! See cgp-knowledge-base/cgp/reference/macros/delegate_components.md.
 
+use cgp::core::component::DelegateComponent;
 use cgp::prelude::*;
 
 pub struct FooKey;

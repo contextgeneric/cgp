@@ -3,7 +3,7 @@
 //!
 //! See cgp-knowledge-base/cgp/reference/types/index.md.
 
-use cgp::prelude::*;
+use cgp::core::field::types::Index;
 
 #[test]
 pub fn test_index_display() {

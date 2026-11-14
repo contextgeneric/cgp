@@ -16,11 +16,12 @@ use core::fmt::Display;
 use core::marker::PhantomData;
 
 use cgp::core::error::ErrorTypeProviderComponent;
+use cgp::core::field::types::Field;
 use cgp::extra::dispatch::{
     DowncastAndHandle, ExtractFieldAndHandle, HandleFieldValue, MatchWithFieldHandlers,
     MatchWithHandlers, MatchWithValueHandlersRef,
 };
-use cgp::extra::handler::{Computer, ComputerComponent, ComputerRef, PromoteAsync};
+use cgp::extra::handler::{AsyncComputer, Computer, ComputerComponent, ComputerRef, PromoteAsync};
 use cgp::prelude::*;
 use futures::executor::block_on;
 

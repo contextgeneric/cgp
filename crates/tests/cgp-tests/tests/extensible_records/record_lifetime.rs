@@ -13,6 +13,7 @@
 
 use core::marker::PhantomData;
 
+use cgp::core::field::traits::{BuildField, FinalizeBuild, HasBuilder, IntoBuilder};
 use cgp::prelude::*;
 
 #[derive(Debug, Eq, PartialEq, CgpData)]

@@ -20,7 +20,9 @@
 
 use core::marker::PhantomData;
 
-use cgp::core::field::traits::FinalizeExtractResult;
+use cgp::core::field::traits::{
+    ExtractField, FinalizeExtractResult, HasExtractor, HasExtractorMut, HasExtractorRef,
+};
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_derive_extract_field;
 

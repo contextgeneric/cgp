@@ -10,6 +10,7 @@
 //! See cgp-knowledge-base/cgp/implementation/entrypoints/product.md and
 //! cgp-knowledge-base/cgp/reference/macros/product.md.
 
+use cgp::core::field::types::{Cons, Nil};
 use cgp::prelude::*;
 
 #[test]

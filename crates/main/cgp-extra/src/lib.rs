@@ -6,8 +6,12 @@
 //! See [`CanHandle`](https://contextgeneric.dev/docs/reference/components/handler/handler), [`PipeHandlers`](https://contextgeneric.dev/docs/reference/providers/handler/pipe_handlers), and [`RaiseFrom`](https://contextgeneric.dev/docs/reference/providers/error/raise_from).
 #![warn(missing_docs)]
 
-/// The prelude, re-exported as `cgp_extra::prelude`.
+/// The extra names users write, re-exported through `cgp::prelude`.
 pub mod prelude;
+
+/// Every extra name the macros' generated code refers to, re-exported through `cgp::macro_prelude`.
+/// Only the macros use this module; import from `cgp::prelude` or the defining module instead.
+pub mod macro_prelude;
 
 pub use cgp_dispatch as dispatch;
 pub use cgp_error_extra as error;

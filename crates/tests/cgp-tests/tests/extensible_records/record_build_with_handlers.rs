@@ -19,7 +19,7 @@ use std::marker::PhantomData;
 
 use cgp::core::error::ErrorTypeProviderComponent;
 use cgp::extra::dispatch::{BuildAndMerge, BuildAndSetField, BuildWithHandlers};
-use cgp::extra::handler::Computer;
+use cgp::extra::handler::{Computer, TryComputer};
 use cgp::prelude::*;
 
 #[derive(Debug, Eq, PartialEq, CgpData)]

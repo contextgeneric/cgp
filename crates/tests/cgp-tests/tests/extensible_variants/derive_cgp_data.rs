@@ -17,6 +17,7 @@
 use core::marker::PhantomData;
 
 use cgp::core::field::impls::{CanDowncast, CanDowncastFields, CanUpcast};
+use cgp::core::field::traits::{ExtractField, FinalizeExtract, HasExtractorRef};
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_derive_cgp_data;
 

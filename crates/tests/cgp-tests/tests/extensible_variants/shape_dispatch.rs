@@ -19,7 +19,7 @@ use cgp::extra::dispatch::{
     ExtractFieldAndHandle, ExtractFirstFieldAndHandle, HandleFieldValue, HandleFirstFieldValue,
     MatchFirstWithHandlers, MatchFirstWithValueHandlers, MatchWithHandlers, MatchWithValueHandlers,
 };
-use cgp::extra::handler::{NoCode, UseInputDelegate};
+use cgp::extra::handler::{Computer, ComputerComponent, NoCode, UseInputDelegate};
 use cgp::prelude::*;
 
 #[derive(Debug, PartialEq, CgpData)]

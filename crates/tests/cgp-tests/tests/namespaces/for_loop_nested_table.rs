@@ -21,6 +21,7 @@
 //!
 //! See cgp-knowledge-base/cgp/implementation/entrypoints/delegate_components.md.
 
+use cgp::core::component::DelegateComponent;
 use cgp::prelude::*;
 
 // Incidental: a generic component routed into `DefaultNamespace` under a prefix.

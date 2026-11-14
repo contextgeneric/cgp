@@ -10,6 +10,8 @@
 //!
 //! See cgp-knowledge-base/cgp/implementation/entrypoints/delegate_components.md.
 
+use cgp::core::field::traits::HasField;
+use cgp::core::field::types::Life;
 use cgp::prelude::*;
 
 #[cgp_component(ReferenceGetter)]

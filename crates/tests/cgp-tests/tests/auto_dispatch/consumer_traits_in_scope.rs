@@ -1,15 +1,16 @@
 //! `#[cgp_auto_dispatch]` in a module that imports the computer consumer traits.
 //!
 //! The generated method calls the matcher through its provider trait, so importing
-//! `CanCompute` and `CanComputeAsync` beside the prelude's `Computer` and
+//! `CanCompute` and `CanComputeAsync` beside the provider traits `Computer` and
 //! `AsyncComputer` leaves the call unambiguous for a synchronous method with an
 //! argument and for an async `&self` method, both dispatched over `FooBar`.
 //!
 //! See cgp-knowledge-base/cgp/implementation/entrypoints/cgp_auto_dispatch.md.
 
-// Only their presence in scope matters: the generated calls must not resolve to them.
+// Only their presence in scope matters: together they make a bare `compute` call ambiguous,
+// which the generated calls avoid by naming the provider trait by path.
 #[allow(unused_imports)]
-use cgp::extra::handler::{CanCompute, CanComputeAsync};
+use cgp::extra::handler::{AsyncComputer, CanCompute, CanComputeAsync, Computer};
 use cgp::prelude::*;
 use futures::executor::block_on;
 

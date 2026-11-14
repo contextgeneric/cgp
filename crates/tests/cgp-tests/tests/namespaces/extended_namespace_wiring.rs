@@ -13,7 +13,7 @@
 
 use cgp::core::error::{ErrorRaiserComponent, ErrorTypeProviderComponent, ErrorWrapperComponent};
 use cgp::extra::error::RaiseFrom;
-use cgp::extra::handler::CanTryCompute;
+use cgp::extra::handler::{CanTryCompute, TryComputerComponent};
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_delegate_components;
 

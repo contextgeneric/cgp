@@ -5,6 +5,8 @@
 //!
 //! See cgp-knowledge-base/cgp/implementation/entrypoints/struct.md.
 
+use cgp::core::field::traits::{FromFields, ToFields};
+use cgp::core::field::types::{Cons, Nil};
 use cgp::prelude::*;
 
 #[derive(Debug, PartialEq, HasFields)]

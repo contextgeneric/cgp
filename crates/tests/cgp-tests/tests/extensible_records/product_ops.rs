@@ -15,8 +15,9 @@
 //!
 //! See cgp-knowledge-base/cgp/reference/traits/product_ops.md.
 
-use cgp::core::field::impls::IsOptional;
+use cgp::core::field::impls::{IsNothing, IsOptional, IsPresent};
 use cgp::core::field::traits::{AppendProduct, ConcatProduct, MapFields};
+use cgp::core::field::types::{Cons, Either, Field, Nil, Void};
 use cgp::prelude::*;
 
 /// `AppendProduct` adds one entry at the end of a product, keeping the existing entries in

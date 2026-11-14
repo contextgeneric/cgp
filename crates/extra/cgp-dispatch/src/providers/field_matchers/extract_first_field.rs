@@ -1,3 +1,6 @@
+use cgp::component::UseContext;
+use cgp::field::traits::ExtractField;
+use cgp::field::types::Field;
 use cgp::prelude::*;
 use cgp_handler::{AsyncComputer, AsyncComputerComponent, Computer, ComputerComponent};
 

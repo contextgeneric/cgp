@@ -9,6 +9,7 @@
 //!
 //! See cgp-knowledge-base/cgp/implementation/entrypoints/cgp_auto_dispatch.md.
 
+use cgp::extra::dispatch::MatchWithValueHandlersRef;
 use cgp::extra::handler::Computer;
 use cgp::prelude::*;
 

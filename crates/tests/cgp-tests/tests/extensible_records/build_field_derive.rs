@@ -21,7 +21,9 @@
 
 use core::marker::PhantomData;
 
-use cgp::core::field::traits::TakeField;
+use cgp::core::field::traits::{
+    BuildField, FinalizeBuild, HasBuilder, HasField, IntoBuilder, TakeField,
+};
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_derive_build_field;
 

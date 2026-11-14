@@ -12,6 +12,8 @@
 
 use core::marker::PhantomData;
 
+use cgp::core::field::impls::UseField;
+use cgp::core::field::types::Index;
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_check_components;
 

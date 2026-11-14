@@ -1,3 +1,5 @@
+use cgp::component::UseContext;
+use cgp::field::traits::BuildField;
 use cgp::prelude::*;
 use cgp_handler::{
     Computer, ComputerComponent, Handler, HandlerComponent, TryComputer, TryComputerComponent,

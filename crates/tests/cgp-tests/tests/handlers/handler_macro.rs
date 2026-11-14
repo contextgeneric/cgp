@@ -20,7 +20,7 @@ use core::fmt::Display;
 
 use cgp::core::error::{ErrorRaiserComponent, ErrorTypeProviderComponent};
 use cgp::extra::error::RaiseFrom;
-use cgp::extra::handler::HandlerRef;
+use cgp::extra::handler::{AsyncComputer, AsyncComputerRef, Handler, HandlerRef};
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_cgp_computer;
 use futures::executor::block_on;
@@ -50,7 +50,7 @@ snapshot_cgp_computer! {
             __Context__,
             __Code__,
         > IsProviderFor<AsyncComputerComponent, __Context__, (__Code__, (u64, u64))> for Add {}
-        ///Provider `Add` for [`AsyncComputer`].
+        ///Provider `Add` for [`AsyncComputer`](cgp::macro_prelude::AsyncComputer).
         pub struct Add;
         impl DelegateComponent<AsyncComputerRefComponent> for Add
         where
@@ -143,7 +143,7 @@ snapshot_cgp_computer! {
             __Code__,
         > IsProviderFor<AsyncComputerComponent, __Context__, (__Code__, (u64, u64))>
         for AddWithError {}
-        ///Provider `AddWithError` for [`AsyncComputer`].
+        ///Provider `AddWithError` for [`AsyncComputer`](cgp::macro_prelude::AsyncComputer).
         pub struct AddWithError;
         impl DelegateComponent<AsyncComputerRefComponent> for AddWithError
         where

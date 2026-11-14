@@ -24,7 +24,10 @@ use core::fmt::Display;
 
 use cgp::core::error::{ErrorRaiserComponent, ErrorTypeProviderComponent};
 use cgp::extra::error::RaiseFrom;
-use cgp::extra::handler::{ComputerRef, HandlerRef, TryComputerRef};
+use cgp::extra::handler::{
+    AsyncComputer, AsyncComputerRef, Computer, ComputerRef, Handler, HandlerRef, TryComputer,
+    TryComputerRef,
+};
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_cgp_computer;
 use futures::executor::block_on;
@@ -54,7 +57,7 @@ snapshot_cgp_computer! {
             __Context__,
             __Code__,
         > IsProviderFor<ComputerComponent, __Context__, (__Code__, (u64, u64))> for Add {}
-        ///Provider `Add` for [`Computer`].
+        ///Provider `Add` for [`Computer`](cgp::macro_prelude::Computer).
         pub struct Add;
         impl DelegateComponent<ComputerRefComponent> for Add
         where
@@ -227,7 +230,7 @@ snapshot_cgp_computer! {
             __Code__,
         > IsProviderFor<ComputerComponent, __Context__, (__Code__, (u64, u64))>
         for AddWithError {}
-        ///Provider `AddWithError` for [`Computer`].
+        ///Provider `AddWithError` for [`Computer`](cgp::macro_prelude::Computer).
         pub struct AddWithError;
         impl DelegateComponent<ComputerRefComponent> for AddWithError
         where
@@ -507,7 +510,7 @@ snapshot_cgp_computer! {
             __Context__,
             __Code__,
         > IsProviderFor<ComputerComponent, __Context__, (__Code__, (T, T))> for AddGeneric {}
-        ///Provider `AddGeneric` for [`Computer`].
+        ///Provider `AddGeneric` for [`Computer`](cgp::macro_prelude::Computer).
         pub struct AddGeneric;
         impl DelegateComponent<ComputerRefComponent> for AddGeneric
         where

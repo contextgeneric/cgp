@@ -6,7 +6,7 @@
 
 use core::marker::PhantomData;
 
-use cgp::prelude::*;
+use cgp::core::field::traits::HasField;
 use cgp_macro_test_util::snapshot_derive_has_field;
 
 snapshot_derive_has_field! {

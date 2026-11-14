@@ -6,6 +6,7 @@
 //!
 //! See cgp-knowledge-base/cgp/reference/macros/delegate_and_check_components.md.
 
+use cgp::core::field::impls::UseField;
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_delegate_and_check_components;
 

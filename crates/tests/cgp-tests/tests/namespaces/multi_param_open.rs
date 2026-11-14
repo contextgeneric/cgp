@@ -9,6 +9,7 @@
 //!
 //! See cgp-knowledge-base/cgp/reference/macros/delegate_components.md.
 
+use cgp::core::field::types::Life;
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_delegate_components;
 

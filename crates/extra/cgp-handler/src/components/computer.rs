@@ -1,6 +1,8 @@
 use core::marker::PhantomData;
 
 use cgp::component::UseDelegate;
+use cgp::field::impls::UseField;
+use cgp::field::traits::HasField;
 use cgp::prelude::*;
 
 use crate::UseInputDelegate;

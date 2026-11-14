@@ -231,9 +231,9 @@ Start from [AGENTS.md](AGENTS.md) for the conventions this repository follows, a
 
 CGP is a collection of small, layered crates, arranged so that low-level primitives stay independent
 of the high-level facade. Most users depend only on the single **`cgp`** crate, which re-exports the
-core and extra functionality through `cgp::prelude`. Pluggable error backends are opt-in as separate
-crates: `cgp-error-anyhow`, `cgp-error-eyre`, and `cgp-error-std`. Browse [`crates/`](crates) for
-the full layout.
+core and extra functionality under `cgp::core` and `cgp::extra` and gathers the names users write in
+`cgp::prelude`. Pluggable error backends are opt-in as separate crates: `cgp-error-anyhow`,
+`cgp-error-eyre`, and `cgp-error-std`. Browse [`crates/`](crates) for the full layout.
 
 ## Contributing
 

@@ -35,7 +35,7 @@ snapshot_cgp_computer! {
             __Context__,
             __Code__,
         > IsProviderFor<ComputerComponent, __Context__, (__Code__, (u64))> for Ignore {}
-        ///Provider `Ignore` for [`Computer`].
+        ///Provider `Ignore` for [`Computer`](cgp::macro_prelude::Computer).
         pub struct Ignore;
         impl DelegateComponent<ComputerRefComponent> for Ignore
         where
@@ -208,7 +208,7 @@ snapshot_cgp_computer! {
             __Code__,
         > IsProviderFor<ComputerComponent, __Context__, (__Code__, (String))>
         for ParseQualified {}
-        ///Provider `ParseQualified` for [`Computer`].
+        ///Provider `ParseQualified` for [`Computer`](cgp::macro_prelude::Computer).
         pub struct ParseQualified;
         impl DelegateComponent<ComputerRefComponent> for ParseQualified
         where

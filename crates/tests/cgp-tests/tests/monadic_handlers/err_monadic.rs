@@ -11,7 +11,7 @@
 //! See cgp-knowledge-base/cgp/concepts/monadic-handlers.md and
 //! cgp-knowledge-base/cgp/reference/providers/monad_providers.md.
 
-use cgp::extra::handler::PipeHandlers;
+use cgp::extra::handler::{Computer, PipeHandlers};
 use cgp::extra::monad::monadic::err::{BindErr, ErrMonadic};
 use cgp::extra::monad::monadic::ident::IdentMonadic;
 use cgp::extra::monad::providers::PipeMonadic;

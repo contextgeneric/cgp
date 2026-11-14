@@ -13,6 +13,7 @@
 //! cgp-knowledge-base/cgp/concepts/extensible-records.md.
 
 use cgp::core::field::impls::CanBuildFrom;
+use cgp::core::field::traits::{FinalizeBuild, HasBuilder};
 use cgp::prelude::*;
 
 #[derive(Debug, Eq, PartialEq, CgpData)]

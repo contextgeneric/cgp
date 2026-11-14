@@ -4,6 +4,8 @@
 //!
 //! See cgp-knowledge-base/cgp/implementation/entrypoints/enum.md.
 
+use cgp::core::field::traits::{FromFields, ToFields};
+use cgp::core::field::types::{Cons, Either, Field, Nil};
 use cgp::prelude::*;
 
 #[derive(Debug, PartialEq, HasFields)]

@@ -14,6 +14,7 @@
 
 use core::marker::PhantomData;
 
+use cgp::core::field::traits::HasField;
 use cgp::extra::handler::{CanCompute, Computer, ComputerComponent, PipeHandlers};
 use cgp::prelude::*;
 

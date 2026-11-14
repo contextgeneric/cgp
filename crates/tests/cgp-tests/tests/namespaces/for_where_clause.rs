@@ -10,6 +10,7 @@
 //! See cgp-knowledge-base/cgp/implementation/entrypoints/cgp_namespace.md (Tests) and
 //! cgp-knowledge-base/cgp/reference/macros/cgp_namespace.md.
 
+use cgp::core::component::UseContext;
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_delegate_components;
 
