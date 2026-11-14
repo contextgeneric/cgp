@@ -11,6 +11,7 @@
 //! See cgp-knowledge-base/cgp/reference/macros/sum.md and
 //! cgp-knowledge-base/cgp/reference/types/either.md.
 
+use cgp::core::field::types::{Either, Void};
 use cgp::prelude::*;
 
 // A standalone three-element sum, written with the `Sum!` sugar.

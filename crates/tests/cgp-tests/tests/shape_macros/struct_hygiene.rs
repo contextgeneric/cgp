@@ -4,6 +4,7 @@
 //!
 //! See cgp-knowledge-base/cgp/implementation/entrypoints/struct.md.
 
+use cgp::core::field::types::{Field, Index, Nil};
 use cgp::prelude::*;
 
 use crate::shape_macros::assertions::assert_same_type;

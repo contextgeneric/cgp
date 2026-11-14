@@ -7,6 +7,7 @@
 //!
 //! See cgp-knowledge-base/cgp/implementation/entrypoints/check_components.md.
 
+use cgp::core::field::impls::UseField;
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_check_components;
 

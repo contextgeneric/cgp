@@ -10,6 +10,7 @@
 //! See cgp-knowledge-base/cgp/reference/macros/cgp_getter.md and
 //! cgp-knowledge-base/cgp/reference/providers/use_field.md.
 
+use cgp::core::field::impls::UseField;
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_cgp_getter;
 

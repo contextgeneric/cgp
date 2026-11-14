@@ -1,4 +1,5 @@
 use cgp::field::traits::{MapFields, MapType};
+use cgp::field::types::{Cons, Nil};
 use cgp::prelude::*;
 use cgp_handler::{
     AsyncComputerComponent, ComposeHandlers, ComputerComponent, HandlerComponent,

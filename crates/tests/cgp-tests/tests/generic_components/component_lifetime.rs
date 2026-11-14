@@ -14,6 +14,9 @@
 //! cgp-knowledge-base/cgp/reference/macros/cgp_component.md and
 //! cgp-knowledge-base/cgp/reference/types/life.md for the user-facing semantics.
 
+use cgp::core::field::impls::UseField;
+use cgp::core::field::traits::HasField;
+use cgp::core::field::types::Life;
 use cgp::prelude::*;
 use cgp_macro_test_util::{snapshot_cgp_component, snapshot_cgp_provider};
 

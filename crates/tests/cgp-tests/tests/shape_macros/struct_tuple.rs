@@ -13,6 +13,7 @@
 use core::fmt::Debug;
 use core::marker::PhantomData;
 
+use cgp::core::field::types::{Field, Index, Nil};
 use cgp::prelude::*;
 
 use crate::shape_macros::assertions::assert_same_type;

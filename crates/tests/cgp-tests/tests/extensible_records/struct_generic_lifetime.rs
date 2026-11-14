@@ -10,7 +10,7 @@
 use core::fmt::Display;
 
 use cgp::core::field::traits::{FromFields, ToFields, ToFieldsRef};
-use cgp::prelude::*;
+use cgp::core::field::types::{Cons, Nil};
 use cgp_macro_test_util::snapshot_derive_has_fields;
 
 snapshot_derive_has_fields! {

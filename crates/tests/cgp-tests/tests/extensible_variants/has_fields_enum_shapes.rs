@@ -19,7 +19,7 @@
 //! See cgp-knowledge-base/cgp/reference/derives/derive_has_fields.md.
 
 use cgp::core::field::traits::{FromFields, ToFields, ToFieldsRef};
-use cgp::prelude::*;
+use cgp::core::field::types::{Cons, Either, Nil};
 use cgp_macro_test_util::snapshot_derive_has_fields;
 
 snapshot_derive_has_fields! {

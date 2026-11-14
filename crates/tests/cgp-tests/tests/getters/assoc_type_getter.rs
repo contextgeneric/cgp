@@ -9,6 +9,7 @@
 
 use core::ops::Mul;
 
+use cgp::core::field::impls::UseField;
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_cgp_getter;
 

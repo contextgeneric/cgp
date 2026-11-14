@@ -9,7 +9,7 @@
 //! See cgp-knowledge-base/cgp/reference/macros/delegate_components.md.
 
 use cgp::core::component::DelegateComponent;
-use cgp::prelude::*;
+use cgp::core::field::types::Index;
 use cgp_macro_test_util::snapshot_delegate_components;
 
 snapshot_delegate_components! {

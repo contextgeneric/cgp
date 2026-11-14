@@ -1,3 +1,5 @@
+use cgp::field::traits::HasFields;
+use cgp::field::types::{Cons, Either, Field, Nil, Void};
 use cgp::prelude::*;
 
 use crate::{ExtractFieldAndHandle, ExtractFirstFieldAndHandle};

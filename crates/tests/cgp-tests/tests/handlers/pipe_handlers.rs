@@ -19,6 +19,7 @@ use core::convert::Infallible;
 use core::marker::PhantomData;
 
 use cgp::core::error::ErrorTypeProviderComponent;
+use cgp::core::field::traits::HasField;
 use cgp::extra::handler::{
     CanHandle, Computer, ComputerComponent, Handler, HandlerComponent, PipeHandlers, Promote,
     PromoteAsync,

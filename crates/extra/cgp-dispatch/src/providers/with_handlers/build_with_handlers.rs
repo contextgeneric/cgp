@@ -1,3 +1,4 @@
+use cgp::field::traits::{FinalizeBuild, HasBuilder};
 use cgp::prelude::*;
 use cgp_handler::{
     Computer, ComputerComponent, Handler, HandlerComponent, PipeHandlers, TryComputer,

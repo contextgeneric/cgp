@@ -16,6 +16,7 @@ use core::fmt::Display;
 use core::marker::PhantomData;
 
 use cgp::core::error::ErrorTypeProviderComponent;
+use cgp::core::field::types::Field;
 use cgp::extra::dispatch::{
     DowncastAndHandle, ExtractFieldAndHandle, HandleFieldValue, MatchWithFieldHandlers,
     MatchWithHandlers, MatchWithValueHandlersRef,

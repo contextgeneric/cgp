@@ -7,6 +7,7 @@
 
 use core::marker::PhantomData;
 
+use cgp::core::field::types::{Field, Index};
 use cgp::prelude::*;
 
 use crate::shape_macros::assertions::assert_same_type;

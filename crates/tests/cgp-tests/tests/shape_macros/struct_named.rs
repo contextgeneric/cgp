@@ -11,6 +11,7 @@
 
 use std::collections::HashMap;
 
+use cgp::core::field::types::{Cons, Field, Nil};
 use cgp::prelude::*;
 
 use crate::shape_macros::assertions::assert_same_type;

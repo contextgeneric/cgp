@@ -17,6 +17,7 @@
 use core::marker::PhantomData;
 
 use cgp::core::field::impls::CanBuildFrom;
+use cgp::core::field::traits::{BuildField, FinalizeBuild, HasBuilder};
 use cgp::extra::dispatch::{BuildAndMerge, BuildAndSetField, BuildWithHandlers};
 use cgp::extra::handler::Computer;
 use cgp::prelude::*;

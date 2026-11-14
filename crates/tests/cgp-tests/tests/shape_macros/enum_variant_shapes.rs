@@ -10,6 +10,7 @@
 //!
 //! See cgp-knowledge-base/cgp/implementation/entrypoints/enum.md.
 
+use cgp::core::field::types::{Field, Index, Nil};
 use cgp::prelude::*;
 
 use crate::shape_macros::assertions::{assert_same_type, assert_type_ne};

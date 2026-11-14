@@ -1,5 +1,6 @@
 use core::marker::PhantomData;
 
+use cgp::field::types::{Cons, Nil};
 use cgp::prelude::*;
 
 use crate::ComposeHandlers;

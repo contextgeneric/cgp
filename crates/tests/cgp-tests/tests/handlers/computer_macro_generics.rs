@@ -11,6 +11,7 @@
 
 use core::fmt::Display;
 
+use cgp::core::field::types::Cons;
 use cgp::extra::handler::Computer;
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_cgp_computer;

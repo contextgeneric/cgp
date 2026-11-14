@@ -7,6 +7,7 @@
 //!
 //! See cgp-knowledge-base/cgp/reference/macros/cgp_getter.md.
 
+use cgp::core::field::impls::UseField;
 use cgp::prelude::*;
 
 #[cgp_getter {

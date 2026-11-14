@@ -7,6 +7,7 @@
 //!
 //! See cgp-knowledge-base/cgp/concepts/consumer-and-provider-traits.md.
 
+use cgp::core::field::impls::UseField;
 use cgp::prelude::*;
 
 #[cgp_getter]

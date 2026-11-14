@@ -15,6 +15,7 @@
 
 use core::fmt::Display;
 
+use cgp::core::field::traits::HasField;
 use cgp::extra::handler::{ComputerRef, ComputerRefComponent};
 use cgp::prelude::*;
 

@@ -6,7 +6,7 @@
 
 use core::marker::PhantomData;
 
-use cgp::core::field::impls::ChainGetters;
+use cgp::core::field::impls::{ChainGetters, UseField};
 use cgp::core::field::traits::FieldGetter;
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_derive_has_field;
