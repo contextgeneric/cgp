@@ -86,6 +86,45 @@ pub mod raw_provider_path {
     }
 }
 
+// A higher-order provider named by path: the inner provider's `IsProviderFor` counterpart names
+// the key by the header's path too.
+pub mod higher_order_path {
+    use cgp_macro_test_util::snapshot_cgp_impl;
+
+    snapshot_cgp_impl! {
+        #[cgp_impl(new Loud<Inner>)]
+        #[use_provider(Inner: super::components::Greeter)]
+        impl<Inner> super::components::Greeter {
+            fn greet(&self) -> String {
+                Inner::greet(self).to_uppercase()
+            }
+        }
+
+        expand_loud(output) {
+            insta::assert_snapshot!(output, @"
+            impl<__Context__, Inner> super::components::Greeter<__Context__> for Loud<Inner>
+            where
+                Inner: super::components::Greeter<__Context__>,
+            {
+                fn greet(__context__: &__Context__) -> String {
+                    Inner::greet(__context__).to_uppercase()
+                }
+            }
+            impl<
+                __Context__,
+                Inner,
+            > IsProviderFor<super::components::GreeterComponent, __Context__, ()> for Loud<Inner>
+            where
+                Inner: IsProviderFor<super::components::GreeterComponent, __Context__, ()>
+                    + super::components::Greeter<__Context__>,
+            {}
+            ///Provider `Loud` for [`Greeter`](super::components::Greeter).
+            pub struct Loud<Inner>(pub ::core::marker::PhantomData<Inner>);
+            ")
+        }
+    }
+}
+
 // A dependency's provider trait, named by path with its generic arguments, once through
 // the crate name and once from the root with a leading `::`.
 snapshot_cgp_impl! {
@@ -144,6 +183,7 @@ greeting_app!(SuperPathApp, super_path::GreetSuperPath);
 greeting_app!(CratePathApp, crate_path::GreetCratePath);
 greeting_app!(RawPathApp, raw_provider_path::GreetRawPath);
 greeting_app!(NewRawPathApp, raw_provider_path::GreetNewRawPath);
+greeting_app!(LoudApp, higher_order_path::Loud<GreetSelfPath>);
 
 pub struct DoubleApp;
 
@@ -171,6 +211,7 @@ fn test_provider_trait_path() {
     assert_eq!(CratePathApp.greet(), "crate");
     assert_eq!(RawPathApp.greet(), "raw");
     assert_eq!(NewRawPathApp.greet(), "new raw");
+    assert_eq!(LoudApp.greet(), "SELF");
     assert_eq!(DoubleApp.compute(PhantomData::<()>, 21), 42);
     assert_eq!(TripleApp.compute(PhantomData::<()>, 14), 42);
 }
