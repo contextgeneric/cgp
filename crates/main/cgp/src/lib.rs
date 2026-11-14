@@ -9,4 +9,7 @@ pub use {cgp_core as core, cgp_extra as extra};
 pub mod prelude;
 
 /// Every name the macros' generated code refers to, as `::cgp::macro_prelude::Name`.
+///
+/// Only the macros use this module. Import names from [`prelude`] or from the module that defines
+/// them, such as `cgp::core::field::traits`, rather than from here.
 pub mod macro_prelude;

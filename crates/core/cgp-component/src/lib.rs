@@ -6,6 +6,7 @@
 #![warn(missing_docs)]
 
 /// Re-exports the component machinery that the macros expand to.
+/// Only the macros use this module; import from `cgp::prelude` or the defining module instead.
 pub mod macro_prelude;
 
 mod namespaces;

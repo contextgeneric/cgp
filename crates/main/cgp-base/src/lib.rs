@@ -5,7 +5,8 @@
 #![no_std]
 #![warn(missing_docs)]
 
-/// The prelude, re-exported as `cgp_base::macro_prelude`.
+/// The base-layer names the macros' generated code refers to.
+/// Only the macros use this module; import from `cgp::prelude` or the defining module instead.
 pub mod macro_prelude;
 
 pub use cgp_base_types::*;

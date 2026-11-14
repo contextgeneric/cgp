@@ -10,6 +10,7 @@
 pub mod prelude;
 
 /// Every core name the macros' generated code refers to, re-exported through `cgp::macro_prelude`.
+/// Only the macros use this module; import from `cgp::prelude` or the defining module instead.
 pub mod macro_prelude;
 #[doc(inline)]
 pub use {
