@@ -16,7 +16,10 @@
 //! cgp-knowledge-base/cgp/reference/components/producer.md.
 
 use cgp::core::error::ErrorTypeProviderComponent;
-use cgp::extra::handler::{AsyncComputerRef, ComputerRef, HandlerRef, TryComputerRef};
+use cgp::extra::handler::{
+    AsyncComputer, AsyncComputerRef, Computer, ComputerRef, Handler, HandlerRef, Producer,
+    TryComputer, TryComputerRef,
+};
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_cgp_producer;
 use futures::executor::block_on;
@@ -43,7 +46,7 @@ snapshot_cgp_producer! {
         }
         impl<__Context__, __Code__> IsProviderFor<ProducerComponent, __Context__, (__Code__)>
         for MagicNumber {}
-        ///Provider `MagicNumber` for [`Producer`].
+        ///Provider `MagicNumber` for [`Producer`](cgp::macro_prelude::Producer).
         pub struct MagicNumber;
         impl DelegateComponent<ComputerComponent> for MagicNumber {
             type Delegate = PromoteProducer<Self>;

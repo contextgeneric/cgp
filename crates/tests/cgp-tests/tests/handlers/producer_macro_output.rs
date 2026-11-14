@@ -36,7 +36,7 @@ snapshot_cgp_producer! {
         }
         impl<__Context__, __Code__> IsProviderFor<ProducerComponent, __Context__, (__Code__)>
         for TheAnswer {}
-        ///Provider `TheAnswer` for [`Producer`].
+        ///Provider `TheAnswer` for [`Producer`](cgp::macro_prelude::Producer).
         pub struct TheAnswer;
         impl DelegateComponent<ComputerComponent> for TheAnswer {
             type Delegate = PromoteProducer<Self>;

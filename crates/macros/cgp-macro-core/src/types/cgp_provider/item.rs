@@ -86,16 +86,22 @@ impl ItemCgpProvider {
 
         let provider_type: IdentWithTypeGenerics = parse_internal!( #impl_self_type );
 
-        let provider_trait = provider_impl
-            .trait_
-            .as_ref()
-            .and_then(|(_, path, _)| path.segments.last().map(|s| s.ident.to_string()))
-            .unwrap_or_default();
         let provider_ident = &provider_type.ident;
-        let doc = if provider_trait.is_empty() {
-            format!("Provider `{provider_ident}`.")
-        } else {
-            format!("Provider `{provider_ident}` for [`{provider_trait}`].")
+        let doc = match provider_impl.trait_.as_ref().map(|(_, path, _)| path) {
+            Some(path) if !path.segments.is_empty() => {
+                let segments: Vec<String> =
+                    path.segments.iter().map(|s| s.ident.to_string()).collect();
+                let provider_trait = &segments[segments.len() - 1];
+                if segments.len() == 1 {
+                    format!("Provider `{provider_ident}` for [`{provider_trait}`].")
+                } else {
+                    // Link the full path, so the link resolves where only the path's first
+                    // segment is in scope, as with `::cgp::macro_prelude::Computer`.
+                    let target = segments.join("::");
+                    format!("Provider `{provider_ident}` for [`{provider_trait}`]({target}).")
+                }
+            }
+            _ => format!("Provider `{provider_ident}`."),
         };
 
         let provider_struct = EmptyStruct {

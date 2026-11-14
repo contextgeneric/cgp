@@ -13,6 +13,7 @@
 //! cgp-knowledge-base/cgp/reference/providers/monad_providers.md.
 
 use cgp::core::error::ErrorOnly;
+use cgp::extra::handler::{Computer, Handler, TryComputer};
 use cgp::extra::monad::monadic::err::ErrMonadic;
 use cgp::extra::monad::monadic::ok::{OkMonadic, OkMonadicTrans};
 use cgp::extra::monad::providers::PipeMonadic;

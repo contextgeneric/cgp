@@ -1,3 +1,4 @@
+use cgp::component::UseContext;
 use cgp::prelude::*;
 use cgp_handler::{
     Computer, ComputerComponent, Handler, HandlerComponent, TryComputer, TryComputerComponent,

@@ -53,7 +53,7 @@ snapshot_cgp_computer! {
         where
             T: Display,
         {}
-        ///Provider `Describe` for [`Computer`].
+        ///Provider `Describe` for [`Computer`](cgp::macro_prelude::Computer).
         pub struct Describe;
         impl DelegateComponent<ComputerRefComponent> for Describe
         where
@@ -226,7 +226,7 @@ snapshot_cgp_computer! {
             __Context__,
             __Code__,
         > IsProviderFor<ComputerComponent, __Context__, (__Code__, (&'a str))> for FirstChar {}
-        ///Provider `FirstChar` for [`Computer`].
+        ///Provider `FirstChar` for [`Computer`](cgp::macro_prelude::Computer).
         pub struct FirstChar;
         impl DelegateComponent<ComputerRefComponent> for FirstChar
         where
@@ -399,7 +399,7 @@ snapshot_cgp_computer! {
             __Context__,
             __Code__,
         > IsProviderFor<ComputerComponent, __Context__, (__Code__, ([u64; N]))> for SumArray {}
-        ///Provider `SumArray` for [`Computer`].
+        ///Provider `SumArray` for [`Computer`](cgp::macro_prelude::Computer).
         pub struct SumArray;
         impl DelegateComponent<ComputerRefComponent> for SumArray
         where

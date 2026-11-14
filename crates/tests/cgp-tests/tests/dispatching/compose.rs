@@ -15,7 +15,7 @@
 
 use core::fmt::Display;
 
-use cgp::extra::handler::ComputerRef;
+use cgp::extra::handler::{ComputerRef, ComputerRefComponent};
 use cgp::prelude::*;
 
 pub fn first_name_to_string<Context>(context: &Context) -> String
