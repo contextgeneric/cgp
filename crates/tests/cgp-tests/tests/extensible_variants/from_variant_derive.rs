@@ -15,6 +15,7 @@
 
 use core::marker::PhantomData;
 
+use cgp::core::field::traits::FromVariant;
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_derive_from_variant;
 

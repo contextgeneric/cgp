@@ -2,11 +2,11 @@
 
 **A language extension for Rust, with pluggable trait implementations at compile-time.**
 
-The `cgp` crate is the facade over the collection of crates that provide CGP, and it re-exports
-everything through `cgp::prelude`. In ordinary Rust a trait has one implementation per type; CGP lets
-one trait have many interchangeable implementations and lets each *context* choose which one it uses,
-through a small wiring table the compiler resolves statically, so provider selection adds nothing at
-runtime.
+The `cgp` crate is the facade over the collection of crates that provide CGP. It re-exports them
+under `cgp::core` and `cgp::extra`, and gathers the names users write in `cgp::prelude`. In ordinary
+Rust a trait has one implementation per type; CGP lets one trait have many interchangeable
+implementations and lets each *context* choose which one it uses, through a small wiring table the
+compiler resolves statically, so provider selection adds nothing at runtime.
 
 ## Learn CGP
 

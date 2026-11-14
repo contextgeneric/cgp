@@ -14,6 +14,7 @@
 //!
 //! See cgp-knowledge-base/cgp/reference/derives/derive_cgp_data.md.
 
+use cgp::core::field::traits::{FromFields, ToFields};
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_derive_cgp_data;
 

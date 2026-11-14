@@ -4,6 +4,7 @@
 //!
 //! See cgp-knowledge-base/cgp/implementation/entrypoints/enum.md.
 
+use cgp::core::field::traits::{FromFields, ToFields};
 use cgp::prelude::*;
 
 #[derive(Debug, PartialEq, HasFields)]

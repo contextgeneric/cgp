@@ -6,10 +6,11 @@
 //! See [`#[cgp_component]`](https://contextgeneric.dev/docs/reference/macros/cgp_component), [`HasField`](https://contextgeneric.dev/docs/reference/traits/field-access/has_field), and [`HasErrorType`](https://contextgeneric.dev/docs/reference/components/has_error_type).
 #![warn(missing_docs)]
 
-/// The prelude, re-exported as `cgp_core::prelude` and `cgp_core::macro_prelude`.
+/// The core names users write, re-exported through `cgp::prelude`.
 pub mod prelude;
 
-pub use prelude as macro_prelude;
+/// Every core name the macros' generated code refers to, re-exported through `cgp::macro_prelude`.
+pub mod macro_prelude;
 #[doc(inline)]
 pub use {
     cgp_async_macro::async_trait, cgp_base as base, cgp_component as component, cgp_error as error,

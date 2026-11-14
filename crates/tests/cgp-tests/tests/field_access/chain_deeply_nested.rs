@@ -11,6 +11,7 @@
 //! See cgp-knowledge-base/cgp/reference/derives/derive_has_field.md and
 //! cgp-knowledge-base/cgp/reference/traits/has_field.md.
 
+use cgp::core::component::WithProvider;
 use cgp::core::field::impls::ChainGetters;
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_derive_has_field;

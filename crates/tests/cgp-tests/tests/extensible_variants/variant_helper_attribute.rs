@@ -9,6 +9,7 @@
 
 use core::marker::PhantomData;
 
+use cgp::core::field::traits::{ExtractField, HasExtractor};
 use cgp::prelude::*;
 
 #[derive(Debug, Default, PartialEq, CgpData)]

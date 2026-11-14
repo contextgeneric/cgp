@@ -20,7 +20,7 @@ use core::fmt::Display;
 
 use cgp::core::error::{ErrorRaiserComponent, ErrorTypeProviderComponent};
 use cgp::extra::error::RaiseFrom;
-use cgp::extra::handler::HandlerRef;
+use cgp::extra::handler::{AsyncComputerRef, HandlerRef};
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_cgp_computer;
 use futures::executor::block_on;

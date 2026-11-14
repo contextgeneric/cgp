@@ -16,7 +16,7 @@
 //! cgp-knowledge-base/cgp/reference/components/producer.md.
 
 use cgp::core::error::ErrorTypeProviderComponent;
-use cgp::extra::handler::{ComputerRef, HandlerRef, TryComputerRef};
+use cgp::extra::handler::{AsyncComputerRef, ComputerRef, HandlerRef, TryComputerRef};
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_cgp_producer;
 use futures::executor::block_on;

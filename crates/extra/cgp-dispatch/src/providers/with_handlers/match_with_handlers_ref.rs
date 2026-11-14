@@ -1,6 +1,6 @@
 use core::marker::PhantomData;
 
-use cgp::field::traits::FinalizeExtractResult;
+use cgp::field::traits::{FinalizeExtract, FinalizeExtractResult, HasExtractorRef};
 use cgp::prelude::*;
 use cgp_handler::{AsyncComputer, AsyncComputerComponent, Computer, ComputerComponent};
 

@@ -5,7 +5,8 @@
 #[doc(inline)]
 pub use {cgp_core as core, cgp_extra as extra};
 
-/// The prelude, re-exported as `cgp::prelude` and `cgp::macro_prelude`.
+/// The names users write, imported with `use cgp::prelude::*`.
 pub mod prelude;
 
-pub use prelude as macro_prelude;
+/// Every name the macros' generated code refers to, as `::cgp::macro_prelude::Name`.
+pub mod macro_prelude;

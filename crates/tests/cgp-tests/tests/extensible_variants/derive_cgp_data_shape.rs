@@ -16,7 +16,7 @@ use core::marker::PhantomData;
 use std::f64::consts::PI;
 
 use cgp::core::field::impls::{CanDowncast, CanDowncastFields, CanUpcast};
-use cgp::core::field::traits::FinalizeExtractResult;
+use cgp::core::field::traits::{ExtractField, FinalizeExtractResult, HasExtractor};
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_derive_cgp_data;
 

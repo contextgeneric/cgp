@@ -14,6 +14,7 @@
 
 use core::marker::PhantomData;
 
+use cgp::core::field::traits::{FromFields, HasFieldMut, ToFields};
 use cgp::prelude::*;
 
 #[derive(CgpRecord, Clone, Debug, Eq, PartialEq)]

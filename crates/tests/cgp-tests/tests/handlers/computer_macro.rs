@@ -24,7 +24,7 @@ use core::fmt::Display;
 
 use cgp::core::error::{ErrorRaiserComponent, ErrorTypeProviderComponent};
 use cgp::extra::error::RaiseFrom;
-use cgp::extra::handler::{ComputerRef, HandlerRef, TryComputerRef};
+use cgp::extra::handler::{AsyncComputerRef, ComputerRef, HandlerRef, TryComputerRef};
 use cgp::prelude::*;
 use cgp_macro_test_util::snapshot_cgp_computer;
 use futures::executor::block_on;

@@ -9,6 +9,7 @@
 
 use core::marker::PhantomData;
 
+use cgp::core::base::types::PathCons;
 use cgp::prelude::*;
 
 pub struct ErrorRaiserComponent;

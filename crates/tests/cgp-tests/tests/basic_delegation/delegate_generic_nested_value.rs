@@ -8,7 +8,7 @@
 
 use core::marker::PhantomData;
 
-use cgp::core::component::UseDelegate;
+use cgp::core::component::{DelegateComponent, UseDelegate};
 use cgp::prelude::*;
 
 pub struct FooKey;

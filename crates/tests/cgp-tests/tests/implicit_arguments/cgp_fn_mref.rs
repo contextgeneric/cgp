@@ -17,6 +17,7 @@
 //! See cgp-knowledge-base/cgp/reference/attributes/implicit.md and
 //! cgp-knowledge-base/cgp/reference/types/mref.md.
 
+use cgp::core::field::types::MRef;
 use cgp::prelude::*;
 
 #[cgp_fn]

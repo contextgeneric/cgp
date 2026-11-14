@@ -18,7 +18,10 @@ use core::marker::PhantomData;
 
 use cgp::core::error::ErrorTypeProviderComponent;
 use cgp::core::field::impls::{CanDowncast, CanUpcast};
-use cgp::core::field::traits::{FinalizeExtractResult, StaticString};
+use cgp::core::field::traits::{
+    ExtractField, FinalizeExtractResult, FromVariant, HasExtractor, HasExtractorMut,
+    HasExtractorRef, StaticString,
+};
 use cgp::extra::dispatch::{
     MatchWithFieldHandlers, MatchWithValueHandlers, MatchWithValueHandlersMut,
     MatchWithValueHandlersRef,

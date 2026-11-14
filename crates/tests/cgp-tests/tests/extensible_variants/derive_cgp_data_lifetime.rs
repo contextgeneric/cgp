@@ -14,7 +14,9 @@
 
 use core::marker::PhantomData;
 
-use cgp::core::field::traits::FinalizeExtractResult;
+use cgp::core::field::traits::{
+    ExtractField, FinalizeExtractResult, HasExtractor, HasExtractorMut, HasExtractorRef,
+};
 use cgp::prelude::*;
 
 #[derive(Debug, Eq, PartialEq, CgpData)]
