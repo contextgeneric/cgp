@@ -34,6 +34,7 @@ snapshot_cgp_component! {
             }
         }
         #[async_trait]
+        ///Provider trait for [`CanFetch`]. A provider imports this trait's component key, [`FetcherComponent`], beside it.
         pub trait Fetcher<__Context__>: IsProviderFor<FetcherComponent, __Context__, ()> {
             async fn fetch(__context__: &__Context__, id: u32) -> String;
         }

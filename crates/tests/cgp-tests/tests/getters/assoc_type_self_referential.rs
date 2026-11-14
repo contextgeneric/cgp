@@ -35,6 +35,7 @@ snapshot_cgp_getter! {
                 __Context__::name(self)
             }
         }
+        ///Provider trait for [`HasName`]. A provider imports this trait's component key, [`NameGetterComponent`], beside it.
         pub trait NameGetter<__Context__>: IsProviderFor<NameGetterComponent, __Context__, ()> {
             type Name: Display;
             fn name(__context__: &__Context__) -> &Self::Name;

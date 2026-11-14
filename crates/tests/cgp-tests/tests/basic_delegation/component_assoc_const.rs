@@ -34,6 +34,7 @@ snapshot_cgp_component! {
                 __Context__::limit(self)
             }
         }
+        ///Provider trait for [`HasLimit`]. A provider imports this trait's component key, [`LimitProviderComponent`], beside it.
         pub trait LimitProvider<
             __Context__,
         >: IsProviderFor<LimitProviderComponent, __Context__, ()> {

@@ -34,6 +34,7 @@ snapshot_cgp_component! {
                 __Context__::foo()
             }
         }
+        ///Provider trait for [`CanDoFoo`]. A provider imports this trait's component key, [`FooProviderComponent`], beside it.
         pub trait FooProvider<
             __Context__,
         >: IsProviderFor<FooProviderComponent, __Context__, ()> {

@@ -39,6 +39,8 @@ snapshot_cgp_component! {
             }
         }
         /// The user's doc for the consumer trait.
+        ///
+        ///Provider trait for [`CanGreet`]. A provider imports this trait's component key, [`GreeterComponent`], beside it.
         pub trait Greeter<__Context__>: IsProviderFor<GreeterComponent, __Context__, ()> {
             /// The user's doc for the method.
             fn greet(__context__: &__Context__) -> String;

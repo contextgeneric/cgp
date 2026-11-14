@@ -42,6 +42,7 @@ snapshot_cgp_type! {
         {
             type Foo = <__Context__ as FooTypeProviderAt<__Context__, I, J>>::Foo;
         }
+        ///Provider trait for [`HasFooTypeAt`]. A provider imports this trait's component key, [`FooTypeProviderAtComponent`], beside it.
         pub trait FooTypeProviderAt<
             __Context__,
             I,
@@ -213,6 +214,7 @@ snapshot_cgp_getter! {
                 __Context__::foo_at(self, _tag)
             }
         }
+        ///Provider trait for [`HasFooAt`]. A provider imports this trait's component key, [`FooGetterAtComponent`], beside it.
         pub trait FooGetterAt<
             __Context__,
             I,

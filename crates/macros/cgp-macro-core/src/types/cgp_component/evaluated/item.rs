@@ -1,4 +1,4 @@
-use syn::{Item, ItemImpl, ItemTrait};
+use syn::{Item, ItemImpl, ItemTrait, parse_quote};
 
 use crate::types::attributes::CgpComponentAttributes;
 use crate::types::cgp_component::CgpComponentArgs;
@@ -33,7 +33,7 @@ impl EvaluatedCgpComponent {
         let mut items = vec![
             Item::Trait(self.consumer_trait.clone()),
             Item::Impl(self.consumer_impl.clone()),
-            Item::Trait(self.provider_trait.clone()),
+            Item::Trait(self.to_documented_provider_trait()),
             Item::Impl(self.provider_impl.clone()),
             Item::Struct(self.component_struct.to_item_struct()),
         ];
@@ -43,6 +43,34 @@ impl EvaluatedCgpComponent {
         items.extend(item_impls);
 
         Ok(items)
+    }
+
+    /// The provider trait with a doc line naming its component key, so a reader
+    /// who hovers the trait in a `use` line learns which key to import beside it.
+    /// The line follows the consumer trait's copied doc as its own paragraph. It
+    /// is added here rather than to `provider_trait`, whose attributes the
+    /// generated impls copy.
+    pub fn to_documented_provider_trait(&self) -> ItemTrait {
+        let mut provider_trait = self.provider_trait.clone();
+
+        let consumer_ident = &self.consumer_trait.ident;
+        let component_ident = &self.args.component_name.ident;
+        let key_doc = format!(
+            "Provider trait for [`{consumer_ident}`]. A provider imports this trait's \
+             component key, [`{component_ident}`], beside it."
+        );
+
+        if provider_trait
+            .attrs
+            .iter()
+            .any(|attr| attr.path().is_ident("doc"))
+        {
+            provider_trait.attrs.push(parse_quote!(#[doc = ""]));
+        }
+
+        provider_trait.attrs.push(parse_quote!(#[doc = #key_doc]));
+
+        provider_trait
     }
 
     /// The standard provider impls (`UseContext`, `RedirectLookup`, per-attribute
