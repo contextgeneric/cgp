@@ -53,7 +53,7 @@ Read what a task touches in the skill and the knowledge base before changing the
 
 ## Code rules
 
-The crates stay small, layered, and `no_std`, and each change keeps its checks and records current:
+The crates stay layered and `no_std`, and each change keeps its docs, snapshots, and checks current:
 
 - Keep every crate `no_std`-compatible unless it already requires `std`; gate `std` and `alloc` behind
   features.
@@ -67,8 +67,6 @@ The crates stay small, layered, and `no_std`, and each change keeps its checks a
   removed.
 - Add a `///` to every public item that lacks one, and keep inline docs brief.
 - Update the expansion snapshots when macro codegen changes, and review the expanded code.
-- Put a post-codegen compile failure in a `cargo-cgp` UI fixture, not in this repository, and update the
-  matching fixture when a construct change alters a diagnostic.
 - Run the repository's checks before committing;
   [`.github/workflows/tests.yml`](.github/workflows/tests.yml) lists them, and CI runs the same
   commands.
@@ -79,8 +77,8 @@ The crates stay small, layered, and `no_std`, and each change keeps its checks a
 
 - Keep the code dependency one-way: no `cgp` crate may depend on a `cargo-cgp` crate.
 - Prefer `cargo-cgp` over raw `cargo check` when diagnosing a wiring failure.
-- Propagate a construct change to the matching skill sub-skill and to `cargo-cgp` when it changes a
-  diagnostic.
+- Propagate a construct change to the matching skill sub-skill, and to `cargo-cgp`'s UI fixtures when
+  it changes a diagnostic.
 
 ## Macro review workflow
 

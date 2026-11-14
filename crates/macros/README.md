@@ -34,7 +34,8 @@ errors stay spanned:
 - Keep the staged `preprocess` → `eval` → `to_items` pipeline.
 - Define a custom keyword with `define_keyword!` and `IsKeyword`.
 - Rewrite ASTs with `VisitMut` visitors, never with string manipulation.
-- Put parser corner cases and expansion snapshots in `cgp-macro-tests`, following the
+- Put parser corner cases and rejection cases in `cgp-macro-tests`, and a macro's expansion snapshot
+  in the `cgp-tests` target that owns its feature, following the
   [test suite's rules](../tests/README.md#rules-for-the-test-suite).
 
 ## Rules for the extra macros
