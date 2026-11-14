@@ -1,4 +1,4 @@
-use syn::{Item, ItemImpl, ItemTrait, parse_quote};
+use syn::{Item, ItemImpl, ItemTrait, Meta, parse_quote};
 
 use crate::types::attributes::CgpComponentAttributes;
 use crate::types::cgp_component::CgpComponentArgs;
@@ -60,10 +60,11 @@ impl EvaluatedCgpComponent {
              component key, [`{component_ident}`], beside it."
         );
 
+        // Only a `#[doc = "…"]` string needs separating; `#[doc(hidden)]` adds no text.
         if provider_trait
             .attrs
             .iter()
-            .any(|attr| attr.path().is_ident("doc"))
+            .any(|attr| matches!(&attr.meta, Meta::NameValue(meta) if meta.path.is_ident("doc")))
         {
             provider_trait.attrs.push(parse_quote!(#[doc = ""]));
         }

@@ -36,3 +36,4 @@ pub mod delegate_new_struct;
 // Where a user's doc comment lands: copied onto the derived items, with a generated
 // line on the marker struct.
 pub mod doc_comment_on_cgp_component;
+pub mod provider_trait_doc_hidden;

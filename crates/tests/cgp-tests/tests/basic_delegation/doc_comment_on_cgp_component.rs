@@ -2,9 +2,9 @@
 //!
 //! The consumer trait's doc is copied onto every item the macro derives, so the
 //! provider trait and the blanket impls carry it too, and the marker struct
-//! carries a generated line naming the consumer trait. The two never meet on one
-//! item: the marker struct has only the generated line, and the derived items have
-//! only the user's doc.
+//! carries a generated line naming the consumer trait. The two meet only on the
+//! provider trait, whose generated line naming its component key follows the
+//! user's doc after an empty line; the impls carry only the user's doc.
 //!
 //! See cgp-knowledge-base/cgp/implementation/README.md#doc-comments-on-generated-items.
 
