@@ -4,8 +4,8 @@ This directory holds the test suite for Context-Generic Programming, organized *
 CGP concept**, such as basic delegation, abstract types, implicit arguments, or namespaces,
 rather than by the macro that implements each concept, because a single
 macro such as `delegate_components!` serves many concepts at once. This README is
-the map of what is here and how to run it; [AGENTS.md](AGENTS.md) is the
-authoritative guide to the conventions, and you should read it before adding,
+the map of what is here and how to run it, and its
+[rules](#rules-for-the-test-suite) are the conventions to follow before adding,
 moving, or refactoring a test.
 
 **[Website](https://contextgeneric.dev/) · [Reference](https://contextgeneric.dev/docs/reference/) · [Implementation record](https://github.com/contextgeneric/cgp-knowledge-base/blob/main/cgp/implementation/README.md)**
@@ -31,8 +31,9 @@ provider behind its `alloc` feature.
 A fourth category lives in another repository: the cases where a macro *accepts*
 input whose *expansion* then fails to compile are UI fixtures in
 [`cargo-cgp`](https://github.com/contextgeneric/cargo-cgp/blob/main/tests/README.md),
-so each is pinned as the readable error the tool renders for it. AGENTS.md's
-"Adding a failure case" says which of the three a new case belongs in.
+so each is pinned as the readable error the tool renders for it.
+[Adding a failure case](#adding-a-failure-case) says which of the three a new case
+belongs in.
 
 ## How the tests are laid out
 
@@ -89,4 +90,38 @@ macros from `cgp-macro-test-util`: each emits the real generated code into the
 module *and* generates a `#[test]` asserting a pretty-printed inline `insta`
 snapshot of it. A failing snapshot prints a diff of the generated code, so accept
 it with `cargo insta` only after confirming the change is intended. Which target
-owns a given macro's snapshot is a convention AGENTS.md sets out.
+owns a given macro's snapshot is a convention the [rules](#rules-for-the-test-suite)
+below set out.
+
+## Rules for the test suite
+
+Each test sits where its concept's other tests are and states what it checks, so a
+reader can find the coverage of a concept in one place:
+
+- Group tests by the CGP concept under test, never by the macro that happens to appear.
+- Split a category into finer ones when it grows too large to stay coherent.
+- Put each unit test in its own file under the concept directory, self-contained at module scope.
+- Open every test file with a brief comment on the behavior it exercises, and link the owning
+  implementation document.
+- Update the implementation document's Tests or Snapshots section in the same change as a test move.
+- Run the suite with the commands above, and review every `insta` diff before accepting it.
+
+### Snapshots
+
+A macro's expansion is pinned once, in the target that owns its feature:
+
+- Snapshot a macro only in the concept target that owns its feature; keep the snapshot inline.
+- Invoke a macro plainly when it is incidental scaffolding; the owning target already pins its
+  expansion.
+
+### Adding a failure case
+
+A failure case goes where the failure happens, in one of three places:
+
+- Put an input the macro rejects in `cgp-macro-tests` with `assert_macro_rejects`.
+- Put an accepted input whose expansion fails to compile in a `cargo-cgp` UI fixture, filed under its
+  error class, and catalog the class in the knowledge base's
+  [error catalog](https://github.com/contextgeneric/cgp-knowledge-base/blob/main/cgp/errors/README.md).
+- Put a pin on the exact invalid tokens in the `invalid_expansion` target of `cgp-macro-tests`.
+- Check the post-codegen behavior in `cargo-cgp`'s UI suite when a construct change alters an accepted
+  input or an expansion.
