@@ -18,7 +18,8 @@ holds their canonical wording: read it first, and change a rule there before upd
 - Verify a claim against the source before writing it.
 - Keep every view of the same truth in sync in the same change.
 - Ask the user when a decision is ambiguous.
-- Apply point-first writing to internal prose.
+- Apply point-first writing to internal prose, and natural writing to public-facing documents
+  such as READMEs.
 
 ## Task guides
 
