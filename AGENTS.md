@@ -19,7 +19,7 @@ holds their canonical wording: read it first, and change a rule there before upd
 - Keep every view of the same truth in sync in the same change.
 - Ask the user when a decision is ambiguous.
 - Apply point-first writing to internal prose, and natural writing to public-facing documents
-  such as READMEs.
+  such as READMEs, using the optional `/point-first-writing` skill when it is available.
 
 ## Task guides
 
@@ -50,7 +50,8 @@ Read what a task touches in the skill and the knowledge base before changing the
   when the task needs them.
 - Find the module that exports a name in the `/cgp` skill's import table or the construct reference
   rather than assuming `cgp::prelude` carries it.
-- Load the `/point-first-writing` skill before editing Markdown or inline comments.
+- Load the optional `/point-first-writing` skill, when it is available, before editing Markdown or
+  inline comments.
 
 ## Code rules
 
