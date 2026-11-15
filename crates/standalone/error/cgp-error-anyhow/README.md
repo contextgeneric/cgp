@@ -9,7 +9,7 @@
 add context to it. Code written against `HasErrorType`, `CanRaiseError`, and `CanWrapError` stays
 generic; only the context's wiring names anyhow.
 
-**[Website](https://contextgeneric.dev/) · [Modular error handling](https://contextgeneric.dev/docs/concepts/modular-error-handling) · [The error components](https://contextgeneric.dev/docs/reference/components/has_error_type) · [Project record](https://github.com/contextgeneric/cgp-knowledge-base/blob/main/projects/error/README.md)**
+**[Website](https://contextgeneric.dev/) · [Modular error handling](https://contextgeneric.dev/docs/concepts/modular-error-handling) · [The error components](https://contextgeneric.dev/docs/reference/components/has_error_type)**
 
 | Provider | Wire it to | What it does |
 |---|---|---|

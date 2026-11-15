@@ -9,7 +9,7 @@ abstract error type of a [CGP](https://contextgeneric.dev) context, and supplies
 raise errors into it and add context to it. It depends only on `cgp` and `alloc`, so it suits a
 `no_std` context that still wants an open-ended error type.
 
-**[Website](https://contextgeneric.dev/) · [Modular error handling](https://contextgeneric.dev/docs/concepts/modular-error-handling) · [The error components](https://contextgeneric.dev/docs/reference/components/has_error_type) · [Project record](https://github.com/contextgeneric/cgp-knowledge-base/blob/main/projects/error/README.md)**
+**[Website](https://contextgeneric.dev/) · [Modular error handling](https://contextgeneric.dev/docs/concepts/modular-error-handling) · [The error components](https://contextgeneric.dev/docs/reference/components/has_error_type)**
 
 | Item | Wire it to | What it does |
 |---|---|---|
