@@ -161,9 +161,10 @@ cargo cgp setup                    # provisions the compiler + driver it needs
 Then run `cargo cgp check` wherever you would run `cargo check`; it forces the pinned nightly that
 `cargo cgp setup` installed only for its own check, so your project keeps its toolchain untouched.
 (Prefer Nix? `nix run github:contextgeneric/cargo-cgp/v0.1.0 -- check` runs it without installing.)
-The [installation guide](https://contextgeneric.dev/docs/cargo-cgp/installation) covers every path,
-[reading the output](https://contextgeneric.dev/docs/cargo-cgp/reading-output) explains the rewritten
-errors, and the [error codes](https://contextgeneric.dev/docs/cargo-cgp/error-codes) catalog every
+The [installation guide](https://contextgeneric.dev/docs/tooling/cargo-cgp/installation) covers
+every path, [reading the output](https://contextgeneric.dev/docs/tooling/cargo-cgp/reading-output)
+explains the rewritten errors, and the
+[error codes](https://contextgeneric.dev/docs/tooling/cargo-cgp/error-codes) catalog every
 `[CGP-Exxx]` code.
 
 cargo-cgp is optional and adds only the reading commands `check` and `expand`: keep building,
