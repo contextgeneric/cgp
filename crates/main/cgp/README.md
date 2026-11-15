@@ -6,18 +6,19 @@ Still ordinary Rust: a library on the stable toolchain, with provider selection 
 time, adopted one trait at a time.
 
 In ordinary Rust, a trait has one implementation per type, so a program that needs two behaviors for
-the same type has to reach for a wrapper type or a second trait. Context-Generic Programming (CGP)
+the same type has to use a wrapper type or a second trait. Context-Generic Programming (CGP)
 works around that limit: one trait can have many interchangeable implementations, called
-*providers*, and each *context* chooses the one it uses through a small wiring table. This crate is
-where you start. It is the facade over the crates that provide CGP, re-exporting them under
-`cgp::core` and `cgp::extra` and gathering the names you write in `cgp::prelude`.
+*providers*, and each *context* chooses the one it uses through a small wiring table.
+
+To get started, use this crate: it re-exports the crates that provide CGP under `cgp::core` and
+`cgp::extra`, and gathers the names you write in `cgp::prelude`.
 
 ## A quick look
 
-The smallest useful example is a greeting. It defines a greeting component, writes one provider
-that reads a name, and wires `Person` to that provider. Here `Person` is the data being greeted, and
-the `check_components!` line at the end makes the build fail if `Person` lacks the `name` field the
-provider reads:
+A greeting shows how these pieces fit together. The example below defines a greeting component
+and a provider that reads a name, then wires `Person` to that provider. Here `Person` holds the data
+being greeted. The `check_components!` line checks the wiring at compile time, making the build
+fail if `Person` lacks the `name` field the provider reads:
 
 ```rust
 use cgp::prelude::*;
@@ -49,9 +50,9 @@ fn main() {
 ```
 
 For a greeting alone, a plain trait would be enough. Providers start to help once an application
-needs interchangeable implementations, or wants to reuse and compose them, and that help has a
-price: more declarations, extra compile-time work, and concepts to learn. The raw compile errors can
-also be verbose, which is why the install steps below suggest a second tool.
+needs interchangeable implementations or wants to reuse and compose them. That flexibility comes
+with more declarations, extra compile-time work, and new concepts to learn. The raw compile errors
+can also be verbose, so the installation steps below include a tool to help interpret them.
 
 ## Install
 
@@ -61,9 +62,10 @@ Add the crate to your project:
 cargo add cgp
 ```
 
-CGP needs Rust 1.89 or newer on the stable toolchain. Its default features need neither `std` nor
-`alloc`, so it builds for `no_std` targets as well. Two providers, `DebugError` and `DisplayError`,
-format an error into a `String`, so they need an allocator and the `alloc` feature:
+CGP needs Rust 1.89 or newer on the stable toolchain. With its default features, it needs neither
+`std` nor `alloc`, so it builds for `no_std` targets as well. The `DebugError` and `DisplayError`
+providers format an error into a `String`, so using them requires an allocator and the `alloc`
+feature:
 
 ```toml
 [dependencies]
@@ -71,14 +73,14 @@ cgp = { version = "0.8.0", features = ["alloc"] }
 ```
 
 Once you start writing CGP, install [`cargo-cgp`](https://github.com/contextgeneric/cargo-cgp)
-beside it, because a wiring mistake otherwise shows up as an error about generated types.
-`cargo cgp check` leads with the root cause for the classes it recognizes, and the tool does not yet
-reshape every class.
+alongside it to help diagnose wiring mistakes. These otherwise show up as errors about generated
+types. `cargo cgp check` leads with the root cause for the classes it recognizes, and the tool does
+not yet reshape every class.
 
 ## Learn CGP
 
-The documentation lives on the website, [contextgeneric.dev](https://contextgeneric.dev/), and each
-part answers a different question:
+To learn more, visit [contextgeneric.dev](https://contextgeneric.dev/). Its documentation covers
+everything from your first program to the details of individual constructs:
 
 - [Quickstart](https://contextgeneric.dev/docs/quickstart): how do I install CGP and run a first
   program?
@@ -89,10 +91,11 @@ part answers a different question:
   generate?
 - [Costs and maturity](https://contextgeneric.dev/#costs): what should I weigh before adopting it?
 
-The API documentation on docs.rs describes each item, and a construct's documentation links the
-website's reference page that explains how to use it, where the site has one. If you work with a
-coding agent, the site's [AI-assisted development](https://contextgeneric.dev/docs/ai/) section
-covers the agent skill and the knowledge base the skill draws on.
+For details about individual API items, use the documentation on docs.rs. Each construct's
+documentation also links to the website's reference page explaining how to use it, where one is
+available. If you work with a coding agent, the site's
+[AI-assisted development](https://contextgeneric.dev/docs/ai/) section explains the agent skill
+and the knowledge base it draws on.
 
 ## License
 
