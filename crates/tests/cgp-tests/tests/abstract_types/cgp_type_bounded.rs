@@ -35,6 +35,7 @@ snapshot_cgp_type! {
         {
             type Types = <__Context__ as TypesTypeProvider<__Context__>>::Types;
         }
+        ///Provider trait for [`HasTypes`]. A provider imports this trait's component key, [`TypesTypeProviderComponent`], beside it.
         pub trait TypesTypeProvider<
             __Context__,
         >: IsProviderFor<TypesTypeProviderComponent, __Context__, ()> {

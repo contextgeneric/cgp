@@ -110,6 +110,7 @@ snapshot_cgp_getter! {
                 __Context__::height(self)
             }
         }
+        ///Provider trait for [`HasRectangleFields`]. A provider imports this trait's component key, [`RectangleFieldsGetterComponent`], beside it.
         pub trait RectangleFieldsGetter<
             __Context__,
         >: IsProviderFor<RectangleFieldsGetterComponent, __Context__, ()>

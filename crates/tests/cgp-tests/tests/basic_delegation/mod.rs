@@ -11,6 +11,7 @@ pub mod delegate_components_macro;
 pub mod delegate_generic_table;
 pub mod provider_component_override;
 pub mod provider_macro;
+pub mod provider_trait_path;
 
 // Behavioral wiring: a consumer trait becomes usable once its component is wired.
 pub mod consumer_delegate_generic;
@@ -35,3 +36,4 @@ pub mod delegate_new_struct;
 // Where a user's doc comment lands: copied onto the derived items, with a generated
 // line on the marker struct.
 pub mod doc_comment_on_cgp_component;
+pub mod provider_trait_doc_hidden;

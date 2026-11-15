@@ -2,9 +2,9 @@
 //!
 //! The consumer trait's doc is copied onto every item the macro derives, so the
 //! provider trait and the blanket impls carry it too, and the marker struct
-//! carries a generated line naming the consumer trait. The two never meet on one
-//! item: the marker struct has only the generated line, and the derived items have
-//! only the user's doc.
+//! carries a generated line naming the consumer trait. The two meet only on the
+//! provider trait, whose generated line naming its component key follows the
+//! user's doc after an empty line; the impls carry only the user's doc.
 //!
 //! See cgp-knowledge-base/cgp/implementation/README.md#doc-comments-on-generated-items.
 
@@ -39,6 +39,8 @@ snapshot_cgp_component! {
             }
         }
         /// The user's doc for the consumer trait.
+        ///
+        ///Provider trait for [`CanGreet`]. A provider imports this trait's component key, [`GreeterComponent`], beside it.
         pub trait Greeter<__Context__>: IsProviderFor<GreeterComponent, __Context__, ()> {
             /// The user's doc for the method.
             fn greet(__context__: &__Context__) -> String;

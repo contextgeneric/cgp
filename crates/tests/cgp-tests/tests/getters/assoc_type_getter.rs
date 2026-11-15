@@ -36,6 +36,7 @@ snapshot_cgp_getter! {
                 __Context__::scalar(self)
             }
         }
+        ///Provider trait for [`HasScalar`]. A provider imports this trait's component key, [`ScalarGetterComponent`], beside it.
         pub trait ScalarGetter<
             __Context__,
         >: IsProviderFor<ScalarGetterComponent, __Context__, ()> {

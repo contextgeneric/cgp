@@ -33,6 +33,7 @@ snapshot_cgp_type! {
         {
             type Scalar = <__Context__ as ScalarTypeProvider<__Context__>>::Scalar;
         }
+        ///Provider trait for [`HasScalarType`]. A provider imports this trait's component key, [`ScalarTypeProviderComponent`], beside it.
         pub trait ScalarTypeProvider<
             __Context__,
         >: IsProviderFor<ScalarTypeProviderComponent, __Context__, ()> {

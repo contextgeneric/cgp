@@ -31,6 +31,7 @@ snapshot_cgp_getter! {
                 __Context__::count(self)
             }
         }
+        ///Provider trait for [`HasCount`]. A provider imports this trait's component key, [`CountGetterComponent`], beside it.
         pub trait CountGetter<
             __Context__,
         >: IsProviderFor<CountGetterComponent, __Context__, ()> {
