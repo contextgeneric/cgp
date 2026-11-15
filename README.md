@@ -209,7 +209,9 @@ for a team, start small, and use the worked examples on the
 
 The [website](https://contextgeneric.dev/) is the main documentation: the quickstart, the tutorials,
 the concepts, the construct reference, the comparisons, and the project pages. The crates' API
-documentation on [docs.rs](https://docs.rs/cgp) is the place to look up an item.
+documentation on [docs.rs](https://docs.rs/cgp) is the place to look up an item. The
+[release notes](https://contextgeneric.dev/docs/release-notes/) list what each release changed and
+how to upgrade to it.
 
 > [!NOTE]
 > Each crate's `docs.rs` page says what that crate provides, and every public item carries a short

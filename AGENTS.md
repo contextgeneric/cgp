@@ -65,8 +65,9 @@ The crates stay layered and `no_std`, and each change keeps its docs, snapshots,
 - Declare inter-crate dependencies once in `[workspace.dependencies]` and reference them with
   `{ workspace = true }`.
 - Mark a test-only crate `publish = false`.
-- Treat [CHANGELOG.md](CHANGELOG.md) as the record of which macro forms are current and which are
-  removed.
+- Treat the knowledge base's
+  [removal ledger](https://github.com/contextgeneric/cgp-knowledge-base/blob/main/releases/README.md#the-removal-ledger)
+  as the record of which macro forms are current and which are removed.
 - Add a `///` to every public item that lacks one, and keep inline docs brief.
 - Update the expansion snapshots when macro codegen changes, and review the expanded code.
 - Run the repository's checks before committing;
