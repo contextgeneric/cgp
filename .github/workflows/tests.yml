@@ -78,6 +78,10 @@ jobs:
       # are UI fixtures in `cargo-cgp`, not tests here.
       - name: Run tests
         run: cargo nextest run --all-features --no-fail-fast --workspace
+      # nextest runs no doctests, so the examples in the crate docs, such as the quick
+      # look the `cgp` crate's README gives as its documentation, run in this step.
+      - name: Run doctests
+        run: cargo test --doc --workspace --all-features --no-fail-fast
 
   doc:
     name: Docs
