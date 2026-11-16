@@ -1,10 +1,10 @@
 # cgp-field
 
-[Context-Generic Programming (CGP)](https://contextgeneric.dev/) extends Rust with pluggable trait
-implementations, chosen at compile time. Its providers read a context's fields by name rather than
-by type, through the field access `cgp-field` provides: the traits that read and build a type's
-fields by name, the tags that name them, and the structural casts between records and between enums.
-`#[derive(HasField)]` gives each field a tag, and the field can then be read by name:
+A [Context-Generic Programming (CGP)](https://contextgeneric.dev/) provider reads the values it
+needs from its context's fields by name, so it fits any context that has those fields. `cgp-field`
+provides that field access: the traits that read and build a type's fields by name, the tags that
+name them, and the structural casts between records and between enums. `#[derive(HasField)]` gives
+each field a tag, and the field can then be read by name:
 
 ```rust,ignore
 use cgp::core::field::traits::HasField;

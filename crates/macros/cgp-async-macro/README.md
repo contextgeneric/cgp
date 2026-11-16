@@ -1,9 +1,8 @@
 # cgp-async-macro
 
-[Context-Generic Programming (CGP)](https://contextgeneric.dev/) extends Rust with pluggable trait
-implementations, chosen at compile time. Many of those traits are async, and `cgp-async-macro`
-provides the `#[async_trait]` macro for them, which rewrites each `async fn` in a trait to return
-`impl Future` without boxing the future:
+Many traits in [Context-Generic Programming (CGP)](https://contextgeneric.dev/) are async, and
+`cgp-async-macro` provides the `#[async_trait]` macro for them, which rewrites each `async fn` in a
+trait to return `impl Future` without boxing the future:
 
 ```rust,ignore
 use cgp::prelude::*;

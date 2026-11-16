@@ -1,10 +1,10 @@
 # cgp-macro
 
 [Context-Generic Programming (CGP)](https://contextgeneric.dev/) extends Rust with pluggable trait
-implementations, chosen at compile time. Its macros write the traits and impls behind that choice.
-`cgp-macro` provides them, from `#[cgp_component]`, which defines a component, and `#[cgp_impl]`,
-which writes a provider, to `delegate_components!` and `check_components!`, which wire a context and
-check the wiring. This greeting uses all four:
+implementations, chosen at compile time, and `cgp-macro` provides the macros that write the traits
+and impls behind them: `#[cgp_component]` defines a component, `#[cgp_impl]` writes a provider, and
+`delegate_components!` and `check_components!` wire a context and check the wiring. This greeting
+uses all four:
 
 ```rust,ignore
 use cgp::prelude::*;

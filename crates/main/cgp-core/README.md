@@ -1,7 +1,7 @@
 # cgp-core
 
-[Context-Generic Programming (CGP)](https://contextgeneric.dev/) extends Rust with pluggable trait
-implementations, chosen at compile time. `cgp-core` gathers what that rests on: the base layer and
+`cgp-core` gathers the core of [Context-Generic Programming (CGP)](https://contextgeneric.dev/),
+which extends Rust with pluggable trait implementations chosen at compile time: the base layer and
 the procedural macros, the `#[async_trait]` macro, and the error, field, and abstract-type
 components. A `#[cgp_fn]` function, for example, reads its arguments from the context's fields:
 

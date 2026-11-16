@@ -1,11 +1,10 @@
 # cgp-extra
 
-[Context-Generic Programming (CGP)](https://contextgeneric.dev/) extends Rust with pluggable trait
-implementations, chosen at compile time. `cgp-extra` gathers the features built on top: the handlers
-and the dispatch and monadic combinators that compose them, task runners and the runtime
-abstraction, the optional-field builders, and the generic error providers. Its `alloc` feature turns
-on the providers that need an allocator. A handler pipeline, for example, runs one computer after
-another:
+`cgp-extra` gathers the features [Context-Generic Programming (CGP)](https://contextgeneric.dev/)
+builds on its pluggable trait implementations: the handlers and the dispatch and monadic combinators
+that compose them, task runners and the runtime abstraction, the optional-field builders, and the
+generic error providers. Its `alloc` feature turns on the providers that need an allocator. A
+handler pipeline, for example, runs one computer after another:
 
 ```rust,ignore
 use cgp::extra::handler::{CanCompute, Computer, ComputerComponent, PipeHandlers};

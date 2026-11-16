@@ -1,10 +1,9 @@
 # cgp-macro-extra
 
-[Context-Generic Programming (CGP)](https://contextgeneric.dev/) extends Rust with pluggable trait
-implementations, chosen at compile time. Some providers follow a common pattern, and
-`cgp-macro-extra` writes them for you: `#[cgp_computer]` and `#[cgp_producer]` define a handler
-provider from a function, and `#[cgp_auto_dispatch]` implements a trait for an enum by dispatching
-to its variants, as here:
+In [Context-Generic Programming (CGP)](https://contextgeneric.dev/), each pluggable implementation
+of a trait is a provider, and some providers follow a common pattern that `cgp-macro-extra` writes
+for you: `#[cgp_computer]` and `#[cgp_producer]` define a handler provider from a function, and
+`#[cgp_auto_dispatch]` implements a trait for an enum by dispatching to its variants, as here:
 
 ```rust,ignore
 use cgp::prelude::*;

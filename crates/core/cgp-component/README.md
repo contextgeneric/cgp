@@ -1,10 +1,10 @@
 # cgp-component
 
-[Context-Generic Programming (CGP)](https://contextgeneric.dev/) extends Rust with pluggable trait
-implementations, chosen at compile time. A context makes that choice through wiring, and
-`cgp-component` provides the machinery behind it: the delegation traits that record which provider a
-context chose for each component, the lookup that reads the choice, and the providers CGP ships
-with. The wiring is a type-level table, which the lookup reads:
+In [Context-Generic Programming (CGP)](https://contextgeneric.dev/), each context chooses, at
+compile time, which implementation of a trait it uses. `cgp-component` provides the machinery behind
+that choice: the delegation traits that record which provider a context chose for each component,
+the lookup that reads the choice, and the providers CGP ships with. The choice is recorded in a
+type-level table, which the lookup reads:
 
 ```rust,ignore
 use cgp::core::component::DelegateComponent;

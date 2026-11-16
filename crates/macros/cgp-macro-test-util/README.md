@@ -4,28 +4,29 @@
 
 **[Website](https://contextgeneric.dev/) · [Reference](https://contextgeneric.dev/docs/reference/) · [Implementation record](https://github.com/contextgeneric/cgp-knowledge-base/blob/main/cgp/implementation/entrypoints/snapshot_macros.md)**
 
-This crate provides a family of `snapshot_*!` procedural macros that pin the code the core CGP
-macros generate. Each one does two things at once: it emits the real generated code into the
-surrounding module, exactly as the underlying CGP macro would, so the traits, structs, and impls
-stay live and the rest of the module can still wire them up and assert their runtime behavior, and
-it generates a `#[test]` that asserts a pretty-printed string of that same code against an inline
-[`insta`](https://insta.rs) snapshot. Adding or removing a snapshot therefore changes only that
-comparison, never what compiles or runs.
+The procedural macros of [Context-Generic Programming (CGP)](https://contextgeneric.dev/) generate
+the traits and impls behind its pluggable trait implementations, and CGP's own test suite pins that
+generated code with the `snapshot_*!` macros this crate provides. Each one emits the real generated
+code into the surrounding module, exactly as the underlying CGP macro would, so the traits, structs,
+and impls stay live and the rest of the module can still wire them and assert their behavior at run
+time. It also generates a `#[test]` that compares a pretty-printed copy of the same code with an
+inline [`insta`](https://insta.rs) snapshot. Adding or removing a snapshot therefore changes only
+that comparison, never what compiles or runs.
 
 Two documents cover what this README leaves out. The
 [implementation document](https://github.com/contextgeneric/cgp-knowledge-base/blob/main/cgp/implementation/entrypoints/snapshot_macros.md)
-in the knowledge base explains how the macros are built and what an invocation expands to; the
+in the knowledge base explains how the macros are built and what an invocation expands to. The
 [test suite's rules](https://github.com/contextgeneric/cgp/blob/main/crates/tests/README.md#snapshots)
-set the convention for *when* to snapshot: a macro's expansion is pinned only in the concept target
-that owns that macro's feature, and written plainly everywhere else.
+say *when* to snapshot: a macro's expansion is pinned only in the concept target that owns that
+macro's feature, and written plainly everywhere else.
 
 ## Crate layout
 
 This is the proc-macro crate, a thin shell: every macro forwards to
-[`cgp-macro-test-util-lib`](https://crates.io/crates/cgp-macro-test-util-lib), a normal library crate so
-the logic can be unit-tested without the `proc-macro = true` restriction.
+[`cgp-macro-test-util-lib`](https://crates.io/crates/cgp-macro-test-util-lib), a normal library
+crate, so the logic can be unit-tested without the `proc-macro = true` restriction.
 
-```
+```text
 cgp-macro-test-util/         # proc-macro entry points (#[proc_macro] fns)
 └── cgp-macro-test-util-lib/ # the actual implementation
     ├── entrypoints/         # one function per macro
@@ -33,9 +34,8 @@ cgp-macro-test-util/         # proc-macro entry points (#[proc_macro] fns)
     └── functions/           # parse_attribute, pretty_format
 ```
 
-The implementation calls the real macro logic in `cgp-macro-lib` and
-`cgp-macro-extra-lib`, not a copy of it,
-so a snapshot is guaranteed to show what the production macros generate.
+The implementation calls the real macro logic in `cgp-macro-lib` and `cgp-macro-extra-lib`, not a
+copy of it, so a snapshot shows what the production macros generate.
 
 ## Available macros
 
@@ -64,15 +64,15 @@ so a snapshot is guaranteed to show what the production macros generate.
 | `snapshot_cgp_producer!`    | `#[cgp_producer]`     |
 | `snapshot_cgp_auto_dispatch!` | `#[cgp_auto_dispatch]` |
 
-Each accepts the same argument forms as the macro it wraps, because it drives the
-production entry function; `snapshot_cgp_component!` takes both
-`#[cgp_component(Greeter)]` and the brace form, for instance.
+Each accepts the same argument forms as the macro it wraps, because it drives the production entry
+function; `snapshot_cgp_component!` takes both `#[cgp_component(Greeter)]` and the brace form, for
+instance.
 
 ## Anatomy of an invocation
 
-Every snapshot macro takes the item under test, written exactly as you would write
-the underlying macro invocation, followed by a test block naming the generated
-`#[test]` and the identifier bound to the pretty-printed expansion:
+Every snapshot macro takes the item under test, written exactly as you would write the underlying
+macro invocation, followed by a test block naming the generated `#[test]` and the identifier bound
+to the pretty-printed expansion:
 
 ```rust
 use cgp::prelude::*;
@@ -91,16 +91,15 @@ snapshot_cgp_getter! {
 }
 ```
 
-That emits the real `#[cgp_getter]` expansion, which is the consumer trait and its
-blanket impl, the provider trait, the marker struct, and the `UseField`/`UseFields`/
-`RedirectLookup` provider impls, and then a `fn expand_has_name()` holding the same
-code as a string. The test-function name must be unique within its module, so give
-each snapshot in a file a distinct one.
+That emits the real `#[cgp_getter]` expansion, which is the consumer trait and its blanket impl, the
+provider trait, the marker struct, and the `UseField`, `UseFields`, and `RedirectLookup` provider
+impls, and then a `fn expand_has_name()` holding the same code as a string. The test-function name
+must be unique within its module, so give each snapshot in a file a distinct one.
 
 ## Workflow with `insta`
 
-Write the test with an **empty** inline snapshot first (`assert_snapshot!(output, @"")`),
-then let `insta` fill it in:
+Write the test with an **empty** inline snapshot first (`assert_snapshot!(output, @"")`), then let
+`insta` fill it in:
 
 ```bash
 cargo insta test -p cgp-tests --test getter   # then: cargo insta review
@@ -108,9 +107,9 @@ cargo insta test -p cgp-tests --accept        # accept everything non-interactiv
 INSTA_UPDATE=always cargo test -p cgp-tests   # or via the env var
 ```
 
-After the first accept, the inline `@"..."` holds the pretty-printed generated code.
-On later runs the test fails if that code changes, showing a diff to re-accept once
-you have confirmed the change is intended.
+After the first accept, the inline `@"..."` holds the pretty-printed generated code. On later runs
+the test fails if that code changes, showing a diff to re-accept once you have confirmed the change
+is intended.
 
 ## Notes and limitations
 

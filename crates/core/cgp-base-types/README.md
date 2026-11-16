@@ -1,11 +1,10 @@
 # cgp-base-types
 
-[Context-Generic Programming (CGP)](https://contextgeneric.dev/) extends Rust with pluggable trait
-implementations, chosen at compile time. CGP names the parts it plugs together with types: a field
-by a type-level string, a list of fields by a type-level list. `cgp-base-types` provides those
-primitives: the symbols, the lists and sums that describe a type's fields and variants, and the
-paths that namespaces route along. A `Product!` list, for example, is a chain of `Cons` cells closed
-by `Nil`:
+[Context-Generic Programming (CGP)](https://contextgeneric.dev/) selects trait implementations at
+compile time through types, so the names it works with are types too: a field's name is a type-level
+string, and a list of fields is a type-level list. `cgp-base-types` provides those primitives: the
+symbols, the lists and sums that describe a type's fields and variants, and the paths that
+namespaces route along. A `Product!` list, for example, is a chain of `Cons` cells closed by `Nil`:
 
 ```rust,ignore
 use cgp::core::field::types::{Cons, Nil};

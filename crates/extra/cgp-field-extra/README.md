@@ -1,10 +1,10 @@
 # cgp-field-extra
 
-[Context-Generic Programming (CGP)](https://contextgeneric.dev/) extends Rust with pluggable trait
-implementations, chosen at compile time. Its records can be built field by field, and
-`cgp-field-extra` provides the optional-field layer for that: it builds a value from fields set in
-any order, then finishes once every field is set, or fills the missing ones from their defaults. A
-record can be widened into a larger one this way:
+[Context-Generic Programming (CGP)](https://contextgeneric.dev/) can build a record field by field,
+so separate pieces of code can each supply part of a value. `cgp-field-extra` provides the
+optional-field layer for that: it builds a value from fields set in any order, then finishes once
+every field is set, or fills the missing ones from their defaults. A record can be widened into a
+larger one this way:
 
 ```rust,ignore
 use cgp::extra::field::impls::CanBuildWithDefault;

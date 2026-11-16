@@ -1,8 +1,8 @@
 # cgp-type
 
-[Context-Generic Programming (CGP)](https://contextgeneric.dev/) extends Rust with pluggable trait
-implementations, chosen at compile time. A context can choose a type the same way, and `cgp-type`
-provides these abstract types, which generic code names only through a trait. A context picks its
+[Context-Generic Programming (CGP)](https://contextgeneric.dev/) lets each context choose a trait's
+implementation at compile time, and it can choose a type the same way. `cgp-type` provides these
+abstract types, which generic code names only through a trait while each context picks the concrete
 type in its wiring:
 
 ```rust,ignore

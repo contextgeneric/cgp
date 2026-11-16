@@ -1,10 +1,10 @@
 # cgp-dispatch
 
-[Context-Generic Programming (CGP)](https://contextgeneric.dev/) extends Rust with pluggable trait
-implementations, chosen at compile time. Its handlers compose into larger computations, and
-`cgp-dispatch` provides the combinators that split a value between them: they match an enum's
-variants or extract a record's fields and pass each part to its own handler, or build a record from
-what the handlers return. Here each variant of an enum gets its own area computation:
+In [Context-Generic Programming (CGP)](https://contextgeneric.dev/), a computation can be a
+component like any other, and `cgp-dispatch` provides the combinators that split a value between
+several of them: they match an enum's variants or extract a record's fields and pass each part to
+its own handler, or build a record from what the handlers return. Here each variant of an enum gets
+its own area computation:
 
 ```rust,ignore
 use cgp::extra::dispatch::MatchWithValueHandlers;

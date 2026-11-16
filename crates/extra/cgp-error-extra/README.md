@@ -1,10 +1,9 @@
 # cgp-error-extra
 
-[Context-Generic Programming (CGP)](https://contextgeneric.dev/) extends Rust with pluggable trait
-implementations, chosen at compile time. A context chooses, the same way, how each kind of error
-becomes its own error type, and `cgp-error-extra` provides generic providers for that choice. They
-raise an error by conversion, return it unchanged, discard a detail, or format it into a message,
-and a context routes each source error to one of them:
+[Context-Generic Programming (CGP)](https://contextgeneric.dev/) lets each context choose its error
+type, and how each kind of error is raised into it. `cgp-error-extra` provides generic providers for
+that choice: they raise an error by conversion, return it unchanged, discard a detail, or format it
+into a message, and a context routes each source error to one of them:
 
 ```rust,ignore
 use core::num::ParseIntError;

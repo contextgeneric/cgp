@@ -1,10 +1,9 @@
 # cgp-handler
 
-[Context-Generic Programming (CGP)](https://contextgeneric.dev/) extends Rust with pluggable trait
-implementations, chosen at compile time. A computation can be a component too, which a context wires
-like any other, and `cgp-handler` provides that handler family: components for computations
-synchronous or async and fallible or not, and the combinators that chain, nest, and promote them. A
-provider of `Computer` computes an output from an input:
+In [Context-Generic Programming (CGP)](https://contextgeneric.dev/), a computation can be a
+component too, which each context wires like any other. `cgp-handler` provides that handler family:
+components for computations synchronous or async and fallible or not, and the combinators that
+chain, nest, and promote them. A provider of `Computer` computes an output from an input:
 
 ```rust,ignore
 use cgp::extra::handler::{CanCompute, Computer, ComputerComponent};

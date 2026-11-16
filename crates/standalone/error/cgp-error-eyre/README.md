@@ -38,9 +38,11 @@ delegate_components! {
     }
 }
 
-let error = App::raise_error(std::io::Error::other("disk full"));
-let error = App::wrap_error(error, "while saving");
-assert_eq!(format!("{error:#}"), "while saving: disk full");
+fn main() {
+    let error = App::raise_error(std::io::Error::other("disk full"));
+    let error = App::wrap_error(error, "while saving");
+    assert_eq!(format!("{error:#}"), "while saving: disk full");
+}
 ```
 
 A `String` needs `DisplayEyreError` or `DebugEyreError`, because it is not a standard error.

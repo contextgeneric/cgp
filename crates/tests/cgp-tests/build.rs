@@ -1,9 +1,9 @@
 //! Turns the wiring example in each error backend's README into a test module, so the
 //! `error_backends` target compiles and runs the README's own code instead of a copy of it.
 //!
-//! Each README carries one `rust,ignore` block: `use` lines and items, then top-level statements
-//! after the last item's closing brace. The block is split there, and the statements become the
-//! body of a `#[test]` function, written to `$OUT_DIR/readme_<backend>.rs`.
+//! Each README carries one `rust,ignore` block: `use` lines and items, then a `fn main()` that
+//! runs the example. The block is split there, and the body of `main` becomes the body of a
+//! `#[test]` function, written to `$OUT_DIR/readme_<backend>.rs`.
 
 use std::path::Path;
 use std::{env, fs};
@@ -42,19 +42,22 @@ fn readme_test(backend: &str, readme: &str) -> Result<String, &'static str> {
         .ok_or("no `rust,ignore` block")?;
 
     let lines: Vec<&str> = block.lines().collect();
-    let split = lines
+    let main = lines
         .iter()
-        .rposition(|line| line.starts_with('}'))
-        .ok_or("the block has no top-level item")?;
+        .position(|line| *line == "fn main() {")
+        .ok_or("the block has no `fn main() {` line")?;
+    if lines.last() != Some(&"}") {
+        return Err("the block does not end with the closing brace of `main`");
+    }
 
-    let items = lines[..=split].join("\n");
-    let statements: Vec<String> = lines[split + 1..]
+    let items = lines[..main].join("\n");
+    let statements: Vec<&str> = lines[main + 1..lines.len() - 1]
         .iter()
+        .copied()
         .filter(|line| !line.trim().is_empty())
-        .map(|line| format!("    {line}"))
         .collect();
     if statements.is_empty() {
-        return Err("the block has no statements after its items");
+        return Err("`main` has no statements");
     }
 
     Ok(format!(
