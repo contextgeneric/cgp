@@ -1,10 +1,10 @@
 # cgp-macro-extra
 
 [Context-Generic Programming (CGP)](https://contextgeneric.dev/) extends Rust with pluggable trait
-implementations, chosen at compile time. `cgp-macro-extra` provides CGP's extra procedural macros:
-`#[cgp_computer]` and `#[cgp_producer]`, which define a handler provider from a function, and
-`#[cgp_auto_dispatch]`, which implements a trait for an enum by dispatching to its variants, as
-here:
+implementations, chosen at compile time. Some providers follow a common pattern, and
+`cgp-macro-extra` writes them for you: `#[cgp_computer]` and `#[cgp_producer]` define a handler
+provider from a function, and `#[cgp_auto_dispatch]` implements a trait for an enum by dispatching
+to its variants, as here:
 
 ```rust,ignore
 use cgp::prelude::*;
@@ -45,14 +45,13 @@ fn main() {
 }
 ```
 
-Its main items are
+The website's reference covers its main items:
 [`#[cgp_computer]`](https://contextgeneric.dev/docs/reference/macros/cgp_computer),
 [`#[cgp_producer]`](https://contextgeneric.dev/docs/reference/macros/cgp_producer), and
-[`#[cgp_auto_dispatch]`](https://contextgeneric.dev/docs/reference/macros/cgp_auto_dispatch), each
-linked to its reference page on the website.
+[`#[cgp_auto_dispatch]`](https://contextgeneric.dev/docs/reference/macros/cgp_auto_dispatch).
 
 The `cgp` crate gathers its macros in `cgp::prelude`, so a project depends on
 [`cgp`](https://crates.io/crates/cgp) alone, as the example does.
 
 The [CGP website](https://contextgeneric.dev/) teaches CGP from a first program to the reference for
-each construct, and the [`cgp` crate's documentation](https://docs.rs/cgp) covers its API.
+each construct, and the [`cgp` crate's documentation](https://docs.rs/cgp) covers the API.

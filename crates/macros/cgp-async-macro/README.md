@@ -1,8 +1,9 @@
 # cgp-async-macro
 
 [Context-Generic Programming (CGP)](https://contextgeneric.dev/) extends Rust with pluggable trait
-implementations, chosen at compile time. `cgp-async-macro` provides CGP's `#[async_trait]` macro,
-which rewrites each `async fn` in a trait to return `impl Future`, without boxing the future:
+implementations, chosen at compile time. Many of those traits are async, and `cgp-async-macro`
+provides the `#[async_trait]` macro for them, which rewrites each `async fn` in a trait to return
+`impl Future` without boxing the future:
 
 ```rust,ignore
 use cgp::prelude::*;
@@ -33,4 +34,4 @@ The `cgp` crate gathers its macro in `cgp::prelude`, so a project depends on
 [`cgp`](https://crates.io/crates/cgp) alone, as the example does.
 
 The [CGP website](https://contextgeneric.dev/) teaches CGP from a first program to the reference for
-each construct, and the [`cgp` crate's documentation](https://docs.rs/cgp) covers its API.
+each construct, and the [`cgp` crate's documentation](https://docs.rs/cgp) covers the API.

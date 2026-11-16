@@ -1,10 +1,10 @@
 # cgp-dispatch
 
 [Context-Generic Programming (CGP)](https://contextgeneric.dev/) extends Rust with pluggable trait
-implementations, chosen at compile time. `cgp-dispatch` provides CGP's dispatch combinators, which
-split a value between handlers: they match an enum's variants or extract a record's fields and pass
-each one to its own handler, or build a record from what the handlers return. Here each variant of
-an enum gets its own area computation:
+implementations, chosen at compile time. Its handlers compose into larger computations, and
+`cgp-dispatch` provides the combinators that split a value between them: they match an enum's
+variants or extract a record's fields and pass each part to its own handler, or build a record from
+what the handlers return. Here each variant of an enum gets its own area computation:
 
 ```rust,ignore
 use cgp::extra::dispatch::MatchWithValueHandlers;
@@ -54,15 +54,14 @@ fn main() {
 }
 ```
 
-Its main items are
+The website's reference covers its main items:
 [`MatchWithHandlers`](https://contextgeneric.dev/docs/reference/providers/dispatch/match_with_handlers),
 [`MatchWithValueHandlers`](https://contextgeneric.dev/docs/reference/providers/dispatch/match_with_value_handlers),
 and
-[`ExtractFieldAndHandle`](https://contextgeneric.dev/docs/reference/providers/dispatch/extract_field_and_handle),
-each linked to its reference page on the website.
+[`ExtractFieldAndHandle`](https://contextgeneric.dev/docs/reference/providers/dispatch/extract_field_and_handle).
 
 The `cgp` crate re-exports it as `cgp::extra::dispatch`, so a project depends on
 [`cgp`](https://crates.io/crates/cgp) alone, as the example does.
 
 The [CGP website](https://contextgeneric.dev/) teaches CGP from a first program to the reference for
-each construct, and the [`cgp` crate's documentation](https://docs.rs/cgp) covers its API.
+each construct, and the [`cgp` crate's documentation](https://docs.rs/cgp) covers the API.

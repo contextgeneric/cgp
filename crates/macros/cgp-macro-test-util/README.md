@@ -4,21 +4,20 @@
 
 **[Website](https://contextgeneric.dev/) · [Reference](https://contextgeneric.dev/docs/reference/) · [Implementation record](https://github.com/contextgeneric/cgp-knowledge-base/blob/main/cgp/implementation/entrypoints/snapshot_macros.md)**
 
-This crate exposes a family of `snapshot_*!` procedural macros that pin the code the
-core CGP macros generate. Each one does **two** things at once: it emits the real
-generated code into the surrounding module, exactly as the underlying CGP macro
-would, so the traits, structs, and impls stay live and the rest of the module can
-still wire them up and assert their runtime behavior, and it generates a `#[test]`
-that asserts a pretty-printed string of that same code against an inline
-[`insta`](https://insta.rs) snapshot. Adding or removing a snapshot therefore
-changes only the golden assertion, never the compile-time or runtime coverage.
+This crate provides a family of `snapshot_*!` procedural macros that pin the code the core CGP
+macros generate. Each one does two things at once: it emits the real generated code into the
+surrounding module, exactly as the underlying CGP macro would, so the traits, structs, and impls
+stay live and the rest of the module can still wire them up and assert their runtime behavior, and
+it generates a `#[test]` that asserts a pretty-printed string of that same code against an inline
+[`insta`](https://insta.rs) snapshot. Adding or removing a snapshot therefore changes only that
+comparison, never what compiles or runs.
 
-Two documents carry what this README does not. The
+Two documents cover what this README leaves out. The
 [implementation document](https://github.com/contextgeneric/cgp-knowledge-base/blob/main/cgp/implementation/entrypoints/snapshot_macros.md)
-in the knowledge base explains how the macros are built and what an invocation
-expands to; the [test suite's rules](https://github.com/contextgeneric/cgp/blob/main/crates/tests/README.md#snapshots) set the convention for
-*when* to snapshot: a macro's expansion is pinned only in the concept target that
-owns that macro's feature, and written plainly everywhere else.
+in the knowledge base explains how the macros are built and what an invocation expands to; the
+[test suite's rules](https://github.com/contextgeneric/cgp/blob/main/crates/tests/README.md#snapshots)
+set the convention for *when* to snapshot: a macro's expansion is pinned only in the concept target
+that owns that macro's feature, and written plainly everywhere else.
 
 ## Crate layout
 

@@ -1,9 +1,10 @@
 # cgp-error
 
 [Context-Generic Programming (CGP)](https://contextgeneric.dev/) extends Rust with pluggable trait
-implementations, chosen at compile time. `cgp-error` provides CGP's error components: an error type
-each context chooses, and the components that raise errors into it and wrap them with detail.
-Generic code raises an error without knowing its type, and each context decides what it becomes:
+implementations, chosen at compile time. Its error handling follows the same idea: each context
+chooses its error type. `cgp-error` provides the components behind it, the abstract error type and
+the components that raise errors into it and wrap them with detail. Generic code raises an error
+without knowing its type, and each context decides what it becomes:
 
 ```rust,ignore
 use cgp::core::error::{ErrorRaiserComponent, ErrorTypeProviderComponent};
@@ -34,14 +35,13 @@ fn main() {
 }
 ```
 
-Its main items are
+The website's reference covers its main items:
 [`HasErrorType`](https://contextgeneric.dev/docs/reference/components/has_error_type),
 [`CanRaiseError`](https://contextgeneric.dev/docs/reference/components/can_raise_error), and
-[`CanWrapError`](https://contextgeneric.dev/docs/reference/components/can_wrap_error), each linked
-to its reference page on the website.
+[`CanWrapError`](https://contextgeneric.dev/docs/reference/components/can_wrap_error).
 
 The `cgp` crate re-exports it as `cgp::core::error`, so a project depends on
 [`cgp`](https://crates.io/crates/cgp) alone, as the example does.
 
 The [CGP website](https://contextgeneric.dev/) teaches CGP from a first program to the reference for
-each construct, and the [`cgp` crate's documentation](https://docs.rs/cgp) covers its API.
+each construct, and the [`cgp` crate's documentation](https://docs.rs/cgp) covers the API.

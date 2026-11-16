@@ -1,10 +1,10 @@
 # cgp-component
 
 [Context-Generic Programming (CGP)](https://contextgeneric.dev/) extends Rust with pluggable trait
-implementations, chosen at compile time. `cgp-component` provides CGP's component machinery: the
-delegation traits that let a context choose a provider for each component, the lookup that finds it,
-and the providers CGP ships with. Wiring a context writes a type-level table, which the lookup
-reads:
+implementations, chosen at compile time. A context makes that choice through wiring, and
+`cgp-component` provides the machinery behind it: the delegation traits that record which provider a
+context chose for each component, the lookup that reads the choice, and the providers CGP ships
+with. The wiring is a type-level table, which the lookup reads:
 
 ```rust,ignore
 use cgp::core::component::DelegateComponent;
@@ -33,18 +33,17 @@ fn main() {
 }
 ```
 
-Its main items are
+The website's reference covers its main items:
 [`DelegateComponent`](https://contextgeneric.dev/docs/reference/traits/wiring/delegate_component),
 [`IsProviderFor`](https://contextgeneric.dev/docs/reference/traits/wiring/is_provider_for),
 [`CanUseComponent`](https://contextgeneric.dev/docs/reference/traits/wiring/can_use_component),
 [`UseContext`](https://contextgeneric.dev/docs/reference/providers/use_context),
 [`UseDefault`](https://contextgeneric.dev/docs/reference/providers/use_default),
 [`UseDelegate`](https://contextgeneric.dev/docs/reference/providers/use_delegate), and
-[`RedirectLookup`](https://contextgeneric.dev/docs/reference/providers/redirect_lookup), each linked
-to its reference page on the website.
+[`RedirectLookup`](https://contextgeneric.dev/docs/reference/providers/redirect_lookup).
 
 The `cgp` crate re-exports it as `cgp::core::component`, so a project depends on
 [`cgp`](https://crates.io/crates/cgp) alone, as the example does.
 
 The [CGP website](https://contextgeneric.dev/) teaches CGP from a first program to the reference for
-each construct, and the [`cgp` crate's documentation](https://docs.rs/cgp) covers its API.
+each construct, and the [`cgp` crate's documentation](https://docs.rs/cgp) covers the API.

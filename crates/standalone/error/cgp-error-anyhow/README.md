@@ -5,9 +5,9 @@
 # cgp-error-anyhow: anyhow as a context's error type
 
 `cgp-error-anyhow` makes [`anyhow::Error`](https://docs.rs/anyhow) the abstract error type of a
-[CGP](https://contextgeneric.dev) context, and supplies the providers that raise errors into it and
-add context to it. Code written against `HasErrorType`, `CanRaiseError`, and `CanWrapError` stays
-generic; only the context's wiring names anyhow.
+[Context-Generic Programming (CGP)](https://contextgeneric.dev) context, and supplies the providers
+that raise errors into it and add context to it. Code written against `HasErrorType`,
+`CanRaiseError`, and `CanWrapError` stays generic, and only the context's wiring names anyhow.
 
 **[Website](https://contextgeneric.dev/) · [Modular error handling](https://contextgeneric.dev/docs/concepts/modular-error-handling) · [The error components](https://contextgeneric.dev/docs/reference/components/has_error_type)**
 
@@ -50,6 +50,3 @@ need `std`, such as backtrace capture.
 
 The crate re-exports `anyhow::Error` as `cgp_error_anyhow::Error`.
 
-## License
-
-Licensed under the [Apache License, Version 2.0](https://github.com/contextgeneric/cgp/blob/main/LICENSE).

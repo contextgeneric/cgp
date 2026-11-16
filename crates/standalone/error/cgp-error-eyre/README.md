@@ -5,9 +5,9 @@
 # cgp-error-eyre: eyre as a context's error type
 
 `cgp-error-eyre` makes [`eyre::Report`](https://docs.rs/eyre) the abstract error type of a
-[CGP](https://contextgeneric.dev) context, and supplies the providers that raise errors into it and
-add context to it. Code written against `HasErrorType`, `CanRaiseError`, and `CanWrapError` stays
-generic; only the context's wiring names eyre.
+[Context-Generic Programming (CGP)](https://contextgeneric.dev) context, and supplies the providers
+that raise errors into it and add context to it. Code written against `HasErrorType`,
+`CanRaiseError`, and `CanWrapError` stays generic, and only the context's wiring names eyre.
 
 **[Website](https://contextgeneric.dev/) · [Modular error handling](https://contextgeneric.dev/docs/concepts/modular-error-handling) · [The error components](https://contextgeneric.dev/docs/reference/components/has_error_type)**
 
@@ -48,13 +48,10 @@ A `String` needs `DisplayEyreError` or `DebugEyreError`, because it is not a sta
 
 The crate enables eyre's `auto-install` feature, so eyre's default report handler is installed the
 first time a report is built. To use another handler, such as `color-eyre`, install it with
-`eyre::set_hook` before the first error is raised; once a report exists, `set_hook` returns an
+`eyre::set_hook` before the first error is raised, since once a report exists, `set_hook` returns an
 error. The crate also enables eyre's `track-caller` feature, and CGP's `raise_error` is
 `#[track_caller]`, so a report's `Location:` names the line that called `raise_error`. eyre requires
 `std`, so this crate does too.
 
 The crate re-exports `eyre::Error`, eyre's alias for `Report`, as `cgp_error_eyre::Error`.
 
-## License
-
-Licensed under the [Apache License, Version 2.0](https://github.com/contextgeneric/cgp/blob/main/LICENSE).

@@ -1,10 +1,10 @@
 # cgp-macro
 
 [Context-Generic Programming (CGP)](https://contextgeneric.dev/) extends Rust with pluggable trait
-implementations, chosen at compile time. `cgp-macro` provides CGP's procedural macros, from
-`#[cgp_component]`, which defines a component, and `#[cgp_impl]`, which writes a provider, to
-`delegate_components!` and `check_components!`, which wire a context and check the wiring at compile
-time. This greeting uses all four:
+implementations, chosen at compile time. Its macros write the traits and impls behind that choice.
+`cgp-macro` provides them, from `#[cgp_component]`, which defines a component, and `#[cgp_impl]`,
+which writes a provider, to `delegate_components!` and `check_components!`, which wire a context and
+check the wiring. This greeting uses all four:
 
 ```rust,ignore
 use cgp::prelude::*;
@@ -35,15 +35,14 @@ fn main() {
 }
 ```
 
-Its main items are
+The website's reference covers its main items:
 [`#[cgp_component]`](https://contextgeneric.dev/docs/reference/macros/cgp_component),
 [`#[cgp_impl]`](https://contextgeneric.dev/docs/reference/macros/cgp_impl),
 [`delegate_components!`](https://contextgeneric.dev/docs/reference/macros/delegate_components), and
-[`check_components!`](https://contextgeneric.dev/docs/reference/macros/check_components), each
-linked to its reference page on the website.
+[`check_components!`](https://contextgeneric.dev/docs/reference/macros/check_components).
 
 The `cgp` crate gathers its macros in `cgp::prelude`, so a project depends on
 [`cgp`](https://crates.io/crates/cgp) alone, as the example does.
 
 The [CGP website](https://contextgeneric.dev/) teaches CGP from a first program to the reference for
-each construct, and the [`cgp` crate's documentation](https://docs.rs/cgp) covers its API.
+each construct, and the [`cgp` crate's documentation](https://docs.rs/cgp) covers the API.
