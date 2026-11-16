@@ -28,7 +28,7 @@ permissions:
 # list lives, so a contributor can reproduce any job from here.
 jobs:
   fmt:
-    name: Rustfmt (nightly-2026-11-05)
+    name: Rustfmt (nightly-2026-11-16)
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -37,8 +37,8 @@ jobs:
       # unstable options, so rustfmt needs a nightly. The channel is pinned so a
       # reformat cannot land without a commit.
       - name: Install the pinned nightly for rustfmt
-        run: rustup toolchain install nightly-2026-11-05 --profile minimal --component rustfmt
-      - run: cargo +nightly-2026-11-05 fmt --all -- --check
+        run: rustup toolchain install nightly-2026-11-16 --profile minimal --component rustfmt
+      - run: cargo +nightly-2026-11-16 fmt --all -- --check
 
   clippy:
     name: Clippy
