@@ -1,11 +1,36 @@
 # cgp-core
 
-`cgp-core` gathers the core of Context-Generic Programming (CGP): the base layer and the procedural
-macros, the `#[async_trait]` macro, and the error, field, and abstract-type components.
+[Context-Generic Programming (CGP)](https://contextgeneric.dev/) extends Rust with pluggable trait
+implementations chosen at compile time, and `cgp-core` gathers the core it rests on: the base layer
+and the procedural macros, the `#[async_trait]` macro, and the error, field, and abstract-type
+components. A `#[cgp_fn]` function, for example, reads its arguments from the context's fields:
 
-The `cgp` crate re-exports it as `cgp::core`. Most projects therefore depend on
-[`cgp`](https://crates.io/crates/cgp) alone, without adding this crate to their manifest.
+```rust,ignore
+use cgp::prelude::*;
 
-To learn more, read the [`cgp` crate's documentation](https://docs.rs/cgp) and the
-[CGP website](https://contextgeneric.dev/), which covers everything from a first program to the
-reference for each construct.
+#[cgp_fn]
+fn rectangle_area(&self, #[implicit] width: f64, #[implicit] height: f64) -> f64 {
+    width * height
+}
+
+#[derive(HasField)]
+pub struct Rectangle {
+    pub width: f64,
+    pub height: f64,
+}
+
+fn main() {
+    let rectangle = Rectangle { width: 2.0, height: 3.0 };
+    assert_eq!(rectangle.rectangle_area(), 6.0);
+}
+```
+
+Projects reach `cgp-core` through the `cgp` crate, which re-exports it as `cgp::core`, so they
+depend on [`cgp`](https://crates.io/crates/cgp) alone, as the example does. The website's reference
+has a page for each of its main items:
+[`#[cgp_component]`](https://contextgeneric.dev/docs/reference/macros/cgp_component),
+[`HasField`](https://contextgeneric.dev/docs/reference/traits/field-access/has_field), and
+[`HasErrorType`](https://contextgeneric.dev/docs/reference/components/has_error_type).
+
+To learn CGP itself, the [CGP website](https://contextgeneric.dev/) starts from a first program, and
+the [`cgp` crate's documentation](https://docs.rs/cgp) covers the whole API.

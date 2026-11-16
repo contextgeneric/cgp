@@ -1,8 +1,5 @@
+#![doc = include_str!("../README.md")]
 #![no_std]
-//! This crate provides CGP's procedural macros, from defining a component to wiring and checking a
-//! context.
-//!
-//! See [`#[cgp_component]`](https://contextgeneric.dev/docs/reference/macros/cgp_component), [`#[cgp_impl]`](https://contextgeneric.dev/docs/reference/macros/cgp_impl), [`delegate_components!`](https://contextgeneric.dev/docs/reference/macros/delegate_components), and [`check_components!`](https://contextgeneric.dev/docs/reference/macros/check_components).
 #![warn(missing_docs)]
 
 use proc_macro::TokenStream;

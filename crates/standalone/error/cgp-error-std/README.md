@@ -5,11 +5,14 @@
 # cgp-error-std: a boxed standard error as a context's error type
 
 `cgp-error-std` makes a boxed standard error, `Box<dyn core::error::Error + Send + Sync>`, the
-abstract error type of a [CGP](https://contextgeneric.dev) context, and supplies the providers that
-raise errors into it and add context to it. It depends only on `cgp` and `alloc`, so it suits a
-`no_std` context that still wants an open-ended error type.
+abstract error type of a [Context-Generic Programming (CGP)](https://contextgeneric.dev) context,
+and supplies the providers that raise errors into it and add context to it. It depends only on `cgp`
+and `alloc`, so it suits a `no_std` context that still wants an open-ended error type.
 
 **[Website](https://contextgeneric.dev/) · [Modular error handling](https://contextgeneric.dev/docs/concepts/modular-error-handling) · [The error components](https://contextgeneric.dev/docs/reference/components/has_error_type)**
+
+The providers go into the wiring under the components their rows name, and the last three rows
+are the types they build:
 
 | Item | Wire it to | What it does |
 |---|---|---|
@@ -41,17 +44,15 @@ delegate_components! {
     }
 }
 
-let error = App::raise_error(std::io::Error::other("disk full"));
-let error = App::wrap_error(error, "while saving");
-assert_eq!(format!("{error}"), "while saving");
-assert_eq!(format!("{error:#}"), "while saving: disk full");
+fn main() {
+    let error = App::raise_error(std::io::Error::other("disk full"));
+    let error = App::wrap_error(error, "while saving");
+    assert_eq!(format!("{error}"), "while saving");
+    assert_eq!(format!("{error:#}"), "while saving: disk full");
+}
 ```
 
-A `WrapError` prints its detail alone with `{}`, so a reporter that walks `source()` prints each
-message once, and prints the whole chain with `{:#}` or `{:?}`. A `String` needs
-`DisplayBoxedStdError` or `DebugBoxedStdError`, because it is not a standard error, and
-`DebugBoxedStdError` prints it with quotes.
+A `WrapError` prints only its detail with `{}`, so a reporter that walks `source()` prints each
+message once, while `{:#}` and `{:?}` print the whole chain. A `String` is not a standard error, so
+it needs `DisplayBoxedStdError` or `DebugBoxedStdError`, and the debug form prints it with quotes.
 
-## License
-
-Licensed under the [Apache License, Version 2.0](https://github.com/contextgeneric/cgp/blob/main/LICENSE).

@@ -1,12 +1,41 @@
 # cgp-field-extra
 
-`cgp-field-extra` provides the optional-field layer of Context-Generic Programming (CGP), which
-builds a value from fields set in any order. The builder finishes once every field is set, or fills
-the missing ones from their defaults.
+[Context-Generic Programming (CGP)](https://contextgeneric.dev/) can build a record field by field,
+so separate pieces of code can each supply part of a value. `cgp-field-extra` provides the
+optional-field layer for that: it builds a value from fields set in any order, then finishes once
+every field is set, or fills the missing ones from their defaults. A record can be widened into a
+larger one this way:
 
-The `cgp` crate re-exports it as `cgp::extra::field`. Most projects therefore depend on
-[`cgp`](https://crates.io/crates/cgp) alone, without adding this crate to their manifest.
+```rust,ignore
+use cgp::extra::field::impls::CanBuildWithDefault;
+use cgp::prelude::*;
 
-To learn more, read the [`cgp` crate's documentation](https://docs.rs/cgp) and the
-[CGP website](https://contextgeneric.dev/), which covers everything from a first program to the
-reference for each construct.
+#[derive(Debug, PartialEq, CgpData)]
+pub struct Point2d {
+    pub x: u64,
+    pub y: u64,
+}
+
+#[derive(Debug, PartialEq, CgpData)]
+pub struct Point3d {
+    pub x: u64,
+    pub y: u64,
+    pub z: u64,
+}
+
+fn main() {
+    let point = Point3d::build_with_default(Point2d { x: 1, y: 2 });
+    assert_eq!(point, Point3d { x: 1, y: 2, z: 0 });
+}
+```
+
+Projects reach this layer through the `cgp` crate, which re-exports it as `cgp::extra::field`, so
+they depend on [`cgp`](https://crates.io/crates/cgp) alone, as the example does. The website's
+reference has a page for each of its main items:
+[`HasOptionalBuilder`](https://contextgeneric.dev/docs/reference/traits/optional/has_optional_builder),
+[`ToOptional`](https://contextgeneric.dev/docs/reference/traits/optional/to_optional),
+[`SetOptional`](https://contextgeneric.dev/docs/reference/traits/optional/set_optional), and
+[`FinalizeOptional`](https://contextgeneric.dev/docs/reference/traits/optional/finalize_optional).
+
+To learn CGP itself, the [CGP website](https://contextgeneric.dev/) starts from a first program, and
+the [`cgp` crate's documentation](https://docs.rs/cgp) covers the whole API.

@@ -1,13 +1,48 @@
 # cgp-extra
 
-`cgp-extra` gathers the extra features of Context-Generic Programming (CGP): the handlers that model
-computations, the dispatch and monadic combinators that compose them, task runners and the runtime
-abstraction, the optional-field builders, and the generic error providers. Its `alloc` feature turns
-on the providers that need an allocator.
+`cgp-extra` gathers the features [Context-Generic Programming (CGP)](https://contextgeneric.dev/)
+builds on its pluggable trait implementations: the handlers and the dispatch and monadic combinators
+that compose them, task runners and the runtime abstraction, the optional-field builders, and the
+generic error providers, two of which format an error into a `String` and so need the `alloc`
+feature. A handler pipeline, for example, runs one computer after another:
 
-The `cgp` crate re-exports it as `cgp::extra`. Most projects therefore depend on
-[`cgp`](https://crates.io/crates/cgp) alone, without adding this crate to their manifest.
+```rust,ignore
+use cgp::extra::handler::{CanCompute, Computer, ComputerComponent, PipeHandlers};
+use cgp::prelude::*;
 
-To learn more, read the [`cgp` crate's documentation](https://docs.rs/cgp) and the
-[CGP website](https://contextgeneric.dev/), which covers everything from a first program to the
-reference for each construct.
+#[cgp_impl(new Double)]
+impl<Code> Computer<Code, u64> {
+    type Output = u64;
+
+    fn compute(&self, _code: PhantomData<Code>, input: u64) -> u64 {
+        input * 2
+    }
+}
+
+#[cgp_impl(new Increment)]
+impl<Code> Computer<Code, u64> {
+    type Output = u64;
+
+    fn compute(&self, _code: PhantomData<Code>, input: u64) -> u64 {
+        input + 1
+    }
+}
+
+pub struct App;
+
+delegate_components! { App { ComputerComponent: PipeHandlers<Product![Double, Increment]> } }
+
+fn main() {
+    assert_eq!(App.compute(PhantomData::<()>, 20), 41);
+}
+```
+
+Projects reach `cgp-extra` through the `cgp` crate, which re-exports it as `cgp::extra`, so they
+depend on [`cgp`](https://crates.io/crates/cgp) alone, as the example does. The website's reference
+has a page for each of its main items:
+[`CanHandle`](https://contextgeneric.dev/docs/reference/components/handler/handler),
+[`PipeHandlers`](https://contextgeneric.dev/docs/reference/providers/handler/pipe_handlers), and
+[`RaiseFrom`](https://contextgeneric.dev/docs/reference/providers/error/raise_from).
+
+To learn CGP itself, the [CGP website](https://contextgeneric.dev/) starts from a first program, and
+the [`cgp` crate's documentation](https://docs.rs/cgp) covers the whole API.

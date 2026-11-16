@@ -1,9 +1,5 @@
+#![doc = include_str!("../README.md")]
 #![no_std]
-//! This crate re-exports CGP's extra layer through `cgp::extra`: handlers, monads, dispatch,
-//! runtime, runners, the optional-field layer, and the generic error providers. The `alloc` feature
-//! turns on the providers that need an allocator.
-//!
-//! See [`CanHandle`](https://contextgeneric.dev/docs/reference/components/handler/handler), [`PipeHandlers`](https://contextgeneric.dev/docs/reference/providers/handler/pipe_handlers), and [`RaiseFrom`](https://contextgeneric.dev/docs/reference/providers/error/raise_from).
 #![warn(missing_docs)]
 
 /// The extra names users write, re-exported through `cgp::prelude`.

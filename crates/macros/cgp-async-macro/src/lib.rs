@@ -1,8 +1,5 @@
+#![doc = include_str!("../README.md")]
 #![no_std]
-//! This crate provides CGP's `#[async_trait]` macro, which rewrites a trait's `async fn` to return
-//! `impl Future`.
-//!
-//! See [`#[async_trait]`](https://contextgeneric.dev/docs/reference/macros/async_trait).
 #![warn(missing_docs)]
 
 extern crate alloc;

@@ -1,12 +1,55 @@
 # cgp-macro-extra
 
-`cgp-macro-extra` provides the extra procedural macros of Context-Generic Programming (CGP):
-`#[cgp_computer]` and `#[cgp_producer]`, which define a handler provider from a function, and
-`#[cgp_auto_dispatch]`, which implements a trait for an enum by dispatching to its variants.
+In [Context-Generic Programming (CGP)](https://contextgeneric.dev/), each pluggable implementation
+of a trait is a provider, and some providers follow a common pattern that `cgp-macro-extra` writes
+for you: `#[cgp_computer]` and `#[cgp_producer]` define a handler provider from a function, and
+`#[cgp_auto_dispatch]` implements a trait for an enum by dispatching to its variants, as here:
 
-The `cgp` crate re-exports these macros under `cgp::prelude`. Most projects therefore depend on
-[`cgp`](https://crates.io/crates/cgp) alone, without adding this crate to their manifest.
+```rust,ignore
+use cgp::prelude::*;
 
-To learn more, read the [`cgp` crate's documentation](https://docs.rs/cgp) and the
-[CGP website](https://contextgeneric.dev/), which covers everything from a first program to the
-reference for each construct.
+#[cgp_auto_dispatch]
+pub trait HasArea {
+    fn area(&self) -> f64;
+}
+
+pub struct Circle {
+    pub radius: f64,
+}
+
+impl HasArea for Circle {
+    fn area(&self) -> f64 {
+        3.0 * self.radius * self.radius
+    }
+}
+
+pub struct Square {
+    pub side: f64,
+}
+
+impl HasArea for Square {
+    fn area(&self) -> f64 {
+        self.side * self.side
+    }
+}
+
+#[derive(CgpData)]
+pub enum Shape {
+    Circle(Circle),
+    Square(Square),
+}
+
+fn main() {
+    assert_eq!(Shape::Square(Square { side: 2.0 }).area(), 4.0);
+}
+```
+
+Projects use these macros through `cgp::prelude`, so they depend on
+[`cgp`](https://crates.io/crates/cgp) alone, as the example does. The website's reference has a page
+for each of its main items:
+[`#[cgp_computer]`](https://contextgeneric.dev/docs/reference/macros/cgp_computer),
+[`#[cgp_producer]`](https://contextgeneric.dev/docs/reference/macros/cgp_producer), and
+[`#[cgp_auto_dispatch]`](https://contextgeneric.dev/docs/reference/macros/cgp_auto_dispatch).
+
+To learn CGP itself, the [CGP website](https://contextgeneric.dev/) starts from a first program, and
+the [`cgp` crate's documentation](https://docs.rs/cgp) covers the whole API.

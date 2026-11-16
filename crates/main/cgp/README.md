@@ -78,8 +78,8 @@ cgp = { version = "0.8.0", features = ["alloc"] }
 
 Once you start writing CGP, install [`cargo-cgp`](https://github.com/contextgeneric/cargo-cgp)
 alongside it to help diagnose wiring mistakes, which otherwise show up as errors about generated
-types. `cargo cgp check` leads with the root cause for the classes of error it recognizes, though
-it does not yet reshape every class.
+types. `cargo cgp check` leads with the root cause for the classes it recognizes, and the tool does
+not yet reshape every class.
 
 ## Learn CGP
 

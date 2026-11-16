@@ -5,11 +5,13 @@
 # cgp-error-anyhow: anyhow as a context's error type
 
 `cgp-error-anyhow` makes [`anyhow::Error`](https://docs.rs/anyhow) the abstract error type of a
-[CGP](https://contextgeneric.dev) context, and supplies the providers that raise errors into it and
-add context to it. Code written against `HasErrorType`, `CanRaiseError`, and `CanWrapError` stays
-generic; only the context's wiring names anyhow.
+[Context-Generic Programming (CGP)](https://contextgeneric.dev) context, and supplies the providers
+that raise errors into it and add context to it. Code written against `HasErrorType`,
+`CanRaiseError`, and `CanWrapError` stays generic, and only the context's wiring names anyhow.
 
 **[Website](https://contextgeneric.dev/) · [Modular error handling](https://contextgeneric.dev/docs/concepts/modular-error-handling) · [The error components](https://contextgeneric.dev/docs/reference/components/has_error_type)**
+
+Each provider goes into the wiring under the components its row names:
 
 | Provider | Wire it to | What it does |
 |---|---|---|
@@ -38,18 +40,17 @@ delegate_components! {
     }
 }
 
-let error = App::raise_error(std::io::Error::other("disk full"));
-let error = App::wrap_error(error, "while saving");
-assert_eq!(format!("{error:#}"), "while saving: disk full");
+fn main() {
+    let error = App::raise_error(std::io::Error::other("disk full"));
+    let error = App::wrap_error(error, "while saving");
+    assert_eq!(format!("{error:#}"), "while saving: disk full");
+}
 ```
 
-A `String` needs `DisplayAnyhowError` or `DebugAnyhowError`, because it is not a standard error.
-`DebugAnyhowError` prints it with quotes. The crate is `no_std` and builds anyhow without its `std`
-feature. Enabling that feature elsewhere in the dependency graph turns on the parts of anyhow that
-need `std`, such as backtrace capture.
+A `String` is not a standard error, so it needs `DisplayAnyhowError` or `DebugAnyhowError`, and the
+debug form prints it with quotes. The crate itself is `no_std` and builds anyhow without its `std`
+feature. When another crate in the dependency graph enables that feature, the parts of anyhow that
+need `std`, such as backtrace capture, turn on as well.
 
 The crate re-exports `anyhow::Error` as `cgp_error_anyhow::Error`.
 
-## License
-
-Licensed under the [Apache License, Version 2.0](https://github.com/contextgeneric/cgp/blob/main/LICENSE).
