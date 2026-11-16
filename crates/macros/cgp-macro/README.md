@@ -1,12 +1,49 @@
 # cgp-macro
 
-`cgp-macro` provides the procedural macros of Context-Generic Programming (CGP), from
+[Context-Generic Programming (CGP)](https://contextgeneric.dev/) extends Rust with pluggable trait
+implementations, chosen at compile time. `cgp-macro` provides CGP's procedural macros, from
 `#[cgp_component]`, which defines a component, and `#[cgp_impl]`, which writes a provider, to
-`delegate_components!` and `check_components!`, which wire and check a context.
+`delegate_components!` and `check_components!`, which wire a context and check the wiring at compile
+time. This greeting uses all four:
 
-The `cgp` crate re-exports these macros under `cgp::prelude`. Most projects therefore depend on
-[`cgp`](https://crates.io/crates/cgp) alone, without adding this crate to their manifest.
+```rust,ignore
+use cgp::prelude::*;
 
-To learn more, read the [`cgp` crate's documentation](https://docs.rs/cgp) and the
-[CGP website](https://contextgeneric.dev/), which covers everything from a first program to the
-reference for each construct.
+#[cgp_component(Greeter)]
+pub trait CanGreet {
+    fn greet(&self) -> String;
+}
+
+#[cgp_impl(new GreetHello)]
+impl Greeter {
+    fn greet(&self, #[implicit] name: &str) -> String {
+        format!("Hello, {name}!")
+    }
+}
+
+#[derive(HasField)]
+pub struct Person {
+    pub name: String,
+}
+
+delegate_components! { Person { GreeterComponent: GreetHello } }
+check_components! { Person { GreeterComponent } }
+
+fn main() {
+    let person = Person { name: "World".to_owned() };
+    assert_eq!(person.greet(), "Hello, World!");
+}
+```
+
+Its main items are
+[`#[cgp_component]`](https://contextgeneric.dev/docs/reference/macros/cgp_component),
+[`#[cgp_impl]`](https://contextgeneric.dev/docs/reference/macros/cgp_impl),
+[`delegate_components!`](https://contextgeneric.dev/docs/reference/macros/delegate_components), and
+[`check_components!`](https://contextgeneric.dev/docs/reference/macros/check_components), each
+linked to its reference page on the website.
+
+The `cgp` crate gathers its macros in `cgp::prelude`, so a project depends on
+[`cgp`](https://crates.io/crates/cgp) alone, as the example does.
+
+The [CGP website](https://contextgeneric.dev/) teaches CGP from a first program to the reference for
+each construct, and the [`cgp` crate's documentation](https://docs.rs/cgp) covers its API.

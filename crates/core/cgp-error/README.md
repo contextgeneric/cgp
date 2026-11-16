@@ -1,12 +1,47 @@
 # cgp-error
 
-`cgp-error` provides the error components of Context-Generic Programming (CGP): an error type that
+[Context-Generic Programming (CGP)](https://contextgeneric.dev/) extends Rust with pluggable trait
+implementations, chosen at compile time. `cgp-error` provides CGP's error components: an error type
 each context chooses, and the components that raise errors into it and wrap them with detail.
+Generic code raises an error without knowing its type, and each context decides what it becomes:
 
-The `cgp` crate re-exports it as `cgp::core::error`, and its traits `HasErrorType`, `CanRaiseError`,
-and `CanWrapError` under `cgp::prelude`. Most projects therefore depend on
-[`cgp`](https://crates.io/crates/cgp) alone, without adding this crate to their manifest.
+```rust,ignore
+use cgp::core::error::{ErrorRaiserComponent, ErrorTypeProviderComponent};
+use cgp::extra::error::RaiseFrom;
+use cgp::prelude::*;
 
-To learn more, read the [`cgp` crate's documentation](https://docs.rs/cgp) and the
-[CGP website](https://contextgeneric.dev/), which covers everything from a first program to the
-reference for each construct.
+pub fn parse_port<Context>(input: &str) -> Result<u16, Context::Error>
+where
+    Context: CanRaiseError<String>,
+{
+    input.parse().map_err(|_| Context::raise_error(format!("not a port: {input}")))
+}
+
+pub struct App;
+
+delegate_components! {
+    App {
+        open ErrorRaiserComponent;
+
+        ErrorTypeProviderComponent: UseType<String>,
+        @ErrorRaiserComponent.String: RaiseFrom,
+    }
+}
+
+fn main() {
+    assert_eq!(parse_port::<App>("80"), Ok(80));
+    assert_eq!(parse_port::<App>("http"), Err("not a port: http".to_owned()));
+}
+```
+
+Its main items are
+[`HasErrorType`](https://contextgeneric.dev/docs/reference/components/has_error_type),
+[`CanRaiseError`](https://contextgeneric.dev/docs/reference/components/can_raise_error), and
+[`CanWrapError`](https://contextgeneric.dev/docs/reference/components/can_wrap_error), each linked
+to its reference page on the website.
+
+The `cgp` crate re-exports it as `cgp::core::error`, so a project depends on
+[`cgp`](https://crates.io/crates/cgp) alone, as the example does.
+
+The [CGP website](https://contextgeneric.dev/) teaches CGP from a first program to the reference for
+each construct, and the [`cgp` crate's documentation](https://docs.rs/cgp) covers its API.

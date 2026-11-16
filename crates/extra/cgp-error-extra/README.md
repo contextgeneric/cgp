@@ -1,13 +1,51 @@
 # cgp-error-extra
 
-`cgp-error-extra` provides the generic error providers of Context-Generic Programming (CGP), which
-raise an error by conversion, return it unchanged, discard a detail, or format it into a message.
-The `DebugError` and `DisplayError` providers need an allocator, so they sit behind the `alloc`
-feature.
+[Context-Generic Programming (CGP)](https://contextgeneric.dev/) extends Rust with pluggable trait
+implementations, chosen at compile time. `cgp-error-extra` provides CGP's generic error providers,
+which raise an error by conversion, return it unchanged, discard a detail, or format it into a
+message. A context routes each source error to one of them:
 
-The `cgp` crate re-exports it as `cgp::extra::error`. Most projects therefore depend on
-[`cgp`](https://crates.io/crates/cgp) alone, without adding this crate to their manifest.
+```rust,ignore
+use core::num::ParseIntError;
 
-To learn more, read the [`cgp` crate's documentation](https://docs.rs/cgp) and the
-[CGP website](https://contextgeneric.dev/), which covers everything from a first program to the
-reference for each construct.
+use cgp::core::error::{ErrorRaiserComponent, ErrorTypeProviderComponent};
+use cgp::extra::error::{DebugError, RaiseFrom};
+use cgp::prelude::*;
+
+pub struct App;
+
+delegate_components! {
+    App {
+        open ErrorRaiserComponent;
+
+        ErrorTypeProviderComponent: UseType<String>,
+        @ErrorRaiserComponent.String: RaiseFrom,
+        @ErrorRaiserComponent.ParseIntError: DebugError,
+    }
+}
+
+fn main() {
+    let error = "http".parse::<u16>().map_err(App::raise_error).unwrap_err();
+    assert!(error.contains("InvalidDigit"));
+}
+```
+
+`DebugError` and `DisplayError` format an error into a `String`, so they need an allocator and the
+`alloc` feature, which this example turns on with
+`cgp = { version = "0.8.0", features = ["alloc"] }`.
+
+Its main items are
+[`RaiseFrom`](https://contextgeneric.dev/docs/reference/providers/error/raise_from),
+[`ReturnError`](https://contextgeneric.dev/docs/reference/providers/error/return_error),
+[`RaiseInfallible`](https://contextgeneric.dev/docs/reference/providers/error/raise_infallible),
+[`PanicOnError`](https://contextgeneric.dev/docs/reference/providers/error/panic_on_error),
+[`DiscardDetail`](https://contextgeneric.dev/docs/reference/providers/error/discard_detail),
+[`DebugError`](https://contextgeneric.dev/docs/reference/providers/error/debug_error), and
+[`DisplayError`](https://contextgeneric.dev/docs/reference/providers/error/display_error), each
+linked to its reference page on the website.
+
+The `cgp` crate re-exports it as `cgp::extra::error`, so a project depends on
+[`cgp`](https://crates.io/crates/cgp) alone, as the example does.
+
+The [CGP website](https://contextgeneric.dev/) teaches CGP from a first program to the reference for
+each construct, and the [`cgp` crate's documentation](https://docs.rs/cgp) covers its API.
