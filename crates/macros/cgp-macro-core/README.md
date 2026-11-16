@@ -1,0 +1,11 @@
+# cgp-macro-core
+
+`cgp-macro-core` holds the shared core of the procedural macros of Context-Generic Programming
+(CGP): the syntax trees, parsers, visitors, and code-generation helpers that the macro crates build
+on.
+
+Projects use the macros through `cgp::prelude` and have no reason to depend on this crate.
+
+To learn more, read the [`cgp` crate's documentation](https://docs.rs/cgp) and the
+[CGP website](https://contextgeneric.dev/), which covers everything from a first program to the
+reference for each construct.

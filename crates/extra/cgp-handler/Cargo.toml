@@ -1,6 +1,6 @@
 [package]
 name         = "cgp-handler"
-version      = "0.8.0-alpha"
+version      = "0.8.0-prerelease"
 edition      = { workspace = true }
 license      = { workspace = true }
 repository   = { workspace = true }
@@ -12,4 +12,4 @@ categories   = { workspace = true }
 description  = "CGP's handler family: the computation components and the combinators that compose them."
 
 [dependencies]
-cgp         = { version = "0.8.0-alpha", path = "../../main/cgp-core", package = "cgp-core" }
+cgp         = { version = "0.8.0-prerelease", path = "../../main/cgp-core", package = "cgp-core" }
