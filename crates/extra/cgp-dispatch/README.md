@@ -54,14 +54,13 @@ fn main() {
 }
 ```
 
-The website's reference covers its main items:
+Projects reach these combinators through the `cgp` crate, which re-exports them as
+`cgp::extra::dispatch`, so they depend on [`cgp`](https://crates.io/crates/cgp) alone, as the
+example does. The website's reference has a page for each of its main items:
 [`MatchWithHandlers`](https://contextgeneric.dev/docs/reference/providers/dispatch/match_with_handlers),
 [`MatchWithValueHandlers`](https://contextgeneric.dev/docs/reference/providers/dispatch/match_with_value_handlers),
 and
 [`ExtractFieldAndHandle`](https://contextgeneric.dev/docs/reference/providers/dispatch/extract_field_and_handle).
 
-The `cgp` crate re-exports it as `cgp::extra::dispatch`, so a project depends on
-[`cgp`](https://crates.io/crates/cgp) alone, as the example does.
-
-The [CGP website](https://contextgeneric.dev/) teaches CGP from a first program to the reference for
-each construct, and the [`cgp` crate's documentation](https://docs.rs/cgp) covers the API.
+To learn CGP itself, the [CGP website](https://contextgeneric.dev/) starts from a first program, and
+the [`cgp` crate's documentation](https://docs.rs/cgp) covers the whole API.

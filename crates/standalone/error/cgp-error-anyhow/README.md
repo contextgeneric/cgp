@@ -11,6 +11,8 @@ that raise errors into it and add context to it. Code written against `HasErrorT
 
 **[Website](https://contextgeneric.dev/) · [Modular error handling](https://contextgeneric.dev/docs/concepts/modular-error-handling) · [The error components](https://contextgeneric.dev/docs/reference/components/has_error_type)**
 
+Each provider goes into the wiring under the components its row names:
+
 | Provider | Wire it to | What it does |
 |---|---|---|
 | `UseAnyhowError` | `ErrorTypeProviderComponent` | sets the context's `Error` to `anyhow::Error` |
@@ -45,10 +47,10 @@ fn main() {
 }
 ```
 
-A `String` needs `DisplayAnyhowError` or `DebugAnyhowError`, because it is not a standard error.
-`DebugAnyhowError` prints it with quotes. The crate is `no_std` and builds anyhow without its `std`
-feature. Enabling that feature elsewhere in the dependency graph turns on the parts of anyhow that
-need `std`, such as backtrace capture.
+A `String` is not a standard error, so it needs `DisplayAnyhowError` or `DebugAnyhowError`, and the
+debug form prints it with quotes. The crate itself is `no_std` and builds anyhow without its `std`
+feature. When another crate in the dependency graph enables that feature, the parts of anyhow that
+need `std`, such as backtrace capture, turn on as well.
 
 The crate re-exports `anyhow::Error` as `cgp_error_anyhow::Error`.
 

@@ -21,8 +21,10 @@ fn main() {
 }
 ```
 
-The website's reference covers its main items:
-[`Symbol!`](https://contextgeneric.dev/docs/reference/macros/symbol),
+Projects reach these types through the `cgp` crate, which re-exports them under `cgp::core::base`
+and the macros that build them under `cgp::prelude`, so they depend on
+[`cgp`](https://crates.io/crates/cgp) alone, as the example does. The website's reference has a page
+for each of its main items: [`Symbol!`](https://contextgeneric.dev/docs/reference/macros/symbol),
 [`Cons`](https://contextgeneric.dev/docs/reference/types/cons),
 [`Nil`](https://contextgeneric.dev/docs/reference/types/nil),
 [`Chars`](https://contextgeneric.dev/docs/reference/types/chars),
@@ -30,9 +32,5 @@ The website's reference covers its main items:
 [`StaticFormat`](https://contextgeneric.dev/docs/reference/traits/formatting/static_format), and
 [`ConcatPath`](https://contextgeneric.dev/docs/reference/traits/formatting/concat_path).
 
-The `cgp` crate re-exports these types under `cgp::core::base`, and the macros that build them under
-`cgp::prelude`, so a project depends on [`cgp`](https://crates.io/crates/cgp) alone, as the example
-does.
-
-The [CGP website](https://contextgeneric.dev/) teaches CGP from a first program to the reference for
-each construct, and the [`cgp` crate's documentation](https://docs.rs/cgp) covers the API.
+To learn CGP itself, the [CGP website](https://contextgeneric.dev/) starts from a first program, and
+the [`cgp` crate's documentation](https://docs.rs/cgp) covers the whole API.

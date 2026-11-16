@@ -34,7 +34,9 @@ fn main() {
 `alloc` feature, which this example turns on with
 `cgp = { version = "0.8.0", features = ["alloc"] }`.
 
-The website's reference covers its main items:
+Projects reach these providers through the `cgp` crate, which re-exports them as
+`cgp::extra::error`, so they depend on [`cgp`](https://crates.io/crates/cgp) alone, as the example
+does. The website's reference has a page for each of its main items:
 [`RaiseFrom`](https://contextgeneric.dev/docs/reference/providers/error/raise_from),
 [`ReturnError`](https://contextgeneric.dev/docs/reference/providers/error/return_error),
 [`RaiseInfallible`](https://contextgeneric.dev/docs/reference/providers/error/raise_infallible),
@@ -43,8 +45,5 @@ The website's reference covers its main items:
 [`DebugError`](https://contextgeneric.dev/docs/reference/providers/error/debug_error), and
 [`DisplayError`](https://contextgeneric.dev/docs/reference/providers/error/display_error).
 
-The `cgp` crate re-exports it as `cgp::extra::error`, so a project depends on
-[`cgp`](https://crates.io/crates/cgp) alone, as the example does.
-
-The [CGP website](https://contextgeneric.dev/) teaches CGP from a first program to the reference for
-each construct, and the [`cgp` crate's documentation](https://docs.rs/cgp) covers the API.
+To learn CGP itself, the [CGP website](https://contextgeneric.dev/) starts from a first program, and
+the [`cgp` crate's documentation](https://docs.rs/cgp) covers the whole API.

@@ -11,6 +11,8 @@ that raise errors into it and add context to it. Code written against `HasErrorT
 
 **[Website](https://contextgeneric.dev/) · [Modular error handling](https://contextgeneric.dev/docs/concepts/modular-error-handling) · [The error components](https://contextgeneric.dev/docs/reference/components/has_error_type)**
 
+Each provider goes into the wiring under the components its row names:
+
 | Provider | Wire it to | What it does |
 |---|---|---|
 | `UseEyreError` | `ErrorTypeProviderComponent` | sets the context's `Error` to `eyre::Report` |
@@ -45,8 +47,8 @@ fn main() {
 }
 ```
 
-A `String` needs `DisplayEyreError` or `DebugEyreError`, because it is not a standard error.
-`DebugEyreError` prints it with quotes.
+A `String` is not a standard error, so it needs `DisplayEyreError` or `DebugEyreError`, and the
+debug form prints it with quotes.
 
 The crate enables eyre's `auto-install` feature, so eyre's default report handler is installed the
 first time a report is built. To use another handler, such as `color-eyre`, install it with

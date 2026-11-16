@@ -11,6 +11,9 @@ and `alloc`, so it suits a `no_std` context that still wants an open-ended error
 
 **[Website](https://contextgeneric.dev/) · [Modular error handling](https://contextgeneric.dev/docs/concepts/modular-error-handling) · [The error components](https://contextgeneric.dev/docs/reference/components/has_error_type)**
 
+The providers go into the wiring under the components their rows name, and the last three rows
+are the types they build:
+
 | Item | Wire it to | What it does |
 |---|---|---|
 | `UseBoxedStdError` | `ErrorTypeProviderComponent` | sets the context's `Error` to `cgp_error_std::Error` |
@@ -49,8 +52,7 @@ fn main() {
 }
 ```
 
-A `WrapError` prints its detail alone with `{}`, so a reporter that walks `source()` prints each
-message once, and prints the whole chain with `{:#}` or `{:?}`. A `String` needs
-`DisplayBoxedStdError` or `DebugBoxedStdError`, because it is not a standard error, and
-`DebugBoxedStdError` prints it with quotes.
+A `WrapError` prints only its detail with `{}`, so a reporter that walks `source()` prints each
+message once, while `{:#}` and `{:?}` print the whole chain. A `String` is not a standard error, so
+it needs `DisplayBoxedStdError` or `DebugBoxedStdError`, and the debug form prints it with quotes.
 

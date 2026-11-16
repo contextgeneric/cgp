@@ -44,13 +44,12 @@ fn main() {
 }
 ```
 
-The website's reference covers its main items:
+Projects use these macros through `cgp::prelude`, so they depend on
+[`cgp`](https://crates.io/crates/cgp) alone, as the example does. The website's reference has a page
+for each of its main items:
 [`#[cgp_computer]`](https://contextgeneric.dev/docs/reference/macros/cgp_computer),
 [`#[cgp_producer]`](https://contextgeneric.dev/docs/reference/macros/cgp_producer), and
 [`#[cgp_auto_dispatch]`](https://contextgeneric.dev/docs/reference/macros/cgp_auto_dispatch).
 
-The `cgp` crate gathers its macros in `cgp::prelude`, so a project depends on
-[`cgp`](https://crates.io/crates/cgp) alone, as the example does.
-
-The [CGP website](https://contextgeneric.dev/) teaches CGP from a first program to the reference for
-each construct, and the [`cgp` crate's documentation](https://docs.rs/cgp) covers the API.
+To learn CGP itself, the [CGP website](https://contextgeneric.dev/) starts from a first program, and
+the [`cgp` crate's documentation](https://docs.rs/cgp) covers the whole API.

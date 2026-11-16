@@ -26,11 +26,10 @@ fn main() {
 }
 ```
 
-Its reference page on the website is
-[`#[async_trait]`](https://contextgeneric.dev/docs/reference/macros/async_trait).
+Projects use the macro through `cgp::prelude`, so they depend on
+[`cgp`](https://crates.io/crates/cgp) alone, as the example does. The website's reference page for
+[`#[async_trait]`](https://contextgeneric.dev/docs/reference/macros/async_trait) describes it in
+full.
 
-The `cgp` crate gathers its macro in `cgp::prelude`, so a project depends on
-[`cgp`](https://crates.io/crates/cgp) alone, as the example does.
-
-The [CGP website](https://contextgeneric.dev/) teaches CGP from a first program to the reference for
-each construct, and the [`cgp` crate's documentation](https://docs.rs/cgp) covers the API.
+To learn CGP itself, the [CGP website](https://contextgeneric.dev/) starts from a first program, and
+the [`cgp` crate's documentation](https://docs.rs/cgp) covers the whole API.

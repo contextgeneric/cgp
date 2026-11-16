@@ -3,8 +3,8 @@
 `cgp-extra` gathers the features [Context-Generic Programming (CGP)](https://contextgeneric.dev/)
 builds on its pluggable trait implementations: the handlers and the dispatch and monadic combinators
 that compose them, task runners and the runtime abstraction, the optional-field builders, and the
-generic error providers. Its `alloc` feature turns on the providers that need an allocator. A
-handler pipeline, for example, runs one computer after another:
+generic error providers, two of which format an error into a `String` and so need the `alloc`
+feature. A handler pipeline, for example, runs one computer after another:
 
 ```rust,ignore
 use cgp::extra::handler::{CanCompute, Computer, ComputerComponent, PipeHandlers};
@@ -37,13 +37,12 @@ fn main() {
 }
 ```
 
-The website's reference covers its main items:
+Projects reach `cgp-extra` through the `cgp` crate, which re-exports it as `cgp::extra`, so they
+depend on [`cgp`](https://crates.io/crates/cgp) alone, as the example does. The website's reference
+has a page for each of its main items:
 [`CanHandle`](https://contextgeneric.dev/docs/reference/components/handler/handler),
 [`PipeHandlers`](https://contextgeneric.dev/docs/reference/providers/handler/pipe_handlers), and
 [`RaiseFrom`](https://contextgeneric.dev/docs/reference/providers/error/raise_from).
 
-The `cgp` crate re-exports it as `cgp::extra`, so a project depends on
-[`cgp`](https://crates.io/crates/cgp) alone, as the example does.
-
-The [CGP website](https://contextgeneric.dev/) teaches CGP from a first program to the reference for
-each construct, and the [`cgp` crate's documentation](https://docs.rs/cgp) covers the API.
+To learn CGP itself, the [CGP website](https://contextgeneric.dev/) starts from a first program, and
+the [`cgp` crate's documentation](https://docs.rs/cgp) covers the whole API.

@@ -1,10 +1,9 @@
 # cgp-runtime
 
 `cgp-runtime` provides the runtime abstraction of Context-Generic Programming (CGP), which lets each
-context choose its async runtime while generic code reaches it through a trait.
+context choose its async runtime while generic code reaches it through a trait. Projects reach it
+through the `cgp` crate, which re-exports it as `cgp::extra::runtime`, so most depend on
+[`cgp`](https://crates.io/crates/cgp) alone and never add this crate to their manifest.
 
-The `cgp` crate re-exports it as `cgp::extra::runtime`. Most projects therefore depend on
-[`cgp`](https://crates.io/crates/cgp) alone, without adding this crate to their manifest.
-
-The [CGP website](https://contextgeneric.dev/) teaches CGP from a first program to the reference for
-each construct, and the [`cgp` crate's documentation](https://docs.rs/cgp) covers the API.
+To learn CGP itself, the [CGP website](https://contextgeneric.dev/) starts from a first program, and
+the [`cgp` crate's documentation](https://docs.rs/cgp) covers the whole API.

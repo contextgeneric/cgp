@@ -1,8 +1,8 @@
 # cgp-core
 
-`cgp-core` gathers the core of [Context-Generic Programming (CGP)](https://contextgeneric.dev/),
-which extends Rust with pluggable trait implementations chosen at compile time: the base layer and
-the procedural macros, the `#[async_trait]` macro, and the error, field, and abstract-type
+[Context-Generic Programming (CGP)](https://contextgeneric.dev/) extends Rust with pluggable trait
+implementations chosen at compile time, and `cgp-core` gathers the core it rests on: the base layer
+and the procedural macros, the `#[async_trait]` macro, and the error, field, and abstract-type
 components. A `#[cgp_fn]` function, for example, reads its arguments from the context's fields:
 
 ```rust,ignore
@@ -25,13 +25,12 @@ fn main() {
 }
 ```
 
-The website's reference covers its main items:
+Projects reach `cgp-core` through the `cgp` crate, which re-exports it as `cgp::core`, so they
+depend on [`cgp`](https://crates.io/crates/cgp) alone, as the example does. The website's reference
+has a page for each of its main items:
 [`#[cgp_component]`](https://contextgeneric.dev/docs/reference/macros/cgp_component),
 [`HasField`](https://contextgeneric.dev/docs/reference/traits/field-access/has_field), and
 [`HasErrorType`](https://contextgeneric.dev/docs/reference/components/has_error_type).
 
-The `cgp` crate re-exports it as `cgp::core`, so a project depends on
-[`cgp`](https://crates.io/crates/cgp) alone, as the example does.
-
-The [CGP website](https://contextgeneric.dev/) teaches CGP from a first program to the reference for
-each construct, and the [`cgp` crate's documentation](https://docs.rs/cgp) covers the API.
+To learn CGP itself, the [CGP website](https://contextgeneric.dev/) starts from a first program, and
+the [`cgp` crate's documentation](https://docs.rs/cgp) covers the whole API.

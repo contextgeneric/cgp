@@ -27,14 +27,13 @@ fn main() {
 }
 ```
 
-The website's reference covers its main items:
+Projects reach the handlers through the `cgp` crate, which re-exports them as `cgp::extra::handler`,
+so they depend on [`cgp`](https://crates.io/crates/cgp) alone, as the example does. The website's
+reference has a page for each of its main items:
 [`CanCompute`](https://contextgeneric.dev/docs/reference/components/handler/computer),
 [`CanHandle`](https://contextgeneric.dev/docs/reference/components/handler/handler),
 [`PipeHandlers`](https://contextgeneric.dev/docs/reference/providers/handler/pipe_handlers), and
 [`Promote`](https://contextgeneric.dev/docs/reference/providers/handler/promote).
 
-The `cgp` crate re-exports it as `cgp::extra::handler`, so a project depends on
-[`cgp`](https://crates.io/crates/cgp) alone, as the example does.
-
-The [CGP website](https://contextgeneric.dev/) teaches CGP from a first program to the reference for
-each construct, and the [`cgp` crate's documentation](https://docs.rs/cgp) covers the API.
+To learn CGP itself, the [CGP website](https://contextgeneric.dev/) starts from a first program, and
+the [`cgp` crate's documentation](https://docs.rs/cgp) covers the whole API.

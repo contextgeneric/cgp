@@ -35,13 +35,12 @@ fn main() {
 }
 ```
 
-The website's reference covers its main items:
+Projects reach these components through the `cgp` crate, which re-exports them as
+`cgp::core::error`, so they depend on [`cgp`](https://crates.io/crates/cgp) alone, as the example
+does. The website's reference has a page for each of its main items:
 [`HasErrorType`](https://contextgeneric.dev/docs/reference/components/has_error_type),
 [`CanRaiseError`](https://contextgeneric.dev/docs/reference/components/can_raise_error), and
 [`CanWrapError`](https://contextgeneric.dev/docs/reference/components/can_wrap_error).
 
-The `cgp` crate re-exports it as `cgp::core::error`, so a project depends on
-[`cgp`](https://crates.io/crates/cgp) alone, as the example does.
-
-The [CGP website](https://contextgeneric.dev/) teaches CGP from a first program to the reference for
-each construct, and the [`cgp` crate's documentation](https://docs.rs/cgp) covers the API.
+To learn CGP itself, the [CGP website](https://contextgeneric.dev/) starts from a first program, and
+the [`cgp` crate's documentation](https://docs.rs/cgp) covers the whole API.

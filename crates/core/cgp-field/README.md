@@ -22,14 +22,13 @@ fn main() {
 }
 ```
 
-The website's reference covers its main items:
+Projects reach this field access through the `cgp` crate, which re-exports it as `cgp::core::field`,
+so they depend on [`cgp`](https://crates.io/crates/cgp) alone, as the example does. The website's
+reference has a page for each of its main items:
 [`HasField`](https://contextgeneric.dev/docs/reference/traits/field-access/has_field),
 [`Index`](https://contextgeneric.dev/docs/reference/types/index_type),
 [`MRef`](https://contextgeneric.dev/docs/reference/types/mref), and the
 [casts](https://contextgeneric.dev/docs/reference/traits/casting/).
 
-The `cgp` crate re-exports it as `cgp::core::field`, so a project depends on
-[`cgp`](https://crates.io/crates/cgp) alone, as the example does.
-
-The [CGP website](https://contextgeneric.dev/) teaches CGP from a first program to the reference for
-each construct, and the [`cgp` crate's documentation](https://docs.rs/cgp) covers the API.
+To learn CGP itself, the [CGP website](https://contextgeneric.dev/) starts from a first program, and
+the [`cgp` crate's documentation](https://docs.rs/cgp) covers the whole API.
