@@ -10,15 +10,19 @@ the same type has to use a wrapper type or a second trait. Context-Generic Progr
 works around that limit: one trait can have many interchangeable implementations, called
 *providers*, and each *context* chooses the one it uses through a small wiring table.
 
-To get started, use this crate: it re-exports the crates that provide CGP under `cgp::core` and
-`cgp::extra`, and gathers the names you write in `cgp::prelude`.
+To get started, depend on this crate alone. It re-exports the crates that provide CGP under
+[`cgp::core`][cgp-core] and [`cgp::extra`][cgp-extra], and gathers the names you write in
+[`cgp::prelude`][cgp-prelude].
 
 ## A quick look
 
-A greeting shows how these pieces fit together. The example below defines a greeting component
-and a provider that reads a name, then wires `Person` to that provider. Here `Person` holds the data
-being greeted. The `check_components!` line checks the wiring at compile time, making the build
-fail if `Person` lacks the `name` field the provider reads:
+A greeting shows how these pieces fit together. [`#[cgp_component]`][cgp-component] turns the
+`CanGreet` trait into a component, and [`#[cgp_impl]`][cgp-impl] writes `GreetHello`, a provider
+whose [`#[implicit]`][implicit] argument reads the context's `name` field.
+[`#[derive(HasField)]`][derive-hasfield] lets `Person` expose that field, and
+[`delegate_components!`][delegate-components] wires `Person` to the provider. Finally,
+[`check_components!`][check-components] checks the wiring at compile time, so the build fails if
+`Person` lacks a field the provider reads:
 
 ```rust
 use cgp::prelude::*;
@@ -63,9 +67,9 @@ cargo add cgp
 ```
 
 CGP needs Rust 1.89 or newer on the stable toolchain. With its default features, it needs neither
-`std` nor `alloc`, so it builds for `no_std` targets as well. The `DebugError` and `DisplayError`
-providers format an error into a `String`, so using them requires an allocator and the `alloc`
-feature:
+`std` nor `alloc`, so it builds for `no_std` targets as well. The [`DebugError`][debugerror] and
+[`DisplayError`][displayerror] providers format an error into a `String`, so using them requires an
+allocator and the `alloc` feature:
 
 ```toml
 [dependencies]
@@ -73,9 +77,9 @@ cgp = { version = "0.8.0", features = ["alloc"] }
 ```
 
 Once you start writing CGP, install [`cargo-cgp`](https://github.com/contextgeneric/cargo-cgp)
-alongside it to help diagnose wiring mistakes. These otherwise show up as errors about generated
-types. `cargo cgp check` leads with the root cause for the classes it recognizes, and the tool does
-not yet reshape every class.
+alongside it to help diagnose wiring mistakes, which otherwise show up as errors about generated
+types. `cargo cgp check` leads with the root cause for the classes of error it recognizes, though
+it does not yet reshape every class.
 
 ## Learn CGP
 
@@ -91,12 +95,20 @@ everything from your first program to the details of individual constructs:
   generate?
 - [Costs and maturity](https://contextgeneric.dev/#costs): what should I weigh before adopting it?
 
-For details about individual API items, use the documentation on docs.rs. Each construct's
-documentation also links to the website's reference page explaining how to use it, where one is
-available. If you work with a coding agent, the site's
-[AI-assisted development](https://contextgeneric.dev/docs/ai/) section explains the agent skill
-and the knowledge base it draws on.
+For details about individual API items, use the documentation on [docs.rs](https://docs.rs/cgp).
+Where the website has a reference page for a construct, that construct's documentation links to it.
+If you work with a coding agent, the site's
+[AI-assisted development](https://contextgeneric.dev/docs/ai/) section explains the agent skill and
+the knowledge base it draws on.
 
-## License
-
-Licensed under the [Apache License, Version 2.0](https://github.com/contextgeneric/cgp/blob/main/LICENSE).
+[cgp-core]: https://docs.rs/cgp/latest/cgp/core/index.html
+[cgp-extra]: https://docs.rs/cgp/latest/cgp/extra/index.html
+[cgp-prelude]: https://docs.rs/cgp/latest/cgp/prelude/index.html
+[cgp-component]: https://docs.rs/cgp/latest/cgp/prelude/attr.cgp_component.html
+[cgp-impl]: https://docs.rs/cgp/latest/cgp/prelude/attr.cgp_impl.html
+[implicit]: https://contextgeneric.dev/docs/reference/attributes/implicit
+[derive-hasfield]: https://docs.rs/cgp/latest/cgp/prelude/derive.HasField.html
+[delegate-components]: https://docs.rs/cgp/latest/cgp/prelude/macro.delegate_components.html
+[check-components]: https://docs.rs/cgp/latest/cgp/prelude/macro.check_components.html
+[debugerror]: https://docs.rs/cgp/latest/cgp/extra/error/struct.DebugError.html
+[displayerror]: https://docs.rs/cgp/latest/cgp/extra/error/struct.DisplayError.html
