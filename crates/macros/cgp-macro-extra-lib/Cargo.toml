@@ -15,6 +15,6 @@ description  = "The implementation of CGP's extra procedural macros, which lower
 cgp-macro-core          = { workspace = true }
 cgp-macro-extra-core    = { workspace = true }
 
-syn                     = { version = "2.0.95", features = [ "full", "extra-traits" ] }
-quote                   = { version = "1.0.38" }
-proc-macro2             = { version = "1.0.92" }
+syn                     = { version = "2.0.119", features = [ "full", "extra-traits" ] }
+quote                   = { version = "1.0.47" }
+proc-macro2             = { version = "1.0.107" }
