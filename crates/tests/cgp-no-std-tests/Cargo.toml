@@ -1,6 +1,6 @@
 [package]
 name         = "cgp-no-std-tests"
-version      = "0.8.0-prerelease"
+version      = "0.8.0"
 edition      = { workspace = true }
 rust-version = { workspace = true }
 license      = { workspace = true }

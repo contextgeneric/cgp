@@ -1,6 +1,6 @@
 [package]
 name         = "cgp-type"
-version      = "0.8.0-prerelease"
+version      = "0.8.0"
 edition      = { workspace = true }
 license      = { workspace = true }
 repository   = { workspace = true }
@@ -12,6 +12,6 @@ categories   = { workspace = true }
 description  = "CGP's abstract types: a type the context chooses behind a trait."
 
 [dependencies]
-cgp                 = { version = "0.8.0-prerelease", path = "../../main/cgp-base", package = "cgp-base" }
+cgp                 = { version = "0.8.0", path = "../../main/cgp-base", package = "cgp-base" }
 cgp-component       = { workspace = true }
 cgp-macro           = { workspace = true }

@@ -1,6 +1,6 @@
 [package]
 name         = "cgp"
-version      = "0.8.0-prerelease"
+version      = "0.8.0"
 readme       = "./README.md"
 edition      = { workspace = true }
 license      = { workspace = true }
