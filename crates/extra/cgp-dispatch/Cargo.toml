@@ -1,6 +1,6 @@
 [package]
 name         = "cgp-dispatch"
-version      = "0.8.0-prerelease"
+version      = "0.8.0"
 edition      = { workspace = true }
 license      = { workspace = true }
 repository   = { workspace = true }
@@ -12,6 +12,6 @@ categories   = { workspace = true }
 description  = "CGP's dispatch providers, which match, extract, and build a value on the way to a handler."
 
 [dependencies]
-cgp         = { version = "0.8.0-prerelease", path = "../../main/cgp-core", package = "cgp-core" }
+cgp         = { version = "0.8.0", path = "../../main/cgp-core", package = "cgp-core" }
 cgp-monad   = { workspace = true }
 cgp-handler = { workspace = true }
